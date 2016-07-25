@@ -1,63 +1,105 @@
-<!-- blocks wrappers with slider -->
-{% block _main_slider_widget %}
-    <div class="heero-promo">
-        {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-options': {
-                autoplaySpeed: 4000,
-                arrowsNav: false,
-                dotsNav: true
-            }
-        }) %}
+<!-- hero-promo -->
+{% block _hero_promo_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hero-promo'
+    }) %}
 
-        {{ block_widget(block, {attr: attr}) }}
-    </div>
-{% endblock %}
-
-{% block _featured_categories_widget %}
-    <div class="featured-categories">
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
+{% block _hero_promo_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            autoplaySpeed: 4000,
+            arrows: false,
+            dots: true
+        }
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _hero_promo_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' heero-promo-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- featured-categories -->
+{% block _featured_categories_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_categories_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- featured-products -->
 {% block _featured_products_widget %}
-    <div class="featured-products">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_products_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- top-selling-items -->
+{% block _top_selling_items_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' top-selling-items'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _top_selling_items_widget %}
-    <div class="top-selling-items">
-        {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-options': {
-                mobileEnabled: false
-            }
-        }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            mobileEnabled: false
+        }
+    }) %}
 
-        {{ block_widget(block, {attr: attr}) }}
-    </div>
-{% endblock %}
-
-<!-- blocks wrappers for item to slide -->
-{% block _main_slider_item_widget %}
-    <div class="heero-promo-item">
-        {{ item }}
-    </div>
-{% endblock %}
-
-{% block _featured_categories_item_widget %}
-    <div class="featured-categories-item">
-        {{ item }}
-    </div>
-{% endblock %}
-
-{% block _featured_products_item_widget %}
-    <div class="featured-products-item">
-        {{ item }}
-    </div>
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block _top_selling_items_item_widget %}
-    <div class="top-selling-items-item">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' top-selling-items-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ item }}
     </div>
 {% endblock %}

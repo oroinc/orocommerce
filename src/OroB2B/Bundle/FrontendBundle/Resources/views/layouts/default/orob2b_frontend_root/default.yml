@@ -4,16 +4,22 @@ layout:
             themes: 'default.html.twig'
         - '@addTree':
             items:
-                main_slider:
+                hero_promo_container:
+                    blockType: container
+                hero_promo:
                     blockType: embedded_list
                     options:
                         items: { '@value': [[0, 1, 2]] }
                         use_slider: { '@value': true }
                         slides_count: { '@value': 1 }
+                hero_promo_item:
+                    blockType: container
                 featured_categories:
                     blockType: embedded_list
                     options:
                         items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7, 8]] }
+                featured_categories_item:
+                    blockType: container
                 featured_products:
                     blockType: embedded_list
                     options:
@@ -21,6 +27,10 @@ layout:
                         label: 'featured_products'
                         use_slider: { '@value': true }
                         slides_count: { '@value': 4 }
+                featured_products_item:
+                    blockType: container
+                top_selling_items_container:
+                    blockType: container
                 top_selling_items:
                     blockType: embedded_list
                     options:
@@ -28,21 +38,17 @@ layout:
                         label: 'top_selling_items'
                         use_slider: { '@value': true }
                         slides_count: { '@value': 4 }
-                main_slider_item:
-                    blockType: container
-                featured_categories_item:
-                    blockType: container
-                featured_products_item:
-                    blockType: container
                 top_selling_items_item:
                     blockType: container
             tree:
                 content:
-                    main_slider:
-                        main_slider_item: ~
+                    hero_promo_container:
+                        hero_promo:
+                            hero_promo_item: ~
                     featured_categories:
                         featured_categories_item: ~
                     featured_products:
                         featured_products_item: ~
-                    top_selling_items:
-                        top_selling_items_item: ~
+                    top_selling_items_container:
+                        top_selling_items:
+                            top_selling_items_item: ~
