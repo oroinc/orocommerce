@@ -23,14 +23,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_pricing_currency }
 
-    orob2b_pricing.provider.fronted_account_user_currency:
-        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendAccountUserCurrencyProvider'
-        public: true
-        arguments:
-            - '@orob2b_pricing.user_currency_manager'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_currency }
-
     orob2b_pricing.layout.block_type.currency_switcher:
         class: 'OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType'
         public: true
