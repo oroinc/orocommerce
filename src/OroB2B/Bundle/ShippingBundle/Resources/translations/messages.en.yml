@@ -55,6 +55,7 @@ orob2b:
             entity_plural_label: Shipping Rules
             id.label: Id
             name.label: Name
+            name_hash.label: Name Hash
             enabled.label: Enabled
             enabled_yes.label: Yes
             enabled_no.label: No
@@ -63,6 +64,7 @@ orob2b:
             destinations.label: Destinations
             address.label: Address
             configurations.label: Configurations
+            currency.label: Сurrency
         shippingruleconfiguration:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
@@ -76,6 +78,7 @@ orob2b:
             currency.label: Currency
             id.label: Id
             type.label: Type
+            method.label: Method
             value.label: Price Value
             rule.label: Rule
         warehouse:
