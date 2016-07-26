@@ -52,14 +52,8 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
-        if (empty($savedState[$this->getName()]) && empty($checkout->getPaymentMethod())) {
+        if (empty($savedState[$this->getName()]) || !is_string($savedState[$this->getName()])) {
             return true;
-        }
-
-        if (!isset($savedState[$this->getName()]) ||
-            !is_string($savedState[$this->getName()])
-        ) {
-            return false;
         }
 
         $paymentMethod = $savedState[$this->getName()];
@@ -69,7 +63,7 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
                 return false;
             }
         } catch (\InvalidArgumentException $e) {
-            return false;
+            return true;
         }
 
         return $paymentMethod === $checkout->getPaymentMethod();

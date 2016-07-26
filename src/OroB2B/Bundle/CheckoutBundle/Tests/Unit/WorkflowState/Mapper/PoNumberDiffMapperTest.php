@@ -104,8 +104,7 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->checkout
             ->expects($this->never())
-            ->method('getPoNumber')
-            ->willReturn('testPoNumber');
+            ->method('getPoNumber');
 
         $savedState = [
             'parameter1' => 10,
@@ -114,15 +113,14 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout
-            ->expects($this->once())
-            ->method('getPoNumber')
-            ->willReturn('testPoNumber');
+            ->expects($this->never())
+            ->method('getPoNumber');
 
         $savedState = [
             'parameter1' => 10,
@@ -132,6 +130,6 @@ class PoNumberDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

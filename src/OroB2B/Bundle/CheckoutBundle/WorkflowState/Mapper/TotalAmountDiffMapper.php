@@ -59,13 +59,16 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
+        if (!isset($savedState[$this->getName()]) ||
+            !isset($savedState[$this->getName()]['amount']) ||
+            !isset($savedState[$this->getName()]['currency'])
+        ) {
+            return true;
+        }
+
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
-        return
-            isset($savedState[$this->getName()]) &&
-            isset($savedState[$this->getName()]['amount']) &&
-            isset($savedState[$this->getName()]['currency']) &&
-            $savedState[$this->getName()]['amount'] === $total->getAmount() &&
+        return $savedState[$this->getName()]['amount'] === $total->getAmount() &&
             $savedState[$this->getName()]['currency'] === $total->getCurrency();
     }
 }

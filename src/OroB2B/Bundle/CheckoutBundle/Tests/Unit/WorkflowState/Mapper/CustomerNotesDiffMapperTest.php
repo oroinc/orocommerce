@@ -104,8 +104,7 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->checkout
             ->expects($this->never())
-            ->method('getCustomerNotes')
-            ->willReturn('testCustomerNotes');
+            ->method('getCustomerNotes');
 
         $savedState = [
             'parameter1' => 10,
@@ -114,15 +113,14 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout
-            ->expects($this->once())
-            ->method('getCustomerNotes')
-            ->willReturn('testCustomerNotes');
+            ->expects($this->never())
+            ->method('getCustomerNotes');
 
         $savedState = [
             'parameter1' => 10,
@@ -132,6 +130,6 @@ class CustomerNotesDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

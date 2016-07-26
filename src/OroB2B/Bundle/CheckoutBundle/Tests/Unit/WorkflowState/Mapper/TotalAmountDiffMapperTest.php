@@ -172,8 +172,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->checkout
             ->expects($this->never())
-            ->method('getTotalAmount')
-            ->willReturn(true);
+            ->method('getTotalAmount');
 
         $savedState = [
             'parameter1' => 10,
@@ -182,15 +181,14 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
         $this->checkout
             ->expects($this->never())
-            ->method('getTotalAmount')
-            ->willReturn(true);
+            ->method('getTotalAmount');
 
         $savedState = [
             'parameter1' => 10,
@@ -200,7 +198,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterNotSetAmount()
@@ -210,10 +208,8 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total->setCurrency('EUR');
 
         $this->totalProcessorProvider
-            ->expects($this->once())
-            ->method('getTotal')
-            ->with($this->checkout)
-            ->willReturn($total);
+            ->expects($this->never())
+            ->method('getTotal');
 
         $savedState = [
             'parameter1' => 10,
@@ -225,7 +221,7 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterNotSetCurrency()
@@ -235,10 +231,8 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
         $total->setCurrency('EUR');
 
         $this->totalProcessorProvider
-            ->expects($this->once())
-            ->method('getTotal')
-            ->with($this->checkout)
-            ->willReturn($total);
+            ->expects($this->never())
+            ->method('getTotal');
 
         $savedState = [
             'parameter1' => 10,
@@ -250,6 +244,6 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

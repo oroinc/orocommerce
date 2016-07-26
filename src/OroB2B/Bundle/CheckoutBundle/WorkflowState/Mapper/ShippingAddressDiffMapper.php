@@ -63,11 +63,10 @@ class ShippingAddressDiffMapper implements CheckoutStateDiffMapperInterface
             isset($savedState[$this->getName()]['updated']) &&
             $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface
         ) {
-            return
-                $savedState[$this->getName()]['id'] ===
-                $checkout->getShippingAddress()->getAccountUserAddress()->getId() &&
+            return $savedState[$this->getName()]['id'] ===
+                    $checkout->getShippingAddress()->getAccountUserAddress()->getId() &&
                 $savedState[$this->getName()]['updated'] >=
-                $checkout->getShippingAddress()->getAccountUserAddress()->getUpdated();
+                    $checkout->getShippingAddress()->getAccountUserAddress()->getUpdated();
         } elseif (isset($savedState[$this->getName()]['text'])) {
             return $savedState[$this->getName()]['text'] === $checkout->getShippingAddress()->__toString();
         }

@@ -108,12 +108,9 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testIsStateActualParameterDoesntExist()
     {
-        $now = new \DateTimeImmutable();
-
         $this->checkout
             ->expects($this->never())
-            ->method('getShipUntil')
-            ->willReturn($now);
+            ->method('getShipUntil');
 
         $savedState = [
             'parameter1' => 10,
@@ -122,17 +119,14 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
-        $now = new \DateTimeImmutable();
-
         $this->checkout
             ->expects($this->never())
-            ->method('getShipUntil')
-            ->willReturn($now);
+            ->method('getShipUntil');
 
         $savedState = [
             'parameter1' => 10,
@@ -142,6 +136,6 @@ class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

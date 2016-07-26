@@ -137,13 +137,11 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->paymentMethod
             ->expects($this->never())
-            ->method('isEnabled')
-            ->willReturn(true);
+            ->method('isEnabled');
 
         $this->checkout
-            ->expects($this->once())
-            ->method('getPaymentMethod')
-            ->willReturn('payflow_gateway');
+            ->expects($this->never())
+            ->method('getPaymentMethod');
 
         $savedState = [
             'parameter1' => 10,
@@ -152,30 +150,28 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualParameterOfWrongType()
     {
         $this->paymentMethod
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
+            ->expects($this->never())
+            ->method('isEnabled');
 
         $this->checkout
-            ->expects($this->once())
-            ->method('getPaymentMethod')
-            ->willReturn(123);
+            ->expects($this->never())
+            ->method('getPaymentMethod');
 
         $savedState = [
             'parameter1' => 10,
-            'paymentMethod' => 'payflow_gateway',
+            'paymentMethod' => 1,
             'parameter3' => 'green',
         ];
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStateActualPaymentMethodNotEnabled()
@@ -187,8 +183,7 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->checkout
             ->expects($this->never())
-            ->method('getPaymentMethod')
-            ->willReturn('payflow_gateway');
+            ->method('getPaymentMethod');
 
         $savedState = [
             'parameter1' => 10,
@@ -210,8 +205,7 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->checkout
             ->expects($this->never())
-            ->method('getPaymentMethod')
-            ->willReturn('payflow_gateway');
+            ->method('getPaymentMethod');
 
         $savedState = [
             'parameter1' => 10,
@@ -221,6 +215,6 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->mapper->isStateActual($this->checkout, $savedState);
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $result);
     }
 }

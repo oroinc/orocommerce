@@ -40,14 +40,10 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
-        if (isset($savedState[$this->getName()]) &&
-            empty($savedState[$this->getName()]) && empty($checkout->isShipToBillingAddress())
-        ) {
+        if (!isset($savedState[$this->getName()]) || !is_bool($savedState[$this->getName()])) {
             return true;
         }
 
-        return
-            isset($savedState[$this->getName()]) &&
-            $savedState[$this->getName()] === $checkout->isShipToBillingAddress();
+        return $savedState[$this->getName()] === $checkout->isShipToBillingAddress();
     }
 }

@@ -40,14 +40,10 @@ class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStateActual($checkout, array $savedState)
     {
-        if (isset($savedState[$this->getName()]) &&
-            empty($savedState[$this->getName()]) && empty($checkout->getCustomerNotes())
-        ) {
+        if (!isset($savedState[$this->getName()]) || !is_string($savedState[$this->getName()])) {
             return true;
         }
 
-        return
-            isset($savedState[$this->getName()]) &&
-            $savedState[$this->getName()] === $checkout->getCustomerNotes();
+        return $savedState[$this->getName()] === $checkout->getCustomerNotes();
     }
 }
