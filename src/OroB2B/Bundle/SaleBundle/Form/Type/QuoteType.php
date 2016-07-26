@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +29,9 @@ class QuoteType extends AbstractType
      */
     protected $quoteAddressSecurityProvider;
 
+    /** @var PaymentTermProvider */
+    protected $paymentTermProvider;
+
     /**
      * @var string
      */
@@ -33,10 +39,14 @@ class QuoteType extends AbstractType
 
     /**
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
+     * @param PaymentTermProvider $paymentTermProvider
      */
-    public function __construct(QuoteAddressSecurityProvider $quoteAddressSecurityProvider)
-    {
+    public function __construct(
+        QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
+        PaymentTermProvider $paymentTermProvider
+    ) {
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
+        $this->paymentTermProvider = $paymentTermProvider;
     }
 
     /**
@@ -126,6 +136,29 @@ class QuoteType extends AbstractType
                     ]
                 );
         }
+
+        $this->addPaymentTerm($builder, $quote);
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Quote $quote
+     */
+    protected function addPaymentTerm(FormBuilderInterface $builder, Quote $quote)
+    {
+        $builder
+            ->add(
+                'paymentTerm',
+                PaymentTermSelectType::NAME,
+                [
+                    'label' => 'orob2b.order.payment_term.label',
+                    'required' => false,
+                    'attr' => [
+                        'data-account-payment-term' => $this->getAccountPaymentTermId($quote),
+                        'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($quote),
+                    ],
+                ]
+            );
     }
 
     /**
@@ -146,5 +179,37 @@ class QuoteType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return int|null
+     */
+    protected function getAccountPaymentTermId(Quote $quote)
+    {
+        $account = $quote->getAccount();
+        if (!$account) {
+            return null;
+        }
+
+        $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
+
+        return $paymentTerm ? $paymentTerm->getId() : null;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return int|null
+     */
+    protected function getAccountGroupPaymentTermId(Quote $quote)
+    {
+        $account = $quote->getAccount();
+        if (!$account || !$account->getGroup()) {
+            return null;
+        }
+
+        $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
+
+        return $paymentTerm ? $paymentTerm->getId() : null;
     }
 }
