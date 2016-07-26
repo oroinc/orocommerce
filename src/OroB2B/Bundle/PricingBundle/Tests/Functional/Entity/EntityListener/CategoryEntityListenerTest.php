@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -55,8 +55,8 @@ class CategoryEntityListenerTest extends WebTestCase
         $actual = $this->getActualTriggersPriceLists();
         $this->assertCount(3, $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_4), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_5), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3), $actual);
     }
 
     public function testOnUpdateCategoryField()
@@ -69,7 +69,7 @@ class CategoryEntityListenerTest extends WebTestCase
 
         $actual = $this->getActualTriggersPriceLists();
         $this->assertCount(1, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_5), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3), $actual);
     }
 
     /**
@@ -83,7 +83,7 @@ class CategoryEntityListenerTest extends WebTestCase
             function (PriceRuleChangeTrigger $trigger) {
                 return $trigger->getPriceList();
             },
-            $repository->findBy([])
+            $repository->findAll()
         );
     }
 
@@ -93,6 +93,7 @@ class CategoryEntityListenerTest extends WebTestCase
     protected function removeTriggers()
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var EntityRepository $repository */
         $repository = $em->getRepository(PriceRuleChangeTrigger::class);
         $repository->createQueryBuilder('t')
             ->delete()

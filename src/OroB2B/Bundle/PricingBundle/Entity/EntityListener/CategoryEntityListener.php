@@ -2,18 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class CategoryEntityListener
 {
@@ -56,46 +53,23 @@ class CategoryEntityListener
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
+        $fields = $this->fieldsProvider->getFields(Category::class, false, true);
+        $updatedFields = array_intersect($fields, array_keys($event->getEntityChangeSet()));
+
         // handle category tree changes
         if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
-            $categoryRepository = $this->getManager()->getRepository(Category::class);
-            // handle both previous and new category paths
-            $categories = array_merge(
-                $categoryRepository->getPath($category),
-                $categoryRepository->getPath($event->getOldValue(self::FIELD_PARENT_CATEGORY))
-            );
-            $this->createTriggersByCategories($categories);
-        }
-
-        $fields = $this->fieldsProvider->getFields(Category::class, false, true);
-        // products and parent category already handled separately
-        $fields = array_diff($fields, [self::FIELD_PARENT_CATEGORY, self::FIELD_PRODUCTS]);
-        $updatedFields = array_intersect($fields, array_keys($event->getEntityChangeSet()));
-        if ($updatedFields) {
-            $lexemes = $this->getManager()
-                ->getRepository(PriceRuleLexeme::class)
-                ->findBy(
-                    [
-                        'className' => Category::class,
-                        'relationId' => $category->getId(),
-                        'fieldName' => $updatedFields,
-                    ]
-                );
+            $lexemes = $this->findLexemes();
+            $this->addTriggersByLexemes($lexemes);
+        } elseif ($updatedFields) {
+            $lexemes = $this->findLexemes($updatedFields);
             $this->addTriggersByLexemes($lexemes);
         }
     }
 
-    /**
-     * @param Category $category
-     */
-    public function preRemove(Category $category)
+    public function preRemove()
     {
-        $categoryRepository = $this->getManager()->getRepository(Category::class);
-        $categories = array_merge(
-            $categoryRepository->getPath($category),
-            $categoryRepository->getChildren($category)
-        );
-        $this->createTriggersByCategories($categories);
+        $lexemes = $this->findLexemes();
+        $this->addTriggersByLexemes($lexemes);
     }
 
     /**
@@ -107,38 +81,18 @@ class CategoryEntityListener
     }
 
     /**
-     * @param Category[] $categories
-     */
-    protected function createTriggersByCategories(array $categories)
-    {
-        $ids = [];
-        foreach ($categories as $category) {
-            $id = $category->getId();
-            if (!in_array($id, $ids)) {
-                $ids[] = $id;
-            }
-        }
-
-        if ($ids) {
-            $lexemes = $this->getManager()
-                ->getRepository(PriceRuleLexeme::class)
-                ->findBy(
-                    [
-                        'className' => Category::class,
-                        'relationId' => $ids,
-                    ]
-                );
-            $this->addTriggersByLexemes($lexemes);
-        }
-    }
-
-    /**
      * @param PriceRuleLexeme[] $lexemes
      */
     protected function addTriggersByLexemes(array $lexemes)
     {
+        $priceLists = [];
+
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
+            $priceLists[$priceList->getId()] = $priceList;
+        }
+
+        foreach ($priceLists as $priceList) {
             if (!$this->isExistingTriggerWithPriseList($priceList)) {
                 $trigger = new PriceRuleChangeTrigger($priceList);
                 $this->extraActionsStorage->scheduleForExtraInsert($trigger);
@@ -155,11 +109,30 @@ class CategoryEntityListener
         /** @var PriceRuleChangeTrigger[] $triggers */
         $triggers = $this->extraActionsStorage->getScheduledForInsert(PriceRuleChangeTrigger::class);
         foreach ($triggers as $trigger) {
-            if ($trigger->getPriceList()->getId() == $priceList->getId()) {
+            if ($trigger->getPriceList()->getId() === $priceList->getId()) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param array $updatedFields
+     * @return array|\OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
+     */
+    protected function findLexemes(array $updatedFields = [])
+    {
+        $criteria = [
+            'className' => Category::class,
+        ];
+        if ($updatedFields) {
+            $criteria['fieldName'] = $updatedFields;
+        }
+        $lexemes = $this->getManager()
+            ->getRepository(PriceRuleLexeme::class)
+            ->findBy($criteria);
+
+        return $lexemes;
     }
 }
