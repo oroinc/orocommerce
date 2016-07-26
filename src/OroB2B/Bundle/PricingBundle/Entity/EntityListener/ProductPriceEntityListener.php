@@ -2,23 +2,20 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
-
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceEntityListener
 {
@@ -206,7 +203,7 @@ class ProductPriceEntityListener
     protected function findRelation($product, $priceList)
     {
         $relation = $this->registry->getManagerForClass(PriceListToProduct::class)
-            ->getRepository('OroB2BPricingBundle:PriceListToProduct')
+            ->getRepository(PriceListToProduct::class)
             ->findOneBy(
                 [
                     'product' => $product,
