@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
@@ -144,8 +143,8 @@ class ProductPriceEntityListener
     {
         if (!$this->repository) {
             $this->repository = $this->registry
-                ->getManagerForClass(PriceListChangeTrigger::class)
-                ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+                ->getManagerForClass(ProductPriceChangeTrigger::class)
+                ->getRepository(ProductPriceChangeTrigger::class);
         }
 
         return $this->repository;
@@ -196,11 +195,11 @@ class ProductPriceEntityListener
     }
 
     /**
-     * @param $product
-     * @param $priceList
-     * @return null|object|PriceListToProduct
+     * @param Product $product
+     * @param PriceList $priceList
+     * @return null|PriceListToProduct
      */
-    protected function findRelation($product, $priceList)
+    protected function findRelation(Product $product, PriceList $priceList)
     {
         $relation = $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class)
