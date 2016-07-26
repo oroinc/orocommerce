@@ -18,6 +18,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -251,6 +252,21 @@ class Quote extends ExtendQuote implements
      * )
      **/
     protected $assignedAccountUsers;
+
+    /**
+     * @var PaymentTerm
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
+     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $paymentTerm;
 
     /**
      * @var float
@@ -653,6 +669,30 @@ class Quote extends ExtendQuote implements
         }
 
         return $this;
+    }
+
+    /**
+     * Set paymentTerm
+     *
+     * @param PaymentTerm|null $paymentTerm
+     *
+     * @return Quote
+     */
+    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
+    {
+        $this->paymentTerm = $paymentTerm;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentTerm
+     *
+     * @return PaymentTerm|null
+     */
+    public function getPaymentTerm()
+    {
+        return $this->paymentTerm;
     }
 
     /**
