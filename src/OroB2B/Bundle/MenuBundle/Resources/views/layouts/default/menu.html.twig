@@ -3,7 +3,7 @@
 {% import 'OroNavigationBundle::macros.html.twig' as Navigation %}
 
 {% macro attributes(attributes) %}
-    {% for name, value in attributes %}
+    {%- for name, value in attributes -%}
         {%- if value is not none and value is not sameas(false) -%}
             {{- ' %s="%s"'|format(name, value is sameas(true) ? name|e : value|e)|raw -}}
         {%- endif -%}
@@ -126,9 +126,9 @@
 {% endblock %}
 
 {% block label %}
-    {% if options.allow_safe_labels %}
+    {%- if options.allow_safe_labels -%}
         {{- item.label|raw -}}
     {% else %}
         {{- item.label -}}
-    {% endif %}
+    {%- endif -%}
 {% endblock %}

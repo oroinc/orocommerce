@@ -1,0 +1,78 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'account_address_book_addresses_grid_toolbar.html.twig'
+        - '@addTree':
+            items:
+                account_address_book_addresses_grid_toolbar:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_actions_container:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_mass_actions:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_extra_actions:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_tools_container:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_actions:
+                    blockType: container
+                account_address_book_addresses_grid_toolbar_page_size:
+                    blockType: block
+                account_address_book_addresses_grid_toolbar_pagination:
+                    blockType: block
+                account_address_book_addresses_grid_toolbar_sorting:
+                    blockType: block
+                account_address_book_addresses_grid_toolbar_button_container:
+                    blockType: container
+            tree:
+                scripts_before:
+                    account_address_book_addresses_grid_toolbar:
+                        account_address_book_addresses_grid_toolbar_sorting: ~
+                        account_address_book_addresses_grid_toolbar_actions_container:
+                            account_address_book_addresses_grid_toolbar_mass_actions: ~
+                            account_address_book_addresses_grid_toolbar_extra_actions: ~
+                        account_address_book_addresses_grid_toolbar_tools_container:
+                            account_address_book_addresses_grid_toolbar_actions: ~
+                            account_address_book_addresses_grid_toolbar_page_size: ~
+                        account_address_book_addresses_grid_toolbar_pagination: ~
+                        account_address_book_addresses_grid_toolbar_button_container: ~
+        - '@setOption':
+            id: account_address_book_addresses_grid_toolbar_sorting
+            optionName: visible
+            optionValue: false
+        - '@setOption':
+            id: account_address_book_addresses_grid_toolbar_mass_actions
+            optionName: visible
+            optionValue: false
+        - '@setOption':
+            id: account_address_book_addresses_grid_toolbar_extra_actions
+            optionName: visible
+            optionValue: false
+        - '@move':
+            id: account_address_book_addresses_grid_toolbar_mass_actions
+            parentId: account_address_book_addresses_grid_toolbar
+            siblingId: account_address_book_addresses_grid_toolbar_sorting
+        - '@move':
+            id: account_address_book_addresses_grid_toolbar_extra_actions
+            parentId: account_address_book_addresses_grid_toolbar
+            siblingId: account_address_book_addresses_grid_toolbar_mass_actions
+        - '@move':
+            id: account_address_book_addresses_grid_toolbar_pagination
+            parentId: account_address_book_addresses_grid_toolbar
+            siblingId: account_address_book_addresses_grid_toolbar_extra_actions
+        - '@move':
+            id: account_address_book_addresses_grid_toolbar_page_size
+            parentId: account_address_book_addresses_grid_toolbar
+            siblingId: account_address_book_addresses_grid_toolbar_pagination
+        - '@move':
+            id: account_address_book_addresses_grid_toolbar_actions
+            parentId: account_address_book_addresses_grid_toolbar
+            siblingId: account_address_book_addresses_grid_toolbar_page_size
+        - '@remove':
+            id: account_address_book_addresses_grid_toolbar_actions_container
+        - '@remove':
+            id: account_address_book_addresses_grid_toolbar_tools_container
+        - '@setOption':
+            id: account_address_book_addresses_grid_toolbar
+            optionName: attr.class
+            optionValue: 'grid__toolbar grid__toolbar--extended grid-toolbar'

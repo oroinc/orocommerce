@@ -51,7 +51,7 @@ class CopyLocalizationReferencesToConfigQuery extends ParametrizedMigrationQuery
             );
 
             $this->prepareEnabledLocalizationsInsertStatement($websiteId, $localizationIds)->execute();
-            $this->prepareDefaultLocalizationStatement($websiteId, reset($localizationIds)); //take a first one
+            $this->prepareDefaultLocalizationStatement($websiteId, reset($localizationIds))->execute();
         }
     }
 

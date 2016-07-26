@@ -12,7 +12,6 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -21,7 +20,6 @@ class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
-    const PRODUCT_IMAGE_TYPE = 'listing';
 
     /**
      * @var DataGridThemeHelper
@@ -70,7 +68,10 @@ class FrontendProductDatagridListener
 
         $config->offsetAddToArrayByPath(
             '[properties]',
-            [self::COLUMN_PRODUCT_UNITS => ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]]
+            [self::COLUMN_PRODUCT_UNITS => [
+                'type' => 'field',
+                'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]
+            ]
         );
 
         // add theme processing
@@ -178,17 +179,15 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $products = $this->getProductRepository()->getProductsWithImage($productIds, self::PRODUCT_IMAGE_TYPE);
+        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
         foreach ($records as $record) {
             $imageUrl = null;
             $productId = $record->getValue('id');
-            if (isset($products[$productId])) {
-                $product = $products[$productId];
-                /** @var ProductImage $listingImage */
-                $listingImage = $product->getImages()->first();
+
+            if (isset($productImages[$productId])) {
                 $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                    $listingImage->getImage(),
+                    $productImages[$productId],
                     self::PRODUCT_IMAGE_FILTER
                 );
                 $record->addData(['image' => $imageUrl]);

@@ -11,26 +11,6 @@ layout:
             id: checkout_information
             optionName: stepOrder
             optionValue: 4
-        - '@addTree':
-            items:
-                checkout_form_buttons:
-                    blockType: container
-                    siblingId: checkout_form_fields
-                checkout_button_continue:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: { '@value': $data.orob2b_checkout_continue_transition }
-                        checkout: { '@value': $data.checkout }
-                checkout_button_back:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: { '@value': $data.orob2b_checkout_back_transition }
-                        checkout: { '@value': $data.checkout }
-            tree:
-                checkout_form:
-                    checkout_form_buttons:
-                          checkout_button_continue: ~
-                          checkout_button_back: ~
         - '@add':
             id: payment_methods
             parentId: checkout_information
@@ -42,6 +22,4 @@ layout:
                 currentPaymentMethod: { '@value': $data.checkout.paymentMethod }
 
     conditions:
-        '@and':
-            - '@eq': [$context.workflowStepName, 'enter_payment']
-            - '@empty': [$context.widget_container]
+        '@eq': [$context.workflowStepName, 'enter_payment']

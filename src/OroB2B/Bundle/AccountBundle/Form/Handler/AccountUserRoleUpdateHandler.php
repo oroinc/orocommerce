@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
 
 class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
 {
-    /** @var  RequestStack */
+    /** @var RequestStack */
     protected $requestStack;
 
     /**
@@ -25,8 +25,7 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
         $this->requestStack = $requestStack;
         $this->request = $requestStack->getCurrentRequest();
     }
-
-
+    
     /**
      * @var Account
      */
