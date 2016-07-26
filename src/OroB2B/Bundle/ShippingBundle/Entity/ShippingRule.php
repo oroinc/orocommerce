@@ -74,7 +74,7 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=40, nullable=false, unique=true)
+     * @ORM\Column(name="name_hash", type="string", length=40, nullable=false, unique=true)
      */
     protected $nameHash;
 

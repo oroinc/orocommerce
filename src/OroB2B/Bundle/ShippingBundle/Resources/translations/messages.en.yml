@@ -49,6 +49,7 @@ orob2b:
             entity_plural_label: Shipping Rules
             id.label: Id
             name.label: Name
+            name_hash.label: Name Hash
             enabled.label: Enabled
             priority.label: Priority
             conditions.label: Conditions
@@ -60,6 +61,7 @@ orob2b:
             entity_plural_label: Shipping Rule Configurations
             id.label: Id
             type.label: Type
+            method.label: Method
             rule.label: Rule
         flatrateruleconfiguration:
             entity_label: Flat Rate Rule Configuraiton
@@ -67,6 +69,7 @@ orob2b:
             currency.label: Currency
             id.label: Id
             type.label: Type
+            method.label: Method
             value.label: Price Value
             rule.label: Rule
         warehouse:
