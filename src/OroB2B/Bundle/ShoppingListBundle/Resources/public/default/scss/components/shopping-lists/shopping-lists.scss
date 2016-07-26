@@ -15,8 +15,32 @@
     background: #d9e8d1;
 
     &__text {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
         margin-bottom: 5px;
         padding-left: 25px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__description-row,
+    &__ui-row {
+        display: table-cell;
+        vertical-align: top;
+    }
+
+    &__description-row {
+        width: 100%;
+        padding-right: 5px;
+    }
+
+    &__ui-row {
+        width: 30px;
+
+        text-align: right;
     }
 
     &__icon {

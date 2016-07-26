@@ -16,7 +16,7 @@
         remove: removeOptions,
         componentOptions: {
             defaultClass: 'btn-dark',
-            addedClass: 'btn-green'
+            editClass: 'btn-dark'
         },
         singleButtonACss: 'btn-block btn-dark btn_lg'
     } %}
@@ -53,27 +53,31 @@
     <% if (currentShoppingList) { %>
     <% _.each(currentShoppingList.line_items, function(lineItem) { %>
     <div class="shopping-lists__text">
-        <span class="shopping-lists__label"><%= _.__(
-                'orob2b.shoppinglist.actions.added_to_shopping_list', {
-                lineItems: _.__(
-                    'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
-                    {count: lineItem.quantity},
-                    lineItem.quantity
-                ),
-                shoppingList: currentShoppingList.shopping_list_label
-        }) %></span>
-        <ul class="actions-row">
-            <li class="actions-row__item actions-row__item--edit">
-                <button type="button"
-                        title="{{ 'Edit'|trans }}"
-                        class="actions-row__button"
-                        data-role="edit-line-item"
-                        data-line-item-id="<%= lineItem.line_item_id %>"
-                >
-                    <i class="actions-row__icon cf-pencil"></i>
-                </button>
-            </li>
-        </ul>
+        <div class="shopping-lists__description-row">
+            <span class="shopping-lists__label"><%= _.__(
+                    'orob2b.shoppinglist.actions.added_to_shopping_list', {
+                    lineItems: _.__(
+                        'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
+                        {count: lineItem.quantity},
+                        lineItem.quantity
+                    ),
+                    shoppingList: currentShoppingList.shopping_list_label
+            }) %></span>
+        </div>
+        <div class="shopping-lists__ui-row">
+            <ul class="actions-row">
+                <li class="actions-row__item actions-row__item--edit">
+                    <button type="button"
+                            title="{{ 'Edit'|trans }}"
+                            class="actions-row__button"
+                            data-role="edit-line-item"
+                            data-line-item-id="<%= lineItem.line_item_id %>"
+                    >
+                        <i class="actions-row__icon cf-pencil"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
     <% }) %>
     <% } else { %>
