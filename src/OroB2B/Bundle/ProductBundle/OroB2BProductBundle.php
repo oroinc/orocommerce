@@ -39,7 +39,7 @@ class OroB2BProductBundle extends Bundle
             ->addCompilerPass(new ComponentProcessorPass())
             ->addCompilerPass(new ProductDataStorageSessionBagPass())
             ->addCompilerPass(new TwigSandboxConfigurationPass())
-            ->addCompilerPass(new DefaultProductUnitProvidersCompilerPass());
+            ->addCompilerPass(new DefaultProductUnitProvidersCompilerPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Product::class => [
                     'name' => 'names',
