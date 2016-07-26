@@ -85,13 +85,15 @@
                     </a>
                 {% endif %}
             </div>
-            {{ block_widget(block) }}
+            <div class="collapse-view__container" data-collapse-container>
+                {{ block_widget(block) }}
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block _checkout_order_summary_table_widget %}
-    <div class="checkout-order-summary__tab__content collapse-view__container" data-collapse-container>
+    <div class="checkout-order-summary__tab__content">
         <table class="oro-grid-table table-scrollable"  
                data-page-component-module="oroui/js/app/components/view-component"  
                data-page-component-options="{{ {view: 'orob2bfrontend/js/app/views/scrollable-table'}|json_encode }}">

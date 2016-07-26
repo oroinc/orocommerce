@@ -20,15 +20,6 @@ class RegionType extends BaseCountryType
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['withoutSelect'] = true;
-        parent::finishView($view, $form, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParent()
     {
         return 'translatable_entity';
