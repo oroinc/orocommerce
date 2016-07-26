@@ -105,7 +105,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      *      }
      * )
      */
-    protected $sell;
+    protected $sell = true;
 
     public function __clone()
     {
