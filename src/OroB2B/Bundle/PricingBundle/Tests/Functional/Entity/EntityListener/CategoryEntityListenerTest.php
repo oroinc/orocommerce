@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
@@ -78,6 +79,7 @@ class CategoryEntityListenerTest extends WebTestCase
     protected function getActualTriggersPriceLists()
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var CategoryRepository $repository */
         $repository = $em->getRepository(PriceRuleChangeTrigger::class);
         return array_map(
             function (PriceRuleChangeTrigger $trigger) {
