@@ -1,3 +1,4 @@
+<!-- hero-promo -->
 {% block _hero_promo_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' hero-promo'
@@ -20,6 +21,17 @@
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
+{% block _hero_promo_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' heero-promo-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- featured-categories -->
 {% block _featured_categories_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-categories'
@@ -136,6 +148,17 @@
     </div>
 {% endblock %}
 
+{% block _featured_categories_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- featured-products -->
 {% block _featured_products_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-products'
@@ -146,6 +169,17 @@
     </div>
 {% endblock %}
 
+{% block _featured_products_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
+{% endblock %}
+
+<!-- top-selling-items -->
 {% block _top_selling_items_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' top-selling-items'
@@ -164,4 +198,14 @@
     }) %}
 
     {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _top_selling_items_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' top-selling-items-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ item }}
+    </div>
 {% endblock %}
