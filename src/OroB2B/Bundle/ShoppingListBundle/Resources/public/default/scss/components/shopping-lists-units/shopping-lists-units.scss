@@ -9,12 +9,6 @@ $shopping-lists-actions-width: 55px;
     &:first-child {
         display: block;
         margin-top: 0;
-
-        .shopping-lists-units__actions,
-        .shopping-lists-modify__badges {
-            visibility: visible;
-            opacity: 1;
-        }
     }
 
     &__number {
@@ -34,9 +28,6 @@ $shopping-lists-actions-width: 55px;
         width: $shopping-lists-actions-width;
 
         color: $base-link-color;
-
-        visibility: hidden;
-        opacity: 0;
 
         transition: opacity .3s linear;
     }

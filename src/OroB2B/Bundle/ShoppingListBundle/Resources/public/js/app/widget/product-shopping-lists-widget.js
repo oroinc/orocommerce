@@ -25,7 +25,6 @@ define(function(require) {
         elements: {
             edit: '[data-role="edit"]',
             decline: '[data-role="decline"]',
-            accept: '[data-role="accept"]',
             controlsContainer: '[data-role="shopping-list"]',
             modifyContainer: '[data-role="shopping-lists-modify"]',
             staticContainer: '[data-role="shopping-lists-static"]'
@@ -130,7 +129,7 @@ define(function(require) {
                 this.model.get('shopping_lists'),
                 updateData.shoppingListId,
                 updateData.lineItemId,
-                updateData.lineItem
+                updateData.value
             );
 
             this.model.set('shopping_lists', updatedShoppingLists);
@@ -140,7 +139,7 @@ define(function(require) {
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
             return _.map(shoppingLists, function(list) {
-                if (list.hasOwnProperty('shopping_list_id') && list.shopping_list_id === parseInt(shoppingListId)) {
+                if (list.shopping_list_id === parseInt(shoppingListId, 10)) {
                     list.line_items = this.updateLineItems(list.line_items, lineItemId, newLineItem);
                 }
                 return list;
@@ -149,7 +148,7 @@ define(function(require) {
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
             return _.map(lineItems, function(item) {
-                if (item.hasOwnProperty('line_item_id') && item.line_item_id === parseInt(lineItemId)) {
+                if (item.line_item_id === parseInt(lineItemId, 10)) {
                     item.unit = newLineItem.unit;
                     item.quantity = newLineItem.quantity;
                 }

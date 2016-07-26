@@ -131,15 +131,14 @@ define(function(require) {
         },
 
         initListeners: function() {
+            var changeAction = this.onViewChange;
             if (this.elements.saveButton) {
                 this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
-                this.$el.on('change', this.elements.quantity, _.bind(this.enableAccept, this));
-                this.$el.on('change', this.elements.unit, _.bind(this.enableAccept, this));
-                return;
+                changeAction = this.enableAccept;
             }
+            this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
+            this.$el.on('change', this.elements.unit, _.bind(changeAction, this));
 
-            this.$el.on('change', this.elements.quantity, _.bind(this.onViewChange, this));
-            this.$el.on('change', this.elements.unit, _.bind(this.onViewChange, this));
         },
 
         saveModelState: function() {
@@ -220,7 +219,7 @@ define(function(require) {
             this.restoreSavedState();
 
             var value = _.extend({}, this.triggerData || {}, {
-                lineItem: value
+                value: this.getValue()
             });
             this.trigger('product:quantity-unit:update', value);
             mediator.trigger('product:quantity-unit:update', value);

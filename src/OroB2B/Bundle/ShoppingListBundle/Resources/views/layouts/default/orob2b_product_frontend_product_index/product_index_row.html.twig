@@ -106,7 +106,7 @@
         },
         '~class': ' shopping-lists__link'
     }) %}
-    <a {{ block('block_attributes') }}>Add item to multiple lists</a>
+    <a {{ block('block_attributes') }}>{{ 'orob2b.shoppinglist.actions.add_to_multiple'|trans }}</a>
 {% endblock %}
 
 {% block _product_shopping_lists_popup_template_widget %}
@@ -134,33 +134,28 @@
                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                 module: 'oroui/js/app/components/view-component',
                                 options: {
-                                    view: 'orob2bshoppinglist/js/app/views/line-item-view',
-                                    modelAttr: '<%= shoppingLists %>',
-                                    lineItemId: '<%= lineItem.line_item_id %>',
-                                    quantityComponentOptions: {
-                                        dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                                        enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                        elements: {
-                                            trigger: '[data-role="accept"]',
-                                            quantity: '[name="product_qty"]',
-                                            unit: '[name="product_unit"]'
+                                    view: 'orob2bproduct/js/app/views/product-quantity-editable-view',
+                                    dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                    elements: {
+                                        saveButton: '[data-role="accept"]',
+                                        quantity: '[data-role="field__quantity"]',
+                                        unit: '[data-role="field__unit"]',
+                                    },
+                                    save_api_accessor: {
+                                        default_route_parameters: {
+                                            id: '<%=lineItem.line_item_id %>'
                                         },
-                                        save_api_accessor: {
-                                            default_route_parameters: {
-                                                id: '<%=lineItem.line_item_id %>'
-                                            },
-                                            route: 'orob2b_api_shopping_list_frontend_put_line_item'
-                                        },
-                                        validation: {
-                                            showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
-                                        },
-                                        triggerData: {
-                                            lineItemId: '<%= lineItem.line_item_id %>',
-                                            shoppingListId: '<%= list.shopping_list_id %>'
-                                        }
+                                        route: 'orob2b_api_shopping_list_frontend_put_line_item'
+                                    },
+                                    validation: {
+                                        showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                    },
+                                    triggerData: {
+                                        lineItemId: '<%= lineItem.line_item_id %>',
+                                        shoppingListId: '<%= list.shopping_list_id %>'
                                     }
-                                },
-                                layout: 'separate'
+                                }
                             })) }}>
                             <form action="#">
                                 <div class="shopping-lists-static"
@@ -175,13 +170,13 @@
                                     <div class="shopping-lists-units__actions">
                                         <ul class="actions-row">
                                             <li class="actions-row__item actions-row__item--edit">
-                                                <button class="actions-row__button" type="button" title="Edit" data-role="edit">
+                                                <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
                                                     <i class="actions-row__icon cf-pencil"></i>
                                                 </button>
                                             </li>
                                             <li class="actions-row__item actions-row__item--separate">|</li>
                                             <li class="actions-row__item actions-row__item--remove">
-                                                <button class="actions-row__button" type="button" title="Remove"
+                                                <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                                             module: 'orob2bfrontend/js/app/components/delete-item-component',
                                                             options: {
@@ -211,13 +206,13 @@
                                         <input class="shopping-lists-modify__input input input_xs"
                                                type="number"
                                                value="<%= lineItem.quantity %>"
-                                               name="product_qty"
-                                               data-name="field__quantity"
+                                               name="quantity"
+                                               data-role="field__quantity"
                                                disabled="disabled" required>
                                     </li>
                                     <li class="shopping-lists-modify__select">
-                                        <select class="oro-select2 oro-select2--size-s" name="product_unit"
-                                                data-name="field__unit" required>
+                                        <select class="oro-select2 oro-select2--size-s" name="unit"
+                                                data-role="field__unit" required>
                                             <% _.each(productUnits, function(unit) { %>
                                                 <% if (unit === lineItem.unit) { %>
                                                     <option value="<%= unit %>" selected="selected"><%= unit %></option>
@@ -231,7 +226,7 @@
                                         <span class="shopping-lists-modify__edit">
                                             <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
                                                     type="button"
-                                                    title="Accept"
+                                                    title="{{ 'Save'|trans }}"
                                                     disabled
                                                     data-role="accept">
                                                     <i class="shopping-lists-modify__icon cf-check"></i>
@@ -240,7 +235,7 @@
                                         <span class="shopping-lists-modify__edit">
                                             <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
                                                     type="button"
-                                                    title="Cancel"
+                                                    title="{{ 'Cancel'|trans }}"
                                                     data-role="decline">
                                                     <i class="shopping-lists-modify__icon cf-clear"></i>
                                             </button>
@@ -257,7 +252,7 @@
             </tbody>
         </table>
         <div class="widget-actions">
-            <button class="btn theme-btn btn-orange" type="reset">Close</button>
+            <button class="btn theme-btn btn-orange" type="reset">{{ 'Cancel'|trans }}</button>
         </div>
     </div>
 {% endblock %}

@@ -81,8 +81,8 @@ define(function (require) {
         },
 
         deleteWithoutRedirect: function(e) {
-            mediator.trigger('frontend:item:delete', this.triggerData || e);
             mediator.execute('showMessage', 'success', this.sucsessMessage, {'flash': true});
+            mediator.trigger('frontend:item:delete', this.triggerData || e);
         }
     });
 
