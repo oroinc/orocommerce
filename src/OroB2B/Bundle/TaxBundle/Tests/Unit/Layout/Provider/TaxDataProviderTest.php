@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Layout\Provider;
 
-use Oro\Component\Layout\LayoutContext;
-
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
@@ -26,15 +24,13 @@ class TaxDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new TaxDataProvider($this->taxManager);
     }
 
-    public function testGetData()
+    public function testGetTax()
     {
-        $context = new LayoutContext();
         $value = new Order();
-        $context->data()->set('order', $value);
         $result = new Result();
         $this->taxManager->expects($this->once())->method('loadTax')->with($value)->willReturn($result);
 
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getTax($value);
 
         $this->assertSame($result, $actual);
     }

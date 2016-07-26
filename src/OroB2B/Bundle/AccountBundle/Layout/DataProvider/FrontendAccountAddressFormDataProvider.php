@@ -2,99 +2,43 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
-use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
 
-class FrontendAccountAddressFormDataProvider
+class FrontendAccountAddressFormDataProvider extends AbstractFormDataProvider
 {
-    /**
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
+    const ACCOUNT_ADDRESS_CREATE_ROUTE_NAME = 'orob2b_account_frontend_account_address_create';
+    const ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME = 'orob2b_account_frontend_account_address_update';
 
     /**
-     * @var array|FormAccessorInterface[]
-     */
-    private $data = [];
-
-    /**
-     * @var array|FormInterface[]
-     */
-    private $forms = [];
-
-    /**
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(FormFactoryInterface $formFactory)
-    {
-        $this->formFactory = $formFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
-    {
-        /** @var AccountAddress $accountAddress */
-        $accountAddress = $context->data()->get('entity');
-
-        $addressId = $accountAddress->getId();
-
-        if (!isset($this->data[$addressId])) {
-            $this->data[$addressId] = new FormAccessor(
-                $this->getForm($accountAddress),
-                $this->getAction($context->data()->get('account'), $addressId)
-            );
-        }
-
-        return $this->data[$addressId];
-    }
-
-    /**
+     * Get form accessor with account address form
+     *
+     * @param AccountAddress $accountAddress
      * @param Account $account
-     * @param integer $addressId
-     * @return FormAction
+     *
+     * @return FormAccessor
      */
-    private function getAction(Account $account, $addressId)
+    public function getAddressForm(AccountAddress $accountAddress, Account $account)
     {
-        if ($addressId) {
-            return FormAction::createByRoute(
-                'orob2b_account_frontend_account_address_update',
-                ['id' => $addressId, 'entityId' => $account->getId()]
+        if ($accountAddress->getId()) {
+            return $this->getFormAccessor(
+                AccountTypedAddressType::NAME,
+                self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME,
+                $accountAddress,
+                ['id' => $accountAddress->getId(), 'entityId' => $account->getId()]
             );
         }
 
-        return FormAction::createByRoute(
-            'orob2b_account_frontend_account_address_create',
+        return $this->getFormAccessor(
+            AccountTypedAddressType::NAME,
+            self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
+            $accountAddress,
             ['entityId' => $account->getId()]
         );
-    }
-
-    /**
-     * @param AccountAddress $accountAddress
-     * @return FormInterface
-     */
-    public function getForm(AccountAddress $accountAddress)
-    {
-        $addressId = $accountAddress->getId();
-
-        if (!isset($this->forms[$addressId])) {
-            $this->forms[$addressId] = $this->formFactory->create(
-                AccountTypedAddressType::NAME,
-                $accountAddress
-            );
-        }
-
-        return $this->forms[$addressId];
     }
 }

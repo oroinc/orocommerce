@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use Oro\Component\Layout\ContextDataCollection;
-use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -31,7 +30,9 @@ class FrontendAccountUserRoleFormDataProviderTest extends \PHPUnit_Framework_Tes
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new FrontendAccountUserRoleFormDataProvider($this->handler);
+        /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject $formFactory */
+        $formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
+        $this->provider = new FrontendAccountUserRoleFormDataProvider($formFactory, $this->handler);
     }
 
     protected function tearDown()
@@ -46,12 +47,11 @@ class FrontendAccountUserRoleFormDataProviderTest extends \PHPUnit_Framework_Tes
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetData(AccountUserRole $role, $route, array $routeParameters = [])
+    public function testGetRoleForm(AccountUserRole $role, $route, array $routeParameters = [])
     {
         $form = $this->assertAccountUserRoleFormHandlerCalled($role);
-        $context = $this->getLayoutContext($role);
 
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getRoleForm($role);
 
         $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
         $this->assertSame($form, $actual->getForm());
@@ -62,7 +62,7 @@ class FrontendAccountUserRoleFormDataProviderTest extends \PHPUnit_Framework_Tes
         $this->assertEquals($routeParameters, $action->getRouteParameters());
 
         /** test local cache */
-        $this->assertSame($actual, $this->provider->getData($context));
+        $this->assertSame($actual, $this->provider->getRoleForm($role));
     }
 
     /**
@@ -81,43 +81,6 @@ class FrontendAccountUserRoleFormDataProviderTest extends \PHPUnit_Framework_Tes
                 'routeParameters' => ['id' => 42]
             ]
         ];
-    }
-
-    public function testGetForm()
-    {
-        /** @var AccountUserRole $role */
-        $role = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole', ['id' => 42]);
-
-        $form = $this->assertAccountUserRoleFormHandlerCalled($role);
-
-        $this->assertSame($form, $this->provider->getForm($role));
-
-        /** test local cache */
-        $this->assertSame($form, $this->provider->getForm($role));
-    }
-
-    /**
-     * @param AccountUserRole $role
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getLayoutContext(AccountUserRole $role)
-    {
-        /** @var ContextDataCollection|\PHPUnit_Framework_MockObject_MockObject $data */
-        $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data->expects($this->exactly(2))
-            ->method('get')
-            ->with('entity')
-            ->willReturn($role);
-
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
-        $context->expects($this->exactly(2))
-            ->method('data')
-            ->willReturn($data);
-
-        return $context;
     }
 
     /**

@@ -6,8 +6,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\ContextDataCollection;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -28,12 +26,12 @@ class FrontendAccountAddressFormDataProviderTest extends \PHPUnit_Framework_Test
         $this->provider = new FrontendAccountAddressFormDataProvider($this->mockFormFactory);
     }
 
-    public function testGetDataWhileUpdate()
+    public function testGetAddressFormWhileUpdate()
     {
         $this->actionTestWithId(1);
     }
 
-    public function testGetDataWhileCreate()
+    public function testGetAddressFormWhileCreate()
     {
         $this->actionTestWithId();
     }
@@ -43,18 +41,7 @@ class FrontendAccountAddressFormDataProviderTest extends \PHPUnit_Framework_Test
      */
     private function actionTestWithId($id = null)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ContextInterface $mockContextInterface */
-        $mockContextInterface = $this->getMockBuilder(ContextInterface::class)
-            ->getMock();
-
-        $mockDataCollection = $this->getMockBuilder(ContextDataCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mockContextInterface->expects($this->exactly(3))
-            ->method('data')
-            ->willReturn($mockDataCollection);
-
+        /** @var AccountAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
         $mockAccountUserAddress = $this->getMockBuilder(AccountAddress::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,21 +50,12 @@ class FrontendAccountAddressFormDataProviderTest extends \PHPUnit_Framework_Test
             ->method('getId')
             ->willReturn($id);
 
-        $mockDataCollection->expects($this->at(0))
-            ->method('get')
-            ->with('entity')
-            ->willReturn($mockAccountUserAddress);
-
+        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $mockAccountUser */
         $mockAccountUser = $this->getMockBuilder(Account::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockDataCollection->expects($this->at(1))
-            ->method('get')
-            ->with('account')
-            ->willReturn($mockAccountUser);
-
-        $mockAccountUser->expects($this->once())
+        $mockAccountUser->expects($this->any())
             ->method('getId')
             ->willReturn(1);
 
@@ -88,16 +66,11 @@ class FrontendAccountAddressFormDataProviderTest extends \PHPUnit_Framework_Test
             ->with(AccountTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
-        $mockDataCollection->expects($this->at(2))
-            ->method('get')
-            ->with('entity')
-            ->willReturn($mockAccountUserAddress);
-
-        $formAccessor = $this->provider->getData($mockContextInterface);
+        $formAccessor = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
 
         $this->assertInstanceOf(FormAccessor::class, $formAccessor);
 
-        $formAccessorSecondCall = $this->provider->getData($mockContextInterface);
+        $formAccessorSecondCall = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
         $this->assertSame($formAccessor, $formAccessorSecondCall);
 
         $this->assertSame($formAccessor->getForm(), $formAccessorSecondCall->getForm());

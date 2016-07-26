@@ -2,20 +2,16 @@
 
 namespace OroB2B\Bundle\CMSBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoginPageProvider
 {
     /**
-     * @var LoginPage
+     * @var array
      */
-    protected $data;
+    protected $options = [];
 
     /**
      * @var ManagerRegistry
@@ -44,33 +40,17 @@ class LoginPageProvider
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
-    {
-        if ($this->data === null) {
-            $this->data = $this->getDefaultLoginPage();
-        }
-        return $this->data;
-    }
-
-    /**
-     * @return ObjectRepository
-     */
-    protected function getLoginPageRepository()
-    {
-        return $this->managerRegistry->getRepository($this->loginPageClass);
-    }
-
-    /**
      * @return LoginPage
      */
-    protected function getDefaultLoginPage()
+    public function getDefaultLoginPage()
     {
-        $loginPage = $this->getLoginPageRepository()->findOneBy([]);
-        if (!$loginPage) {
-            $loginPage = new LoginPage();
+        if (!array_key_exists('default_login_page', $this->options)) {
+            $repository = $this->managerRegistry->getRepository($this->loginPageClass);
+            $loginPage = $repository->findOneBy([]);
+
+            $this->options['default_login_page'] = !$loginPage ? new LoginPage() : $loginPage;
         }
-        return $loginPage;
+
+        return $this->options['default_login_page'];
     }
 }

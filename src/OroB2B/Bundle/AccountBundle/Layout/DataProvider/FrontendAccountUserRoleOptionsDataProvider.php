@@ -2,16 +2,19 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
 
-use Oro\Component\Layout\ContextInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FrontendAccountUserRoleOptionsDataProvider
 {
+    /** @var array */
+    private $options = [];
+
     /** @var RolePrivilegeCapabilityProvider */
     protected $capabilityProvider;
 
@@ -20,9 +23,6 @@ class FrontendAccountUserRoleOptionsDataProvider
 
     /** @var TranslatorInterface */
     protected $translator;
-
-    /** @var array */
-    protected $data;
 
     /**
      * @param RolePrivilegeCapabilityProvider $capabilityProvider
@@ -40,40 +40,43 @@ class FrontendAccountUserRoleOptionsDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function getData(ContextInterface $context)
+    public function getTabsOptions()
     {
-        if ($this->data === null) {
-            $role = $context->data()->get('entity');
+        if (!array_key_exists('tabsOptions', $this->options)) {
+            $tabListOptions = array_map(
+                function (PrivilegeCategory $tab) {
+                    return [
+                        'id' => $tab->getId(),
+                        'label' => $this->translator->trans($tab->getLabel())
+                    ];
+                },
+                $this->categoryProvider->getTabbedCategories()
+            );
             
-            $this->data = [
-                'tabsOptions' => [
-                    'data' => $this->getTabListOptions()
-                ],
-                'capabilitySetOptions' => [
-                    'data' => $this->capabilityProvider->getCapabilities($role),
-                    'tabIds' => $this->categoryProvider->getTabList()
-                ]
+            $this->options['tabsOptions'] = [
+                'data' => $tabListOptions
             ];
         }
         
-        return $this->data;
+        return $this->options['tabsOptions'];
     }
 
     /**
-     * @return array
+     * @param AccountUserRole $accountUserRole
+     *
+     * @return mixed
      */
-    protected function getTabListOptions()
+    public function getCapabilitySetOptions(AccountUserRole $accountUserRole)
     {
-        return array_map(
-            function (PrivilegeCategory $tab) {
-                return [
-                    'id' => $tab->getId(),
-                    'label' => $this->translator->trans($tab->getLabel())
-                ];
-            },
-            $this->categoryProvider->getTabbedCategories()
-        );
+        if (!array_key_exists('capabilitySetOptions', $this->options)) {
+            $this->options['capabilitySetOptions'] = [
+                'data' => $this->capabilityProvider->getCapabilities($accountUserRole),
+                'tabIds' => $this->categoryProvider->getTabList()
+            ];
+        }
+
+        return $this->options['capabilitySetOptions'];
     }
 }

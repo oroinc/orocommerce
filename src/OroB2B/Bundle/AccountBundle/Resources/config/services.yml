@@ -763,20 +763,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
 
-    orob2b_account.provider.frontend_account_user_forgot_password_form:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserForgotPasswordFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_account_user_password_request }
-
-    orob2b_account.provider.frontend_account_user_reset_password_form:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserResetPasswordFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_account_user_password_reset }
-
     orob2b_account.manager.windows_state:
         parent: oro_windows.manager.windows_state.abstract
         arguments:
@@ -803,6 +789,7 @@ services:
     orob2b_account.provider.frontend_account_user_role_form:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider'
         arguments:
+            - '@form.factory'
             - '@orob2b_account.form.handler.update_account_user_role_frontend='
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_form }
@@ -821,13 +808,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_address_form }
 
-    orob2b_account.provider.frontend_account_user_profile_form:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserProfileFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile_form }
-
     orob2b_account.provider.frontend_account_user_form:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormDataProvider'
         arguments:
@@ -841,15 +821,15 @@ services:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
 
-    orob2b_account.provider.frontend_account_user_address_count:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressCountProvider'
+    orob2b_account.provider.frontend_account_user:
+        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountUserDataProvider'
         tags:
-            - { name: layout.data_provider, alias: account_user_address_count }
+            - { name: layout.data_provider, alias: account_user }
 
-    orob2b_account.provider.frontend_account_address_count:
-        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressCountProvider'
+    orob2b_account.provider.frontend_account:
+        class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountDataProvider'
         tags:
-            - { name: layout.data_provider, alias: account_address_count }
+            - { name: layout.data_provider, alias: account }
 
     orob2b_account.provider.fronted_account_user_role_tabs_options:
         class: 'OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsDataProvider'

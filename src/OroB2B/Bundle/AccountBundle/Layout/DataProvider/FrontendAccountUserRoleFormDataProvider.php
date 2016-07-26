@@ -2,76 +2,68 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 
-class FrontendAccountUserRoleFormDataProvider
+class FrontendAccountUserRoleFormDataProvider extends AbstractFormDataProvider
 {
+    const ACCOUNT_USER_ROLE_CREATE_ROUTE_NAME = 'orob2b_account_frontend_account_user_role_create';
+    const ACCOUNT_USER_ROLE_UPDATE_ROUTE_NAME = 'orob2b_account_frontend_account_user_role_update';
+
     /** @var AccountUserRoleUpdateFrontendHandler */
     protected $handler;
 
-    /** @var FormAccessor[] */
-    protected $data = [];
-
-    /** @var FormInterface[] */
-    protected $forms = [];
-
     /**
+     * @param FormFactoryInterface $formFactory
      * @param AccountUserRoleUpdateFrontendHandler $handler
      */
-    public function __construct(AccountUserRoleUpdateFrontendHandler $handler)
+    public function __construct(FormFactoryInterface $formFactory, AccountUserRoleUpdateFrontendHandler $handler)
     {
+        parent::__construct($formFactory);
+
         $this->handler = $handler;
     }
 
     /**
-     * {@inheritdoc}
+     * Get form accessor with account user role form
+     *
+     * @param AccountUserRole $accountUserRole
+     *
+     * @return FormAccessor
      */
-    public function getData(ContextInterface $context)
+    public function getRoleForm(AccountUserRole $accountUserRole)
     {
-        $role = $context->data()->get('entity');
-        $roleId = $role->getId();
-
-        if (!isset($this->data[$roleId])) {
-            if ($roleId) {
-                $action = FormAction::createByRoute(
-                    'orob2b_account_frontend_account_user_role_update',
-                    ['id' => $roleId]
-                );
-            } else {
-                $action = FormAction::createByRoute('orob2b_account_frontend_account_user_role_create');
-            }
-
-            $this->data[$roleId] = new FormAccessor($this->getForm($role), $action);
+        if ($accountUserRole->getId()) {
+            return $this->getFormAccessor(
+                '',
+                self::ACCOUNT_USER_ROLE_UPDATE_ROUTE_NAME,
+                $accountUserRole,
+                ['id' => $accountUserRole->getId()]
+            );
         }
 
-        return $this->data[$roleId];
+        return $this->getFormAccessor('', self::ACCOUNT_USER_ROLE_CREATE_ROUTE_NAME, $accountUserRole);
     }
 
     /**
-     * @param AccountUserRole $role
-     * @return FormInterface
+     * {@inheritdoc}
+     *
+     * @param AccountUserRole $data
      */
-    public function getForm(AccountUserRole $role)
+    protected function getForm($formName, $data = null, array $options = [])
     {
-        $roleId = $role->getId();
+        $form = $this->handler->createForm($data);
 
-        if (!isset($this->forms[$roleId])) {
-            $this->forms[$roleId] = $this->handler->createForm($role);
+        /* This call needs for set privileges data to form */
+        //TODO: refactor handler and set privileges data on form creation
+        $this->handler->process($data);
 
-            /* This call needs for set privileges data to form */
-            //TODO: refactor handler and set privileges data on form creation
-            $this->handler->process($role);
-        }
-
-        return $this->forms[$roleId];
+        return $form;
     }
 }

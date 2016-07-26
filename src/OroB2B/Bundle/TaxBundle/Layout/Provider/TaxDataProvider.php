@@ -2,9 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Layout\Provider;
 
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class TaxDataProvider
 {
@@ -19,11 +18,13 @@ class TaxDataProvider
         $this->taxManager = $taxManager;
     }
 
-    /** {@inheritDoc} */
-    public function getData(ContextInterface $context)
+    /**
+     * @param $order
+     *
+     * @return Result
+     */
+    public function getTax($order)
     {
-        $taxable = $context->data()->get('order');
-
-        return $this->taxManager->loadTax($taxable);
+        return $this->taxManager->loadTax($order);
     }
 }

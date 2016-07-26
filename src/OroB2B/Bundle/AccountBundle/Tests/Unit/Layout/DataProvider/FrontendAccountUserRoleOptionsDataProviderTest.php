@@ -8,8 +8,6 @@ use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
 
-use Oro\Component\Layout\ContextDataCollection;
-use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -68,66 +66,52 @@ class FrontendAccountUserRoleOptionsDataProviderTest extends \PHPUnit_Framework_
         unset($this->provider, $this->capabilityProvider, $this->categoryProvider, $this->translator);
     }
 
-    public function testGetData()
+    public function testGetTabsOptions()
     {
-        $this->capabilityProvider->expects($this->once())
-            ->method('getCapabilities')
-            ->with($this->role)
-            ->willReturn(['capabilities_data']);
-
         $category1 = new PrivilegeCategory(35, 'cat1', 'tab1', 0);
         $category2 = new PrivilegeCategory(42, 'cat2', 'tab2', 0);
 
         $this->categoryProvider->expects($this->once())
             ->method('getTabbedCategories')
             ->willReturn([$category1, $category2]);
-        $this->categoryProvider->expects($this->once())
-            ->method('getTabList')
-            ->willReturn(['tab_list_data']);
 
-        $context = $this->getLayoutContext();
+        $firstResult = $this->provider->getTabsOptions();
 
-        $firstResult = $this->provider->getData($context);
-
-        $this->assertInternalType('array', $firstResult);
-
-        $this->assertArrayHasKey('tabsOptions', $firstResult);
-        $this->assertArrayHasKey('data', $firstResult['tabsOptions']);
+        $this->assertArrayHasKey('data', $firstResult);
         $this->assertEquals(
             [
                 ['id' => 35, 'label' => 'translated_cat1'],
                 ['id' => 42, 'label' => 'translated_cat2']
             ],
-            $firstResult['tabsOptions']['data']
+            $firstResult['data']
         );
 
-        $this->assertArrayHasKey('capabilitySetOptions', $firstResult);
-        $this->assertArrayHasKey('data', $firstResult['capabilitySetOptions']);
-        $this->assertEquals(['capabilities_data'], $firstResult['capabilitySetOptions']['data']);
-        $this->assertArrayHasKey('tabIds', $firstResult['capabilitySetOptions']);
-        $this->assertEquals(['tab_list_data'], $firstResult['capabilitySetOptions']['tabIds']);
-        
         //expected result from cache
-        $secondResult = $this->provider->getData($context);
-
+        $secondResult = $this->provider->getTabsOptions();
         $this->assertEquals($secondResult, $firstResult);
     }
 
-    /**
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getLayoutContext()
+    public function testGetCapabilitySetOptions()
     {
-        /** @var ContextDataCollection|\PHPUnit_Framework_MockObject_MockObject $data */
-        $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data->expects($this->once())->method('get')->with('entity')->willReturn($this->role);
+        $this->capabilityProvider->expects($this->once())
+            ->method('getCapabilities')
+            ->with($this->role)
+            ->willReturn(['capabilities_data']);
 
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
-        $context->expects($this->once())->method('data')->willReturn($data);
+        $this->categoryProvider->expects($this->once())
+            ->method('getTabList')
+            ->willReturn(['tab_list_data']);
 
-        return $context;
+        $firstResult = $this->provider->getCapabilitySetOptions($this->role);
+
+        $this->assertArrayHasKey('data', $firstResult);
+        $this->assertArrayHasKey('tabIds', $firstResult);
+
+        $this->assertEquals(['capabilities_data'], $firstResult['data']);
+        $this->assertEquals(['tab_list_data'], $firstResult['tabIds']);
+
+        //expected result from cache
+        $secondResult = $this->provider->getCapabilitySetOptions($this->role);
+        $this->assertEquals($secondResult, $firstResult);
     }
 }

@@ -2,73 +2,91 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
-class FrontendAccountUserFormDataProvider
+class FrontendAccountUserFormDataProvider extends AbstractFormDataProvider
 {
-    /** @var FormAccessor[] */
-    protected $data = [];
-
-    /** @var FormInterface[] */
-    protected $form = [];
-
-    /** @var FormFactoryInterface */
-    protected $formFactory;
+    const ACCOUNT_USER_CREATE_ROUTE_NAME            = 'orob2b_account_frontend_account_user_create';
+    const ACCOUNT_USER_UPDATE_ROUTE_NAME            = 'orob2b_account_frontend_account_user_update';
+    const ACCOUNT_USER_PROFILE_UPDATE_ROUTE_NAME    = 'orob2b_account_frontend_account_user_profile_update';
+    const ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME     = 'orob2b_account_frontend_account_user_reset_request';
+    const ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME    = 'orob2b_account_frontend_account_user_password_reset';
 
     /**
-     * @param FormFactoryInterface $formFactory
+     * @param AccountUser $accountUser
+     *
+     * @return FormAccessor
      */
-    public function __construct(FormFactoryInterface $formFactory)
+    public function getAccountUserForm(AccountUser $accountUser)
     {
-        $this->formFactory = $formFactory;
+        if ($accountUser->getId()) {
+            return $this->getFormAccessor(
+                FrontendAccountUserType::NAME,
+                self::ACCOUNT_USER_UPDATE_ROUTE_NAME,
+                $accountUser,
+                ['id' => $accountUser->getId()]
+            );
+        }
+
+        return $this->getFormAccessor(
+            FrontendAccountUserType::NAME,
+            self::ACCOUNT_USER_CREATE_ROUTE_NAME,
+            $accountUser
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * @return FormAccessor
      */
-    public function getData(ContextInterface $context)
+    public function getForgotPasswordForm()
     {
-        $accountUser = $context->data()->get('entity');
-        $accountUserId = $accountUser->getId();
+        return $this->getFormAccessor(
+            AccountUserPasswordRequestType::NAME,
+            self::ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME
+        );
+    }
 
-        if (!isset($this->data[$accountUserId])) {
-            if ($accountUserId) {
-                $action = FormAction::createByRoute(
-                    'orob2b_account_frontend_account_user_update',
-                    ['id' => $accountUserId]
-                );
-            } else {
-                $action = FormAction::createByRoute('orob2b_account_frontend_account_user_create');
-            }
-            $form = $this->getForm($accountUser);
-            $this->data[$accountUserId] = new FormAccessor($form, $action);
-        }
-
-        return $this->data[$accountUserId];
+    /**
+     * @return FormAccessor
+     */
+    public function getResetPasswordForm()
+    {
+        return $this->getFormAccessor(
+            AccountUserPasswordResetType::NAME,
+            self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME
+        );
     }
 
     /**
      * @param AccountUser $accountUser
      *
-     * @return FormInterface
+     * @return FormAccessor
      */
-    public function getForm(AccountUser $accountUser)
+    public function getProfileForm(AccountUser $accountUser)
     {
-        $accountUserId = $accountUser->getId();
-        if (!isset($this->form[$accountUserId])) {
-            $this->form[$accountUserId] = $this->formFactory
-                ->create(FrontendAccountUserType::NAME, $accountUser);
+        if ($accountUser->getId()) {
+            return $this->getFormAccessor(
+                FrontendAccountUserProfileType::NAME,
+                self::ACCOUNT_USER_PROFILE_UPDATE_ROUTE_NAME,
+                $accountUser,
+                ['id' => $accountUser->getId()]
+            );
         }
-        return $this->form[$accountUserId];
+
+        throw new \RuntimeException(
+            sprintf(
+                'Entity with type "%s" must be loaded. Method getId() return NULL.',
+                AccountUser::class,
+                gettype($accountUser)
+            )
+        );
     }
 }

@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use Oro\Component\Layout\ContextDataCollection;
-use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
 use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormDataProvider;
 
 class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -41,17 +41,16 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @dataProvider getDataProvider
+     * @dataProvider getAccountUserFormProvider
      *
      * @param AccountUser $accountUser
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetData(AccountUser $accountUser, $route, array $routeParameters = [])
+    public function testGetAccountUserForm(AccountUser $accountUser, $route, array $routeParameters = [])
     {
         $form = $this->assertAccountUserFormHandlerCalled();
-        $context = $this->getLayoutContext($accountUser);
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getAccountUserForm($accountUser);
         $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
         $this->assertSame($form, $actual->getForm());
         $action = $actual->getAction();
@@ -59,13 +58,70 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals($routeParameters, $action->getRouteParameters());
 
         /** test local cache */
-        $this->assertSame($actual, $this->provider->getData($context));
+        $this->assertSame($actual, $this->provider->getAccountUserForm($accountUser));
+    }
+
+    public function testGetForgotPasswordForm()
+    {
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordRequestType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getForgotPasswordForm();
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getForgotPasswordForm();
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+    }
+
+    public function testGetResetPasswordForm()
+    {
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordResetType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getResetPasswordForm();
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getResetPasswordForm();
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+    }
+
+    /**
+     * @dataProvider getProfileFormProvider
+     *
+     * @param AccountUser $accountUser
+     * @param string $route
+     * @param array $routeParameters
+     */
+    public function testGetProfileForm(AccountUser $accountUser, $route, array $routeParameters = [])
+    {
+        $form = $this->assertAccountUserProfileFormHandlerCalled();
+        $actual = $this->provider->getProfileForm($accountUser);
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
+        $this->assertSame($form, $actual->getForm());
+        $action = $actual->getAction();
+        $this->assertEquals($route, $action->getRouteName());
+        $this->assertEquals($routeParameters, $action->getRouteParameters());
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getProfileForm($accountUser));
     }
 
     /**
      * @return array
      */
-    public function getDataProvider()
+    public function getAccountUserFormProvider()
     {
         return [
             [
@@ -80,41 +136,18 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
         ];
     }
 
-    public function testGetForm()
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]);
-
-        $form = $this->assertAccountUserFormHandlerCalled();
-
-        $this->assertSame($form, $this->provider->getForm($accountUser));
-
-        /** test local cache */
-        $this->assertSame($form, $this->provider->getForm($accountUser));
-    }
-
     /**
-     * @param AccountUser $accountUser
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return array
      */
-    protected function getLayoutContext(AccountUser $accountUser)
+    public function getProfileFormProvider()
     {
-        /** @var ContextDataCollection|\PHPUnit_Framework_MockObject_MockObject $data */
-        $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data->expects($this->exactly(2))
-            ->method('get')
-            ->with('entity')
-            ->willReturn($accountUser);
-
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
-        $context->expects($this->exactly(2))
-            ->method('data')
-            ->willReturn($data);
-
-        return $context;
+        return [
+            [
+                'accountUser' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
+                'route' => 'orob2b_account_frontend_account_user_profile_update',
+                'routeParameters' => ['id' => 42]
+            ]
+        ];
     }
 
     /**
@@ -122,6 +155,38 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
      * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
      */
     protected function assertAccountUserFormHandlerCalled($method = 'TEST')
+    {
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getMethod')
+            ->willReturn($method);
+
+        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
+        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view->vars = ['multipart' => null];
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $form->expects($this->any())
+            ->method('createView')
+            ->willReturn($view);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($form);
+
+        return $form;
+    }
+
+    /**
+     * @param string $method
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     */
+    protected function assertAccountUserProfileFormHandlerCalled($method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
         $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');

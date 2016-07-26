@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-class EnabledCurrenciesProvider
+class CurrencyDataProvider
 {
     /**
      * @var UserCurrencyManager
@@ -22,10 +20,26 @@ class EnabledCurrenciesProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @return null|string
      */
-    public function getData(ContextInterface $context)
+    public function getDefaultCurrency()
+    {
+        return $this->userCurrencyManager->getDefaultCurrency();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAvailableCurrencies()
     {
         return $this->userCurrencyManager->getAvailableCurrencies();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getUserCurrency()
+    {
+        return $this->userCurrencyManager->getUserCurrency();
     }
 }
