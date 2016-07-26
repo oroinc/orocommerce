@@ -20,9 +20,11 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['name', 'Test Rule'],
+            ['nameHash', sha1('Test Rule')],
             ['enabled', true],
             ['priority', 10],
-            ['conditions',  'Subtotal > 50 USD AND Subtotal <= 100 USD'],
+            ['conditions', 'Subtotal > 50 USD AND Subtotal <= 100 USD'],
+            ['currency', 'USD'],
         ];
 
         $rule = new ShippingRule();
@@ -63,9 +65,11 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
     {
         $id = 123;
         $name = 'Test Rule';
+        $nameHash = sha1('Test Rule');
         $enabled = true;
         $priority = 20;
         $conditions = 'Subtotal > 50 USD AND Subtotal <= 100 USD';
+        $currency = 'USD';
         
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getEntity(
@@ -73,24 +77,30 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => $id,
                 'name' => $name,
+                'nameHash' => $nameHash,
                 'enabled' => $enabled,
                 'priority' => $priority,
                 'conditions' => $conditions,
+                'currency' => $currency,
             ]
         );
 
         $this->assertEquals($id, $shippingRule->getId());
         $this->assertEquals($name, $shippingRule->getName());
+        $this->assertEquals($nameHash, $shippingRule->getNameHash());
         $this->assertEquals($enabled, $shippingRule->isEnabled());
         $this->assertEquals($priority, $shippingRule->getPriority());
         $this->assertEquals($conditions, $shippingRule->getConditions());
+        $this->assertEquals($currency, $shippingRule->getCurrency());
 
         $shippingRuleCopy = clone $shippingRule;
 
         $this->assertNull($shippingRuleCopy->getId());
         $this->assertEquals($name, $shippingRuleCopy->getName());
+        $this->assertEquals($nameHash, $shippingRuleCopy->getNameHash());
         $this->assertEquals($enabled, $shippingRuleCopy->isEnabled());
         $this->assertEquals($priority, $shippingRuleCopy->getPriority());
         $this->assertEquals($conditions, $shippingRuleCopy->getConditions());
+        $this->assertEquals($currency, $shippingRuleCopy->getCurrency());
     }
 }

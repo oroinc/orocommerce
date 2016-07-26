@@ -56,7 +56,7 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="text", nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -70,6 +70,13 @@ class ShippingRule extends ExtendShippingRule
      * )
      */
     protected $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=40, nullable=false, unique=true)
+     */
+    protected $nameHash;
 
     /**
      * @var bool
@@ -137,6 +144,23 @@ class ShippingRule extends ExtendShippingRule
     protected $configurations;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50
+     *          }
+     *      }
+     *  )
+     */
+    protected $currency;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -169,8 +193,17 @@ class ShippingRule extends ExtendShippingRule
     public function setName($name)
     {
         $this->name = $name;
+        $this->nameHash = sha1($name);
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameHash()
+    {
+        return $this->nameHash;
     }
 
     /**
@@ -287,6 +320,25 @@ class ShippingRule extends ExtendShippingRule
     public function getConfigurations()
     {
         return $this->configurations;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
     }
 
     public function __clone()

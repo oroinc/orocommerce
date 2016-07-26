@@ -54,6 +54,7 @@ orob2b:
             conditions.label: Conditions
             shipping_destinations.label: Shipping Destinations
             configurations.label: Configurations
+            currency.label: Сurrency
         shippingruleconfiguration:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
