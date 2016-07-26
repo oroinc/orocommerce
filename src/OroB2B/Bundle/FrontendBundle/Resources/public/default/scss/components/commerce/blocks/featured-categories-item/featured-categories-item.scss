@@ -1,6 +1,6 @@
 .featured-categories-item {
     display: inline-block;
-    margin-top: 20px;
+    margin-top: 50px;
 
     color: $base-dark-color;
 
@@ -22,18 +22,32 @@
     }
 
     &__desc {
+        overflow: hidden;
+
         padding-top: 8px;
 
         text-align: center;
     }
 
-    &_name,
-    &__count {
-        line-height: normal;
-    }
-
     &__name {
         font-size: 18px;
         font-weight: normal;
+        line-height: normal;
+    }
+
+    &__count {
+        line-height: normal;;
+    }
+
+    @include breakpoint($phone-width) {
+        margin-top: 20px;
+
+        &__name {
+            font-size: 14px;
+        }
+
+        &__count {
+            font-size: 10px;
+        }
     }
 }

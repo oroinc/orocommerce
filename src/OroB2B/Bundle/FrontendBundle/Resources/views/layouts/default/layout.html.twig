@@ -135,13 +135,13 @@
             <h2 class="embedded-list__label">{{ label }}</h2>
         {% endif %}
 
-        <ul {{ block('block_attributes') }}>
+        <div {{ block('block_attributes') }}>
             {% for item in items %}
-                <li class="embedded-list__item">
+                <div class="embedded-list__item">
                     {% do block|merge_context({'item': item}) %}
                     {{ block('container_widget') }}
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 {% endblock %}
