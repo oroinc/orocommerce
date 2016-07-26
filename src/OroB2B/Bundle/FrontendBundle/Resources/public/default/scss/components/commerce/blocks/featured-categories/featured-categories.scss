@@ -2,12 +2,16 @@
     .embedded-list__container {
         display: flex;
         flex-wrap: wrap;
+
+        font-size: 0;
     }
 
     .embedded-list__item {
+        display: inline-block;
         width: 33.33%;
         padding: 0 8px;
 
+        font-size: 14px;
         text-align: center;
 
         &:nth-child(3n+1) {
