@@ -16,7 +16,7 @@ class ProductPriceChangeTriggerRepository extends EntityRepository
      * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isCreated(ProductPriceChangeTrigger $trigger)
+    public function isExisting(ProductPriceChangeTrigger $trigger)
     {
         //product or priceList can be not flushed yet
         if (!$trigger->getProduct()->getId() || !$trigger->getPriceList()->getId()) {

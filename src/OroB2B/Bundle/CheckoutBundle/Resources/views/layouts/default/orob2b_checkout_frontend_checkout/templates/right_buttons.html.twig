@@ -1,0 +1,22 @@
+{% block _checkout_button_continue_right_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="order-checkout-widget order-checkout-widget_block text-right">
+            {{ _layout.conditionMessagesStart(transitionData) }}
+            <button type="submit"
+                    class="btn btn_xlg {% if transitionData.isAllowed %}btn-orange{% endif %} checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
+                {{ transitionData.transition.label|trans }}
+            </button>
+            {{ _layout.conditionMessagesEnd(transitionData) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _checkout_button_back_right_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}

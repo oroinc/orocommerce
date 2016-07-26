@@ -258,7 +258,7 @@ services:
     orob2b_pricing.event_listener.datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\DatagridListener'
         tags:
-# TODO: add correct grid columns in scope of https://magecore.atlassian.net/browse/BB-1666
+# TODO: BB-3826 add correct grid columns
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
@@ -538,6 +538,14 @@ services:
         public: false
         arguments:
             - '@orob2b_pricing.price_list_change_trigger_handler'
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
+    orob2b_pricing.entity_listener.price_list_product:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
+        public: false
+        arguments:
+            - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener }
 

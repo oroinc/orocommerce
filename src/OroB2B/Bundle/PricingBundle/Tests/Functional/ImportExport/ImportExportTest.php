@@ -30,7 +30,12 @@ class ImportExportTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices'
+            ]
+        );
 
         $this->priceList = $this->getReference('price_list_1');
     }
@@ -72,13 +77,27 @@ class ImportExportTest extends WebTestCase
      */
     public function testImportExport($strategy, $expectedAdd, $expectedUpdate)
     {
-        $this->doExport();
+        $this->doExport(8, 0);
         $this->file = $this->getExportFile();
 
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
         $this->assertEquals(0, $crawler->filter('.import-errors')->count());
         $this->doImport($strategy, $expectedAdd, $expectedUpdate);
+    }
+
+    public function testExportWithRelations()
+    {
+        $this->priceList = $this->getReference('price_list_2');
+        $this->doExport(9, 0);
+
+        $locator = $this->getContainer()->get('file_locator');
+        $this->assertFileEquals(
+            $locator->locate(
+                '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/expected_export_with_relations.csv'
+            ),
+            $this->getExportFile()
+        );
     }
 
     /**
@@ -218,7 +237,7 @@ class ImportExportTest extends WebTestCase
             '&importJob=price_list_product_prices_entity_import_from_csv' .
             '&exportJob=price_list_product_prices_export_to_csv';
 
-        /** TODO Change after BAP-1813 */
+        /** TODO: BB-3827 Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action'). $optionsPriceList . '&_widgetContainer=dialog'
@@ -273,9 +292,10 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * export
+     * @param int $expectedReadCount
+     * @param int $expectedErrorsCount
      */
-    protected function doExport()
+    protected function doExport($expectedReadCount, $expectedErrorsCount)
     {
         $this->client->followRedirects(false);
         $this->client->request(
@@ -295,8 +315,8 @@ class ImportExportTest extends WebTestCase
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $this->assertTrue($data['success']);
-        $this->assertEquals(8, $data['readsCount']);
-        $this->assertEquals(0, $data['errorsCount']);
+        $this->assertEquals($expectedReadCount, $data['readsCount']);
+        $this->assertEquals($expectedErrorsCount, $data['errorsCount']);
 
         $this->client->request(
             'GET',

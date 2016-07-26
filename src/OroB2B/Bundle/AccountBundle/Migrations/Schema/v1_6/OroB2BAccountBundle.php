@@ -16,6 +16,13 @@ class OroB2BAccountBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addAccountUserSettingsTable($schema);
+
+        $table = $schema->getTable('orob2b_account_user_role');
+        $table->addColumn('self_managed', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('public', 'boolean', ['notnull' => true, 'default' => true]);
+
+        $this->updateAccountUserRoles($queries);
+        $this->removeAccountAddressSerializedDataColumn($schema);
     }
 
     /**
@@ -51,5 +58,34 @@ class OroB2BAccountBundle implements Migration
         );
 
         $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    protected function updateAccountUserRoles(QueryBag $queries)
+    {
+        $anonymousRoleName = 'IS_AUTHENTICATED_ANONYMOUSLY';
+
+        $queries->addPostQuery(
+            "UPDATE orob2b_account_user_role SET self_managed = TRUE WHERE role <> '$anonymousRoleName'"
+        );
+        $queries->addPostQuery(
+            "UPDATE orob2b_account_user_role SET public = FALSE WHERE role = '$anonymousRoleName'"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function removeAccountAddressSerializedDataColumn(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_account_address');
+        if ($table->hasColumn('serialized_data') &&
+            !class_exists('Oro\Bundle\EntitySerializedFieldsBundle\OroEntitySerializedFieldsBundle')
+        ) {
+            $table->dropColumn('serialized_data');
+        }
     }
 }

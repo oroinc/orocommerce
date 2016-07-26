@@ -1,0 +1,11 @@
+Product,SKU,Inventory Status,Quantity,Unit,Warehouse
+"Medical Tag, Sterling Silver",product.2,,2000,liters,Second Warehouse
+"Medical Tag, Sterling Silver",product.2,,770,milliliters,Second Warehouse
+"Medical Tag, Stainless Steel",product.1,,100,liters,First Warehouse
+"Medical Tag, Stainless Steel",product.1,,1000,liter,Second Warehouse
+"Medical Tag, Stainless Steel",product.1,,550,milliliter,Second Warehouse
+"Medical Tag, Stainless Steel",product.1,In Stock,55,milliliter,First Warehouse
+"Medical Tag, Sterling Silver",product.2,Out of Stock,200,liters,First Warehouse
+"Medical Tag, Sterling Silver",product.2,,77,milliliters,First Warehouse
+"Medical Tag, Intentional Typo Here",product.3,,300,liter,First Warehouse
+"Medical Tag, Intentional Typo Here",product.3,,300,,Second Warehouse

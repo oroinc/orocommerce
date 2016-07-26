@@ -63,6 +63,9 @@ class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
+        $this->totalsProvider->expects($this->once())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
 
         $this->totalsProvider->expects($this->any())
             ->method('getTotal')
