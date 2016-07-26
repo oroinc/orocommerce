@@ -10,7 +10,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class NormalizeProductIdTest extends GetProcessorOrmRelatedTestCase
 {
-    /** @var UpdateContext||\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UpdateContext|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
 
     /** @var NormalizeProductId */

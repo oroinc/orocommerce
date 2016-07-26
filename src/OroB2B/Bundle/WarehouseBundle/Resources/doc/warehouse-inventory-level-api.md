@@ -39,21 +39,21 @@ Parameters
 ### product.sku
 Product SKU(s).
 
-One ore more Product SKUs can be provided as request query.
+One or more Product SKUs can be provided as request query.
 
 E.g.: `filter[product.sku]=0RT28` or `filter[product.sku]=0RT28,1AB92`
 
 ### productUnitPrecision.unit.code
 ProductUnit code(s).
 
-One ore more ProductUnit codes can be provided as request query.
+One or more ProductUnit codes can be provided as request query.
 
 E.g.: `filter[productUnitPrecision.unit.code]=item` or `filter[productUnitPrecision.unit.code]=item,set`
 
 ### warehouse
 Warehouse ID(s).
 
-One ore more Warehouse ids can be provided as request query.
+One or more Warehouse ids can be provided as request query.
 
 E.g.: `filter[warehouse]=1` or `filter[warehouse]=1,2`
 

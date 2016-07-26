@@ -28,33 +28,21 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures(
-            [
-                LoadWarehousesInventoryLevelWithPrimaryUnit::class
-            ]
-        );
+        $this->loadFixtures([LoadWarehousesInventoryLevelWithPrimaryUnit::class]);
     }
 
     /**
-     * @param string $entityClass
-     * @param string $expectedStatusCode
-     * @param array $params
      * @param array $filters
      * @param int $expectedCount
      * @param array $expectedContent
      *
      * @dataProvider cgetParamsAndExpectation
      */
-    public function testCgetEntity(
-        $entityClass,
-        $expectedStatusCode,
-        array $params,
-        array $filters,
-        $expectedCount,
-        array $expectedContent = null
-    ) {
-        $entityType = $this->getEntityType($entityClass);
+    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent = null)
+    {
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
 
+        $params = [];
         foreach ($filters as $filter) {
             $filterValue = '';
             foreach ($filter['references'] as $value) {
@@ -70,7 +58,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
             $params
         );
 
-        $this->assertApiResponseStatusCodeEquals($response, $expectedStatusCode, $entityType, 'get list');
+        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
 
@@ -89,9 +77,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     {
         return [
             'filter by Product' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -170,9 +155,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -339,9 +321,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products and Warehouse' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -381,9 +360,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products and Unit' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -445,9 +421,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products and Units' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -553,9 +526,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products, Warehouse and Unit' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -622,9 +592,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products, Warehouse and Units' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -735,9 +702,6 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products, Warehouses and Units' => [
-                'entityClass' => WarehouseInventoryLevel::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',

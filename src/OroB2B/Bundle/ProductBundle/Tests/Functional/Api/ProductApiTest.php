@@ -28,33 +28,21 @@ class ProductApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures(
-            [
-                LoadWarehousesAndInventoryLevels::class,
-            ]
-        );
+        $this->loadFixtures([LoadWarehousesAndInventoryLevels::class]);
     }
 
     /**
-     * @param string $entityClass
-     * @param string $expectedStatusCode
-     * @param array $params
      * @param array $filters
      * @param int $expectedCount
      * @param array $expectedContent
      *
      * @dataProvider cgetParamsAndExpectation
      */
-    public function testCgetEntity(
-        $entityClass,
-        $expectedStatusCode,
-        array $params,
-        array $filters,
-        $expectedCount,
-        array $expectedContent = null
-    ) {
-        $entityType = $this->getEntityType($entityClass);
+    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent = null)
+    {
+        $entityType = $this->getEntityType(Product::class);
 
+        $params = [];
         foreach ($filters as $filter) {
             $filterValue = '';
             foreach ($filter['references'] as $value) {
@@ -70,7 +58,7 @@ class ProductApiTest extends RestJsonApiTestCase
             $params
         );
 
-        $this->assertApiResponseStatusCodeEquals($response, $expectedStatusCode, $entityType, 'get list');
+        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
         if ($expectedContent) {
@@ -87,9 +75,6 @@ class ProductApiTest extends RestJsonApiTestCase
     {
         return [
             'filter by Product' => [
-                'entityClass' => Product::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',
@@ -116,9 +101,6 @@ class ProductApiTest extends RestJsonApiTestCase
                 ],
             ],
             'filter by Products with different inventory status' => [
-                'entityClass' => Product::class,
-                'statusCode' => 200,
-                'params' => [],
                 'filter' => [
                     [
                         'method' => 'getSku',

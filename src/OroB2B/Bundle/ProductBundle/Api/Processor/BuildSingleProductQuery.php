@@ -31,7 +31,9 @@ class BuildSingleProductQuery implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var UpdateContext $context */
+        if (!$context instanceof UpdateContext) {
+            return;
+        }
 
         if ($context->hasQuery()) {
             // a query is already built

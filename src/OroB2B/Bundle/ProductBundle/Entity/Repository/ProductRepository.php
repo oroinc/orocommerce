@@ -216,9 +216,8 @@ class ProductRepository extends EntityRepository
         $qb = $this->createQueryBuilder('product');
 
         return $qb
-            ->select('precisionUnit.code')
+            ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
-            ->innerJoin('productPrecision.unit', 'precisionUnit')
             ->where($qb->expr()->eq('product.sku', ':sku'))
             ->setParameter('sku', $sku)
             ->getQuery()

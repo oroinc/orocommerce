@@ -10,7 +10,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadEntityIdTest extends GetProcessorOrmRelatedTestCase
 {
-    /** @var SingleItemContext||\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SingleItemContext|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
 
     /** @var LoadEntityId */
