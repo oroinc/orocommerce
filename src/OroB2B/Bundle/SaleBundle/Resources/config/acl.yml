@@ -37,3 +37,8 @@ orob2b_quote_address_shipping_allow_manual:
 orob2b_quote_address_shipping_allow_manual_backend:
     label: orob2b.sale.security.permission.address_shipping_allow_manual
     type: action
+
+# Can override payment term
+orob2b_quote_payment_term_account_can_override:
+    label: orob2b.sale.security.permission.payment_term_account_can_override
+    type: action

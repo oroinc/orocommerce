@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,15 +11,22 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote';
+
+    /** @var SecurityFacade */
+    protected $securityFacade;
 
     /**
      * @var QuoteAddressSecurityProvider
@@ -38,13 +42,16 @@ class QuoteType extends AbstractType
     protected $dataClass;
 
     /**
+     * @param SecurityFacade $securityFacade
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
      */
     public function __construct(
+        SecurityFacade $securityFacade,
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
         PaymentTermProvider $paymentTermProvider
     ) {
+        $this->securityFacade = $securityFacade;
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
     }
@@ -146,19 +153,29 @@ class QuoteType extends AbstractType
      */
     protected function addPaymentTerm(FormBuilderInterface $builder, Quote $quote)
     {
-        $builder
-            ->add(
-                'paymentTerm',
-                PaymentTermSelectType::NAME,
-                [
-                    'label' => 'orob2b.order.payment_term.label',
-                    'required' => false,
-                    'attr' => [
-                        'data-account-payment-term' => $this->getAccountPaymentTermId($quote),
-                        'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($quote),
-                    ],
-                ]
-            );
+        if ($this->isOverridePaymentTermGranted()) {
+            $builder
+                ->add(
+                    'paymentTerm',
+                    PaymentTermSelectType::NAME,
+                    [
+                        'label' => 'orob2b.order.payment_term.label',
+                        'required' => false,
+                        'attr' => [
+                            'data-account-payment-term' => $this->getAccountPaymentTermId($quote),
+                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($quote),
+                        ],
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOverridePaymentTermGranted()
+    {
+        return $this->securityFacade->isGranted('orob2b_quote_payment_term_account_can_override');
     }
 
     /**
