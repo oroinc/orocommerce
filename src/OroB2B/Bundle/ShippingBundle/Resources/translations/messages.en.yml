@@ -1,8 +1,14 @@
 orob2b:
     shipping:
         datagrid:
+            status:
+                success_message: "{0} No entities status were changed|{1} One entity status was changed|]1,Inf[ %count% entities status were changed"
+            action.enable: Enable
+            action.disable: Disable
             shipping_options:
-                column.label:         Shipping Options
+                column.label: Shipping Options
+        widgets:
+          shipping_rule_information: Shipping Rule Information
         system_configuration:
             groups:
                 shipping.title: Shipping
@@ -50,15 +56,19 @@ orob2b:
             id.label: Id
             name.label: Name
             enabled.label: Enabled
+            enabled_yes.label: Yes
+            enabled_no.label: No
             priority.label: Priority
             conditions.label: Conditions
-            shipping_destinations.label: Shipping Destinations
+            destinations.label: Destinations
+            address.label: Address
             configurations.label: Configurations
         shippingruleconfiguration:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
             id.label: Id
             type.label: Type
+            method.label: Method
             rule.label: Rule
         flatrateruleconfiguration:
             entity_label: Flat Rate Rule Configuraiton
@@ -82,6 +92,14 @@ orob2b:
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
 
+        menu:
+            shipping_rule.description: Shipping Rules
+            shortcut_shipping_rule.description: List of shipping rules
+
+        notification:
+            channel:
+                enabled: Shipping rule has been enabled successfully
+                disabled: Shipping rule has been disabled successfully
     weight_unit.lbs:
         label:
             full: pound

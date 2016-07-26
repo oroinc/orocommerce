@@ -1,0 +1,3 @@
+{% set destinations = record.getValue('shippingDestinations').toArray() %}
+
+{{ destinations|join('</br>')|raw }}

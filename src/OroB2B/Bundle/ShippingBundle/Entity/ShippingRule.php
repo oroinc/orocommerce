@@ -36,9 +36,6 @@ use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRule;
  */
 class ShippingRule extends ExtendShippingRule
 {
-    const STATUS_DISABLED = 'disabled';
-    const STATUS_ENABLED = 'enabled';
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
