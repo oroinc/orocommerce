@@ -111,17 +111,14 @@ define(function(require) {
 
         onLineItemDelete: function(deleteData) {
             var shoppingLists = this.model.get('shopping_lists');
-
-            _.each(shoppingLists, function(shoppingList, key) {
+            shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
                     return lineItem.line_item_id != deleteData.lineItemId;
                 });
-                if (_.isEmpty(shoppingList.line_items)) {
-                    shoppingLists.splice(key, 1);
-                }
+                return !_.isEmpty(shoppingList.line_items);
             }, this);
 
-            this.model.trigger('change:shopping_lists');
+            this.model.set('shopping_lists', shoppingLists);
         },
 
         onLineItemUpdate: function(updateData) {

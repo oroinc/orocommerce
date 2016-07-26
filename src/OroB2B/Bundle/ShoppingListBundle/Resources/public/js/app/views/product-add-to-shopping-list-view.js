@@ -59,6 +59,9 @@ define(function(require) {
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
+            if (this.model) {
+                this.model.on('change:shopping_lists', this._onModelChanged, this);
+            }
         },
 
         initModel: function(options) {
@@ -141,13 +144,17 @@ define(function(require) {
                 return;
             }
             this.model.set('shopping_lists', product.shopping_lists);
-            this._editLineItem(this.editLineItem ? this.editLineItem.line_item_id : null);
+        },
 
+        _onModelChanged: function() {
+            this._editLineItem(this.editLineItem ? this.editLineItem.line_item_id : null);
             this.updateMainButton();
         },
 
         _onShoppingListCreate: function(shoppingList, product) {
             if (this.model) {
+                this.editLineItem = null;
+                this.editShoppingList = null;
                 if (!product || product.id !== parseInt(this.model.get('id'), 10)) {
                     var modelCurrentShoppingLists = this.findCurrentShoppingList();
                     if (modelCurrentShoppingLists) {
