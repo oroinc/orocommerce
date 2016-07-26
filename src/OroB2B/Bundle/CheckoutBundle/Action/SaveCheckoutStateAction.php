@@ -42,7 +42,7 @@ class SaveCheckoutStateAction extends AbstractAction
         $token = UUIDGenerator::v4();
         $saveToValue[$token] = $stateValue;
 
-        $this->contextAccessor->setValue($context, $saveToPath, $checkoutState);
+        $this->contextAccessor->setValue($context, $saveToPath, $saveToValue);
         $this->contextAccessor->setValue($context, $tokenPath, $token);
 
     }
@@ -57,12 +57,7 @@ class SaveCheckoutStateAction extends AbstractAction
         }
 
         if (empty($options[self::OPTION_KEY_SAVE_TO])) {
-            $saveTo = $options[self::OPTION_KEY_SAVE_TO];
-            if (!is_string($saveTo) && !($saveTo instanceof PropertyPath)) {
-                throw new InvalidParameterException(
-                    sprintf('Option "%s" should be string or PropertyPath', self::OPTION_KEY_SAVE_TO)
-                );
-            }
+            throw new InvalidParameterException(sprintf('Parameter "%s" is required', self::OPTION_KEY_SAVE_TO));
         }
 
         $this->options = $options;

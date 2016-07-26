@@ -59,20 +59,24 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
             $this->entity = $options[0];
         }
 
+        if (!$this->entity) {
+            throw new InvalidArgumentException('Missing "entity" option');
+        }
+
         if (array_key_exists('state1', $options)) {
             $this->state1 = $options['state1'];
         } elseif (array_key_exists(1, $options)) {
             $this->state1 = $options[1];
         }
 
+        if (!$this->state1) {
+            throw new InvalidArgumentException('Missing "state1" option');
+        }
+
         if (array_key_exists('state2', $options)) {
             $this->state2 = $options['state2'];
         } elseif (array_key_exists(2, $options)) {
             $this->state2 = $options[2];
-        }
-
-        if (!$this->state1) {
-            throw new InvalidArgumentException('Missing "state1" option');
         }
 
         if (!$this->state2) {

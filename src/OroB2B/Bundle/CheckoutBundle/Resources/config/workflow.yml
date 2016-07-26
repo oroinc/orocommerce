@@ -126,6 +126,7 @@ workflows:
                             actions:
                                 - '@get_checkout_state':
                                     token: $state_token
+                                    getFrom: $state_token_storage
                                     attribute: $.result.formCheckoutState
                         # Generate snapshot before submit
                         # and set flag to $.result.stateGenerated
@@ -134,15 +135,10 @@ workflows:
                                 '@not':
                                     - '@equal': [$.result.stateGenerated, true]
                             actions:
-#                                - '@assign_value': [$.result.currentState, []]
                                 - '@generate_checkout_state_snapshot':
                                     checkout: $checkout
                                     attribute: $.result.initCheckoutState
-#                                - '@save_checkout_state':
-#                                    checkout: $checkout
-#                                    saveTo: $.result.currentState
-#                                    token: $.result.currentStateToken
-                                - '@assing_value': [$.result.stateGenerated, true]
+                                - '@assign_value': [$.result.stateGenerated, true]
 
 
                     attribute_fields:
@@ -306,6 +302,7 @@ workflows:
             __start___definition:
                 post_actions:
                     - '@assign_value': [$payment_save_for_later, true]
+                    - '@assign_value': [$state_token_storage, []]
             do_nothing:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -328,7 +325,12 @@ workflows:
                 conditions:
                     '@and':
                         - '@not_empty': $checkout.billingAddress
-                        - '@check_checkout_states': [$.result.initCheckoutState, $.result.formCheckoutState]
+                        - '@not_empty': $.result.initCheckoutState
+                        - '@not_empty': $.result.formCheckoutState
+                        - '@check_checkout_states':
+                            entity: $checkout
+                            state1: $.result.initCheckoutState
+                            state2: $.result.formCheckoutState
                 post_actions:
                     # TODO: Move down at the end of actions
                     - '@generate_checkout_state_snapshot':
