@@ -2,43 +2,38 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BMenuBundle:layouts:custom/page/main_menu.html.twig'
+        - '@setOption':
+            id: quick_access_menu
+            optionName: attr.class
+            optionValue: sidebar__quick-access
+        - '@setOption':
+            id: main_menu_shopping_lists_wrapper
+            optionName: attr.class
+            optionValue: middlebar__shopping-list
         - '@addTree':
             items:
-                sidebar_main_menu_container:
-                    blockType: container
-                    siblingId: account_sidebar
-                    prepend: false
-                sidebar_product_categories_container:
-                    blockType: container
-                    siblingId: account_sidebar
-                    prepend: false
                 sidebar_quick_access_menu_container:
                     blockType: container
-                    siblingId: account_sidebar
-                    prepend: false
+                sidebar_product_categories_container:
+                    blockType: container
+                sidebar_main_menu_container:
+                    blockType: container
             tree:
                 sidebar_left:
-                    sidebar_main_menu_container: ~
-                    sidebar_product_categories_container: ~
                     sidebar_quick_access_menu_container: ~
+                    sidebar_product_categories_container: ~
+                    sidebar_main_menu_container: ~
         - '@move':
             id: main_menu
             parentId: sidebar_main_menu_container
-            prepend: true
         - '@move':
             id: categories_main_menu
             parentId: sidebar_product_categories_container
-            prepend: true
-        - '@remove':
-            id: main_menu_container
         - '@move':
             id: quick_access_menu
             parentId: sidebar_quick_access_menu_container
-            prepend: true
         - '@move':
             id: main_menu_shopping_lists_wrapper
             parentId: quick_access_container
-            prepend: false
-    conditions:
-            '@and':
-                - '@neq': [ $context.logged_user, null ]
+        - '@remove':
+            id: main_menu_container

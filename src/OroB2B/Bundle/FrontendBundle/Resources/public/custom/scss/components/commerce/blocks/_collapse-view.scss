@@ -26,6 +26,12 @@
     }
   }
 
+  &__text {
+    vertical-align: middle;
+
+    font-weight: 700;
+  }
+
   &__container {
     display: none;
   }

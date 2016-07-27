@@ -67,15 +67,17 @@
 
 {% block _content_widget %}
     {% set visibleSidebarChildren = [] %}
-    {% for child in blocks.sidebar_left.children %}
-        {% if child.vars.visible %}
-            {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
-        {% endif %}
-    {% endfor %}
-    {% set hasSidebarLeft = blocks.sidebar_left is defined and visibleSidebarChildren|length > 0 %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' content' ~ (hasSidebarLeft ? ' content--has-sidebar')
-    }) %}
+    {% if blocks.sidebar_left is defined %}
+        {% for child in blocks.sidebar_left.children %}
+            {% if child.vars.visible %}
+                {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
+            {% endif %}
+        {% endfor %}
+        {% set hasSidebarLeft = blocks.sidebar_left is defined and visibleSidebarChildren|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' content' ~ (hasSidebarLeft ? ' content--has-sidebar')
+        }) %}
+    {% endif %}
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">

@@ -1,6 +1,7 @@
 {% block _footer_menu_container_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " row" }) %}
-
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " row"
+    }) %}
     <div {{ block('block_attributes') }}>
         <div class="col-md-8 col-sm-12 clearfix">
             {{ block_widget(block) }}

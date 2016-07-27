@@ -1,9 +1,11 @@
 /* START MIDDLE BAR */
 .middlebar {
+  min-height: 100px;
   padding: 20px 0 19px;
   border-bottom: 1px solid $theme-lighter-gray-color;
 
   @media (max-width: $screen-md) {
+    min-height: initial;
     padding: 10px 0;
   }
 
@@ -38,6 +40,11 @@
     @media (max-width: $screen-md) {
       display: none;
     }
+  }
+
+  &__shopping-list {
+    padding: 0 !important;
+    background: transparent !important;
   }
 }
 /* END MIDDLE BAR */
@@ -112,6 +119,7 @@
   width: 100%;
 
   &__inner {
+    padding-top: 20px;
     padding-bottom: 20px;
 
     @include clearfix();
@@ -133,10 +141,10 @@
     }
 
     .content__inner {
-      padding-bottom: 20px;
+      padding-left: 15px;
 
       @media (max-width: $screen-md) {
-        padding-bottom: 10px;
+        padding-left: 0;
       }
     }
 
@@ -716,4 +724,8 @@
   background: transparent;
 
   cursor: pointer;
+}
+
+.shopping-list {
+  @include list-normalize();
 }

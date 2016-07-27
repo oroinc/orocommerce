@@ -5,7 +5,7 @@
 
     {% for category in categories -%}
         {% set hasSublist = category.childCategories is not empty %}
-        <li class="top-nav__item {{ hasSublist ? "top-nav__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
+        <li class="main-menu__item {{ hasSublist ? "main-menu__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
         </li>
@@ -15,7 +15,7 @@
 {% block _categories_main_menu_first_level_item_widget %}
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
-       class="top-nav__link">
+       class="main-menu__link">
         <span>{{ category.defaultTitle }} </span>
         {% if hasSublist %}
             <i class="cf-down-open-mini"></i>
@@ -23,8 +23,8 @@
     </a>
     {% if hasSublist %}
         <!-- START TOP NAVIGATION SUBLIST -->
-        <div class="top-nav__sublist-container">
-            <ul class="top-nav__sublist">
+        <div class="main-menu__sublist-container">
+            <ul class="main-menu__sublist">
                 {% do block|merge_context({'categories': category.childCategories }) %}
                 {{ block_widget(block) }}
             </ul>
@@ -35,10 +35,10 @@
 
 {% block _categories_main_menu_second_level_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__sublist__item"
+        class: attr.class|default('') ~ " main-menu__sublist__item"
     }) %}
     <li {{ block('block_attributes') }}>
-        <div class="top-nav__sublist__title">By Category</div>
+        <div class="main-menu__sublist__title">By Category</div>
         {% for category in categories %}
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
@@ -48,11 +48,11 @@
 
 {% block _categories_main_menu_second_level_item_widget %}
     {% set hasSublist = category.childCategories is not empty %}
-    {% set class = attr.class|default('') ~ " top-nav__sublist_nested top-nav__sublist__item_has-2columns" %}
-    {% set class = hasSublist ? class ~ " top-nav__sublist_nested_has-sibling" : class %}
+    {% set class = attr.class|default('') ~ " main-menu__sublist--nested main-menu__sublist__item_has-2columns" %}
+    {% set class = hasSublist ? class ~ " main-menu__sublist--nested main-menu__sublist--has-sibling" : class %}
     {% set attr = attr|merge({class: class}) %}
     <ul {{ block('block_attributes') }}>
-        <li class="top-nav__sublist_nested__item">
+        <li class="main-menu__sublist-item">
             <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
                 {{ category.defaultTitle }}
             </a>
@@ -66,7 +66,7 @@
 
 {% block _categories_main_menu_third_level_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__sublist_subnested"
+        class: attr.class|default('') ~ " main-menu__sublist_subnested"
     }) %}
     <ul {{ block('block_attributes') }}>
         {% for category in categories %}
@@ -87,10 +87,10 @@
 
 {% block _categories_main_menu_second_level_sales_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__sublist__item top-nav__sublist__item_has-sales-block"
+        class: attr.class|default('') ~ " main-menu__sublist__item main-menu__sublist__item_has-sales-block"
     }) %}
     <li {{ block('block_attributes') }}>
-        <div class="top-nav__sublist__title">On Sale</div>
+        <div class="main-menu__sublist__title">On Sale</div>
         <div class="sales-block">
             <a href="#">
                 <img class="img-responsive"

@@ -1,116 +1,44 @@
-.navigation-widget {
-    margin: .3rem 0 0;
-    background: $theme-slight-lightest-gray-color;
+.sidebar__quick-access {
+  margin-top: 3px;
 
-    &__list {
-        @include list-normalize();
+  background: $theme-slight-lightest-gray-color;
 
-        padding: 0;
+  &:first-child {
+    margin-top: 0;
+  }
 
-        > li {
-            position: relative;
+  .quick-access__list {
+    padding: 30px 15px 10px 30px; //override default theme styles
 
-            margin: 0 0 17px;
+    text-align: left; //override default theme styles
+  }
 
-            font-size: 13px;
-            text-transform: uppercase;
+  .quick-access__item {
+    display: block; //override default theme styles
+    margin: 0 0 17px; //override default theme styles
 
-            &:last-child {
-                margin-bottom: 0;
-            }
+    text-transform: uppercase;
 
-            > a {
-                display: inline-block;
-                overflow: hidden;
-                vertical-align: middle;
-
-                color: $base-font-color-light;
-                font-weight: 700;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-
-                &:hover {
-                    text-decoration: none;
-
-                    > span {
-                        &:last-child {
-                            text-decoration: underline;
-                        }
-                    }
-                }
-
-                &:visited, &:focus {
-                    text-decoration: none;
-                }
-
-                > span {
-                    vertical-align: middle;
-                }
-            }
-        }
+    @media (max-width: $screen-md) {
+      margin: 0 0 17px; //override default theme styles
     }
+  }
 
-    &--right {
-        text-align: right;
+  .quick-access__link {
+    font-weight: 700; //override default theme styles
+  }
+
+  .quick-access__badge {
+    width: $badge-sm; //override default theme styles
+    height: $badge-sm; //override default theme styles
+    margin-right: 15px; //override default theme styles
+
+    font-size: 14px; //override default theme styles
+    line-height: $badge-sm; //override default theme styles
+
+    i {
+      font-size: 16px; //override default theme styles
     }
-
-    &--inline {
-        padding: 18px 0 0;
-
-        @include clearfix();
-
-        > li {
-            display: inline-block;
-            margin: 0 0 0 10px;
-
-            @media (max-width: $screen-md) {
-                margin: 0 0 0 5px;
-            }
-
-            > a {
-                font-weight: 400;
-            }
-        }
-
-        .navigation-widget__badge {
-            margin: 0 5px 0 0;
-
-            i {
-                font-size: 11px;
-            }
-        }
-    }
-
-    &__badge {
-        margin: 0 15px 0 0;
-
-        i {
-            font-size: 16px;
-        }
-    }
-}
-// *** Nested list has not implemented yet!!!
-.navigation-widget__list_nested {
-    @include list-normalize();
-
-    > li {
-        margin: 0;
-
-        > a {
-            color: $base-font-color-light;
-            font-weight: 400;
-            text-transform: uppercase;
-
-            &:hover, &:focus {
-                text-decoration: none;
-            }
-        }
-    }
-}
-
-.shopping-list {
-    > li {
-        background: none;
-    }
+  }
 }
 
