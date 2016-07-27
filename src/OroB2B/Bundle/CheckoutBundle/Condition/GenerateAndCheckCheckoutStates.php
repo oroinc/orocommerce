@@ -117,7 +117,7 @@ class GenerateAndCheckCheckoutStates extends AbstractCondition implements Contex
      */
     public function toArray()
     {
-        return $this->convertToArray([$this->checkout, $this->state]);
+        return $this->convertToArray([$this->checkout, $this->token, $this->getFrom, $this->state]);
     }
 
     /**
@@ -125,6 +125,6 @@ class GenerateAndCheckCheckoutStates extends AbstractCondition implements Contex
      */
     public function compile($factoryAccessor)
     {
-        return $this->convertToPhpCode([$this->checkout, $this->state], $factoryAccessor);
+        return $this->convertToPhpCode([$this->checkout, $this->token, $this->getFrom, $this->state], $factoryAccessor);
     }
 }
