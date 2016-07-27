@@ -59,7 +59,9 @@ define(function (require) {
                 url: self.url,
                 type: 'DELETE',
                 success: function() {
-                    self.$elem.closest('.' + self.removeClass).remove();
+                    if (self.removeClass) {
+                        self.$elem.closest('.' + self.removeClass).remove();
+                    }
 
                     if (self.redirect) {
                         self.deleteWithRedirect(e);

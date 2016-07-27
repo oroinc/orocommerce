@@ -25,9 +25,9 @@ define(function(require) {
         elements: {
             edit: '[data-role="edit"]',
             decline: '[data-role="decline"]',
-            controlsContainer: '[data-role="shopping-list"]',
-            modifyContainer: '[data-role="shopping-lists-modify"]',
-            staticContainer: '[data-role="shopping-lists-static"]'
+            lineItem: '[data-role="line-item"]',
+            lineItemEdit: '[data-role="line-item-edit"]',
+            lineItemView: '[data-role="line-item-view"]'
         },
 
         elementsEvents: {
@@ -159,21 +159,21 @@ define(function(require) {
 
             if (key === 'enable') {
                 $target
-                    .closest(this.elements.controlsContainer)
-                    .find(this.elements.staticContainer)
+                    .closest(this.elements.lineItem)
+                    .find(this.elements.lineItemView)
                     .addClass('hidden');
                 $target
-                    .closest(this.elements.controlsContainer)
-                    .find(this.elements.modifyContainer)
+                    .closest(this.elements.lineItem)
+                    .find(this.elements.lineItemEdit)
                     .removeClass('hidden');
             } else {
                 $target
-                    .closest(this.elements.controlsContainer)
-                    .find(this.elements.modifyContainer)
+                    .closest(this.elements.lineItem)
+                    .find(this.elements.lineItemEdit)
                     .addClass('hidden');
                 $target
-                    .closest(this.elements.controlsContainer)
-                    .find(this.elements.staticContainer)
+                    .closest(this.elements.lineItem)
+                    .find(this.elements.lineItemView)
                     .removeClass('hidden');
             }
         },

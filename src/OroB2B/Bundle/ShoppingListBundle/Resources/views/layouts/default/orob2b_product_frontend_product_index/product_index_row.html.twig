@@ -126,7 +126,7 @@
             </thead>
             <tbody class="shopping-lists-popup__content">
             <% _.each(shoppingLists, function(list) { %>
-            <tr class="shopping-lists-popup__item" data-role="shopping-list">
+            <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
                     <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
                 </td>
@@ -135,6 +135,7 @@
                     <% if (!_.isEmpty(ListLineItems)) { %>
                     <% _.each(ListLineItems, function(lineItem, i) { %>
                         <div class="shopping-lists-units"
+                             data-role="line-item"
                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                 module: 'oroui/js/app/components/view-component',
                                 options: {
@@ -163,7 +164,7 @@
                             })) }}>
                             <form action="#">
                                 <div class="shopping-lists-static"
-                                     data-role="shopping-lists-static">
+                                     data-role="line-item-view">
                                     <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
                                     <span class="shopping-lists-units__separate">/</span>
                                     <span class="shopping-lists-units__measurements"><%= _.__(
@@ -191,7 +192,6 @@
                                                                 triggerData: {
                                                                     lineItemId: '<%= lineItem.line_item_id %>'
                                                                 },
-                                                                removeClass: 'shopping-lists-popup__item',
                                                                 confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
                                                                 okButtonClass: 'btn ok theme-btn_sm btn-orange',
@@ -205,7 +205,7 @@
                                     </div>
                                 </div>
                                 <ul class="shopping-lists-modify hidden"
-                                    data-role="shopping-lists-modify">
+                                    data-role="line-item-edit">
                                     <li class="shopping-lists-modify__text">
                                         <input class="shopping-lists-modify__input input input_xs"
                                                type="number"
