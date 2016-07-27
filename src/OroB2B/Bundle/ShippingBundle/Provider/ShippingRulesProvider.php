@@ -26,23 +26,15 @@ class ShippingRulesProvider
     protected $shippingMethodRegistry;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ShippingMethodRegistry $shippingMethodRegistry
-     * @param TranslatorInterface $translator
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ShippingMethodRegistry $shippingMethodRegistry,
-        TranslatorInterface $translator
+        ShippingMethodRegistry $shippingMethodRegistry
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->shippingMethodRegistry = $shippingMethodRegistry;
-        $this->translator = $translator;
     }
 
     /**
@@ -104,28 +96,5 @@ class ShippingRulesProvider
             )
         ));
         return $result;
-    }
-
-    /**
-     * @param string $method
-     * @return string
-     */
-    protected function formatMethodLabel($method)
-    {
-        $translationKey = sprintf('oro.shipping.%s.label', $method);
-
-        return $this->translator->trans($translationKey);
-    }
-
-    /**
-     * @param string $method
-     * @param string $type
-     * @return string
-     */
-    protected function formatTypeLabel($method, $type)
-    {
-        $translationKey = sprintf('oro.shipping.%s.%s.label', $method, $type);
-
-        return $this->translator->trans($translationKey);
     }
 }
