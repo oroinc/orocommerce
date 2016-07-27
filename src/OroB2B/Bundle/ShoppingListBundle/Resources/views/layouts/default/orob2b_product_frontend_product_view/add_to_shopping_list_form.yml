@@ -1,7 +1,16 @@
 layout:
+    imports:
+        -
+            id: product_shopping_lists
+            root: line_item_form
+            namespace: product
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@setOption':
+            id: product_shopping_lists
+            optionName: shoppingLists
+            optionValue: { '@value': $data.orob2b_shopping_list_product_units_quantity }
         - '@add':
             id: add_to_shopping_list_form_button
             blockType: add_to_shopping_list_form_button
