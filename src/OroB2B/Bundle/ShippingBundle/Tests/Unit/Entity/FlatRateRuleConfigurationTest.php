@@ -29,7 +29,7 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($entity->getPrice());
         $entity->setValue(42);
         $entity->setCurrency('USD');
-        $entity->createPrice();
+        $entity->createPrices();
         $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
@@ -78,7 +78,7 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $entity->getPrice()->setValue(84);
         $entity->getPrice()->setCurrency('EUR');
 
-        $entity->updatePrice();
+        $entity->updatePrices();
         $this->assertEquals(84, $entity->getValue());
         $this->assertEquals('EUR', $entity->getCurrency());
     }

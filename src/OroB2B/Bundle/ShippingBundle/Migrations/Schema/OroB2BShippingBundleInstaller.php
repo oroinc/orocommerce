@@ -129,10 +129,12 @@ class OroB2BShippingBundleInstaller implements Installation
     {
         $table = $schema->createTable('orob2b_shipping_rule_config');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', ['notnull' => false]);
+        $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('method', 'string', ['length' => 255]);
         $table->addColumn('entity_name', 'string', ['length' => 255]);
+        $table->addColumn('enabled', 'boolean', []);
+        $table->addColumn('currency', 'string', ['length' => 255]);
         $table->addIndex(['rule_id'], 'idx_b517b837744e0351', []);
         $table->setPrimaryKey(['id']);
     }
@@ -147,7 +149,12 @@ class OroB2BShippingBundleInstaller implements Installation
         $table = $schema->createTable('orob2b_ship_flat_rate_rule_cnf');
         $table->addColumn('id', 'integer', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn('handling_fee_value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -192,10 +199,11 @@ class OroB2BShippingBundleInstaller implements Installation
     {
         $table = $schema->createTable('orob2b_shipping_destination');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('shipping_rule_id', 'integer', ['notnull' => false]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_rule_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -307,7 +315,7 @@ class OroB2BShippingBundleInstaller implements Installation
             $schema->getTable('orob2b_shipping_rule'),
             ['rule_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

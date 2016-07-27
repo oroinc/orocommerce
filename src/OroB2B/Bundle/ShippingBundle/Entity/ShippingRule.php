@@ -132,14 +132,23 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var Collection|ShippingDestination[]
      *
-     * @ORM\OneToMany(targetEntity="ShippingDestination", mappedBy="shippingRule", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination",
+     *     mappedBy="shippingRule",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
      */
     protected $shippingDestinations;
 
     /**
      * @var Collection|ShippingRuleConfiguration[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration", mappedBy="rule")
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
+     *     mappedBy="rule",
+     *     cascade={"persist", "remove"}
+     * )
      */
     protected $configurations;
 
@@ -337,7 +346,9 @@ class ShippingRule extends ExtendShippingRule
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-
+        foreach ($this->configurations as $configuration) {
+            $configuration->setCurrency($currency);
+        }
         return $this;
     }
 
@@ -373,6 +384,7 @@ class ShippingRule extends ExtendShippingRule
     {
         if (!$this->shippingDestinations->contains($shippingDestination)) {
             $this->shippingDestinations->add($shippingDestination);
+            $shippingDestination->setShippingRule($this);
         }
 
         return $this;

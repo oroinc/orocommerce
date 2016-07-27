@@ -68,14 +68,28 @@ class ShippingDestination
     protected $region;
 
     /**
-     * @var Country
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
-     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code")
+     * @ORM\Column(name="region_text", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30,
+     *              "order"=30
+     *          }
+     *      }
+     * )
+     */
+    protected $regionText;
+
+    /**
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
+     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
      *              "short"=true,
      *              "identity"=true
      *          }
@@ -88,7 +102,7 @@ class ShippingDestination
      * @var ShippingRule
      *
      * @ORM\ManyToOne(targetEntity="ShippingRule", inversedBy="shippingDestinations")
-     * @ORM\JoinColumn(name="shipping_rule_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="shipping_rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -163,6 +177,29 @@ class ShippingDestination
     public function getRegionCode()
     {
         return $this->getRegion() ? $this->getRegion()->getCode() : '';
+    }
+
+    /**
+     * Set region text
+     *
+     * @param string $regionText
+     * @return $this
+     */
+    public function setRegionText($regionText)
+    {
+        $this->regionText = $regionText;
+
+        return $this;
+    }
+
+    /**
+     * Get region test
+     *
+     * @return string
+     */
+    public function getRegionText()
+    {
+        return $this->regionText;
     }
 
     /**
