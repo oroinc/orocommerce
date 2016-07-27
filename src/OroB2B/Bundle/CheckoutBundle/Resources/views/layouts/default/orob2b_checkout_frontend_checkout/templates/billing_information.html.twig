@@ -47,5 +47,6 @@
         <fieldset class="checkout__form__row {% if hideShipping %}hidden{% endif %}">
             {{ form_row(form.ship_to_billing_address) }}
         </fieldset>
+        {{ form_row(form.state_token) }}
     {% endif %}
 {%- endblock %}

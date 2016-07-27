@@ -76,13 +76,11 @@ class CheckoutStateDiffManager
                 continue;
             }
 
-            if ($mapper->isStatesEqual($state1, $state2)) {
-                continue;
+            if (!$mapper->isStatesEqual($state1, $state2)) {
+                return false;
             }
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 }

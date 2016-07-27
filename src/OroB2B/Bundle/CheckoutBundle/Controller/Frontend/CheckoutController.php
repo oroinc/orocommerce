@@ -178,6 +178,12 @@ class CheckoutController extends Controller
                     $transitionForm->submit($request);
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                    } else {
+                        // TODO: Change this hardcoded value
+                        $this->get('session')->getFlashBag()->add(
+                            'error',
+                            'There was a change to the contents of your order.'
+                        );
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
