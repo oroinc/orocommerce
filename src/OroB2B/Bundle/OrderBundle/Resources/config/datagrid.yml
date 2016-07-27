@@ -484,7 +484,7 @@ datagrid:
                 - order_id
         properties:
             productName:
-                type: fallback
+                type: localized_value
                 data_name: product.names
 
     order-line-items-grid:

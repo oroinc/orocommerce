@@ -7,11 +7,11 @@ layout:
             optionName: value
             optionValue:
                 - 'orob2b.product.entity_plural_label'
-                - { '@fallback_value': $data.product.names }
+                - { '@localized_value': $data.product.names }
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: {'@fallback_value': $data.product.names}
+            optionValue: {'@localized_value': $data.product.names}
         - '@move':
             id: page_title
             parentId: product_title_container
@@ -26,7 +26,7 @@ layout:
                 product_title_mobile:
                     blockType: text
                     options:
-                        text: {'@fallback_value': $data.product.names}
+                        text: {'@localized_value': $data.product.names}
                 product_image:
                     blockType: product_image
                     options:
@@ -60,7 +60,7 @@ layout:
                 product_description:
                     blockType: text
                     options:
-                        text: {'@fallback_value': $data.product.descriptions}
+                        text: {'@localized_value': $data.product.descriptions}
                         escape: false
                 attachments:
                     blockType: block

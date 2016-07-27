@@ -64,7 +64,7 @@ datagrid:
         properties:
             id: ~
             name:
-                type: fallback
+                type: localized_value
                 data_name: names
         sorters:
             columns:

@@ -3,11 +3,14 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Product as BaseProduct;
 
-class StubProduct extends Product
+class Product extends BaseProduct
 {
+    use LocalizedEntityTrait;
+
     /**
      * @var AbstractEnumValue
      */
@@ -27,6 +30,39 @@ class StubProduct extends Product
      * @var string
      */
     private $color;
+
+    /**
+     * @var array
+     */
+    private $localizedFields = [
+        'name' => 'names',
+        'description' => 'descriptions',
+        'shortDescription' => 'shortDescriptions',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __call($name, $arguments)
+    {
+        return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __get($name)
+    {
+        return $this->localizedFieldGet($this->localizedFields, $name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __set($name, $value)
+    {
+        return $this->localizedFieldSet($this->localizedFields, $name, $value);
+    }
 
     /**
      * @return AbstractEnumValue

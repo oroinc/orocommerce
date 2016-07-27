@@ -15,6 +15,10 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @method Category setLargeImage(File $largeImage)
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue getShortDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultShortDescription()
+ * @method LocalizedFallbackValue getLongDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultLongDescription()
  */
 class ExtendCategory
 {

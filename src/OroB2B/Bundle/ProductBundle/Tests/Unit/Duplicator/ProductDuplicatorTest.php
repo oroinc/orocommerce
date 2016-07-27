@@ -16,10 +16,9 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
@@ -144,7 +143,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $attachment2 = (new Attachment())
             ->setFile($attachmentFile2);
 
-        $product = (new StubProduct())
+        $product = (new Product())
             ->setSku(self::PRODUCT_SKU)
             ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
@@ -224,7 +223,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDuplicateFailed()
     {
-        $product = (new StubProduct())
+        $product = (new Product())
             ->setSku(self::PRODUCT_SKU)
             ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,

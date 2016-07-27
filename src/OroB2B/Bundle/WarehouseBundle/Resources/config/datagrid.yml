@@ -163,7 +163,7 @@ datagrid:
             productId: ~
             inventoryLevelPrecision: ~
             productName:
-                type: fallback
+                type: localized_value
                 data_name: product.names
             delete_link:
                 type: url

@@ -479,22 +479,6 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultShortDescription()
-    {
-        $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocalization();
-        });
-
-        if ($shortDescription->count() !== 1) {
-            throw new \LogicException('There must be only one default short description');
-        }
-
-        return $shortDescription->first();
-    }
-
-    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getLongDescriptions()
@@ -531,22 +515,6 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultLongDescription()
-    {
-        $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
-            return null === $longDescription->getLocalization();
-        });
-
-        if ($longDescription->count() != 1) {
-            throw new \LogicException('There must be only one default long description');
-        }
-
-        return $longDescription->first();
-    }
-
-    /**
      * @return CategoryDefaultProductOptions
      */
     public function getDefaultProductOptions()
@@ -564,7 +532,7 @@ class Category extends ExtendCategory
     public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
     {
         $this->defaultProductOptions = $defaultProductOptions;
-    
+
         return $this;
     }
 }

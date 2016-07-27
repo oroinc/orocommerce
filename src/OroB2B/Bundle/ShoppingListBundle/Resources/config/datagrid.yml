@@ -175,7 +175,7 @@ datagrid:
             id: ~
             productId: ~
             productName:
-                type: fallback
+                type: localized_value
                 data_name: product.names
             view_product_link:
                 type:  url

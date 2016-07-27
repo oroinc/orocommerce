@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -128,7 +129,7 @@ class FrontendProductDatagridListener
             ],
             '[properties]' => [
                 'shortDescription' => [
-                    'type' => 'fallback',
+                    'type' => LocalizedValueProperty::NAME,
                     'data_name' => 'shortDescriptions',
                 ]
             ],

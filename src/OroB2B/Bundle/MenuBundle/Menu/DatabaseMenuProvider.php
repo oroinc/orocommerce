@@ -172,7 +172,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        $localizations = $this->localizationHelper->getAll();
+        $localizations = $this->localizationHelper->getLocalizations();
         foreach ($localizations as $localization) {
             $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }

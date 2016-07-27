@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -63,7 +64,7 @@ class DatagridListener
         $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
 
         // properties
-        $categoryProperty = ['type' => 'fallback', 'data_name' => 'productCategory.titles'];
+        $categoryProperty = ['type' => LocalizedValueProperty::NAME, 'data_name' => 'productCategory.titles'];
         $this->addConfigElement($config, '[properties]', $categoryProperty, self::CATEGORY_COLUMN);
 
         // sorter

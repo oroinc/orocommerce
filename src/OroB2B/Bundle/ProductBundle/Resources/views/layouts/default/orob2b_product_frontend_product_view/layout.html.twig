@@ -30,7 +30,7 @@
                     <div class="product-gallery__image-holder__container">
                         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
                         <img src="{{ Image.url(productImage, 'product_large') }}"
-                             alt="{{ product.names|oro_fallback_value }}"
+                             alt="{{ product.names|oro_localized_value }}"
                              width="378"
                              height="378"
                              {% if productImage %}

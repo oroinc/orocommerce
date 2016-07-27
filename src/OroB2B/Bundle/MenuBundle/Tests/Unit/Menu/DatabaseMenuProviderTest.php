@@ -6,21 +6,22 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 use OroB2B\Bundle\MenuBundle\Menu\MenuSerializer;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCALE_ENTITY_CLASS = 'Oro\Bundle\LocaleBundle\Entity\Localization';
+    const LOCALE_ENTITY_CLASS = Localization::class;
     const MENU_ITEM_ENTITY_CLASS = 'TestBundle:MenuItem';
 
     const LOCALE_ID_EN = 1;
@@ -236,7 +237,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
     public function testRebuildCacheByAliasWithoutCache()
     {
         $this->localizationHelper->expects($this->never())
-            ->method('getAll');
+            ->method('getLocalizations');
         $this->provider->rebuildCacheByAlias('test_menu');
     }
 
@@ -252,7 +253,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
         $this->localizationHelper->expects($this->once())
-            ->method('getAll')
+            ->method('getLocalizations')
             ->willReturn(
                 [
                     $enLocalization,
@@ -317,7 +318,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $serializedMenuEn = ['menuItem1en', 'menuItem2kz'];
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $this->localizationHelper->expects($this->once())
-            ->method('getAll')
+            ->method('getLocalizations')
             ->willReturn([$enLocalization]);
         $this->builder->expects($this->once())
             ->method('build')
@@ -345,7 +346,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
     public function testClearCacheByAliasWithoutCache()
     {
         $this->localizationHelper->expects($this->never())
-            ->method('getAll');
+            ->method('getLocalizations');
         $this->provider->clearCacheByAlias('test_menu');
     }
 
@@ -357,7 +358,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
         $this->localizationHelper->expects($this->once())
-            ->method('getAll')
+            ->method('getLocalizations')
             ->willReturn(
                 [
                     $enLocalization,
