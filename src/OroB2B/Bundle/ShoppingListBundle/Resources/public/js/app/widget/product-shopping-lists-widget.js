@@ -118,7 +118,8 @@ define(function(require) {
                 return !_.isEmpty(shoppingList.line_items);
             }, this);
 
-            this.model.set('shopping_lists', shoppingLists);
+            this.model.set('shopping_lists', shoppingLists, {silent: true});
+            this.model.trigger('change:shopping_lists');
         },
 
         onLineItemUpdate: function(updateData) {

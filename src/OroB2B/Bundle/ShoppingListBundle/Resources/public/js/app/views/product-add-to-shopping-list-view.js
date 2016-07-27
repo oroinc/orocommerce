@@ -54,13 +54,15 @@ define(function(require) {
                 this.options.removeButtonTemplate = _.template(this.options.removeButtonTemplate);
             }
 
-            this._editLineItem();
+            this._setEditLineItem(null, true);
             this.saveApiAccessor = new ApiAccessor(this.options.save_api_accessor);
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
             if (this.model) {
                 this.model.on('change:shopping_lists', this._onModelChanged, this);
+                this.model.on('change:unit', this._onModelChanged, this);
+                this.model.on('editLineItem', this._editLineItem, this);
             }
         },
 
@@ -79,8 +81,6 @@ define(function(require) {
                     this.model.set(attribute, value);
                 }
             }, this);
-
-            this.model.on('editLineItem', this._editLineItem, this);
         },
 
         dispose: function(options) {
@@ -136,6 +136,11 @@ define(function(require) {
             this.updateMainButton();
         },
 
+        _onModelChanged: function() {
+            this._setEditLineItem();
+            this.updateMainButton();
+        },
+
         _onShoppingListUpdate: function(shoppingList, product) {
             if (!this.model) {
                 return;
@@ -146,15 +151,8 @@ define(function(require) {
             this.model.set('shopping_lists', product.shopping_lists);
         },
 
-        _onModelChanged: function() {
-            this._editLineItem(this.editLineItem ? this.editLineItem.line_item_id : null);
-            this.updateMainButton();
-        },
-
         _onShoppingListCreate: function(shoppingList, product) {
             if (this.model) {
-                this.editLineItem = null;
-                this.editShoppingList = null;
                 if (!product || product.id !== parseInt(this.model.get('id'), 10)) {
                     var modelCurrentShoppingLists = this.findCurrentShoppingList();
                     if (modelCurrentShoppingLists) {
@@ -199,6 +197,11 @@ define(function(require) {
         },
 
         _editLineItem: function(lineItemId) {
+            this._setEditLineItem(lineItemId);
+            this.updateMainButton();
+        },
+
+        _setEditLineItem: function(lineItemId, setFirstLineItem) {
             this.editLineItem = null;
             this.editShoppingList = null;
 
@@ -207,14 +210,16 @@ define(function(require) {
             }
 
             _.each(this.model.get('shopping_lists'), function(shoppingList) {
-                if (this.editLineItem) {
+                if (this.editLineItem || !shoppingList.is_current) {
                     return;
                 }
 
                 if (lineItemId) {
                     this.editLineItem = _.findWhere(shoppingList.line_items, {line_item_id: lineItemId});
-                } else if (shoppingList.is_current) {
+                } else if (setFirstLineItem) {
                     this.editLineItem = shoppingList.line_items[0] || null;
+                } else {
+                    this.editLineItem = _.findWhere(shoppingList.line_items, {unit: this.model.get('unit')});
                 }
 
                 if (this.editLineItem) {
@@ -222,14 +227,12 @@ define(function(require) {
                 }
             }, this);
 
-            if (this.editLineItem) {
+            if (this.editLineItem && (lineItemId || setFirstLineItem)) {
                 this.model.set({
                     quantity: this.editLineItem.quantity,
                     unit: this.editLineItem.unit
                 });
             }
-
-            this.updateMainButton();
         },
 
         transformCreateNewButton: function() {
