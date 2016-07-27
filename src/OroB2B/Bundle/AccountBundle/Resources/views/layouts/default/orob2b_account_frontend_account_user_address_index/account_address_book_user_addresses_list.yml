@@ -66,3 +66,4 @@ layout:
                                 account_address_book_user_addresses_list_template_item_actions_remove: ~
                     account_address_book_user_addresses_list: ~
     conditions: 'context["account_user_address_count"]<8'
+            - '@eq': [true, false]
