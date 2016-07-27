@@ -72,30 +72,33 @@ datagrid:
                 name:
                     data_name: shipping_rule.name
                 enabled:
-                    data_name: enabled
+                    data_name: shipping_rule.enabled
                 priority:
-                    data_name: priority
+                    data_name: shipping_rule.priority
                 currency:
-                    data_name: currency
+                    data_name: shipping_rule.currency
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 id:
                     type:      number
-                    data_name: id
+                    data_name: shipping_rule.id
                 name:
                     type:      string
-                    data_name: name
+                    data_name: shipping_rule.name
                 enabled:
                     type:      boolean
-                    data_name: enabled
+                    data_name: shipping_rule.enabled
                 priority:
                     type:      number
-                    data_name: priority
+                    data_name: shipping_rule.priority
                 currency:
                     type:      string
-                    data_name: currency
+                    data_name: shipping_rule.currency
+                conditions:
+                    type:      string
+                    data_name: shipping_rule.conditions
         actions:
             view:
                 type:          navigate
