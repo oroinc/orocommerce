@@ -17,9 +17,7 @@ class LoadWarehousesInventoryLevelWithPrimaryUnit extends AbstractFixture implem
      */
     public function getDependencies()
     {
-        return [
-            LoadWarehousesAndInventoryLevels::class
-        ];
+        return [LoadWarehousesAndInventoryLevels::class];
     }
 
     /**

@@ -15,6 +15,8 @@ use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAn
  */
 class ProductApiTest extends RestJsonApiTestCase
 {
+    use ApiResponseContentTrait;
+
     const ARRAY_DELIMITER = ',';
 
     /**
@@ -38,7 +40,7 @@ class ProductApiTest extends RestJsonApiTestCase
      *
      * @dataProvider cgetParamsAndExpectation
      */
-    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent = null)
+    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent)
     {
         $entityType = $this->getEntityType(Product::class);
 
@@ -61,9 +63,7 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, $entityType, 'get list');
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
-        if ($expectedContent) {
-            $this->assertIsContained($expectedContent, $content['data']);
-        }
+        $this->assertIsContained($expectedContent, $content['data']);
     }
 
     /**
@@ -173,24 +173,13 @@ class ProductApiTest extends RestJsonApiTestCase
             $data
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-        $result = self::jsonToArray($response->getContent());
-        self::assertEquals('out_of_stock', $result['data']['relationships']['inventory_status']['data']['id']);
-    }
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = $this->jsonToArray($response->getContent());
+        $this->assertEquals('out_of_stock', $result['data']['relationships']['inventory_status']['data']['id']);
 
-    /**
-     * @param array $expected
-     * @param array $content
-     */
-    protected function assertIsContained(array $expected, array $content)
-    {
-        foreach ($expected as $key => $value) {
-            $this->assertArrayHasKey($key, $content);
-            if (is_array($value)) {
-                $this->assertIsContained($value, $content[$key]);
-            } else {
-                $this->assertEquals($value, $content[$key]);
-            }
-        }
+        $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
+        /** @var Product $product */
+        $product = $doctrineHelper->getEntity(Product::class, $product->getId());
+        $this->assertEquals('out_of_stock', $product->getInventoryStatus()->getId());
     }
 }

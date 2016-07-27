@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 
+use OroB2B\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
@@ -20,6 +21,8 @@ use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesIn
  */
 class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
 {
+    use ApiResponseContentTrait;
+
     const ARRAY_DELIMITER = ',';
 
     /**
@@ -38,7 +41,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
      *
      * @dataProvider cgetParamsAndExpectation
      */
-    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent = null)
+    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent)
     {
         $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
 
@@ -62,10 +65,8 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $content = json_decode($response->getContent(), true);
         $this->assertCount($expectedCount, $content['data']);
 
-        if ($expectedContent) {
-            $expectedContent = $this->addReferenceRelationships($expectedContent);
-            $this->assertIsContained($expectedContent, $content['data']);
-        }
+        $expectedContent = $this->addReferenceRelationships($expectedContent);
+        $this->assertIsContained($expectedContent, $content['data']);
     }
 
     /**
@@ -895,9 +896,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-        $result = self::jsonToArray($response->getContent());
-        self::assertEquals(17, $result['data']['attributes']['quantity']);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = $this->jsonToArray($response->getContent());
+        $this->assertUpdatedInventoryLevel($result, $inventoryLevel->getId(), 17);
     }
 
     public function testUpdateEntityWithDefaultUnit()
@@ -926,9 +927,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-        $result = self::jsonToArray($response->getContent());
-        self::assertEquals(1, $result['data']['attributes']['quantity']);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = $this->jsonToArray($response->getContent());
+        $this->assertUpdatedInventoryLevel($result, $result['data']['id'], 1);
     }
 
     public function testUpdateEntityWithOneWarehouse()
@@ -958,9 +959,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-        $result = self::jsonToArray($response->getContent());
-        self::assertEquals(100, $result['data']['attributes']['quantity']);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+        $result = $this->jsonToArray($response->getContent());
+        $this->assertUpdatedInventoryLevel($result, $result['data']['id'], 100);
     }
 
     /**
@@ -991,18 +992,17 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     }
 
     /**
-     * @param array $expected
-     * @param array $content
+     * @param array $result
+     * @param int $inventoryLevelId
+     * @param int $quantity
      */
-    protected function assertIsContained(array $expected, array $content)
+    protected function assertUpdatedInventoryLevel(array $result, $inventoryLevelId, $quantity)
     {
-        foreach ($expected as $key => $value) {
-            $this->assertArrayHasKey($key, $content);
-            if (is_array($value)) {
-                $this->assertIsContained($value, $content[$key]);
-            } else {
-                $this->assertEquals($value, $content[$key]);
-            }
-        }
+        $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
+        /** @var WarehouseInventoryLevel $inventoryLevel */
+        $inventoryLevel = $doctrineHelper->getEntity(WarehouseInventoryLevel::class, $inventoryLevelId);
+
+        $this->assertEquals($quantity, $result['data']['attributes']['quantity']);
+        $this->assertEquals($quantity, $inventoryLevel->getQuantity());
     }
 }

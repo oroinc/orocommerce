@@ -59,7 +59,6 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
         );
     }
 
-
     public function testProcessWhenCriteriaObjectDoesNotExist()
     {
         $this->processor->process($this->context);
