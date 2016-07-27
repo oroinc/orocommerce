@@ -38,20 +38,20 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      id="orob2b_shipping_rule_update",
      *      type="entity",
      *      permission="EDIT",
-     *      class="OroShippingBundle:ShippingRule"
+     *      class="OroB2BShippingBundle:ShippingRule"
      * )
      *
      * @return Response
      */
     public function enableAction($id)
     {
-        /** @var ShippingRule $integration */
+        /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
 
         if ($shippingRule) {
             $shippingRule->setEnabled(true);
             $objectManager = $this->getManager()->getObjectManager();
-            $objectManager->persist($integration);
+            $objectManager->persist($shippingRule);
             $objectManager->flush();
             $view = $this->view(
                 [
@@ -86,20 +86,20 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      id="orob2b_shipping_rule_update",
      *      type="entity",
      *      permission="EDIT",
-     *      class="OroShippingBundle:ShippingRule"
+     *      class="OroB2BShippingBundle:ShippingRule"
      * )
      *
      * @return Response
      */
     public function disableAction($id)
     {
-        /** @var ShippingRule $integration */
+        /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
 
         if ($shippingRule) {
             $shippingRule->setEnabled(false);
             $objectManager = $this->getManager()->getObjectManager();
-            $objectManager->persist($integration);
+            $objectManager->persist($shippingRule);
             $objectManager->flush();
             $view = $this->view(
                 [
@@ -131,7 +131,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      id="orob2b_shipping_rule_delete",
      *      type="entity",
      *      permission="DELETE",
-     *      class="OroShippingBundle:ShippingRule"
+     *      class="OroB2BShippingBundle:ShippingRule"
      * )
      * @return Response
      */

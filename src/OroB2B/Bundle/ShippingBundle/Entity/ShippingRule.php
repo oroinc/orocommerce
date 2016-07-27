@@ -136,7 +136,7 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var Collection|ShippingRuleConfiguration[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration", mappedBy="rule")
+     * @ORM\OneToMany(targetEntity="ShippingRuleConfiguration", mappedBy="rule", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $configurations;
 

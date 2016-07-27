@@ -14,6 +14,7 @@ datagrid:
                     - shipping_rule.name
                     - shipping_rule.enabled
                     - shipping_rule.priority
+                    - shipping_rule.currency
                     - shipping_rule.conditions
                 from:
                     - { table: %orob2b_shipping.entity.shipping_rule.class%, alias: shipping_rule }
@@ -28,6 +29,8 @@ datagrid:
                 frontend_type: boolean
             priority:
                 label:         orob2b.shipping.shippingrule.priority.label
+            currency:
+                label:         orob2b.shipping.shippingrule.currency.label
             conditions:
                 label:         orob2b.shipping.shippingrule.conditions.label
             configurations:
@@ -72,22 +75,27 @@ datagrid:
                     data_name: enabled
                 priority:
                     data_name: priority
+                currency:
+                    data_name: currency
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 id:
                     type:      number
-                    data_name: shipping_rule.id
+                    data_name: id
                 name:
                     type:      string
-                    data_name: shipping_rule.name
+                    data_name: name
                 enabled:
                     type:      boolean
                     data_name: enabled
                 priority:
                     type:      number
                     data_name: priority
+                currency:
+                    type:      string
+                    data_name: currency
         actions:
             view:
                 type:          navigate
@@ -108,13 +116,13 @@ datagrid:
                 acl_resource: orob2b_shipping_rule_update
                 label:        orob2b.shipping.datagrid.action.enable
                 icon:         ok
-                link:         activate_link
+                link:         enable_link
             disable:
                 type:         ajax
                 acl_resource: orob2b_shipping_rule_update
                 label:        orob2b.shipping.datagrid.action.disable
                 icon:         remove
-                link:         deactivate_link
+                link:         disable_link
             delete:
                 type:         delete
                 link:         delete_link

@@ -26,18 +26,13 @@
                 'orob2b.shipping.shippingrule.enabled_no.label'|trans
                 ) }}
                 {{ UI.renderProperty('orob2b.shipping.shippingrule.priority.label'|trans, entity.priority) }}
+                {{ UI.renderProperty('orob2b.shipping.shippingrule.currency.label'|trans, entity.currency) }}
                 {{ UI.renderProperty('orob2b.shipping.shippingrule.conditions.label'|trans, entity.conditions) }}
 
                 {% if entity.shippingDestinations.count %}
-                    {% set titles = ['orob2b.shipping.shippingrule.address.label'|trans] %}
-                    {% set rows = [] %}
-                    {% for shippingDestination in entity.shippingDestinations %}
-                        {% set row = [shippingDestination] %}
-                        {% set rows = rows|merge([row]) %}
-                    {% endfor %}
                     {{ UI.renderHtmlProperty(
                     'orob2b.shipping.shippingrule.destinations.label'|trans,
-                    UI.renderTable(titles, rows, "grid table-hover table table-bordered unit-table")) }}
+                    UI.renderList(entity.shippingDestinations)) }}
                 {% endif %}
 
                 {% if entity.configurations.count %}

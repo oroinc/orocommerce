@@ -1,7 +1,7 @@
 parameters:
-    orob2b_shipping.mass_action.status.enable.class: OroB2B\Bundle\ShippingBundle\Extension\MassAction\Actions\StatusEnableMassAction
-    orob2b_shipping.mass_action.status.disable.class: OroB2B\Bundle\ShippingBundle\Extension\MassAction\Actions\StatusDisableMassAction
-    orob2b_shipping.mass_action.status.handler.class: OroB2B\Bundle\ShippingBundle\Extension\MassAction\StatusMassActionHandler
+    orob2b_shipping.mass_action.status.enable.class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction
+    orob2b_shipping.mass_action.status.disable.class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction
+    orob2b_shipping.mass_action.status.handler.class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\StatusMassActionHandler
 services:
     orob2b_shipping.mass_action.status.enable:
         class: %orob2b_shipping.mass_action.status.enable.class%

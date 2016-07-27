@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Extension\MassAction;
+namespace OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
