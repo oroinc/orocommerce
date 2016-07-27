@@ -6,16 +6,6 @@
 
     color: $base-dark-color;
 
-    &:hover {
-        text-decoration: none;
-
-        color: $base-dark-color;
-
-        .featured-categories-item__name {
-            text-decoration: underline;
-        }
-    }
-
     &__image {
         display: block;
         max-width: 100%;
@@ -41,11 +31,21 @@
         line-height: normal;;
     }
 
+    &:hover {
+        text-decoration: none;
+
+        color: $base-dark-color;
+
+        .featured-categories-item__name {
+            text-decoration: underline;
+        }
+    }
+
     @include breakpoint($phone-width) {
         margin-top: 20px;
 
         &__name {
-            font-size: 14px;
+            font-size: $base-font-size;
         }
 
         &__count {
