@@ -32,6 +32,7 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
     /**
      * {@inheritdoc}
      */
+
     public function isGlobalLevelOwned()
     {
         return false;

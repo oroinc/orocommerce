@@ -17,8 +17,8 @@ layout:
                 text: orob2b.account.frontend.account_user.address.label
                 visible:
                     '@or':
-                        - '@acl': orob2b_account_frontend_account_view
-                        - '@acl': orob2b_account_frontend_account_user_view
+                        - '@acl': orob2b_account_frontend_account_address_view
+                        - '@acl': orob2b_account_frontend_account_user_address_view
         - '@add':
             id: account_sidebar_account
             parentId: account_sidebar
