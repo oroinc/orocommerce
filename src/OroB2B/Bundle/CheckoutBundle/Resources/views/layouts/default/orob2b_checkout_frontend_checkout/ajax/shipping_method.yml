@@ -27,5 +27,15 @@ layout:
                           checkout_button_continue: ~
                           checkout_button_back: ~
 
+        - '@add':
+            id: shipping_methods
+            parentId: checkout_information
+            blockType: shipping_methods
+            prepend: true
+            options:
+                class_prefix: 'checkout'
+                methods: { '@value': $data.shipping_methods_data_provider }
+                currentShippingMethod: { '@value': $data.checkout.shippingMethod }
+
     conditions:
         '@eq': [$context.workflowStepName, 'enter_shipping_method']

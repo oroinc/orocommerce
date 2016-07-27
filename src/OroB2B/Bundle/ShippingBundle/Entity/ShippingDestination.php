@@ -87,7 +87,7 @@ class ShippingDestination
     /**
      * @var ShippingRule
      *
-     * @ORM\ManyToOne(targetEntity="ShippingRule", inversedBy="shippingDestinations")
+     * @ORM\ManyToOne(targetEntity="ShippingRule", inversedBy="shippingDestinations", fetch="EAGER")
      * @ORM\JoinColumn(name="shipping_rule_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
