@@ -42,13 +42,21 @@
     </div>
 {% endblock %}
 
-{% block _featured_categories_item_widget %}
+{% block _featured_category_widget %}
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-categories-item'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ item }}
+        <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': item.id, 'includeSubcategories': true}) }}">
+            <img
+                src="{{ Image.url(item.largeImage, 'product_large') }}"
+                alt="{{ item.defaultTitle }}">
+            <span>{{ item.defaultTitle }}</span>
+            <span>{{ 'orob2b.frontend.featuredcategories.view.items.label'|transchoice(item.products|length) }}</span>
+        </a>
     </div>
 {% endblock %}
 
