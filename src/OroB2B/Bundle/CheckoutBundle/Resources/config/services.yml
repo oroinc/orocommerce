@@ -8,7 +8,7 @@ services:
     orob2b_checkout.layout.data_provider.abstract_transition:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\AbstractTransitionDataProvider'
         arguments:
-            - '@oro_workflow.manager'
+            - '@oro_workflow.registry'
 
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
@@ -51,7 +51,7 @@ services:
     orob2b_checkout.layout.data_provider.checkout_steps:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider'
         arguments:
-            - '@oro_workflow.manager'
+            - '@oro_workflow.registry'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_steps }
 

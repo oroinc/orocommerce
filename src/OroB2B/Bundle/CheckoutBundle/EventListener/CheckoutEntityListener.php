@@ -230,8 +230,7 @@ class CheckoutEntityListener
             $workflows = array_filter(
                 $workflows,
                 function (Workflow $workflow) use ($checkout) {
-                    return $this->workflowManager->isStartTransitionAvailable(
-                        $workflow,
+                    $workflow->isStartTransitionAvailable(
                         static::START_TRANSITION_DEFINITION,
                         $checkout
                     );
