@@ -41,3 +41,15 @@ services:
             - [setExtendedType, ['checkout_form_fields']]
         tags:
             - { name: layout.block_type_extension, alias: checkout_form_fields }
+
+    orob2b_alternativecheckout.event_listener.shopping_list:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
+        public: false
+        arguments:
+            - '@doctrine'
+        calls:
+            - [setCheckoutClassName, ['%orob2b_alternativecheckout.entity.alternativecheckout.class%']]
+            - [setCheckoutSourceClassName, ['%orob2b_checkout.entity.checkout_source.class%']]
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_shopping_list.entity.shopping_list.class%', event: preRemove }
+

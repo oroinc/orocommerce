@@ -127,6 +127,17 @@ services:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
             - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
+    orob2b_checkout.event_listener.shopping_list:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
+        public: false
+        arguments:
+            - '@doctrine'
+        calls:
+            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
+            - [setCheckoutSourceClassName, ['%orob2b_checkout.entity.checkout_source.class%']]
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_shopping_list.entity.shopping_list.class%', event: preRemove }
+
     orob2b_checkout.grid_totals_metadata.cache:
         public: false
         parent: oro.cache.abstract
