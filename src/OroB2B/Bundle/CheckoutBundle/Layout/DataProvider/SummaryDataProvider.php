@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
@@ -54,13 +52,11 @@ class SummaryDataProvider
     }
 
     /**
-     * @param ContextInterface $context
+     * @param Checkout $checkout
      * @return ArrayCollection
      */
-    public function getData(ContextInterface $context)
+    public function getSummary(Checkout $checkout)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
         if (!array_key_exists($checkout->getId(), $this->summary)) {
             $order = new Order();
             $order->setShippingCost($checkout->getShippingCost());

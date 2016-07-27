@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -71,8 +71,13 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
      * @param Subtotal $totalPrice
      * @param Subtotal[] $subtotals
      */
-    public function testGetData(\SplObjectStorage $lineItems, array $expected, Subtotal $totalPrice, array $subtotals)
-    {
+    public function testGetSummary(
+        \SplObjectStorage $lineItems,
+        array $expected,
+        Subtotal $totalPrice,
+        array $subtotals
+    ) {
+        /** @var Checkout $checkout */
         $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
 
         $this->checkoutLineItemsManager->expects($this->once())
@@ -111,10 +116,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
             $lineItems->next();
         }
 
-        $context = new LayoutContext();
-        $context->data()->set('checkout', $checkout);
-
-        $result = $this->provider->getData($context);
+        $result = $this->provider->getSummary($checkout);
         $this->assertEquals($expected, $result);
     }
 

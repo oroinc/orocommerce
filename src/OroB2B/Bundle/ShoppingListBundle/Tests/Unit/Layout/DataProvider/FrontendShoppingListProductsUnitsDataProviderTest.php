@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -63,25 +62,12 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: entity.
-     */
-    public function testGetDataWithEmptyContext()
-    {
-        $context = new LayoutContext();
-        $this->provider->getData($context);
-    }
-
-    /**
      * @dataProvider getDataDataProvider
      * @param ShoppingList|null $shoppingList
      * @param array|null $expected
      */
     public function testGetData($shoppingList, $expected)
     {
-        $context = new LayoutContext();
-        $context->data()->set('entity', $shoppingList);
-
         if ($shoppingList) {
             $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
                 ->disableOriginalConstructor()
@@ -102,7 +88,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
                 ->willReturn($em);
         }
 
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getProductsUnits($shoppingList);
 
         $this->assertEquals($expected, $actual);
     }

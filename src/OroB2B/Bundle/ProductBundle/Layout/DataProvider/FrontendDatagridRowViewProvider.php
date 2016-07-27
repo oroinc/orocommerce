@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
 class FrontendDatagridRowViewProvider
@@ -25,9 +22,9 @@ class FrontendDatagridRowViewProvider
     }
 
     /**
-     * {@inheritDoc}
+     * @return null|string
      */
-    public function getData(ContextInterface $context)
+    public function getDataGridTheme()
     {
         return $this->themeHelper->getTheme(static::FRONTEND_DATAGRID_NAME);
     }

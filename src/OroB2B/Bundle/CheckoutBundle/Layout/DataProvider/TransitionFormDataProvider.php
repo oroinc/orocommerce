@@ -2,101 +2,62 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
-class TransitionFormDataProvider
+class TransitionFormDataProvider extends AbstractFormDataProvider
 {
     /**
-     * @var FormFactoryInterface
+     * @var TransitionDataProvider
      */
-    protected $formFactory;
+    protected $transitionDataProvider;
 
     /**
      * @var object
      */
-    protected $continueTransitionDataProvider;
-
-    /**
-     * @var FormInterface[]
-     */
-    protected $forms = [];
-
-    /**
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(FormFactoryInterface $formFactory)
+    public function setTransitionDataProvider($transitionDataProvider)
     {
-        $this->formFactory = $formFactory;
+        $this->transitionDataProvider = $transitionDataProvider;
     }
 
     /**
-     * @param object $continueTransitionDataProvider
+     * @param Checkout $checkout
+     * @return null|FormView
      */
-    public function setContinueTransitionDataProvider($continueTransitionDataProvider)
+    public function getTransitionForm(Checkout $checkout)
     {
-        $this->continueTransitionDataProvider = $continueTransitionDataProvider;
-    }
+        /** @var TransitionData $continueTransitionData */
+        $transitionData = $this->transitionDataProvider->getContinueTransition($checkout);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
-    {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
+        if (!$transitionData || !$transitionData->getTransition()->hasForm()) {
+            return null;
+        }
 
         $workflowItem = $checkout->getWorkflowItem();
-        /** @var TransitionData $continueTransitionData */
-        $transitionData = $this->continueTransitionDataProvider->getData($context);
+        $transition = $transitionData->getTransition();
 
-        if ($transitionData) {
-            $form = $this->getForm($transitionData, $workflowItem);
-            if ($form) {
-                return $form->createView();
-            }
-        }
+        // in this context parameters used for generating local cache
+        $parameters = [$transition->getName(), $workflowItem->getId()];
 
-        return null;
-    }
+        $formAccessor = $this->getFormAccessor(
+            $transition->getFormType(),
+            null,
+            $workflowItem->getData(),
+            $parameters,
+            array_merge(
+                $transition->getFormOptions(),
+                [
+                    'workflow_item' => $workflowItem,
+                    'transition_name' => $transition->getName(),
+                    'disabled' => !$transitionData->isAllowed()
+                ]
+            )
+        );
 
-    /**
-     * @param TransitionData $transitionData
-     * @param WorkflowItem $workflowItem
-     * @return FormInterface
-     */
-    public function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
-    {
-        $key = $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
-        if ($transitionData->getTransition()->hasForm()) {
-            if (!array_key_exists($key, $this->forms)) {
-                $transition = $transitionData->getTransition();
-
-                $this->forms[$key] = $this->formFactory->create(
-                    $transition->getFormType(),
-                    $workflowItem->getData(),
-                    array_merge(
-                        $transition->getFormOptions(),
-                        [
-                            'workflow_item' => $workflowItem,
-                            'transition_name' => $transition->getName(),
-                            'disabled' => !$transitionData->isAllowed()
-                        ]
-                    )
-                );
-            }
-        } else {
-            $this->forms[$key] = null;
-        }
-
-        return $this->forms[$key];
+        return $formAccessor->getForm()->createView();
     }
 }

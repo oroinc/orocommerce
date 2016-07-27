@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -56,15 +55,12 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
      * @param array $lineItems
      * @param array|null $expected
      */
-    public function testGetData(
+    public function testGetProductUnitsQuantity(
         $product,
         $shoppingList,
         array $lineItems = [],
         array $expected = null
     ) {
-        $context = new LayoutContext();
-        $context->data()->set('product', $product);
-
         $this->shoppingListManager->expects($product ? $this->once() : $this->never())
             ->method('getCurrent')
             ->willReturn($shoppingList);
@@ -74,7 +70,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
             ->with($shoppingList, $product)
             ->willReturn($lineItems);
 
-        $this->assertEquals($expected, $this->provider->getData($context));
+        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
     }
 
     /**
@@ -123,14 +119,5 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 'quantity' => $quantity
             ]
         );
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: product.
-     */
-    public function testGetDataWithEmptyContext()
-    {
-        $this->provider->getData(new LayoutContext());
     }
 }

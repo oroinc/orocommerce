@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -13,11 +12,6 @@ use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingList
  */
 class AccountUserShoppingListsProviderTest extends WebTestCase
 {
-    /**
-     * @var LayoutContext
-     */
-    protected $context;
-
     /**
      * @var AccountUserShoppingListsProvider
      */
@@ -35,16 +29,15 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
             ]
         );
 
-        $this->context = new LayoutContext();
         $this->dataProvider = $this->getContainer()
             ->get('orob2b_shopping_list.layout.data_provider.account_user_shopping_lists');
     }
 
-    public function testGetData()
+    public function testGetShoppingLists()
     {
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
 
-        $actual = $this->dataProvider->getData($this->context);
+        $actual = $this->dataProvider->getShoppingLists();
 
         $this->assertInternalType('array', $actual);
 

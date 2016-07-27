@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
+use Doctrine\Common\Collections\Collection;
+
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
@@ -24,12 +26,13 @@ class CheckoutStepsDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param Checkout $checkout
+     *
+     * @return Collection|Step[]
+     * @throws WorkflowException
      */
-    public function getData(ContextInterface $context)
+    public function getSteps(Checkout $checkout)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
         $workflowItem = $checkout->getWorkflowItem();
 
         $workflow = $this->workflowManager->getWorkflow($workflowItem);

@@ -6,10 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Collections\Criteria;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -21,9 +18,9 @@ class AccountUserShoppingListsProvider
     const DATA_SORT_BY_UPDATED = 'updated';
 
     /**
-     * @var FormAccessor
+     * @var array
      */
-    protected $data;
+    protected $options = [];
 
     /**
      * @var DoctrineHelper
@@ -77,35 +74,26 @@ class AccountUserShoppingListsProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function getData(ContextInterface $context)
+    public function getShoppingLists()
     {
-        if (!$this->data) {
-            $this->data = $this->getAccountUserShoppingLists();
+        if (!array_key_exists('shoppingLists', $this->options)) {
+            $accountUser = $this->securityFacade->getLoggedUser();
+            $shoppingLists = [];
+            if ($accountUser) {
+                /** @var ShoppingListRepository $shoppingListRepository */
+                $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
+
+                /** @var ShoppingList[] $shoppingLists */
+                $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
+                $this->totalManager->setSubtotals($shoppingLists, false);
+            }
+
+            $this->options['shoppingLists'] = $shoppingLists;
         }
 
-        return $this->data;
-    }
-
-    /**
-     * @return array|null
-     * @throws \InvalidArgumentException
-     */
-    protected function getAccountUserShoppingLists()
-    {
-        $accountUser = $this->securityFacade->getLoggedUser();
-        $shoppingLists = [];
-        if ($accountUser) {
-            /** @var ShoppingListRepository $shoppingListRepository */
-            $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
-
-            /** @var ShoppingList[] $shoppingLists */
-            $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-            $this->totalManager->setSubtotals($shoppingLists, false);
-        }
-
-        return ['shoppingLists' => $shoppingLists];
+        return $this->options['shoppingLists'];
     }
 
     /**

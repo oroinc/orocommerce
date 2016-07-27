@@ -2,12 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider
@@ -33,11 +29,11 @@ class FrontendShoppingListProductUnitsQuantityDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param Product $product
+     * @return array
      */
-    public function getData(ContextInterface $context)
+    public function getProductUnitsQuantity(Product $product = null)
     {
-        $product = $context->data()->get('product');
         if (!$product) {
             return null;
         }
@@ -46,17 +42,7 @@ class FrontendShoppingListProductUnitsQuantityDataProvider
         if (!$shoppingList) {
             return null;
         }
-
-        return $this->getProductUnitsQuantity($shoppingList, $product);
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return array
-     */
-    protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
-    {
+        
         $items = $this->lineItemRepository->getItemsByShoppingListAndProduct($shoppingList, $product);
         $units = [];
 

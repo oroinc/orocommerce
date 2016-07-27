@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
@@ -10,9 +9,9 @@ use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvi
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsAllPricesProvider;
+use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsDataProvider;
 
-class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -22,7 +21,7 @@ class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framewo
     protected $frontendProductPricesDataProvider;
 
     /**
-     * @var  FrontendShoppingListProductsAllPricesProvider
+     * @var  FrontendShoppingListProductsDataProvider
      */
     protected $provider;
 
@@ -50,30 +49,18 @@ class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framewo
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
             ->disableOriginalConstructor()->getMock();
 
-        $this->provider = new FrontendShoppingListProductsAllPricesProvider(
+        $this->provider = new FrontendShoppingListProductsDataProvider(
             $this->frontendProductPricesDataProvider,
             $this->shoppingListLineItemsDataProvider,
             $this->productPriceFormatter
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: entity.
-     */
-    public function testGetDataWithEmptyContext()
-    {
-        $context = new LayoutContext();
-        $this->provider->getData($context);
-    }
-
-    public function testGetData()
+    public function testGetAllPrices()
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
 
-        $context = new LayoutContext();
-        $context->data()->set('entity', $shoppingList);
         /** @var LineItem[] $lineItems */
         $lineItems = [
             $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
@@ -97,14 +84,12 @@ class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framewo
             ->with($prices)
             ->willReturn($expected);
 
-        $result = $this->provider->getData($context);
+        $result = $this->provider->getAllPrices($shoppingList);
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetDataWithoutShoppingList()
+    public function testGetAllPricesWithoutShoppingList()
     {
-        $context = new LayoutContext();
-        $context->data()->set('entity', null, null);
         $this->shoppingListLineItemsDataProvider->expects($this->never())
             ->method('getShoppingListLineItems');
         $this->frontendProductPricesDataProvider->expects($this->never())
@@ -112,6 +97,48 @@ class FrontendShoppingListProductsAllPricesProviderTest extends \PHPUnit_Framewo
         $this->productPriceFormatter->expects($this->never())
             ->method('formatProducts');
 
-        $this->provider->getData($context);
+        $this->provider->getAllPrices();
+    }
+
+    /**
+     * @dataProvider matchedPriceDataProvider
+     * @param ShoppingList|null $shoppingList
+     */
+    public function testGetMatchedPrice($shoppingList)
+    {
+        $expected = null;
+
+        if ($shoppingList) {
+            $lineItems = [];
+
+            $this->shoppingListLineItemsDataProvider->expects($this->once())
+                ->method('getShoppingListLineItems')
+                ->willReturn($lineItems);
+
+            $expected = 'expectedData';
+            $this->frontendProductPricesDataProvider
+                ->expects($this->once())
+                ->method('getProductsMatchedPrice')
+                ->with($lineItems)
+                ->willReturn($expected);
+        }
+
+        $result = $this->provider->getMatchedPrice($shoppingList);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function matchedPriceDataProvider()
+    {
+        return [
+            'with shoppingList' => [
+                'entity' => new ShoppingList(),
+            ],
+            'without shoppingList' => [
+                'entity' => null,
+            ],
+        ];
     }
 }

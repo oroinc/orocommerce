@@ -2,14 +2,12 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class FrontendShoppingListProductsAllPricesProvider
+class FrontendShoppingListProductsDataProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
@@ -42,16 +40,35 @@ class FrontendShoppingListProductsAllPricesProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param ShoppingList|null $shoppingList
+     *
+     * @return array|null
      */
-    public function getData(ContextInterface $context)
+    public function getAllPrices(ShoppingList $shoppingList = null)
     {
-        $shoppingList = $context->data()->get('entity');
         if (!$shoppingList) {
             return null;
         }
+
         $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
         $productPrices = $this->productPriceProvider->getProductsAllPrices($lineItems);
+
         return $this->productPriceFormatter->formatProducts($productPrices);
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     *
+     * @return array|null
+     */
+    public function getMatchedPrice(ShoppingList $shoppingList = null)
+    {
+        if (!$shoppingList) {
+            return null;
+        }
+        
+        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+        
+        return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
 }

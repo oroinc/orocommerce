@@ -120,22 +120,14 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_account_user_shopping_lists }
 
-    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_matched_price:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsMatchedPriceProvider'
-        arguments:
-            - '@orob2b_shopping_list.data_provider.frontend_product_prices'
-            - '@orob2b_shopping_list.data_provider.shopping_list_line_items'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products_matched_price }
-
-    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_all_prices:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsAllPricesProvider'
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsDataProvider'
         arguments:
             - '@orob2b_shopping_list.data_provider.frontend_product_prices'
             - '@orob2b_shopping_list.data_provider.shopping_list_line_items'
             - '@orob2b_pricing.formatter.product_price_formatter'
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products_all_prices }
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products }
 
     orob2b_shopping_list.data_provider.frontend_product_prices:
         class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'

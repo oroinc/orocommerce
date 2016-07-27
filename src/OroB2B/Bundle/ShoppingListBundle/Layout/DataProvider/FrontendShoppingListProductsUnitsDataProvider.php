@@ -4,9 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -45,25 +42,15 @@ class FrontendShoppingListProductsUnitsDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param ShoppingList $shoppingList
+     * @return array|null
      */
-    public function getData(ContextInterface $context)
+    public function getProductsUnits(ShoppingList $shoppingList = null)
     {
-        $shoppingList = $context->data()->get('entity');
-
         if (!$shoppingList) {
             return null;
         }
 
-        return $this->getProductsUnits($shoppingList);
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @return array|null
-     */
-    protected function getProductsUnits(ShoppingList $shoppingList)
-    {
         $products = $shoppingList->getLineItems()->map(
             function (LineItem $lineItem) {
                 return $lineItem->getProduct();

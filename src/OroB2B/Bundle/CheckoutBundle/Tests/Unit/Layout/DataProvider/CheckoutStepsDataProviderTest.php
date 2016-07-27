@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
@@ -39,7 +38,7 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @param bool $displayOrdered
      * @param array $expected
      */
-    public function testGetData(Checkout $checkout, $displayOrdered, array $expected)
+    public function testGetSteps(Checkout $checkout, $displayOrdered, array $expected)
     {
         $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
             ->disableOriginalConstructor()
@@ -83,10 +82,7 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($workflowItem)
             ->willReturn($workflow);
 
-        $context = new LayoutContext();
-        $context->data()->set('checkout', $checkout);
-
-        $result = $this->provider->getData($context);
+        $result = $this->provider->getSteps($checkout);
         $this->assertEquals($expected, $result);
     }
 

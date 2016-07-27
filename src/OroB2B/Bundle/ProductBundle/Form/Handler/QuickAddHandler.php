@@ -18,29 +18,17 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormDataProvider;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
 {
     /**
-     * @var QuickAddFormProvider
+     * @var ProductFormDataProvider
      */
-    protected $quickAddFormProvider;
-
-    /**
-     * @var QuickAddImportFormProvider
-     */
-    protected $quickAddImportFormProvider;
-
-    /**
-     * @var QuickAddCopyPasteFormProvider
-     */
-    protected $quickAddCopyPasteFormProvider;
+    protected $productFormDataProvider;
 
     /**
      * @var QuickAddRowCollectionBuilder
@@ -61,26 +49,20 @@ class QuickAddHandler
     protected $translator;
 
     /**
-     * @param QuickAddFormProvider $quickAddFormProvider
-     * @param QuickAddImportFormProvider $quickAddImportFormProvider
-     * @param QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider
+     * @param ProductFormDataProvider $productFormDataProvider
      * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
      * @param ComponentProcessorRegistry $componentRegistry
      * @param UrlGeneratorInterface $router
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        QuickAddFormProvider $quickAddFormProvider,
-        QuickAddImportFormProvider $quickAddImportFormProvider,
-        QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider,
+        ProductFormDataProvider $productFormDataProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         ComponentProcessorRegistry $componentRegistry,
         UrlGeneratorInterface $router,
         TranslatorInterface $translator
     ) {
-        $this->quickAddFormProvider = $quickAddFormProvider;
-        $this->quickAddImportFormProvider = $quickAddImportFormProvider;
-        $this->quickAddCopyPasteFormProvider = $quickAddCopyPasteFormProvider;
+        $this->productFormDataProvider = $productFormDataProvider;
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->componentRegistry = $componentRegistry;
         $this->router = $router;
@@ -108,7 +90,7 @@ class QuickAddHandler
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->quickAddFormProvider->getForm([], $options);
+        $form = $this->productFormDataProvider->getBaseQuickAddForm([], $options)->getForm();
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -156,14 +138,14 @@ class QuickAddHandler
      */
     public function processImport(Request $request)
     {
-        $form = $this->quickAddImportFormProvider->getForm()->handleRequest($request);
+        $form = $this->productFormDataProvider->getQuickAddImportForm()->getForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                $this->quickAddFormProvider->getForm($collection->getFormData());
+                $this->productFormDataProvider->getBaseQuickAddForm($collection->getFormData())->getForm();
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
@@ -184,13 +166,13 @@ class QuickAddHandler
      */
     public function processCopyPaste(Request $request)
     {
-        $form = $this->quickAddCopyPasteFormProvider->getForm()->handleRequest($request);
+        $form = $this->productFormDataProvider->getQuickAddCopyPasteForm()->getForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
-            $this->quickAddFormProvider->getForm($collection->getFormData());
+            $this->productFormDataProvider->getBaseQuickAddForm($collection->getFormData())->getForm();
         }
 
         return $collection;
