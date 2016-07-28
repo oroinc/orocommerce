@@ -30,6 +30,11 @@ class CheckoutEntityEvent extends Event
     protected $type;
 
     /**
+     * @var string
+     */
+    protected $workflowName;
+
+    /**
      * @return CheckoutInterface
      */
     public function getCheckoutEntity()
@@ -94,6 +99,24 @@ class CheckoutEntityEvent extends Event
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkflowName()
+    {
+        return $this->workflowName;
+    }
+
+    /**
+     * @param string $workflowName
+     * @return $this
+     */
+    public function setWorkflowName($workflowName)
+    {
+        $this->workflowName = $workflowName;
         return $this;
     }
 }

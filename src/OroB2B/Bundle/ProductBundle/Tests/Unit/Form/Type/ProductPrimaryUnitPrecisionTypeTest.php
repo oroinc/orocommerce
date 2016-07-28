@@ -138,7 +138,8 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [],
-                'expectedData'  => new ProductUnitPrecision()
+                'expectedData'  => (new ProductUnitPrecision())
+                    ->setSell(false)
             ],
             'unit precision without value' => [
                 'defaultData'   => new ProductUnitPrecision(),
@@ -146,7 +147,8 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
                     'unit' => [],
                 ],
                 'submittedData' => [],
-                'expectedData'  => new ProductUnitPrecision()
+                'expectedData'  => (new ProductUnitPrecision())
+                    ->setSell(false)
             ],
             'unit precision with value' => [
                 'defaultData'   => new ProductUnitPrecision(),
@@ -156,10 +158,12 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'unit' => 'kg',
                     'precision' => 5,
+                    'sell' => true
                 ],
                 'expectedData'  => (new ProductUnitPrecision())
                     ->setUnit((new ProductUnit())->setCode('kg'))
                     ->setPrecision(5)
+                    ->setSell(true)
             ]
         ];
     }

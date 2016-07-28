@@ -5,12 +5,14 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_4;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -94,7 +96,7 @@ class OroB2BProductBundle implements
             'oro_fallback_localization_val',
             ['localized_value_id']
         );
-        $this->updateOroB2BProductUnitPrecisionTable($schema);
+        $this->updateOroB2BProductUnitPrecisionTable($schema, $queries);
         $this->updateOroB2BProductTable($schema);
         $this->addOroB2BProductForeignKeys($schema);
         
@@ -132,12 +134,27 @@ class OroB2BProductBundle implements
      * Update orob2b_product_unit_precision table
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function updateOroB2BProductUnitPrecisionTable(Schema $schema)
+    protected function updateOroB2BProductUnitPrecisionTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
         $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
         $table->addColumn('sell', 'boolean', ['notnull' => false]);
+
+        $queries->addQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE orob2b_product_unit_precision SET conversion_rate = :conversion_rate, sell = :sell',
+                [
+                    'conversion_rate' => 1.0,
+                    'sell' => true,
+                ],
+                [
+                    'conversion_rate' => Type::FLOAT,
+                    'sell' => Type::BOOLEAN
+                ]
+            )
+        );
     }
 
     /**
@@ -289,6 +306,6 @@ class OroB2BProductBundle implements
             $selects[] = sprintf('SELECT \'%s\' as type', $imageType->getName());
         }
 
-        return join(' UNION ', $selects);
+        return implode(' UNION ', $selects);
     }
 }
