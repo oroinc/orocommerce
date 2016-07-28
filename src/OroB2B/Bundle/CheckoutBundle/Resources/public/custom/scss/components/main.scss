@@ -1,3 +1,19 @@
 .checkout-container {
   padding-left: 235px;
 }
+
+.checkout-sidebar {
+  &--inner-invader {
+    float: left;
+    width: 220px;
+
+    @media (max-width: $screen-md) {
+      display: none;
+    }
+
+    .checkout-navigation {
+      margin: 0;
+    }
+  }
+}
+

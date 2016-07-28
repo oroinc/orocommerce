@@ -7,5 +7,4 @@ data:
         styles:
             inputs:
                 - 'bundles/orob2bfrontend/custom/scss/styles.scss'
-            filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/custom/styles.css'
