@@ -85,21 +85,25 @@ abstract class AbstractRuleEntityListener
     /**
      * @param array $changeSet
      * @param Product $product
+     * @param int|null $relationId
      */
-    protected function recalculateByEntityFieldsUpdate(array $changeSet, Product $product = null)
+    protected function recalculateByEntityFieldsUpdate(array $changeSet, Product $product = null, $relationId = null)
     {
         $fields = $this->getEntityFields();
         $updatedFields = array_intersect($fields, array_keys($changeSet));
 
         if ($updatedFields) {
-            $lexemes = $this->findEntityLexemes($updatedFields);
+            $lexemes = $this->findEntityLexemes($updatedFields, $relationId);
             $this->addTriggersByLexemes($lexemes, $product);
         }
     }
 
-    protected function recalculateByEntity()
+    /**
+     * @param int|null $relationId
+     */
+    protected function recalculateByEntity($relationId = null)
     {
-        $lexemes = $this->findEntityLexemes();
+        $lexemes = $this->findEntityLexemes([], $relationId);
         $this->addTriggersByLexemes($lexemes);
     }
 

@@ -593,6 +593,15 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_product.entity.product.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_product.entity.product.class%', event: preUpdate }
 
+    orob2b_pricing.entity_listener.price_attribute_product_price:
+        class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceAttributeProductPriceEntityListener'
+        parent: orob2b_pricing.entity_listener.abstract_rule_listener
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_attribute_product_price.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_attribute_product_price.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_attribute_product_price.class%', event: preRemove }
+
     orob2b_pricing.entity_listener.price_list_product:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
         public: false
