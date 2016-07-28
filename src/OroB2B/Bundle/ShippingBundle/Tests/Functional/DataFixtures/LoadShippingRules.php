@@ -28,15 +28,15 @@ class LoadShippingRules extends AbstractFixture
             'configurations'       => [
                 [
                     'class'    => 'flatrateruleconfiguration',
-                    'type'     => 'UPS',
-                    'method'   => 'Ground',
+                    'method'   => 'UPS',
+                    'type'     => 'UPS Ground',
                     'value'    => 10,
                     'currency' => 'EUR',
                 ],
                 [
                     'class'    => 'flatrateruleconfiguration',
-                    'type'     => 'UPS',
-                    'method'   => 'Next Day Air',
+                    'method'   => 'UPS',
+                    'type'     => 'UPS Next Day Air',
                     'value'    => 20,
                     'currency' => 'EUR',
                 ]

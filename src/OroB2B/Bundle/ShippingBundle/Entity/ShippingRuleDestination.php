@@ -11,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table("orob2b_shipping_destination")
+ * @ORM\Table("orob2b_shipping_rl_destination")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",
@@ -113,7 +113,7 @@ class ShippingRuleDestination
      * Set id
      *
      * @param int $id
-     * @return ShippingRuleDestination
+     * @return $this
      */
     public function setId($id)
     {
@@ -126,7 +126,7 @@ class ShippingRuleDestination
      * Set region
      *
      * @param Region $region
-     * @return ShippingRuleDestination
+     * @return $this
      */
     public function setRegion($region)
     {
@@ -169,7 +169,7 @@ class ShippingRuleDestination
      * Set postal_code
      *
      * @param string $postalCode
-     * @return ShippingRuleDestination
+     * @return $this
      */
     public function setPostalCode($postalCode)
     {
@@ -192,7 +192,7 @@ class ShippingRuleDestination
      * Set country
      *
      * @param Country $country
-     * @return ShippingRuleDestination
+     * @return $this
      */
     public function setCountry($country)
     {
@@ -245,7 +245,7 @@ class ShippingRuleDestination
      * Set shippingRule
      *
      * @param ShippingRule $shippingRule
-     * @return ShippingRuleDestination
+     * @return $this
      */
     public function setShippingRule($shippingRule)
     {
@@ -272,8 +272,6 @@ class ShippingRuleDestination
     public function __toString()
     {
         $countryPostalStr = implode(' ', array_filter([$this->getCountry(), $this->getPostalCode()]));
-        $str = implode(', ', array_filter([$this->getRegionName(), $countryPostalStr]));
-
-        return $str;
+        return implode(', ', array_filter([$this->getRegionName(), $countryPostalStr]));
     }
 }

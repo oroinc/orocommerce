@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroB2BShippingBundle implements Migration
 {
     const ORO_B2B_SHIPPING_RULE_TABLE_NAME = 'orob2b_shipping_rule';
-    const ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME = 'orob2b_shipping_destination';
+    const ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME = 'orob2b_shipping_rl_destination';
     /**
      * {@inheritdoc}
      */
@@ -48,7 +48,7 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_shipping_destination table
+     * Create orob2b_shipping_rl_destination table
      *
      * @param Schema $schema
      */
@@ -64,7 +64,7 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_shipping_destination foreign keys.
+     * Add orob2b_shipping_rl_destination foreign keys.
      *
      * @param Schema $schema
      */

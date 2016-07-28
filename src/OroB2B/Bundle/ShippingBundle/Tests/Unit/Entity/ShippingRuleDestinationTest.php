@@ -29,7 +29,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
      * @var ShippingRuleDestination
      */
     protected $shippingRuleDestination;
-    
+
     public function setUp()
     {
         $this->country = $this->createMockCountry();
@@ -92,9 +92,57 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $this->shippingRuleDestination->getCountryIso3());
     }
 
-    public function testToString()
+    /**
+     * @dataProvider toStringDataProvider
+     *
+     * @param array $data
+     * @param string $expectedString
+     */
+    public function testToString(array $data, $expectedString)
     {
-        $this->assertEquals('RegionName, CountryName 12345', (string)$this->shippingRuleDestination);
+        $entity = (string)$this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination', $data);
+        $this->assertEquals($expectedString, $entity);
+    }
+
+    /**
+     * @return array
+     */
+    public function toStringDataProvider()
+    {
+        return [
+            'all' => [
+                'data' => [
+                    'country' => $this->createMockCountry(),
+                    'region' => $this->createMockRegion(),
+                    'postalCode' => '12345',
+                ],
+                'expectedString' => 'RegionName, CountryName 12345'
+            ],
+            'country and postal code' => [
+                'data' => [
+                    'country' => $this->createMockCountry(),
+                    'region' => null,
+                    'postalCode' => '12345, 54321',
+                ],
+                'expectedString' => 'CountryName 12345, 54321'
+            ],
+            'country and region' => [
+                'data' => [
+                    'country' => $this->createMockCountry('SecondCountryName'),
+                    'region' => $this->createMockRegion('SecondRegionName'),
+                    'postalCode' => null,
+                ],
+                'expectedString' => 'SecondRegionName, SecondCountryName'
+            ],
+            'only country' => [
+                'data' => [
+                    'country' => $this->createMockCountry(),
+                    'region' => null,
+                    'postalCode' => null,
+                ],
+                'expectedString' => 'CountryName'
+            ]
+        ];
     }
 
     /**
@@ -131,7 +179,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {
-        $result = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', array(), array('combinedCode'));
+        $result = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
         $result->expects($this->any())
             ->method('__toString')
             ->will($this->returnValue($name));
