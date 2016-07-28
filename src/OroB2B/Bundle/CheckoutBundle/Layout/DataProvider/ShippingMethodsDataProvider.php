@@ -5,8 +5,12 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
@@ -48,21 +52,16 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     public function getData(ContextInterface $context)
     {
         if (null === $this->data) {
+            /** @var BaseCheckout $entity */
             $entity = $this->getEntity($context);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($entity);
-            foreach ($rules as $rule) {
-                $config = $rule->getConfigurations();
-                $dest = $rule->getShippingDestinations();
-            }
-            $methods = $this->registry->getShippingMethods();
-            foreach ($methods as $name => $view) {
-
-                $this->data[$name] = [
-                    'label' => $view->getLabel(),
-                    'block' => $view->getBlock(),
-                    'options' => $view->getOptions([]),
-                ];
-            }
+            $context = [
+                'checkout' => $entity,
+                'line_items' => $entity->getSourceEntity()->getLineItems(),
+            ];
+            $shippingContext = new ShippingContextProvider($context);
+            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
+            $methods = $this->getApplicableShippingMethods($entity, $rules);
+            $this->data = $methods;
         }
 
         return $this->data;
@@ -91,7 +90,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
      * @param array $applRules
      * @return array
      */
-    public function getApplicableShippingMethods(array $applRules)
+    public function getApplicableShippingMethods($context, array $applRules)
     {
         $shippingMethods = [];
         foreach ($applRules as $priority => $rule) {
@@ -100,24 +99,28 @@ class ShippingMethodsDataProvider implements DataProviderInterface
             foreach ($configurations as $configuration) {
                 $methodName = $configuration->getMethod();
                 $typeName = $configuration->getType();
-                if (!array_search($methodName, array_column($shippingMethods, 'name'))) {
+                /** @var ShippingMethodInterface $method */
+                $method = $this->registry
+                    ->getShippingMethod($methodName);
+                if (!is_int(array_search($methodName, array_column($shippingMethods, 'name')))) {
                     $shippingMethods[$methodName] = [
                         'name' => $methodName,
-                        'label' => $this->formatMethodLabel($methodName),
+                        'label' => $method->getLabel(),
                         'types' => []
                     ];
-                    if (!array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name'))) {
-                        $method = $this->shippingMethodRegistry
-                            ->getShippingMethod($configuration->getMethod());
-                        $price = $method->calculatePrice($this->getEntity(), $configuration);
-                        $shippingMethods[$methodName]['types'][] = [
-                            'name' => $typeName,
-                            'label' => $this->formatTypeLabel($methodName, $typeName),
-                            'price' => $price,
-                        ];
-                    }
+                }
+                $col = array_column($shippingMethods[$methodName]['types'], 'name');
+                $tp = array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name'));
+                if (!is_int(array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name')))) {
+                    $price = $method->calculatePrice($context, $configuration);
+                    $shippingMethods[$methodName]['types'][] = [
+                        'name' => $typeName,
+                        'label' => $method->getShippingTypeLabel($typeName),
+                        'price' => $price,
+                    ];
                 }
             }
         }
+        return $shippingMethods;
     }
 }

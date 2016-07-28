@@ -5,12 +5,10 @@ namespace OroB2B\Bundle\ShippingBundle\Provider;
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingRulesProvider
@@ -50,11 +48,11 @@ class ShippingRulesProvider
      * @param ShippingContextAwareInterface|null $context
      * @return ShippingRule[]
      */
-    public function getApplicableShippingRules($context = null)
+    public function getApplicableShippingRules(ShippingContextAwareInterface $context = null)
     {
         /** @var ShippingRule[] $rules */
         $rules = $this->getShippingRules();
-        $shippingRuleCntx = $context/*->getShippingContext()*/;
+        $shippingRuleCntx = $context->getShippingContext();
         if ($shippingRuleCntx) {
             $applicableRules = [];
             foreach ($rules as $rule) {
@@ -82,19 +80,14 @@ class ShippingRulesProvider
     }
 
     /**
-     * @param object $context
+     * @param array $context
      * @param string $conditions
      * @return string
      */
     protected function evaluateConditions($context, $conditions)
     {
         $language = new ExpressionLanguage();
-        $result = ($language->evaluate(
-            $conditions,
-            array(
-                'context' => $context,
-            )
-        ));
+        $result = ($language->evaluate($conditions, $context));
         return $result;
     }
 }
