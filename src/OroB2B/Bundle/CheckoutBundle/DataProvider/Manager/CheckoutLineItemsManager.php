@@ -74,11 +74,15 @@ class CheckoutLineItemsManager
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
                         function (OrderLineItem $lineItem) use ($currency, $supportedStatuses) {
-                            $allowedProduct = false;
+                            $allowedProduct = true;
 
                             $product = $lineItem->getProduct();
-                            if ($product && $product->getInventoryStatus()) {
-                                $allowedProduct = !empty($supportedStatuses[$product->getInventoryStatus()->getId()]);
+                            if ($product) {
+                                $allowedProduct = false;
+                                if ($product->getInventoryStatus()) {
+                                    $statusId = $product->getInventoryStatus()->getId();
+                                    $allowedProduct = !empty($supportedStatuses[$statusId]);
+                                }
                             }
 
                             return $allowedProduct

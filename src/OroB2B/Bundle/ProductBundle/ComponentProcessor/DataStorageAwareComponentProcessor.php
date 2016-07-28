@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -47,25 +48,31 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     /** @var TranslatorInterface */
     protected $translator;
 
+    /** @var ContainerInterface */
+    protected $container;
+
     /**
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
      * @param SecurityFacade $securityFacade
      * @param Session $session
      * @param TranslatorInterface $translator
+     * @param ContainerInterface $container
      */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
         SecurityFacade $securityFacade,
         Session $session,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ContainerInterface $container = null
     ) {
         $this->router = $router;
         $this->storage = $storage;
         $this->securityFacade = $securityFacade;
         $this->session = $session;
         $this->translator = $translator;
+        $this->container = $container;
     }
 
     /**
@@ -158,6 +165,22 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
+        $isAllowedRFP = true;
+        if (!empty($this->container)) {
+            $isAllowedRFP = $this->container
+                ->get('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
+
+            if ($isAllowedRFP === false) {
+                $this->session->getFlashBag()->add(
+                    'warning',
+                    $this->translator->trans('orob2b.frontend.rfp.data_storage.no_products_be_added_to_rfq')
+                );
+
+                return false;
+            }
+        }
+
         $inputProductSkus = $this->getProductSkus($data);
         $data = $this->filterData($data);
         $filteredProductSkus = $this->getProductSkus($data);

@@ -13,3 +13,8 @@ $color-error: $theme-input-error;
 $color-warring: $theme-warning-color;
 $color-success: $theme-input-success;
 $color-focus: $base-link-color;
+
+// Breakpoint for iPhone 4s, iPhone 5s, iPhone 6s, iPhone 6s Plus
+$phone-width: 480px;
+// Breakpoint for iPad mini 4, iPad Air 2
+$tablet-width: 1024px;

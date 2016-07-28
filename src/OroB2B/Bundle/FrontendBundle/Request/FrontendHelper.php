@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Request;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class FrontendHelper
 {
@@ -13,18 +13,18 @@ class FrontendHelper
     protected $backendPrefix;
 
     /**
-     * @var RequestStack
+     * @var ContainerInterface
      */
-    protected $requestStack;
+    protected $container;
 
     /**
      * @param string $backendPrefix
-     * @param RequestStack $requestStack
+     * @param ContainerInterface $container
      */
-    public function __construct($backendPrefix, RequestStack $requestStack)
+    public function __construct($backendPrefix, ContainerInterface $container)
     {
         $this->backendPrefix = $backendPrefix;
-        $this->requestStack = $requestStack;
+        $this->container = $container;
     }
 
     /**
@@ -33,8 +33,8 @@ class FrontendHelper
      */
     public function isFrontendRequest(Request $request = null)
     {
-        $request = $request ?: $this->requestStack->getCurrentRequest();
-        if (!$request) {
+        $request = $request ?: $this->container->get('request_stack')->getCurrentRequest();
+        if (!$request || !$this->container->getParameter('installed')) {
             // no request means CLI i.e. not frontend
             return false;
         }

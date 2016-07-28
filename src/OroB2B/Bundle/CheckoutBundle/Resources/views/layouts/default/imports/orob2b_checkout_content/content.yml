@@ -21,18 +21,21 @@ layout:
                     options:
                         checkout: { '@value': $data.checkout }
                         form: { '@value': $data.orob2b_checkout_transition_form }
+                        workflowItem: { '@value': $data.workflowItem }
                 __checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
                         visible: { '@neq': [$context.workflowStepName, 'order_review'] }
                         summary: { '@value': $data.orob2b_checkout_summary }
                         checkout: { '@value': $data.checkout }
+                        workflowItem: { '@value': $data.workflowItem }
                 __checkout_order_summary_table:
                     blockType: checkout_order_summary_table
                     options:
                         checkout: { '@value': $data.checkout }
                         workflowStep: { '@value': $data.workflowStep }
                         summary: { '@value': $data.orob2b_checkout_summary }
+                        workflowItem: { '@value': $data.workflowItem }
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:
