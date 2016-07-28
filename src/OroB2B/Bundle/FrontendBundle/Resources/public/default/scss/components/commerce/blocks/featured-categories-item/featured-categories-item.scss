@@ -9,14 +9,13 @@
     &__image {
         display: block;
         max-width: 100%;
+        max-height: 260px;
 
         border: 1px solid $theme-lighter-gray-color;
     }
 
     &__desc {
         overflow: hidden;
-
-        padding-top: 8px;
 
         text-align: center;
     }
@@ -25,10 +24,15 @@
         font-size: 18px;
         font-weight: normal;
         line-height: normal;
+
+        padding-top: 8px;
     }
 
-    &__count {
-        line-height: normal;;
+    &__qty {
+        line-height: normal;
+
+        margin-bottom: -2px;
+        padding-top: 2px;
     }
 
     &:hover {
@@ -48,7 +52,7 @@
             font-size: $base-font-size;
         }
 
-        &__count {
+        &__qty {
             font-size: 10px;
         }
     }

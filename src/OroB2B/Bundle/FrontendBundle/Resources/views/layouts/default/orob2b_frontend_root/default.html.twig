@@ -75,8 +75,8 @@
             src="{{ Image.url(item.largeImage, 'product_large') }}"
             alt="{{ item.defaultTitle }}">
         <dl class="featured-categories-item__desc">
-            <dt class="featured-categories-item__name">{{ item.defaultTitle }}<</dt>
-            <dd class="featured-categories-item__count">{{ 'orob2b.frontend.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
+            <dt class="featured-categories-item__name">{{ item.defaultTitle }}</dt>
+            <dd class="featured-categories-item__qty">{{ 'orob2b.frontend.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
         </dl>
     </a>
 {% endblock %}
