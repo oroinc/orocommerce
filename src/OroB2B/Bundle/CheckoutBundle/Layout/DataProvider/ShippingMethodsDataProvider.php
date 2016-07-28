@@ -5,9 +5,12 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
@@ -49,8 +52,14 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     public function getData(ContextInterface $context)
     {
         if (null === $this->data) {
+            /** @var BaseCheckout $entity */
             $entity = $this->getEntity($context);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($entity);
+            $context = [
+                'checkout' => $entity,
+                'line_items' => $entity->getSourceEntity()->getLineItems(),
+            ];
+            $shippingContext = new ShippingContextProvider($context);
+            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
             $methods = $this->getApplicableShippingMethods($entity, $rules);
             $this->data = $methods;
         }

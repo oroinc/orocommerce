@@ -25,10 +25,6 @@ workflows:
                 property_path: checkout.customerNotes
             payment_method:
                 property_path: checkout.paymentMethod
-            shipping_method:
-                property_path: checkout.shippingMethod
-                type: string
-                label: Shipping Label
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -176,10 +172,6 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
-                form_options:
-                    attribute_fields:
-                        shipping_method: ~
 
             continue_to_order_review:
                 label: Continue
