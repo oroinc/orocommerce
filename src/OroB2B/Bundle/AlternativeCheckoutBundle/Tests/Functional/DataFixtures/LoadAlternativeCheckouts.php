@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
@@ -21,7 +20,7 @@ class LoadAlternativeCheckouts extends AbstractLoadCheckouts
         return [
             self::CHECKOUT_1 => [
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => PayflowGateway::TYPE]
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
