@@ -25,7 +25,13 @@
                 {% for child in block if child.vars.visible %}
                     {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
 
-                    <li class="account-menu__item {% if currentUrl in requestUrl and not found %}account-menu__item--current{% endif %}">{{ block_widget(child) }}</li>
+                    <li class="account-menu__item {% if currentUrl in requestUrl and not found %}account-menu__item--current{% endif %}">
+                        {{ block_widget(child, {
+                            attr: layout_attr_defaults(child.vars.attr, {
+                                '~class': ' account-menu__link'
+                            })
+                        }) }}
+                    </li>
 
                     {% if currentUrl in requestUrl and not found %}
                         {% set found = true %}

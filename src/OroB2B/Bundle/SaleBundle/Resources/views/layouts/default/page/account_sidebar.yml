@@ -7,7 +7,5 @@ layout:
             options:
                 route_name: orob2b_sale_quote_frontend_index
                 text: orob2b.frontend.sale.quote.entity_plural_label
-                attr:
-                    class: account-menu__link
     conditions:
         '@acl': orob2b_sale_quote_frontend_index

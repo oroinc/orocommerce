@@ -7,7 +7,5 @@ layout:
             options:
                 route_name: orob2b_rfp_frontend_request_index
                 text: orob2b.frontend.rfp.request.entity_plural_label
-                attr:
-                    class: account-menu__link
     conditions:
         '@acl': orob2b_rfp_frontend_request_view
