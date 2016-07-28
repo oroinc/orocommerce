@@ -11,11 +11,20 @@ class Category extends BaseCategory
     use LocalizedEntityTrait;
 
     /**
+     * @var array
+     */
+    protected $localizedFields = [
+        'title' => 'titles',
+        'shortDescription' => 'shortDescriptions',
+        'longDescription' => 'longDescriptions',
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function __call($name, $arguments)
     {
-        return $this->localizedMethodCall(['title' => 'titles'], $name, $arguments);
+        return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
     /**
@@ -23,7 +32,7 @@ class Category extends BaseCategory
      */
     public function __get($name)
     {
-        return $this->localizedFieldGet(['title' => 'titles'], $name);
+        return $this->localizedFieldGet($this->localizedFields, $name);
     }
 
     /**
@@ -31,6 +40,6 @@ class Category extends BaseCategory
      */
     public function __set($name, $value)
     {
-        return $this->localizedFieldSet(['title' => 'titles'], $name, $value);
+        return $this->localizedFieldSet($this->localizedFields, $name, $value);
     }
 }

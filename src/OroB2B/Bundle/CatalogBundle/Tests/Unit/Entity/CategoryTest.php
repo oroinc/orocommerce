@@ -6,8 +6,8 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -240,60 +240,6 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->addLongDescription($localizedLongDescription);
 
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription());
-    }
-
-    /**
-     * @param array $titles
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default title
-     */
-    public function testGetDefaultTitleException(array $titles)
-    {
-        $category = $this->category;
-
-        foreach ($titles as $title) {
-            $category->addTitle($title);
-        }
-
-        $category->getDefaultTitle();
-    }
-
-    /**
-     * @param array $shortDescriptions
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default short description
-     */
-    public function testGetDefaultShortDescriptionException(array $shortDescriptions)
-    {
-        $category = $this->category;
-
-        foreach ($shortDescriptions as $shortDescription) {
-            $category->addShortDescription($shortDescription);
-        }
-
-        $category->getDefaultShortDescription();
-    }
-
-    /**
-     * @param array $longDescriptions
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default long description
-     */
-    public function testGetDefaultLongDescriptionException(array $longDescriptions)
-    {
-        $category = $this->category;
-
-        foreach ($longDescriptions as $longDescription) {
-            $category->addShortDescription($longDescription);
-        }
-
-        $category->getDefaultLongDescription();
     }
 
     /**

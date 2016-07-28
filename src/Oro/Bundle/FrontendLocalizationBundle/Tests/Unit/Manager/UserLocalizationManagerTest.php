@@ -258,7 +258,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Localization $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
-        /** @var Website **/
+        /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $user = $this->getMockBuilder(AccountUser::class)
             ->disableOriginalConstructor()
