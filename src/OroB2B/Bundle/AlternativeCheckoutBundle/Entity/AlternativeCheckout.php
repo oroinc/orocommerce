@@ -31,7 +31,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *              "group_name"="commerce"
  *          },
  *          "workflow"={
- *              "active_workflow"="b2b_flow_alternative_checkout"
+ *              "active_workflows"={"b2b_flow_alternative_checkout"}
  *          }
  *      }
  * )

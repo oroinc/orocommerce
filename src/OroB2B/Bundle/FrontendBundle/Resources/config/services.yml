@@ -71,7 +71,7 @@ services:
         class: 'OroB2B\Bundle\FrontendBundle\Request\FrontendHelper'
         arguments:
             - '%web_backend_prefix%'
-            - '@request_stack'
+            - '@service_container'
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
@@ -84,13 +84,13 @@ services:
 
     orob2b_frontend.form.type.install_configuration.web:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
-        public: false
+        public: true
         tags:
             - { name: form.type, alias: orob2b_frontend_install_configuration_web }
 
     orob2b_frontend.form.type.extension.configuration.web:
         class: 'OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'
-        public: false
+        public: true
         tags:
             - { name: form.type_extension, alias: oro_installer_configuration }
 

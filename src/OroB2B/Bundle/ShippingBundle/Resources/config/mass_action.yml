@@ -1,0 +1,25 @@
+services:
+    orob2b_shipping.mass_action.status.enable:
+        class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction
+        arguments:
+            - '@oro_entity_merge.metadata.registry'
+            - '@translator'
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: shippingruleenable }
+
+    orob2b_shipping.mass_action.status.disable:
+        class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction
+        arguments:
+            - '@oro_entity_merge.metadata.registry'
+            - '@translator'
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: shippingruledisable }
+
+    orob2b_shipping.mass_action.status_handler:
+        class: OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\StatusMassActionHandler
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@translator'
+            - '@oro_security.security_facade.link'

@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroB2BShippingBundle implements Migration
 {
     const ORO_B2B_SHIPPING_RULE_TABLE_NAME = 'orob2b_shipping_rule';
-    const ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME = 'orob2b_shipping_destination';
+    const ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME = 'orob2b_shipping_rl_destination';
     /**
      * {@inheritdoc}
      */
@@ -18,12 +18,12 @@ class OroB2BShippingBundle implements Migration
     {
         /** Tables generation **/
         $this->createOrob2BShippingRuleTable($schema);
-        $this->createOrob2BShippingDestinationTable($schema);
+        $this->createOrob2BShippingRuleDestinationTable($schema);
         $this->createOrob2BShippingRuleConfigTable($schema);
         $this->createOrob2BShipFlatRateRuleCnfTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BShippingDestinationForeignKeys($schema);
+        $this->addOrob2BShippingRuleDestinationForeignKeys($schema);
         $this->addOrob2BShippingRuleConfigForeignKeys($schema);
         $this->addOrob2BShipFlatRateRuleCnfForeignKeys($schema);
     }
@@ -47,11 +47,11 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_shipping_destination table
+     * Create orob2b_shipping_rl_destination table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingDestinationTable(Schema $schema)
+    protected function createOrob2BShippingRuleDestinationTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -64,11 +64,11 @@ class OroB2BShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_shipping_destination foreign keys.
+     * Add orob2b_shipping_rl_destination foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingDestinationForeignKeys(Schema $schema)
+    protected function addOrob2BShippingRuleDestinationForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addForeignKeyConstraint(

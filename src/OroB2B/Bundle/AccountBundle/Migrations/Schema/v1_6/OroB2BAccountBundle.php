@@ -21,6 +21,7 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('public', 'boolean', ['notnull' => true, 'default' => true]);
 
         $this->updateAccountUserRoles($queries);
+        $this->removeAccountAddressSerializedDataColumn($schema);
     }
 
     /**
@@ -61,7 +62,7 @@ class OroB2BAccountBundle implements Migration
     /**
      * @param QueryBag $queries
      */
-    public function updateAccountUserRoles(QueryBag $queries)
+    protected function updateAccountUserRoles(QueryBag $queries)
     {
         $anonymousRoleName = 'IS_AUTHENTICATED_ANONYMOUSLY';
 
@@ -71,5 +72,19 @@ class OroB2BAccountBundle implements Migration
         $queries->addPostQuery(
             "UPDATE orob2b_account_user_role SET public = FALSE WHERE role = '$anonymousRoleName'"
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function removeAccountAddressSerializedDataColumn(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_account_address');
+        if ($table->hasColumn('serialized_data') &&
+            !class_exists('Oro\Bundle\EntitySerializedFieldsBundle\OroEntitySerializedFieldsBundle')
+        ) {
+            $table->dropColumn('serialized_data');
+        }
     }
 }

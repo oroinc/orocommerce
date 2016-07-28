@@ -6,15 +6,32 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleController extends Controller
 {
+    /**
+     * @Route("/", name="orob2b_shipping_rule_index")
+     * @Template
+     * @AclAncestor("orob2b_shipping_rule_view")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_shipping.entity.shipping_rule.class')
+        ];
+    }
+
     /**
      * @Route("/create", name="orob2b_shipping_rule_create")
      * @Template("OroB2BShippingBundle:ShippingRule:update.html.twig")
@@ -30,6 +47,27 @@ class ShippingRuleController extends Controller
     public function createAction()
     {
         return $this->update(new ShippingRule());
+    }
+
+    /**
+     * @Route("/view/{id}", name="orob2b_shipping_rule_view", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_shipping_rule_view",
+     *      type="entity",
+     *      class="OroB2BShippingBundle:ShippingRule",
+     *      permission="VIEW"
+     * )
+     *
+     * @param ShippingRule $shippingRule
+     *
+     * @return array
+     */
+    public function viewAction(ShippingRule $shippingRule)
+    {
+        return [
+            'entity' => $shippingRule,
+        ];
     }
 
     /**
@@ -62,5 +100,29 @@ class ShippingRuleController extends Controller
             $form,
             $this->get('translator')->trans('orob2b.shipping.controller.rule.saved.message')
         );
+    }
+
+    /**
+     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_status_shipping_rule_massaction")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function markMassAction($gridName, $actionName, Request $request)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
+
+        $data = [
+            'successful' => $response->isSuccessful(),
+            'message' => $response->getMessage()
+        ];
+
+        return new JsonResponse(array_merge($data, $response->getOptions()));
     }
 }

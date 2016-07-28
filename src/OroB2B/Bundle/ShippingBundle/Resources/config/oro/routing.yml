@@ -1,9 +1,19 @@
+orob2b_shipping_rule:
+    resource:     "@OroB2BShippingBundle/Controller/ShippingRuleController.php"
+    type:         annotation
+    prefix:       /shippingrule
+
 orob2b_shipping_product_shipping_options_ajax:
     resource:     "@OroB2BShippingBundle/Controller/AjaxProductShippingOptionsController.php"
     type:         annotation
     prefix:       /shipping/product-shipping
 
-orob2b_shipping_rule:
-    resource:     "@OroB2BShippingBundle/Controller/ShippingRuleController.php"
-    type:         annotation
-    prefix:       /shippingrule
+orob2b_shipping_bundle_api:
+    resource: "@OroB2BShippingBundle/Controller/Api/Rest/ShippingRuleController.php"
+    type:     rest
+    prefix:   api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version: latest
