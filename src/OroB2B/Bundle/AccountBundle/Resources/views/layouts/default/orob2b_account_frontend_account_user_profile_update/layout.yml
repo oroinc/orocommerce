@@ -26,6 +26,7 @@ layout:
             id: account_sidebar
             parentId: sidebar_left
             blockType: container
+            prepend: true
 
         - '@addTree':
             items:

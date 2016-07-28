@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroB2BAccountBundle:layouts:custom/page/layout.html.twig'
