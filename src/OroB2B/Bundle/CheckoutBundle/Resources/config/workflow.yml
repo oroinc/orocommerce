@@ -6,6 +6,8 @@ workflows:
         start_step: enter_billing_address
         steps_display_ordered: true
 
+        default:
+            active: true
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
