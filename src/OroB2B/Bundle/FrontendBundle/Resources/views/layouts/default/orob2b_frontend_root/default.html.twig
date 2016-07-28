@@ -23,11 +23,31 @@
 
 {% block _hero_promo_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' heero-promo-item'
+        '~class': ' hero-promo-item'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ item }}
+        <div class="hero-promo-item__picture">
+            <img class="hero-promo-item__img"
+                src="{% image '@OroB2BFrontendBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
+                alt="Ololo">
+        </div>
+        <div class="hero-promo-item__info">
+            <img class="hero-promo-item__img"
+                src="{% image '@OroB2BFrontendBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
+                alt="Ololo">
+            <div class="hero-promo-item__cover">
+                <div class="hero-promo-item__desc">
+                    <span class="hero-promo-item__pretitle">New items in stock</span>
+                    <h2 class="hero-promo-item__title">For Kitchen Professionals</h2>
+                    <a href="#" class="btn theme-btn btn-dark hero-promo-item__view-btn">
+                        View Items
+                        <!-- {{ item }} -->
+                        <i class="cf-right-open-mini"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -47,9 +67,15 @@
         '~class': ' featured-categories-item'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ item }}
-    </div>
+    <a {{ block('block_attributes') }} href="#">
+        <img class="featured-categories-item__image"
+            src="{% image '@OroB2BFrontendBundle/Resources/public/default/scss/components/commerce/blocks/featured-categories-item/featured-categories-item.png' %}{{ asset_url }}{% endimage %}"
+            alt="Work Hats">
+        <dl class="featured-categories-item__desc">
+            <dt class="featured-categories-item__name">{{ item }}</dt>
+            <dd class="featured-categories-item__count">9 items</dd>
+        </dl>
+    </a>
 {% endblock %}
 
 <!-- featured-products -->

@@ -83,3 +83,9 @@
     @include success-state;
   }
 }
+
+@mixin breakpoint($device-width) {
+  @media (max-width: #{$device-width}) {
+    @content;
+  }
+}

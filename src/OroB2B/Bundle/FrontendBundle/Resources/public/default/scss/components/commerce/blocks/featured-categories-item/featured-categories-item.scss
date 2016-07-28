@@ -1,0 +1,55 @@
+.featured-categories-item {
+    display: inline-block;
+    margin-top: 50px;
+
+    vertical-align: top;
+
+    color: $base-dark-color;
+
+    &__image {
+        display: block;
+        max-width: 100%;
+
+        border: 1px solid $theme-lighter-gray-color;
+    }
+
+    &__desc {
+        overflow: hidden;
+
+        padding-top: 8px;
+
+        text-align: center;
+    }
+
+    &__name {
+        font-size: 18px;
+        font-weight: normal;
+        line-height: normal;
+    }
+
+    &__count {
+        line-height: normal;;
+    }
+
+    &:hover {
+        text-decoration: none;
+
+        color: $base-dark-color;
+
+        .featured-categories-item__name {
+            text-decoration: underline;
+        }
+    }
+
+    @include breakpoint($phone-width) {
+        margin-top: 20px;
+
+        &__name {
+            font-size: $base-font-size;
+        }
+
+        &__count {
+            font-size: 10px;
+        }
+    }
+}
