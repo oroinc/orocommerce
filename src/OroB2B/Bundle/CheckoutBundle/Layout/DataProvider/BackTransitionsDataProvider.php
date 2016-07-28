@@ -36,9 +36,7 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
      */
     protected function getBackTransitions(WorkflowItem $workflowItem)
     {
-        $transitions = $this->workflowRegistry->getWorkflow($workflowItem->getWorkflowName())
-            ->getTransitionsByWorkflowItem($workflowItem);
-
+        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
         /** @var TransitionData[] $backTransitions */
         $backTransitions = [];
         foreach ($transitions as $transition) {

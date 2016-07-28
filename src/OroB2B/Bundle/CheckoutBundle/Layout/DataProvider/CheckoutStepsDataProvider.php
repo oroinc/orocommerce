@@ -2,24 +2,23 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowRegistry;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
 {
     /**
-     * @var WorkflowRegistry
+     * @var WorkflowManager
      */
-    private $workflowRegistry;
+    protected $workflowManager;
 
     /**
-     * @param WorkflowRegistry $workflowRegistry
+     * @param WorkflowManager $workflowManager
      */
-    public function __construct(WorkflowRegistry $workflowRegistry)
+    public function __construct(WorkflowManager $workflowManager)
     {
-        $this->workflowRegistry = $workflowRegistry;
+        $this->workflowManager = $workflowManager;
     }
 
     /**
@@ -35,9 +34,9 @@ class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var WorkflowItem $workflowItem */
         $workflowItem = $context->data()->get('workflowItem');
-        $workflow = $this->workflowRegistry->getWorkflow($workflowItem->getWorkflowName());
+
+        $workflow = $this->workflowManager->getWorkflow($workflowItem);
 
         if ($workflow->getDefinition()->isStepsDisplayOrdered()) {
             $steps = $workflow->getStepManager()->getOrderedSteps();

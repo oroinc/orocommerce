@@ -31,9 +31,7 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
         if (!array_key_exists($cacheKey, $this->continueTransitions)) {
             $continueTransition = null;
-            $transitions = $this->workflowRegistry->getWorkflow($workflowItem->getWorkflowName())
-                ->getTransitionsByWorkflowItem($workflowItem);
-
+            $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
             foreach ($transitions as $transition) {
                 $frontendOptions = $transition->getFrontendOptions();
                 if (!empty($frontendOptions['is_checkout_continue'])) {
