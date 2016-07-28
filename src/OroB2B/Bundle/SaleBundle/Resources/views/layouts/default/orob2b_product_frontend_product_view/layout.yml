@@ -15,4 +15,4 @@ layout:
             options:
                 visible: '=data["product_units_without_prices"]!=null'
                 vars:
-                    product: { '@value': $data.product }
+                    product: '=data["product"]'
