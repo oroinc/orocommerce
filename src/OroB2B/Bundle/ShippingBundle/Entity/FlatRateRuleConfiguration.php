@@ -34,18 +34,18 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     protected $value;
 
     /**
-     * @var string
+     * @var float
      *
-     * @ORM\Column(name="currency", type="string", nullable=false)
+     * @ORM\Column(name="handling_fee_value", type="money", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=40
+     *              "order"=50
      *          }
      *      }
      * )
      */
-    protected $currency;
+    protected $handlingFeeValue;
 
     /**
      * @var Price
@@ -53,12 +53,20 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     protected $price;
 
     /**
+     * @var Price
+     */
+    protected $handlingFee;
+
+    /**
      * @ORM\PostLoad
      */
-    public function createPrice()
+    public function createPrices()
     {
         if (null !== $this->value && null !== $this->currency) {
             $this->price = Price::create($this->value, $this->currency);
+        }
+        if (null !== $this->handlingFeeValue && null !== $this->currency) {
+            $this->handlingFee = Price::create($this->handlingFeeValue, $this->currency);
         }
     }
 
@@ -66,18 +74,11 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function updatePrice()
+    public function updatePrices()
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
+        $this->handlingFeeValue = $this->handlingFee ? $this->handlingFee->getValue() : null;
     }
 
     /**
@@ -87,7 +88,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-        $this->createPrice();
+        $this->createPrices();
 
         return $this;
     }
@@ -107,7 +108,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setValue($value)
     {
         $this->value = $value;
-        $this->createPrice();
+        $this->createPrices();
 
         return $this;
     }
@@ -121,8 +122,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setPrice(Price $price = null)
     {
         $this->price = $price;
-
-        $this->updatePrice();
+        $this->updatePrices();
 
         return $this;
     }
@@ -135,6 +135,46 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /**
+     * @return float
+     */
+    public function getHandlingFeeValue()
+    {
+        return $this->handlingFeeValue;
+    }
+
+    /**
+     * @param float $handlingFeeValue
+     * @return $this
+     */
+    public function setHandlingFeeValue($handlingFeeValue)
+    {
+        $this->handlingFeeValue = $handlingFeeValue;
+        $this->createPrices();
+
+        return $this;
+    }
+
+    /**
+     * @return Price
+     */
+    public function getHandlingFee()
+    {
+        return $this->handlingFee;
+    }
+
+    /**
+     * @param Price $handlingFee
+     * @return $this
+     */
+    public function setHandlingFee(Price $handlingFee)
+    {
+        $this->handlingFee = $handlingFee;
+        $this->updatePrices();
+
+        return $this;
     }
 
     /**

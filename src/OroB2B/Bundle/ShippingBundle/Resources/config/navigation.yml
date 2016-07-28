@@ -37,4 +37,5 @@ oro_menu_config:
 oro_titles:
     orob2b_shipping_rule_index: ~
     orob2b_shipping_rule_view:  '%%label%%'
-    orob2b_shipping_rule_view:  '%%label%% - orob2b.shipping.shippingrule.entity_plural_label'
+    orob2b_shipping_rule_update: 'Shipping Rule %%id%% - Edit'
+    orob2b_shipping_rule_create: 'Create Shipping Rule'

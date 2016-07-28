@@ -13,10 +13,6 @@ use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
 class FlatRateTest extends \PHPUnit_Framework_TestCase
 {
-    const CURRENCY = 'USD';
-    const PRICE = 25;
-    const CHECKOUT_LINE_ITEMS_COUNT = 5;
-
     /**
      * @var FlatRate
      */
@@ -30,12 +26,13 @@ class FlatRateTest extends \PHPUnit_Framework_TestCase
     /**
      * $currency
      * $price
+     * $handlingFee
      * $type
      * $expectedPrice
      *
      * @dataProvider ruleConfigProvider
      */
-    public function testCalculatePrice($currency, $price, $type, $expectedPrice)
+    public function testCalculatePrice($currency, $price, $handlingFee, $type, $expectedPrice)
     {
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $dataEntity **/
         $dataEntity = $this->getMock(ShippingContextAwareInterface::class);
@@ -48,6 +45,8 @@ class FlatRateTest extends \PHPUnit_Framework_TestCase
 
         /** @var ArrayCollection|\PHPUnit_Framework_MockObject_MockObject $checkout **/
         $lineItems = $this->getMock(ArrayCollection::class);
+
+        $context = ['checkout' => $checkout];
 
         $configEntity->expects($this->once())
             ->method('getCurrency')
@@ -64,10 +63,14 @@ class FlatRateTest extends \PHPUnit_Framework_TestCase
             ->willReturn($type)
         ;
 
+        $configEntity->expects($this->once())
+            ->method('getHandlingFee')
+            ->willReturn($handlingFee)
+        ;
+
         $dataEntity->expects($this->any())
-            ->method('get')
-            ->with('checkout')
-            ->willReturn($checkout)
+            ->method('getShippingContext')
+            ->willReturn($context)
         ;
 
         $checkout->expects($this->any())
@@ -77,7 +80,7 @@ class FlatRateTest extends \PHPUnit_Framework_TestCase
 
         $lineItems->expects($this->any())
             ->method('count')
-            ->willReturn(self::CHECKOUT_LINE_ITEMS_COUNT)
+            ->willReturn(5)
         ;
 
         $price = $this->flatRate->calculatePrice($dataEntity, $configEntity);
@@ -89,16 +92,32 @@ class FlatRateTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE,
+                'currency' => 'USD',
+                'price' => Price::create(25, 'USD'),
+                'handlingFee' => Price::create(5, 'USD'),
                 'type' => FlatRateRuleConfiguration::TYPE_PER_ORDER,
-                'expectedPrice' => self::PRICE
+                'expectedPrice' => 30
             ],
             [
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE,
+                'currency' => 'USD',
+                'price' => Price::create(25, 'USD'),
+                'handlingFee' => Price::create(5, 'USD'),
                 'type' => FlatRateRuleConfiguration::TYPE_PER_ITEM,
-                'expectedPrice' => self::PRICE * self::CHECKOUT_LINE_ITEMS_COUNT
+                'expectedPrice' => 130
+            ],
+            [
+                'currency' => 'EUR',
+                'price' => Price::create(25, 'EUR'),
+                'handlingFee' => Price::create(5, 'EUR'),
+                'type' => FlatRateRuleConfiguration::TYPE_PER_ORDER,
+                'expectedPrice' => 30
+            ],
+            [
+                'currency' => 'EUR',
+                'price' => Price::create(25, 'EUR'),
+                'handlingFee' => Price::create(5, 'EUR'),
+                'type' => FlatRateRuleConfiguration::TYPE_PER_ITEM,
+                'expectedPrice' => 130
             ]
         ];
     }

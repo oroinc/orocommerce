@@ -186,3 +186,28 @@
     <td>{{ form_widget(form.dimensions) }}</td>
     <td>{{ form_widget(form.freightClass) }}</td>
 {% endblock %}
+
+{% block orob2b_shipping_flat_rate_rule_config_widget %}
+    <div data-validation-ignore="">
+        {{ form_row(form.enabled) }}
+        {{ form_row(form.value) }}
+        {{ form_row(form.type) }}
+        {{ form_row(form.handlingFeeValue) }}
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_shipping_rule_destination_widget %}
+    <div class="row">
+        <div class="small-row">
+            {{ form_row(form.country) }}
+        </div>
+        <div class="small-row">
+            {{ form_row(form.region) }}
+        </div>
+        <div class="small-row">
+            {{ form_row(form.postalCode) }}
+        </div>
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}

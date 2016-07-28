@@ -5,10 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Provider;
 interface ShippingContextAwareInterface
 {
     /**
-     * Gets a value stored in the context.
-     *
-     * @param string $name
-     * @return mixed|null
+     * @return array
      */
-    public function get($name);
+    public function getShippingContext();
 }

@@ -31,8 +31,7 @@ class OroB2BShippingBundle extends Bundle
     {
         parent::build($container);
 
-        $container
-            ->addCompilerPass(new FreightClassExtensionPass(), PassConfig::TYPE_AFTER_REMOVING)
-            ->addCompilerPass(new ShippingMethodsCompilerPass());
+        $container->addCompilerPass(new FreightClassExtensionPass(), PassConfig::TYPE_AFTER_REMOVING);
+        $container->addCompilerPass(new ShippingMethodsCompilerPass());
     }
 }
