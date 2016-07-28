@@ -59,8 +59,8 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
             $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
-            foreach ($views as $name => $view) {
-                $this->paymentMethodViews[$name] = [
+            foreach ($views as $view) {
+                $this->paymentMethodViews[$view->getPaymentMethodType()] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
                     'options' => $view->getOptions($paymentContext),

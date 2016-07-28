@@ -4,9 +4,6 @@ layout:
             themes:
                 - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
                 - 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
-        - '@setFormTheme':
-            themes:
-                - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder

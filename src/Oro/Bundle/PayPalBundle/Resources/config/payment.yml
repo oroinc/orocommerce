@@ -1,0 +1,102 @@
+services:
+    oro_paypal.payment_method.payflow_gateway.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfig'
+        public: false
+        arguments:
+            - '@oro_config.global'
+
+    oro_paypal.payment_method.paypal_payments_pro.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProConfig'
+        public: false
+        arguments:
+            - '@oro_config.global'
+
+    oro_paypal.payment_method.payflow_express_checkout.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfig'
+        public: false
+        arguments:
+           - '@oro_config.global'
+
+    oro_paypal.payment_method.paypal_payments_pro_express_checkout.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProExpressCheckoutConfig'
+        public: false
+        arguments:
+           - '@oro_config.global'
+
+    oro_paypal.payment_method.payflow_gateway:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayflowGateway'
+        public: false
+        arguments:
+            - '@oro_paypal.paypal.payflow_gateway.gateway='
+            - '@oro_paypal.payment_method.payflow_gateway.config'
+            - '@router'
+        tags:
+            - { name: orob2b_payment.payment_method }
+
+    oro_paypal.payment_method.paypal_payments_pro:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro'
+        public: false
+        arguments:
+            - '@oro_paypal.paypal.payflow_gateway.gateway='
+            - '@oro_paypal.payment_method.paypal_payments_pro.config'
+            - '@router'
+        tags:
+            - { name: orob2b_payment.payment_method }
+
+    oro_paypal.payment_method.payflow_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout'
+        public: false
+        arguments:
+            - '@oro_paypal.paypal.payflow_express_checkout.gateway='
+            - '@oro_paypal.payment_method.payflow_express_checkout.config'
+            - '@router'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: orob2b_payment.payment_method }
+
+    oro_paypal.payment_method.paypal_payments_pro_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsProExpressCheckout'
+        public: false
+        arguments:
+            - '@oro_paypal.paypal.payflow_express_checkout.gateway='
+            - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
+            - '@router'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: orob2b_payment.payment_method }
+
+    oro_paypal.payment_method.view.payflow_gateway:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowGatewayView'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_paypal.payment_method.payflow_gateway.config'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: orob2b_payment.payment_method_view }
+
+    oro_paypal.payment_method.view.payflow_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView'
+        public: false
+        arguments:
+            - '@oro_paypal.payment_method.payflow_express_checkout.config'
+        tags:
+            - { name: orob2b_payment.payment_method_view }
+
+    oro_paypal.payment_method.view.paypal_payments_pro_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProExpressCheckoutView'
+        public: false
+        arguments:
+            - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
+        tags:
+            - { name: orob2b_payment.payment_method_view }
+
+    oro_paypal.payment_method.view.paypal_payments_pro:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProView'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_paypal.payment_method.paypal_payments_pro.config'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: orob2b_payment.payment_method_view }
