@@ -53,16 +53,18 @@ class CategoryEntityListener
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
-        $fields = $this->fieldsProvider->getFields(Category::class, false, true);
-        $updatedFields = array_intersect($fields, array_keys($event->getEntityChangeSet()));
-
-        // handle category tree changes
         if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
+            // handle category tree changes
             $lexemes = $this->findLexemes();
             $this->addTriggersByLexemes($lexemes);
-        } elseif ($updatedFields) {
-            $lexemes = $this->findLexemes($updatedFields);
-            $this->addTriggersByLexemes($lexemes);
+        } else {
+            $fields = $this->fieldsProvider->getFields(Category::class, false, true);
+            $updatedFields = array_intersect($fields, array_keys($event->getEntityChangeSet()));
+            
+            if ($updatedFields) {
+                $lexemes = $this->findLexemes($updatedFields);
+                $this->addTriggersByLexemes($lexemes);
+            }
         }
     }
 
