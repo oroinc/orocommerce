@@ -52,3 +52,9 @@ layout:
                     top_selling_items_container:
                         top_selling_items:
                             top_selling_items_item: ~
+
+    imports:
+        -
+            id: orob2b_frontend_product_showing
+            root: top_selling_items_container
+            namespace: root_top_selling

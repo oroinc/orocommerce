@@ -103,3 +103,54 @@
         {{ item }}
     </div>
 {% endblock %}
+
+{#{% block _root_top_selling__template %}#}
+    {#{% set attr = {#}
+    {#'data-page-component-module': 'oroui/js/app/components/view-component',#}
+    {#'data-page-component-options': {#}
+        {#view: 'orob2bproduct/js/app/views/base-product-view'#}
+    {#}|json_encode,#}
+    {#'data-layout': 'separate'#}
+    {#}|merge(attr|merge({#}
+        {#class: attr.class|default('')#}
+    {#})) %}#}
+    {#123123123123#}
+    {#<div {{ block('block_attributes') }}>#}
+        {#{{ block_widget(block) }}#}
+    {#</div>#}
+{#{% endblock %}#}
+
+{% block _root_top_selling_template_widget %}
+    {% set attr = {
+    'data-page-component-module': 'oroui/js/app/components/view-component',
+    'data-page-component-options': {
+    view: 'orob2bproduct/js/app/views/base-product-view'
+    }|json_encode,
+    'data-layout': 'separate'
+    }|merge(attr|merge({
+    class: attr.class|default('')
+    })) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block('container_widget') }}
+    </div>
+
+{% endblock %}
+
+{% block _hero_promo_template_widget %}
+    {% set attr = {
+    'data-page-component-module': 'oroui/js/app/components/view-component',
+    'data-page-component-options': {
+        view: 'orob2bproduct/js/app/views/base-product-view'
+    }|json_encode,
+    'data-layout': 'separate'
+    }|merge(attr|merge({
+    class: attr.class|default('')
+    })) %}
+
+    234234234324234234234234234234
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+
+{% endblock %}
