@@ -18,12 +18,12 @@ class OroB2BShippingBundle implements Migration
     {
         /** Tables generation **/
         $this->createOrob2BShippingRuleTable($schema);
-        $this->createOrob2BShippingDestinationTable($schema);
+        $this->createOrob2BShippingRuleDestinationTable($schema);
         $this->createOrob2BShippingRuleConfigTable($schema);
         $this->createOrob2BShipFlatRateRuleCnfTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BShippingDestinationForeignKeys($schema);
+        $this->addOrob2BShippingRuleDestinationForeignKeys($schema);
         $this->addOrob2BShippingRuleConfigForeignKeys($schema);
         $this->addOrob2BShipFlatRateRuleCnfForeignKeys($schema);
     }
@@ -52,7 +52,7 @@ class OroB2BShippingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingDestinationTable(Schema $schema)
+    protected function createOrob2BShippingRuleDestinationTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -68,7 +68,7 @@ class OroB2BShippingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingDestinationForeignKeys(Schema $schema)
+    protected function addOrob2BShippingRuleDestinationForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addForeignKeyConstraint(

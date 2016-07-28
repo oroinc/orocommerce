@@ -1,9 +1,3 @@
 {% set configurations = record.getValue('configurations').toArray() %}
 
-{% set labels = [] %}
-{% for configuration in configurations %}
-    {% set label = configuration.type ~ ', ' ~ configuration.method %}
-    {% set labels = labels|merge([label]) %}
-{% endfor %}
-
-{{ labels|join('</br>')|raw }}
+{{ configurations|join('</br>')|raw }}

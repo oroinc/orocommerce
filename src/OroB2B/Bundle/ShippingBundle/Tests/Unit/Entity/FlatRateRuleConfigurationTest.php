@@ -82,4 +82,14 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(84, $entity->getValue());
         $this->assertEquals('EUR', $entity->getCurrency());
     }
+
+    public function testToString()
+    {
+        $entity = new FlatRateRuleConfiguration();
+        $entity->setValue(42);
+        $entity->setCurrency('USD');
+        $entity->setMethod('UPS');
+        $entity->setType('TEST');
+        $this->assertEquals('UPS TEST, 42 USD', $entity->__toString());
+    }
 }

@@ -62,6 +62,11 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     protected $rule;
 
     /**
+     * @return string
+     */
+    abstract public function __toString();
+
+    /**
      * @return mixed
      */
     public function getId()

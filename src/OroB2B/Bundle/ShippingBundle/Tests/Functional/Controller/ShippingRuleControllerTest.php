@@ -41,7 +41,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $this->assertContains($shippingRule->getName(), $html);
         $this->assertContains($shippingRule->getCurrency(), $html);
-        $destination = $shippingRule->getShippingDestinations();
+        $destination = $shippingRule->getDestinations();
         $this->assertContains($destination[0]->__toString(), $html);
         $configurations = $shippingRule->getConfigurations();
         $this->assertContains($configurations[0]->getType(), $html);

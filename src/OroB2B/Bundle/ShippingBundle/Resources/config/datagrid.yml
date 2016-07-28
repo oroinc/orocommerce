@@ -38,7 +38,7 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BShippingBundle:ShippingRule:Datagrid/configurations.html.twig
-            shippingDestinations:
+            destinations:
                 label:         orob2b.shipping.shippingrule.destinations.label
                 type:          twig
                 frontend_type: html

@@ -7,10 +7,10 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
-class ShippingDestinationTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -26,16 +26,16 @@ class ShippingDestinationTest extends \PHPUnit_Framework_TestCase
     protected $country;
 
     /**
-     * @var ShippingDestination
+     * @var ShippingRuleDestination
      */
-    protected $shippingDestination;
+    protected $shippingRuleDestination;
     
     public function setUp()
     {
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();
-        $this->shippingDestination = $this->getEntity(
-            'OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination',
+        $this->shippingRuleDestination = $this->getEntity(
+            'OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination',
             [
                 'region' => $this->region,
                 'country' => $this->country,
@@ -54,47 +54,47 @@ class ShippingDestinationTest extends \PHPUnit_Framework_TestCase
             ['shippingRule', new ShippingRule()],
         ];
 
-        $this->assertPropertyAccessors(new ShippingDestination(), $properties);
+        $this->assertPropertyAccessors(new ShippingRuleDestination(), $properties);
     }
 
     public function testGetRegionName()
     {
-        $this->assertEquals('RegionName', $this->shippingDestination->getRegionName());
-        $this->shippingDestination->setRegion(null);
-        $this->assertEquals('', $this->shippingDestination->getRegionName());
+        $this->assertEquals('RegionName', $this->shippingRuleDestination->getRegionName());
+        $this->shippingRuleDestination->setRegion(null);
+        $this->assertEquals('', $this->shippingRuleDestination->getRegionName());
     }
 
     public function testGetRegionCode()
     {
-        $this->assertEquals('RegionCode', $this->shippingDestination->getRegionCode());
-        $this->shippingDestination->setRegion(null);
-        $this->assertEquals('', $this->shippingDestination->getRegionCode());
+        $this->assertEquals('RegionCode', $this->shippingRuleDestination->getRegionCode());
+        $this->shippingRuleDestination->setRegion(null);
+        $this->assertEquals('', $this->shippingRuleDestination->getRegionCode());
     }
 
     public function testGetCountryName()
     {
-        $this->assertEquals('CountryName', $this->shippingDestination->getCountryName());
-        $this->shippingDestination->setCountry(null);
-        $this->assertEquals('', $this->shippingDestination->getCountryName());
+        $this->assertEquals('CountryName', $this->shippingRuleDestination->getCountryName());
+        $this->shippingRuleDestination->setCountry(null);
+        $this->assertEquals('', $this->shippingRuleDestination->getCountryName());
     }
 
     public function testGetCountryIso2()
     {
-        $this->assertEquals('CountryIso2', $this->shippingDestination->getCountryIso2());
-        $this->shippingDestination->setCountry(null);
-        $this->assertEquals('', $this->shippingDestination->getCountryIso2());
+        $this->assertEquals('CountryIso2', $this->shippingRuleDestination->getCountryIso2());
+        $this->shippingRuleDestination->setCountry(null);
+        $this->assertEquals('', $this->shippingRuleDestination->getCountryIso2());
     }
 
     public function testGetCountryIso3()
     {
-        $this->assertEquals('CountryIso3', $this->shippingDestination->getCountryIso3());
-        $this->shippingDestination->setCountry(null);
-        $this->assertEquals('', $this->shippingDestination->getCountryIso3());
+        $this->assertEquals('CountryIso3', $this->shippingRuleDestination->getCountryIso3());
+        $this->shippingRuleDestination->setCountry(null);
+        $this->assertEquals('', $this->shippingRuleDestination->getCountryIso3());
     }
 
     public function testToString()
     {
-        $this->assertEquals('RegionName , CountryName 12345', (string)$this->shippingDestination);
+        $this->assertEquals('RegionName, CountryName 12345', (string)$this->shippingRuleDestination);
     }
 
     /**

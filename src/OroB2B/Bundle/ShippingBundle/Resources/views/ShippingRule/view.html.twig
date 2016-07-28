@@ -29,23 +29,16 @@
                 {{ UI.renderProperty('orob2b.shipping.shippingrule.currency.label'|trans, entity.currency) }}
                 {{ UI.renderProperty('orob2b.shipping.shippingrule.conditions.label'|trans, entity.conditions) }}
 
-                {% if entity.shippingDestinations.count %}
+                {% if entity.destinations.count %}
                     {{ UI.renderHtmlProperty(
                     'orob2b.shipping.shippingrule.destinations.label'|trans,
-                    UI.renderList(entity.shippingDestinations)) }}
+                    UI.renderList(entity.destinations)) }}
                 {% endif %}
 
                 {% if entity.configurations.count %}
-                    {% set titles = ['orob2b.shipping.shippingruleconfiguration.type.label'|trans,
-                    'orob2b.shipping.shippingruleconfiguration.method.label'|trans] %}
-                    {% set rows = [] %}
-                    {% for configuration in entity.configurations %}
-                        {% set row = [configuration.type, configuration.method] %}
-                        {% set rows = rows|merge([row]) %}
-                    {% endfor %}
                     {{ UI.renderHtmlProperty(
                     'orob2b.shipping.shippingrule.configurations.label'|trans,
-                    UI.renderTable(titles,rows,"grid table-hover table table-bordered unit-table")) }}
+                    UI.renderList(entity.configurations)) }}
                 {% endif %}
             </div>
             <div class="responsive-block">

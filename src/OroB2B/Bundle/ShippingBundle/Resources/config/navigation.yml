@@ -24,7 +24,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                sales_tab:
+                system_tab:
                     children:
                         shipping_rule: ~
         shortcuts:

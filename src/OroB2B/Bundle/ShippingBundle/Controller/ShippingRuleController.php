@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Controller;
 
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ShippingRuleController extends Controller

@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class LoadShippingRules extends AbstractFixture
@@ -42,7 +42,7 @@ class LoadShippingRules extends AbstractFixture
                 ]
 
             ],
-            'shippingDestinations' => [
+            'destinations' => [
                 [
                     'postalCode' => '12345',
                     'country'    => 'US',
@@ -66,7 +66,7 @@ class LoadShippingRules extends AbstractFixture
                 ->setConditions($data['conditions'])
                 ->setCurrency($data['currency']);
 
-            foreach ($data['shippingDestinations'] as $destination) {
+            foreach ($data['destinations'] as $destination) {
                 /** @var Country $country */
                 $country = $manager
                     ->getRepository('OroAddressBundle:Country')
@@ -76,15 +76,15 @@ class LoadShippingRules extends AbstractFixture
                     ->getRepository('OroAddressBundle:Region')
                     ->findOneBy(['combinedCode' => $destination['country'] . '-' . $destination['region']]);
 
-                $shippingDestination = new ShippingDestination();
-                $shippingDestination
+                $shippingRuleDestination = new ShippingRuleDestination();
+                $shippingRuleDestination
                     ->setShippingRule($entity)
                     ->setPostalCode($destination['postalCode'])
                     ->setCountry($country)
                     ->setRegion($region);
 
-                $manager->persist($shippingDestination);
-                $entity->addShippingDestination($shippingDestination);
+                $manager->persist($shippingRuleDestination);
+                $entity->addDestination($shippingRuleDestination);
             }
 
             foreach ($data['configurations'] as $configuration) {

@@ -2,19 +2,20 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Routing\ClassResourceInterface;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use Symfony\Component\HttpFoundation\Response;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
  * @RouteResource("shippingrules")
