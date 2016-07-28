@@ -2,20 +2,18 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var ExtraActionEntityStorageInterface
+     * @var PriceRuleTriggerFiller
      */
-    protected $extraActionsStorage;
+    protected $priceRuleTriggersFiller;
 
     /**
      * @var PriceRuleFieldsProvider
@@ -28,16 +26,16 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param ExtraActionEntityStorageInterface $extraActionsStorage
+     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        ExtraActionEntityStorageInterface $extraActionsStorage,
+        PriceRuleTriggerFiller $priceRuleTriggersFiller,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {
-        $this->extraActionsStorage = $extraActionsStorage;
+        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
         $this->fieldsProvider = $fieldsProvider;
         $this->registry = $registry;
     }
@@ -60,29 +58,7 @@ abstract class AbstractRuleEntityListener
             $priceLists[$priceList->getId()] = $priceList;
         }
 
-        foreach ($priceLists as $priceList) {
-            if (!$this->isExistingTriggerWithPriseList($priceList)) {
-                $trigger = new PriceRuleChangeTrigger($priceList, $product);
-                $this->extraActionsStorage->scheduleForExtraInsert($trigger);
-            }
-        }
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @return bool
-     */
-    protected function isExistingTriggerWithPriseList(PriceList $priceList)
-    {
-        /** @var PriceRuleChangeTrigger[] $triggers */
-        $triggers = $this->extraActionsStorage->getScheduledForInsert(PriceRuleChangeTrigger::class);
-        foreach ($triggers as $trigger) {
-            if ($trigger->getPriceList()->getId() === $priceList->getId()) {
-                return true;
-            }
-        }
-
-        return false;
+        $this->priceRuleTriggersFiller->addTriggersForPriceLists($priceLists, $product);
     }
 
     /**

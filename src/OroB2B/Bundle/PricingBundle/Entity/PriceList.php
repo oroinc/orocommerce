@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * @ORM\Table(name="orob2b_price_list")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
- * @ORM\EntityListeners("OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
  *      routeView="orob2b_pricing_price_list_view",
