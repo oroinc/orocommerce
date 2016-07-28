@@ -1,3 +1,7 @@
 {% block _checkout_form_fields_widget %}
-
+    <div class="hidden">
+        <fieldset class="checkout__form__row">
+            {{ form_widget(form.shipping_method) }}
+        </fieldset>
+    </div>
 {% endblock %}

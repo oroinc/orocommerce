@@ -129,14 +129,16 @@ class ShippingRule extends ExtendShippingRule
     /**
      * @var Collection|ShippingDestination[]
      *
-     * @ORM\OneToMany(targetEntity="ShippingDestination", mappedBy="shippingRule", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="ShippingDestination",
+     *      mappedBy="shippingRule", cascade={"ALL"}, orphanRemoval=true, fetch="EAGER")
      */
     protected $shippingDestinations;
 
     /**
      * @var Collection|ShippingRuleConfiguration[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration", mappedBy="rule")
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
+     *      mappedBy="rule", fetch="EAGER")
      */
     protected $configurations;
 

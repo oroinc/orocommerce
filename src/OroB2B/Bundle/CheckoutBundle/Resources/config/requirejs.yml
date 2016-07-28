@@ -2,6 +2,7 @@ config:
     paths:
         'orob2bcheckout/js/app/components/transition-button-component': 'bundles/orob2bcheckout/js/app/components/transition-button-component.js'
         'orob2bcheckout/js/app/components/payment-transition-button-component': 'bundles/orob2bcheckout/js/app/components/payment-transition-button-component.js'
+        'orob2bcheckout/js/app/components/shipping-transition-button-component': 'bundles/orob2bcheckout/js/app/components/shipping-transition-button-component.js'
         'orob2bcheckout/js/app/views/address-view': 'bundles/orob2bcheckout/js/app/views/address-view.js'
         'orob2bcheckout/js/app/components/clear-field-data-component': 'bundles/orob2bcheckout/js/app/components/clear-field-data-component.js'
         'orob2bcheckout/js/app/components/payment-save-for-later-component': 'bundles/orob2bcheckout/js/app/components/payment-save-for-later-component.js'

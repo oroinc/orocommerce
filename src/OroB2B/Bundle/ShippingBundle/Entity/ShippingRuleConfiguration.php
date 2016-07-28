@@ -57,7 +57,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
      * @var ShippingRule
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule",
-     *     inversedBy="configurations", fetch="EAGER")
+     *     inversedBy="configurations")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
      */
     protected $rule;

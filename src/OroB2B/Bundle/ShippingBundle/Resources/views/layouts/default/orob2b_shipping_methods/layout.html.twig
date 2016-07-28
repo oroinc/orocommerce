@@ -1,23 +1,26 @@
 {% block _shipping_methods_widget %}
-    {% set currentShippingMethod = currentShippingMethod|default(views|keys|first) %}
-    <div class="{{ class_prefix }}__form" data-content="shipping_method_form" data-page-component-module="orob2bshipping/js/app/components/shipping-method-selector-component">
+    {% set currentShippingMethod = currentShippingMethod|default(methods|keys|first) %}
+    <div class="{{ class_prefix }}__form" data-content="shipping_method_form" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
         <div class="{{ class_prefix }}__form__row">
             <div class="{{ class_prefix }}__form__col form__col_x6" data-shipping-method-forms>
-                {% if views|length > 0 %}
+                {% if methods|length > 0 %}
                     <span class="{{ class_prefix }}__form__label">{{ 'orob2b.shipping.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, method in methods if methods is defined and method is iterable %}
-                        {% set selected = currentShippingMethod == name %}
-                        <div class="{{ class_prefix }}__form__radio" data-item-container>
-                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                <input type="radio" name="shippingMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
-                                <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
-                                <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
-                                <span class="checkbox_custom__text fs13">{{ method.label }}</span>
-                            </label>
-                            <!--<div class="{#{{ class_prefix }}#}__form__shipping-container" data-form-container {#{% if not selected %}#} style="display: none;" {#{% endif %}#}>
-                                {#{{ block(method.block) }}#}
-                            </div>-->
-                        </div>
+                        <span class="checkbox_custom__text fs13">{{ method.label }}</span>
+                        {% for type in method.types if method.types is defined and type is iterable %}
+                            {% set selected = currentShippingMethod == type.name %}
+                            <div class="{{ class_prefix }}__form__radio" data-item-container>
+                                <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                    <input type="radio" name="shippingMethod" data-choice="{{ type.name }}" value="{{ type.name }}" {% if selected%}checked="checked"{% endif %} />
+                                    <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
+                                    <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
+                                    <span class="checkbox_custom__text fs13">{{ type.label }}: <strong>{{ type.price|oro_format_price }}</strong></span>
+                                </label>
+                                <!--<div class="{#{{ class_prefix }}#}__form__shipping-container" data-form-container {#{% if not selected %}#} style="display: none;" {#{% endif %}#}>
+                                    {#{{ block(method.block) }}#}
+                                </div>-->
+                            </div>
+                        {% endfor %}
                     {% endfor %}
                 {% else %}
                     <span class="{{ class_prefix }}__form__label" >{{ 'orob2b.shipping.methods.no_method'|trans }}</span>

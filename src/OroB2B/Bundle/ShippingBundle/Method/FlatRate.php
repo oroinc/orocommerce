@@ -17,17 +17,25 @@ class FlatRate implements ShippingMethodInterface
 
     public function getLabel()
     {
-        // TODO: Implement getLabel() method.
+        return "Flat Rate";
     }
 
     public function getShippingTypes()
     {
-        // TODO: Implement getShippingTypes() method.
+        return ['per_item', 'per_order'];
     }
 
     public function getShippingTypeLabel($type)
     {
-        // TODO: Implement getShippingTypeLabel() method.
+        $labels = [
+            'per_item' => 'Per Item',
+            'per_order' => 'Per Order'
+        ];
+        if (in_array($type, $this->getShippingTypes())) {
+            return $labels[$type];
+        } else {
+            return null;
+        }
     }
 
     public function getFormType()
@@ -51,10 +59,9 @@ class FlatRate implements ShippingMethodInterface
      * @return Price
      */
     public function calculatePrice(
-        ShippingContextAwareInterface $dataEntity,
+        /*ShippingContextAwareInterface*/ $dataEntity,
         ShippingRuleConfiguration $configEntity
     ) {
-        // TODO: Implement calculatePrice() method.
+        return $configEntity->getPrice();
     }
-
 }
