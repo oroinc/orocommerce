@@ -7,7 +7,7 @@
     &__info {
         display: inline-block;
 
-        font-size: 14px;
+        font-size: $base-font-size;
 
         border: 1px solid $base-border-color;
     }
@@ -88,7 +88,7 @@
         }
 
         &__title {
-            font-size: 14px;
+            font-size: $base-font-size;
             line-height: 18px;
         }
 
