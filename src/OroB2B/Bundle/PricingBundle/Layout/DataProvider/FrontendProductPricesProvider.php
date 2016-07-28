@@ -7,6 +7,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -58,79 +59,44 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     {
         /** @var Product $product */
         $product = $context->data()->get('product');
+        $productId = $product->getId();
 
-        $this->setProductsPrices([$product->getId()]);
+        if (!array_key_exists($productId, $this->data)) {
+            $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
-        return $this->data[$product->getId()];
-    }
+            /** @var ProductPriceRepository $priceRepository */
+            $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
+            $prices = $priceRepository->findByPriceListIdAndProductIds(
+                $priceList->getId(),
+                [$productId],
+                true,
+                $this->userCurrencyManager->getUserCurrency(),
+                null,
+                [
+                    'unit' => 'ASC',
+                    'currency' => 'DESC',
+                    'quantity' => 'ASC',
+                ]
+            );
+            if (count($prices)) {
+                $unitPrecisions = $product->getUnitPrecisions();
 
-    public function getProductsPrices($products)
-    {
-        $productsId = [];
-        foreach ($products as $product) {
-            $productsId[] = $product->getId();
-        }
-
-        $this->setProductsPrices($productsId);
-        $productsPrices = [];
-
-        foreach ($productsId as $productId) {
-            if ($this->data[$productId]) {
-                $productsPrices[$productId] = $this->data[$productId];
-            }
-        }
-
-        return $productsPrices;
-    }
-
-    protected function setProductsPrices($productsId)
-    {
-        $productsId = array_filter($productsId, function ($productId) {
-            return !array_key_exists($productId, $this->data);
-        });
-        if (!$productsId) {
-            return;
-        }
-
-        $priceList = $this->priceListRequestHandler->getPriceListByAccount();
-
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
-        $prices = $priceRepository->findByPriceListIdAndProductIds(
-            $priceList->getId(),
-            $productsId,
-            true,
-            $this->userCurrencyManager->getUserCurrency(),
-            null,
-            [
-                'unit' => 'ASC',
-                'currency' => 'DESC',
-                'quantity' => 'ASC',
-            ]
-        );
-
-        $pricesByProduct = [];
-        $productUnits = [];
-        foreach ($prices as $price) {
-            $product = $price->getProduct();
-            $productId = $product->getId();
-
-            if (!isset($productUnits[$productId])) {
-                $productUnits[$productId] = [];
-                foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                    if ($unitPrecision->isSell()) {
-                        $productUnits[$productId][] = $unitPrecision->getUnit();
-                    }
+                $unitsToSell = [];
+                foreach ($unitPrecisions as $unitPrecision) {
+                    $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
                 }
+
+                $prices = array_filter(
+                    $prices,
+                    function (CombinedProductPrice $price) use ($unitsToSell) {
+                        return !empty($unitsToSell[$price->getProductUnitCode()]);
+                    }
+                );
             }
 
-            if (in_array($price->getUnit(), $productUnits[$productId])) {
-                $pricesByProduct[$productId][] = $price;
-            }
+            $this->data[$productId] = $prices;
         }
 
-        foreach ($productsId as $productId) {
-            $this->data[$productId] = isset($pricesByProduct[$productId]) ? $pricesByProduct[$productId] : [];
-        }
+        return $this->data[$productId];
     }
 }

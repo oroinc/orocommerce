@@ -14,17 +14,24 @@
 {% endblock %}
 
 {% block _request_a_quote_form_button_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set btnOptions = {
-        'label': 'orob2b.frontend.sale.product.view.request_a_quote'|trans,
-        'aCss': 'direct-link btn-block btn-orange btn_lg',
-        'dataUrl': 'orob2b_rfp_frontend_request_create',
-        'pageComponent': {
-            'module': 'oroui/js/app/components/view-component',
-            'options': {
-                'view': 'orob2bsale/js/app/views/product-add-to-rfq-view'
+    {% set visible = false %}
+    {% if block.vars.product is not empty %}
+        {% set visible = is_quote_visible(block.vars.product) %}
+    {% endif %}
+
+    {% if visible == true %}
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% set btnOptions = {
+            'label': 'orob2b.frontend.sale.product.view.request_a_quote'|trans,
+            'aCss': 'direct-link btn-block btn-orange btn_lg',
+            'dataUrl': 'orob2b_rfp_frontend_request_create',
+            'pageComponent': {
+                'module': 'oroui/js/app/components/view-component',
+                'options': {
+                    'view': 'orob2bsale/js/app/views/product-add-to-rfq-view'
+                }
             }
-        }
-    } %}
-    {{ UI.clientButton(btnOptions) }}
+        } %}
+        {{ UI.clientButton(btnOptions) }}
+    {% endif %}
 {% endblock %}

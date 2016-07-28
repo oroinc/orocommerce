@@ -22,8 +22,6 @@ orob2b:
         source.label: Source
         currency.label: Currency
         website.label: Website
-        workflow_item.label: Workflow Item
-        workflow_step.label: Workflow Step
         allow_request_date.label: Workflow Step
         allowed.label: Allowed
         request_approval_notes.label: Notes
