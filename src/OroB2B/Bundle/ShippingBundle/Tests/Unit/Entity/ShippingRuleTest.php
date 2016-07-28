@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
 
@@ -48,7 +48,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
     public function testRelations()
     {
         $this->assertPropertyCollections(new ShippingRule(), [
-            ['shippingDestinations', new ShippingDestination()],
+            ['destinations', new ShippingRuleDestination()],
         ]);
     }
 

@@ -24,7 +24,7 @@ class OroB2BShippingExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('shipping_methods.yml');
-        $loader->load('block_types.yml');
+        $loader->load('mass_action.yml');
     }
 
     /**
