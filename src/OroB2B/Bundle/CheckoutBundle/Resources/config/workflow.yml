@@ -61,6 +61,11 @@ workflows:
             payment_save_for_later:
                 type: bool
                 label: Save payment data for later use
+            order:
+                type: entity
+                label: Instance of Order entity
+                options:
+                    class: OroB2B\Bundle\OrderBundle\Entity\Order
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -269,6 +274,11 @@ workflows:
 
         transition_definitions:
             __start___definition:
+                pre_conditions:
+                    '@not':
+                        - '@and':
+                            - '@assert_account': 4
+                            - '@payment_method_enabled': 'payment_term'
                 post_actions:
                     - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
@@ -505,30 +515,29 @@ workflows:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.result.shippingAddress
                     - '@create_entity':
-                        parameters:
-                            attribute: $checkout.order
-                            class: OroB2B\Bundle\OrderBundle\Entity\Order
-                            data:
-                                website: $checkout.website
-                                currency: $checkout.currency
-                                owner: $checkout.owner
-                                organization: $checkout.organization
-                                account: $checkout.account
-                                accountUser: $checkout.accountUser
-                                sourceEntityClass: $.result.sourceDocumentEntityClassName
-                                sourceEntityId: $checkout.sourceEntity.sourceDocument.id
-                    - '@assign_value': [$checkout.order.billingAddress, $.result.billingAddress]
-                    - '@assign_value': [$checkout.order.shippingAddress, $.result.shippingAddress]
-                    - '@assign_value': [$checkout.order.shippingCost, $checkout.shippingCost]
-                    - '@assign_value': [$checkout.order.poNumber, $checkout.poNumber]
-                    - '@assign_value': [$checkout.order.customerNotes, $checkout.customerNotes]
-                    - '@assign_value': [$checkout.order.shipUntil, $checkout.shipUntil]
-                    - '@assign_value': [$checkout.order.sourceEntityIdentifier, $checkout.sourceEntity.sourceDocumentIdentifier]
+                        attribute: $order
+                        class: OroB2B\Bundle\OrderBundle\Entity\Order
+                        data:
+                            website: $checkout.website
+                            currency: $checkout.currency
+                            owner: $checkout.owner
+                            organization: $checkout.organization
+                            account: $checkout.account
+                            accountUser: $checkout.accountUser
+                            billingAddress: $.result.billingAddress
+                            shippingAddress: $.result.shippingAddress
+                            shippingCost: $checkout.shippingCost
+                            poNumber: $checkout.poNumber
+                            customerNotes: $checkout.customerNotes
+                            shipUntil: $checkout.shipUntil
+                            sourceEntityClass: $.result.sourceDocumentEntityClassName
+                            sourceEntityId: $checkout.sourceEntity.sourceDocument.id
+                            sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
                     - '@call_method':
-                        object: $checkout.order
+                        object: $order
                         method: setLineItems
                         method_parameters:
                             - $.result.lineItems
@@ -536,8 +545,8 @@ workflows:
                         service: orob2b_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
-                            - $checkout.order
-                    - '@flush_entity': $checkout.order
+                            - $order
+                    - '@flush_entity': $order
 
                     - '@tree':
                         actions:
@@ -555,9 +564,9 @@ workflows:
                                     transition: 'payment_error'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
-                                object: $checkout.order
-                                amount: $checkout.order.total
-                                currency: $checkout.order.currency
+                                object: $order
+                                amount: $order.total
+                                currency: $order.currency
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
@@ -589,15 +598,15 @@ workflows:
 
                     - '@send_email_template':
                         parameters:
-                            from: $checkout.order.owner.email
-                            to: $checkout.order.accountUser.email
+                            from: $order.owner.email
+                            to: $order.accountUser.email
                             template: 'order_confirmation_email'
-                            entity: $checkout.order
+                            entity: $order
 
             finish_checkout_definition:
                 conditions:
                     '@and':
-                        - '@not_empty': [$checkout.order]
+                        - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
                 post_actions:
                     # Save billing address if required
@@ -606,8 +615,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveBillingAddress, true]
-                                - '@empty': $checkout.order.billingAddress.accountAddress
-                                - '@empty': $checkout.order.billingAddress.accountUserAddress
+                                - '@empty': $order.billingAddress.accountAddress
+                                - '@empty': $order.billingAddress.accountUserAddress
                                 - '@acl_granted': 'orob2b_order_address_billing_allow_manual'
                         actions:
                             - '@find_entity':
@@ -621,21 +630,21 @@ workflows:
                                     frontendOwner: $checkout.accountUser
                                     owner: $checkout.owner
                                     systemOrganization: $checkout.organization
-                                    label: $checkout.order.billingAddress.label
-                                    organization: $checkout.order.billingAddress.organization
-                                    street: $checkout.order.billingAddress.street
-                                    street2: $checkout.order.billingAddress.street2
-                                    city: $checkout.order.billingAddress.city
-                                    postalCode: $checkout.order.billingAddress.postalCode
-                                    country: $checkout.order.billingAddress.country
-                                    region: $checkout.order.billingAddress.region
-                                    regionText: $checkout.order.billingAddress.regionText
-                                    namePrefix: $checkout.order.billingAddress.namePrefix
-                                    firstName: $checkout.order.billingAddress.firstName
-                                    middleName: $checkout.order.billingAddress.middleName
-                                    lastName: $checkout.order.billingAddress.lastName
-                                    nameSuffix: $checkout.order.billingAddress.nameSuffix
-                                    phone: $checkout.order.billingAddress.phone
+                                    label: $order.billingAddress.label
+                                    organization: $order.billingAddress.organization
+                                    street: $order.billingAddress.street
+                                    street2: $order.billingAddress.street2
+                                    city: $order.billingAddress.city
+                                    postalCode: $order.billingAddress.postalCode
+                                    country: $order.billingAddress.country
+                                    region: $order.billingAddress.region
+                                    regionText: $order.billingAddress.regionText
+                                    namePrefix: $order.billingAddress.namePrefix
+                                    firstName: $order.billingAddress.firstName
+                                    middleName: $order.billingAddress.middleName
+                                    lastName: $order.billingAddress.lastName
+                                    nameSuffix: $order.billingAddress.nameSuffix
+                                    phone: $order.billingAddress.phone
                             - '@call_method':
                                 object: $.result.customerBillingAddress
                                 method: addType
@@ -652,8 +661,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveShippingAddress, true]
-                                - '@empty': $checkout.order.shippingAddress.accountAddress
-                                - '@empty': $checkout.order.shippingAddress.accountUserAddress
+                                - '@empty': $order.shippingAddress.accountAddress
+                                - '@empty': $order.shippingAddress.accountUserAddress
                                 - '@acl_granted': 'orob2b_order_address_shipping_allow_manual'
                         actions:
                             - '@find_entity':
@@ -673,19 +682,19 @@ workflows:
                                             systemOrganization: $checkout.organization
                                             label: $checkout.shippingAddress.label
                                             organization: $checkout.shippingAddress.organization
-                                            street: $checkout.order.shippingAddress.street
-                                            street2: $checkout.order.shippingAddress.street2
-                                            city: $checkout.order.shippingAddress.city
-                                            postalCode: $checkout.order.shippingAddress.postalCode
-                                            country: $checkout.order.shippingAddress.country
-                                            region: $checkout.order.shippingAddress.region
-                                            regionText: $checkout.order.shippingAddress.regionText
-                                            namePrefix: $checkout.order.shippingAddress.namePrefix
-                                            firstName: $checkout.order.shippingAddress.firstName
-                                            middleName: $checkout.order.shippingAddress.middleName
-                                            lastName: $checkout.order.shippingAddress.lastName
-                                            nameSuffix: $checkout.order.shippingAddress.nameSuffix
-                                            phone: $checkout.order.shippingAddress.phone
+                                            street: $order.shippingAddress.street
+                                            street2: $order.shippingAddress.street2
+                                            city: $order.shippingAddress.city
+                                            postalCode: $order.shippingAddress.postalCode
+                                            country: $order.shippingAddress.country
+                                            region: $order.shippingAddress.region
+                                            regionText: $order.shippingAddress.regionText
+                                            namePrefix: $order.shippingAddress.namePrefix
+                                            firstName: $order.shippingAddress.firstName
+                                            middleName: $order.shippingAddress.middleName
+                                            lastName: $order.shippingAddress.lastName
+                                            nameSuffix: $order.shippingAddress.nameSuffix
+                                            phone: $order.shippingAddress.phone
                                     - '@call_method':
                                         object: $.result.customerShippingAddress
                                         method: addType
@@ -718,7 +727,7 @@ workflows:
                     - '@redirect':
                         route: orob2b_order_frontend_success
                         route_parameters:
-                            id: $checkout.order.id
+                            id: $order.id
 
             payment_error_definition:
 #                pre_conditions:
