@@ -12,13 +12,15 @@
 {% endblock %}
 
 {% block _main_menu_widget %}
-    {% for child in item.children -%}
-        <li class="top-nav__item">
-            <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__link">
-                <span>{{ child.label }} </span>
-            </a>
-        </li>
-    {%- endfor %}
+    {% spaceless %}
+        {% for child in item.children -%}
+            <li class="top-nav__item">
+                <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__link">
+                    <span>{{ child.label }}</span>
+                </a>
+            </li>
+        {%- endfor %}
+    {% endspaceless %}
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}
