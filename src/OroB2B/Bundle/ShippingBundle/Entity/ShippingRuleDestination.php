@@ -11,13 +11,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table("orob2b_shipping_destination")
+ * @ORM\Table("orob2b_shipping_rl_destination")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",
  * )
  */
-class ShippingDestination
+class ShippingRuleDestination
 {
     /**
      * @var integer
@@ -87,7 +87,7 @@ class ShippingDestination
     /**
      * @var ShippingRule
      *
-     * @ORM\ManyToOne(targetEntity="ShippingRule", inversedBy="shippingDestinations", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="ShippingRule", inversedBy="destinations", fetch="EAGER")
      * @ORM\JoinColumn(name="shipping_rule_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -113,7 +113,7 @@ class ShippingDestination
      * Set id
      *
      * @param int $id
-     * @return ShippingDestination
+     * @return $this
      */
     public function setId($id)
     {
@@ -126,7 +126,7 @@ class ShippingDestination
      * Set region
      *
      * @param Region $region
-     * @return ShippingDestination
+     * @return $this
      */
     public function setRegion($region)
     {
@@ -169,7 +169,7 @@ class ShippingDestination
      * Set postal_code
      *
      * @param string $postalCode
-     * @return ShippingDestination
+     * @return $this
      */
     public function setPostalCode($postalCode)
     {
@@ -192,7 +192,7 @@ class ShippingDestination
      * Set country
      *
      * @param Country $country
-     * @return ShippingDestination
+     * @return $this
      */
     public function setCountry($country)
     {
@@ -245,7 +245,7 @@ class ShippingDestination
      * Set shippingRule
      *
      * @param ShippingRule $shippingRule
-     * @return ShippingDestination
+     * @return $this
      */
     public function setShippingRule($shippingRule)
     {
@@ -271,15 +271,7 @@ class ShippingDestination
      */
     public function __toString()
     {
-        $data = array(
-            $this->getRegionName(),
-            ',',
-            $this->getCountry(),
-            $this->getPostalCode(),
-        );
-
-        $str = implode(' ', $data);
-        $check = trim(str_replace(',', '', $str));
-        return empty($check) ? '' : $str;
+        $countryPostalStr = implode(' ', array_filter([$this->getCountry(), $this->getPostalCode()]));
+        return implode(', ', array_filter([$this->getRegionName(), $countryPostalStr]));
     }
 }

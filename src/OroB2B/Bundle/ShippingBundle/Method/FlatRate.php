@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Method;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
@@ -54,7 +57,26 @@ class FlatRate implements ShippingMethodInterface
         ShippingContextAwareInterface $dataEntity,
         ShippingRuleConfiguration $configEntity
     ) {
-        // TODO: Implement calculatePrice() method.
-    }
+        /** @var FlatRateRuleConfiguration $configEntity */
+        $currency = $configEntity->getCurrency();
+        $price = $configEntity->getPrice();
+        $shippingRuleType = $configEntity->getType();
 
+        if ($shippingRuleType == FlatRateRuleConfiguration::TYPE_PER_ORDER) {
+            return Price::create($price, $currency);
+        } else {
+            /** @var Checkout|null $checkout */
+            $checkout = $dataEntity->get('checkout');
+
+            if (!empty($checkout)) {
+                /** @var ArrayCollection|null $items */
+                $items = $checkout->getLineItems();
+                $countItems = !empty($items) && ($items instanceof ArrayCollection) ? $items->count() : 0;
+
+                return Price::create($countItems * $price, $currency);
+            }
+        }
+
+        return new Price();
+    }
 }

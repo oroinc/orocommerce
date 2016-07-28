@@ -8,8 +8,16 @@ parameters:
     orob2b_shipping.entity.freight_class.class: OroB2B\Bundle\ShippingBundle\Entity\FreightClass
     orob2b_shipping.entity.weight_unit.class: OroB2B\Bundle\ShippingBundle\Entity\WeightUnit
     orob2b_shipping.entity.product_shipping_options.class: OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions
+    orob2b_shipping.entity.shipping_rule.class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRule
 
 services:
+    orob2b_shipping.shipping_rule.manager.api:
+            class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+            parent: oro_soap.manager.entity_manager.abstract
+            arguments:
+                - '%orob2b_shipping.entity.shipping_rule.class%'
+                - "@doctrine.orm.entity_manager"
+
     orob2b_shipping.factory.shipping_origin_model_factory:
         class: OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory
         public: false

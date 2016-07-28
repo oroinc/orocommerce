@@ -6,6 +6,8 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfigurationInterface;
+use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
@@ -56,7 +58,6 @@ class ShippingMethodsProvider implements DataProviderInterface
             }
             $methods = $this->registry->getShippingMethods();
             foreach ($methods as $name => $view) {
-
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
@@ -70,7 +71,7 @@ class ShippingMethodsProvider implements DataProviderInterface
 
     /**
      * @param ContextInterface $context
-     * @return object|null
+     * @return ShippingRuleConfigurationInterface|null
      */
     protected function getEntity(ContextInterface $context)
     {
@@ -107,6 +108,7 @@ class ShippingMethodsProvider implements DataProviderInterface
                         'types' => []
                     ];
                     if (!array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name'))) {
+                        /** @var ShippingMethodInterface $method */
                         $method = $this->shippingMethodRegistry
                             ->getShippingMethod($configuration->getMethod());
                         $price = $method->calculatePrice($this->getEntity(), $configuration);

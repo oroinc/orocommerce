@@ -7,6 +7,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BShippingBundleInstaller implements Installation
 {
     /**
@@ -29,7 +32,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $this->createOrob2BShippingProductOptsTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
         $this->createOrob2BShippingRuleTable($schema);
-        $this->createOrob2BShippingDestinationTable($schema);
+        $this->createOrob2BShippingRuleDestinationTable($schema);
         $this->createOrob2BShippingRuleConfigTable($schema);
         $this->createOrob2BShipFlatRateRuleCnfTable($schema);
 
@@ -38,7 +41,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $this->addOrob2BShipFlatRateRuleCnfForeignKeys($schema);
         $this->addOrob2BShippingOrigWarehouseForeignKeys($schema);
         $this->addOrob2BShippingProductOptsForeignKeys($schema);
-        $this->addOrob2BShippingDestinationForeignKeys($schema);
+        $this->addOrob2BShippingRuleDestinationForeignKeys($schema);
     }
     /**
      * Create orob2b_shipping_freight_class table
@@ -184,13 +187,13 @@ class OroB2BShippingBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_shipping_destination table
+     * Create orob2b_shipping_rl_destination table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingDestinationTable(Schema $schema)
+    protected function createOrob2BShippingRuleDestinationTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_shipping_destination');
+        $table = $schema->createTable('orob2b_shipping_rl_destination');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
@@ -268,13 +271,13 @@ class OroB2BShippingBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_shipping_destination foreign keys.
+     * Add orob2b_shipping_rl_destination foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingDestinationForeignKeys(Schema $schema)
+    protected function addOrob2BShippingRuleDestinationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_shipping_destination');
+        $table = $schema->getTable('orob2b_shipping_rl_destination');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_country'),
             ['country_code'],
