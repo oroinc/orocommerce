@@ -784,3 +784,10 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
+
+    orob2b_pricing.builder.price_list_queue_consumer:
+        class: 'OroB2B\Bundle\PricingBundle\Builder\PriceListQueueConsumer'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_pricing.builder.price_list_product_assignment_builder'
+            - '@orob2b_pricing.builder.product_price_builder'

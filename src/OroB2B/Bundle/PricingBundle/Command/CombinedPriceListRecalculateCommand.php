@@ -9,8 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PricingBundle\Builder\PriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -25,6 +26,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     const ACCOUNT = 'account';
     const ACCOUNT_GROUP = 'account-group';
     const WEBSITE = 'website';
+    const PRICE_LIST = 'pricelist';
 
     /**
      * {@inheritdoc}
@@ -55,6 +57,13 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
                 'website ids for prices recalculate',
                 []
             )
+            ->addOption(
+                self::PRICE_LIST,
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'price list ids for prices recalculate',
+                []
+            )
             ->setDescription('Recalculate combined price list and combined product prices');
     }
 
@@ -63,8 +72,17 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->processPriceRules($input, $output);
-        $this->processCombinedPriceLists($input, $output);
+        $key = Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE);
+        $container = $this->getContainer();
+        $mode = $container->get('oro_config.manager')->get($key);
+
+        $force = (bool)$input->getOption(self::FORCE);
+        if ($force || $mode === CombinedPriceListQueueConsumer::MODE_SCHEDULED) {
+            $this->processPriceRules($input, $output);
+            $this->processCombinedPriceLists($input, $output);
+        } else {
+            $output->writeln('<info>Recalculation is not required, another mode is active</info>');
+        }
     }
 
     /**
@@ -82,7 +100,6 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     protected function processCombinedPriceLists(InputInterface $input, OutputInterface $output)
     {
         $force = (bool)$input->getOption(self::FORCE);
-
         $container = $this->getContainer();
         $websiteIds = $input->getOption(self::WEBSITE);
         $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
@@ -102,21 +119,14 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
                 ->fillTriggersForRecalculate($websiteIds, $accountGroupIds, $accountIds);
         }
 
-        $key = Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE);
-        $mode = $container->get('oro_config.manager')->get($key);
+        $output->writeln('<info>Start the process recalculation</info>');
+        /** @var CombinedPriceListQueueConsumer $consumer */
+        $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
+        $priceListCollectionConsumer->process();
+        $productPriceConsumer = $container->get('orob2b_pricing.builder.combined_product_price_queue_consumer');
+        $productPriceConsumer->process();
 
-        if ($force || $mode === CombinedPriceListQueueConsumer::MODE_SCHEDULED) {
-            $output->writeln('<info>Start the process recalculation</info>');
-            /** @var CombinedPriceListQueueConsumer $consumer */
-            $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
-            $priceListCollectionConsumer->process();
-            $productPriceConsumer = $container->get('orob2b_pricing.builder.combined_product_price_queue_consumer');
-            $productPriceConsumer->process();
-
-            $output->writeln('<info>The cache is updated successfully</info>');
-        } else {
-            $output->writeln('<info>Recalculation is not required, another mode is active</info>');
-        }
+        $output->writeln('<info>The cache is updated successfully</info>');
 
         $this->calculatePricesForScheduleCPLs();
     }
@@ -146,30 +156,51 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     protected function processPriceRules(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>Start the process Price rules</info>');
-        /** @var ProductPriceBuilder $builer */
-        $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
 
-        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
-        $assignmentBuilder = $this->getContainer()
-            ->get('orob2b_pricing.builder.price_list_product_assignment_builder');
+        $priceListIds = $input->getOption(self::PRICE_LIST);
+        $force = (bool)$input->getOption(self::FORCE);
 
-        /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceList::class)
-            ->getRepository(PriceList::class);
+        if ($priceListIds && !$force) {
+            $output->writeln(
+                '<comment>ATTENTION</comment>: To force execution run command with <info>--force</info> option:'
+            );
+            $output->writeln(sprintf('    <info>%s --force</info>', $this->getName()));
 
-        /** @var PriceRuleChangeTriggerRepository $triggerRepository */
-        $triggerRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceRuleChangeTrigger::class)
-            ->getRepository(PriceRuleChangeTrigger::class);
+            return;
+        }
 
-        if ((bool)$input->getOption(self::FORCE)) {
-            $triggerRepository->deleteAll();
-            $priceListIterator = $priceListRepository->getPriceListsWithRules();
+        if ($force) {
+            /** @var PriceListRepository $priceListRepository */
+            $priceListRepository = $this->getContainer()->get('doctrine')
+                ->getManagerForClass(PriceList::class)
+                ->getRepository(PriceList::class);
+
+            if (!$priceListIds) {
+                /** @var PriceRuleChangeTriggerRepository $triggerRepository */
+                $triggerRepository = $this->getContainer()->get('doctrine')
+                    ->getManagerForClass(PriceRuleChangeTrigger::class)
+                    ->getRepository(PriceRuleChangeTrigger::class);
+
+                $triggerRepository->deleteAll();
+                $priceListIterator = $priceListRepository->getPriceListsWithRules();
+            } else {
+                $priceListIterator = $priceListRepository->findBy(['id' => $priceListIds]);
+            }
+
+            /** @var ProductPriceBuilder $builer */
+            $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
+            /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
+            $assignmentBuilder = $this->getContainer()
+                ->get('orob2b_pricing.builder.price_list_product_assignment_builder');
+
             foreach ($priceListIterator as $priceList) {
                 $assignmentBuilder->buildByPriceList($priceList);
                 $priceBuilder->buildByPriceList($priceList);
             }
+        } else {
+            /** @var PriceListQueueConsumer $consumer */
+            $consumer = $this->getContainer()->get('orob2b_pricing.builder.price_list_queue_consumer');
+            $consumer->process();
         }
     }
 }

@@ -8,7 +8,7 @@
 {% block _line_item_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
-        {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ " form__col no-padding "}) %}
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
