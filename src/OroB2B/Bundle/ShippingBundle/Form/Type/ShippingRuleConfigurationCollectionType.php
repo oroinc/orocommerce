@@ -38,7 +38,6 @@ class ShippingRuleConfigurationCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'type' => ShippingRuleConfigurationType::NAME,
-            'error_bubbling' => false,
             'cascade_validation' => true,
         ]);
     }

@@ -68,11 +68,17 @@ table.shipping-options-result-grid {
 .orob2b-shipping-destination-collection.oro-item-collection {
   &>div {
     position: relative;
-    padding: 10px 15px 0 0;
+    padding: 15px 15px 0 0;
     margin: 0 0 20px;
     border: 1px solid #e6e6e6;
     background: #f8f8f8;
     border-radius: 4px;
+  }
+  div[data-validation-optional-group=""] {
+    display: inline-block;
+    .oro-multiselect-holder {
+      padding-right: 50px !important;
+    }
   }
   .add-list-item {
     margin-left: 183px;
@@ -90,25 +96,9 @@ table.shipping-options-result-grid {
   input[type="text"] {
     width: 280px;
   }
-}
-
-//.orob2b-shipping-config-collection {
-//  input[type="text"],
-//  .selector {
-//    width: 150px;
-//  }
-//  .control-group-choice {
-//    .controls {
-//      width: 150px;
-//    }
-//  }
-//  .controls {
-//    margin-left: 150px !important;
-//  }
-//}
-
-.control-group-orob2b_shipping_rule_configuration {
-  .controls {
-    margin-left: 138px !important;
+  .small-row {
+    .control-group-choice {
+      float: left;
+    }
   }
 }

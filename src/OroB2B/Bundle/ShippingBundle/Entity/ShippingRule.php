@@ -72,13 +72,6 @@ class ShippingRule extends ExtendShippingRule
     protected $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="name_hash", type="string", length=40, nullable=false, unique=true)
-     */
-    protected $nameHash;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=true})
@@ -170,6 +163,23 @@ class ShippingRule extends ExtendShippingRule
     protected $currency;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="stop_processing", type="boolean", nullable=false, options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=60
+     *          }
+     *      }
+     *  )
+     */
+    protected $stopProcessing = false;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -202,17 +212,8 @@ class ShippingRule extends ExtendShippingRule
     public function setName($name)
     {
         $this->name = $name;
-        $this->nameHash = sha1($name);
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNameHash()
-    {
-        return $this->nameHash;
     }
 
     /**
@@ -401,6 +402,24 @@ class ShippingRule extends ExtendShippingRule
             $this->shippingDestinations->removeElement($shippingDestination);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isStopProcessing()
+    {
+        return $this->stopProcessing;
+    }
+
+    /**
+     * @param boolean $stopProcessing
+     * @return $this
+     */
+    public function setStopProcessing($stopProcessing)
+    {
+        $this->stopProcessing = $stopProcessing;
         return $this;
     }
 }

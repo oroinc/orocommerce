@@ -6,4 +6,4 @@ orob2b_shipping_product_shipping_options_ajax:
 orob2b_shipping_rule:
     resource:     "@OroB2BShippingBundle/Controller/ShippingRuleController.php"
     type:         annotation
-    prefix:       /shipping_rule
+    prefix:       /shippingrule

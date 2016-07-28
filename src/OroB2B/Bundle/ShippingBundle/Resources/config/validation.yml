@@ -49,10 +49,6 @@ OroB2B\Bundle\ShippingBundle\Model\Weight:
 
 OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: nameHash
-            errorPath: name
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: priority
         - OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
     properties:
         name:
