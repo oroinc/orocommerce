@@ -166,6 +166,11 @@ class ShoppingList extends ExtendShoppingList implements
     protected $subtotal;
 
     /**
+     * @var bool
+     */
+    protected $isAllowedRFP = true;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -406,5 +411,21 @@ class ShoppingList extends ExtendShoppingList implements
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsAllowedRFP()
+    {
+        return $this->isAllowedRFP;
+    }
+
+    /**
+     * @param bool $isAllowedRFP
+     */
+    public function setIsAllowedRFP($isAllowedRFP)
+    {
+        $this->isAllowedRFP = $isAllowedRFP;
     }
 }

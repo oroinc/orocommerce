@@ -219,7 +219,7 @@ workflows:
             back_to_shipping_address:
                 label: Edit Shipping Information
                 step_to: enter_shipping_address
-                transition_definition: do_nothing
+                transition_definition: back_to_shipping_address_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -429,12 +429,12 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
@@ -553,14 +553,20 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                                    id: $.id
                                     transition: 'payment_error'
+                            - '@assign_url':
+                                attribute: $.result.failedShippingAddressUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'back_to_shipping_address'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
                                 object: $checkout.order
@@ -570,6 +576,7 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
+                                    failedShippingAddressUrl: $.result.failedShippingAddressUrl
                             - '@assign_value': [$payment_in_progress, true]
                     - '@redirect':
                         conditions:
@@ -580,7 +587,7 @@ workflows:
                                     action: 'validate'
                         route: orob2b_checkout_frontend_checkout
                         route_parameters:
-                            id: $checkout.id
+                            id: $.id
                             transition: finish_checkout
 
                     - '@redirect':
@@ -592,15 +599,8 @@ workflows:
                                     action: 'validate'
                         route: orob2b_checkout_frontend_checkout
                         route_parameters:
-                            id: $checkout.id
+                            id: $.id
                             transition: payment_error
-
-                    - '@send_email_template':
-                        parameters:
-                            from: $checkout.order.owner.email
-                            to: $checkout.order.accountUser.email
-                            template: 'order_confirmation_email'
-                            entity: $checkout.order
 
             finish_checkout_definition:
                 conditions:
@@ -711,7 +711,12 @@ workflows:
                                 conditions:
                                     '@not_empty': $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
-
+                    - '@send_email_template':
+                        parameters:
+                            from: $checkout.order.owner.email
+                            to: $checkout.order.accountUser.email
+                            template: 'order_confirmation_email'
+                            entity: $checkout.order
                     - '@remove_entity':
                         conditions:
                             '@or':
@@ -731,5 +736,9 @@ workflows:
             payment_error_definition:
 #                pre_conditions:
 #                    '@equal': [$payment_in_progress, true]
+                post_actions:
+                    - '@assign_value': [$payment_in_progress, false]
+
+            back_to_shipping_address_definition:
                 post_actions:
                     - '@assign_value': [$payment_in_progress, false]

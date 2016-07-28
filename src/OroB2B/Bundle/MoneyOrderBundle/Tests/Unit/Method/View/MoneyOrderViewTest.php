@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Unit\Method\View;
 
 use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use OroB2B\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
@@ -17,13 +18,17 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
     /** @var MoneyOrderView */
     protected $methodView;
 
+    /** @var MoneyOrderConfig */
+    protected $config;
+
     protected function setUp()
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->methodView = new MoneyOrderView($this->configManager);
+        $this->config = new MoneyOrderConfig($this->configManager);
+        $this->methodView = new MoneyOrderView($this->config);
     }
 
     protected function tearDown()
