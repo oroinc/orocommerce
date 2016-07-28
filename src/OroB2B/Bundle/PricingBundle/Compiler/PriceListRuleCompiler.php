@@ -121,6 +121,12 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         $params = [];
+        $priceValue = (string)$this->expressionBuilder->convert(
+            $this->expressionParser->parse($rule->getRule()),
+            $qb->expr(),
+            $params,
+            $this->queryConverter->getTableAliasByColumn()
+        );
         $this->addSelectInOrder(
             $qb,
             [
@@ -131,14 +137,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                 'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
                 'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
                 'priceRule' => (string)$qb->expr()->literal($rule->getId()),
-                'value' => (string)$this->expressionBuilder->convert(
-                    $this->expressionParser->parse($rule->getRule()),
-                    $qb->expr(),
-                    $params,
-                    $this->queryConverter->getTableAliasByColumn()
-                ),
+                'value' => $priceValue,
             ]
         );
+        $qb->andWhere($qb->expr()->gte($priceValue, 0));
         $this->applyParameters($qb, $params);
     }
 

@@ -7,7 +7,7 @@ interface NodeInterface
     /**
      * Get current node and all it's subnodes.
      *
-     * @return array|null
+     * @return array
      */
     public function getNodes();
 

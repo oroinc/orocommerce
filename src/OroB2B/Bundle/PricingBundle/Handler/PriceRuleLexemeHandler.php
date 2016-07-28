@@ -97,6 +97,16 @@ class PriceRuleLexemeHandler
         $lexemeEntities = [];
         foreach ($lexemes as $class => $fieldNames) {
             $realClassName = $this->priceRuleProvider->getRealClassName($class);
+            if (strpos($class, '::') !== false) {
+                list($containerClass, $fieldName) = explode('::', $class);
+                $lexeme = new PriceRuleLexeme();
+                $lexeme->setPriceRule($priceRule);
+                $lexeme->setPriceList($priceList);
+                $lexeme->setClassName($containerClass);
+                $lexeme->setFieldName($fieldName);
+                $lexemeEntities[] = $lexeme;
+            }
+
             foreach ($fieldNames as $fieldName) {
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);

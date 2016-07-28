@@ -143,7 +143,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getSingleEntityIdentifierFieldName')
             ->willReturn('id');
 
-        $lexemeEntityManager->expects($this->exactly(4))->method('persist');
+        $lexemeEntityManager->expects($this->exactly(5))->method('persist');
         $lexemeEntityManager->expects($this->once())->method('flush');
 
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
