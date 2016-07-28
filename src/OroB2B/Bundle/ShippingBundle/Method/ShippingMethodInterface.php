@@ -49,7 +49,7 @@ interface ShippingMethodInterface
     /**
      * @param ShippingContextAwareInterface $dataEntity
      * @param ShippingRuleConfiguration $configEntity
-     * @return Price
+     * @return Price|null
      */
     public function calculatePrice(
         ShippingContextAwareInterface $dataEntity,

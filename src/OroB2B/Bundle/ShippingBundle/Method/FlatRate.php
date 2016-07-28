@@ -51,19 +51,25 @@ class FlatRate implements ShippingMethodInterface
     /**
      * @param ShippingContextAwareInterface $dataEntity
      * @param ShippingRuleConfiguration $configEntity
-     * @return Price
+     * @return Price|nul
      */
     public function calculatePrice(
         ShippingContextAwareInterface $dataEntity,
         ShippingRuleConfiguration $configEntity
     ) {
+        if (!($configEntity instanceof FlatRateRuleConfiguration)) {
+            return null;
+        }
+
         /** @var FlatRateRuleConfiguration $configEntity */
         $currency = $configEntity->getCurrency();
         $price = $configEntity->getPrice();
         $shippingRuleType = $configEntity->getType();
+        /** @var Price $handlingFee */
+        $handlingFee = $configEntity->getHandlingFee();
 
         if ($shippingRuleType == FlatRateRuleConfiguration::TYPE_PER_ORDER) {
-            return Price::create($price, $currency);
+            return Price::create($price + $handlingFee->getValue(), $currency);
         } else {
             /** @var Checkout|null $checkout */
             $checkout = $dataEntity->get('checkout');
@@ -73,10 +79,10 @@ class FlatRate implements ShippingMethodInterface
                 $items = $checkout->getLineItems();
                 $countItems = !empty($items) && ($items instanceof ArrayCollection) ? $items->count() : 0;
 
-                return Price::create($countItems * $price, $currency);
+                return Price::create($countItems * $price + $handlingFee->getValue(), $currency);
             }
         }
 
-        return new Price();
+        return null;
     }
 }
