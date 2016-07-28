@@ -56,7 +56,7 @@ class PriceRuleChangeTrigger
     }
     
     /**
-     * @return PriceRule
+     * @return PriceList
      */
     public function getPriceList()
     {

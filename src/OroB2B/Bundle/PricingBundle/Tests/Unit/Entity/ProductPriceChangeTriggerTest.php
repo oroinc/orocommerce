@@ -24,26 +24,6 @@ class ProductPriceChangeTriggerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($product, $productPriceChangeTrigger->getProduct());
     }
 
-    public function testGetObjectIdentifier()
-    {
-        $changedProductPrice = $this->getProductPriceChangeTrigger(1, 1);
-
-        $this->assertSame(
-            'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger_1_1',
-            $changedProductPrice->getObjectIdentifier()
-        );
-    }
-
-    /**
-     * @expectedExceptionMessage Product id and priceList id, required for identifier generation
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetObjectIdentifierError()
-    {
-        $changedProductPrice = $this->getProductPriceChangeTrigger();
-        $changedProductPrice->getObjectIdentifier();
-    }
-
     /**
      * @param null|int $productId
      * @param null|int $priceListId

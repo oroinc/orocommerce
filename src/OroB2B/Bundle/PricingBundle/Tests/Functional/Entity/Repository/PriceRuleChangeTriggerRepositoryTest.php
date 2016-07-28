@@ -54,4 +54,20 @@ class PriceRuleChangeTriggerRepositoryTest extends WebTestCase
         $triggers = $this->repository->findAll();
         $this->assertEmpty($triggers);
     }
+
+    public function testGetTriggersIterator()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $trigger = new PriceRuleChangeTrigger($priceList);
+        $this->manager->persist($trigger);
+        $this->manager->flush($trigger);
+
+        $qb = $this->repository->createQueryBuilder('trigger');
+        $qb->select('COUNT(trigger)');
+        $countExpected = $qb->getQuery()->getSingleScalarResult();
+        $iterator = $this->repository->getTriggersIterator();
+
+        $this->assertCount((int)$countExpected, $iterator);
+    }
 }
