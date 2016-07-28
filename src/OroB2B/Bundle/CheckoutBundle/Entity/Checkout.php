@@ -28,9 +28,6 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareI
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
- *          },
- *          "workflow"={
- *              "active_workflows"={"b2b_flow_checkout"}
  *          }
  *      }
  * )

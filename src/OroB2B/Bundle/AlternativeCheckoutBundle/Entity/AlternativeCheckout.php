@@ -29,9 +29,6 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
- *          },
- *          "workflow"={
- *              "active_workflows"={"b2b_flow_alternative_checkout"}
  *          }
  *      }
  * )
