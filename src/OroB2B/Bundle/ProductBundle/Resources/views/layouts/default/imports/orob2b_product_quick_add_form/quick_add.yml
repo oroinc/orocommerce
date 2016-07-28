@@ -1,0 +1,27 @@
+layout:
+    actions:
+        - '@addTree':
+            items:
+                __quick_add_form:
+                    blockType: container
+                __quick_add_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                __quick_add_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                __quick_add_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_product_quick_add_form_provider }
+                __quick_add_form_buttons:
+                    blockType: container
+            tree:
+                __root:
+                    __quick_add_form:
+                        __quick_add_form_start: ~
+                        __quick_add_form_fields: ~
+                        __quick_add_form_buttons: ~
+                        __quick_add_form_end: ~

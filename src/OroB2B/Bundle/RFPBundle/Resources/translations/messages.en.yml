@@ -198,5 +198,8 @@ orob2b:
                 comment.label: 'Notes'
             action:
                 request.edit: 'Edit RFQ'
+            data_storage:
+                cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
+                no_products_be_added_to_rfq: 'No products could be added to RFQ.'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'

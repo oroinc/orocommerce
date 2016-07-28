@@ -140,6 +140,20 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     protected $accountUsers;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="self_managed", options={"default"=false})
+     */
+    protected $selfManaged = false;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="public", options={"default"=true})
+     */
+    protected $public = true;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -317,7 +331,39 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
+     */
+    public function isSelfManaged()
+    {
+        return $this->selfManaged;
+    }
+
+    /**
+     * @param string $selfManaged
+     */
+    public function setSelfManaged($selfManaged)
+    {
+        $this->selfManaged = $selfManaged;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * @param boolean $public
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+    }
+
+    /**
+     * @return string
      */
     public function serialize()
     {
@@ -326,12 +372,14 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
                 $this->id,
                 $this->role,
                 $this->label,
+                $this->selfManaged,
+                $this->public
             ]
         );
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $serialized
      */
     public function unserialize($serialized)
     {
@@ -339,6 +387,11 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
             $this->id,
             $this->role,
             $this->label,
+            $this->selfManaged,
+            $this->public
             ) = unserialize($serialized);
+
+        $this->websites     = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
     }
 }

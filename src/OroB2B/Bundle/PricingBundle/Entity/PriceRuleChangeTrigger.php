@@ -24,10 +24,10 @@ class PriceRuleChangeTrigger
     /**
      * @var PriceRule
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule")
-     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
-    protected $priceRule;
+    protected $priceList;
 
     /**
      * @var Product
@@ -38,12 +38,12 @@ class PriceRuleChangeTrigger
     protected $product;
 
     /**
-     * @param PriceRule $priceRule
+     * @param PriceList $priceList
      * @param Product $product
      */
-    public function __construct(PriceRule $priceRule, Product $product = null)
+    public function __construct(PriceList $priceList, Product $product = null)
     {
-        $this->priceRule = $priceRule;
+        $this->priceList = $priceList;
         $this->product = $product;
     }
 
@@ -56,11 +56,11 @@ class PriceRuleChangeTrigger
     }
     
     /**
-     * @return PriceRule
+     * @return PriceList
      */
-    public function getPriceRule()
+    public function getPriceList()
     {
-        return $this->priceRule;
+        return $this->priceList;
     }
 
     /**

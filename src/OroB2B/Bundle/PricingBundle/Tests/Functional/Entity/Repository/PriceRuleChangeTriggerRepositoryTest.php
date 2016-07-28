@@ -6,9 +6,11 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
 /**
@@ -40,9 +42,9 @@ class PriceRuleChangeTriggerRepositoryTest extends WebTestCase
 
     public function testDeleteAll()
     {
-        /** @var PriceRule $priceRule */
-        $priceRule = $this->getReference(LoadPriceRules::PRICE_RULE_1);
-        $trigger = new PriceRuleChangeTrigger($priceRule);
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $trigger = new PriceRuleChangeTrigger($priceList);
         $this->manager->persist($trigger);
         $this->manager->flush($trigger);
 
@@ -51,5 +53,21 @@ class PriceRuleChangeTriggerRepositoryTest extends WebTestCase
         $this->repository->deleteAll();
         $triggers = $this->repository->findAll();
         $this->assertEmpty($triggers);
+    }
+
+    public function testGetTriggersIterator()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $trigger = new PriceRuleChangeTrigger($priceList);
+        $this->manager->persist($trigger);
+        $this->manager->flush($trigger);
+
+        $qb = $this->repository->createQueryBuilder('trigger');
+        $qb->select('COUNT(trigger)');
+        $countExpected = $qb->getQuery()->getSingleScalarResult();
+        $iterator = $this->repository->getTriggersIterator();
+
+        $this->assertCount((int)$countExpected, $iterator);
     }
 }

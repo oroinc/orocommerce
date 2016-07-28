@@ -6,8 +6,24 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
+use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+
 class WarehouseRepository extends EntityRepository
 {
+    /**
+     * Returns the first warehouse in the system or null if there are no warehouses
+     *
+     * @return null|Warehouse
+     */
+    public function getSingularWarehouse()
+    {
+        $queryBuilder = $this->createQueryBuilder('w')
+            ->orderBy('w.id', 'ASC')
+            ->setMaxResults(1);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
+
     /**
      * Counts all entities in current repository.
      * @return integer

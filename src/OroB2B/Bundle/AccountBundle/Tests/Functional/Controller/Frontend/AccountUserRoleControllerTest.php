@@ -14,6 +14,8 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRol
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserRoleControllerTest extends WebTestCase
 {
@@ -156,6 +158,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
             ->getToken('orob2b_account_frontend_account_user_role')->getValue();
+
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'orob2b_account_frontend_account_user_role' => [
@@ -303,6 +306,71 @@ class AccountUserRoleControllerTest extends WebTestCase
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->find($id);
         $this->assertFalse($role->isPredefined());
+    }
+
+    public function testDisplaySelfManagedPublicRoles()
+    {
+        $response = $this->client->requestGrid('frontend-account-account-user-roles-grid');
+        $result = $this->getJsonResponseContent($response, 200);
+
+        $visibleRoleIds = array_map(
+            function (array $row) {
+                return $row['id'];
+            },
+            $result['data']
+        );
+
+        // invisible role not self managed role (self_managed = false and public = true)
+        $this->assertNotContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED)->getId(),
+            $visibleRoleIds
+        );
+
+        // visible not self managed role (self_managed = true and public = true)
+        $this->assertContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_SELF_MANAGED)->getId(),
+            $visibleRoleIds
+        );
+
+        // invisible not public role (self_managed = true and public = false)
+        $this->assertNotContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_NOT_PUBLIC)->getId(),
+            $visibleRoleIds
+        );
+    }
+
+    public function testShouldNotAllowViewAndUpdateNotSelfManagedRole()
+    {
+        $notSelfManagedRole = $this->getReference(LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $notSelfManagedRole->getId()])
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $notSelfManagedRole->getId()])
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+    }
+
+    public function testShouldNotAllowViewAndUpdateNotPublicRole()
+    {
+        $notPublicRole = $this->getReference(LoadAccountUserRoleData::ROLE_NOT_PUBLIC);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $notPublicRole->getId()])
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $notPublicRole->getId()])
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
     /**

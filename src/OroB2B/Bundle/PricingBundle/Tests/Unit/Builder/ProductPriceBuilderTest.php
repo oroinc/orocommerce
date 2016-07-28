@@ -146,65 +146,6 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->productPriceBuilder->buildByPriceList($priceList, $product);
     }
 
-    public function testBuildByRule()
-    {
-        $priceList = new PriceList();
-        $priceRule = new PriceRule();
-        $priceRule->setPriceList($priceList);
-        $product = new Product();
-        $fields = ['field1', 'field2'];
-
-        $repo = $this->getRepositoryMock();
-        $repo->expects($this->once())
-            ->method('deleteGeneratedPricesByRule')
-            ->with($priceRule, $product);
-
-        $qb = $this->assertInsertCall($fields, [$priceRule], $product);
-
-        $this->insertFromSelectQueryExecutor->expects($this->once())
-            ->method('execute')
-            ->with(
-                ProductPrice::class,
-                $fields,
-                $qb
-            );
-
-        $this->triggersFiller->expects($this->once())
-            ->method('createTriggerByPriceListProduct')
-            ->with($priceList, $product);
-
-        $this->productPriceBuilder->buildByRule($priceRule, $product);
-    }
-
-    public function testBuildByRuleWithoutProduct()
-    {
-        $priceList = new PriceList();
-        $priceRule = new PriceRule();
-        $priceRule->setPriceList($priceList);
-        $fields = ['field1', 'field2'];
-
-        $repo = $this->getRepositoryMock();
-        $repo->expects($this->once())
-            ->method('deleteGeneratedPricesByRule')
-            ->with($priceRule, null);
-
-        $qb = $this->assertInsertCall($fields, [$priceRule]);
-
-        $this->insertFromSelectQueryExecutor->expects($this->once())
-            ->method('execute')
-            ->with(
-                ProductPrice::class,
-                $fields,
-                $qb
-            );
-
-        $this->triggersFiller->expects($this->once())
-            ->method('fillTriggersByPriceList')
-            ->with($priceList);
-
-        $this->productPriceBuilder->buildByRule($priceRule);
-    }
-
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
      */

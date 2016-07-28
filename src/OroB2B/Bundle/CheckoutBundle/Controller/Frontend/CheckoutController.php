@@ -15,7 +15,6 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
@@ -88,6 +87,7 @@ class CheckoutController extends Controller
             'data' =>
                 [
                     'checkout' => $checkout,
+                    'workflowItem' => $workflowItem,
                     'workflowStep' => $currentStep
                 ]
         ];
@@ -158,16 +158,15 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param WorkflowAwareInterface $checkout
+     * @param CheckoutInterface $checkout
      * @param Request $request
      * @return WorkflowItem
-     * @throws \Exception
      * @throws \Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException
      * @throws \Oro\Bundle\WorkflowBundle\Exception\WorkflowException
      */
-    protected function handleTransition(WorkflowAwareInterface $checkout, Request $request)
+    protected function handleTransition(CheckoutInterface $checkout, Request $request)
     {
-        $workflowItem = $checkout->getWorkflowItem();
+        $workflowItem = $this->getWorkflowItem($checkout);
         if ($request->isMethod(Request::METHOD_POST)) {
             $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
                 ->getContinueTransition($workflowItem);
@@ -231,5 +230,20 @@ class CheckoutController extends Controller
         $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
 
         return $event->getCheckoutEntity();
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @return WorkflowItem
+     */
+    protected function getWorkflowItem(CheckoutInterface $checkout)
+    {
+        $items = $this->getWorkflowManager()->getWorkflowItemsByEntity($checkout);
+
+        if (count($items) !== 1) {
+            throw new \RuntimeException('Should be only one WorkflowItem');
+        }
+
+        return reset($items);
     }
 }
