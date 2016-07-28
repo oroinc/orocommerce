@@ -284,7 +284,6 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-
     }
 
     /**

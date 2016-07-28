@@ -36,6 +36,7 @@ class OroB2BMenuBundle implements Migration, RenameExtensionAwareInterface
             'oro_fallback_localization_val',
             ['localized_value_id']
         );
+        $this->removeMenuItemSerializedDataColumn($schema);
     }
 
     /**
@@ -56,5 +57,19 @@ class OroB2BMenuBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function removeMenuItemSerializedDataColumn(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_menu_item');
+        if ($table->hasColumn('serialized_data') &&
+            !class_exists('Oro\Bundle\EntitySerializedFieldsBundle\OroEntitySerializedFieldsBundle')
+        ) {
+            $table->dropColumn('serialized_data');
+        }
     }
 }

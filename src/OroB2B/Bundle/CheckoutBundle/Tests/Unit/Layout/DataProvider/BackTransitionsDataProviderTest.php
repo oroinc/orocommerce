@@ -33,8 +33,7 @@ class BackTransitionsDataProviderTest extends AbstractTransitionDataProviderTest
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
-        $context = $this->prepareContext($checkout);
+        $context = $this->prepareContext($checkout, $workflowItem);
 
         $transition = new Transition();
         $transition->setName('transition1');
