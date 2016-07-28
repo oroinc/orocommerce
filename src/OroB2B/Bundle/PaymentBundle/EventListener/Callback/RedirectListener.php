@@ -13,6 +13,7 @@ class RedirectListener
 {
     const SUCCESS_URL_KEY = 'successUrl';
     const FAILURE_URL_KEY = 'failureUrl';
+    const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
 
     /** @var Session */
     protected $session;
@@ -39,12 +40,7 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);
-
-        $flashBag = $this->session->getFlashBag();
-
-        if (!$flashBag->has('error')) {
-            $flashBag->add('error', 'orob2b.payment.result.error');
-        }
+        $this->setErrorMessage('orob2b.payment.result.error');
     }
 
     /**
@@ -62,6 +58,18 @@ class RedirectListener
 
         if (!empty($transactionOptions[$expectedOptionsKey])) {
             $event->setResponse(new RedirectResponse($transactionOptions[$expectedOptionsKey]));
+        }
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function setErrorMessage($message)
+    {
+        $flashBag = $this->session->getFlashBag();
+
+        if (!$flashBag->has('error')) {
+            $flashBag->add('error', $message);
         }
     }
 }

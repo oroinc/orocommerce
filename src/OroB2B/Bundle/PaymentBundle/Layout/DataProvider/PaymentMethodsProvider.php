@@ -49,8 +49,8 @@ class PaymentMethodsProvider implements DataProviderInterface
             $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
 
             $views = $this->registry->getPaymentMethodViews($paymentContext);
-            foreach ($views as $name => $view) {
-                $this->data[$name] = [
+            foreach ($views as $view) {
+                $this->data[$view->getPaymentMethodType()] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
                     'options' => $view->getOptions($paymentContext),
