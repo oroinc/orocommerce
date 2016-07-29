@@ -154,11 +154,9 @@
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.form.payment.label'|trans,
-        'class': 'active',
-        'subblocks': [{
-        'data': [paymentTerm]
-        }]
+            'title': 'orob2b.order.form.payment.label'|trans,
+            'class': 'active',
+            'subblocks': [{'data': [paymentTerm]}]
         }]) %}
     {% endif %}
 

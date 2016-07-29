@@ -28,17 +28,13 @@ class QuoteType extends AbstractType
     /** @var SecurityFacade */
     protected $securityFacade;
 
-    /**
-     * @var QuoteAddressSecurityProvider
-     */
+    /** @var QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
 
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataClass;
 
     /**
