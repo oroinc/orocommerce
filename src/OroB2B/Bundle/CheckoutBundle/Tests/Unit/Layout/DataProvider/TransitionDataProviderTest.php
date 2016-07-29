@@ -40,11 +40,9 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBackTransitions()
     {
-        $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
 
         $transition = new Transition();
         $transition->setName('transition1');
@@ -68,16 +66,14 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($transitions));
 
         $expected = [$step->getName() => new TransitionData($backTransition, true, new ArrayCollection())];
-        $this->assertEquals($expected, $this->dataProvider->getBackTransitions($checkout));
+        $this->assertEquals($expected, $this->dataProvider->getBackTransitions($workflowItem));
     }
 
     public function testGetContinueTransition()
     {
-        $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
 
         $transitionWithoutForm = new Transition();
         $transitionWithoutForm->setName('transition1');
@@ -98,16 +94,14 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($transitions));
 
         $expected = new TransitionData($continueTransition, true, new ArrayCollection());
-        $this->assertEquals($expected, $this->dataProvider->getContinueTransition($checkout));
+        $this->assertEquals($expected, $this->dataProvider->getContinueTransition($workflowItem));
     }
 
     public function testGetBackTransition()
     {
-        $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
 
         $transition = new Transition();
         $transition->setName('transition1');
@@ -131,7 +125,7 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($transitions));
 
         $expected = new TransitionData($backTransition, true, new ArrayCollection());
-        $this->assertEquals($expected, $this->dataProvider->getBackTransition($checkout));
+        $this->assertEquals($expected, $this->dataProvider->getBackTransition($workflowItem));
     }
 
     public function testGetBackTransitionNull()

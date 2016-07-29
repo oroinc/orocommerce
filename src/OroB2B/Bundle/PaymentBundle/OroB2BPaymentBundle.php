@@ -6,6 +6,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
@@ -23,6 +25,8 @@ class OroB2BPaymentBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new PaymentMethodPass());
+        $container->addCompilerPass(new PaymentMethodViewPass());
         parent::build($container);
     }
 

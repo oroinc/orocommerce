@@ -4,9 +4,10 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormView;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+
 use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class TransitionFormDataProvider extends AbstractFormDataProvider
@@ -25,19 +26,18 @@ class TransitionFormDataProvider extends AbstractFormDataProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param WorkflowItem $workflowItem
      * @return null|FormView
      */
-    public function getTransitionForm(Checkout $checkout)
+    public function getTransitionForm(WorkflowItem $workflowItem)
     {
         /** @var TransitionData $continueTransitionData */
-        $transitionData = $this->transitionDataProvider->getContinueTransition($checkout);
+        $transitionData = $this->transitionDataProvider->getContinueTransition($workflowItem);
 
         if (!$transitionData || !$transitionData->getTransition()->hasForm()) {
             return null;
         }
 
-        $workflowItem = $checkout->getWorkflowItem();
         $transition = $transitionData->getTransition();
 
         // in this context parameters used for generating local cache

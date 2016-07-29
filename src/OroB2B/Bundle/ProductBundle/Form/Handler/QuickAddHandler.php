@@ -72,7 +72,7 @@ class QuickAddHandler
     /**
      * @param Request $request
      * @param string $successDefaultRoute
-     * @return Response|null
+     * @return Response|null|false
      */
     public function process(Request $request, $successDefaultRoute)
     {
@@ -124,7 +124,10 @@ class QuickAddHandler
                 ],
                 $request
             );
-            if (!$response) {
+
+            if ($response === false) {
+                return $response;
+            } elseif (!$response) {
                 $response = new RedirectResponse($this->router->generate($successDefaultRoute));
             }
         }

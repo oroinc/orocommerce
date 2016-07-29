@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider;
 
 class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -34,12 +34,12 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getDataDataProvider
-     * @param Checkout $checkout
      * @param bool $displayOrdered
      * @param array $expected
      */
-    public function testGetSteps(Checkout $checkout, $displayOrdered, array $expected)
+    public function testGetSteps($displayOrdered, array $expected)
     {
+        /** @var WorkflowItem|\PHPUnit_Framework_MockObject_MockObject $workflowItem */
         $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
             ->disableOriginalConstructor()
             ->getMock();
@@ -75,14 +75,12 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($expected);
         }
 
-        $checkout->setWorkflowItem($workflowItem);
-
         $this->workflowManager->expects($this->once())
             ->method('getWorkflow')
             ->with($workflowItem)
             ->willReturn($workflow);
 
-        $result = $this->provider->getSteps($checkout);
+        $result = $this->provider->getSteps($workflowItem);
         $this->assertEquals($expected, $result);
     }
 
@@ -91,18 +89,15 @@ class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getDataDataProvider()
     {
-        $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
         $step1 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 100]);
         $step2 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 200]);
         $steps = [$step1, $step2];
         return [
             'displayOrdered' => [
-                'checkout' => $checkout,
                 'displayOrdered' => true,
                 'expected' => $steps
             ],
             'displayUnOrdered' => [
-                'checkout' => $checkout,
                 'displayOrdered' => false,
                 'expected' => $steps
             ],

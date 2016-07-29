@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -73,22 +74,19 @@ class FrontendProductPricesProvider
                 ]
             );
             if (count($prices)) {
-                /** @var ProductPrice $price */
-                $price = current($prices);
-                $unitPrecisions = $price->getProduct()->getUnitPrecisions();
+                $unitPrecisions = $product->getUnitPrecisions();
 
                 $unitsToSell = [];
                 foreach ($unitPrecisions as $unitPrecision) {
-                    if ($unitPrecision->isSell()) {
-                        $unitsToSell[] = $unitPrecision->getUnit();
-                    }
+                    $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
                 }
 
-                foreach ($prices as $key => $combinedProductPrice) {
-                    if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
-                        unset($prices[$key]);
+                $prices = array_filter(
+                    $prices,
+                    function (CombinedProductPrice $price) use ($unitsToSell) {
+                        return !empty($unitsToSell[$price->getProductUnitCode()]);
                     }
-                }
+                );
             }
 
             $this->productPrices[$productId] = $prices;

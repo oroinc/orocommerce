@@ -37,13 +37,13 @@ class TransitionDataProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param WorkflowItem $workflowItem
      *
      * @return null|TransitionData
      */
-    public function getBackTransition(Checkout $checkout)
+    public function getBackTransition(WorkflowItem $workflowItem)
     {
-        $transitions = $this->getBackTransitions($checkout);
+        $transitions = $this->getBackTransitions($workflowItem);
 
         if ($transitions) {
             return end($transitions);
@@ -53,14 +53,12 @@ class TransitionDataProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param WorkflowItem $workflowItem
      *
      * @return array
      */
-    public function getBackTransitions(Checkout $checkout)
+    public function getBackTransitions(WorkflowItem $workflowItem)
     {
-        $workflowItem = $checkout->getWorkflowItem();
-
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
         if (!array_key_exists($cacheKey, $this->backTransitions)) {
             $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
@@ -91,13 +89,12 @@ class TransitionDataProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param WorkflowItem $workflowItem
      *
      * @return null|TransitionData
      */
-    public function getContinueTransition(Checkout $checkout)
+    public function getContinueTransition(WorkflowItem $workflowItem)
     {
-        $workflowItem = $checkout->getWorkflowItem();
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
         if (!array_key_exists($cacheKey, $this->continueTransitions)) {
             $continueTransition = null;

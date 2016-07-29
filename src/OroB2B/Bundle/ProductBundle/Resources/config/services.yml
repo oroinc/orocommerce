@@ -167,6 +167,7 @@ services:
             - "@oro_security.security_facade"
             - "@session"
             - "@translator"
+            - "@service_container"
         calls:
             - [setComponentProcessorFilter,  ["@orob2b_product.component_processor.filter"]]
         abstract: true

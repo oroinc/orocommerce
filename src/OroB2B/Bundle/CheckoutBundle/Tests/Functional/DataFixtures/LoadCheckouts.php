@@ -3,9 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 class LoadCheckouts extends AbstractLoadCheckouts
@@ -22,7 +20,7 @@ class LoadCheckouts extends AbstractLoadCheckouts
         return [
             self::CHECKOUT_1 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_1,
-                'checkout' => ['payment_method' => PayflowGateway::TYPE]
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_2,
@@ -30,7 +28,7 @@ class LoadCheckouts extends AbstractLoadCheckouts
             ],
             self::CHECKOUT_3 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_3,
-                'checkout' => ['payment_method' =>  PayPalPaymentsPro::TYPE]
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],
         ];
     }

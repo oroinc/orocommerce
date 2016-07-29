@@ -10,7 +10,6 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
@@ -43,10 +42,8 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTransitionForm()
     {
         $workflowData = new WorkflowData();
-        $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
         $workflowItem->setData($workflowData);
-        $checkout->setWorkflowItem($workflowItem);
 
         $continueTransition = new Transition();
         $continueTransition->setName('transition3');
@@ -56,7 +53,7 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
         $transitionData = new TransitionData($continueTransition, true, new ArrayCollection());
         $this->transitionDataProvider->expects($this->once())
             ->method('getContinueTransition')
-            ->with($checkout)
+            ->with($workflowItem)
             ->will($this->returnValue($transitionData));
 
         $formView = $this->getMock('Symfony\Component\Form\FormView');
@@ -78,6 +75,6 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnValue($form));
 
-        $this->assertSame($formView, $this->dataProvider->getTransitionForm($checkout));
+        $this->assertSame($formView, $this->dataProvider->getTransitionForm($workflowItem));
     }
 }

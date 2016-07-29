@@ -15,5 +15,5 @@ layout:
                 middle_bar:
                     quick_access_container:
                         quick_access_menu: ~
-    conditions:
-        '@neq': [ $context.logged_user, null ]
+
+    conditions: 'context["logged_user"]!=null'

@@ -4,11 +4,10 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutStepsDataProvider
 {
@@ -26,15 +25,13 @@ class CheckoutStepsDataProvider
     }
 
     /**
-     * @param Checkout $checkout
+     * @param WorkflowItem $workflowItem
      *
      * @return Collection|Step[]
      * @throws WorkflowException
      */
-    public function getSteps(Checkout $checkout)
+    public function getSteps(WorkflowItem $workflowItem)
     {
-        $workflowItem = $checkout->getWorkflowItem();
-
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
 
         if ($workflow->getDefinition()->isStepsDisplayOrdered()) {
