@@ -6,9 +6,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
-class FlatRate implements ShippingMethodInterface
+class FlatRateShippingMethod implements ShippingMethodInterface
 {
     const NAME = 'flat_rate';
 
@@ -17,7 +18,7 @@ class FlatRate implements ShippingMethodInterface
      */
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**
@@ -33,7 +34,7 @@ class FlatRate implements ShippingMethodInterface
      */
     public function getShippingTypes()
     {
-        return ['per_item', 'per_order'];
+        return [];
     }
 
     /**
@@ -56,7 +57,7 @@ class FlatRate implements ShippingMethodInterface
      */
     public function getFormType()
     {
-        // TODO: Implement getFormType() method.
+        return FlatRateShippingConfigurationType::NAME;
     }
 
     /**

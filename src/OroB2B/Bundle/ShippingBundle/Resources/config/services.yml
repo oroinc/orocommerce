@@ -176,6 +176,11 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
 
+    orob2b_shipping.validator.enabled_configuration_validation_group:
+        class: 'OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_shipping_enabled_configuration_validation_group_validator }
+
     orob2b_shipping.form.data_transformer.measure:
         class: 'OroB2B\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
         public: false
@@ -204,3 +209,14 @@ services:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_shipping.shipping_method.registry:
+        class: 'OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
+        public: false
+
+    orob2b_shipping.form_event_subscriber.rule_configuration_subscriber:
+        class: 'OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
+        arguments:
+            - '@form.factory'
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@doctrine'

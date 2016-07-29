@@ -18,6 +18,8 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
             ['value', 1.0],
             ['currency', 'USD'],
             ['price', Price::create(1.0, 'USD')],
+            ['handlingFeeValue', 2.0],
+            ['processingType', FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM],
         ];
 
         $this->assertPropertyAccessors($entity, $properties);
@@ -29,7 +31,7 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($entity->getPrice());
         $entity->setValue(42);
         $entity->setCurrency('USD');
-        $entity->createPrice();
+        $entity->createPrices();
         $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
@@ -78,7 +80,7 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $entity->getPrice()->setValue(84);
         $entity->getPrice()->setCurrency('EUR');
 
-        $entity->updatePrice();
+        $entity->updatePrices();
         $this->assertEquals(84, $entity->getValue());
         $this->assertEquals('EUR', $entity->getCurrency());
     }
@@ -90,6 +92,6 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $entity->setCurrency('USD');
         $entity->setMethod('UPS');
         $entity->setType('TEST');
-        $this->assertEquals('UPS, TEST, 42 USD', (string)$entity);
+        $this->assertEquals('UPS, 42 USD', (string)$entity);
     }
 }

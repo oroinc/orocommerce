@@ -63,6 +63,43 @@ services:
         tags:
             - { name: form.type, alias: orob2b_shipping_weight }
 
+    orob2b_shipping.form.type.rule:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleType
+        tags:
+            - { name: form.type, alias: orob2b_shipping_rule }
+
+    orob2b_shipping.form.type.rule_config_collection:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType
+        arguments:
+            - '@orob2b_shipping.form_event_subscriber.rule_configuration_subscriber'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_rule_config_collection }
+
+    orob2b_shipping.form.type.rule_destination:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType
+        arguments:
+            - '@orob2b_shipping.form.listener.rule_destination'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_rule_destination }
+
+    orob2b_shipping.form.type.rule_configuration:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType
+        tags:
+            - { name: form.type, alias: orob2b_shipping_rule_configuration }
+
+    orob2b_shipping.form.type.flat_rate_rule_config:
+        class: OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType
+        arguments:
+            - '@orob2b_pricing.rounding.price_rounding_service'
+        tags:
+            - { name: form.type, alias: orob2b_shipping_flat_rate_rule_config }
+
+    orob2b_shipping.form.listener.rule_destination:
+        class: Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+
     orob2b_shipping.form.type.dimensions:
         class: OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType
         calls:

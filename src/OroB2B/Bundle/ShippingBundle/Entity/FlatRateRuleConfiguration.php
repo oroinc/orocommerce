@@ -16,8 +16,22 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
  */
 class FlatRateRuleConfiguration extends ShippingRuleConfiguration
 {
-    const TYPE_PER_ORDER = 'per_order';
-    const TYPE_PER_ITEM = 'per_item';
+    const PROCESSING_TYPE_PER_ORDER = 'per_order';
+    const PROCESSING_TYPE_PER_ITEM = 'per_item';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="processing_type", type="string", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=50
+     *          }
+     *      }
+     * )
+     */
+    protected $processingType;
 
     /**
      * @var float
@@ -26,7 +40,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30
+     *              "order"=60
      *          }
      *      }
      * )
@@ -34,18 +48,18 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     protected $value;
 
     /**
-     * @var string
+     * @var float
      *
-     * @ORM\Column(name="currency", type="string", nullable=false)
+     * @ORM\Column(name="handling_fee_value", type="money", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=40
+     *              "order"=70
      *          }
      *      }
      * )
      */
-    protected $currency;
+    protected $handlingFeeValue;
 
     /**
      * @var Price
@@ -55,7 +69,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     /**
      * @ORM\PostLoad
      */
-    public function createPrice()
+    public function createPrices()
     {
         if (null !== $this->value && null !== $this->currency) {
             $this->price = Price::create($this->value, $this->currency);
@@ -66,18 +80,10 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function updatePrice()
+    public function updatePrices()
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
     }
 
     /**
@@ -87,7 +93,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-        $this->createPrice();
+        $this->createPrices();
 
         return $this;
     }
@@ -107,7 +113,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setValue($value)
     {
         $this->value = $value;
-        $this->createPrice();
+        $this->createPrices();
 
         return $this;
     }
@@ -121,8 +127,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setPrice(Price $price = null)
     {
         $this->price = $price;
-
-        $this->updatePrice();
+        $this->updatePrices();
 
         return $this;
     }
@@ -138,14 +143,51 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     }
 
     /**
+     * @return float
+     */
+    public function getHandlingFeeValue()
+    {
+        return $this->handlingFeeValue;
+    }
+
+    /**
+     * @param float $handlingFeeValue
+     * @return $this
+     */
+    public function setHandlingFeeValue($handlingFeeValue)
+    {
+        $this->handlingFeeValue = $handlingFeeValue;
+        $this->createPrices();
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcessingType()
+    {
+        return $this->processingType;
+    }
+
+    /**
+     * @param string $processingType
+     * @return $this
+     */
+    public function setProcessingType($processingType)
+    {
+        $this->processingType = $processingType;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
         return sprintf(
-            '%s, %s, %g %s',
+            '%s, %g %s',
             $this->getMethod(),
-            $this->getType(),
             $this->getValue(),
             $this->getCurrency()
         );

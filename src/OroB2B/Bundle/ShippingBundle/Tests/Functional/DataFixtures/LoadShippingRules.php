@@ -78,7 +78,7 @@ class LoadShippingRules extends AbstractFixture
 
                 $shippingRuleDestination = new ShippingRuleDestination();
                 $shippingRuleDestination
-                    ->setShippingRule($entity)
+                    ->setRule($entity)
                     ->setPostalCode($destination['postalCode'])
                     ->setCountry($country)
                     ->setRegion($region);
@@ -88,7 +88,7 @@ class LoadShippingRules extends AbstractFixture
             }
 
             foreach ($data['configurations'] as $configuration) {
-                if ($configuration['class'] == 'flatrateruleconfiguration') {
+                if ($configuration['class'] === 'flatrateruleconfiguration') {
                     $flatConfig = new FlatRateRuleConfiguration();
 
                     $flatConfig
@@ -97,7 +97,7 @@ class LoadShippingRules extends AbstractFixture
                         ->setMethod($configuration['method'])
                         ->setValue($configuration['value'])
                         ->setCurrency($configuration['currency'])
-                        ->createPrice();
+                        ->createPrices();
 
                     $manager->persist($flatConfig);
                     $entity->addConfiguration($flatConfig);
