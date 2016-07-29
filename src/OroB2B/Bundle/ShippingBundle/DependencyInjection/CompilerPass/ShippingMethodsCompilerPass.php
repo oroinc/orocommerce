@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ShippingMethodsCompilerPass implements CompilerPassInterface
 {
-    const TAG = 'orob2b_shipping.shipping_method';
+    const TAG = 'orob2b_shipping_method';
     const SERVICE = 'orob2b_shipping.shipping_method.registry';
 
     /**
@@ -33,7 +33,7 @@ class ShippingMethodsCompilerPass implements CompilerPassInterface
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall(
                 'addShippingMethod',
-                array(new Reference($id))
+                [new Reference($id)]
             );
         }
     }
