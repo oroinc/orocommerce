@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -21,7 +20,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="checkout_discriminator", type="string", length=30)
  * @ORM\HasLifecycleCallbacks()
@@ -54,7 +53,6 @@ class BaseCheckout implements
     ShippingAwareInterface
 {
     use DatesAwareTrait;
-    use WorkflowAwareTrait;
     use UserAwareTrait;
     use FrontendAccountUserAwareTrait;
 

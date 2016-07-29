@@ -322,7 +322,8 @@ class ImportExportTest extends WebTestCase
         $errors = array_filter(
             $jobResult->getContext()->getErrors(),
             function ($error) {
-                return strpos($error, 'owner: This value should not be blank.') === false;
+                return strpos($error, 'owner: This value should not be blank.') === false
+                && strpos($error, 'Unit of Quantity Unit Code: This value should not be blank.') === false;
             }
         );
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));

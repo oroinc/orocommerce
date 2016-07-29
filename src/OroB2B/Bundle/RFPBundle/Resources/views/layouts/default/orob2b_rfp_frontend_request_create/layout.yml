@@ -1,8 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_create/layout.html.twig'
-
         - '@appendOption':
             id: title
             optionName: value
@@ -21,61 +18,13 @@ layout:
             optionName: text
             optionValue:
                 label: 'orob2b.frontend.rfp.request.create_title.label'
+
         - '@add':
             id: account_sidebar
             parentId: sidebar_left
             blockType: container
 
-        - '@addTree':
-            items:
-                rfp_page:
-                    blockType: container
-                    options:
-                        class_prefix: 'edit-frq'
-
-                rfp_form_container:
-                    blockType: container
-
-                rfp_form_start:
-                    blockType: form_start
-                    options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
-                rfp_form_fields:
-                    blockType: form_fields
-                    options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
-                rfp_form_lineitems:
-                    blockType: form_fields
-                    options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
-                rfp_form_end:
-                    blockType: form_end
-                    options:
-                        form: { '@value': $data.orob2b_rfp_request_form }
-                rfp_form_actions:
-                    blockType: container
-                rfp_form_actions_back:
-                    blockType: link
-                    options:
-                        path: { '@value': $data.backToUrl }
-                        text: orob2b.frontend.rfp.request.create_form.back.label
-                        icon: cf-left-open-mini
-                rfp_form_actions_create:
-                    blockType: button
-                    options:
-                        action: submit
-                        text: orob2b.frontend.rfp.request.create_form.submit.label
-                        style: auto
-                        attr:
-                            class: btn_xlg
-            tree:
-                content:
-                    rfp_page:
-                        rfp_form_container:
-                            rfp_form_start: ~
-                            rfp_form_fields: ~
-                            rfp_form_lineitems: ~
-                            rfp_form_actions:
-                                rfp_form_actions_create: ~
-                                rfp_form_actions_back: ~
-                            rfp_form_end: ~
+    imports:
+        -
+            id: orob2b_rfp_frontend_request_edit
+            root: content

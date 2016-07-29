@@ -3,11 +3,8 @@ layout:
         - '@setOption':
             id: payment_methods
             optionName: views
-            optionValue: {'payment_term': { '@value': $data.orob2b_payment_methods_provider.payment_term }}
+            optionValue:
+                payment_term: '=data["orob2b_payment_methods_provider"].isPaymentMethodApplicable("payment_term", context["checkout"]) ? data["orob2b_payment_methods_provider"]["payment_term"] : null'
 
-    conditions:
-        '@and':
-            - '@payment_method_applicable':
-                payment_method: 'payment_term'
-                entity: { '@value': $context.checkout }
-            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
+    conditions: 'context["workflowName"]=="b2b_flow_alternative_checkout"'
+

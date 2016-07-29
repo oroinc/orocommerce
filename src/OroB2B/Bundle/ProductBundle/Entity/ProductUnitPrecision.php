@@ -96,7 +96,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="sell",type="boolean",nullable=true)
+     * @ORM\Column(name="sell",type="boolean",nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -105,7 +105,12 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      *      }
      * )
      */
-    protected $sell;
+    protected $sell = true;
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 
     /**
      * @return int
@@ -251,7 +256,11 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     public function getProductUnitCode()
     {
-        return $this->getUnit()->getCode();
+        if ($unit = $this->getUnit()) {
+            return $unit->getCode();
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -5,11 +5,11 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: { '@value': $data.status_text }
+            optionValue: '=data["status_text"]'
         - '@add':
             id: exception
             parentId: content
             blockType: exception
             options:
-                status_code: { '@value': $data.status_code }
-                status_text: { '@value': $data.status_text }
+                status_code: '=data["status_code"]'
+                status_text: '=data["status_text"]'

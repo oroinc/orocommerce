@@ -231,7 +231,9 @@ operations:
         button_options:
             icon: icon-briefcase
         preconditions:
-            '@has_elements': $lineItems
+            '@and':
+                - '@has_elements': $lineItems
+                - '@equal': [$.data.isAllowedRFP, true]
         actions:
             - '@call_service_method':
                 service: orob2b_shopping_list.service.product_data_storage

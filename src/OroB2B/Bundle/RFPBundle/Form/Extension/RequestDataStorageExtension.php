@@ -14,12 +14,31 @@ use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
+
 class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 {
     /**
      * @var ConfigManager
      */
     protected $configManager;
+
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
 
     /**
      * @var array
@@ -35,6 +54,66 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
+     * @param Session $session
+     */
+    public function setSession(Session $session)
+    {
+        $this->session = $session;
+    }
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function fillItemsData($entity, array $itemsData = [])
+    {
+        $repository = $this->getProductRepository();
+        $canNotBeAddedToRFQ = [];
+        foreach ($itemsData as $dataRow) {
+            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+                continue;
+            }
+
+            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            if (!$product) {
+                continue;
+            }
+
+            $result = $this->addItem($product, $entity, $dataRow);
+            if ($result === false) {
+                $canNotBeAddedToRFQ[] = ['sku' => $product->getSku(), 'name' => $product->getDefaultName()];
+            }
+        }
+
+        $message = $this->container->get('templating')->render(
+            'OroB2BRFPBundle:Form/FlashBag:warning.html.twig',
+            [
+                'message' => $this->translator->trans('orob2b.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                'products' => $canNotBeAddedToRFQ
+            ]
+        );
+
+        if (!empty($canNotBeAddedToRFQ)) {
+            $this->session->getFlashBag()->add('warning', $message);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function addItem(Product $product, $entity, array $itemData = [])
@@ -43,7 +122,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             return;
         }
         if (!$this->isAllowedProduct($product)) {
-            return;
+            return false;
         }
 
         $requestProductItem = new RequestProductItem();
@@ -90,13 +169,33 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     protected function isAllowedProduct(Product $product)
     {
         if (!$this->supportedStatuses) {
-            $supportedStatuses = (array)$this->configManager->get('oro_b2b_rfp.frontend_product_visibility');
-            foreach ($supportedStatuses as $status) {
-                $this->supportedStatuses[$status] = true;
+            $this->supportedStatuses = (array)$this->configManager->get('oro_b2b_rfp.frontend_product_visibility');
+        }
+        $inventoryStatus = $product->getInventoryStatus();
+        if (is_object($inventoryStatus)) {
+            $inventoryStatus = $inventoryStatus->getId();
+        }
+
+        return $inventoryStatus && in_array($inventoryStatus, $this->supportedStatuses);
+    }
+
+    /**
+     * @param array $products
+     *
+     * @return bool
+     */
+    public function isAllowedRFP($products)
+    {
+        $repository = $this->getProductRepository();
+        foreach ($products as $product) {
+            if (!empty($product['productSku'])) {
+                $product = $repository->findOneBySku($product['productSku']);
+                if (!empty($product) && ($this->isAllowedProduct($product) === true)) {
+                    return true;
+                }
             }
         }
 
-        $inventoryStatus = $product->getInventoryStatus();
-        return $inventoryStatus && !empty($this->supportedStatuses[$inventoryStatus->getId()]);
+        return false;
     }
 }
