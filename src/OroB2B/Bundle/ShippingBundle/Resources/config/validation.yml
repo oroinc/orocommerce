@@ -55,7 +55,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
             - NotBlank: ~
         priority:
             - NotBlank: ~
-        shippingDestinations:
+        destinations:
             - Valid: ~
         configurations:
             - Valid: ~
@@ -63,7 +63,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
             - Currency: ~
             - NotBlank: ~
 
-OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination:
+OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
     properties:
         country:
             - NotBlank: ~

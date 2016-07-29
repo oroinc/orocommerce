@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingDestination;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 
 class ShippingRuleDestinationType extends AbstractType
 {
@@ -51,7 +51,7 @@ class ShippingRuleDestinationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ShippingDestination::class,
+            'data_class' => ShippingRuleDestination::class,
             'region_route' => 'oro_api_country_get_regions',
         ]);
     }

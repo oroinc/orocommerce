@@ -72,10 +72,10 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
             $method = $this->methodRegistry->getShippingMethod($ruleConfiguration->getMethod());
             if ($method) {
                 $existingConfigs[$method->getFormType()][] = $ruleConfiguration;
-                $data->remove($index);
                 $form->remove($index);
             }
         }
+        $data->clear();
 
         foreach ($this->methodRegistry->getShippingMethods() as $method) {
             foreach ($method->getTypes() as $type) {

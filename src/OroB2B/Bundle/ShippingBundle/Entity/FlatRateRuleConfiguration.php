@@ -16,8 +16,22 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
  */
 class FlatRateRuleConfiguration extends ShippingRuleConfiguration
 {
-    const TYPE_PER_ORDER = 'per_order';
-    const TYPE_PER_ITEM = 'per_item';
+    const PROCESSING_TYPE_PER_ORDER = 'per_order';
+    const PROCESSING_TYPE_PER_ITEM = 'per_item';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="processing_type", type="string", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=50
+     *          }
+     *      }
+     * )
+     */
+    protected $processingType;
 
     /**
      * @var float
@@ -26,7 +40,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30
+     *              "order"=60
      *          }
      *      }
      * )
@@ -40,7 +54,7 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=50
+     *              "order"=70
      *          }
      *      }
      * )
@@ -53,20 +67,12 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     protected $price;
 
     /**
-     * @var Price
-     */
-    protected $handlingFee;
-
-    /**
      * @ORM\PostLoad
      */
     public function createPrices()
     {
         if (null !== $this->value && null !== $this->currency) {
             $this->price = Price::create($this->value, $this->currency);
-        }
-        if (null !== $this->handlingFeeValue && null !== $this->currency) {
-            $this->handlingFee = Price::create($this->handlingFeeValue, $this->currency);
         }
     }
 
@@ -78,7 +84,6 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
-        $this->handlingFeeValue = $this->handlingFee ? $this->handlingFee->getValue() : null;
     }
 
     /**
@@ -158,22 +163,20 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     }
 
     /**
-     * @return Price
+     * @return string
      */
-    public function getHandlingFee()
+    public function getProcessingType()
     {
-        return $this->handlingFee;
+        return $this->processingType;
     }
 
     /**
-     * @param Price $handlingFee
+     * @param string $processingType
      * @return $this
      */
-    public function setHandlingFee(Price $handlingFee)
+    public function setProcessingType($processingType)
     {
-        $this->handlingFee = $handlingFee;
-        $this->updatePrices();
-
+        $this->processingType = $processingType;
         return $this;
     }
 

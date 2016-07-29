@@ -102,7 +102,7 @@ class ShippingRuleDestination
      * @var ShippingRule
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="destinations")
-     * @ORM\JoinColumn(name="shipping_rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -111,7 +111,7 @@ class ShippingRuleDestination
      *      }
      * )
      */
-    protected $shippingRule;
+    protected $rule;
 
     /**
      * Get id
@@ -279,26 +279,26 @@ class ShippingRuleDestination
     }
 
     /**
-     * Set shippingRule
+     * Set rule
      *
-     * @param ShippingRule $shippingRule
+     * @param ShippingRule $rule
      * @return $this
      */
-    public function setShippingRule($shippingRule)
+    public function setRule($rule)
     {
-        $this->shippingRule = $shippingRule;
+        $this->rule = $rule;
 
         return $this;
     }
 
     /**
-     * Get shippingRule
+     * Get rule
      *
      * @return ShippingRule
      */
-    public function getShippingRule()
+    public function getRule()
     {
-        return $this->shippingRule;
+        return $this->rule;
     }
 
     /**

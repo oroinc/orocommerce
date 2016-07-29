@@ -21,6 +21,7 @@ class ShippingRuleConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('enabled', 'checkbox');
+        $builder->add('currency', 'hidden');
         $builder->add('type', 'hidden');
         $builder->add('method', 'hidden');
     }

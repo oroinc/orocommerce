@@ -23,9 +23,8 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getTypes()
     {
-        /** Here we have only one type because we need only one form for both types */
         return [
-            FlatRateRuleConfiguration::TYPE_PER_ORDER,
+            static::NAME,
         ];
     }
 

@@ -72,6 +72,13 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="configurations")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $rule;
 
@@ -135,6 +142,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setRule(ShippingRule $rule)
     {
         $this->rule = $rule;
+        $this->setCurrency($rule->getCurrency());
         return $this;
     }
 
