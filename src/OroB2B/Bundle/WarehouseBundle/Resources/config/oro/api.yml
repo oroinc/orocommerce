@@ -2,11 +2,6 @@ oro_api:
     entities:
         OroB2B\Bundle\WarehouseBundle\Entity\Warehouse: ~
         OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
-            fields:
-                productSku:
-                    property_path: product.sku
-                unit:
-                    property_path: productUnitPrecision.unit.code
             filters:
                 fields:
                     product.sku:
@@ -18,5 +13,3 @@ oro_api:
                     productUnitPrecision.unit.code:
                         data_type: string
                         allow_array: true
-            actions:
-                get_list: ~
