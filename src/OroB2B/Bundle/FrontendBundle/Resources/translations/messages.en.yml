@@ -1,10 +1,6 @@
 orob2b:
     privilege:
         category.commerce.label: 'Commerce'
-    frontend:
-        featuredcategories:
-            view:
-                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
 orob2b_frontend:
     widget_form_component:

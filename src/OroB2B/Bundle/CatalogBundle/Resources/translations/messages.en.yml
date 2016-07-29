@@ -50,3 +50,7 @@ orob2b:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+
+        featuredcategories:
+            view:
+                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'

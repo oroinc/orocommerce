@@ -28,12 +28,12 @@
     <div {{ block('block_attributes') }}>
         <div class="hero-promo-item__picture">
             <img class="hero-promo-item__img"
-                src="{% image '@OroB2BFrontendBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
+                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
                 alt="Ololo">
         </div>
         <div class="hero-promo-item__info">
             <img class="hero-promo-item__img"
-                src="{% image '@OroB2BFrontendBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
+                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
                 alt="Ololo">
             <div class="hero-promo-item__cover">
                 <div class="hero-promo-item__desc">
@@ -73,7 +73,7 @@
             alt="{{ item.defaultTitle }}">
         <dl class="featured-categories-item__desc">
             <dt class="featured-categories-item__name">{{ item.defaultTitle }}</dt>
-            <dd class="featured-categories-item__qty">{{ 'orob2b.frontend.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
+            <dd class="featured-categories-item__qty">{{ 'orob2b.catalog.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
         </dl>
     </a>
 {% endblock %}
