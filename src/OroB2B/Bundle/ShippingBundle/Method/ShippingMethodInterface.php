@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
 interface ShippingMethodInterface
 {
@@ -47,12 +47,9 @@ interface ShippingMethodInterface
     public function getSortOrder();
 
     /**
-     * @param ShippingContextAwareInterface $dataEntity
+     * @param ShippingContextAwareInterface $context
      * @param ShippingRuleConfiguration $configEntity
-     * @return Price
+     * @return null|Price
      */
-    public function calculatePrice(
-        /*ShippingContextAwareInterface*/ $dataEntity,
-        ShippingRuleConfiguration $configEntity
-    );
+    public function calculatePrice(ShippingContextAwareInterface $context, ShippingRuleConfiguration $configEntity);
 }
