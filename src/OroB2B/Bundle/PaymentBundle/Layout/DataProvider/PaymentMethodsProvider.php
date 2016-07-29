@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
+use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
@@ -50,12 +51,13 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param object|null $entity
+     * @param ContextInterface $context
      * @return array[]
      */
-    public function getViews($entity = null)
+    public function getViews($context = null)
     {
         if (null === $this->paymentMethodViews) {
+            $entity = $this->getEntity($context);
             $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
@@ -128,5 +130,22 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
         }
 
         return false;
+    }
+
+    /**
+     * @param ContextInterface $context
+     * @return object|null
+     */
+    protected function getEntity(ContextInterface $context)
+    {
+        $entity = null;
+        $contextData = $context->data();
+        if ($contextData->has('entity')) {
+            $entity = $contextData->get('entity');
+        }
+        if (!$entity && $contextData->has('checkout')) {
+            $entity = $contextData->get('checkout');
+        }
+        return $entity;
     }
 }

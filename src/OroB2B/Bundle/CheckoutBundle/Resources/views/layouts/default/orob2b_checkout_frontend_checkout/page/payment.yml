@@ -15,7 +15,7 @@ layout:
             prepend: true
             options:
                 class_prefix: 'checkout'
-                views: '=data["orob2b_payment_methods_provider"].getViews()'
+                views: '=data["orob2b_payment_methods_provider"].getViews(context)'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
 
     conditions: 'context["workflowStepName"]=="enter_payment"'
