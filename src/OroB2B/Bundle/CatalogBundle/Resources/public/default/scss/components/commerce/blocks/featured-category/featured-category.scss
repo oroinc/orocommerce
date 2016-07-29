@@ -1,4 +1,4 @@
-.featured-categories-item {
+.featured-category {
     display: inline-block;
     margin-top: 50px;
 
@@ -40,7 +40,7 @@
 
         color: $base-dark-color;
 
-        .featured-categories-item__name {
+        .featured-category__name {
             text-decoration: underline;
         }
     }

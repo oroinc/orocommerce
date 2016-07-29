@@ -63,17 +63,17 @@
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' featured-categories-item'
+        '~class': ' featured-category'
     }) %}
 
     <a {{ block('block_attributes') }}
         href="{{ path('orob2b_product_frontend_product_index', {'categoryId': item.id, 'includeSubcategories': true}) }}">
-        <img class="featured-categories-item__image"
+        <img class="featured-category__image"
             src="{{ Image.url(item.largeImage, 'product_large') }}"
             alt="{{ item.defaultTitle }}">
-        <dl class="featured-categories-item__desc">
-            <dt class="featured-categories-item__name">{{ item.defaultTitle }}</dt>
-            <dd class="featured-categories-item__qty">{{ 'orob2b.catalog.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
+        <dl class="featured-category__desc">
+            <dt class="featured-category__name">{{ item.defaultTitle }}</dt>
+            <dd class="featured-category__qty">{{ 'orob2b.catalog.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
         </dl>
     </a>
 {% endblock %}
