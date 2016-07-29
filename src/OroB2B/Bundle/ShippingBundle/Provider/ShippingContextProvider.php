@@ -25,5 +25,4 @@ class ShippingContextProvider implements ShippingContextAwareInterface
     {
         return $this->shippingContext;
     }
-
 }
