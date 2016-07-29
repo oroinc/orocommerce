@@ -124,10 +124,9 @@ class ShippingRule extends ExtendShippingRule
      *
      * @ORM\OneToMany(
      *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination",
-     *     mappedBy="shippingRule",
+     *     mappedBy="rule",
      *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EAGER"
+     *     orphanRemoval=true
      * )
      */
     protected $destinations;
@@ -138,9 +137,7 @@ class ShippingRule extends ExtendShippingRule
      * @ORM\OneToMany(
      *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
      *     mappedBy="rule",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EAGER"
+     *     cascade={"ALL"}
      * )
      */
     protected $configurations;
@@ -385,7 +382,7 @@ class ShippingRule extends ExtendShippingRule
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
-            $destination->setShippingRule($this);
+            $destination->setRule($this);
         }
 
         return $this;

@@ -3,4 +3,13 @@
 {% set gridName = 'shipping-rule-grid' %}
 {% set pageTitle = 'orob2b.shipping.shippingrule.entity_plural_label'|trans %}
 
-{% block navButtons %}{% endblock %}
+{% block navButtons %}
+    {% if resource_granted('orob2b_shipping_rule_create') %}
+        <div class="btn-group pull-right">
+            {{ UI.addButton({
+                'path': path('orob2b_shipping_rule_create'),
+                'entity_label': 'orob2b.shipping.shippingrule.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

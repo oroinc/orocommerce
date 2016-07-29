@@ -50,8 +50,9 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['postalCode', 'fr4a'],
             ['region', new Region('code')],
+            ['regionText', 'text'],
             ['country', new Country('UA')],
-            ['shippingRule', new ShippingRule()],
+            ['rule', new ShippingRule()],
         ];
 
         $this->assertPropertyAccessors(new ShippingRuleDestination(), $properties);

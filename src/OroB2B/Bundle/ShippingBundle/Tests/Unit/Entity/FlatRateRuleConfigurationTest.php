@@ -18,6 +18,8 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
             ['value', 1.0],
             ['currency', 'USD'],
             ['price', Price::create(1.0, 'USD')],
+            ['handlingFeeValue', 2.0],
+            ['processingType', FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM],
         ];
 
         $this->assertPropertyAccessors($entity, $properties);

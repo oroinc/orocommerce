@@ -78,7 +78,7 @@ class LoadShippingRules extends AbstractFixture
 
                 $shippingRuleDestination = new ShippingRuleDestination();
                 $shippingRuleDestination
-                    ->setShippingRule($entity)
+                    ->setRule($entity)
                     ->setPostalCode($destination['postalCode'])
                     ->setCountry($country)
                     ->setRegion($region);

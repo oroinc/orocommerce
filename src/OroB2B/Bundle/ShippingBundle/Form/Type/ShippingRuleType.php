@@ -27,7 +27,7 @@ class ShippingRuleType extends AbstractType
                 'label' => 'orob2b.shipping.shippingrule.currency.label',
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
-            ->add('shippingDestinations', CollectionType::NAME, [
+            ->add('destinations', CollectionType::NAME, [
                 'required' => false,
                 'type' => ShippingRuleDestinationType::NAME,
                 'label' => 'orob2b.shipping.shippingrule.shipping_destinations.label',

@@ -45,11 +45,11 @@ class FlatRateShippingConfigurationType extends AbstractType
             ->add('handlingFeeValue', 'number', array_merge([
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.handlingFeeValue.label',
             ], $priceOptions))
-            ->add('type', 'choice', [
+            ->add('processingType', 'choice', [
                 'choices' => [
-                    FlatRateRuleConfiguration::TYPE_PER_ITEM
+                    FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM
                     => 'orob2b.shipping.flatrateruleconfiguration.type.per_item.label',
-                    FlatRateRuleConfiguration::TYPE_PER_ORDER
+                    FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER
                     => 'orob2b.shipping.flatrateruleconfiguration.type.per_order.label',
                 ],
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.type.label',

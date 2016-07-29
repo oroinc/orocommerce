@@ -33,6 +33,7 @@ class ShippingRuleConfigurationTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['type', '123'],
             ['rule', new ShippingRule()],
+            ['enabled', true],
         ];
 
         $this->assertPropertyAccessors($this->entity, $properties);
