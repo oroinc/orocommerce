@@ -18,8 +18,8 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     ];
 
     /** @var array */
-    protected $payflowGatewayData = [
-        self::PAYMENT_METHOD_KEY => 'payflow_gateway',
+    protected $paymentMethodWithValidateData = [
+        self::PAYMENT_METHOD_KEY => 'payment_method_with_validate',
         self::ACTION_NAME_KEY => 'validate'
     ];
 
@@ -94,8 +94,8 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
                 'supportsData' => false,
                 'expected' => false
             ],
-            'payflow_gateway' => [
-                'data' => $this->payflowGatewayData,
+            'payment_method_with_validate' => [
+                'data' => $this->paymentMethodWithValidateData,
                 'supportsData' => true,
                 'expected' => true
             ]

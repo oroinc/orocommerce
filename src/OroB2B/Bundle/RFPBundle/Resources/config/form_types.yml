@@ -113,6 +113,9 @@ services:
             - [setDataClass, ['%orob2b_rfp.entity.request.class%']]
             - [setExtendedType, ['orob2b_rfp_frontend_request']]
             - [setConfigManager, ['@oro_config.manager']]
+            - [setSession, ['@session']]
+            - [setTranslator, ['@translator']]
+            - [setContainer, ['@service_container']]
         tags:
             - { name: form.type_extension, alias: orob2b_rfp_frontend_request }
 

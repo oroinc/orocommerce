@@ -22,7 +22,7 @@ layout:
             id: account_user_role_form_fields
             optionName: vars
             optionValue:
-                entity: {'@value': $data.entity}
+                entity: '=data["entity"]'
         - '@add':
             id: account_user_role_form_privileges
             blockType: datagrid
@@ -31,11 +31,11 @@ layout:
             options:
                 grid_name: frontend-account-user-role-permission-grid
                 grid_parameters:
-                    role: {'@value': $data.entity}
+                    role: '=data["entity"]'
                 grid_render_parameters:
                     cssClass: 'inner-permissions-grid'
                 vars:
-                    options: { '@value': $data.orob2b_account_fronted_account_user_role_options }
+                    options: '=data["orob2b_account_fronted_account_user_role_options"]'
     imports:
         -
             id: orob2b_account_user_role_form
