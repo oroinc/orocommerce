@@ -75,6 +75,11 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         ];
         $actual = $this->getActualResult($qb);
         $this->assertEquals($expected, $actual);
+
+        // Check that cache does not affect results
+        $qb = $this->getQueryBuilder($priceList);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testCompileWithManuallyAssigned()

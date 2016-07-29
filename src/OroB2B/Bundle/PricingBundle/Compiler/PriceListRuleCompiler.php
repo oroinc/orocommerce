@@ -65,17 +65,23 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     public function compile(PriceRule $rule, Product $product = null)
     {
-        $this->reset();
+        $cacheKey = 'pr_' . $rule->getId();
+        $qb = $this->cache->fetch($cacheKey);
+        if (!$qb) {
+            $this->reset();
 
-        $qb = $this->createQueryBuilder($rule);
-        $aliases = $qb->getRootAliases();
-        $rootAlias = reset($aliases);
+            $qb = $this->createQueryBuilder($rule);
+            $rootAlias = $this->getRootAlias($qb);
 
-        $this->modifySelectPart($qb, $rule, $rootAlias);
-        $this->applyRuleConditions($qb, $rule);
-        $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
-        $this->restrictByManualPrices($qb, $rule, $rootAlias);
-        $this->restrictByGivenProduct($qb, $rootAlias, $product);
+            $this->modifySelectPart($qb, $rule, $rootAlias);
+            $this->applyRuleConditions($qb, $rule);
+            $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
+            $this->restrictByManualPrices($qb, $rule, $rootAlias);
+
+            $this->cache->save($cacheKey, $qb);
+        }
+
+        $this->restrictByGivenProduct($qb, $product);
 
         return $qb;
     }
@@ -227,19 +233,18 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                 $qb->expr()->eq('priceListToProduct.product', $rootAlias)
             )
             ->andWhere($qb->expr()->eq('priceListToProduct.priceList', ':priceList'))
-            ->setParameter('priceList', $rule->getPriceList());
+            ->setParameter('priceList', $rule->getPriceList()->getId());
     }
 
     /**
      * @param QueryBuilder $qb
-     * @param string $rootAlias
      * @param Product $product
      */
-    protected function restrictByGivenProduct(QueryBuilder $qb, $rootAlias, Product $product = null)
+    protected function restrictByGivenProduct(QueryBuilder $qb, Product $product = null)
     {
         if ($product) {
-            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
-                ->setParameter('product', $product);
+            $qb->andWhere($qb->expr()->eq($this->getRootAlias($qb), ':product'))
+                ->setParameter('product', $product->getId());
         }
     }
 
@@ -337,5 +342,16 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
 
         return $additionalCondition;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @return string
+     */
+    protected function getRootAlias(QueryBuilder $qb)
+    {
+        $aliases = $qb->getRootAliases();
+
+        return reset($aliases);
     }
 }

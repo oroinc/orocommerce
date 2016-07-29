@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Compiler;
 
+use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
@@ -32,21 +33,29 @@ abstract class AbstractRuleCompiler
     protected $expressionBuilder;
 
     /**
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * @param ExpressionParser $parser
      * @param NodeToQueryDesignerConverter $nodeConverter
      * @param PriceListExpressionQueryConverter $queryConverter
      * @param QueryExpressionBuilder $expressionBuilder
+     * @param Cache $cache
      */
     public function __construct(
         ExpressionParser $parser,
         NodeToQueryDesignerConverter $nodeConverter,
         PriceListExpressionQueryConverter $queryConverter,
-        QueryExpressionBuilder $expressionBuilder
+        QueryExpressionBuilder $expressionBuilder,
+        Cache $cache
     ) {
         $this->expressionParser = $parser;
         $this->nodeConverter = $nodeConverter;
         $this->queryConverter = $queryConverter;
         $this->expressionBuilder = $expressionBuilder;
+        $this->cache = $cache;
     }
 
     /**

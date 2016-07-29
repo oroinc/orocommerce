@@ -1,8 +1,8 @@
 parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.price_rule.class: OroB2B\Bundle\PricingBundle\Entity\PriceRule
     orob2b_pricing.entity.price_list_schedule.class: OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule
     orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
-    orob2b_pricing.entity.price_rule.class: OroB2B\Bundle\PricingBundle\Entity\PriceRule
 
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
@@ -555,6 +555,7 @@ services:
         public: false
         arguments:
             - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.cache.rule_cache'
             - '@orob2b_pricing.triggers_filler.price_rule_triggers_filler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_list.class%', event: preUpdate }
@@ -564,6 +565,7 @@ services:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener'
         public: false
         arguments:
+            - '@orob2b_pricing.cache.rule_cache'
             - '@orob2b_pricing.triggers_filler.price_rule_triggers_filler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preUpdate }
@@ -730,6 +732,7 @@ services:
             - '@orob2b_pricing.expression.node_to_query_designer_converter'
             - '@orob2b_pricing.query.price_list_expression_query_converter'
             - '@orob2b_pricing.expression.query_expression_builder'
+            - '@orob2b_pricing.cache.rule_cache'
 
     orob2b_pricing.compiler.price_list_rule_compiler:
         class: 'OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
@@ -824,3 +827,16 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.builder.price_list_product_assignment_builder'
             - '@orob2b_pricing.builder.product_price_builder'
+
+    orob2b_pricing.cache.rule_cache.storage:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'orob2b_pricing.cache.rule_cache' ] ]
+
+    orob2b_pricing.cache.rule_cache:
+        class: 'OroB2B\Bundle\PricingBundle\Cache\RuleCache'
+        public: false
+        arguments:
+            - '@orob2b_pricing.cache.rule_cache.storage'
+            - '@doctrine'

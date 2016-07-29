@@ -72,7 +72,6 @@ class PriceListRuleCompilerTest extends WebTestCase
         $this->assignProducts($priceList, [$product1, $product2]);
 
         $priceRule = $this->createPriceRule($priceList, $condition, $rule, 1, $unitLitre, 'EUR');
-        $qb = $this->getQueryBuilder($priceRule);
 
         $expected = [
             [
@@ -86,6 +85,12 @@ class PriceListRuleCompilerTest extends WebTestCase
                 100
             ],
         ];
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
+
+        // Check that cache does not affect results
+        $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
         $this->assertEquals($expected, $actual);
     }

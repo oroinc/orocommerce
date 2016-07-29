@@ -38,26 +38,15 @@ orob2b:
             no_method: 'No payment methods are available, Please contact us to complete the order submission.'
             required_field: 'Required Field'
             term_method.label: 'Payment Term'
-            credit_card.label: 'Credit Card'
-            whats_this: "What's this?"
-            tooltip: |
-                The verification number is a 3-digit number printed on the back of your card.
-                The American Express security code is a 4-digit number printed on the front of your card.
 
         system_configuration:
             groups:
                 payment.title: 'Payment'
                 general.title: 'General'
                 merchant_location.title: 'Merchant Location'
-                paypal_payments_pro.title: 'PayPal Payments Pro'
-                payflow_gateway.title: 'Payflow Gateway'
-                display_options.title: 'Display Options'
-                integration.title: 'Integration'
-                advanced_settings.title: 'Advanced Settings'
                 payment_terms.title: 'Payment Terms'
             fields:
                 merchant_country.label: 'Merchant Country'
-
                 enabled.label: 'Enabled'
                 label.label: 'Checkout Label'
                 label.tooltip: 'This label is used on the checkout screens'
@@ -69,42 +58,12 @@ orob2b:
                     all: 'All'
                     selected: 'Selected'
                 selected_countries.label: 'Select Allowed Countries'
-                allowed_cc_types:
-                    label: 'Allowed Credit Card Types'
-                    visa: 'Visa'
-                    mastercard: 'Mastercard'
-                    discover: 'Discover'
-                    american_express: 'American Express'
-                partner.label: 'Partner'
-                user.label: 'User'
-                vendor.label: 'Vendor'
-                password.label: 'Password'
-                payment_action:
-                    label: 'Payment Action'
-                    authorize: 'Authorize'
-                    charge: 'Authorize and Charge'
-                test_mode.label: 'Test Mode'
 
-                use_proxy.label: 'Use Proxy'
-                proxy_host.label: 'Proxy Host'
-                proxy_port.label: 'Proxy Port'
-                debug_mode.label: 'Debug Mode'
-                enable_ssl_verification.label: 'Enable SSL Verification'
-                require_cvv.label: 'Require CVV Entry'
-                zero_amount_authorization:
-                    label: 'Zero Amount Authorization'
-                    tooltip: |
-                        If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
-                        Please note that zero dollar authorizations are subject to the transaction fees.
-                authorization_for_required_amount.label: 'Authorization For Required Amount'
+        result:
+            error: Payment failed
 
         security.transaction: Work with payments
         capture: Capture
-        credit_card:
-            card_number.label: Credit Card Number
-            expiration_date.label: Expiration Date
-            cvv2.label: Credit Card Verification Number
-            save_for_later.label: Save this card for later use
         payment_terms:
             label: 'Terms: %paymentTerm%'
 
@@ -116,16 +75,5 @@ orob2b:
             declined: Payment declined
             partially: Paid partially
 
-        result:
-            token_expired: Authorization token expired, please try one more time
-            error: Payment failed
-
-        payflow:
-            authorized_card: 'Credit Card  **** **** **** {{ last4 }}'
-            use_different_card: 'Use a different card >'
-            use_authorized_card: '< Use an existing card'
-
         admin:
             payment_term.label: 'Payment Terms'
-            paypal_payments_pro.label: 'Paypal Payments Pro'
-            payflow_gateway.label: 'Payflow Gateway'
