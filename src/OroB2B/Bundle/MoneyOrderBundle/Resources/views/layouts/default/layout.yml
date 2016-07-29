@@ -2,4 +2,3 @@ layout:
     actions:
         - @setBlockTheme:
                 themes: 'OroB2BMoneyOrderBundle:layouts:default/money_order_block.html.twig'
-

@@ -71,30 +71,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
-    orob2b_payment.event_listener.config.paypal_encrypt:
-        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Config\PayPalConfigurationEncryptListener'
-        arguments:
-            - '@oro_security.encoder.mcrypt'
-        tags:
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_partner, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_user, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_vendor, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_password, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_proxy_host, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_proxy_port, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_partner, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_user, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_vendor, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_password, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_proxy_host, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_proxy_port, method: loadConfig }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
-
-    orob2b_payment.event_listener.config.paypal_selected_countries:
-        class: 'OroB2B\Bundle\PaymentBundle\EventListener\Config\PayPalSelectedCountriesListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
-
     orob2b_payment.extension.action.type.payment_delete:
         class: 'OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
         scope: prototype
@@ -108,13 +84,6 @@ services:
             - '@doctrine'
             - '@security.token_storage'
             - '%orob2b_payment.entity.payment_term.class%'
-
-    orob2b_payment.provider.credit_form_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\CreditCardFormProvider'
-        arguments:
-            - '@form.factory'
-        tags:
-            - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
 
     orob2b_payment.provider.methods_provider:
         class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'

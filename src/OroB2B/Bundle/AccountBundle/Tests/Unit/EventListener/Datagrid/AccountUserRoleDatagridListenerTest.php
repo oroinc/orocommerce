@@ -100,11 +100,8 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
                         'query' => [
                             'where' => [
                                 'and' => [
-                                    'role.account IN (' . static::USER_ID . ')'
+                                    'role.account IN (' . static::USER_ID . ') or role.account IS NULL'
                                 ],
-                                'or' => [
-                                    'role.account IS NULL'
-                                ]
                             ]
                         ]
                     ]

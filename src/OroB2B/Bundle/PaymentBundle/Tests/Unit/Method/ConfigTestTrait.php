@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
-
 trait ConfigTestTrait
 {
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -34,6 +32,11 @@ trait ConfigTestTrait
      */
     protected function getConfigKey($key)
     {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return $this->getExtensionAlias() . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
+
+    /**
+     * @return string
+     */
+    protected abstract function getExtensionAlias();
 }

@@ -102,7 +102,7 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 
             /** @var ShoppingList[] $shoppingLists */
             $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-            $this->totalManager->setSubtotals($shoppingLists);
+            $this->totalManager->setSubtotals($shoppingLists, false);
         }
 
         return ['shoppingLists' => $shoppingLists];

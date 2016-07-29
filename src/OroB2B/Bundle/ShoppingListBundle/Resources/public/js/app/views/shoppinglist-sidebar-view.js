@@ -8,18 +8,27 @@ define(function(require) {
     var ShoppingListSidebarView;
 
     ShoppingListSidebarView = BaseView.extend({
-
-        eventChannelId: null,
+        /**
+         * @property {Object}
+         */
+        options: {
+            eventChannelId: null,
+            shoppingListCount: null,
+            shoppingListVisible: 6
+        },
 
         /**
          *
          * @param options
          */
         initialize: function(options) {
-            this.$el = options._sourceElement;
-            this.eventChannelId = options.eventChannelId;
+            this.options = _.defaults(options || {}, this.options);
+
             // listen to incoming title updates and re-render the whole shopping list
-            mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateCurrentTitle, this);
+            mediator.on('shopping-list-event:' + this.options.eventChannelId + ':update',
+                        this.updateCurrentTitle, this);
+
+            this.showAdditionalDropdown(this.options.shoppingListCount);
         },
 
         /**
@@ -27,7 +36,21 @@ define(function(require) {
          * @param updateData
          */
         updateCurrentTitle: function(updateData) {
-            this.$el.find('.current-title').text(updateData.label);
+            this.options._sourceElement.find('[data-current-title]').text(updateData.label);
+        },
+
+        /**
+         *
+         * @param shoppingListCount
+         */
+        showAdditionalDropdown: function(shoppingListCount) {
+            var shoppingListVisible = this.options.shoppingListVisible;
+
+            if (shoppingListCount > shoppingListVisible) {
+                this.options._sourceElement
+                    .next('.shopping-list-dropdown')
+                    .addClass('shopping-list-dropdown--visible');
+            }
         }
     });
 

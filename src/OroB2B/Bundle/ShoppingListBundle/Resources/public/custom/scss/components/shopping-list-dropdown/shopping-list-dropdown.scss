@@ -1,0 +1,77 @@
+.shopping-list-dropdown {
+    position: relative;
+
+    display: none;
+
+    text-align: center;
+
+    border-radius: 0 3px 0 0;
+    border: 1px solid transparent;
+    border-left-color: $theme-lighter-gray-color;
+    border-bottom-color: #d9d9d9;
+    background: #ededed;
+
+    &--visible {
+        display: table-cell;
+
+        vertical-align: middle;
+    }
+
+    &__handle {
+        width: 40px;
+        padding-top: 16px;
+        padding-bottom: 12px;
+
+        cursor: pointer;
+    }
+
+    &__icon {
+        margin: 0;
+
+        font-size: 20px;
+
+        color: #707070;
+
+        vertical-align: baseline;
+    }
+
+    &__nav {
+        top: 100%;
+        right: -10px;
+        left: auto;
+        z-index: 9;
+
+        margin: -5px 0 0;
+
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+        border-radius: 2px;
+        border: 1px solid $theme-lighter-gray-color;
+        background: #fff;
+
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity .2s, visibility .2s;
+    }
+
+    &__overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 8;
+
+        opacity: 0;
+        cursor: default;
+    }
+
+    &.open {
+        border-left-color: #d9d9d9;
+        box-shadow: inset 0 2px 3px rgba(0, 0, 0, .08);
+
+        .shopping-list-dropdown__nav {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}

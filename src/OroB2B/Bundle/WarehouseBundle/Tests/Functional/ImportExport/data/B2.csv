@@ -1,0 +1,4 @@
+SKU,Product,Inventory Status,Quantity,Warehouse
+product.1,"Medical Tag, Stainless Steel",In Stock,,First Warehouse
+product.2,"Medical Tag, Sterling Silver",Out of Stock,200,First Warehouse
+product.3,"Medical Tag, Intentional Typo Here",,300,First Warehouse

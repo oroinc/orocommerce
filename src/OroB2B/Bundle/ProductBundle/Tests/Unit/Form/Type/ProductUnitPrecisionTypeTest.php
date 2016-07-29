@@ -122,7 +122,8 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [],
-                'expectedData'  => new ProductUnitPrecision()
+                'expectedData'  => (new ProductUnitPrecision())
+                    ->setSell(false)
             ],
             'unit precision without value' => [
                 'defaultData'   => new ProductUnitPrecision(),
@@ -131,7 +132,8 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                     'unit_disabled' => []
                 ],
                 'submittedData' => [],
-                'expectedData'  => new ProductUnitPrecision()
+                'expectedData'  => (new ProductUnitPrecision())
+                    ->setSell(false)
             ],
             'unit precision with value' => [
                 'defaultData'   => new ProductUnitPrecision(),

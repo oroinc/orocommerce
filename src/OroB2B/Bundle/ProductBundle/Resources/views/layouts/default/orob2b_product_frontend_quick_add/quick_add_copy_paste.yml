@@ -38,7 +38,7 @@ layout:
                     options:
                         text: 'orob2b.product.frontend.quick_add.copy_paste.description'
             tree:
-                quick_add:
+                quick_add_container:
                     quick_add_copy_paste_form:
                         quick_add_copy_paste_form_start: ~
                         quick_add_copy_paste_title: ~

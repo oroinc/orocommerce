@@ -9,16 +9,17 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentTermTest extends \PHPUnit_Framework_TestCase
 {
-    use ConfigTestTrait;
-
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;
 
@@ -34,13 +35,12 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTermMethod */
     protected $method;
 
+    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $config;
+
     protected function setUp()
     {
         $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,12 +52,14 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->config = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface');
+
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
 
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
-            $this->configManager,
+            $this->config,
             $this->propertyAccessor,
             $this->doctrineHelper
         );
@@ -67,7 +69,6 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     {
         unset(
             $this->method,
-            $this->configManager,
             $this->paymentTermProvider,
             $this->propertyAccessor,
             $this->doctrineHelper
@@ -78,6 +79,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     {
         $entityClass = 'TestClass';
         $entityId = 10;
+
         $this->paymentTransaction
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
@@ -104,6 +106,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $entityClass = 'TestClass';
         $entityId = 10;
+
         $this->paymentTransaction
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
@@ -208,11 +211,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsEnabled($configValue, $expected)
     {
-        $this->setConfig(
-            $this->once(),
-            Configuration::PAYMENT_TERM_ENABLED_KEY,
-            $configValue
-        );
+        $this->config->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->method->isEnabled());
     }
@@ -266,13 +267,13 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->withConsecutive(
-                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
-                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES)]
-            )
-            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_ALL, ['USD']);
+        $this->config->expects($this->once())
+            ->method('isCountryApplicable')
+            ->willReturn(true);
+
+        $this->config->expects($this->once())
+            ->method('isCurrencyApplicable')
+            ->willReturn(true);
 
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')
@@ -283,13 +284,12 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableWithoutCountry()
     {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->withConsecutive(
-                [$this->getConfigKey(Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY)],
-                [$this->getConfigKey(Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY)]
-            )
-            ->willReturnOnConsecutiveCalls(Configuration::ALLOWED_COUNTRIES_SELECTED, []);
+        $this->config->expects($this->once())
+            ->method('isCountryApplicable')
+            ->willReturn(false);
+
+        $this->config->expects($this->never())
+            ->method('isCurrencyApplicable');
 
         $this->paymentTermProvider->expects($this->never())->method('getCurrentPaymentTerm');
 
@@ -298,11 +298,12 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableWithoutCurrentPaymentTerm()
     {
-        $this->setConfig(
-            $this->once(),
-            Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY,
-            Configuration::ALLOWED_COUNTRIES_ALL
-        );
+        $this->config->expects($this->once())
+            ->method('isCountryApplicable')
+            ->willReturn(true);
+
+        $this->config->expects($this->never())
+            ->method('isCurrencyApplicable');
 
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')

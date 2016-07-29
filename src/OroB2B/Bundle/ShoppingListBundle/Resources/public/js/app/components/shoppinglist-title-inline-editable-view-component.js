@@ -10,30 +10,33 @@ define(function(require) {
     ShoppingListTitleInlineEditableViewComponent = InlineEditableViewComponent.extend({
 
         eventChannelId: null,
-        
+
         /**
          * @param {Object} options
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
+            this.shoppingListSelectedId = options.metadata.broadcast_parameters.id;
             ShoppingListTitleInlineEditableViewComponent.__super__.initialize.apply(this, arguments);
-            
+
             // listening to generic inline editor's events and repackaging them
             // into specific shopping list events
             mediator.on('inlineEditor:' + this.eventChannelId + ':update', this.repackageEvent, this);
-            
-            // sending off information about the currently loaded shopping list ID 
+
+            // sending off information about the currently loaded shopping list ID
             // to other components in aid
-            mediator.trigger('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', 
-                options.metadata.broadcast_parameters.id);
+            mediator.trigger('shopping-list-event:' + this.eventChannelId + ':shopping-list-id',
+                this.shoppingListSelectedId);
         },
 
         /**
-         * 
+         *
          * @param data
          */
         repackageEvent: function(data) {
+            data.id = this.shoppingListSelectedId;
+
             mediator.trigger('shopping-list-event:' + this.eventChannelId + ':update', data);
         },
 
