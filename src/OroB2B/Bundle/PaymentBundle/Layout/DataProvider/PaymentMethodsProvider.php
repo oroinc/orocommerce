@@ -51,13 +51,13 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param ContextInterface $context
+     * @param $entity
      * @return array[]
      */
-    public function getViews($context = null)
+    public function getViews($entity = null)
     {
         if (null === $this->paymentMethodViews) {
-            $entity = $this->getEntity($context);
+            $entity = $this->getEntity($entity);
             $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
@@ -133,19 +133,21 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param ContextInterface $context
+     * @param $entity
      * @return object|null
      */
-    protected function getEntity(ContextInterface $context)
+    protected function getEntity($entity)
     {
-        $entity = null;
-        $contextData = $context->data();
-        if ($contextData->has('entity')) {
-            $entity = $contextData->get('entity');
+        if ($entity instanceof ContextInterface) {
+            $contextData = $entity->data();
+            if ($contextData->has('entity')) {
+                $entity = $contextData->get('entity');
+            }
+            if (!$entity && $contextData->has('checkout')) {
+                $entity = $contextData->get('checkout');
+            }
         }
-        if (!$entity && $contextData->has('checkout')) {
-            $entity = $contextData->get('checkout');
-        }
+
         return $entity;
     }
 }
