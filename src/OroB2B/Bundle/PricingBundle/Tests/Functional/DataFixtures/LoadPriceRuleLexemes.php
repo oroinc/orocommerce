@@ -6,8 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureInterface
 {
@@ -17,18 +20,26 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
     protected $data = [
         [
             'reference' => 'price_list_1_lexeme_1',
-            'priceList' => 'price_list_1',
-            'priceRule' => 'price_list_1_price_rule_1',
-            'className' => 'OroB2B\Bundle\CatalogBundle\Entity\Category',
+            'priceList' => LoadPriceLists::PRICE_LIST_1,
+            'priceRule' => LoadPriceRules::PRICE_RULE_1,
+            'className' => Category::class,
             'fieldName' => 'id',
         ],
         [
             'reference' => 'price_list_1_lexeme_2',
-            'priceList' => 'price_list_1',
-            'priceRule' => 'price_list_1_price_rule_1',
-            'className' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'priceList' => LoadPriceLists::PRICE_LIST_1,
+            'priceRule' => LoadPriceRules::PRICE_RULE_1,
+            'className' => Product::class,
             'fieldName' => 'status',
-        ]
+        ],
+        [
+            'reference' => 'price_list_1_lexeme_3',
+            'priceList' => LoadPriceLists::PRICE_LIST_1,
+            'priceRule' => LoadPriceRules::PRICE_RULE_1,
+            'className' => PriceAttributeProductPrice::class,
+            'fieldName' => 'value',
+            'reference_entity' => 'price_attribute_price_list_1'
+        ],
     ];
 
     /**
@@ -62,6 +73,6 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
      */
     public function getDependencies()
     {
-        return [LoadPriceRules::class];
+        return [LoadPriceRules::class, LoadPriceAttributePriceLists::class];
     }
 }

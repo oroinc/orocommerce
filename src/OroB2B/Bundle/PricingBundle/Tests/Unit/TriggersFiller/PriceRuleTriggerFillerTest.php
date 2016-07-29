@@ -115,4 +115,66 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
 
         $this->filler->addTriggersForPriceList($priceList, $product);
     }
+
+    public function testAddTriggersExistingWiderScope()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $trigger = new PriceRuleChangeTrigger($priceList);
+
+        $this->extraActionsStorage->expects($this->once())
+            ->method('getScheduledForInsert')
+            ->with(PriceRuleChangeTrigger::class)
+            ->willReturn([$trigger]);
+        $this->extraActionsStorage->expects($this->never())
+            ->method('scheduleForExtraInsert');
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 2]);
+        $this->filler->addTriggersForPriceList($priceList, $product);
+    }
+
+    public function testAddTriggersLowerScope()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 2]);
+        $trigger = new PriceRuleChangeTrigger($priceList, $product);
+
+        $this->extraActionsStorage->expects($this->once())
+            ->method('getScheduledForInsert')
+            ->with(PriceRuleChangeTrigger::class)
+            ->willReturn([$trigger]);
+
+        $expectedTrigger = new PriceRuleChangeTrigger($priceList);
+        $this->extraActionsStorage->expects($this->once())
+            ->method('scheduleForExtraInsert')
+            ->with($expectedTrigger);
+
+        $this->filler->addTriggersForPriceList($priceList);
+    }
+
+    public function testAddTriggersDifferentProducts()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        /** @var Product $product1 */
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        /** @var Product $product2 */
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+        $trigger = new PriceRuleChangeTrigger($priceList, $product1);
+
+        $this->extraActionsStorage->expects($this->once())
+            ->method('getScheduledForInsert')
+            ->with(PriceRuleChangeTrigger::class)
+            ->willReturn([$trigger]);
+
+        $expectedTrigger = new PriceRuleChangeTrigger($priceList, $product2);
+        $this->extraActionsStorage->expects($this->once())
+            ->method('scheduleForExtraInsert')
+            ->with($expectedTrigger);
+
+        $this->filler->addTriggersForPriceList($priceList, $product2);
+    }
 }

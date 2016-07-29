@@ -99,12 +99,13 @@ abstract class AbstractRuleEntityListener
     }
 
     /**
+     * @param Product|null $product
      * @param int|null $relationId
      */
-    protected function recalculateByEntity($relationId = null)
+    protected function recalculateByEntity(Product $product = null, $relationId = null)
     {
         $lexemes = $this->findEntityLexemes([], $relationId);
-        $this->addTriggersByLexemes($lexemes);
+        $this->addTriggersByLexemes($lexemes, $product);
     }
 
     /**

@@ -28,7 +28,7 @@ class PriceRuleTriggerFiller
      */
     public function addTriggersForPriceList(PriceList $priceList, Product $product = null)
     {
-        if (!$this->isExistingTriggerWithPriseList($priceList)) {
+        if (!$this->isExistingTriggerWithPriseList($priceList, $product)) {
             $trigger = new PriceRuleChangeTrigger($priceList, $product);
             $this->extraActionsStorage->scheduleForExtraInsert($trigger);
         }
@@ -47,14 +47,21 @@ class PriceRuleTriggerFiller
 
     /**
      * @param PriceList $priceList
+     * @param Product|null $product
      * @return bool
      */
-    protected function isExistingTriggerWithPriseList(PriceList $priceList)
+    protected function isExistingTriggerWithPriseList(PriceList $priceList, Product $product = null)
     {
         /** @var PriceRuleChangeTrigger[] $triggers */
         $triggers = $this->extraActionsStorage->getScheduledForInsert(PriceRuleChangeTrigger::class);
         foreach ($triggers as $trigger) {
-            if ($trigger->getPriceList()->getId() === $priceList->getId()) {
+            // Skip trigger creation if there are trigger for whole price list
+            // or trigger for same product and price list
+            if ((!$trigger->getProduct() && $trigger->getPriceList()->getId() === $priceList->getId())
+                || ($product && $trigger->getProduct() && $trigger->getProduct()->getId() === $product->getId()
+                    && $trigger->getPriceList()->getId() === $priceList->getId()
+                )
+            ) {
                 return true;
             }
         }
