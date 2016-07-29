@@ -5,29 +5,29 @@ layout:
         - '@setOption':
             id: widget_content
             optionName: savedId
-            optionValue: { '@value': $data.savedId }
+            optionValue: '=data["savedId"]'
         - '@setOption':
             id: widget_content
             optionName: shoppingList
-            optionValue: { '@value': $data.shoppingList }
+            optionValue: '=data["shoppingList"]'
         - '@addTree':
             items:
                 form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_shopping_list_shopping_list_form }
+                        form: '=data["orob2b_shopping_list_shopping_list_form"]'
                 form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_shopping_list_shopping_list_form }
+                        form: '=data["orob2b_shopping_list_shopping_list_form"]'
                 form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_shopping_list_shopping_list_form }
+                        form: '=data["orob2b_shopping_list_shopping_list_form"]'
                 form_comment:
                     blockType: block
                     options:
-                        visible: { '@neq': [$data.createOnly, true] }
+                        visible: '=data["createOnly"]!=true'
                 form_actions:
                     blockType: container
                 form_actions_reset:
@@ -42,14 +42,14 @@ layout:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.create.label
                         style: auto
-                        visible: { '@eq': [$data.createOnly, true] }
+                        visible: '=data["createOnly"]==true'
                 form_actions_create_and_add:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.create_and_add.label
                         style: auto
-                        visible: { '@neq': [$data.createOnly, true] }
+                        visible: '=data["createOnly"]!=true'
             tree:
                 widget_content:
                     form_start: ~

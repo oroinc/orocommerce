@@ -2,26 +2,37 @@
 
 namespace OroB2B\Bundle\SaleBundle\Twig;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_sale_quote';
-
+    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_b2b_rfp.frontend_product_visibility';
+    
     /**
      * @var QuoteProductFormatter
      */
     protected $quoteProductFormatter;
 
     /**
-     * @param QuoteProductFormatter $quoteProductFormatter
+     * @var ConfigManager
      */
-    public function __construct(QuoteProductFormatter $quoteProductFormatter)
+    protected $configManager;
+
+    /**
+     * @param QuoteProductFormatter $quoteProductFormatter
+     * @param ConfigManager $configManager
+     */
+    public function __construct(QuoteProductFormatter $quoteProductFormatter, ConfigManager $configManager)
     {
         $this->quoteProductFormatter = $quoteProductFormatter;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -45,6 +56,16 @@ class QuoteExtension extends \Twig_Extension
                 [$this, 'formatProductRequest'],
                 ['is_safe' => ['html']]
             ),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction('is_quote_visible', [$this, 'isQuoteVisible'])
         ];
     }
 
@@ -73,6 +94,18 @@ class QuoteExtension extends \Twig_Extension
     public function formatProductRequest(QuoteProductRequest $item)
     {
         return $this->quoteProductFormatter->formatRequest($item);
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function isQuoteVisible(Product $product)
+    {
+        $supportedStatuses = (array)$this->configManager->get(self::FRONTEND_SYSTEM_CONFIG_PATH);
+        $inventoryStatus = $product->getInventoryStatus();
+
+        return $inventoryStatus && in_array($inventoryStatus->getId(), $supportedStatuses);
     }
 
     /**

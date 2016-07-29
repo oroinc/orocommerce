@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
 
 /**
@@ -19,7 +20,7 @@ class BaseCheckoutRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData',
-                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
+                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckouts',
             ]
         );
     }

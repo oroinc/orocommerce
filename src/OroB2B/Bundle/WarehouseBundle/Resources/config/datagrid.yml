@@ -149,6 +149,7 @@ datagrid:
                     - inventory.quantity as quantity
                     - precisionUnit.code as unit
                     - productPrecision.precision as inventoryLevelPrecision
+                    - IDENTITY(productPrecision.unit) as unitCode
                 from:
                     - { table: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
                 join:
@@ -198,10 +199,11 @@ datagrid:
                             productId: id
                 choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
             warehouseName:
-                label:           orob2b.warehouse.entity_label
+                label:              orob2b.warehouse.entity_label
             quantity:
                 label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type:   decimal
+                align:           right
                 inline_editing:
                     enable: true
                     editor:
@@ -213,6 +215,9 @@ datagrid:
                             decimalsField: inventoryLevelPrecision
             unit:
                 label:           orob2b.product.productunitprecision.unit.label
+                type:            twig
+                frontend_type:   html
+                template:        OroB2BProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
         sorters:
             columns:
                 sku:
@@ -240,14 +245,25 @@ datagrid:
                     data_name:       inventoryStatusId
                     enum_code:       prod_inventory_status
                 warehouseName:
-                    data_name:       warehouseName
-                    type:            string
+                    type:               entity
+                    frontend_type:      select
+                    data_name:          warehouse.id
+                    options:
+                        field_type:     entity
+                        field_options:
+                            class:      %orob2b_warehouse.entity.warehouse.class%
+                            property:   name
                 quantity:
                     data_name:       quantity
                     type:            number
                 unit:
                     data_name:       unit
-                    type:            string
+                    type:            choice
+                    data_name:       precisionUnit
+                    options:
+                        field_options:
+                            choices: "@orob2b_product.provider.product_units_provider->getAvailableProductUnits"
+                            multiple: true
         actions:
             delete:
                 type:          delete

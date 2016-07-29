@@ -1,0 +1,44 @@
+{% block _account_address_book_addresses_grid_toolbar_actions_container_widget %}
+    {{ block('_datagrid_toolbar_actions_container_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_mass_actions_widget %}
+    {{ block('_datagrid_toolbar_mass_actions_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_extra_actions_widget %}
+    {{ block('_datagrid_toolbar_extra_actions_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_tools_container_widget %}
+    {{ block('_datagrid_toolbar_tools_container_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_actions_widget %}
+    {{ block('_datagrid_toolbar_actions_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_page_size_widget %}
+    {{ block('_datagrid_toolbar_page_size_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_pagination_widget %}
+    {{ block('_datagrid_toolbar_pagination_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " grid-toolbar"
+    }) %}
+    <script type="text/html" id="template-account-address-book-addresses-grid-toolbar">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </script>
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_sorting_widget %}
+    {{ block('_datagrid_toolbar_sorting_widget') }}
+{% endblock %}
+
+{% block _account_address_book_addresses_grid_toolbar_button_container_widget %}
+    {{ block('_datagrid_toolbar_button_container_widget') }}
+{% endblock %}

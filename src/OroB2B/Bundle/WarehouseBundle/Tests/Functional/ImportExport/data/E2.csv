@@ -1,0 +1,5 @@
+SKU,Quantity,Warehouse
+product.1,100,First Warehouse
+product.2,200,First Warehouse
+product.2,2000,Second Warehouse
+product.3,300,First Warehouse
