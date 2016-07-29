@@ -185,8 +185,12 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
     }) %}
-    <div {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}
+         data-product-footer
+         data-theme="<%= themeOptions.view %>"
+    >
         {{ block_widget(block) }}
+
     </div>
 {% endblock %}
 

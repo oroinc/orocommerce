@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: product_shopping_lists
-            root: product_grid_row_secondary_content_first_container
+            root: product_grid_row_shopping_lists
             namespace: product_grid
     actions:
         - '@setBlockTheme':

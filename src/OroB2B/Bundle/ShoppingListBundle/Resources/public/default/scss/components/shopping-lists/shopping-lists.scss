@@ -1,18 +1,20 @@
 .shopping-lists {
-    position: relative;
+    padding-bottom: 15px;
 
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-bottom: 15px;
-    padding: 7px 13px;
+    &__content {
+        position: relative;
 
-    font-size: $font-size-s;
-    text-align: left;
+        height: auto;
 
-    color: #5b7a59;
-    border-radius: 3px;
-    background: #d9e8d1;
+        padding: 7px 13px;
+
+        font-size: $font-size-s;
+        text-align: left;
+
+        color: #5b7a59;
+        border-radius: 3px;
+        background: #d9e8d1;
+    }
 
     &__text {
         display: table;
@@ -67,14 +69,8 @@
     &__link {
         margin-left: 25px;
 
-        text-decoration: none;
-
-        color: #5b7a59;
+        font-size: $base-font-size - 2px;
 
         cursor: pointer;
-
-        &:hover {
-            color: #5b7a59;
-        }
     }
 }

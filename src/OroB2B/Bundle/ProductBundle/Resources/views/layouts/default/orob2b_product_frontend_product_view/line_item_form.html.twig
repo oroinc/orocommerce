@@ -25,3 +25,10 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " form__col"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

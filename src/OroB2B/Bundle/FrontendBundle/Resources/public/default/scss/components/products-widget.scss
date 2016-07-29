@@ -692,12 +692,19 @@
     &_gallery-view,
     &_list-view,
     &_no-image-view {
+      @include clearfix();
+
       .product-item__qty__current-grid {
         @include clearfix();
       }
     }
 
     &_no-image-view {
+      .shopping-lists {
+        float: right;
+        width: 94%;
+      }
+
       .btn {
         margin-top: 0;
       }

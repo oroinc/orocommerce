@@ -6,6 +6,7 @@ define(function(require) {
     var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
 
     ProductShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
@@ -91,6 +92,8 @@ define(function(require) {
 
             this.$el.html($el);
             this.delegateEvents();
+
+            mediator.trigger('shopping-list-event:update');
         },
 
         findCurrentShoppingList: function() {

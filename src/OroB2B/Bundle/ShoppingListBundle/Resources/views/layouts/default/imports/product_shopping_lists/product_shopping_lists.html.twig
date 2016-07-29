@@ -13,7 +13,8 @@
                 shopping_lists: shoppingLists
             },
             template: shoppingListsTemplate
-        }
+        },
+        '~data-product-shopping-lists': ''
     }) %}
     <div {{ block('block_attributes') }}></div>
 {% endblock %}
@@ -21,7 +22,9 @@
 {% block __product_shopping_lists__shopping_lists_template_widget %}
     <% if (!_.isEmpty(shoppingLists)) { %>
         <div class="shopping-lists">
-            {{ block_widget(block) }}
+            <div class="shopping-lists__content">
+                {{ block_widget(block) }}
+            </div>
         </div>
     <% } %>
 {% endblock %}
