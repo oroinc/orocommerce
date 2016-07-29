@@ -13,43 +13,37 @@ layout:
                 no_shopping_lists:
                     blockType: block
                     options:
-                        visible: { '@empty': $data.entity }
+                        visible: '=!data["entity"]'
                 shopping_list_title:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions:
-                            '@value': $data.actions.all
-                        entity:
-                            '@value': $data.entity
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll()'
+                        entity: '=data["entity"]'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_line_items:
                     blockType: container
                 shopping_list_line_items_list:
                     blockType: shopping_list_line_items_list
                     options:
-                        visible:
-                          '@and':
-                            - '@not_empty': $data.entity
-                            - '@has_elements': $data.entity.lineItems
-                        shoppingList: { '@value': $data.entity }
-                        productsMatchedPrice: { '@value': $data.orob2b_shopping_list_products_matched_price }
-                        productsAllPrices: { '@value': $data.orob2b_shopping_list_products_all_prices }
-                        productsUnits: { '@value': $data.orob2b_shopping_list_products_units }
+                        visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
+                        shoppingList: '=data["entity"]'
+                        productsMatchedPrice: '=data["orob2b_shopping_list_products_matched_price"]'
+                        productsAllPrices: '=data["orob2b_shopping_list_products_all_prices"]'
+                        productsUnits: '=data["orob2b_shopping_list_products_units"]'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        hidden: { '@has_elements': $data.entity.lineItems }
+                        visible: '=data["entity"]!=null && data["entity"].getLineItems()==null'
                 shopping_list_checkout_container:
                     blockType: container
                 shopping_list_button_container:
@@ -57,22 +51,20 @@ layout:
                 shopping_list_delete_button:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity}
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_totals:
                     blockType: shopping_list_totals
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
-                        totals: { '@value': $data.totals }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
+                        totals: '=data["totals"]'
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions:
-                            '@value': $data.actions.all
-                        entity:
-                            '@value': $data.entity
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll()'
+                        entity: '=data["entity"]'
             tree:
                 content:
                     shopping_list_view_container:
@@ -93,18 +85,14 @@ layout:
             parentId: sidebar_left
             blockType: shopping_list_selector
             options:
-                visible: { '@has_elements': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                shoppingLists:
-                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
-                selectedShoppingList:
-                    '@value': $data.entity
+                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]!=null'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                selectedShoppingList: '=data["entity"]'
         - '@add':
             id: shopping_lists_sidebar_list
             parentId: sidebar_left
             blockType: shopping_lists_sidebar_list
             options:
-                visible: { '@has_elements': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                shoppingLists:
-                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
-                selectedShoppingList:
-                    '@value': $data.entity
+                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]!=null'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                selectedShoppingList: '=data["entity"]'

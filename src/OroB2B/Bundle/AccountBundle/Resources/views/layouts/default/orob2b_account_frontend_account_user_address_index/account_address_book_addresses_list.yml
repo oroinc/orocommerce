@@ -7,6 +7,8 @@ layout:
             items:
                 account_address_book_addresses_list_head:
                     blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 account_address_book_addresses_list_title:
                     blockType: text
                     options:
@@ -14,19 +16,23 @@ layout:
                 account_address_book_addresses_list_create_button:
                     blockType: link
                     options:
-                        visible: { '@acl': orob2b_account_frontend_account_address_create }
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_create")'
                         route_name: orob2b_account_frontend_account_address_create
-                        route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                        route_parameters:
+                            entityId: '=data["entity"].getAccount().getId()'
                         text: 'orob2b.account.frontend.account_user_address_book.create.label'
                 account_address_book_addresses_list:
                     blockType: address_book
                     options:
-                        entity: { '@value': $data.entity.account }
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
+                        entity: '=data["entity"].getAccount()'
                         addressListRouteName: 'orob2b_api_account_frontend_get_account_addresses'
                         addressCreateRouteName: 'orob2b_account_frontend_account_address_create'
                         addressUpdateRouteName: 'orob2b_account_frontend_account_address_update'
                 account_address_book_addresses_list_template:
                     blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 account_address_book_addresses_list_template_item:
                     blockType: container
                 account_address_book_addresses_list_template_item_address:
@@ -40,11 +46,11 @@ layout:
                 account_address_book_addresses_list_template_item_actions_edit:
                     blockType: block
                     options:
-                        visible: { '@acl': orob2b_account_frontend_account_address_update }
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_update")'
                 account_address_book_addresses_list_template_item_actions_remove:
                     blockType: block
                     options:
-                        visible: { '@acl': orob2b_account_frontend_account_address_remove }
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_remove")'
             tree:
                 account_address_book_addresses:
                     account_address_book_addresses_list_head:
@@ -59,8 +65,5 @@ layout:
                                 account_address_book_addresses_list_template_item_actions_edit: ~
                                 account_address_book_addresses_list_template_item_actions_remove: ~
                     account_address_book_addresses_list: ~
-    conditions:
-        '@and':
-            - '@eq': [true, false]
-            - '@acl': orob2b_account_frontend_account_address_view
-            - '@lt': [$context.account_address_count, 8]
+    conditions: 'context["account_address_count"]<8 && true==false'
+

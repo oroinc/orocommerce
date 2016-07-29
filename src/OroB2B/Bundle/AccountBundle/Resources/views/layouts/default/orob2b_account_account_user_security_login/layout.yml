@@ -21,14 +21,14 @@ layout:
                 login_form_error:
                     blockType: text
                     options:
-                        visible: { '@not_empty': $data.orob2b_account_sign_in.error }
-                        text: { '@value': $data.orob2b_account_sign_in.error }
+                        visible: '=data["orob2b_account_sign_in"]["error"]!=null'
+                        text: '=data["orob2b_account_sign_in"]["error"]'
                 login_form_username:
                     blockType: input
                     options:
                         id: userNameSignIn
                         name: _username
-                        value: { '@value': $data.orob2b_account_sign_in.last_username }
+                        value: '=data["orob2b_account_sign_in"]["last_username"]'
                         placeholder: orob2b.account.accountuser.email.label
                         label: orob2b.account.accountuser.email.label
                 login_form_password:
@@ -57,7 +57,7 @@ layout:
                     options:
                         type: hidden
                         name: _csrf_token
-                        value: { '@value': $data.orob2b_account_sign_in.csrf_token }
+                        value: '=data["orob2b_account_sign_in"]["csrf_token"]'
                 login_form_submit:
                     blockType: button
                     options:
@@ -75,11 +75,11 @@ layout:
                 login_form_register:
                     blockType: link
                     options:
+                        visible: '=data["registrationAllowed"]==true'
                         route_name: orob2b_account_frontend_account_user_register
                         text: orob2b.account.accountuser.profile.create_an_account
                         attr:
                             class: col-md-12
-                        visible: { '@eq': [$data.registrationAllowed, true] }
             tree:
                 content:
                     login_page:

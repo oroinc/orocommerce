@@ -11,8 +11,7 @@ layout:
         - '@setOption':
             id: checkout_form_fields
             optionName: transitionData
-            optionValue: { '@value': $data.orob2b_checkout_continue_transition }
-    conditions:
-        '@and':
-            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
-            - '@eq': [$context.workflowStepName, 'request_approval']
+            optionValue: '=data["orob2b_checkout_continue_transition"]'
+
+    conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'
+
