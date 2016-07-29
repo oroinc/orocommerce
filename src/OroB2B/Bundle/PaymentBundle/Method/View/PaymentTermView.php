@@ -4,36 +4,34 @@ namespace OroB2B\Bundle\PaymentBundle\Method\View;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
-    use ConfigTrait;
-
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
     /**  @var TranslatorInterface */
     protected $translator;
 
+    /** @var PaymentTermConfigInterface */
+    protected $config;
+
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param TranslatorInterface $translator
-     * @param ConfigManager $configManager
+     * @param PaymentTermConfigInterface $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         TranslatorInterface $translator,
-        ConfigManager $configManager
+        PaymentTermConfigInterface $config
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;
-        $this->configManager = $configManager;
+        $this->config = $config;
     }
 
     /** {@inheritdoc} */
@@ -62,19 +60,19 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOrder()
     {
-        return (int)$this->getConfigValue(Configuration::PAYMENT_TERM_SORT_ORDER_KEY);
+        return $this->config->getOrder();
     }
 
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->getConfigValue(Configuration::PAYMENT_TERM_LABEL_KEY);
+        return $this->config->getLabel();
     }
 
     /** {@inheritdoc} */
     public function getShortLabel()
     {
-        return $this->getConfigValue(Configuration::PAYMENT_TERM_SHORT_LABEL_KEY);
+        return $this->config->getShortLabel();
     }
 
     /** {@inheritdoc} */

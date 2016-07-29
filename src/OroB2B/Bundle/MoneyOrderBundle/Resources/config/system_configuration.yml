@@ -69,6 +69,17 @@ oro_system_configuration:
                     'data-depends-on-field': 'money_order_allowed_countries'
                     'data-depends-on-field-value': 'selected'
 
+        orob2b_money_order.money_order_allowed_currencies:
+            data_type: array
+            type: oro_currency_selection
+            priority: 60
+            options:
+                label: orob2b.pricing.system_configuration.fields.enabled_currencies.label
+                required: true
+                multiple: true
+                constraints:
+                    - NotBlank: ~
+
         orob2b_money_order.money_order_pay_to:
             data_type: string
             type: text
@@ -110,5 +121,6 @@ oro_system_configuration:
                                             - orob2b_money_order.money_order_sort_order
                                             - orob2b_money_order.money_order_allowed_countries
                                             - orob2b_money_order.money_order_selected_countries
+                                            - orob2b_money_order.money_order_allowed_currencies
                                             - orob2b_money_order.money_order_pay_to
                                             - orob2b_money_order.money_order_send_to
