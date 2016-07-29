@@ -2117,6 +2117,57 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $this->assertCreatedInventoryLevel($warehouse, 'product.3', null, 10);
     }
 
+    public function testDeleteEntity()
+    {
+        /** @var WarehouseInventoryLevel $inventoryLevel */
+        $inventoryLevel = $this->getReference(
+            sprintf(
+                'warehouse_inventory_level.%s.%s',
+                LoadWarehousesAndInventoryLevels::WAREHOUSE1,
+                'product_unit_precision.product.1.bottle'
+            )
+        );
+
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $response = $this->request(
+            'DELETE',
+            $this->getUrl('oro_rest_api_delete', ['entity' => $entityType, 'id' => $inventoryLevel->getId()])
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
+        $this->assertDeletedInventorLevel($inventoryLevel->getId());
+    }
+
+    public function testDeleteEntityUsingFilters()
+    {
+        /** @var WarehouseInventoryLevel $inventoryLevel */
+        $inventoryLevel = $this->getReference(
+            sprintf(
+                'warehouse_inventory_level.%s.%s',
+                LoadWarehousesAndInventoryLevels::WAREHOUSE1,
+                'product_unit_precision.product.1.liter'
+            )
+        );
+
+        $params = [
+            'filter' => [
+                'product.sku' => $inventoryLevel->getProduct()->getSku(),
+                'warehouse.id' => $inventoryLevel->getWarehouse()->getId(),
+                'productUnitPrecision.unit.code' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
+            ]
+        ];
+
+        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $response = $this->request(
+            'DELETE',
+            $this->getUrl('oro_rest_api_cdelete', ['entity' => $entityType]),
+            $params
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
+        $this->assertDeletedInventorLevel($inventoryLevel->getId());
+    }
+
     /**
      * @param array $expectedContent
      * @param array $includedItems
@@ -2202,5 +2253,16 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
 
         $this->assertInstanceOf(WarehouseInventoryLevel::class, $inventoryLevel);
         $this->assertEquals($quantity, $inventoryLevel->getQuantity());
+    }
+
+    /**
+     * @param int $inventoryLevelId
+     */
+    protected function assertDeletedInventorLevel($inventoryLevelId)
+    {
+        $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
+        $inventoryLevelRepository = $doctrineHelper->getEntityRepository(WarehouseInventoryLevel::class);
+        $result = $inventoryLevelRepository->findOneBy(['id' => $inventoryLevelId]);
+        $this->assertNull($result);
     }
 }
