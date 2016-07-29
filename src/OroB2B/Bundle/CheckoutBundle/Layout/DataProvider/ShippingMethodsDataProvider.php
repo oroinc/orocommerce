@@ -6,10 +6,10 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
@@ -87,10 +87,11 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     }
 
     /**
+     * @param ShippingContextAwareInterface $context
      * @param array $applRules
      * @return array
      */
-    public function getApplicableShippingMethods($context, array $applRules)
+    public function getApplicableShippingMethods(ShippingContextAwareInterface $context, array $applRules)
     {
         $shippingMethods = [];
         foreach ($applRules as $priority => $rule) {
@@ -109,8 +110,6 @@ class ShippingMethodsDataProvider implements DataProviderInterface
                         'types' => []
                     ];
                 }
-                $col = array_column($shippingMethods[$methodName]['types'], 'name');
-                $tp = array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name'));
                 if (!is_int(array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name')))) {
                     $price = $method->calculatePrice($context, $configuration);
                     $shippingMethods[$methodName]['types'][] = [
@@ -121,6 +120,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
                 }
             }
         }
+
         return $shippingMethods;
     }
 }
