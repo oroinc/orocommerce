@@ -43,7 +43,7 @@ class ShippingRuleType extends AbstractType
             ])
             ->add('stopProcessing', 'checkbox', [
                 'required' => false,
-                'label' => 'orob2b.shipping.shippingrule.stopProcessing.label',
+                'label' => 'orob2b.shipping.shippingrule.stop_processing.label',
             ]);
     }
 
