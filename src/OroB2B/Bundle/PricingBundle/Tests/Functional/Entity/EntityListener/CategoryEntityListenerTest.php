@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCategoryPriceRuleLexemes;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -27,9 +28,10 @@ class CategoryEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadCategoryPriceRuleLexemes::class,
             LoadPriceLists::class,
-            LoadProductData::class
+            LoadProductData::class,
+            LoadCategoryProductData::class
         ]);
-        $this->removeTriggers();
+        $this->cleanTriggers();
     }
 
     public function testOnDelete()
@@ -38,11 +40,11 @@ class CategoryEntityListenerTest extends WebTestCase
         $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceLists();
-        $this->assertCount(3, $this->getActualTriggersPriceLists());
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3), $actual);
+        $actual = $this->getActualTriggersPriceListIds();
+        $this->assertCount(3, $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
     }
 
     public function testOnUpdateCategoryParentChanged()
@@ -53,11 +55,11 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceLists();
+        $actual = $this->getActualTriggersPriceListIds();
         $this->assertCount(3, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
     }
 
     public function testOnUpdateCategoryField()
@@ -68,38 +70,87 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceLists();
+        $actual = $this->getActualTriggersPriceListIds();
         $this->assertCount(1, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3), $actual);
+        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
+    }
+
+    public function testProductAdd()
+    {
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_5);
+        $category->addProduct($product);
+
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->flush();
+
+        $expectedPriceLists = [
+            $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
+        ];
+        $triggers = $this->getTriggers();
+        $this->assertCount(2, $triggers);
+        foreach ($triggers as $trigger) {
+            $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
+            $this->assertContains($trigger->getPriceList()->getId(), $expectedPriceLists);
+        }
+    }
+
+    public function testProductRemove()
+    {
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $product = $category->getProducts()->first();
+        $category->removeProduct($product);
+
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->flush();
+
+        $expectedPriceLists = [
+            $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
+        ];
+        $triggers = $this->getTriggers();
+        $this->assertCount(2, $triggers);
+        foreach ($triggers as $trigger) {
+            $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
+            $this->assertContains($trigger->getPriceList()->getId(), $expectedPriceLists);
+        }
     }
 
     /**
      * @return PriceList[]
      */
-    protected function getActualTriggersPriceLists()
+    protected function getActualTriggersPriceListIds()
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        /** @var CategoryRepository $repository */
-        $repository = $em->getRepository(PriceRuleChangeTrigger::class);
         return array_map(
             function (PriceRuleChangeTrigger $trigger) {
-                return $trigger->getPriceList();
+                return $trigger->getPriceList()->getId();
             },
-            $repository->findAll()
+            $this->getTriggers()
         );
     }
 
-    /**
-     * @return PriceList[]
-     */
-    protected function removeTriggers()
+    protected function cleanTriggers()
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        /** @var EntityRepository $repository */
-        $repository = $em->getRepository(PriceRuleChangeTrigger::class);
-        $repository->createQueryBuilder('t')
-            ->delete()
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
+        $em->createQueryBuilder()
+            ->delete(PriceRuleChangeTrigger::class)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @return PriceRuleChangeTrigger[]
+     */
+    protected function getTriggers()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceRuleChangeTrigger::class)
+            ->getRepository(PriceRuleChangeTrigger::class)
+            ->findAll();
     }
 }
