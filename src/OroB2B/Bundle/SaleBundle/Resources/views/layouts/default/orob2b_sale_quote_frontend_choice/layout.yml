@@ -14,7 +14,7 @@ layout:
                 -
                     label: 'orob2b.frontend.sale.quote.title.label'
                     parameters:
-                        '%id%': { '@value': $data.quote.qid }
+                        '%id%': '=data["quote"].getQid()'
 
         - '@setOption':
             id: page_title
@@ -27,7 +27,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    '%id%': { '@value': $data.quote.qid }
+                    '%id%': '=data["quote"].getQid()'
 
         - '@add':
             id: account_sidebar
@@ -39,31 +39,32 @@ layout:
                 quote_view_information:
                     blockType: quote_view_information
                     options:
-                        quote: { '@value': $data.quote }
+                        quote: '=data["quote"]'
                 quote_choice_page:
                     blockType: container
                 quote_choice_form:
                     blockType: quote_choice_form_container
                     options:
-                        form: { '@value': $data.form }
-                        quoteDemand: { '@value': $data.data }
+                        form: '=data["form"]'
+                        quoteDemand: '=data["data"]'
                 quote_choice_back_button:
                     blockType: back_link
                     options:
                         route_name: orob2b_sale_quote_frontend_view
-                        route_parameters: { id: { '@value': $data.quote.id } }
+                        route_parameters:
+                            id: '=data["quote"].getId()'
                         text: 'orob2b.frontend.sale.quote.sections.back.label'
                 quote_choice_submit_button:
                     blockType: block
                 quote_choice_subtotals:
                     blockType: order_total
                     options:
-                        total: {'@value': $data.totals.total}
-                        subtotals: {'@value': $data.totals.subtotals}
+                        total: '=data["totals"].total'
+                        subtotals: '=data["totals"].subtotals'
                 quote_shipping_address:
                     blockType: address
                     options:
-                        address: {'@value': $data.quote.shippingAddress}
+                        address: '=data["quote"].getShippingAddress()'
                         label: 'orob2b.sale.quote.shipping_address.label'
                         block_prefixes: ['quote_body_column_element']
             tree:
@@ -75,5 +76,6 @@ layout:
                             quote_choice_back_button: ~
                             quote_choice_subtotals: ~
                             quote_choice_submit_button: ~
-    conditions:
-        '@empty': [$context.widget_container]
+
+    conditions: '!context["widget_container"]'
+

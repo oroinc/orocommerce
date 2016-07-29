@@ -8,7 +8,7 @@ layout:
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
                 - 'orob2b.account.frontend.account_user.role.entity_plural_label'
-                - { '@value': $data.entity.label }
+                - '=data["entity"].getLabel()'
         - '@add':
             id: account_sidebar
             parentId: sidebar_left
@@ -20,8 +20,8 @@ layout:
                 account_user_role_title:
                     blockType: text
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        text: { '@value': $data.entity.label }
+                        visible: '=data["entity"]!=null'
+                        text: '=data["entity"].getLabel()'
                 account_user_role_back_link:
                     blockType: link
                     options:
@@ -30,28 +30,28 @@ layout:
                 account_user_role_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions: { '@value': $data.actions.all }
-                        entity: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll()'
+                        entity: '=data["entity"]'
                 account_user_role_items:
                     blockType: container
                 account_user_role_items_view_privileges:
                     blockType: datagrid
                     options:
-                        visible: { '@not_empty': $data.entity }
+                        visible: '=data["entity"]!=null'
                         grid_name: frontend-account-user-role-permission-readonly-grid
                         grid_parameters:
-                            role: {'@value': $data.entity}
+                            role: '=data["entity"]'
                         grid_render_parameters:
                             cssClass: 'inner-permissions-grid'
                         vars:
-                            options: { '@value': $data.orob2b_account_fronted_account_user_role_options }
+                            options: '=data["orob2b_account_fronted_account_user_role_options"]'
                 account_user_role_items_view_users:
                     blockType: datagrid
                     options:
                         grid_name: frontend-account-account-users-grid-view
                         grid_parameters:
-                            role: {'@value': $data.entity.id}
+                            role: '=data["entity"].getId()'
             tree:
                 content:
                     account_user_role_view_container:

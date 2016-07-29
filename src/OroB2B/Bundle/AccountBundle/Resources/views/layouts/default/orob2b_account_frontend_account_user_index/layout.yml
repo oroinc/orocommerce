@@ -30,10 +30,8 @@ layout:
             parentId: datagrid_toolbar_button_container
             blockType: action_combined_buttons
             options:
-                actions:
-                    '@value': $data.actions.all
-                entityClass:
-                    '@value': 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+                actions: '=data["actions"].getAll()'
+                entityClass: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
 
         - '@add':
             id: account_users
