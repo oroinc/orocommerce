@@ -9,7 +9,6 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                unitsQuantity: { '@value': $data.orob2b_shopping_list_product_units_quantity }
-    conditions:
-        '@eq': [{ '@acl': orob2b_shopping_list_line_item_frontend_add }, true]
+                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                unitsQuantity: '=data["orob2b_shopping_list_product_units_quantity"]'

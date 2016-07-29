@@ -6,7 +6,7 @@ layout:
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
                 - 'orob2b.account.frontend.account_user.entity_plural_label'
-                - { '@value': $data.entity.fullName }
+                - '=data["entity"].getFullName()'
 
         - '@setOption':
             id: page_title
@@ -14,7 +14,7 @@ layout:
             optionValue:
                 label: 'orob2b.account.frontend.title.account_user.view'
                 parameters:
-                    '%identifier%': { '@value': $data.entity.fullName }
+                    '%identifier%': '=data["entity"].getFullName()'
 
         - '@setOption':
             id: content

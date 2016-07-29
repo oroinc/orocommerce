@@ -12,7 +12,7 @@ layout:
                 -
                     label: 'orob2b.frontend.sale.quote.title.label'
                     parameters:
-                        '%id%': { '@value': $data.entity.qid }
+                        '%id%': '=data["entity"].getQid()'
 
         - '@setOption':
             id: page_title
@@ -25,7 +25,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    '%id%': { '@value': $data.entity.qid }
+                    '%id%': '=data["entity"].getQid()'
 
         - '@add':
             id: account_sidebar
@@ -39,36 +39,31 @@ layout:
                 quote_view_controls_list:
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 quote_view_information:
                     blockType: quote_view_information
                     options:
-                        quote: { '@value': $data.entity }
+                        quote: '=data["entity"]'
                 quote_view_line_items:
                     blockType: quote_products_container
                     options:
-                        quoteProducts: { '@value': $data.entity.quoteProducts }
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
                 quote_view_line_items_mobile:
                     blockType: quote_products_container
                     options:
-                        quoteProducts: { '@value': $data.entity.quoteProducts }
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
-                        visible:
-                            '@and':
-                                - '@not_empty': $data.entity.hasOfferVariants
-                                - '@equal': [$data.entity.isAcceptable, true]
-                        actions:
-                            '@value': $data.actions.all
-                        entity:
-                            '@value': $data.quote
+                        visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
+                        actions: '=data["actions"].getAll()'
+                        entity: '=data["quote"]'
                 quote_view_accept_container:
                     blockType: container
                 quote_shipping_address:
                     blockType: address
                     options:
-                        address: {'@value': $data.entity.shippingAddress}
+                        address: '=data["entity"].getShippingAddress()'
                         label: 'orob2b.sale.quote.shipping_address.label'
                         block_prefixes: ['quote_body_column_element']
             tree:

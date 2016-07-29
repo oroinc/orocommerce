@@ -6,18 +6,18 @@ layout:
             blockType: meta
             options:
                 name: 'title'
-                content: { '@value': $data.product.defaultMetaTitle }
+                content: '=data["product"].getDefaultMetaTitle()'
         - @add:
             id: meta_description
             parentId: head
             blockType: meta
             options:
                 name: 'description'
-                content: { '@value': $data.product.defaultMetaDescription }
+                content: '=data["product"].getDefaultMetaDescription()'
         - @add:
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-                content: { '@value': $data.product.defaultMetaKeywords }
+                content: '=data["product"].getDefaultMetaKeywords()'

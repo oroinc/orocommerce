@@ -3,6 +3,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: { '@value': $context.title }
-    conditions:
-        '@not_empty': [ $context.title ]
+            optionValue: '=context["title"]'
+
+    conditions: 'context["title"]!=null'
+

@@ -2,35 +2,44 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
-class PaymentMethodsProvider implements DataProviderInterface
+class PaymentMethodsProvider extends AbstractServerRenderDataProvider
 {
     const NAME = 'orob2b_payment_methods_provider';
 
     /**
      * @var array[]
      */
-    protected $data;
+    protected $paymentMethodViews;
 
     /** @var PaymentMethodViewRegistry */
-    protected $registry;
+    protected $paymentMethodViewRegistry;
 
     /** @var PaymentContextProvider */
     protected $paymentContextProvider;
 
+    /** @var PaymentMethodRegistry */
+    protected $paymentMethodRegistry;
+
     /**
-     * @param PaymentMethodViewRegistry $registry
+     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
      * @param PaymentContextProvider $paymentContextProvider
+     * @param PaymentMethodRegistry $paymentMethodRegistry
      */
-    public function __construct(PaymentMethodViewRegistry $registry, PaymentContextProvider $paymentContextProvider)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        PaymentMethodViewRegistry $paymentMethodViewRegistry,
+        PaymentContextProvider $paymentContextProvider,
+        PaymentMethodRegistry $paymentMethodRegistry
+    ) {
+        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
         $this->paymentContextProvider = $paymentContextProvider;
+        $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
     /**
@@ -41,16 +50,19 @@ class PaymentMethodsProvider implements DataProviderInterface
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
-    public function getData(ContextInterface $context)
+    /**
+     * @param $entity
+     * @return array[]
+     */
+    public function getViews($entity = null)
     {
-        if (null === $this->data) {
-            $entity = $this->getEntity($context);
-            $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
+        if (null === $this->paymentMethodViews) {
+            $entity = $this->getEntity($entity);
+            $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
-            $views = $this->registry->getPaymentMethodViews($paymentContext);
+            $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
             foreach ($views as $view) {
-                $this->data[$view->getPaymentMethodType()] = [
+                $this->paymentMethodViews[$view->getPaymentMethodType()] = [
                     'label' => $view->getLabel(),
                     'block' => $view->getBlock(),
                     'options' => $view->getOptions($paymentContext),
@@ -58,23 +70,82 @@ class PaymentMethodsProvider implements DataProviderInterface
             }
         }
 
-        return $this->data;
+        return $this->paymentMethodViews;
     }
 
     /**
-     * @param ContextInterface $context
-     * @return object|null
+     * @param $paymentMethod
+     * @return bool
      */
-    protected function getEntity(ContextInterface $context)
+    public function isPaymentMethodEnabled($paymentMethod)
     {
-        $entity = null;
-        $contextData = $context->data();
-        if ($contextData->has('entity')) {
-            $entity = $contextData->get('entity');
+        try {
+            return $this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->isEnabled();
+        } catch (\InvalidArgumentException $e) {
         }
 
-        if (!$entity && $contextData->has('checkout')) {
-            $entity = $contextData->get('checkout');
+        return false;
+    }
+
+    /**
+     * @param $paymentMethodName
+     * @param $entity
+     * @return bool
+     */
+    public function isPaymentMethodApplicable($paymentMethodName, $entity)
+    {
+        try {
+            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
+        } catch (\InvalidArgumentException $e) {
+            return false;
+        }
+
+        if (!$paymentMethod->isEnabled()) {
+            return false;
+        }
+        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+
+        return $paymentMethod->isApplicable($paymentContext);
+    }
+
+    /**
+     * @param $entity
+     * @return bool
+     */
+    public function hasApplicablePaymentMethods($entity)
+    {
+        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+
+        $paymentMethods = $this->paymentMethodRegistry->getPaymentMethods();
+        foreach ($paymentMethods as $paymentMethod) {
+            if (!$paymentMethod->isEnabled()) {
+                continue;
+            }
+
+            if (!$paymentMethod->isApplicable($paymentContext)) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $entity
+     * @return object|null
+     */
+    protected function getEntity($entity)
+    {
+        if ($entity instanceof ContextInterface) {
+            $contextData = $entity->data();
+            if ($contextData->has('entity')) {
+                $entity = $contextData->get('entity');
+            }
+            if (!$entity && $contextData->has('checkout')) {
+                $entity = $contextData->get('checkout');
+            }
         }
 
         return $entity;
