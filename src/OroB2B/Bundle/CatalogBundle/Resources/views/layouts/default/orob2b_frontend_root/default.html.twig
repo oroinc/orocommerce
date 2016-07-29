@@ -1,4 +1,3 @@
-<!-- hero-promo -->
 {% block _hero_promo_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' hero-promo'
@@ -42,7 +41,6 @@
                     <h2 class="hero-promo-item__title">For Kitchen Professionals</h2>
                     <a href="#" class="btn theme-btn btn-dark hero-promo-item__view-btn">
                         View Items
-                        <!-- {{ item }} -->
                         <i class="cf-right-open-mini"></i>
                     </a>
                 </div>
@@ -51,7 +49,6 @@
     </div>
 {% endblock %}
 
-<!-- featured-categories -->
 {% block _featured_categories_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-categories'
@@ -79,56 +76,4 @@
             <dd class="featured-categories-item__qty">{{ 'orob2b.frontend.featuredcategories.view.items.label'|transchoice(item.products|length) }}</dd>
         </dl>
     </a>
-{% endblock %}
-
-<!-- featured-products -->
-{% block _featured_products_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' featured-products'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _featured_products_item_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' featured-products-item'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ item }}
-    </div>
-{% endblock %}
-
-<!-- top-selling-items -->
-{% block _top_selling_items_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-items'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _top_selling_items_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~data-page-component-options': {
-            mobileEnabled: false
-        }
-    }) %}
-
-    {{ block_widget(block, {attr: attr}) }}
-{% endblock %}
-
-{% block _top_selling_items_item_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-items-item'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ item }}
-    </div>
 {% endblock %}

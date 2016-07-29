@@ -1,0 +1,31 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@addTree':
+            items:
+                hero_promo_container:
+                    blockType: container
+                    prepend: true
+                hero_promo:
+                    blockType: embedded_list
+                    options:
+                        items: { '@value': [[0, 1, 2]] }
+                        use_slider: { '@value': true }
+                        slides_count: { '@value': 1 }
+                hero_promo_item:
+                    blockType: container
+                featured_categories:
+                    blockType: embedded_list
+                    siblingId: hero_promo_container
+                    options:
+                        items: { '@value': $data.featured_categories }
+                featured_category:
+                    blockType: container
+            tree:
+                content:
+                    hero_promo_container:
+                        hero_promo:
+                            hero_promo_item: ~
+                    featured_categories:
+                        featured_category: ~
