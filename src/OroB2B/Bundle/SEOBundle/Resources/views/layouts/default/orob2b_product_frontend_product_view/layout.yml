@@ -6,21 +6,18 @@ layout:
             blockType: meta
             options:
                 name: 'title'
-#                content: { '@localized_value': $data.product.metaTitles }
-                content: '=data["product"].getDefaultMetaTitle()'
+                content: '=localized_value(data["product"].getMetaTitles())'
         - @add:
             id: meta_description
             parentId: head
             blockType: meta
             options:
                 name: 'description'
-#                content: { '@localized_value': $data.product.metaDescriptions }
-                content: '=data["product"].getDefaultMetaDescription()'
+                content: '=localized_value(data["product"].getMetaDescriptions())'
         - @add:
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-#                content: { '@localized_value': $data.product.metaKeywords }
-                content: '=data["product"].getDefaultMetaKeywords()'
+                content: '=localized_value(data["product"].getMetaKeywords())'

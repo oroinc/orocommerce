@@ -7,16 +7,11 @@ layout:
             optionName: value
             optionValue:
                 - 'orob2b.product.entity_plural_label'
-#                - { '@localized_value': $data.product.names }
-#        - '@setOption':
-#            id: page_title
-#            optionName: text
-#            optionValue: {'@localized_value': $data.product.names}
-                - '=data["product"].getDefaultName()'
+                - '=localized_value(data["product"].getNames())'
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: '=data["product"].getDefaultName()'
+            optionValue: '=localized_value(data["product"].getNames())'
         - '@move':
             id: page_title
             parentId: product_title_container
@@ -31,8 +26,7 @@ layout:
                 product_title_mobile:
                     blockType: text
                     options:
-#                        text: {'@localized_value': $data.product.names}
-                        text: '=data["product"].getDefaultName()'
+                        text: '=localized_value(data["product"].getNames())'
                 product_image:
                     blockType: product_image
                     options:
@@ -66,8 +60,7 @@ layout:
                 product_description:
                     blockType: text
                     options:
-#                        text: {'@localized_value': $data.product.descriptions}
-                        text: '=data["product"].getDefaultDescription()'
+                        text: '=localized_value(data["product"].getDescriptions())'
                         escape: false
                 attachments:
                     blockType: block

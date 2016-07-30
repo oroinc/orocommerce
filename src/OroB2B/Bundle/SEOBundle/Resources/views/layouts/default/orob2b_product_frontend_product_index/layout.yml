@@ -6,21 +6,18 @@ layout:
             blockType: meta
             options:
                 name: 'title'
-#                content: { '@localized_value': $data.category.metaTitles }
-                content: '=data["category"].getDefaultMetaTitle()'
+                content: '=localized_value(data["category"].getMetaTitles())'
         - @add:
             id: meta_description
             parentId: head
             blockType: meta
             options:
                 name: 'description'
-#                content: { '@localized_value': $data.category.metaDescriptions }
-                content: '=data["category"].getDefaultMetaDescription()'
+                content: '=localized_value(data["category"].getMetaDescriptions())'
         - @add:
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-#                content: { '@localized_value': $data.category.metaKeywords }
-                content: '=data["category"].getDefaultMetaKeywords()'
+                content: '=localized_value(data["category"].getMetaKeywords())'

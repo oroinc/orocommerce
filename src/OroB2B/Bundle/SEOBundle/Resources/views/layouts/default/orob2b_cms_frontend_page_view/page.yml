@@ -6,21 +6,18 @@ layout:
             blockType: meta
             options:
                 name: 'title'
-#                content: { '@localized_value': $data.page.metaTitles }
-                content: '=data["page"].getDefaultMetaTitle()'
+                content: '=localized_value(data["page"].getMetaTitles())'
         - @add:
             id: meta_description
             parentId: head
             blockType: meta
             options:
                 name: 'description'
-#                content: { '@localized_value': $data.page.metaDescriptions }
-                content: '=data["page"].getDefaultMetaDescription()'
+                content: '=localized_value(data["page"].getMetaDescriptions())'
         - @add:
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-#                content: { '@localized_value': $data.page.metaKeywords }
-                content: '=data["page"].getDefaultMetaKeywords()'
+                content: '=localized_value(data["page"].getMetaKeywords())'
