@@ -10,7 +10,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use OroB2B\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
 

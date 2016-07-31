@@ -7,6 +7,8 @@ layout:
             items:
                 account_address_book_addresses_grid_head:
                     blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 account_address_book_addresses_grid_title:
                     blockType: text
                     options:
@@ -14,9 +16,10 @@ layout:
                 account_address_book_addresses_grid:
                     blockType: datagrid
                     options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                         grid_name: frontend-account-account-address-grid
                         grid_parameters:
-                            frontend_owner_id: {'@value': $data.entity.account.id}
+                            frontend_owner_id: '=data["entity"].getAccount().getId()'
                         grid_render_parameters:
                             themeOptions:
                                 toolbarTemplateSelector: '#template-account-address-book-addresses-grid-toolbar'
@@ -32,11 +35,9 @@ layout:
             parentId: account_address_book_addresses_grid_toolbar_button_container
             blockType: link
             options:
-                visible: { '@acl': orob2b_account_frontend_account_address_create }
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_create") && data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                 route_name: orob2b_account_frontend_account_address_create
-                route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                route_parameters:
+                    entityId: '=data["entity"].getId()'
                 text: 'orob2b.account.frontend.account_user_address_book.create.label'
-    conditions:
-        '@and':
-            - '@acl': orob2b_account_frontend_account_address_view
-#            - '@gte': [$context.account_address_count, 8]
+    conditions: 'context["account_address_count"]>=8'
