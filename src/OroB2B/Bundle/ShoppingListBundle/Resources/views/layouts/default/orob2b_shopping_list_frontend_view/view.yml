@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_view/view.html.twig'
+            themes: 'view.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -83,11 +83,3 @@ layout:
                                     shopping_list_delete_button: ~
                                 shopping_list_totals: ~
                                 shopping_list_combined_button: ~
-        - '@add':
-            id: shopping_lists_sidebar_list
-            parentId: sidebar_left
-            blockType: shopping_lists_sidebar_list
-            options:
-                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]!=null'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
-                selectedShoppingList: '=data["entity"]'

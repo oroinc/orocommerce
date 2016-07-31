@@ -163,14 +163,6 @@ services:
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
-    orob2b_shopping_list.layout.block.type.shopping_lists_sidebar_list:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_lists_sidebar_list']]
-        tags:
-             - { name: layout.block_type, alias: shopping_lists_sidebar_list }
-
     orob2b_shopping_list.data_provider.checkout_line_item:
         class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
         public: false

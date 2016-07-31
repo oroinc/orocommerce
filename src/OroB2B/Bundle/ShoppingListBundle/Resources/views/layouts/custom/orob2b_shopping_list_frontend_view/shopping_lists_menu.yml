@@ -1,19 +1,19 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'orob2b_shopping_list_frontend_view.html.twig'
+            themes: 'shopping_lists_menu.html.twig'
         - '@add':
             id: shopping_list_view_tabs
             blockType: container
             parentId: shopping_list_view_container
             prepend: true
         - '@move':
-            id: shopping_lists_sidebar_list
+            id: shopping_lists_menu
             parentId: shopping_list_view_tabs
         - '@add':
             id: shopping_list_view_more
             parentId: shopping_list_view_tabs
-            blockType: shopping_lists_sidebar_list
+            blockType: shopping_lists_menu
             options:
                 shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
                 selectedShoppingList: '=data["entity"]'

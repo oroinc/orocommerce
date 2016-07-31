@@ -1,8 +1,9 @@
 .shopping-list-dropdown {
     position: relative;
 
-    display: none;
+    display: table-cell;
 
+    vertical-align: middle;
     text-align: center;
 
     border-radius: 0 3px 0 0;
@@ -10,12 +11,6 @@
     border-left-color: $theme-lighter-gray-color;
     border-bottom-color: #d9d9d9;
     background: #ededed;
-
-    &--visible {
-        display: table-cell;
-
-        vertical-align: middle;
-    }
 
     &__handle {
         width: 40px;

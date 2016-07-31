@@ -1,3 +1,5 @@
+{% extends 'OroB2BShoppingListBundle:layouts/default/orob2b_shopping_list_frontend_view:shopping_lists_menu.html.twig' %}
+
 {% block _shopping_list_view_tabs_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-view-component',
@@ -28,7 +30,25 @@
     </div>
 {% endblock %}
 
+{% block _shopping_lists_menu_widget %}
+    {% set selectedIndex = 0 %}
+    {% for shoppingList in shoppingLists %}
+        {% if shoppingList.id == selectedShoppingList.id %}
+            {% set selectedIndex = loop.index %}
+        {% endif %}
+    {% endfor %}
+
+    {% if selectedIndex > 6 %}
+        {% set shoppingLists = shoppingLists|slice(selectedIndex - 6, 6) %}
+    {% else %}
+        {% set shoppingLists = shoppingLists|slice(0, 6) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
+
 {% block _shopping_list_view_more_widget %}
+    {% if shoppingLists|length > 6 %}
     {% set attr = layout_attr_defaults(attr, {'~class': "shopping-list-dropdown"}) %}
 
     <div{{ block('block_attributes') }}>
@@ -51,4 +71,5 @@
             </ul>
         </div>
     </div>
+    {% endif %}
 {% endblock _shopping_list_view_more_widget %}
