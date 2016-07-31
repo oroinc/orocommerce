@@ -180,5 +180,5 @@
     {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky-element-notification'
     }) %}
-    <div {{ block('block_attributes') }}></div>
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
