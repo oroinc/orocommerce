@@ -155,6 +155,9 @@ abstract class RolePermissionDatasourceTestCase extends \PHPUnit_Framework_TestC
                     ]
                 )
             );
+        $privilege->expects($this->any())
+            ->method('getFields')
+            ->willReturn(new ArrayCollection());
 
         return $privilege;
     }
