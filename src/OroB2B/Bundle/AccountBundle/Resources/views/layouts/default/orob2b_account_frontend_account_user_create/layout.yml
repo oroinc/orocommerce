@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: orob2b_account_user_form
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -18,18 +23,7 @@ layout:
             optionName: class_prefix
             optionValue: 'user'
 
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-            prepend: true
-
         - '@setOption':
             id: account_user_edit_form_actions_create
             optionName: text
             optionValue: orob2b.account.form.action.create.label
-
-    imports:
-        -
-            id: orob2b_account_user_form
-            root: content

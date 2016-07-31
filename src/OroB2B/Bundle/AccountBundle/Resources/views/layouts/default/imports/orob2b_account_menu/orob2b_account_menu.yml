@@ -1,6 +1,11 @@
 layout:
     actions:
         - '@add':
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: container
+            prepend: true
+        - '@add':
             id: account_sidebar_account_profile
             parentId: account_sidebar
             blockType: link
@@ -15,10 +20,7 @@ layout:
             options:
                 route_name: orob2b_account_frontend_account_user_address_index
                 text: orob2b.account.frontend.account_user.address.label
-                visible:
-                    '@or':
-                        - '@acl': orob2b_account_frontend_account_view
-                        - '@acl': orob2b_account_frontend_account_user_view
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_view") or data["acl"].isGranted("orob2b_account_frontend_account_user_view")'
         - '@add':
             id: account_sidebar_account
             parentId: account_sidebar

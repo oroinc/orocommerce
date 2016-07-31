@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:custom/orob2b_shopping_list_frontend_view/orob2b_shopping_list_frontend_view.html.twig'
+            themes: 'orob2b_shopping_list_frontend_view.html.twig'
         - '@add':
             id: shopping_list_view_tabs
             blockType: container
@@ -15,7 +15,5 @@ layout:
             parentId: shopping_list_view_tabs
             blockType: shopping_lists_sidebar_list
             options:
-                shoppingLists:
-                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
-                selectedShoppingList:
-                    '@value': $data.entity
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                selectedShoppingList: '=data["entity"]'
