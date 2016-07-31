@@ -11,7 +11,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
@@ -205,6 +205,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertArrayHasKey('successUrl', $data['responseData']);
+        $this->assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());

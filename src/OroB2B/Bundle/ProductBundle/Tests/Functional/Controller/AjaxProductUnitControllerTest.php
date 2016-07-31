@@ -68,38 +68,38 @@ class AjaxProductUnitControllerTest extends WebTestCase
             'product.1' => [
                 'product.1',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
+                    'bottle' => 'bottle',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 false
             ],
             'product.2' => [
                 'product.2',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'box' => 'orob2b.product_unit.box.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.full',
+                    'bottle' => 'bottle',
+                    'box' => 'box',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 false
             ],
             'product.1 short label' => [
                 'product.1',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
+                    'bottle' => 'bottle',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 true
             ],
             'product.2 short label' => [
                 'product.2',
                 [
-                    'bottle' => 'orob2b.product_unit.bottle.label.short',
-                    'box' => 'orob2b.product_unit.box.label.short',
-                    'liter' => 'orob2b.product_unit.liter.label.short',
-                    'milliliter' => 'orob2b.product_unit.milliliter.label.short',
+                    'bottle' => 'bottle',
+                    'box' => 'box',
+                    'liter' => 'liter',
+                    'milliliter' => 'milliliter',
                 ],
                 true
             ]

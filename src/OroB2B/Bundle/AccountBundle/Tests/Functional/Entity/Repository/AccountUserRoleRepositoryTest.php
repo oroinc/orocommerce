@@ -125,6 +125,36 @@ class AccountUserRoleRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider accountUserRolesDataProvider
+     * @param string $accountUser
+     */
+    public function testGetAvailableSelfManagedRolesByAccountUserQueryBuilder(
+        $accountUser
+    ) {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getReference($accountUser);
+        /** @var AccountUserRole[] $actual */
+        $actual = $this->repository
+            ->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
+                $accountUser->getOrganization(),
+                $accountUser->getAccount()
+            )
+            ->getQuery()
+            ->getResult();
+
+        $roleIds = [];
+
+        foreach ($actual as $role) {
+            $roleIds[] = $role->getId();
+        }
+
+        $this->assertNotContains(
+            $this->getReference(LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED)->getId(),
+            $roleIds
+        );
+    }
+
+    /**
      * @return array
      */
     public function accountUserRolesDataProvider()
@@ -137,6 +167,9 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
                     LoadAccountUserRoleData::ROLE_EMPTY,
+                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_NOT_PUBLIC,
                 ]
             ],
             'user from account without custom roles' => [
@@ -145,6 +178,9 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
                     LoadAccountUserRoleData::ROLE_EMPTY,
+                    LoadAccountUserRoleData::ROLE_NOT_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_SELF_MANAGED,
+                    LoadAccountUserRoleData::ROLE_NOT_PUBLIC,
                 ]
             ]
         ];
