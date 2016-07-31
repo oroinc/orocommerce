@@ -1,10 +1,16 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'orob2b_account_menu.html.twig'
         - '@add':
-            id: account_sidebar
+            id: account_sidebar_container
             parentId: sidebar_left
             blockType: container
             prepend: true
+        - '@add':
+            id: account_sidebar
+            parentId: account_sidebar_container
+            blockType: container
         - '@add':
             id: account_sidebar_account_profile
             parentId: account_sidebar
