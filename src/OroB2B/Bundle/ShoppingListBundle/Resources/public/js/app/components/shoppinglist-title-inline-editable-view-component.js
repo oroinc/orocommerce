@@ -17,7 +17,6 @@ define(function(require) {
         initialize: function(options) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
-            this.shoppingListSelectedId = options.metadata.broadcast_parameters.id;
             ShoppingListTitleInlineEditableViewComponent.__super__.initialize.apply(this, arguments);
 
             // listening to generic inline editor's events and repackaging them
@@ -27,7 +26,7 @@ define(function(require) {
             // sending off information about the currently loaded shopping list ID
             // to other components in aid
             mediator.trigger('shopping-list-event:' + this.eventChannelId + ':shopping-list-id',
-                this.shoppingListSelectedId);
+                options.metadata.broadcast_parameters.id);
         },
 
         /**
@@ -35,8 +34,6 @@ define(function(require) {
          * @param data
          */
         repackageEvent: function(data) {
-            data.id = this.shoppingListSelectedId;
-
             mediator.trigger('shopping-list-event:' + this.eventChannelId + ':update', data);
         },
 
