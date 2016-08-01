@@ -1,0 +1,82 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setFormTheme':
+            themes: 'form.html.twig'
+        - '@addTree':
+            items:
+                __account_user_role_container:
+                    blockType: container
+                __account_user_role_form_errors:
+                    blockType: form_errors
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form.view }
+                __account_user_role_form_start:
+                    blockType: form_start
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
+                __account_user_role_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
+                __account_user_role_form_users:
+                    blockType: account_user_role_users_datagrid
+                    options:
+                        grid_name: frontend-account-account-users-grid-update
+                        grid_parameters:
+                            role: {'@value': $data.entity.id}
+                            account: {'@value': $data.entity.account}
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
+                __account_user_role_form_end:
+                    blockType: form_end
+                    options:
+                        form: { '@value': $data.orob2b_account_frontend_account_user_role_form }
+                __account_user_role_form_actions_top:
+                    blockType: container
+                __account_user_role_form_actions_update_top:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.account.action.account_user_role.save_label
+                        style: auto
+                        attr:
+                            'class': role-submit
+                __account_user_role_form_actions_cancel_top:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.action.account_user_role.cancel_label
+                        attr:
+                            'class': btn theme-btn btn-gray
+                __account_user_role_form_actions_bottom:
+                    blockType: container
+                __account_user_role_form_actions_update_bottom:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.account.action.account_user_role.save_label
+                        style: auto
+                        attr:
+                            'class': role-submit
+                __account_user_role_form_actions_cancel_bottom:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.action.account_user_role.cancel_label
+                        attr:
+                            'class': btn theme-btn btn-gray
+            tree:
+                __root:
+                    __account_user_role_container:
+                        __account_user_role_form_errors: ~
+                        __account_user_role_form_start: ~
+                        __account_user_role_form_actions_top:
+                            __account_user_role_form_actions_update_top: ~
+                            __account_user_role_form_actions_cancel_top: ~
+                        __account_user_role_form_fields: ~
+                        __account_user_role_form_users: ~
+                        __account_user_role_form_actions_bottom:
+                            __account_user_role_form_actions_update_bottom: ~
+                            __account_user_role_form_actions_cancel_bottom: ~
+                        __account_user_role_form_end: ~
