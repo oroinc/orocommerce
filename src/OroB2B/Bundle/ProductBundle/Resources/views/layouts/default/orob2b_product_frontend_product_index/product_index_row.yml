@@ -70,8 +70,6 @@ layout:
                     blockType: block
                     options:
                         visible: false
-                product_grid_row_shopping_lists:
-                    blockType: container
                 line_item_form:
                     blockType: container
                     options:
@@ -111,7 +109,6 @@ layout:
                             product_grid_row_secondary_content_second_container:
                                 product_grid_row_more_info: ~
                                 line_item_form:
-                                    product_grid_row_shopping_lists: ~
                                     line_item_form_start: ~
                                     line_item_form_fields: ~
                                     line_item_buttons: ~

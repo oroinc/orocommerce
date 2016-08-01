@@ -8,6 +8,11 @@ layout:
         - '@setBlockTheme':
             themes: 'product_index_row.html.twig'
         - '@add':
+            id: product_grid_row_shopping_lists
+            parentId: line_item_form
+            blockType: container
+            prepend: true
+        - '@add':
             id: add_to_shopping_list_form_button
             blockType: add_to_shopping_list_form_button
             parentId: line_item_buttons
