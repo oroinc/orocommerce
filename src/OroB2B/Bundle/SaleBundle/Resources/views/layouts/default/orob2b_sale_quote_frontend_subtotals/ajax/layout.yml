@@ -8,5 +8,5 @@ layout:
             parentId: root
             blockType: order_total
             options:
-                total: {'@value': $data.totals.total}
-                subtotals: {'@value': $data.totals.subtotals}
+                total: '=data["totals"].total'
+                subtotals: '=data["totals"].subtotals'
