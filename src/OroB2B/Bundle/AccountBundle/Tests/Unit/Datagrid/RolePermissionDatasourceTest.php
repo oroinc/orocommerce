@@ -63,6 +63,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($name) {
                     $permission = new Permission();
+                    $permission->setName($name);
                     $permission->setLabel($name . 'Label');
 
                     return $permission;
