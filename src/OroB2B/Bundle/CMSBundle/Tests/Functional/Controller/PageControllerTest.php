@@ -11,6 +11,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 
 /**
+ * @group segfault
+ *
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
@@ -62,6 +64,16 @@ class PageControllerTest extends WebTestCase
     public function testCreatePage()
     {
         return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
+    }
+
+    /**
+     * @depends testCreatePage
+     * @param int $id
+     * @return int
+     */
+    public function testCreateSubPage($id)
+    {
+        return $this->assertCreate(self::DEFAULT_SUBPAGE_TITLE, self::DEFAULT_SUBPAGE_SLUG_TEXT, $id);
     }
 
     /**
@@ -122,16 +134,6 @@ class PageControllerTest extends WebTestCase
             self::SLUG_MODE_REDIRECT,
             $id
         );
-    }
-
-    /**
-     * @depends testCreatePage
-     * @param int $id
-     * @return int
-     */
-    public function testCreateSubPage($id)
-    {
-        return $this->assertCreate(self::DEFAULT_SUBPAGE_TITLE, self::DEFAULT_SUBPAGE_SLUG_TEXT, $id);
     }
 
     /**

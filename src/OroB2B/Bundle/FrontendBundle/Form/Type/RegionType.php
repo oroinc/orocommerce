@@ -14,6 +14,14 @@ class RegionType extends BaseCountryType
      */
     public function getName()
     {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
         return 'orob2b_region';
     }
 
