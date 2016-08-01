@@ -47,9 +47,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     {
         $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
 
-        $params = [
-            'include' => 'product,productUnitPrecision'
-        ];
+        $params = ['include' => 'product,productUnitPrecision'];
         foreach ($filters as $filter) {
             $filterValue = '';
             foreach ($filter['references'] as $value) {
@@ -110,9 +108,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -133,7 +131,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -168,9 +166,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -191,7 +189,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -226,9 +224,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -249,7 +247,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -296,9 +294,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -319,7 +317,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -354,9 +352,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -377,7 +375,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -412,9 +410,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -435,7 +433,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -470,9 +468,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -493,7 +491,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -528,9 +526,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -551,7 +549,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -586,9 +584,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -609,7 +607,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -644,9 +642,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -667,7 +665,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -719,9 +717,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -742,7 +740,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -794,9 +792,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -817,7 +815,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -852,9 +850,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -875,7 +873,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -927,9 +925,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -950,7 +948,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -985,9 +983,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1008,7 +1006,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1043,9 +1041,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1066,7 +1064,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1101,9 +1099,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1124,7 +1122,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1181,9 +1179,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1204,7 +1202,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1239,9 +1237,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1262,7 +1260,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1319,9 +1317,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1342,7 +1340,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1377,9 +1375,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1400,7 +1398,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1435,9 +1433,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1458,7 +1456,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1493,9 +1491,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1516,7 +1514,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1576,9 +1574,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1599,7 +1597,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1634,9 +1632,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1'
+                                        'sku' => 'product.1',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1657,7 +1655,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1692,9 +1690,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1715,7 +1713,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1750,9 +1748,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1773,7 +1771,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1808,9 +1806,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1831,7 +1829,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1866,9 +1864,9 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2'
+                                        'sku' => 'product.2',
                                     ],
-                                ] ,
+                                ],
                             ],
                             'productUnitPrecision' => [
                                 'data' => [
@@ -1889,7 +1887,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                                             ],
                                         ],
                                     ],
-                                ] ,
+                                ],
                             ],
                             'warehouse' => [
                                 'data' => [
@@ -1989,10 +1987,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'attributes' =>
-                    [
-                        'quantity' => 100,
-                    ],
+                'attributes' => ['quantity' => 100],
                 'relationships' => [
                     'warehouse' => [
                         'data' => [
@@ -2009,7 +2004,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
                     'unit' => [
                         'data' => [
                             'type' => $this->getEntityType(ProductUnitPrecision::class),
-                            'id' => 'liter'
+                            'id' => 'liter',
                         ],
                     ],
                 ]
@@ -2017,10 +2012,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         ];
         $response = $this->request(
             'POST',
-            $this->getUrl(
-                'oro_rest_api_post',
-                ['entity' => $entityType]
-            ),
+            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
             $data
         );
 
@@ -2037,10 +2029,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'attributes' =>
-                    [
-                        'quantity' => 50,
-                    ],
+                'attributes' => ['quantity' => 50],
                 'relationships' => [
                     'warehouse' => [
                         'data' => [
@@ -2059,10 +2048,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         ];
         $response = $this->request(
             'POST',
-            $this->getUrl(
-                'oro_rest_api_post',
-                ['entity' => $entityType]
-            ),
+            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
             $data
         );
 
@@ -2110,10 +2096,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'attributes' =>
-                    [
-                        'quantity' => 10,
-                    ],
+                'attributes' => ['quantity' => 10],
                 'relationships' => [
                     'product' => [
                         'data' => [
@@ -2126,10 +2109,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         ];
         $response = $this->request(
             'POST',
-            $this->getUrl(
-                'oro_rest_api_post',
-                ['entity' => $entityType]
-            ),
+            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
             $data
         );
 
@@ -2139,6 +2119,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
 
     /**
      * @param array $expectedContent
+     * @param array $includedItems
      * @return array
      */
     protected function addReferenceRelationshipsAndAssertIncluded(array $expectedContent, array $includedItems)
@@ -2208,8 +2189,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
         $product = $productRepository->findOneBy(['sku' => $productSku]);
         /** @var ProductUnitPrecision $productUnitPrecision */
         $productUnitPrecision = $unit
-            ? $productUnitPrecisionRepository
-                ->findOneBy(['product' => $product->getId(), 'unit' => $unit])
+            ? $productUnitPrecisionRepository->findOneBy(['product' => $product, 'unit' => $unit])
             : $product->getPrimaryUnitPrecision();
         /** @var WarehouseInventoryLevel $inventoryLevel */
         $inventoryLevel = $inventoryLevelRepository->findOneBy(

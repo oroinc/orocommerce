@@ -37,7 +37,6 @@ services:
         class: 'OroB2B\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData'
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@oro_api.criteria_connector'
             - '@orob2b_warehouse.entity.helper.warehouse_counter'
         tags:
-            - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%'}
+            - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%' }

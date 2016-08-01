@@ -4,15 +4,14 @@ namespace OroB2B\Bundle\WarehouseBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
-use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestData implements ProcessorInterface
@@ -25,27 +24,24 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var CriteriaConnector */
-    protected $criteriaConnector;
-
     /** @var  WarehouseCounter */
     protected $warehouseCounter;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param CriteriaConnector $criteriaConnector
      * @param WarehouseCounter $warehouseCounter
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        CriteriaConnector $criteriaConnector,
         WarehouseCounter $warehouseCounter
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->criteriaConnector = $criteriaConnector;
         $this->warehouseCounter = $warehouseCounter;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContextInterface $context)
     {
         if (!$context instanceof FormContext) {
@@ -53,44 +49,31 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
         }
 
         $requestData = $context->getRequestData();
+        if (!$requestData) {
+            return;
+        }
+
         if (!array_key_exists(JsonApiDoc::DATA, $requestData)
             || !array_key_exists(JsonApiDoc::RELATIONSHIPS, $requestData[JsonApiDoc::DATA])
         ) {
             // the request data are already normalized
             return;
         }
-
         $relationships = $requestData[JsonApiDoc::DATA][JsonApiDoc::RELATIONSHIPS];
-        if (!$this->isRelationshipValid($relationships, self::PRODUCT)) {
-            // sku is required on request in order to identify a product
+
+        $productId = $this->resolveProductId($relationships);
+        if (!$productId) {
+            // Product is required in order to identify a WarehouseInventoryLevel
             return;
         }
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
-        $productId = reset(
-            $productRepository->getProductsIdsBySku([$relationships[self::PRODUCT][JsonApiDoc::DATA][JsonApiDoc::ID]])
-        );
         unset($relationships[self::PRODUCT]);
 
-        if (!$this->isRelationshipValid($relationships, self::UNIT)) {
-            /** @var Product $product */
-            $product = $this->doctrineHelper->getEntity(Product::class, $productId);
-            $productUnitPrecision = $product->getPrimaryUnitPrecision();
-        } else {
-            $productUnitPrecisionRepository = $this->doctrineHelper->getEntityRepository(ProductUnitPrecision::class);
-            $productUnitPrecision = $productUnitPrecisionRepository->findOneBy(
-                [
-                    self::PRODUCT => $productId,
-                    self::UNIT => $relationships[self::UNIT][JsonApiDoc::DATA][JsonApiDoc::ID],
-                ]
-            );
-            if (!$productUnitPrecision) {
-                // ProductUnitPrecision not found.
-                return;
-            }
-            unset($relationships[self::UNIT]);
+        $productUnitPrecision = $this->resolveProductUnitPrecision($relationships, $productId);
+        if (!$productUnitPrecision) {
+            // ProductUnitPrecision not found.
+            return;
         }
+        unset($relationships[self::UNIT]);
         $this->addRelationship(
             $relationships,
             self::UNIT_PRECISION,
@@ -104,9 +87,7 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
                 return;
             }
         } else {
-            /** @var WarehouseRepository $warehouseRepository */
-            $warehouseRepository = $this->doctrineHelper->getEntityRepository(Warehouse::class);
-            $warehouse = $warehouseRepository->getSingularWarehouse();
+            $warehouse = $this->resolveWarehouse();
             if ($warehouse) {
                 $this->addRelationship($relationships, self::WAREHOUSE, Warehouse::class, $warehouse->getId());
             }
@@ -117,15 +98,64 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
     }
 
     /**
+     * @param array $relationships
+     * @param int $productId
+     * @return null|object
+     */
+    protected function resolveProductUnitPrecision(array $relationships, $productId)
+    {
+        if (!$this->isRelationshipValid($relationships, self::UNIT)) {
+            return $this->doctrineHelper->getEntity(Product::class, $productId)->getPrimaryUnitPrecision();
+        }
+
+        $productUnitPrecisionRepository = $this->doctrineHelper->getEntityRepository(ProductUnitPrecision::class);
+
+        return $productUnitPrecisionRepository->findOneBy(
+            [
+                self::PRODUCT => $productId,
+                self::UNIT => $relationships[self::UNIT][JsonApiDoc::DATA][JsonApiDoc::ID],
+            ]
+        );
+    }
+
+    /**
+     * @param array $relationships
+     * @return null|int
+     */
+    protected function resolveProductId(array $relationships)
+    {
+        if (!$this->isRelationshipValid($relationships, self::PRODUCT)) {
+            // sku is required on request in order to identify a product
+            return;
+        }
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
+
+        return reset(
+            $productRepository->getProductsIdsBySku([$relationships[self::PRODUCT][JsonApiDoc::DATA][JsonApiDoc::ID]])
+        );
+    }
+
+    /**
+     * @return null|Warehouse
+     */
+    protected function resolveWarehouse()
+    {
+        return $this->doctrineHelper->getEntityRepository(Warehouse::class)->getSingularWarehouse();
+    }
+
+    /**
      * @param array $data
-     * @param $relationship
+     * @param string $relationship
      * @return bool
      */
     protected function isRelationshipValid(array $data, $relationship)
     {
         return array_key_exists($relationship, $data)
             && array_key_exists(JsonApiDoc::DATA, $data[$relationship])
-            && array_key_exists(JsonApiDoc::ID, $data[$relationship][JsonApiDoc::DATA]);
+            && array_key_exists(JsonApiDoc::ID, $data[$relationship][JsonApiDoc::DATA])
+            && array_key_exists(JsonApiDoc::TYPE, $data[$relationship][JsonApiDoc::DATA]);
     }
 
     /**
