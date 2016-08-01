@@ -54,13 +54,47 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     protected $method;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="enabled", type="boolean", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=30
+     *          }
+     *      }
+     * )
+     */
+    protected $enabled = false;
+
+    /**
      * @var ShippingRule
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule",
-     *     inversedBy="configurations")
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="configurations")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $rule;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40
+     *          }
+     *      }
+     * )
+     */
+    protected $currency;
 
     /**
      * @return string
@@ -108,6 +142,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setRule(ShippingRule $rule)
     {
         $this->rule = $rule;
+        $this->setCurrency($rule->getCurrency());
         return $this;
     }
 
@@ -126,6 +161,42 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setMethod($method)
     {
         $this->method = $method;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param string $enabled
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
         return $this;
     }
 }

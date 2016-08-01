@@ -20,11 +20,11 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['name', 'Test Rule'],
-            ['nameHash', sha1('Test Rule')],
             ['enabled', true],
             ['priority', 10],
             ['conditions', 'Subtotal > 50 USD AND Subtotal <= 100 USD'],
             ['currency', 'USD'],
+            ['stopProcessing', 'USD'],
         ];
 
         $rule = new ShippingRule();
@@ -42,6 +42,19 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($configurations, $result);
         foreach ($result as $configuration) {
             $this->assertEquals($configuration->getRule()->getId(), $shippingRule->getId());
+        }
+    }
+
+    public function testSetCurrency()
+    {
+        $config = new CustomShippingRuleConfiguration();
+        $this->assertNull($config->getCurrency());
+        $configurations = new ArrayCollection([$config]);
+        $shippingRule = new ShippingRule();
+        $shippingRule->setConfigurations($configurations);
+        $shippingRule->setCurrency('USD');
+        foreach ($shippingRule->getConfigurations() as $configuration) {
+            $this->assertEquals('USD', $configuration->getCurrency());
         }
     }
 
@@ -65,19 +78,19 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
     {
         $id = 123;
         $name = 'Test Rule';
-        $nameHash = sha1('Test Rule');
+        $stopProcessing = false;
         $enabled = true;
         $priority = 20;
         $conditions = 'Subtotal > 50 USD AND Subtotal <= 100 USD';
         $currency = 'USD';
-        
+
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getEntity(
             'OroB2B\Bundle\ShippingBundle\Entity\ShippingRule',
             [
                 'id' => $id,
                 'name' => $name,
-                'nameHash' => $nameHash,
+                'stopProcessing' => $stopProcessing,
                 'enabled' => $enabled,
                 'priority' => $priority,
                 'conditions' => $conditions,
@@ -87,7 +100,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($id, $shippingRule->getId());
         $this->assertEquals($name, $shippingRule->getName());
-        $this->assertEquals($nameHash, $shippingRule->getNameHash());
+        $this->assertEquals($stopProcessing, $shippingRule->isStopProcessing());
         $this->assertEquals($enabled, $shippingRule->isEnabled());
         $this->assertEquals($priority, $shippingRule->getPriority());
         $this->assertEquals($conditions, $shippingRule->getConditions());
@@ -97,7 +110,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($shippingRuleCopy->getId());
         $this->assertEquals($name, $shippingRuleCopy->getName());
-        $this->assertEquals($nameHash, $shippingRuleCopy->getNameHash());
+        $this->assertEquals($stopProcessing, $shippingRuleCopy->isStopProcessing());
         $this->assertEquals($enabled, $shippingRuleCopy->isEnabled());
         $this->assertEquals($priority, $shippingRuleCopy->getPriority());
         $this->assertEquals($conditions, $shippingRuleCopy->getConditions());
