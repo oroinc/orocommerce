@@ -66,8 +66,8 @@ class PaymentMethodLabelFormatter
         } else {
             return sprintf(
                 '%s (%s)',
-                $adminPaymentMethodLabel,
-                $adminPaymentMethodShortLabel
+                $adminPaymentMethodShortLabel,
+                $adminPaymentMethodLabel
             );
         }
     }

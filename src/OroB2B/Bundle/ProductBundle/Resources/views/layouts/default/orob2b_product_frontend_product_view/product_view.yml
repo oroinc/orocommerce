@@ -7,11 +7,11 @@ layout:
             optionName: value
             optionValue:
                 - 'orob2b.product.entity_plural_label'
-                - { '@value': $data.product.defaultName.string }
+                - '=data["product"].getDefaultName()'
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: {'@value': $data.product.defaultName}
+            optionValue: '=data["product"].getDefaultName()'
         - '@move':
             id: page_title
             parentId: product_title_container
@@ -22,15 +22,15 @@ layout:
                 product_container:
                     blockType: product_view_container
                     options:
-                        product: {'@value': $data.product}
+                        product: '=data["product"]'
                 product_title_mobile:
                     blockType: text
                     options:
-                        text: {'@value': $data.product.defaultName}
+                        text: '=data["product"].getDefaultName()'
                 product_image:
                     blockType: product_image
                     options:
-                        product: {'@value': $data.product}
+                        product: '=data["product"]'
                 product_description_container:
                     blockType: container
                 product_title_container:
@@ -44,7 +44,7 @@ layout:
                 product_specification_sku:
                     blockType: text
                     options:
-                        text: {'@value': $data.product.sku}
+                        text: '=data["product"].getSku()'
                 product_specification_mfg:
                     blockType: text
                     options:
@@ -52,7 +52,7 @@ layout:
                 product_variants:
                     blockType: block
                     options:
-                        visible: { '@value': $data.product.hasVariants }
+                        visible: '=data["product"].hasVariants()'
                 order_with_matrix:
                     blockType: block
                 product_description_content:
@@ -60,7 +60,7 @@ layout:
                 product_description:
                     blockType: text
                     options:
-                        text: {'@value': $data.product.defaultDescription}
+                        text: '=data["product"].getDefaultDescription()'
                         escape: false
                 attachments:
                     blockType: block
