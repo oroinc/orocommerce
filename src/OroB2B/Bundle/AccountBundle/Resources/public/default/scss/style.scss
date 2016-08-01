@@ -173,6 +173,10 @@
   .list-item {
     &.map-item {
       &.active {
+        .address-list__item {
+          background-color: #f5f5f5;
+        }
+
         .actions {
           a {
             cursor: pointer;
@@ -193,4 +197,11 @@
 
 .oro-account-user-role__back-link {
   padding-left: 0;
+}
+
+.user-page-title {
+  font-size: 16px;
+  line-height: 2;
+  font-weight: 400;
+  text-transform: uppercase;
 }

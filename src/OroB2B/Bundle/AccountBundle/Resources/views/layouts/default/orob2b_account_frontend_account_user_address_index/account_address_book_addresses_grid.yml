@@ -1,0 +1,42 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'address_book_grid.html.twig'
+
+        - '@addTree':
+            items:
+                account_address_book_addresses_grid_head:
+                    blockType: container
+                account_address_book_addresses_grid_title:
+                    blockType: text
+                    options:
+                        text: 'orob2b.account.frontend.account_user_address_book.account_addresses'
+                account_address_book_addresses_grid:
+                    blockType: datagrid
+                    options:
+                        grid_name: frontend-account-account-address-grid
+                        grid_parameters:
+                            frontend_owner_id: {'@value': $data.entity.account.id}
+                        grid_render_parameters:
+                            themeOptions:
+                                toolbarTemplateSelector: '#template-account-address-book-addresses-grid-toolbar'
+                                cellActionsHideCount: 4
+            tree:
+                account_address_book_addresses:
+                    account_address_book_addresses_grid_head:
+                        account_address_book_addresses_grid_title: ~
+                    account_address_book_addresses_grid: ~
+
+        - '@add':
+            id: account_address_book_addresses_grid_create_button
+            parentId: account_address_book_addresses_grid_toolbar_button_container
+            blockType: link
+            options:
+                visible: { '@acl': orob2b_account_frontend_account_address_create }
+                route_name: orob2b_account_frontend_account_address_create
+                route_parameters: { entityId: {'@value': $data.entity.account.id }}
+                text: 'orob2b.account.frontend.account_user_address_book.create.label'
+    conditions:
+        '@and':
+            - '@acl': orob2b_account_frontend_account_address_view
+            - '@gte': [$context.account_address_count, 8]

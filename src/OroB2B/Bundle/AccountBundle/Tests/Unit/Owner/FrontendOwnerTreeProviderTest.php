@@ -5,36 +5,46 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
+use Oro\Component\TestUtils\ORM\Mocks\ConnectionMock;
+use Oro\Component\TestUtils\ORM\Mocks\DriverMock;
+use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
+use Oro\Component\TestUtils\ORM\OrmTestCase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendOwnerTreeProviderTest extends OrmTestCase
 {
-    const ACCOUNT_USER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ENTITY_NAMESPACE = 'OroB2B\Bundle\AccountBundle\Tests\Unit\Owner\Fixtures\Entity';
 
-    const MAIN_ACCOUNT_ID = 1;
-    const SECOND_ACCOUNT_ID = 2;
-    const CHILD_ACCOUNT_ID = 3;
-    const FIRST_USER_ID = 4;
-    const SECOND_USER_ID = 5;
-    const THIRD_USER_ID = 6;
-    const ORGANIZATION_ID = 7;
+    const ORG_1 = 1;
+    const ORG_2 = 2;
+
+    const MAIN_ACCOUNT_1 = 10;
+    const MAIN_ACCOUNT_2 = 20;
+    const ACCOUNT_1 = 30;
+    const ACCOUNT_2 = 40;
+    const ACCOUNT_2_1 = 50;
+
+    const USER_1 = 100;
+    const USER_2 = 200;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
      */
     protected $container;
+
+    /** @var EntityManagerMock */
+    protected $em;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CacheProvider
@@ -63,6 +73,22 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $reader = new AnnotationReader();
+        $metadataDriver = new AnnotationDriver($reader, self::ENTITY_NAMESPACE);
+
+        $conn = new ConnectionMock([], new DriverMock());
+        $conn->setDatabasePlatform(new MySqlPlatform());
+        $this->em = $this->getTestEntityManager($conn);
+        $this->em->getConfiguration()->setMetadataDriverImpl($metadataDriver);
+        $this->em->getConfiguration()->setEntityNamespaces(['Test' => self::ENTITY_NAMESPACE]);
+
+        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->will($this->returnValue($this->em));
+
         $this->cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
             [],
@@ -82,8 +108,12 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider')
                 ->disableOriginalConstructor()
                 ->getMock();
-
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->ownershipMetadataProvider->expects($this->any())
+            ->method('getBasicLevelClass')
+            ->willReturn(self::ENTITY_NAMESPACE . '\TestAccountUser');
+        $this->ownershipMetadataProvider->expects($this->any())
+            ->method('getLocalLevelClass')
+            ->willReturn(self::ENTITY_NAMESPACE . '\TestAccount');
 
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
@@ -104,7 +134,7 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
                         ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                         $this->ownershipMetadataProvider,
                     ],
-                    ['doctrine', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->managerRegistry],
+                    ['doctrine', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $doctrine],
                     [
                         'oro_security.security_facade',
                         ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
@@ -117,178 +147,548 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
         $this->treeProvider->setContainer($this->container);
     }
 
-    public function testGetTree()
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $conn
+     * @param int                                      $expectsAt
+     * @param string                                   $sql
+     * @param array                                    $result
+     */
+    protected function setQueryExpectationAt(
+        \PHPUnit_Framework_MockObject_MockObject $conn,
+        $expectsAt,
+        $sql,
+        $result
+    ) {
+        $stmt = $this->createFetchStatementMock($result);
+        $conn
+            ->expects($this->at($expectsAt))
+            ->method('query')
+            ->with($sql)
+            ->will($this->returnValue($stmt));
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $conn
+     * @param int                                      $expectsAt
+     * @param string                                   $sql
+     * @param array                                    $result
+     */
+    protected function setFetchAllQueryExpectationAt(
+        \PHPUnit_Framework_MockObject_MockObject $conn,
+        $expectsAt,
+        $sql,
+        $result
+    ) {
+        $stmt = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
+        $stmt->expects($this->once())
+            ->method('fetchAll')
+            ->willReturn($result);
+        $conn
+            ->expects($this->at($expectsAt))
+            ->method('query')
+            ->with($sql)
+            ->will($this->returnValue($stmt));
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $connection
+     * @param string[]                                 $existingTables
+     */
+    protected function setTablesExistExpectation($connection, array $existingTables)
     {
-        $accountUserRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountUserManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountUserManager->expects($this->any())
-            ->method('getRepository')
-            ->with(self::ACCOUNT_USER_CLASS)
-            ->willReturn($accountUserRepository);
+        $this->setFetchAllQueryExpectationAt(
+            $connection,
+            0,
+            $this->em->getConnection()->getDatabasePlatform()->getListTablesSQL(),
+            $existingTables
+        );
+    }
 
-        $AccountRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountManager->expects($this->any())
-            ->method('getRepository')
-            ->with(self::ACCOUNT_CLASS)
-            ->willReturn($AccountRepository);
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $connection
+     * @param string[]                                 $accounts
+     */
+    protected function setGetAccountsExpectation($connection, array $accounts)
+    {
+        $queryResult = [];
+        foreach ($accounts as $item) {
+            $queryResult[] = [
+                'id_0'   => $item['id'],
+                'sclr_1' => $item['orgId'],
+                'sclr_2' => $item['parentId'],
+            ];
+        }
+        $this->setQueryExpectationAt(
+            $connection,
+            1,
+            'SELECT t0_.id AS id_0, t0_.organization_id AS sclr_1, t0_.parent_id AS sclr_2,'
+            . ' (CASE WHEN t0_.parent_id IS NULL THEN 0 ELSE 1 END) AS sclr_3'
+            . ' FROM tbl_account t0_'
+            . ' ORDER BY sclr_3 ASC, sclr_2 ASC',
+            $queryResult
+        );
+    }
 
-        $this->ownershipMetadataProvider->expects($this->any())
-            ->method('getBasicLevelClass')
-            ->willReturn(self::ACCOUNT_USER_CLASS);
-        $this->ownershipMetadataProvider->expects($this->any())
-            ->method('getLocalLevelClass')
-            ->willReturn(self::ACCOUNT_CLASS);
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $connection
+     * @param string[]                                 $users
+     */
+    protected function setGetUsersExpectation($connection, array $users)
+    {
+        $queryResult = [];
+        foreach ($users as $item) {
+            $queryResult[] = [
+                'id_0'   => $item['userId'],
+                'id_1'   => $item['orgId'],
+                'sclr_2' => $item['accountId'],
+            ];
+        }
+        $this->setQueryExpectationAt(
+            $connection,
+            2,
+            'SELECT t0_.id AS id_0, t1_.id AS id_1, t0_.account_id AS sclr_2'
+            . ' FROM tbl_account_user t0_'
+            . ' INNER JOIN tbl_account_user_to_organization t2_ ON t0_.id = t2_.account_user_id'
+            . ' INNER JOIN tbl_organization t1_ ON t1_.id = t2_.organization_id'
+            . ' ORDER BY id_1 ASC',
+            $queryResult
+        );
+    }
 
-        $this->managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturnMap([
-                [self::ACCOUNT_USER_CLASS, $accountUserManager],
-                [self::ACCOUNT_CLASS, $accountManager],
-            ]);
+    /**
+     * @param array     $expected
+     * @param OwnerTree $actual
+     */
+    protected function assertOwnerTreeEquals(array $expected, OwnerTree $actual)
+    {
+        foreach ($expected as $property => $value) {
+            $this->assertEquals(
+                $value,
+                $this->getObjectAttribute($actual, $property),
+                'Owner Tree Property: ' . $property
+            );
+        }
+    }
 
-        list($accountUsers, $accounts) = $this->getTestData();
-
-        $accountUserRepository->expects($this->any())
-            ->method('findAll')
-            ->will($this->returnValue($accountUsers));
-
-        $AccountRepository->expects($this->any())
-            ->method('findAll')
-            ->will($this->returnValue($accounts));
-
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountUserManager->expects($this->any())
-            ->method('getClassMetadata')
-            ->will($this->returnValue($metadata));
-        $metadata->expects($this->any())
-            ->method('getTableName')
-            ->will($this->returnValue('test'));
-        $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountUserManager->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($connection));
-        $schemaManager = $this->getMockBuilder('Doctrine\DBAL\Schema\MySqlSchemaManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->expects($this->any())
-            ->method('getSchemaManager')
-            ->will($this->returnValue($schemaManager));
-        $schemaManager->expects($this->any())
-            ->method('tablesExist')
-            ->with('test')
-            ->willReturn(true);
+    public function testAccountsWithoutOrganization()
+    {
+        $connection = $this->getDriverConnectionMock($this->em);
+        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
+        // the accounts without parent should be at the top,
+        // rest accounts are sorted by parent id
+        $this->setGetAccountsExpectation(
+            $connection,
+            [
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => null,
+                    'id'       => self::MAIN_ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => null,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_2,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::ACCOUNT_2,
+                    'id'       => self::ACCOUNT_2_1,
+                ],
+            ]
+        );
+        // should be sorted by organization id
+        $this->setGetUsersExpectation(
+            $connection,
+            [
+                [
+                    'orgId'     => self::ORG_1,
+                    'userId'    => self::USER_1,
+                    'accountId' => self::MAIN_ACCOUNT_1,
+                ],
+            ]
+        );
 
         $this->treeProvider->warmUpCache();
         /** @var OwnerTree $tree */
         $tree = $this->treeProvider->getTree();
-        $this->assertTestData($tree);
+
+        $this->assertOwnerTreeEquals(
+            [
+                'userOwningOrganizationId'         => [
+                    self::USER_1 => self::ORG_1
+                ],
+                'userOrganizationIds'              => [
+                    self::USER_1 => [self::ORG_1]
+                ],
+                'userOwningBusinessUnitId'         => [
+                    self::USER_1 => self::MAIN_ACCOUNT_1
+                ],
+                'userBusinessUnitIds'              => [
+                    self::USER_1 => [self::MAIN_ACCOUNT_1]
+                ],
+                'userOrganizationBusinessUnitIds'  => [
+                    self::USER_1 => [self::ORG_1 => [self::MAIN_ACCOUNT_1]]
+                ],
+                'businessUnitOwningOrganizationId' => [
+                    self::MAIN_ACCOUNT_1 => self::ORG_1,
+                    self::ACCOUNT_1      => self::ORG_1,
+                    self::ACCOUNT_2_1    => self::ORG_1,
+                ],
+                'assignedBusinessUnitUserIds'      => [
+                    self::MAIN_ACCOUNT_1 => [self::USER_1],
+                ],
+                'subordinateBusinessUnitIds'       => [
+                    self::MAIN_ACCOUNT_1 => [self::ACCOUNT_1],
+                ],
+                'organizationBusinessUnitIds'      => [
+                    self::ORG_1 => [self::MAIN_ACCOUNT_1, self::ACCOUNT_1, self::ACCOUNT_2_1]
+                ],
+            ],
+            $tree
+        );
     }
 
     /**
-     * @param object $object
-     * @param int $id
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function setId($object, $id)
+    public function testAccountTree()
     {
-        $reflection = new \ReflectionClass($object);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($object, $id);
+        $connection = $this->getDriverConnectionMock($this->em);
+        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
+        // the accounts without parent should be at the top,
+        // rest accounts are sorted by parent id
+        $this->setGetAccountsExpectation(
+            $connection,
+            [
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => null,
+                    'id'       => self::MAIN_ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_2,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::ACCOUNT_2,
+                    'id'       => self::ACCOUNT_2_1,
+                ],
+            ]
+        );
+        // should be sorted by organization id
+        $this->setGetUsersExpectation(
+            $connection,
+            [
+                [
+                    'orgId'     => self::ORG_1,
+                    'userId'    => self::USER_1,
+                    'accountId' => self::MAIN_ACCOUNT_1,
+                ],
+            ]
+        );
+
+        $this->treeProvider->warmUpCache();
+        /** @var OwnerTree $tree */
+        $tree = $this->treeProvider->getTree();
+
+        $this->assertOwnerTreeEquals(
+            [
+                'userOwningOrganizationId'         => [
+                    self::USER_1 => self::ORG_1
+                ],
+                'userOrganizationIds'              => [
+                    self::USER_1 => [self::ORG_1]
+                ],
+                'userOwningBusinessUnitId'         => [
+                    self::USER_1 => self::MAIN_ACCOUNT_1
+                ],
+                'userBusinessUnitIds'              => [
+                    self::USER_1 => [self::MAIN_ACCOUNT_1]
+                ],
+                'userOrganizationBusinessUnitIds'  => [
+                    self::USER_1 => [self::ORG_1 => [self::MAIN_ACCOUNT_1]]
+                ],
+                'businessUnitOwningOrganizationId' => [
+                    self::MAIN_ACCOUNT_1 => self::ORG_1,
+                    self::ACCOUNT_1      => self::ORG_1,
+                    self::ACCOUNT_2      => self::ORG_1,
+                    self::ACCOUNT_2_1    => self::ORG_1,
+                ],
+                'assignedBusinessUnitUserIds'      => [
+                    self::MAIN_ACCOUNT_1 => [self::USER_1],
+                ],
+                'subordinateBusinessUnitIds'       => [
+                    self::MAIN_ACCOUNT_1 => [self::ACCOUNT_2, self::ACCOUNT_2_1, self::ACCOUNT_1],
+                    self::ACCOUNT_2      => [self::ACCOUNT_2_1],
+                ],
+                'organizationBusinessUnitIds'      => [
+                    self::ORG_1 => [self::MAIN_ACCOUNT_1, self::ACCOUNT_2, self::ACCOUNT_1, self::ACCOUNT_2_1]
+                ],
+            ],
+            $tree
+        );
     }
 
     /**
-     * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function getTestData()
+    public function testAccountTreeWhenChildAccountAreLoadedBeforeParentAccount()
     {
-        $organization = new Organization();
-        $this->setId($organization, self::ORGANIZATION_ID);
+        $connection = $this->getDriverConnectionMock($this->em);
+        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
+        // the accounts without parent should be at the top,
+        // rest accounts are sorted by parent id
+        $this->setGetAccountsExpectation(
+            $connection,
+            [
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => null,
+                    'id'       => self::MAIN_ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::ACCOUNT_2,
+                    'id'       => self::ACCOUNT_2_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_2,
+                ],
+            ]
+        );
+        // should be sorted by organization id
+        $this->setGetUsersExpectation(
+            $connection,
+            [
+                [
+                    'orgId'     => self::ORG_1,
+                    'userId'    => self::USER_1,
+                    'accountId' => self::MAIN_ACCOUNT_1,
+                ],
+            ]
+        );
 
-        $mainAccount = new Account();
-        $this->setId($mainAccount, self::MAIN_ACCOUNT_ID);
-        $mainAccount->setOrganization($organization);
+        $this->treeProvider->warmUpCache();
+        /** @var OwnerTree $tree */
+        $tree = $this->treeProvider->getTree();
 
-        $secondAccount = new Account();
-        $this->setId($secondAccount, self::SECOND_ACCOUNT_ID);
-        $secondAccount->setOrganization($organization);
+        $this->assertOwnerTreeEquals(
+            [
+                'userOwningOrganizationId'         => [
+                    self::USER_1 => self::ORG_1
+                ],
+                'userOrganizationIds'              => [
+                    self::USER_1 => [self::ORG_1]
+                ],
+                'userOwningBusinessUnitId'         => [
+                    self::USER_1 => self::MAIN_ACCOUNT_1
+                ],
+                'userBusinessUnitIds'              => [
+                    self::USER_1 => [self::MAIN_ACCOUNT_1]
+                ],
+                'userOrganizationBusinessUnitIds'  => [
+                    self::USER_1 => [self::ORG_1 => [self::MAIN_ACCOUNT_1]]
+                ],
+                'businessUnitOwningOrganizationId' => [
+                    self::MAIN_ACCOUNT_1 => self::ORG_1,
+                    self::ACCOUNT_1      => self::ORG_1,
+                    self::ACCOUNT_2      => self::ORG_1,
+                    self::ACCOUNT_2_1    => self::ORG_1,
+                ],
+                'assignedBusinessUnitUserIds'      => [
+                    self::MAIN_ACCOUNT_1 => [self::USER_1],
+                ],
+                'subordinateBusinessUnitIds'       => [
+                    self::MAIN_ACCOUNT_1 => [self::ACCOUNT_1, self::ACCOUNT_2, self::ACCOUNT_2_1],
+                    self::ACCOUNT_2      => [self::ACCOUNT_2_1],
+                ],
+                'organizationBusinessUnitIds'      => [
+                    self::ORG_1 => [self::MAIN_ACCOUNT_1, self::ACCOUNT_2_1, self::ACCOUNT_1, self::ACCOUNT_2]
+                ],
+            ],
+            $tree
+        );
+    }
 
-        $childAccount = new Account();
-        $this->setId($childAccount, self::CHILD_ACCOUNT_ID);
-        $childAccount->setOrganization($organization);
-        $childAccount->setParent($mainAccount);
+    public function testUserDoesNotHaveParentAccount()
+    {
+        $connection = $this->getDriverConnectionMock($this->em);
+        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
+        // the accounts without parent should be at the top,
+        // rest accounts are sorted by parent id
+        $this->setGetAccountsExpectation(
+            $connection,
+            [
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => null,
+                    'id'       => self::MAIN_ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_1,
+                ],
+            ]
+        );
+        // should be sorted by organization id
+        $this->setGetUsersExpectation(
+            $connection,
+            [
+                [
+                    'orgId'     => self::ORG_1,
+                    'userId'    => self::USER_1,
+                    'accountId' => null,
+                ],
+            ]
+        );
 
-        $firstUser = new AccountUser();
-        $this->setId($firstUser, self::FIRST_USER_ID);
-        $firstUser->setAccount($mainAccount);
-        $firstUser->setOrganizations(new ArrayCollection([$organization]));
+        $this->treeProvider->warmUpCache();
+        /** @var OwnerTree $tree */
+        $tree = $this->treeProvider->getTree();
 
-        $secondUser = new AccountUser();
-        $this->setId($secondUser, self::SECOND_USER_ID);
-        $secondUser->setAccount($secondAccount);
-        $secondUser->setOrganizations(new ArrayCollection([$organization]));
-
-        $thirdUser = new AccountUser();
-        $this->setId($thirdUser, self::THIRD_USER_ID);
-        $thirdUser->setAccount($childAccount);
-        $thirdUser->setOrganizations(new ArrayCollection([$organization]));
-
-        return [
-            [$firstUser, $secondUser, $thirdUser],
-            [$mainAccount, $secondAccount, $childAccount]
-        ];
+        $this->assertOwnerTreeEquals(
+            [
+                'userOwningOrganizationId'         => [],
+                'userOrganizationIds'              => [
+                    self::USER_1 => [self::ORG_1],
+                ],
+                'userOwningBusinessUnitId'         => [],
+                'userBusinessUnitIds'              => [],
+                'userOrganizationBusinessUnitIds'  => [],
+                'businessUnitOwningOrganizationId' => [
+                    self::MAIN_ACCOUNT_1 => self::ORG_1,
+                    self::ACCOUNT_1      => self::ORG_1,
+                ],
+                'assignedBusinessUnitUserIds'      => [],
+                'subordinateBusinessUnitIds'       => [
+                    self::MAIN_ACCOUNT_1 => [self::ACCOUNT_1],
+                ],
+                'organizationBusinessUnitIds'      => [
+                    self::ORG_1 => [self::MAIN_ACCOUNT_1, self::ACCOUNT_1],
+                ],
+            ],
+            $tree
+        );
     }
 
     /**
-     * @param OwnerTree $tree
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function assertTestData(OwnerTree $tree)
+    public function testSeveralOrganizations()
     {
-        foreach ([self::MAIN_ACCOUNT_ID, self::SECOND_ACCOUNT_ID, self::CHILD_ACCOUNT_ID] as $accountId) {
-            $this->assertEquals(self::ORGANIZATION_ID, $tree->getBusinessUnitOrganizationId($accountId));
-        }
-
-        $this->assertEquals([self::CHILD_ACCOUNT_ID], $tree->getSubordinateBusinessUnitIds(self::MAIN_ACCOUNT_ID));
-        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::SECOND_ACCOUNT_ID));
-        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::CHILD_ACCOUNT_ID));
-
-        foreach ([self::FIRST_USER_ID, self::SECOND_USER_ID, self::THIRD_USER_ID] as $userId) {
-            $this->assertEquals(self::ORGANIZATION_ID, $tree->getUserOrganizationId($userId));
-        }
-
-        $this->assertEquals(self::MAIN_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::FIRST_USER_ID));
-        $this->assertEquals(self::SECOND_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::SECOND_USER_ID));
-        $this->assertEquals(self::CHILD_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::THIRD_USER_ID));
-
-        $this->assertEquals(
-            [self::MAIN_ACCOUNT_ID],
-            $tree->getUserBusinessUnitIds(self::FIRST_USER_ID, self::ORGANIZATION_ID)
+        $connection = $this->getDriverConnectionMock($this->em);
+        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
+        // the accounts without parent should be at the top,
+        // rest accounts are sorted by parent id
+        $this->setGetAccountsExpectation(
+            $connection,
+            [
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => null,
+                    'id'       => self::MAIN_ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_2,
+                    'parentId' => null,
+                    'id'       => self::ACCOUNT_2,
+                ],
+                [
+                    'orgId'    => self::ORG_1,
+                    'parentId' => self::MAIN_ACCOUNT_1,
+                    'id'       => self::ACCOUNT_1,
+                ],
+                [
+                    'orgId'    => self::ORG_2,
+                    'parentId' => self::ACCOUNT_2,
+                    'id'       => self::ACCOUNT_2_1,
+                ],
+            ]
         );
-        $this->assertEquals(
-            [self::SECOND_ACCOUNT_ID],
-            $tree->getUserBusinessUnitIds(self::SECOND_USER_ID, self::ORGANIZATION_ID)
-        );
-        $this->assertEquals(
-            [self::CHILD_ACCOUNT_ID],
-            $tree->getUserBusinessUnitIds(self::THIRD_USER_ID, self::ORGANIZATION_ID)
+        // should be sorted by organization id
+        $this->setGetUsersExpectation(
+            $connection,
+            [
+                [
+                    'orgId'     => self::ORG_1,
+                    'userId'    => self::USER_1,
+                    'accountId' => self::ACCOUNT_1,
+                ],
+                [
+                    'orgId'     => self::ORG_2,
+                    'userId'    => self::USER_2,
+                    'accountId' => self::ACCOUNT_2,
+                ],
+            ]
         );
 
-        $undefinedOrganization = 42;
-        $this->assertEmpty($tree->getUserBusinessUnitIds(self::FIRST_USER_ID, $undefinedOrganization));
-        $this->assertEmpty($tree->getUserBusinessUnitIds(self::SECOND_USER_ID, $undefinedOrganization));
-        $this->assertEmpty($tree->getUserBusinessUnitIds(self::THIRD_USER_ID, $undefinedOrganization));
+        $this->treeProvider->warmUpCache();
+        /** @var OwnerTree $tree */
+        $tree = $this->treeProvider->getTree();
+
+        $this->assertOwnerTreeEquals(
+            [
+                'userOwningOrganizationId'         => [
+                    self::USER_1 => self::ORG_1,
+                    self::USER_2 => self::ORG_2,
+                ],
+                'userOrganizationIds'              => [
+                    self::USER_1 => [self::ORG_1],
+                    self::USER_2 => [self::ORG_2],
+                ],
+                'userOwningBusinessUnitId'         => [
+                    self::USER_1 => self::ACCOUNT_1,
+                    self::USER_2 => self::ACCOUNT_2,
+                ],
+                'userBusinessUnitIds'              => [
+                    self::USER_1 => [self::ACCOUNT_1],
+                    self::USER_2 => [self::ACCOUNT_2],
+                ],
+                'userOrganizationBusinessUnitIds'  => [
+                    self::USER_1 => [self::ORG_1 => [self::ACCOUNT_1]],
+                    self::USER_2 => [self::ORG_2 => [self::ACCOUNT_2]],
+                ],
+                'businessUnitOwningOrganizationId' => [
+                    self::MAIN_ACCOUNT_1 => self::ORG_1,
+                    self::ACCOUNT_1      => self::ORG_1,
+                    self::ACCOUNT_2      => self::ORG_2,
+                    self::ACCOUNT_2_1    => self::ORG_2,
+                ],
+                'assignedBusinessUnitUserIds'      => [
+                    self::ACCOUNT_1 => [self::USER_1],
+                    self::ACCOUNT_2 => [self::USER_2],
+                ],
+                'subordinateBusinessUnitIds'       => [
+                    self::MAIN_ACCOUNT_1 => [self::ACCOUNT_1],
+                    self::ACCOUNT_2      => [self::ACCOUNT_2_1],
+                ],
+                'organizationBusinessUnitIds'      => [
+                    self::ORG_1 => [self::MAIN_ACCOUNT_1, self::ACCOUNT_1],
+                    self::ORG_2 => [self::ACCOUNT_2, self::ACCOUNT_2_1],
+                ],
+            ],
+            $tree
+        );
     }
 
     public function testSupports()
