@@ -13,6 +13,13 @@
 
   &__item {
     border-bottom: 1px solid #d9d9d9;
+    border-left: 6px solid transparent;
+
+    &--current,
+    &:hover {
+      border-left: 6px solid $theme-lighter-gray-color;
+      background: $theme-lightest-gray-color;
+    }
 
     &:first-child {
       border-top: 1px solid $theme-lighter-gray-color;
@@ -25,15 +32,10 @@
     display: block;
     padding: 15px 10px 15px 40px;
 
-
     color: $base-font-color;
     text-decoration: none;
 
-    &--current,
-    &:hover {
-      text-decoration: none;
-    }
-
+    &:hover,
     &:focus,
     &:active {
       color: $base-font-color;
