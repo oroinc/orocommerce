@@ -25,6 +25,13 @@ workflows:
                 property_path: checkout.customerNotes
             payment_method:
                 property_path: checkout.paymentMethod
+            shipping_method:
+                property_path: checkout.shippingMethod
+            shipping_method_type:
+                property_path: checkout.shippingMethodType
+            shipping_rule_config:
+                type: int
+                label: Shipping Rule Configuration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -172,6 +179,12 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
+                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
+                form_options:
+                    attribute_fields:
+                        shipping_method: ~
+                        shipping_method_type: ~
+                        shipping_rule_config: ~
 
             continue_to_order_review:
                 label: Continue
@@ -389,6 +402,17 @@ workflows:
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
+                post_actions:
+                    actions:
+                        - '@find_entity':
+                            class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
+                            attribute: $.result.ShippingRuleConfiguration
+                            identifier: $shipping_rule_config
+                        - '@call_service_method':
+                            service: orob2b_checkout.shipping_cost.calculator
+                            method: calculatePrice
+                            method_parameters: [$checkout, $.result.ShippingRuleConfiguration]
+                            attribute: $checkout.shippingCost
 
             continue_to_order_review_definition:
                 pre_conditions:

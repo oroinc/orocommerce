@@ -59,7 +59,7 @@ class FlatRate implements ShippingMethodInterface
      * @return Price
      */
     public function calculatePrice(
-        /*ShippingContextAwareInterface*/ $dataEntity,
+        ShippingContextAwareInterface $dataEntity,
         ShippingRuleConfiguration $configEntity
     ) {
         return $configEntity->getPrice();

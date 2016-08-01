@@ -1,10 +1,21 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/shipping_method.html.twig'
+           themes:
+                - 'OroB2BShippingBundle:layouts:default/orob2b_shipping_methods/layout.html.twig'
+                - 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_method.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
             optionValue: 3
+        - '@add':
+            id: shipping_methods
+            parentId: checkout_information
+            blockType: shipping_methods
+            prepend: true
+            options:
+                class_prefix: 'checkout'
+                methods: { '@value': $data.shipping_methods_data_provider }
+                currentShippingMethodType: { '@value': $data.checkout.shippingMethodType }
     conditions:
         '@eq': [$context.workflowStepName, 'enter_shipping_method']

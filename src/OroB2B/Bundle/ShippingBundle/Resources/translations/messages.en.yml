@@ -94,7 +94,10 @@ orob2b:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
-
+        methods:
+            label: "Shipping Method"
+            select_method: 'Select a Shipping Method'
+            no_method: 'No shipping methods are available, Please contact us to complete the order submission.'
         menu:
             shipping_rule.description: Shipping Rules
             shortcut_shipping_rule.description: List of shipping rules

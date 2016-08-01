@@ -88,9 +88,18 @@ class BaseCheckout implements
     protected $website;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
      */
     protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
 
     /**
      * @var string
@@ -376,5 +385,29 @@ class BaseCheckout implements
     {
         $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
+    }
+
+    /**
+     * Set shippingMethodType
+     *
+     * @param string $shippingMethodType
+     *
+     * @return BaseCheckout
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * Get shippingMethodType
+     *
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
     }
 }
