@@ -17,7 +17,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var  Category $category */
+    /** @var Category $category */
     protected $category;
 
     public function setup()
@@ -86,10 +86,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->addTitle($secondTitle)
             ->addTitle($secondTitle);
 
-        $this->assertEquals(
-            2,
-            count($category->getTitles()->toArray())
-        );
+        $this->assertCount(2, $category->getTitles()->toArray());
 
         $this->assertEquals([$firstTitle, $secondTitle], array_values($category->getTitles()->toArray()));
 
@@ -117,10 +114,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             array_values($category->getShortDescriptions()->toArray())
         );
 
-        $this->assertEquals(
-            2,
-            count($category->getShortDescriptions()->toArray())
-        );
+        $this->assertCount(2, $category->getShortDescriptions()->toArray());
 
         $category->removeShortDescription($firstShortDescription)
             ->removeShortDescription($firstShortDescription);
@@ -146,10 +140,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             array_values($category->getLongDescriptions()->toArray())
         );
 
-        $this->assertEquals(
-            2,
-            count($category->getLongDescriptions()->toArray())
-        );
+        $this->assertCount(2, $category->getLongDescriptions()->toArray());
 
         $category->removeLongDescription($firstLongDescription)
             ->removeLongDescription($firstLongDescription);

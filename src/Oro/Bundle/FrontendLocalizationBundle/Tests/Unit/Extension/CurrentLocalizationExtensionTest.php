@@ -41,13 +41,9 @@ class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentLocalizationAndUser()
     {
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($this->token);
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($this->token);
 
-        $this->token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(new User());
+        $this->token->expects($this->once())->method('getUser')->willReturn(new User());
 
         $this->localizationManager->expects($this->never())->method('getCurrentLocalization');
 
@@ -58,17 +54,24 @@ class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $localization = new Localization();
 
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($this->token);
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($this->token);
 
-        $this->token->expects($this->once())
-            ->method('getUser')
-            ->willReturn(new \stdClass());
+        $this->token->expects($this->once())->method('getUser')->willReturn(new \stdClass());
 
-        $this->localizationManager->expects($this->once())
-            ->method('getCurrentLocalization')
-            ->willReturn($localization);
+        $this->localizationManager->expects($this->once())->method('getCurrentLocalization')->willReturn($localization);
+
+        $this->assertSame($localization, $this->extension->getCurrentLocalization());
+    }
+
+    public function testGetCurrentLocalizationWithoutToken()
+    {
+        $localization = new Localization();
+
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
+
+        $this->token->expects($this->never())->method($this->anything());
+
+        $this->localizationManager->expects($this->once())->method('getCurrentLocalization')->willReturn($localization);
 
         $this->assertSame($localization, $this->extension->getCurrentLocalization());
     }

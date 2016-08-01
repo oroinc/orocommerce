@@ -19,8 +19,16 @@ class OroB2BCatalogBundle extends Bundle
         parent::build($container);
 
         $container
-            ->addCompilerPass(new DefaultFallbackExtensionPass([
-                Category::class => ['title' => 'titles'],
-            ]));
+            ->addCompilerPass(
+                new DefaultFallbackExtensionPass(
+                    [
+                        Category::class => [
+                            'title' => 'titles',
+                            'shortDescription' => 'shortDescriptions',
+                            'longDescription' => 'longDescriptions'
+                        ]
+                    ]
+                )
+            );
     }
 }

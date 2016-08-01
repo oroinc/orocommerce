@@ -39,7 +39,7 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
     public function getCurrentLocalization()
     {
         if ($this->getLoggedUser() instanceof User) {
-            return;
+            return null;
         }
 
         return $this->localizationManager->getCurrentLocalization();

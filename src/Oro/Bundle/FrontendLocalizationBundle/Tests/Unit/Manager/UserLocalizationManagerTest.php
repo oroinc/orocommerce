@@ -86,7 +86,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetCurrentLocalizationAndDefaultWebsiteLocalization()
     {
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $localization = $this->getEntity(Localization::class, ['id' => 1]);
+        $localization = $this->getEntity(Localization::class, ['id' => 42]);
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
@@ -118,8 +118,8 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetCurrentLocalizationAndDefaultGlobalLocalization()
     {
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $localization1 = $this->getEntity(Localization::class, ['id' => 1]);
-        $localization2 = $this->getEntity(Localization::class, ['id' => 2]);
+        $localization1 = $this->getEntity(Localization::class, ['id' => 41]);
+        $localization2 = $this->getEntity(Localization::class, ['id' => 42]);
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
@@ -146,7 +146,6 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->localizationProvider->expects($this->once())
             ->method('getDefaultLocalization')
             ->willReturn($localization2);
-
 
         $this->assertSame($localization2, $this->localizationManager->getCurrentLocalization());
     }

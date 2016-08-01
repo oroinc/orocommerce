@@ -6,4 +6,4 @@ layout:
             siblingId: top_nav
             blockType: localization_switcher
             options:
-                data: '=data["orob2b_website_localizations"]'
+                data: '=data["frontend_localizations"]'
