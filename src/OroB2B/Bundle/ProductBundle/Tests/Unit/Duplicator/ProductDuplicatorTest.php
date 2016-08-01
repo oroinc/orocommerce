@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -59,9 +59,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     protected $skuIncrementor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AttachmentManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|FileManager
      */
-    protected $attachmentManager;
+    protected $fileManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|AttachmentProvider
@@ -95,7 +95,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->skuIncrementor = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
+        $this->fileManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\FileManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->attachmentProvider = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider')
@@ -117,7 +117,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->duplicator = new ProductDuplicator(
             $this->doctrineHelper,
             $this->eventDispatcher,
-            $this->attachmentManager,
+            $this->fileManager,
             $this->attachmentProvider
         );
 
@@ -172,16 +172,16 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->with($product)
             ->will($this->returnValue([$attachment1, $attachment2]));
 
-        $this->attachmentManager->expects($this->any())
-            ->method('copyAttachmentFile')
+        $this->fileManager->expects($this->any())
+            ->method('cloneFileEntity')
             ->with($image)
             ->will($this->returnValue($imageCopy));
-        $this->attachmentManager->expects($this->any())
-            ->method('copyAttachmentFile')
+        $this->fileManager->expects($this->any())
+            ->method('cloneFileEntity')
             ->with($attachmentFile1)
             ->will($this->returnValue($attachmentFileCopy1));
-        $this->attachmentManager->expects($this->any())
-            ->method('copyAttachmentFile')
+        $this->fileManager->expects($this->any())
+            ->method('cloneFileEntity')
             ->with($attachmentFile2)
             ->will($this->returnValue($attachmentFileCopy2));
 

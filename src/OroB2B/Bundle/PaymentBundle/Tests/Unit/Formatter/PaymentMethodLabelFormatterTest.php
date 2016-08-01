@@ -136,7 +136,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
                 '$paymentMethod'           => 'payment_method',
                 '$paymentMethodLabel'      => 'Payment Method',
                 '$paymentMethodShortLabel' => 'Payment Method Short',
-                '$expectedResult'          => 'Payment Method (Payment Method Short)',
+                '$expectedResult'          => 'Payment Method Short (Payment Method)',
             ],
             [
                 '$paymentMethod'           => 'payment_method',

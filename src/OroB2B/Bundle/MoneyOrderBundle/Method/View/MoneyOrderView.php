@@ -2,27 +2,25 @@
 
 namespace OroB2B\Bundle\MoneyOrderBundle\Method\View;
 
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
+use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use OroB2B\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 
 class MoneyOrderView implements PaymentMethodViewInterface
 {
     /**
-     * @var ConfigManager
+     * @var MoneyOrderConfigInterface
      */
-    protected $configManager;
+    protected $config;
 
     /**
-     * @param ConfigManager $configManager
+     * @param MoneyOrderConfigInterface $config
      */
-    public function __construct(ConfigManager $configManager)
+    public function __construct(MoneyOrderConfigInterface $config)
     {
-        $this->configManager = $configManager;
+        $this->config = $config;
     }
 
     /**
@@ -31,8 +29,8 @@ class MoneyOrderView implements PaymentMethodViewInterface
     public function getOptions(array $context = [])
     {
         return [
-            'pay_to'  => $this->getConfigValue(Configuration::MONEY_ORDER_PAY_TO_KEY),
-            'send_to' => $this->getConfigValue(Configuration::MONEY_ORDER_SEND_TO_KEY),
+            'pay_to' => $this->config->getPayTo(),
+            'send_to' => $this->config->getSendTo()
         ];
     }
 
@@ -49,7 +47,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
      */
     public function getOrder()
     {
-        return (int)$this->getConfigValue(Configuration::MONEY_ORDER_SORT_ORDER_KEY);
+        return $this->config->getOrder();
     }
 
     /**
@@ -57,7 +55,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
      */
     public function getLabel()
     {
-        return $this->getConfigValue(Configuration::MONEY_ORDER_LABEL_KEY);
+        return $this->config->getLabel();
     }
 
     /**
@@ -65,7 +63,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
      */
     public function getShortLabel()
     {
-        return $this->getConfigValue(Configuration::MONEY_ORDER_SHORT_LABEL_KEY);
+        return $this->config->getShortLabel();
     }
 
     /**
@@ -74,16 +72,5 @@ class MoneyOrderView implements PaymentMethodViewInterface
     public function getPaymentMethodType()
     {
         return MoneyOrder::TYPE;
-    }
-
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    protected function getConfigValue($key)
-    {
-        $key = OroB2BMoneyOrderExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-
-        return $this->configManager->get($key);
     }
 }

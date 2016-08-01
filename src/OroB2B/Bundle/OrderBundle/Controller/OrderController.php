@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
