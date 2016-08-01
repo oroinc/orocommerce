@@ -39,7 +39,7 @@ layout:
                     blockType: datagrid
                     options:
                         visible: '=data["entity"]!=null'
-                        grid_name: frontend-account-user-role-permission-readonly-grid
+                        grid_name: frontend-account-user-role-permission-grid
                         grid_parameters:
                             role: '=data["entity"]'
                         grid_render_parameters:
