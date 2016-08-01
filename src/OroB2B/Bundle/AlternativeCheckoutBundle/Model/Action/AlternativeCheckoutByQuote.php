@@ -48,10 +48,10 @@ class AlternativeCheckoutByQuote extends AbstractAction
     public function initialize(array $options)
     {
         if (empty($options[self::QUOTE])) {
-            throw new InvalidParameterException('Quote parameter is required');
+            throw new InvalidParameterException(sprintf('Parameter `%s` is required', self::QUOTE));
         }
         if (empty($options[self::CHECKOUT_ATTRIBUTE])) {
-            throw new InvalidParameterException('Checkout parameter is required');
+            throw new InvalidParameterException(sprintf('Parameter `%s` is required', self::CHECKOUT_ATTRIBUTE));
         }
         $this->options = $options;
 

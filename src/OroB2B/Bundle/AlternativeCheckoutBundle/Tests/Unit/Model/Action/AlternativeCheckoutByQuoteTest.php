@@ -80,7 +80,7 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
                     AlternativeCheckoutByQuote::CHECKOUT_ATTRIBUTE => 'test'
                 ],
                 'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
-                'expectedExceptionMessage' => 'Quote parameter is required'
+                'expectedExceptionMessage' => 'Parameter `quote` is required'
             ],
             [
                 'inputData' => [
@@ -88,7 +88,7 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
                     AlternativeCheckoutByQuote::CHECKOUT_ATTRIBUTE => null
                 ],
                 'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
-                'expectedExceptionMessage' => 'Checkout parameter is required'
+                'expectedExceptionMessage' => 'Parameter `checkout` is required'
             ]
         ];
     }
