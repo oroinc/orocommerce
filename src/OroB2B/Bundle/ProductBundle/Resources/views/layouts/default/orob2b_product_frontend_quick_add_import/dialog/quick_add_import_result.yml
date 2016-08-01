@@ -21,7 +21,7 @@ layout:
                 text: Back
                 style: gray
                 attr:
-                    'data-url': { '@value': $data.backToUrl }
+                    'data-url': '=data["backToUrl"]'
         - '@setOption':
             id: quick_add_form_start
             optionName: form_route_name
@@ -37,5 +37,5 @@ layout:
         -
             id: orob2b_product_quick_add_form
             root: quick_add_validation
-    conditions:
-        '@eq': [$context.import_step, 'result']
+    conditions: 'context["import_step"]=="result"'
+

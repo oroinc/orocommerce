@@ -16,7 +16,7 @@ class AccountUserPasswordResetType extends AbstractType
     protected $dataClass;
 
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -50,6 +50,14 @@ class AccountUserPasswordResetType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }
