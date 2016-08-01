@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -82,7 +83,7 @@ class ValidateActionTest extends AbstractActionTest
             ->with($context, $options['attribute'], $expected);
 
         $this->router
-            ->expects($this->any())
+            ->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 [
@@ -90,14 +91,14 @@ class ValidateActionTest extends AbstractActionTest
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    true
+                    RouterInterface::ABSOLUTE_URL
                 ],
                 [
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    true
+                    RouterInterface::ABSOLUTE_URL
                 ]
             )
             ->will($this->returnArgument(0));
