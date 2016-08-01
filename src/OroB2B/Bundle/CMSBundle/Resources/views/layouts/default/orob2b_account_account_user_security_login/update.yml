@@ -7,23 +7,23 @@ layout:
             parentId: head
             blockType: style
             options:
-                visible: { '@not_empty': $data.orob2b_cms_login_page.css }
-                content: { '@value': $data.orob2b_cms_login_page.css }
+                visible: '=data["orob2b_cms_login_page"].getCss()!=null'
+                content: '=data["orob2b_cms_login_page"].getCss()'
         - '@add':
             id: login_page_logo
             parentId: login_page
             blockType: login_page_logo
             options:
-                visible: { '@not_empty': $data.orob2b_cms_login_page.logoImage }
-                logo: { '@value': $data.orob2b_cms_login_page.logoImage }
+                visible: '=data["orob2b_cms_login_page"].getLogoImage()!=null'
+                logo: '=data["orob2b_cms_login_page"].getLogoImage()'
             prepend: true
         - '@add':
             id: login_page_top
             parentId: login_page
             blockType: text
             options:
-                visible: { '@not_empty': $data.orob2b_cms_login_page.topContent }
-                text: { '@value': $data.orob2b_cms_login_page.topContent }
+                visible: '=data["orob2b_cms_login_page"].getTopContent()!=null'
+                text: '=data["orob2b_cms_login_page"].getTopContent()'
                 escape: false
             siblingId: login_page_logo
         - '@add':
@@ -31,10 +31,10 @@ layout:
             parentId: login_page
             blockType: text
             options:
-                visible: { '@not_empty': $data.orob2b_cms_login_page.bottomContent }
-                text: { '@value': $data.orob2b_cms_login_page.bottomContent }
+                visible: '=data["orob2b_cms_login_page"].getBottomContent()!=null'
+                text: '=data["orob2b_cms_login_page"].getBottomContent()'
                 escape: false
         - '@setOption':
             id: login_page
             optionName: loginPage
-            optionValue: { '@value': $data.orob2b_cms_login_page }
+            optionValue: '=data["orob2b_cms_login_page"]'

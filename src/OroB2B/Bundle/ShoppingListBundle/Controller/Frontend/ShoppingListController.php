@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -32,7 +32,7 @@ class ShoppingListController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param int|null $shoppingList
+     * @param int|null $id
      *
      * @return array
      */
@@ -51,6 +51,23 @@ class ShoppingListController extends Controller
         if ($shoppingList) {
             $title = $shoppingList->getLabel();
             $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
+
+            $lineItems = $shoppingList->getLineItems();
+
+            if (!empty($lineItems)) {
+                $products = [];
+                foreach ($lineItems as $lineItem) {
+                    /** @var LineItem $lineItem */
+                    $products[]['productSku'] = $lineItem->getProduct()->getSku();
+                }
+                if (!empty($this->container)) {
+                    $shoppingList->setIsAllowedRFP(
+                        $this->container
+                            ->get('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                            ->isAllowedRFP($products)
+                    );
+                }
+            }
         } else {
             $title = null;
             $totalWithSubtotalsAsArray = [];

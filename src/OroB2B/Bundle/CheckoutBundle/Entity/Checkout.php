@@ -30,7 +30,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareI
  *              "group_name"="commerce"
  *          },
  *          "workflow"={
- *              "active_workflow"="b2b_flow_checkout"
+ *              "active_workflows"={"b2b_flow_checkout"}
  *          }
  *      }
  * )

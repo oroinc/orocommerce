@@ -6,8 +6,6 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-
 class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
 {
     /**
@@ -36,9 +34,7 @@ class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        /** @var Checkout $checkout */
-        $checkout = $context->data()->get('checkout');
-        $workflowItem = $checkout->getWorkflowItem();
+        $workflowItem = $context->data()->get('workflowItem');
 
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
 

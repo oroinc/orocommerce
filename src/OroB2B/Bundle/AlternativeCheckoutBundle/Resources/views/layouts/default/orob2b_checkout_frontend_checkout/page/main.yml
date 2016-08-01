@@ -3,9 +3,7 @@ layout:
         - '@setOption':
             id: checkout_order_summary
             optionName: visible
-            optionValue:
-                '@and':
-                    - '@neq': [$context.workflowStepName, 'order_review']
-                    - '@neq': [$context.workflowStepName, 'approve_request']
-    conditions:
-        '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
+            optionValue: '=context["workflowStepName"]!="order_review" && context["workflowStepName"]!="approve_request"'
+
+    conditions: 'context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'
+

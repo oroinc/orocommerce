@@ -22,6 +22,7 @@ services:
         public: false
         arguments:
             - "@orob2b_sale.formatter.quote_product"
+            - "@oro_config.manager"
         tags:
             - { name: twig.extension }
 

@@ -4,8 +4,10 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -22,6 +24,10 @@ class ShoppingListControllerTest extends WebTestCase
 {
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
+    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_b2b_rfp.frontend_product_visibility';
+
+    /** @var ConfigManager $configManager */
+    protected $configManager;
 
     protected function setUp()
     {
@@ -38,6 +44,8 @@ class ShoppingListControllerTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
+
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
     public function testView()
@@ -61,9 +69,13 @@ class ShoppingListControllerTest extends WebTestCase
      * @dataProvider testViewSelectedShoppingListDataProvider
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
+     * @param bool $needToTestRequestQuote
      */
-    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
-    {
+    public function testViewSelectedShoppingListWithLineItemPrice(
+        $shoppingList,
+        $expectedLineItemPrice,
+        $needToTestRequestQuote
+    ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
@@ -71,10 +83,19 @@ class ShoppingListControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
         );
+
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
+            ->find(Product::INVENTORY_STATUS_IN_STOCK)];
+
+        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
+        $this->configManager->flush();
+
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($shoppingList1->getLabel(), $crawler->html());
-        // operations only for ShoppingList with LineItems
-        $this->assertContains('Request Quote', $crawler->html());
+
+        $this->assertEquals((strpos($crawler->html(), 'Request Quote') !== false), $needToTestRequestQuote);
+
         $this->assertContains('Create Order', $crawler->html());
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
@@ -87,22 +108,26 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10'
+                'expectedLineItemPrice' => '$13.10',
+                'needToTestRequestQuote' => true
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
-                'expectedLineItemPrice' => 'N/A'
+                'expectedLineItemPrice' => 'N/A',
+                'needToTestRequestQuote' => false
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00'
+                'expectedLineItemPrice' => '$0.00',
+                'needToTestRequestQuote' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
-                ]
+                ],
+                'needToTestRequestQuote' => true
             ],
         ];
     }
@@ -200,5 +225,11 @@ class ShoppingListControllerTest extends WebTestCase
         foreach ($prices as $value) {
             $this->assertContains(trim($value->nodeValue), $expected);
         }
+    }
+
+    protected function tearDown()
+    {
+        $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $this->configManager->flush();
     }
 }
