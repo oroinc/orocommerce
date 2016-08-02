@@ -1713,7 +1713,7 @@ class OroB2BAccountBundleInstaller implements
             $schema->getTable('oro_localization'),
             ['localization_id'],
             ['id'],
-            ['onDelete' => 'CASCADE'],
+            ['onDelete' => 'SET NULL'],
             'fk_localization_id'
         );
 

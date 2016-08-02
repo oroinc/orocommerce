@@ -16,7 +16,7 @@
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="top-nav__link">
-        <span>{{ category.titles|oro_localized_value }} </span>
+        <span>{{ category.titles|localized_value }} </span>
         {% if hasSublist %}
             <i class="cf-down-open-mini"></i>
         {% endif %}
@@ -54,7 +54,7 @@
     <ul {{ block('block_attributes') }}>
         <li class="top-nav__sublist_nested__item">
             <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
-                {{ category.titles|oro_localized_value }}
+                {{ category.titles|localized_value }}
             </a>
             {% if hasSublist %}
                 {% do block|merge_context({'categories': category.childCategories }) %}
@@ -82,7 +82,7 @@
     {% set attr = attr|merge({
         href: path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true})
     }) %}
-    <a {{ block('block_attributes') }}>{{ category.titles|oro_localized_value }}</a>
+    <a {{ block('block_attributes') }}>{{ category.titles|localized_value }}</a>
 {% endblock %}
 
 {% block _categories_main_menu_second_level_sales_widget %}
