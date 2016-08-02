@@ -8,8 +8,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProvider;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
@@ -37,9 +37,9 @@ class DatabaseMenuProvider implements MenuProviderInterface
     protected $cache;
 
     /**
-     * @var LocalizationHelper
+     * @var LocalizationProvider
      */
-    protected $localizationHelper;
+    protected $localizationProvider;
 
     /**
      * @var MenuSerializer
@@ -58,18 +58,18 @@ class DatabaseMenuProvider implements MenuProviderInterface
 
     /**
      * @param BuilderInterface $builder
-     * @param LocalizationHelper $localizationHelper
+     * @param LocalizationProvider $localizationProvider
      * @param MenuSerializer $serializer
      * @param ManagerRegistry $registry
      */
     public function __construct(
         BuilderInterface $builder,
-        LocalizationHelper $localizationHelper,
+        LocalizationProvider $localizationProvider,
         MenuSerializer $serializer,
         ManagerRegistry $registry
     ) {
         $this->builder = $builder;
-        $this->localizationHelper = $localizationHelper;
+        $this->localizationProvider = $localizationProvider;
         $this->serializer = $serializer;
         $this->registry = $registry;
     }
@@ -135,7 +135,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        $localizations = $this->localizationHelper->getLocalizations();
+        $localizations = $this->localizationProvider->getLocalizations();
         foreach ($localizations as $localization) {
             $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
@@ -172,7 +172,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        $localizations = $this->localizationHelper->getLocalizations();
+        $localizations = $this->localizationProvider->getLocalizations();
         foreach ($localizations as $localization) {
             $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $localization]]);
         }
@@ -255,7 +255,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
     protected function setDefaultLocalizationIfNotExists(&$options)
     {
         if (!array_key_exists('extras', $options) || !array_key_exists(MenuItem::LOCALE_OPTION, $options['extras'])) {
-            $options['extras'][MenuItem::LOCALE_OPTION] = $this->localizationHelper->getCurrentLocalization();
+            $options['extras'][MenuItem::LOCALE_OPTION] = $this->localizationProvider->getCurrentLocalization();
         }
     }
 

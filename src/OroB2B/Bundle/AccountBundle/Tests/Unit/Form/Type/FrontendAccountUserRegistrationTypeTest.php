@@ -120,6 +120,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
             ->setLastName('Doe')
             ->setEmail('johndoe@example.com')
             ->setOwner($owner)
+            ->setPlainPassword('123456')
             ->createAccount();
 
         $entity->setSalt($expectedEntity->getSalt());
@@ -131,7 +132,10 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                     'firstName' => 'John',
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
-                    'plainPassword' => '123456'
+                    'plainPassword' => [
+                        'first' => '123456',
+                        'second' => '123456'
+                    ]
                 ],
                 'expectedData' => $expectedEntity,
                 'owner' => $owner,
@@ -144,7 +148,10 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                     'firstName' => 'John',
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
-                    'plainPassword' => '123456'
+                    'plainPassword' => [
+                        'first' => '123456',
+                        'second' => '123456'
+                    ]
                 ],
                 'expectedData' => $expectedEntity,
                 'owner' => $owner,
