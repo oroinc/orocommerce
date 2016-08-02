@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -20,8 +19,6 @@ class OroB2BAccountBundle implements Migration
 
     /**
      * @param Schema $schema
-     *
-     * @throws SchemaException
      */
     protected function alterAccountUserSettingsTable(Schema $schema)
     {

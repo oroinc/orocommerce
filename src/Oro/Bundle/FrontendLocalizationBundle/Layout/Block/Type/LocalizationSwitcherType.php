@@ -24,7 +24,7 @@ class LocalizationSwitcherType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(['data']);
+        $resolver->setRequired(['localizations', 'selected_localization']);
     }
 
     /**
@@ -32,6 +32,7 @@ class LocalizationSwitcherType extends AbstractType
      */
     public function finishView(BlockView $view, BlockInterface $block, array $options)
     {
-        $view->vars['data'] = $options['data'];
+        $view->vars['localizations'] = $options['localizations'];
+        $view->vars['selected_localization'] = $options['selected_localization'];
     }
 }

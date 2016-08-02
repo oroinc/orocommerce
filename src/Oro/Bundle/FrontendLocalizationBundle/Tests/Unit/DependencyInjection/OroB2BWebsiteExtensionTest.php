@@ -12,7 +12,7 @@ class OroFrontendLocalizationExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroFrontendLocalizationExtension());
 
         $expectedDefinitions = [
-            'oro_frontend_localization.user_localization_manager',
+            'oro_frontend_localization.manager.user_localization',
             'oro_frontend_localization.acl.voter.localization',
         ];
 
