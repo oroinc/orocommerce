@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductItemType extends AbstractType
 {
@@ -62,6 +65,18 @@ class RequestProductItemType extends AbstractType
                     'default_data' => 1,
                 ]
             );
+
+        // make value not empty
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                /** @var RequestProductItem $item */
+                $item = $event->getData();
+                if ($item) {
+                    $item->updatePrice();
+                }
+            }
+        );
     }
 
     /**
@@ -83,6 +98,14 @@ class RequestProductItemType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

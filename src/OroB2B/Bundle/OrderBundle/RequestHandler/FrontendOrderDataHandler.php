@@ -82,7 +82,7 @@ class FrontendOrderDataHandler
      */
     public function getOwner()
     {
-        //TODO: set correct owner in task BB-929
+        //TODO: BB-3825 set correct owner
         return $this->registry->getManagerForClass('OroUserBundle:User')
             ->getRepository('OroUserBundle:User')
             ->findOneBy([]);

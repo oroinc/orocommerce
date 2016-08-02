@@ -59,7 +59,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->any())
-            ->method('getAvailableRolesByAccountUserQueryBuilder')
+            ->method('getAvailableSelfManagedRolesByAccountUserQueryBuilder')
             ->with($organization, $account)
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -94,13 +94,19 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     {
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+
+        $qb = new ORMQueryBuilderLoader($this->qb);
+
         $resolver->expects($this->once())
             ->method('setNormalizer')
             ->with($this->isType('string'), $this->isInstanceOf('\Closure'))
             ->willReturnCallback(
-                function ($type, $closure) {
+                function ($type, $closure) use ($qb) {
                     $this->assertEquals('loader', $type);
-                    $this->assertEquals($closure(), new ORMQueryBuilderLoader($this->qb));
+                    $this->assertEquals(
+                        $closure(),
+                        $qb
+                    );
                 }
             );
         $this->formType->configureOptions($resolver);

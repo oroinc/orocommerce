@@ -51,6 +51,14 @@ class FrontendAccountUserRoleSelectType extends AbstractType
      */
     public function getName()
     {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
         return self::NAME;
     }
 
@@ -77,7 +85,7 @@ class FrontendAccountUserRoleSelectType extends AbstractType
             $repo = $this->registry->getManagerForClass($this->roleClass)
                 ->getRepository($this->roleClass);
             /** @var $qb QueryBuilder */
-            $qb = $repo->getAvailableRolesByAccountUserQueryBuilder(
+            $qb = $repo->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
                 $loggedUser->getOrganization(),
                 $loggedUser->getAccount()
             );

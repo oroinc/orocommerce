@@ -1,0 +1,19 @@
+services:
+    oro_frontend_localization.user_localization_manager:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager'
+        arguments:
+            - '@session'
+            - '@security.token_storage'
+            - '@oro_config.manager'
+            - '@orob2b_website.manager'
+            - '@orob2b_account_user.manager'
+            - '@oro_locale.provider.localization'
+
+    oro_frontend_localization.acl.voter.localization:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Acl\Voter\LocalizationVoter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setClassName, ['%oro_locale.entity.localization.class%']]
+        tags:
+            - { name: security.voter }

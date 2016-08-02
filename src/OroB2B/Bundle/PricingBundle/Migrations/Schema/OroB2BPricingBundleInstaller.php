@@ -12,6 +12,7 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
@@ -66,6 +67,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOroB2BPriceAttributeTable($schema);
         $this->createOroB2BPriceAttributeCurrencyTable($schema);
         $this->createOroB2BPriceAttributeProductPriceTable($schema);
+        $this->createOroB2BriceListToProductTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
@@ -89,6 +91,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOroB2BCplActivationRuleForeignKeys($schema);
         $this->addOroB2BPriceAttributeCurrencyForeignKeys($schema);
         $this->addOroB2BPriceAttributeProductPriceForeignKeys($schema);
+        $this->addOroB2BriceListToProductForeignKeys($schema);
     }
 
     /**
@@ -509,6 +512,21 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->setPrimaryKey(['id']);
     }
 
+    /**
+     * Create orob2b_price_list_to_product table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BriceListToProductTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_to_product');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('is_manual', 'boolean', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_price_list_to_product_uidx');
+    }
 
     /**
      * Add orob2b_price_list_currency foreign keys.
@@ -1007,6 +1025,28 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['unit_code'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+    
+    /**
+     * Add orob2b_price_list_to_product foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BriceListToProductForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_to_product');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

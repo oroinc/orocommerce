@@ -73,7 +73,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_4';
     }
 
     /**
@@ -157,7 +157,7 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('unit_precision', 'integer', []);
         $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
-        $table->addColumn('sell', 'boolean', ['notnull' => false]);
+        $table->addColumn('sell', 'boolean', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
     }

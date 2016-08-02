@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Action\PurchaseAction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
@@ -80,7 +79,7 @@ class PurchaseActionTest extends AbstractActionTest
             );
 
         $this->router
-            ->expects($this->any())
+            ->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 [
@@ -88,14 +87,14 @@ class PurchaseActionTest extends AbstractActionTest
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    true,
+                    RouterInterface::ABSOLUTE_URL
                 ],
                 [
                     'orob2b_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
-                    true,
+                    RouterInterface::ABSOLUTE_URL
                 ]
             )
             ->will($this->returnArgument(0));
@@ -134,6 +133,7 @@ class PurchaseActionTest extends AbstractActionTest
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'testResponse' => 'testResponse',
                     'paymentMethodSupportsValidation' => false,
+                    'testOption' => 'testOption',
                 ],
             ],
             'without transactionOptions' => [
@@ -174,6 +174,7 @@ class PurchaseActionTest extends AbstractActionTest
                     'errorUrl' => 'orob2b_payment_callback_error',
                     'returnUrl' => 'orob2b_payment_callback_return',
                     'paymentMethodSupportsValidation' => false,
+                    'testOption' => 'testOption',
                 ],
             ],
         ];

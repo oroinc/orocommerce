@@ -3,3 +3,8 @@
   top: 128px;
   margin-top: -48px;
 }
+.inner-permissions-grid {
+  .grid, .grid-scrollable-container {
+    overflow: visible;
+  }
+}
