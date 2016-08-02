@@ -1,5 +1,3 @@
-config:
-    assets:
-        styles:
-            inputs:
-                - 'bundles/orob2bpayment/default/scss/styles.scss'
+styles:
+    inputs:
+        - 'bundles/orob2bpayment/default/scss/styles.scss'
