@@ -388,10 +388,7 @@ class BaseCheckout implements
     }
 
     /**
-     * Set shippingMethodType
-     *
      * @param string $shippingMethodType
-     *
      * @return BaseCheckout
      */
     public function setShippingMethodType($shippingMethodType)
@@ -402,8 +399,6 @@ class BaseCheckout implements
     }
 
     /**
-     * Get shippingMethodType
-     *
      * @return string
      */
     public function getShippingMethodType()

@@ -6,19 +6,20 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
 {
     const NAME = 'shipping_methods_data_provider';
 
-    /** @var array[] */
-    protected $data;
+    /** @var array[]|null */
+    protected $data = null;
 
     /** @var ShippingMethodRegistry */
     protected $registry;
@@ -26,19 +27,13 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     /** @var ShippingRulesProvider */
     protected $shippingRulesProvider;
 
-    /** @var  ShippingCostCalculationProvider */
-    protected $shippingCostCalculator;
-
     /**
-     * @param ShippingCostCalculationProvider $shippingCostCalculator
+     * @param ShippingMethodRegistry $registry
      * @param ShippingRulesProvider $shippingRuleProvider
      */
-    public function __construct(
-        ShippingCostCalculationProvider $shippingCostCalculator,
-        ShippingRulesProvider $shippingRuleProvider
-    ) {
-        $this->shippingCostCalculator = $shippingCostCalculator;
-        $this->registry = $shippingCostCalculator->getShippingMethodRegistry();
+    public function __construct(ShippingMethodRegistry $registry, ShippingRulesProvider $shippingRuleProvider)
+    {
+        $this->registry = $registry;
         $this->shippingRulesProvider = $shippingRuleProvider;
     }
 
@@ -58,17 +53,23 @@ class ShippingMethodsDataProvider implements DataProviderInterface
         if (null === $this->data) {
             /** @var BaseCheckout $entity */
             $entity = $this->getEntity($layoutContext);
-            $sourceEntity = $entity->getSourceEntity();
-            $context = [
-                'checkout' => $entity,
-                'billingAddress' => $entity->getBillingAddress(),
-                'currency' => $entity->getCurrency(),
-                'line_items' => $sourceEntity->getLineItems(),
-            ];
-            $shippingContext = new ShippingContextProvider($context);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
-            $this->data = $this->getApplicableShippingMethods($shippingContext, $rules);
+            if (!empty($entity)) {
+                $context = [
+                    'checkout' => $entity,
+                    'billingAddress' => $entity->getBillingAddress(),
+                    'currency' => $entity->getCurrency(),
+                ];
+                /** @var ShoppingList $sourceEntity */
+                $sourceEntity = $entity->getSourceEntity();
+                if (!empty($sourceEntity)) {
+                    $context['line_items'] = $sourceEntity->getLineItems();
+                }
+                $shippingContext = new ShippingContextProvider($context);
+                $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
+                $this->data = $this->getApplicableShippingMethods($shippingContext, $rules);
+            }
         }
+
         return $this->data;
     }
 
@@ -93,7 +94,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
 
     /**
      * @param ShippingContextAwareInterface $context
-     * @param array $applicableRules
+     * @param ShippingRule[]|array $applicableRules
      * @return array
      */
     public function getApplicableShippingMethods(ShippingContextAwareInterface $context, array $applicableRules)
@@ -134,6 +135,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
                 }
             }
         }
+        
         return $shippingMethods;
     }
 }
