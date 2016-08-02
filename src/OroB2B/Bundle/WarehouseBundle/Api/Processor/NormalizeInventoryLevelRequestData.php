@@ -131,10 +131,10 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
 
         /** @var ProductRepository $productRepository */
         $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
+        $productIds = $productRepository
+            ->getProductsIdsBySku([$relationships[self::PRODUCT][JsonApiDoc::DATA][JsonApiDoc::ID]]);
 
-        return reset(
-            $productRepository->getProductsIdsBySku([$relationships[self::PRODUCT][JsonApiDoc::DATA][JsonApiDoc::ID]])
-        );
+        return reset($productIds);
     }
 
     /**
