@@ -188,10 +188,12 @@ datagrid:
                 select:
                     - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
                     - quoteAccount.name as accountName
+                    - paymentTerm.label as paymentTermLabel
                 join:
                     left:
                         - { join: quote.accountUser, alias: quoteAccountUser }
                         - { join: quote.account, alias: quoteAccount }
+                        - { join: quote.paymentTerm, alias: paymentTerm }
         columns:
             accountUserName:
                 label: orob2b.sale.quote.account_user.label
@@ -199,12 +201,18 @@ datagrid:
             accountName:
                 label: orob2b.sale.quote.account.label
                 order: 3
+            paymentTermLabel:
+                label:      orob2b.sale.quote.payment_term.label
+                order:      8
+                renderable: false
         sorters:
             columns:
                 accountUserName:
                     data_name: accountUserName
                 accountName:
                     data_name: accountName
+                paymentTermLabel:
+                    data_name: paymentTermLabel
         filters:
             columns:
                 qid:
@@ -231,6 +239,10 @@ datagrid:
                 poNumber:
                     type:      string
                     data_name: quote.poNumber
+                paymentTermLabel:
+                    type:      string
+                    data_name: paymentTermLabel
+                    enabled:   false
                 shipUntil:
                     type:      date
                     data_name: quote.shipUntil

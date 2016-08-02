@@ -26,8 +26,7 @@
                 {{ UI.renderHtmlProperty('orob2b.sale.quote.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_account_user_view')) }}
             {% endif %}
 
-            {% set paymentTermView = '' %}
-            {% if entity.paymentTerm %}
+            {% if entity.paymentTerm is not empty %}
                 {% if resource_granted('VIEW', entity.paymentTerm) %}
                     {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
                 {% else %}
