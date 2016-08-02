@@ -35,7 +35,7 @@ class LocalizationSwitcherTypeTest extends \PHPUnit_Framework_TestCase
 
         $resolver->expects($this->once())
             ->method('setRequired')
-            ->with(['data']);
+            ->with(['localizations', 'selected_localization']);
 
         $this->type->configureOptions($resolver);
     }
@@ -47,10 +47,13 @@ class LocalizationSwitcherTypeTest extends \PHPUnit_Framework_TestCase
         /* @var $block BlockInterface|\PHPUnit_Framework_MockObject_MockObject */
         $block = $this->getMock(BlockInterface::class);
 
-        $options = ['data' => ['localizations' => 'L1', 'L2'], 'current_localization' => 'L1'];
+        $options = ['localizations' => ['L1', 'L2'], 'selected_localization' => 'L1'];
         $this->type->finishView($view, $block, $options);
 
-        $this->assertArrayHasKey('data', $view->vars);
-        $this->assertEquals($options['data'], $view->vars['data']);
+        $this->assertArrayHasKey('localizations', $view->vars);
+        $this->assertEquals($options['localizations'], $view->vars['localizations']);
+
+        $this->assertArrayHasKey('selected_localization', $view->vars);
+        $this->assertEquals($options['selected_localization'], $view->vars['selected_localization']);
     }
 }
