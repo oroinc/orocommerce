@@ -14,6 +14,7 @@ define(function(require) {
             enabled: true,
             hasForm: false,
             selectors: {
+                checkoutNotification: '[data-role="checkout-notification"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
@@ -89,6 +90,7 @@ define(function(require) {
                 if ($title.length) {
                     document.title = $title.text();
                 }
+                var notificationSelector = this.options.selectors.checkoutNotification;
                 var sidebarSelector = this.options.selectors.checkoutSidebar;
                 var contentSelector = this.options.selectors.checkoutContent;
 
@@ -99,6 +101,9 @@ define(function(require) {
 
                 var $content = $(contentSelector);
                 $content.html($response.find(contentSelector).html());
+
+                var $notification = $(notificationSelector);
+                $notification.html($response.find(notificationSelector).html());
 
                 mediator.trigger('checkout-content:updated');
             }

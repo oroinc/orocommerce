@@ -9,6 +9,10 @@ layout:
                     label: 'orob2b.checkout.title.step.label'
                     parameters:
                         '%step_label%': '=data["workflowStep"].getLabel()'
+        - '@setOption':
+            id: notification
+            optionName: 'attr.data-role'
+            optionValue: 'checkout-notification'
     imports:
         -
             id: orob2b_checkout_content

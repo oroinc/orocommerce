@@ -22,10 +22,17 @@ layout:
                     head:
                         title: ~
                     body: ~
+        - '@setOption':
+            id: notification
+            optionName: 'attr.data-role'
+            optionValue: 'checkout-notification'
     imports:
         -
             id: orob2b_checkout_content
             root: body
         -
             id: orob2b_checkout_sidebar
+            root: body
+        -
+            id: orob2b_frontend_notification
             root: body
