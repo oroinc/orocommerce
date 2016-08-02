@@ -15,8 +15,8 @@ layout:
                     blockType: container
                 sticky_panel_content:
                     blockType: container
-#                notification:
-#                    blockType: block
+                notification:
+                    blockType: block
                 main:
                     blockType: container
                 content:
@@ -36,7 +36,7 @@ layout:
                         sticky_panel:
                             sticky_panel_content: ~
                         main:
-#                            notification: ~
+                            notification: ~
                             content:
                                 page_title_container:
                                     page_title: ~
@@ -57,13 +57,3 @@ layout:
             id: title
             optionName: reverse
             optionValue: true
-        - '@move':
-            id: notification
-            parentId: main
-            siblingId: ~
-            prepend: true
-
-    imports:
-        -
-            id: orob2b_frontend_notification
-            root: main

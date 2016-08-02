@@ -14,7 +14,7 @@ define(function(require) {
             enabled: true,
             hasForm: false,
             selectors: {
-                checkoutNotification: '[data-role="checkout-notification"]',
+                checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
@@ -90,7 +90,7 @@ define(function(require) {
                 if ($title.length) {
                     document.title = $title.text();
                 }
-                var notificationSelector = this.options.selectors.checkoutNotification;
+                var flashNotificationsSelector = this.options.selectors.checkoutFlashNotifications;
                 var sidebarSelector = this.options.selectors.checkoutSidebar;
                 var contentSelector = this.options.selectors.checkoutContent;
 
@@ -102,8 +102,14 @@ define(function(require) {
                 var $content = $(contentSelector);
                 $content.html($response.find(contentSelector).html());
 
-                var $notification = $(notificationSelector);
-                $notification.html($response.find(notificationSelector).html());
+                var $flashNotifications = $response.find(flashNotificationsSelector);
+
+                _.each($flashNotifications, function(element) {
+                    var $element = $(element);
+                    var type = $(element).data('type');
+                    var message = $element.data('message');
+                    mediator.execute('showFlashMessage', type, message);
+                });
 
                 mediator.trigger('checkout-content:updated');
             }
