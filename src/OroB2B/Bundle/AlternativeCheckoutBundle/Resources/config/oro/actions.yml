@@ -23,7 +23,7 @@ operations:
                         method: getWorkflowItemsByEntity
                         method_parameters: [$.checkout]
                     - '@count':
-                        array: $.workflowItems
+                        value: $.workflowItems
                         attribute: $.workflowItemsCount
                     - '@traverse':
                         conditions:
