@@ -47,4 +47,3 @@ operations:
                 route: 'orob2b_checkout_frontend_checkout'
                 route_parameters:
                     id: $.checkout.id
-                    type: alternative
