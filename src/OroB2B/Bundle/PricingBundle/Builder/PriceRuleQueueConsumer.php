@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
-class PriceListQueueConsumer
+class PriceRuleQueueConsumer
 {
     /**
      * @var ManagerRegistry

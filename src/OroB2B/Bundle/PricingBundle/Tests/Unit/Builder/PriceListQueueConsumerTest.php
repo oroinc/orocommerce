@@ -7,13 +7,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
-class PriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
+class PriceRuleQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -31,7 +31,7 @@ class PriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     protected $productPriceBuilder;
 
     /**
-     * @var PriceListQueueConsumer
+     * @var PriceRuleQueueConsumer
      */
     protected $priceListQueueConsumer;
 
@@ -44,7 +44,7 @@ class PriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $this->productPriceBuilder = $this->getMockBuilder(ProductPriceBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceListQueueConsumer = new PriceListQueueConsumer(
+        $this->priceListQueueConsumer = new PriceRuleQueueConsumer(
             $this->registry,
             $this->productAssignmentBuilder,
             $this->productPriceBuilder

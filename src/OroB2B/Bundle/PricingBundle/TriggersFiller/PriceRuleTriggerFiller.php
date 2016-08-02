@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Event\PriceRuleChange;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceRuleTriggerFiller
 {
@@ -16,10 +18,14 @@ class PriceRuleTriggerFiller
 
     /**
      * @param ExtraActionEntityStorageInterface $extraActionsStorage
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(ExtraActionEntityStorageInterface $extraActionsStorage)
-    {
+    public function __construct(
+        ExtraActionEntityStorageInterface $extraActionsStorage,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->extraActionsStorage = $extraActionsStorage;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -32,6 +38,7 @@ class PriceRuleTriggerFiller
             $trigger = new PriceRuleChangeTrigger($priceList, $product);
             $this->extraActionsStorage->scheduleForExtraInsert($trigger);
         }
+        $this->dispatcher->dispatch(PriceRuleChange::NAME);
     }
 
     /**

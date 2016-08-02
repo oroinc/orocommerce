@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
@@ -198,8 +198,8 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
                 $priceBuilder->buildByPriceList($priceList);
             }
         } else {
-            /** @var PriceListQueueConsumer $consumer */
-            $consumer = $this->getContainer()->get('orob2b_pricing.builder.price_list_queue_consumer');
+            /** @var PriceRuleQueueConsumer $consumer */
+            $consumer = $this->getContainer()->get('orob2b_pricing.builder.price_rule_queue_consumer');
             $consumer->process();
         }
     }

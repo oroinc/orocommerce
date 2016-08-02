@@ -6,8 +6,10 @@ use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Event\PriceRuleChange;
 use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,10 +25,16 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
      */
     protected $filler;
 
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $dispatcher;
+
     protected function setUp()
     {
         $this->extraActionsStorage = $this->getMock(ExtraActionEntityStorageInterface::class);
-        $this->filler = new PriceRuleTriggerFiller($this->extraActionsStorage);
+        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->filler = new PriceRuleTriggerFiller($this->extraActionsStorage, $this->dispatcher);
     }
 
     public function testAddTriggersForPriceList()
@@ -43,6 +51,8 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
         $this->extraActionsStorage->expects($this->once())
             ->method('scheduleForExtraInsert')
             ->with($trigger);
+
+        $this->dispatcher->expects($this->once())->method('dispatch')->with(PriceRuleChange::NAME);
 
         $this->filler->addTriggersForPriceList($priceList, $product);
     }
@@ -62,6 +72,9 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
             ->method('scheduleForExtraInsert')
             ->with($trigger);
 
+
+        $this->dispatcher->expects($this->once())->method('dispatch')->with(PriceRuleChange::NAME);
+
         $this->filler->addTriggersForPriceLists([$priceList], $product);
     }
 
@@ -78,6 +91,8 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
         $this->extraActionsStorage->expects($this->once())
             ->method('scheduleForExtraInsert')
             ->with($trigger);
+
+        $this->dispatcher->expects($this->once())->method('dispatch')->with(PriceRuleChange::NAME);
 
         $this->filler->addTriggersForPriceList($priceList);
     }
@@ -96,6 +111,8 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
             ->method('scheduleForExtraInsert')
             ->with($trigger);
 
+        $this->dispatcher->expects($this->once())->method('dispatch')->with(PriceRuleChange::NAME);
+
         $this->filler->addTriggersForPriceLists([$priceList]);
     }
 
@@ -112,6 +129,8 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([$trigger]);
         $this->extraActionsStorage->expects($this->never())
             ->method('scheduleForExtraInsert');
+
+        $this->dispatcher->expects($this->once())->method('dispatch')->with(PriceRuleChange::NAME);
 
         $this->filler->addTriggersForPriceList($priceList, $product);
     }
