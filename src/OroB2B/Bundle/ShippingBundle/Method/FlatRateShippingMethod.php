@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Method;
 
+use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 
@@ -23,6 +24,14 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     public function getTypes()
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRuleConfigurationClass()
+    {
+        return FlatRateRuleConfiguration::class;
     }
 
     /**

@@ -224,4 +224,3 @@ services:
         arguments:
             - '@form.factory'
             - '@orob2b_shipping.shipping_method.registry'
-            - '@doctrine'

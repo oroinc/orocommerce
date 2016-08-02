@@ -19,6 +19,11 @@ interface ShippingMethodInterface
     /**
      * @return string
      */
+    public function getRuleConfigurationClass();
+
+    /**
+     * @return string
+     */
     public function getFormType();
 
     /**
