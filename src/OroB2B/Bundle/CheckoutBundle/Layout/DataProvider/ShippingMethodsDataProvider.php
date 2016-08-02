@@ -6,12 +6,12 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
 {
@@ -52,17 +52,21 @@ class ShippingMethodsDataProvider implements DataProviderInterface
         if (null === $this->data) {
             /** @var BaseCheckout $entity */
             $entity = $this->getEntity($layoutContext);
-            /** @var Order $sourceEntity */
-            $sourceEntity = $entity->getSourceEntity();
-            $context = [
-                'checkout' => $entity,
-                'billingAddress' => $sourceEntity->getBillingAddress(),
-                'currency' => $entity->getCurrency(),
-                'line_items' => $entity->getSourceEntity()->getLineItems(),
-            ];
-            $shippingContext = new ShippingContextProvider($context);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
-            $this->data = $this->getApplicableShippingMethods($shippingContext, $rules);
+            if (!empty($entity)) {
+                $context = [
+                    'checkout' => $entity,
+                    'billingAddress' => $entity->getBillingAddress(),
+                    'currency' => $entity->getCurrency(),
+                ];
+                /** @var ShoppingList $sourceEntity */
+                $sourceEntity = $entity->getSourceEntity();
+                if (!empty($sourceEntity)) {
+                    $context['line_items'] = $sourceEntity->getLineItems();
+                }
+                $shippingContext = new ShippingContextProvider($context);
+                $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
+                $this->data = $this->getApplicableShippingMethods($shippingContext, $rules);
+            }
         }
 
         return $this->data;

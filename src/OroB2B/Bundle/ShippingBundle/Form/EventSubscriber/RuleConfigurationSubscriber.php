@@ -78,7 +78,7 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
         $data->clear();
 
         foreach ($this->methodRegistry->getShippingMethods() as $method) {
-            $methods = $method->getTypes();
+            $methods = $method->getShippingTypes();
             if (count($methods) === 0) {
                 $methods = [$method->getName()];
             }

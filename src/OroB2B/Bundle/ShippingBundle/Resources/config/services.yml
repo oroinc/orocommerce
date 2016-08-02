@@ -209,14 +209,3 @@ services:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
-
-    orob2b_shipping.shipping_method.registry:
-        class: 'OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
-        public: false
-
-    orob2b_shipping.form_event_subscriber.rule_configuration_subscriber:
-        class: 'OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
-        arguments:
-            - '@form.factory'
-            - '@orob2b_shipping.shipping_method.registry'
-            - '@doctrine'
