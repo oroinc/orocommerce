@@ -29,7 +29,9 @@ orob2b:
             shipping_estimate.label: 'Shipping Estimate'
             shipping_estimate_amount.label: 'Shipping Estimate Ammount'
             shipping_estimate_currency.label: 'Shipping Estimate Currency'
-            shipping_address.label: Shipping Address
+            shipping_address.label: 'Shipping Address'
+            payment_term.label: 'Payment Term'
+
 
             sections:
                 general: 'General'
@@ -76,6 +78,7 @@ orob2b:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
+                payment.label: 'Payment'
 
             datagrid:
                 account.label: 'Quotes'
@@ -230,6 +233,7 @@ orob2b:
                 assigned_account_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
+                payment_term.label: 'Payment Term'
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'

@@ -58,6 +58,12 @@
                                 <td>{{ quote.shippingEstimate|oro_format_price }}</td>
                             </tr>
                             {% endif %}
+                            {% if quote.paymentTerm is not empty %}
+                                <tr class="account-oq__order-info__control">
+                                    <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.payment_term.label'|trans }}</td>
+                                    <td>{{ quote.paymentTerm|escape }}</td>
+                                </tr>
+                            {% endif %}
                             {{ block_widget(block) }}
                         </tbody>
                     </table>
