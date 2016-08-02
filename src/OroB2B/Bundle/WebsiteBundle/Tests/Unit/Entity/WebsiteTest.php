@@ -19,6 +19,7 @@ class WebsiteTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', 1],
             ['name', 'test'],
+            ['default', true],
             ['url', 'www.test.com'],
             ['owner', new BusinessUnit()],
             ['organization', new Organization()],
