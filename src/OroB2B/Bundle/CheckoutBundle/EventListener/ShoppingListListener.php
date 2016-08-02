@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 
 class ShoppingListListener
 {
@@ -73,7 +73,7 @@ class ShoppingListListener
 
     /**
      * @param string $className
-     * @return ObjectRepository
+     * @return EntityRepository
      */
     protected function getRepository($className)
     {
