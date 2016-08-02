@@ -55,13 +55,16 @@ class FrontendAccountUserFormDataProvider extends AbstractFormDataProvider
     }
 
     /**
+     * @param AccountUser $accountUser
+     *
      * @return FormAccessor
      */
-    public function getResetPasswordForm()
+    public function getResetPasswordForm(AccountUser $accountUser = null)
     {
         return $this->getFormAccessor(
             AccountUserPasswordResetType::NAME,
-            self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME
+            self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME,
+            $accountUser
         );
     }
 

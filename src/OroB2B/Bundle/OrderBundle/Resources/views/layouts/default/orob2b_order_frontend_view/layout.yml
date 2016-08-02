@@ -136,13 +136,13 @@ layout:
                 order_payment_method:
                     blockType: text
                     options:
-                        text: '=data["orob2b_order_frontend_payment_method_provider"]'
+                        text: '=data["orob2b_order_frontend_payment_method_provider"].getPaymentMethod(data["order"])'
                         label: 'orob2b.payment.methods.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text
                     options:
-                        text: '=data["orob2b_order_frontend_payment_status_provider"]'
+                        text: '=data["orob2b_order_frontend_payment_status_provider"].getPaymentStatus(data["order"])'
                         label: 'orob2b.payment.status.label'
                         block_prefixes: ['order_body_column_element']
                 order_customer_notes:

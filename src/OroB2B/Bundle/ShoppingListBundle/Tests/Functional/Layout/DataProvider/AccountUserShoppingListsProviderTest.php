@@ -39,9 +39,6 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
 
         $actual = $this->dataProvider->getShoppingLists();
 
-        $this->assertInternalType('array', $actual);
-
-        $this->assertArrayHasKey('shoppingLists', $actual);
-        $this->assertNotEmpty($actual['shoppingLists']);
+        $this->assertNotEmpty($actual);
     }
 }

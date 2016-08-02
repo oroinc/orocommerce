@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormView;
-
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 
 use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
 
@@ -27,23 +27,19 @@ class TransitionFormDataProvider extends AbstractFormDataProvider
 
     /**
      * @param WorkflowItem $workflowItem
-     * @return null|FormView
+     * @param TransitionData $transitionData
+     *
+     * @return FormAccessor
+     * @throws WorkflowException
      */
-    public function getTransitionForm(WorkflowItem $workflowItem)
+    public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
     {
-        /** @var TransitionData $continueTransitionData */
-        $transitionData = $this->transitionDataProvider->getContinueTransition($workflowItem);
-
-        if (!$transitionData || !$transitionData->getTransition()->hasForm()) {
-            return null;
-        }
-
         $transition = $transitionData->getTransition();
 
         // in this context parameters used for generating local cache
         $parameters = [$transition->getName(), $workflowItem->getId()];
 
-        $formAccessor = $this->getFormAccessor(
+        return $this->getFormAccessor(
             $transition->getFormType(),
             null,
             $workflowItem->getData(),
@@ -57,7 +53,24 @@ class TransitionFormDataProvider extends AbstractFormDataProvider
                 ]
             )
         );
+    }
 
-        return $formAccessor->getForm()->createView();
+    /**
+     * @param WorkflowItem $workflowItem
+     *
+     * @return mixed
+     */
+    public function getTransitionFormView(WorkflowItem $workflowItem)
+    {
+        /** @var TransitionData $continueTransitionData */
+        $transitionData = $this->transitionDataProvider->getContinueTransition($workflowItem);
+
+        if (!$transitionData || !$transitionData->getTransition()->hasForm()) {
+            return null;
+        }
+
+        $form = $this->getTransitionForm($workflowItem, $transitionData);
+
+        return $form->getForm()->createView();
     }
 }

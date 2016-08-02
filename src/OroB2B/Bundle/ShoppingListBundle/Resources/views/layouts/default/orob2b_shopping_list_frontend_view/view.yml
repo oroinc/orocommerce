@@ -23,7 +23,7 @@ layout:
                     blockType: action_line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll()'
+                        actions: '=data["actions"].getAll(data["entity"])'
                         entity: '=data["entity"]'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
@@ -37,9 +37,9 @@ layout:
                     options:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
                         shoppingList: '=data["entity"]'
-                        productsMatchedPrice: '=data["orob2b_shopping_list_products_matched_price"]'
-                        productsAllPrices: '=data["orob2b_shopping_list_products_all_prices"]'
-                        productsUnits: '=data["orob2b_shopping_list_products_units"]'
+                        productsMatchedPrice: '=data["orob2b_shopping_list_products"].getMatchedPrice(data["entity"])'
+                        productsAllPrices: '=data["orob2b_shopping_list_products"].getAllPrices(data["entity"])'
+                        productsUnits: '=data["orob2b_shopping_list_products_units"].getProductsUnits(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
@@ -63,7 +63,7 @@ layout:
                     blockType: action_combined_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll()'
+                        actions: '=data["actions"].getAll(data["entity"])'
                         entity: '=data["entity"]'
             tree:
                 content:
@@ -85,14 +85,14 @@ layout:
             parentId: sidebar_left
             blockType: shopping_list_selector
             options:
-                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]!=null'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()!=null'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 selectedShoppingList: '=data["entity"]'
         - '@add':
             id: shopping_lists_sidebar_list
             parentId: sidebar_left
             blockType: shopping_lists_sidebar_list
             options:
-                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]!=null'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                visible: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()!=null'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 selectedShoppingList: '=data["entity"]'

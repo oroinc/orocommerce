@@ -35,7 +35,9 @@ layout:
                 grid_render_parameters:
                     cssClass: 'inner-permissions-grid'
                 vars:
-                    options: '=data["orob2b_account_fronted_account_user_role_options"]'
+                    options:
+                        tabsOptions: '=data["orob2b_account_fronted_account_user_role_options"].getTabsOptions()'
+                        capabilitySetOptions: '=data["orob2b_account_fronted_account_user_role_options"].getCapabilitySetOptions(data["entity"])'
     imports:
         -
             id: orob2b_account_user_role_form

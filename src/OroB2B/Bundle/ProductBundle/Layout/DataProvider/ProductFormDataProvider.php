@@ -51,7 +51,7 @@ class ProductFormDataProvider extends AbstractFormDataProvider
      */
     public function getQuickAddImportForm()
     {
-        return $this->getFormAccessor(QuickAddImportFromFileType::NAME, self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        return $this->getFormAccessor(QuickAddImportFromFileType::NAME, self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
     }
 
     /**

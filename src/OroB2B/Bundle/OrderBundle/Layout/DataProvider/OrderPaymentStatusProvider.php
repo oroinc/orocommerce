@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 class OrderPaymentStatusProvider
@@ -23,11 +21,12 @@ class OrderPaymentStatusProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param Order $order
+     *
+     * @return string
      */
-    public function getData(ContextInterface $context)
+    public function getPaymentStatus(Order $order)
     {
-        $order = $context->data()->get('order');
         return $this->paymentStatusProvider->getPaymentStatus($order);
     }
 }

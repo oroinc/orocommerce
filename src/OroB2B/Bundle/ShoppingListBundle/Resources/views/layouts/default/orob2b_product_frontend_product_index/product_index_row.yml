@@ -10,7 +10,7 @@ layout:
             prepend: true
             options:
                 visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
 
     conditions: 'context["logged_user"]!=null'
 

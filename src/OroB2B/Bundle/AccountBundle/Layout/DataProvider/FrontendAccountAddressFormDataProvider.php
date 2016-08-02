@@ -28,7 +28,7 @@ class FrontendAccountAddressFormDataProvider extends AbstractFormDataProvider
         if ($accountAddress->getId()) {
             return $this->getFormAccessor(
                 AccountTypedAddressType::NAME,
-                self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME,
+                self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
                 $accountAddress,
                 ['id' => $accountAddress->getId(), 'entityId' => $account->getId()]
             );
@@ -36,7 +36,7 @@ class FrontendAccountAddressFormDataProvider extends AbstractFormDataProvider
 
         return $this->getFormAccessor(
             AccountTypedAddressType::NAME,
-            self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
+            self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME,
             $accountAddress,
             ['entityId' => $account->getId()]
         );

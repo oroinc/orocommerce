@@ -8,8 +8,6 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodsProvider
 {
-    const NAME = 'orob2b_payment_methods_provider';
-
     /**
      * @var array[]
      */
@@ -46,7 +44,7 @@ class PaymentMethodsProvider
     public function getViews($entity = null)
     {
         if (null === $this->paymentMethodViews) {
-            $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+            $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
             foreach ($views as $view) {
@@ -59,6 +57,26 @@ class PaymentMethodsProvider
         }
 
         return $this->paymentMethodViews;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @param $entity
+     * @return array[]
+     */
+    public function getView($paymentMethod, $entity = null)
+    {
+        if (!$this->paymentMethodViews) {
+            $this->getViews($entity);
+        }
+
+        if ($this->isPaymentMethodEnabled($paymentMethod) &&
+            $this->isPaymentMethodApplicable($paymentMethod, $entity)
+        ) {
+            return $this->paymentMethodViews[$paymentMethod];
+        }
+        return null;
+
     }
 
     /**
@@ -91,7 +109,7 @@ class PaymentMethodsProvider
         if (!$paymentMethod->isEnabled()) {
             return false;
         }
-        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+        $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
         return $paymentMethod->isApplicable($paymentContext);
     }
@@ -102,7 +120,7 @@ class PaymentMethodsProvider
      */
     public function hasApplicablePaymentMethods($entity)
     {
-        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+        $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
         $paymentMethods = $this->paymentMethodRegistry->getPaymentMethods();
         foreach ($paymentMethods as $paymentMethod) {

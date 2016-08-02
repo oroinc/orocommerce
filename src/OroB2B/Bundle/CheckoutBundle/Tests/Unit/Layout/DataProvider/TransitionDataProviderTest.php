@@ -130,11 +130,9 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBackTransitionNull()
     {
-        $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
-        $checkout->setWorkflowItem($workflowItem);
 
         $transitions = [];
 
@@ -143,6 +141,6 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($workflowItem)
             ->will($this->returnValue($transitions));
 
-        $this->assertNull($this->dataProvider->getBackTransition($checkout));
+        $this->assertNull($this->dataProvider->getBackTransition($workflowItem));
     }
 }
