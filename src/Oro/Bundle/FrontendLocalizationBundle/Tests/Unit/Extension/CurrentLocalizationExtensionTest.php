@@ -33,7 +33,7 @@ class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
         $this->token = $this->getMock(TokenInterface::class);
 
         $this->localizationManager = $this->getMockBuilder(UserLocalizationManager::class)
-            ->disableoriginalConstructor()
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->extension = new CurrentLocalizationExtension($this->tokenStorage, $this->localizationManager);

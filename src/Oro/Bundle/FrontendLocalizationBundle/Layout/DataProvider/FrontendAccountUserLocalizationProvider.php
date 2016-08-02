@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
-
-class LocalizationsProvider implements DataProviderInterface
+class FrontendAccountUserLocalizationProvider implements DataProviderInterface
 {
+    const NAME = 'frontend_account_user_localization';
+
     /**
      * @var UserLocalizationManager
      */
@@ -27,7 +29,7 @@ class LocalizationsProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'orob2b_website_localizations';
+        return self::NAME;
     }
 
     /**
@@ -35,9 +37,6 @@ class LocalizationsProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        return [
-            'localizations' => $this->userLocalizationManager->getEnabledLocalizations(),
-            'current_localization' => $this->userLocalizationManager->getCurrentLocalization(),
-        ];
+        return $this->userLocalizationManager->getCurrentLocalization();
     }
 }

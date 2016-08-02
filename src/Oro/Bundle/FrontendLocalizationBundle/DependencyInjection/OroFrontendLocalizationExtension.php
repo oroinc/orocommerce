@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Loader;
 class OroFrontendLocalizationExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {

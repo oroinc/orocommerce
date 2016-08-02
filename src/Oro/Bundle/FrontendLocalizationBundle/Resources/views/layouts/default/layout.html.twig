@@ -1,13 +1,13 @@
 {% block localization_switcher_widget %}
-    {% if data.localizations|length > 1 %}
+    {% if localizations|length > 1 %}
         <div class="oro-toolbar"
              data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
              data-page-component-options="{{ {
-                 'selectedLocalization': data.current_localization.titles|oro_localized_value,
+                 'selectedLocalization': selected_localization.titles|oro_localized_value,
                  'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
              }|json_encode }}">
             <div class="oro-toolbar__content" data-toggle="dropdown">
-                {{ data.current_localization.titles|oro_localized_value }}
+                {{ selected_localization.titles|oro_localized_value }}
                 <span class="oro-toolbar__icon">
                     <i class="cf-down-open-mini"></i>
                 </span>
@@ -15,7 +15,7 @@
 
             <div class="oro-toolbar__dropdown dropdown-menu">
                 <ul class="oro-toolbar__list">
-                    {% for localization in data.localizations %}
+                    {% for localization in localizations %}
                     <li class="oro-toolbar__list-item">
                         <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
                             {{ localization.titles|oro_localized_value }}
