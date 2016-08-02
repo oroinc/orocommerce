@@ -1,0 +1,11 @@
+parent: blank
+label: Blank theme
+description: Blank theme based on BEM methodology
+groups: [ commerce ]
+data:
+    assets:
+        styles:
+            inputs:
+                - 'bundles/orob2bfrontend/blank/blank.scss'
+            filters: ['cssrewrite', 'cssmin']
+            output: 'css/layout/blank/blank.css'
