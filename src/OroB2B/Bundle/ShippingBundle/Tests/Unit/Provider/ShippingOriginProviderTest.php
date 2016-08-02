@@ -62,10 +62,15 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
      *
      * @param Warehouse $warehouse
      * @param ShippingOriginWarehouse|null $shippingOriginWarehouse
-     * @param string $expected
+     * @param string $expectedClass
+     * @param bool $expectedIsSystem
      */
-    public function testGetShippingOriginByWarehouse(Warehouse $warehouse, $shippingOriginWarehouse, $expected)
-    {
+    public function testGetShippingOriginByWarehouse(
+        Warehouse $warehouse,
+        $shippingOriginWarehouse,
+        $expectedClass,
+        $expectedIsSystem
+    ) {
         $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('findOneBy')
@@ -97,7 +102,8 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
 
         $shippingOrigin = $this->shippingOriginProvider->getShippingOriginByWarehouse($warehouse);
 
-        $this->assertInstanceOf($expected, $shippingOrigin);
+        $this->assertInstanceOf($expectedClass, $shippingOrigin);
+        $this->assertEquals($expectedIsSystem, $shippingOrigin->isSystem());
     }
 
     /**
@@ -148,12 +154,14 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     []
                 ),
-                'expected' => ShippingOrigin::class
+                'expectedClass' => ShippingOrigin::class,
+                'expectedIsSystem' => false
             ],
             [
                 'warehouse' => $warehouse,
                 'shippingOriginWarehouse' => null,
-                'expected' => ShippingOrigin::class
+                'expectedClass' => ShippingOrigin::class,
+                'expectedIsSystem' => true
             ]
         ];
     }
