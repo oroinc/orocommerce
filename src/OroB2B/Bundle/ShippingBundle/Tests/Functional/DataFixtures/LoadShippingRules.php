@@ -102,7 +102,6 @@ class LoadShippingRules extends AbstractFixture
                     $manager->persist($flatConfig);
                     $entity->addConfiguration($flatConfig);
                 }
-
             }
 
             $manager->persist($entity);

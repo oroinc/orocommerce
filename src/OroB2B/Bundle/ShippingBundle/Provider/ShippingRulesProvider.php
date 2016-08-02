@@ -40,8 +40,7 @@ class ShippingRulesProvider
      */
     public function getShippingRules()
     {
-        $repo = $this->getShippingRuleRepository();
-        return $repo->findAll();
+        return $this->getShippingRuleRepository()->findAll();
     }
 
     /**
@@ -72,11 +71,10 @@ class ShippingRulesProvider
      */
     protected function getShippingRuleRepository()
     {
-        $repo = $this->doctrineHelper
+        return $this->doctrineHelper
             ->getEntityManagerForClass('OroB2BShippingBundle:ShippingRule')
-            ->getRepository('OroB2BShippingBundle:ShippingRule');
-
-        return $repo;
+            ->getRepository('OroB2BShippingBundle:ShippingRule')
+        ;
     }
 
     /**
@@ -88,6 +86,7 @@ class ShippingRulesProvider
     {
         $language = new ExpressionLanguage();
         $result = ($language->evaluate($conditions, $context));
+
         return $result;
     }
 }
