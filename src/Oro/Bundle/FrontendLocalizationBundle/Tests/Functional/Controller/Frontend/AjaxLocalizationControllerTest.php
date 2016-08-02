@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -30,13 +32,19 @@ class AjaxLocalizationControllerTest extends WebTestCase
 
     /**
      * @dataProvider setCurrentLocalizationProvider
+     *
+     * @param string $code
+     * @param array $expectedResult
      */
-    public function testSetCurrentLocalizationAction($code, $expectedResult)
+    public function testSetCurrentLocalizationAction($code, array $expectedResult)
     {
         $localization = $this->getLocalizationByCode($code);
 
-        $params = ['localization' => $localization->getId()];
-        $this->client->request('POST', $this->getUrl('oro_frontend_localization_frontend_set_current_localization'), $params);
+        $this->client->request(
+            Request::METHOD_POST,
+            $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
+            ['localization' => $localization->getId()]
+        );
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);

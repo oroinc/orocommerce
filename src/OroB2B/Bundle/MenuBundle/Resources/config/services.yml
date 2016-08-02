@@ -68,7 +68,7 @@ services:
         public: false
         arguments:
             - "@orob2b_menu.menu.database_builder"
-            - "@oro_locale.provider.localization"
+            - "@oro_locale.helper.localization"
             - "@orob2b_menu.menu_serializer"
             - "@doctrine"
         calls:

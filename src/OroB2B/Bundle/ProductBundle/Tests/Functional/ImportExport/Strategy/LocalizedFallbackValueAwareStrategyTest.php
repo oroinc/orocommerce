@@ -227,10 +227,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function skippedDataProvider()
     {
-        $localizationEnUs = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'name' => 'English (United States)'
-        ]);
-
         return [
             'new product, no fallback from another entity' => [
                 [
@@ -276,7 +272,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
                                 'string' => 'product.4 en_US Title',
-                                'localization' => $localizationEnUs],
+                                'localization' => [
+                                    'testEntity' => Localization::class,
+                                    'testProperties' => [
+                                        'name' => 'English (United States)',
+                                    ],
+                                ],
+                            ],
                         ],
                     ]
                 ],

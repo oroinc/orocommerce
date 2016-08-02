@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Provider\LocalizationProvider;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -45,9 +45,9 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
     protected $currentLocalization;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper
      */
-    protected $localizationProvider;
+    protected $localizationHelper;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|MenuSerializer
@@ -69,10 +69,10 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->builder = $this->getMock('OroB2B\Bundle\MenuBundle\Menu\BuilderInterface');
 
         $this->currentLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $this->localizationProvider = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Provider\LocalizationProvider')
+        $this->localizationHelper = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Helper\LocalizationHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->localizationProvider->expects($this->any())
+        $this->localizationHelper->expects($this->any())
             ->method('getCurrentLocalization')
             ->willReturn($this->currentLocalization);
 
@@ -86,7 +86,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = new DatabaseMenuProvider(
             $this->builder,
-            $this->localizationProvider,
+            $this->localizationHelper,
             $this->serializer,
             $this->registry
         );
@@ -236,7 +236,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testRebuildCacheByAliasWithoutCache()
     {
-        $this->localizationProvider->expects($this->never())
+        $this->localizationHelper->expects($this->never())
             ->method('getLocalizations');
         $this->provider->rebuildCacheByAlias('test_menu');
     }
@@ -252,7 +252,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $serializedMenuKz = ['menuItem1kz', 'menuItem2kz'];
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
-        $this->localizationProvider->expects($this->once())
+        $this->localizationHelper->expects($this->once())
             ->method('getLocalizations')
             ->willReturn(
                 [
@@ -317,7 +317,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $menuEn = $this->getMock('Knp\Menu\ItemInterface');
         $serializedMenuEn = ['menuItem1en', 'menuItem2kz'];
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
-        $this->localizationProvider->expects($this->once())
+        $this->localizationHelper->expects($this->once())
             ->method('getLocalizations')
             ->willReturn([$enLocalization]);
         $this->builder->expects($this->once())
@@ -345,7 +345,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testClearCacheByAliasWithoutCache()
     {
-        $this->localizationProvider->expects($this->never())
+        $this->localizationHelper->expects($this->never())
             ->method('getLocalizations');
         $this->provider->clearCacheByAlias('test_menu');
     }
@@ -357,7 +357,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $alias = 'test_menu';
         $enLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $kzLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_KZ]);
-        $this->localizationProvider->expects($this->once())
+        $this->localizationHelper->expects($this->once())
             ->method('getLocalizations')
             ->willReturn(
                 [
