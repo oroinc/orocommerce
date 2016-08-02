@@ -61,6 +61,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
             $sourceEntity = $entity->getSourceEntity();
             $context = [
                 'checkout' => $entity,
+                'billingAddress' => $entity->getBillingAddress(),
                 'currency' => $entity->getCurrency(),
                 'line_items' => $sourceEntity->getLineItems(),
             ];

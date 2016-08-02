@@ -2,8 +2,12 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Method;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
+use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
 class FlatRateShippingMethod implements ShippingMethodInterface
 {
@@ -20,9 +24,32 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function getTypes()
+    public function getLabel()
+    {
+        return "Flat Rate";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getShippingTypes()
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getShippingTypeLabel($type)
+    {
+        $labels = [
+            'per_item' => 'Per Item',
+            'per_order' => 'Per Order'
+        ];
+        if (in_array($type, $this->getShippingTypes(), true)) {
+            return $labels[$type];
+        }
+        return null;
     }
 
     /**
@@ -36,8 +63,26 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function calculatePrice(ShippingRuleConfiguration $entity)
+    public function getOptions(array $context = [])
     {
-        // TODO: will be implemented in BB-2815
+        // TODO: Implement getOptions() method.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSortOrder()
+    {
+        // TODO: Implement getSortOrder() method.
+    }
+
+    /**
+     * @param ShippingContextAwareInterface $context
+     * @param FlatRateRuleConfiguration|ShippingRuleConfiguration $configEntity
+     * @return null|Price
+     */
+    public function calculatePrice(ShippingContextAwareInterface $context, ShippingRuleConfiguration $configEntity)
+    {
+        return $configEntity->getPrice();
     }
 }
