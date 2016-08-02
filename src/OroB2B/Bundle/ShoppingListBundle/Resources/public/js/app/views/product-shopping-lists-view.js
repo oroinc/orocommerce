@@ -82,6 +82,7 @@ define(function(require) {
                     productModel: this.model
                 }
             });
+            mediator.trigger('layout:adjustHeight');
         },
 
         updateShoppingLists: function() {

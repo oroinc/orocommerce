@@ -180,9 +180,7 @@
 
 {% block _line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__qty product-item__qty_<%= themeOptions.view %>",
-        'data-product-footer': '',
-        'data-theme': "<%= themeOptions.view %>"
+        '~class': " product-item__qty product-item__qty_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

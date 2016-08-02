@@ -7,19 +7,11 @@ define(function(require) {
     var BaseModel = require('oroui/js/app/models/base/model');
     var $ = require('jquery');
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
-        options: {
-            offset: 20,
-            elInRow: 5
-        },
-
         elements: {
             quantity: '[data-name="field__quantity"]',
-            unit: '[data-name="field__unit"]',
-            footer: '[data-product-footer]',
-            shoppingLists: '[data-product-shopping-lists]'
+            unit: '[data-name="field__unit"]'
         },
 
         modelElements: {
@@ -34,18 +26,15 @@ define(function(require) {
         },
 
         initialize: function(options) {
-            this.options = _.extend(this.options, options || {});
             BaseProductView.__super__.initialize.apply(this, arguments);
 
-            this.initModel(this.options);
-            this.initializeElements(this.options);
+            this.initModel(options);
+            this.initializeElements(options);
             this.initLayout({
                 productModel: this.model
             });
 
             this.model.on('change:quantity', this.updateQuantity, this);
-
-            this.render();
         },
 
         updateQuantity: function() {
@@ -71,59 +60,9 @@ define(function(require) {
 
         dispose: function() {
             delete this.modelAttr;
-            delete this.$conteiner;
-            delete this.$conteinerіs;
-            delete this.$currentFooter;
-            delete this.$footers;
-            delete this.$shoppingLists;
             this.disposeElements();
             this.model.off('change:quantity', this.updateQuantity, this);
-            this.model.off('editLineItem', this.alignFooter, this);
-            mediator.off(null, null, this);
             BaseProductView.__super__.dispose.apply(this, arguments);
-        },
-
-        render: function() {
-            this.$conteiner = this.$el.parent();
-            this.$conteinerіs = this.$conteiner.add(this.$conteiner.siblings());
-            this.$currentFooter = $(this.elements.footer, this.$el);
-            this.$footers = $(this.elements.footer);
-            this.$shoppingLists = $(this.elements.shoppingLists);
-
-            if (this.$currentFooter.data('theme') === 'gallery-view') {
-                this.model.on('editLineItem', this.alignFooter);
-                mediator.on('shopping-list-event:update', _.bind(this.alignFooter, this));
-                mediator.on('page:afterChange', _.bind(this.alignFooter, this));
-            }
-        },
-
-        alignFooter: function() {
-            var self = this;
-
-            this.$conteinerіs.each(function(index) {
-                var $this = $(this);
-                var $currentShoppingLists = $this.find(self.elements.shoppingLists);
-                var startPos = Math.floor(index / self.options.elInRow, 0) * self.options.elInRow;
-                var endPos = startPos + self.options.elInRow;
-                var $footersListsRow = self.$footers.slice(startPos, endPos);
-                var $shoppingListsRow = self.$shoppingLists.slice(startPos, endPos);
-                var maxFooterHeight = self._getMaxHeight($footersListsRow);
-                var maxShippingListsHeight = self._getMaxHeight($shoppingListsRow);
-                var shoppingListHeight = $currentShoppingLists.outerHeight();
-                var offset = (maxFooterHeight + self.options.offset) - (maxShippingListsHeight - shoppingListHeight);
-
-                $this.css({
-                    'margin-bottom': offset
-                });
-            });
-        },
-
-        _getMaxHeight: function($collections) {
-            var heights = $collections.map(function() {
-                return $(this).outerHeight();
-            }).get();
-
-            return Math.max.apply(null, heights);
         }
     }));
 
