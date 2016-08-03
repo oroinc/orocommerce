@@ -138,6 +138,13 @@ layout:
                         text: {'@value': $data.orob2b_order_frontend_payment_method_provider }
                         label: 'orob2b.payment.methods.label'
                         block_prefixes: ['order_body_column_element']
+                order_payment_term:
+                    blockType: text
+                    options:
+                        text: {'@value': $data.order.paymentTerm }
+                        label: 'orob2b.order.payment_term.label'
+                        block_prefixes: ['order_body_column_element']
+                        visible: { '@not_empty': $data.order.paymentTerm }
                 order_payment_status:
                     blockType: text
                     options:
@@ -187,6 +194,7 @@ layout:
                                         order_po_number: ~
                                         order_shipping_method: ~
                                         order_payment_method: ~
+                                        order_payment_term: ~
                                         order_payment_status: ~
                                         order_ship_until: ~
                                         order_po_number: ~
