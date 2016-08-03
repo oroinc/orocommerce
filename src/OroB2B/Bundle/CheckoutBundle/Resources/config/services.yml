@@ -76,6 +76,14 @@ services:
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
 
+    orob2b_checkout.layout.data_provider.shipping_methods:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+        tags:
+            - { name: layout.data_provider, alias: shipping_methods_data_provider }
+
     orob2b_checkout.model.action.start_checkout:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout'
         calls:

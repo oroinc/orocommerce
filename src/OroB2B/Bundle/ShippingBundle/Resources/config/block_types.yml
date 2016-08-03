@@ -1,0 +1,13 @@
+services:
+    orob2b_shipping.layout.block_type.shipping_methods:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        methods: {required: true}
+                        currentShippingMethod: {required: true}
+            - [setName, ['shipping_methods']]
+        tags:
+            - { name: layout.block_type, alias: shipping_methods }

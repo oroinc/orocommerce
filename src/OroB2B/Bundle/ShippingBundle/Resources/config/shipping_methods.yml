@@ -1,0 +1,16 @@
+services:
+    orob2b_shipping.shipping_method.registry:
+        class: 'OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
+        public: false
+
+    orob2b_shipping.shipping_method.flat_rate:
+        class: 'OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod'
+        public: false
+        tags:
+            - {name: orob2b_shipping_method}
+
+    orob2b_shipping.provider.shipping_rules:
+        class: 'OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_method.registry'

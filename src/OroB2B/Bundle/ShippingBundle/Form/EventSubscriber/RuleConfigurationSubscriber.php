@@ -72,7 +72,7 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
 
         $index = 0;
         foreach ($this->methodRegistry->getShippingMethods() as $method) {
-            $types = $method->getTypes();
+            $types = $method->getShippingTypes();
             if (count($types) === 0) {
                 $types = [$method->getName()];
             }
