@@ -14,9 +14,8 @@ class ShippingMethodLabelFormatter
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
      */
-    public function __construct(
-        ShippingMethodRegistry $shippingMethodRegistry
-    ) {
+    public function __construct(ShippingMethodRegistry $shippingMethodRegistry)
+    {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
     }
 

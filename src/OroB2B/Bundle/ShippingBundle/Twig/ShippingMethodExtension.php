@@ -16,9 +16,8 @@ class ShippingMethodExtension extends \Twig_Extension
     /**
      * @param ShippingMethodLabelFormatter $shippingMethodLabelFormatter
      */
-    public function __construct(
-        ShippingMethodLabelFormatter $shippingMethodLabelFormatter
-    ) {
+    public function __construct(ShippingMethodLabelFormatter $shippingMethodLabelFormatter)
+    {
         $this->shippingMethodLabelFormatter = $shippingMethodLabelFormatter;
     }
 

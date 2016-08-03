@@ -100,12 +100,12 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             [
                 'shippingMethod'           => 'shipping_method_1',
                 'shippingMethodLabel'      => 'Shipping Method 1 Label',
-                'expectedResult'          => 'Shipping Method 1 Label',
+                'expectedResult'           => 'Shipping Method 1 Label',
             ],
             [
                 'shippingMethod'           => 'shipping_method_2',
                 'shippingMethodLabel'      => 'Shipping Method 2 Label',
-                'expectedResult'          => 'Shipping Method 2 Label',
+                'expectedResult'           => 'Shipping Method 2 Label',
             ],
         ];
     }

@@ -19,26 +19,22 @@ class ShippingCostCalculationProvider
     }
 
     /**
-     * @return ShippingMethodRegistry
-     */
-    public function getShippingMethodRegistry()
-    {
-        return $this->registry;
-    }
-
-    /**
-     * @param BaseCheckout $checkout
+     * @param BaseCheckout $entity
      * @param ShippingRuleConfiguration $config
      * @return Price
      */
-    public function calculatePrice(BaseCheckout $checkout, ShippingRuleConfiguration $config)
+    public function calculatePrice(BaseCheckout $entity, ShippingRuleConfiguration $config)
     {
         $method = $this->registry->getShippingMethod($config->getMethod());
         $context = [
-            'checkout' => $checkout,
-            'currency' => $checkout->getCurrency(),
-            'line_items' => $checkout->getSourceEntity()->getLineItems(),
+            'checkout' => $entity,
+            'billingAddress' => $entity->getBillingAddress(),
+            'currency' => $entity->getCurrency(),
         ];
+        $sourceEntity = $entity->getSourceEntity();
+        if (!empty($sourceEntity)) {
+            $context['line_items'] = $sourceEntity->getLineItems();
+        }
         $shippingContext = new ShippingContextProvider($context);
         $cost = $method->calculatePrice($shippingContext, $config);
         
