@@ -67,7 +67,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $total->setCurrency('EUR');
 
         $this->totalProcessorProvider
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getTotal')
             ->with($this->checkout)
             ->willReturn($total);
@@ -119,7 +119,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $total->setCurrency('EUR');
 
         $this->totalProcessorProvider
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getTotal')
             ->with($this->checkout)
             ->willReturn($total);

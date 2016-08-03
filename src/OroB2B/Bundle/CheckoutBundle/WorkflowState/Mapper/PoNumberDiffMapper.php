@@ -44,6 +44,6 @@ class PoNumberDiffMapper implements CheckoutStateDiffMapperInterface
             return true;
         }
 
-        return $savedState[$this->getName()] === $checkout->getPoNumber();
+        return $savedState[$this->getName()] === $this->getCurrentState($checkout);
     }
 }

@@ -66,9 +66,7 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
             return true;
         }
 
-        $total = $this->totalProcessorProvider->getTotal($checkout);
-
-        return $savedState[$this->getName()]['amount'] === $total->getAmount() &&
-            $savedState[$this->getName()]['currency'] === $total->getCurrency();
+        return $savedState[$this->getName()]['amount'] === $this->getCurrentState($checkout)['amount'] &&
+            $savedState[$this->getName()]['currency'] === $this->getCurrentState($checkout)['currency'];
     }
 }

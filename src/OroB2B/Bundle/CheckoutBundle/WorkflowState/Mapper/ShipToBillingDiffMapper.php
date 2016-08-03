@@ -44,6 +44,6 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
             return true;
         }
 
-        return $savedState[$this->getName()] === $checkout->isShipToBillingAddress();
+        return $savedState[$this->getName()] === $this->getCurrentState($checkout);
     }
 }

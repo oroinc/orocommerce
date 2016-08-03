@@ -66,6 +66,6 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
             return true;
         }
 
-        return $paymentMethod === $checkout->getPaymentMethod();
+        return $paymentMethod === $this->getCurrentState($checkout);
     }
 }

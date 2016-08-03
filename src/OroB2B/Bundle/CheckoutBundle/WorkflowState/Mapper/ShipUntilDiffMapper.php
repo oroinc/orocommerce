@@ -44,6 +44,6 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
             return true;
         }
 
-        return $savedState[$this->getName()] === $checkout->getShipUntil();
+        return $savedState[$this->getName()] === $this->getCurrentState($checkout);
     }
 }

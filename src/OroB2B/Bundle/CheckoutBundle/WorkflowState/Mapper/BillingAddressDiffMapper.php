@@ -41,7 +41,7 @@ class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
 
         if (!empty($checkout->getBillingAddress())) {
             return [
-                'text' => $checkout->getBillingAddress()->__toString(),
+                'text' => (string) $checkout->getBillingAddress(),
             ];
         }
 
@@ -63,12 +63,10 @@ class BillingAddressDiffMapper implements CheckoutStateDiffMapperInterface
             isset($savedState[$this->getName()]['updated']) &&
             $savedState[$this->getName()]['updated'] instanceof \DateTimeInterface
         ) {
-            return $savedState[$this->getName()]['id'] ===
-                    $checkout->getBillingAddress()->getAccountUserAddress()->getId() &&
-                $savedState[$this->getName()]['updated'] >=
-                    $checkout->getBillingAddress()->getAccountUserAddress()->getUpdated();
+            return $savedState[$this->getName()]['id'] === $this->getCurrentState($checkout)['id'] &&
+                $savedState[$this->getName()]['updated'] >= $this->getCurrentState($checkout)['updated'];
         } elseif (isset($savedState[$this->getName()]['text'])) {
-            return $savedState[$this->getName()]['text'] === $checkout->getBillingAddress()->__toString();
+            return $savedState[$this->getName()]['text'] === (string) $checkout->getBillingAddress();
         }
 
         return true;
