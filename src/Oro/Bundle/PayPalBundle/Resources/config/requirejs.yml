@@ -1,0 +1,11 @@
+config:
+    paths:
+        'oropaypal/js/lib/jquery-credit-card-validator': 'bundles/oropaypal/js/lib/jquery.creditCardValidator.js'
+        'oropaypal/js/app/components/credit-card-component': 'bundles/oropaypal/js/app/components/credit-card-component.js'
+        'oropaypal/js/app/components/authorized-credit-card-component': 'bundles/oropaypal/js/app/components/authorized-credit-card-component.js'
+        'oropaypal/js/app/components/payflow-express-checkout-component': 'bundles/oropaypal/js/app/components/payflow-express-checkout-component.js'
+        'oropaypal/js/validator/credit-card-expiration-date': 'bundles/oropaypal/js/validator/credit-card-expiration-date.js'
+        'oropaypal/js/validator/credit-card-expiration-date-not-blank': 'bundles/oropaypal/js/validator/credit-card-expiration-date-not-blank.js'
+        'oropaypal/js/validator/credit-card-number': 'bundles/oropaypal/js/validator/credit-card-number.js'
+        'oropaypal/js/validator/credit-card-type': 'bundles/oropaypal/js/validator/credit-card-type.js'
+        'oropaypal/js/adapter/credit-card-validator-adapter': 'bundles/oropaypal/js/adapter/credit-card-validator-adapter.js'

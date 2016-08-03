@@ -1,0 +1,58 @@
+.featured-categories {
+    .embedded-list__container {
+        display: flex;
+        flex-wrap: wrap;
+
+        font-size: 0;
+    }
+
+    .embedded-list__item {
+        display: inline-block;
+        width: 33.33%;
+        padding: 0 8px;
+
+        font-size: $base-font-size;
+        text-align: center;
+
+        &:nth-child(3n+1) {
+            padding-right: 16px;
+            padding-left: 0;
+
+            text-align: left;
+        }
+
+        &:nth-child(3n) {
+            padding-right: 0;
+            padding-left: 16px;
+
+            text-align: right;
+        }
+    }
+
+    @include breakpoint($phone-width) {
+        .embedded-list__item {
+            width: 50%;
+
+            &:nth-child(3n),
+            &:nth-child(3n+1) {
+                padding: 0 4px;
+
+                text-align: center;
+            }
+
+            &:nth-child(2n+1) {
+                padding-right: 8px;
+                padding-left: 0;
+
+                text-align: left;
+            }
+
+            &:nth-child(2n) {
+                padding-right: 0;
+                padding-left: 8px;
+
+                text-align: right;
+            }
+        }
+    }
+}

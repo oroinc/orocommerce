@@ -34,10 +34,3 @@
         {{ view.options.value }}
     </div>
 {% endblock %}
-
-{% block _payment_methods_credit_card_widget %}
-    {{ form_widget(
-        view.options.formView,
-        {class_prefix: class_prefix, paymentMethod: name, options: view.options})
-    }}
-{% endblock %}

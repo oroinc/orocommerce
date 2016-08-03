@@ -1,0 +1,52 @@
+.hero-promo {
+    position: relative;
+
+    margin-top: 25px;
+
+    .embedded-list__container--slider {
+        overflow: hidden;
+        height: 1px;
+    }
+
+    .embedded-list__container--slider.slick-initialized {
+        height: auto;
+    }
+
+    .slick-dots {
+        @include list-normalize();
+
+        position: absolute;
+        bottom: 0;
+
+        display: flex;
+        justify-content: center;
+        width: 63.46%;
+        margin: 0 auto 20px;
+    }
+
+    .slick-dots li button {
+        display: block;
+        height: 10px;
+        width: 10px;
+        margin-left: 8px;
+        padding: 0;
+
+        text-indent: -100px;
+
+        border-radius: 5px;
+        border: 1px solid $base-white-color;
+        background: transparent;
+    }
+
+    .slick-dots li:first-child button {
+        margin-left: 0;
+    }
+
+    .slick-dots .slick-active button {
+        background: $base-white-color;
+    }
+
+    @include breakpoint($phone-width) {
+        margin-top: 5px;
+    }
+}
