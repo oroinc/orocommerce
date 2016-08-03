@@ -2,49 +2,15 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper;
 
-class ShipUntilDiffMapperTest extends \PHPUnit_Framework_TestCase
+class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var ShipUntilDiffMapper
-     */
-    protected $mapper;
-
-    /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $checkout;
-
     public function setUp()
     {
+        parent::setUp();
+
         $this->mapper = new ShipUntilDiffMapper();
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
-    }
-
-    public function tearDown()
-    {
-        unset($this->mapper, $this->checkout);
-    }
-
-    public function testIsEntitySupported()
-    {
-        $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
-    }
-
-    public function testIsEntitySupportedNotObject()
-    {
-        $entity = 'string';
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
-    }
-
-    public function testIsEntitySupportedUnsupportedEntity()
-    {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
     }
 
     public function testGetName()

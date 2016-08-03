@@ -10,13 +10,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 /**
  * @SuppressWarnings("TooManyPublicMethods")
  */
-class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
+class BillingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var BillingAddressDiffMapper
-     */
-    protected $mapper;
-
     /**
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -24,13 +19,17 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->mapper = new BillingAddressDiffMapper();
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
     public function tearDown()
     {
-        unset($this->mapper, $this->billingAddress);
+        parent::tearDown();
+
+        unset($this->billingAddress);
     }
 
     /**
@@ -39,38 +38,12 @@ class BillingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCheckout($billingAddress)
     {
-        $checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
-
-        $checkout
+        $this->checkout
             ->expects($this->any())
             ->method('getBillingAddress')
             ->willReturn($billingAddress);
 
-        return $checkout;
-    }
-
-    public function testIsEntitySupported()
-    {
-        $this->assertEquals(
-            true,
-            $this->mapper->isEntitySupported(
-                $this->getCheckout($billingAddress = $this->billingAddress)
-            )
-        );
-    }
-
-    public function testIsEntitySupportedNotObject()
-    {
-        $entity = 'string';
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
-    }
-
-    public function testIsEntitySupportedUnsupportedEntity()
-    {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        return $this->checkout;
     }
 
     public function testGetName()

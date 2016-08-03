@@ -3,25 +3,11 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
-/**
- * @SuppressWarnings("TooManyPublicMethods")
- */
-class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var PaymentMethodDiffMapper
-     */
-    protected $mapper;
-
-    /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $checkout;
-
     /**
      * @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -34,6 +20,8 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->paymentMethod = $this->getMock('\OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
@@ -43,31 +31,13 @@ class PaymentMethodDiffMapperTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->paymentMethod);
 
         $this->mapper = new PaymentMethodDiffMapper($this->paymentMethodRegistry);
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
     public function tearDown()
     {
-        unset($this->mapper, $this->checkout, $this->paymentMethodRegistry, $this->paymentMethod);
-    }
+        parent::tearDown();
 
-    public function testIsEntitySupported()
-    {
-        $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
-    }
-
-    public function testIsEntitySupportedNotObject()
-    {
-        $entity = 'string';
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
-    }
-
-    public function testIsEntitySupportedUnsupportedEntity()
-    {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        unset($this->paymentMethodRegistry, $this->paymentMethod);
     }
 
     public function testGetName()

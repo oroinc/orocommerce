@@ -3,25 +3,11 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\TotalAmountDiffMapper;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-/**
- * @SuppressWarnings("TooManyPublicMethods")
- */
-class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
+class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var TotalAmountDiffMapper
-     */
-    protected $mapper;
-
-    /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $checkout;
-
     /**
      * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -29,37 +15,21 @@ class TotalAmountDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->totalProcessorProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->mapper = new TotalAmountDiffMapper($this->totalProcessorProvider);
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
     public function tearDown()
     {
-        unset($this->mapper, $this->checkout, $this->totalProcessorProvider);
-    }
+        parent::tearDown();
 
-    public function testIsEntitySupported()
-    {
-        $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
-    }
-
-    public function testIsEntitySupportedNotObject()
-    {
-        $entity = 'string';
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
-    }
-
-    public function testIsEntitySupportedUnsupportedEntity()
-    {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        unset($this->totalProcessorProvider);
     }
 
     public function testGetName()

@@ -10,13 +10,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 /**
  * @SuppressWarnings("TooManyPublicMethods")
  */
-class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
+class ShippingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var ShippingAddressDiffMapper
-     */
-    protected $mapper;
-
     /**
      * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -24,14 +19,17 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->mapper = new ShippingAddressDiffMapper();
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->shippingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
     public function tearDown()
     {
-        unset($this->mapper, $this->checkout, $this->shippingAddress);
+        parent::tearDown();
+
+        unset($this->shippingAddress);
     }
 
     /**
@@ -40,38 +38,12 @@ class ShippingAddressDiffMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCheckout($shippingAddress)
     {
-        $checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
-
-        $checkout
+        $this->checkout
             ->expects($this->any())
             ->method('getShippingAddress')
             ->willReturn($shippingAddress);
 
-        return $checkout;
-    }
-
-    public function testIsEntitySupported()
-    {
-        $this->assertEquals(
-            true,
-            $this->mapper->isEntitySupported(
-                $this->getCheckout($shippingAddress = $this->shippingAddress)
-            )
-        );
-    }
-
-    public function testIsEntitySupportedNotObject()
-    {
-        $entity = 'string';
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
-    }
-
-    public function testIsEntitySupportedUnsupportedEntity()
-    {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        return $this->checkout;
     }
 
     public function testGetName()
