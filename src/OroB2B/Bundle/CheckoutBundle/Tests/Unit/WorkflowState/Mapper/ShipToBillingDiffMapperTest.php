@@ -20,13 +20,13 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $checkout;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->mapper = new ShipToBillingDiffMapper();
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         unset($this->mapper, $this->checkout);
     }
