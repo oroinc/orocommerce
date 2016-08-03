@@ -572,6 +572,7 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: postPersist }
 
     orob2b_pricing.entity_listener.abstract_rule_listener:
         class: 'OroB2B\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener'

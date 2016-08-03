@@ -34,6 +34,17 @@ class PriceRuleEntityListener
      *
      * @param PriceRule $priceRule
      */
+    public function postPersist(PriceRule $priceRule)
+    {
+        $this->clearCache($priceRule);
+        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+    }
+
+    /**
+     * Recalculate price rules on price rule change.
+     *
+     * @param PriceRule $priceRule
+     */
     public function preUpdate(PriceRule $priceRule)
     {
         $this->clearCache($priceRule);
