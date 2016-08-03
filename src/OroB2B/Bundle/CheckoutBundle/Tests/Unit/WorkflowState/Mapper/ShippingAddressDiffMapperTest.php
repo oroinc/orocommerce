@@ -17,7 +17,7 @@ class ShippingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $shippingAddress;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class ShippingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->shippingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 

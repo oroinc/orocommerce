@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper;
 
 class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

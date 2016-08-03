@@ -13,7 +13,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $totalProcessorProvider;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->mapper = new TotalAmountDiffMapper($this->totalProcessorProvider);
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 

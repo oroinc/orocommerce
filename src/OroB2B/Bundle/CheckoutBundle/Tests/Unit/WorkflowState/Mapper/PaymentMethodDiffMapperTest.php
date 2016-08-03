@@ -18,7 +18,7 @@ class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $paymentMethod;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->mapper = new PaymentMethodDiffMapper($this->paymentMethodRegistry);
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 

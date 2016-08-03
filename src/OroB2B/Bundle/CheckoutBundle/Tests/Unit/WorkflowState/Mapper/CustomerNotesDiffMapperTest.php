@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CustomerNotesDiffMapper;
 
 class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

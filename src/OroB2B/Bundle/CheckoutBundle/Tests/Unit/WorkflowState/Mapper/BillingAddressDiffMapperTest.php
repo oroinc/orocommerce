@@ -17,7 +17,7 @@ class BillingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $billingAddress;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class BillingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 

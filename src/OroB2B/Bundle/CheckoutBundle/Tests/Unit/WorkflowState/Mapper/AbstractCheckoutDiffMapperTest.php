@@ -17,12 +17,12 @@ abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit_Framework_TestCas
      */
     protected $checkout;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         unset($this->mapper, $this->checkout);
     }
