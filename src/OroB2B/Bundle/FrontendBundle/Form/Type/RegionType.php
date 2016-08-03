@@ -14,16 +14,15 @@ class RegionType extends BaseCountryType
      */
     public function getName()
     {
-        return 'orob2b_region';
+        return $this->getBlockPrefix();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function getBlockPrefix()
     {
-        $view->vars['withoutSelect'] = true;
-        parent::finishView($view, $form, $options);
+        return 'orob2b_region';
     }
 
     /**

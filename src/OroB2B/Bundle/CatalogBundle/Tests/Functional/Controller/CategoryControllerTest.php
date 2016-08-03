@@ -13,6 +13,8 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
+ * @group segfault
+ *
  * @dbIsolation
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)

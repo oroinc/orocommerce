@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+            themes: 'product_index_row.html.twig'
         - '@add':
             id: add_to_shopping_list_form_button
             blockType: add_to_shopping_list_form_button
@@ -9,8 +9,8 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-    conditions:
-        '@and':
-            - '@neq': [ $context.logged_user, null ]
-            - '@eq': [{ '@acl': orob2b_shopping_list_line_item_frontend_add }, true]
+                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
+
+    conditions: 'context["logged_user"]!=null'
+

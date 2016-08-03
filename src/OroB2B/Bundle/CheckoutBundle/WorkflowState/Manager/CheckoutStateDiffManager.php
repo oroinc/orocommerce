@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager;
 
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
 class CheckoutStateDiffManager
@@ -9,8 +10,11 @@ class CheckoutStateDiffManager
     /**
      * @var CheckoutStateDiffMapperRegistry
      */
-    private $mapperRegistry;
+    protected $mapperRegistry;
 
+    /**
+     * @param CheckoutStateDiffMapperRegistry $mapperRegistry
+     */
     public function __construct(CheckoutStateDiffMapperRegistry $mapperRegistry)
     {
         $this->mapperRegistry = $mapperRegistry;
@@ -23,6 +27,8 @@ class CheckoutStateDiffManager
     public function getCurrentState($entity)
     {
         $currentState = [];
+
+        /** @var CheckoutStateDiffMapperInterface $mapper */
         foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
@@ -40,10 +46,12 @@ class CheckoutStateDiffManager
      */
     public function isStateActual($entity, array $savedState)
     {
+        /** @var CheckoutStateDiffMapperInterface $mapper */
         foreach ($this->mapperRegistry->getMappers() as $mapper) {
             if (!$mapper->isEntitySupported($entity)) {
                 continue;
             }
+
             if (!$mapper->isStateActual($entity, $savedState)) {
                 return false;
             }

@@ -1,32 +1,15 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAlternativeCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/approve_request.html.twig'
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/right_buttons.html.twig'
+        - '@setBlockTheme':
+            themes: '../templates/approve_request.html.twig'
         - '@setFormTheme':
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
             optionValue: 7
-        - '@addTree':
-            items:
-                checkout_form_buttons:
-                    blockType: container
-                checkout_button_continue_right:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: { '@value': $data.orob2b_checkout_continue_transition }
-                        checkout: { '@value': $data.checkout }
-                checkout_button_back_right:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: { '@value': $data.orob2b_checkout_back_transition }
-                        checkout: { '@value': $data.checkout }
-            tree:
-                checkout_form:
-                    checkout_form_buttons:
-                          checkout_button_continue_right: ~
-                          checkout_button_back_right: ~
         - '@move':
             id: checkout_order_summary_table
             parentId: checkout_form_fields
@@ -34,7 +17,25 @@ layout:
             id: checkout_form_buttons
             siblingId: checkout_form_fields
             prepend: false
-    conditions:
-        '@and':
-            - '@eq': [$context.workflowStepName, 'approve_request']
-            - '@eq': [$context.workflowName, 'b2b_flow_alternative_checkout']
+        - '@remove':
+            id: checkout_button_continue
+        - '@remove':
+            id: checkout_button_back
+        - '@addTree':
+            items:
+                checkout_button_continue_right:
+                    blockType: checkout_transition_continue
+                    options:
+                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        checkout: '=data["checkout"]'
+                checkout_button_back_right:
+                    blockType: checkout_transition_back
+                    options:
+                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        checkout: '=data["checkout"]'
+            tree:
+                checkout_form_buttons:
+                    checkout_button_continue_right: ~
+                    checkout_button_back_right: ~
+
+    conditions: 'context["workflowStepName"]=="approve_request" && context["workflowName"]=="b2b_flow_alternative_checkout"'

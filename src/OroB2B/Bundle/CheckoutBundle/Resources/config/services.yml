@@ -2,6 +2,7 @@ parameters:
     orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+    orob2b_checkout.entity.checkout_workflow_state.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState
 
 services:
     # Data Providers
@@ -90,6 +91,7 @@ services:
             - '@property_accessor'
             - '@oro_action.action.redirect'
             - '@event_dispatcher'
+            - '@oro_workflow.manager'
         tags:
             - { name: oro_action.action, alias: start_checkout }
 
@@ -179,6 +181,18 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
+
+    orob2b_checkout.migration.post_up.listener:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -80 }
+
+    orob2b_checkout.workflow_state.storage.checkout_state_diff_storage:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
+        pablic: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_checkout.entity.checkout_workflow_state.class%'
 
     orob2b_checkout.workflow_state.manager.checkout_state_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'

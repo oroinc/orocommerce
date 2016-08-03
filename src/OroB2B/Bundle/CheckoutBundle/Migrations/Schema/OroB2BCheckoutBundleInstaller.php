@@ -18,7 +18,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -30,6 +30,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $this->createOroB2BCheckoutSourceTable($schema);
         $this->createOroB2BCheckoutTable($schema);
         $this->createOroB2BDefaultCheckoutTable($schema);
+        $this->createCheckoutWorkflowStateTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCheckoutForeignKeys($schema);
@@ -57,8 +58,6 @@ class OroB2BCheckoutBundleInstaller implements Installation
     {
         $table = $schema->createTable('orob2b_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('workflow_step_id', 'integer', ['notnull' => false]);
-        $table->addColumn('workflow_item_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
@@ -82,7 +81,6 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('payment_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('checkout_discriminator', 'string', ['notnull' => true, 'length' => 30]);
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
-        $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
         $table->setPrimaryKey(['id']);
     }
 
@@ -94,18 +92,6 @@ class OroB2BCheckoutBundleInstaller implements Installation
     protected function addOroB2BCheckoutForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_workflow_step'),
-            ['workflow_step_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_workflow_item'),
-            ['workflow_item_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_checkout_source'),
             ['source_id'],
@@ -201,5 +187,25 @@ class OroB2BCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createCheckoutWorkflowStateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_checkout_workflow_state');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('token', 'string', ['length' => 255]);
+        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_class', 'string', ['length' => 255]);
+        $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(
+            ['entity_id', 'entity_class', 'token'],
+            'orob2b_checkout_workflow_state_unique_id_class_token_idx'
+        );
+        $table->setPrimaryKey(['id']);
     }
 }

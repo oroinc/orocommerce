@@ -25,11 +25,11 @@ layout:
                 registration_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_register }
+                        form: '=data["orob2b_account_frontend_account_user_register"]'
                 registration_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_register }
+                        form: '=data["orob2b_account_frontend_account_user_register"]'
                 registration_form_submit:
                     blockType: button
                     options:
@@ -40,7 +40,7 @@ layout:
                 registration_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_register }
+                        form: '=data["orob2b_account_frontend_account_user_register"]'
                 registration_back_btn:
                     blockType: link
                     options:

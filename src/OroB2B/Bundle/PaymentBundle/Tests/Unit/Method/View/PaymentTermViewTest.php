@@ -4,25 +4,24 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-
+use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 {
-    use ConfigTestTrait;
-
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;
 
-    /**  @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $translator;
 
     /** @var PaymentTermView */
     protected $methodView;
+
+    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentConfig;
 
     protected function setUp()
     {
@@ -32,11 +31,9 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentConfig = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface');
 
-        $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->configManager);
+        $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->paymentConfig);
     }
 
     protected function tearDown()
@@ -81,7 +78,11 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
     public function testGetOrder()
     {
         $order = '100';
-        $this->setConfig($this->once(), Configuration::PAYMENT_TERM_SORT_ORDER_KEY, $order);
+
+        $this->paymentConfig->expects($this->once())
+            ->method('getOrder')
+            ->willReturn((int)$order);
+
         $this->assertEquals((int)$order, $this->methodView->getOrder());
     }
 
@@ -92,13 +93,19 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        $this->setConfig($this->once(), Configuration::PAYMENT_TERM_LABEL_KEY, 'testValue');
-        $this->assertEquals('testValue', $this->methodView->getLabel());
+        $this->paymentConfig->expects($this->once())
+            ->method('getLabel')
+            ->willReturn('label');
+
+        $this->assertEquals('label', $this->methodView->getLabel());
     }
 
     public function testGetShortLabel()
     {
-        $this->setConfig($this->once(), Configuration::PAYMENT_TERM_SHORT_LABEL_KEY, 'testValue');
-        $this->assertEquals('testValue', $this->methodView->getShortLabel());
+        $this->paymentConfig->expects($this->once())
+            ->method('getShortLabel')
+            ->willReturn('short label');
+
+        $this->assertEquals('short label', $this->methodView->getShortLabel());
     }
 }
