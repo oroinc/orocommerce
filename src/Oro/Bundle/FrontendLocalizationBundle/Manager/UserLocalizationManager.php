@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Provider\LocalizationProvider;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -35,8 +35,8 @@ class UserLocalizationManager
     /** @var BaseUserManager */
     protected $userManager;
 
-    /** @var LocalizationProvider */
-    protected $localizationProvider;
+    /** @var LocalizationManager */
+    protected $localizationManager;
 
     /**
      * @param Session $session
@@ -44,7 +44,7 @@ class UserLocalizationManager
      * @param ConfigManager $configManager
      * @param WebsiteManager $websiteManager
      * @param BaseUserManager $userManager
-     * @param LocalizationProvider $localizationProvider
+     * @param LocalizationManager $localizationManager
      */
     public function __construct(
         Session $session,
@@ -52,14 +52,14 @@ class UserLocalizationManager
         ConfigManager $configManager,
         WebsiteManager $websiteManager,
         BaseUserManager $userManager,
-        LocalizationProvider $localizationProvider
+        LocalizationManager $localizationManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
         $this->userManager = $userManager;
-        $this->localizationProvider = $localizationProvider;
+        $this->localizationManager = $localizationManager;
     }
 
     /**
@@ -67,7 +67,7 @@ class UserLocalizationManager
      */
     public function getEnabledLocalizations()
     {
-        return $this->localizationProvider->getLocalizations(
+        return $this->localizationManager->getLocalizations(
             (array)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
         );
     }
@@ -77,11 +77,11 @@ class UserLocalizationManager
      */
     public function getDefaultLocalization()
     {
-        $localization = $this->localizationProvider->getLocalization(
+        $localization = $this->localizationManager->getLocalization(
             $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
         );
 
-        return $localization ?: $this->localizationProvider->getDefaultLocalization();
+        return $localization ?: $this->localizationManager->getDefaultLocalization();
     }
 
     /**
@@ -107,7 +107,7 @@ class UserLocalizationManager
         } else {
             $sessionStoredLocalizations = $this->getSessionLocalizations();
             if (array_key_exists($website->getId(), $sessionStoredLocalizations)) {
-                $localization = $this->localizationProvider->getLocalization(
+                $localization = $this->localizationManager->getLocalization(
                     $sessionStoredLocalizations[$website->getId()]
                 );
             }

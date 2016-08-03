@@ -12,7 +12,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Provider\LocalizationProvider;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -41,11 +41,11 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
 
-    /** @var LocalizationProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $localizationProvider;
+    /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $localizationManager;
 
     /** @var UserLocalizationManager */
-    private $localizationManager;
+    private $userLocalizationManager;
 
     /**
      * {@inheritdoc}
@@ -69,17 +69,17 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localizationProvider = $this->getMockBuilder(LocalizationProvider::class)
+        $this->localizationManager = $this->getMockBuilder(LocalizationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localizationManager = new UserLocalizationManager(
+        $this->userLocalizationManager = new UserLocalizationManager(
             $this->session,
             $this->tokenStorage,
             $this->configManager,
             $this->websiteManager,
             $this->userManager,
-            $this->localizationProvider
+            $this->localizationManager
         );
     }
 
@@ -105,14 +105,14 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
             ->willReturn($localization->getId());
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalization')
             ->with($localization->getId())
             ->willReturn($localization);
 
-        $this->localizationProvider->expects($this->never())->method('getDefaultLocalization');
+        $this->localizationManager->expects($this->never())->method('getDefaultLocalization');
 
-        $this->assertSame($localization, $this->localizationManager->getCurrentLocalization());
+        $this->assertSame($localization, $this->userLocalizationManager->getCurrentLocalization());
     }
 
     public function testGetCurrentLocalizationAndDefaultGlobalLocalization()
@@ -138,16 +138,16 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
             ->willReturn($localization1->getId());
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalization')
             ->with($localization1->getId())
             ->willReturn(null);
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getDefaultLocalization')
             ->willReturn($localization2);
 
-        $this->assertSame($localization2, $this->localizationManager->getCurrentLocalization());
+        $this->assertSame($localization2, $this->userLocalizationManager->getCurrentLocalization());
     }
 
     public function testGetEnabledLocalizations()
@@ -157,14 +157,14 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn(['1', '2']);
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalizations')
             ->with(['1', '2'])
             ->willReturn([(new Localization())->setLanguageCode('en')]);
 
         $this->assertEquals(
             [(new Localization())->setLanguageCode('en')],
-            $this->localizationManager->getEnabledLocalizations()
+            $this->userLocalizationManager->getEnabledLocalizations()
         );
     }
 
@@ -202,14 +202,14 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalizations')
             ->with([$localization1->getId(), $localization2->getId()])
             ->willReturn([$localization1, $localization2]);
 
         $this->assertEquals(
             $userWebsiteSettings->getLocalization(),
-            $this->localizationManager->getCurrentLocalization($website)
+            $this->userLocalizationManager->getCurrentLocalization($website)
         );
     }
 
@@ -233,24 +233,24 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
             ->willReturn($sessionLocalizations);
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalizations')
             ->with([$localization->getId(), 4])
             ->willReturn([$localization]);
 
-        $this->localizationProvider->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getLocalization')
             ->with($localization->getId())
             ->willReturn($localization);
 
-        $this->assertEquals($localization, $this->localizationManager->getCurrentLocalization());
+        $this->assertEquals($localization, $this->userLocalizationManager->getCurrentLocalization());
     }
 
     public function testGetCurrentLocalizationNoWebsite()
     {
         $this->configManager->expects($this->never())
             ->method($this->anything());
-        $this->assertNull($this->localizationManager->getCurrentLocalization());
+        $this->assertNull($this->userLocalizationManager->getCurrentLocalization());
     }
 
     public function testSetCurrentLocalizationLoggedUser()
@@ -281,7 +281,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getStorageManager')
             ->willReturn($em);
 
-        $this->localizationManager->setCurrentLocalization($localization, $website);
+        $this->userLocalizationManager->setCurrentLocalization($localization, $website);
     }
 
     public function testSetCurrentLocalizationNotLoggedUser()
@@ -306,6 +306,6 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
                 [2 => 3, $website->getId() => $localization->getId()]
             );
 
-        $this->localizationManager->setCurrentLocalization($localization);
+        $this->userLocalizationManager->setCurrentLocalization($localization);
     }
 }

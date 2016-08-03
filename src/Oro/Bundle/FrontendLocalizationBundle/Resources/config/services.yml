@@ -7,7 +7,7 @@ services:
             - '@oro_config.manager'
             - '@orob2b_website.manager'
             - '@orob2b_account_user.manager'
-            - '@oro_locale.provider.localization'
+            - '@oro_locale.manager.localization'
 
     oro_frontend_localization.extension.current_localization:
         class: 'Oro\Bundle\FrontendLocalizationBundle\Extension\CurrentLocalizationExtension'
