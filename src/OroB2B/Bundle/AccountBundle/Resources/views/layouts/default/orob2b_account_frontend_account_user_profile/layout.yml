@@ -26,7 +26,7 @@ layout:
         - '@setOption':
             id: account_user_view_information_title
             optionName: text
-            optionValue: {'@value': 'orob2b.account.frontend.sections.account_user.my_profile'}
+            optionValue: 'orob2b.account.frontend.sections.account_user.my_profile'
 
     imports:
         -

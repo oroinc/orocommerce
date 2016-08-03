@@ -1,0 +1,37 @@
+SET_EXPRESS_CHECKOUT:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&ACTION=S&TENDER=P&AMT=100&CURRENCY=USD&RETURNURL=http://127.0.0.1/return
+        &CANCELURL=http://127.0.0.1/cancel&PAYMENTTYPE=instantonly&FREIGHTAMT=20
+        &ADDROVERRIDE=1&SHIPTOFIRSTNAME=J&SHIPTOLASTNAME=Smith&SHIPTOSTREET=5262 Green Street #8&SHIPTOCITY=San Jose&SHIPTOSTATE=CA
+        &SHIPTOZIP=95148&SHIPTOCOUNTRY=US&PARTNER=PayPal&PWD=pwd&USER=user&VENDOR=vendor
+
+SET_EXPRESS_CHECKOUT_WITHOUT_REQUIRED_OPTIONS:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=P&ACTION=S&PAYMENTTYPE=instantonly&FREIGHTAMT=20
+        &ADDROVERRIDE=1&SHIPTOFIRSTNAME=J&SHIPTOLASTNAME=Smith&SHIPTOSTREET=5262 Green Street #8&SHIPTOCITY=San Jose&SHIPTOSTATE=CA
+        &SHIPTOZIP=95148&SHIPTOCOUNTRY=US&PARTNER=PayPal&PWD=pwd&USER=user&VENDOR=vendor
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required options "AMT", "CANCELURL", "CURRENCY", "RETURNURL" are missing.'
+
+INCORRECT_TENDER:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request\AuthorizationRequest'
+    request: |
+        PARTNER=PayPal&PWD=pwd&USER=user&VENDOR=vendor&TRXTYPE=A&ACTION=S&TENDER=C&AMT=100&CURRENCY=USD&RETURNURL=http://127.0.0.1/return
+        &CANCELURL=http://127.0.0.1/cancel
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException'
+        - 'The option "TENDER" with value "C" is invalid. Accepted values are: "P".'
+
+CREDENTIALS_MISSING:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&ACTION=S&TENDER=P&AMT=100&CURRENCY=USD&RETURNURL=http://127.0.0.1/return
+        &CANCELURL=http://127.0.0.1/cancel&TOKEN=EC-NFSII4ONPF34GUBIVEJ&PAYMENTTYPE=instantonly&FREIGHTAMT=20
+        &ADDROVERRIDE=1&SHIPTOFIRSTNAME=J&SHIPTOLASTNAME=Smith&SHIPTOSTREET=5262 Green Street #8&SHIPTOCITY=San Jose&SHIPTOSTATE=CA
+        &SHIPTOZIP=95148&SHIPTOCOUNTRY=US
+    error:
+         - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+         - 'The required options "PARTNER", "PWD", "USER", "VENDOR" are missing.'

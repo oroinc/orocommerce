@@ -11,4 +11,4 @@ layout:
             parentId: content
             blockType: success_order
             options:
-                order: { '@value': $data.order }
+                order: '=data["order"]'
