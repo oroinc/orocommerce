@@ -31,11 +31,6 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         unset($this->mapperRegistry, $this->checkoutStateDiffManager);
     }
 
-    public function tearDown()
-    {
-        unset($this->checkoutStateDiffManager, $this->mapperRegistry, $this->checkout);
-    }
-
     /**
      * @param string $name
      * @param bool $isEntitySupported
