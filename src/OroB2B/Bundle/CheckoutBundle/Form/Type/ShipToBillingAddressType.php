@@ -29,7 +29,8 @@ class ShipToBillingAddressType extends AbstractType
         $parent = $form->getParent();
 
         if ($event->getData() && $parent->has(self::SHIPPING_ADDRESS_FORM_FIELD)) {
-            $parent->remove(self::SHIPPING_ADDRESS_FORM_FIELD);
+            // @todo: Remove this type
+//            $parent->remove(self::SHIPPING_ADDRESS_FORM_FIELD);
         }
     }
 

@@ -3,6 +3,9 @@
 namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
@@ -65,6 +68,26 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 $builder->get('lastName')->setRequired(true);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('validation_groups', function (FormInterface $form) {
+            if (!$form->getParent() || !$form->getParent()->has('ship_to_billing_address')) {
+                return [];
+            }
+
+            if ($form->getParent()->get('ship_to_billing_address')->getData() === true) {
+                return [];
+            }
+
+            return [Constraint::DEFAULT_GROUP];
+        });
+
+        parent::configureOptions($resolver);
     }
 
     /**
