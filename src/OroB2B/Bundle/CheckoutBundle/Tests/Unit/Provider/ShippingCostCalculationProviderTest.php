@@ -43,6 +43,6 @@ class ShippingCostCalculationProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($method);
 
         $actualPrice = $this->shippingCostCalculationProvider->calculatePrice($checkout, $config);
-        $this->assertEquals((new Price()), $actualPrice);
+        $this->assertEquals(new Price(), $actualPrice);
     }
 }
