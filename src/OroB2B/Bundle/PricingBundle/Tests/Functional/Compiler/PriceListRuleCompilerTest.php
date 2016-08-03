@@ -218,6 +218,45 @@ class PriceListRuleCompilerTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testRestrictByProductUnit()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.box');
+
+        $rule = '10';
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+
+        $priceRule = $this->createPriceRule($priceList, null, $rule, 1, $unit, 'EUR');
+
+        $expected = [
+            [
+                $product2->getId(),
+                $priceList->getId(),
+                $unit->getCode(),
+                'EUR',
+                1,
+                $product2->getSku(),
+                $priceRule->getId(),
+                10
+            ],
+        ];
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
+
+        // Check that cache does not affect results
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @return PriceList
      */
