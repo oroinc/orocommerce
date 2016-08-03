@@ -19,7 +19,7 @@ class AjaxLocalizationController extends Controller
      */
     public function setCurrentLocalizationAction(Request $request)
     {
-        $localization = $this->get('oro_locale.provider.localization')->getLocalization($request->get('localization'));
+        $localization = $this->get('oro_locale.manager.localization')->getLocalization($request->get('localization'));
         $userLocalizationManager = $this->get('oro_frontend_localization.manager.user_localization');
 
         $result = false;

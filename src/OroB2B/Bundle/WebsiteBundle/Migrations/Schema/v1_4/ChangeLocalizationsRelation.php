@@ -9,12 +9,15 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class ChangeLocalizationsRelation implements Migration
 {
+    /**
+     * {@inheritdoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPreQuery(
             new CopyLocalizationReferencesToConfigQuery()
         );
 
-        $schema->dropTable('orob2b_websites_localizations');
+        $queries->addQuery('DROP TABLE orob2b_websites_localizations');
     }
 }
