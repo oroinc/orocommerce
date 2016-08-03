@@ -6,20 +6,18 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
 {
     const NAME = 'shipping_methods_provider';
 
-    /**
-     * @var array[]
-     */
+    /** @var array[] */
     protected $data;
 
     /** @var ShippingMethodRegistry */
@@ -49,19 +47,26 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getData(ContextInterface $context)
+    public function getData(ContextInterface $layoutContext)
     {
         if (null === $this->data) {
             /** @var BaseCheckout $entity */
-            $entity = $this->getEntity($context);
-            $context = [
-                'checkout' => $entity,
-                'line_items' => $entity->getSourceEntity()->getLineItems(),
-            ];
-            $shippingContext = new ShippingContextProvider($context);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
-            $methods = $this->getApplicableShippingMethods($entity, $rules);
-            $this->data = $methods;
+            $entity = $this->getEntity($layoutContext);
+            if (!empty($entity)) {
+                $context = [
+                    'checkout' => $entity,
+                    'billingAddress' => $entity->getBillingAddress(),
+                    'currency' => $entity->getCurrency(),
+                ];
+                /** @var ShoppingList $sourceEntity */
+                $sourceEntity = $entity->getSourceEntity();
+                if (!empty($sourceEntity)) {
+                    $context['line_items'] = $sourceEntity->getLineItems();
+                }
+                $shippingContext = new ShippingContextProvider($context);
+                $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
+                $this->data = $this->getApplicableShippingMethods($shippingContext, $rules);
+            }
         }
 
         return $this->data;
@@ -88,31 +93,28 @@ class ShippingMethodsDataProvider implements DataProviderInterface
 
     /**
      * @param ShippingContextAwareInterface $context
-     * @param array $applRules
+     * @param ShippingRule[]|array $applicableRules
      * @return array
      */
-    public function getApplicableShippingMethods(ShippingContextAwareInterface $context, array $applRules)
+    public function getApplicableShippingMethods(ShippingContextAwareInterface $context, array $applicableRules)
     {
         $shippingMethods = [];
-        foreach ($applRules as $priority => $rule) {
-            $configurations = $rule->getConfigurations()->toArray();
-            /** @var ShippingRuleConfiguration $configuration */
+        foreach ($applicableRules as $priority => $rule) {
+            $configurations = $rule->getConfigurations();
             foreach ($configurations as $configuration) {
                 $methodName = $configuration->getMethod();
                 $typeName = $configuration->getType();
-                /** @var ShippingMethodInterface $method */
-                $method = $this->registry
-                    ->getShippingMethod($methodName);
-                if (!is_int(array_search($methodName, array_column($shippingMethods, 'name')))) {
+                $method = $this->registry->getShippingMethod($methodName);
+                if (!array_key_exists($methodName, $shippingMethods)) {
                     $shippingMethods[$methodName] = [
                         'name' => $methodName,
                         'label' => $method->getLabel(),
                         'types' => []
                     ];
                 }
-                if (!is_int(array_search($typeName, array_column($shippingMethods[$methodName]['types'], 'name')))) {
+                if (!array_key_exists($typeName, $shippingMethods[$methodName])) {
                     $price = $method->calculatePrice($context, $configuration);
-                    $shippingMethods[$methodName]['types'][] = [
+                    $shippingMethods[$methodName]['types'][$typeName] = [
                         'name' => $typeName,
                         'label' => $method->getShippingTypeLabel($typeName),
                         'price' => $price,

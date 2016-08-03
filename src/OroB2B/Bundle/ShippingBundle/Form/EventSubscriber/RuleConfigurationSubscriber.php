@@ -71,23 +71,24 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
         foreach ($data as $index => $ruleConfiguration) {
             $method = $this->methodRegistry->getShippingMethod($ruleConfiguration->getMethod());
             if ($method) {
-                $existingConfigs[$method->getFormType()][] = $ruleConfiguration;
+                $existingConfigs[$method->getFormType()][$ruleConfiguration->getType()] = $ruleConfiguration;
                 $form->remove($index);
             }
         }
         $data->clear();
 
         foreach ($this->methodRegistry->getShippingMethods() as $method) {
-            foreach ($method->getTypes() as $type) {
+            $methods = $method->getShippingTypes();
+            if (count($methods) === 0) {
+                $methods = [$method->getName()];
+            }
+            foreach ($methods as $type) {
                 $formName = $method->getFormType();
                 $formData = null;
-                if (array_key_exists($formName, $existingConfigs)) {
-                    foreach ($existingConfigs[$formName] as $existingConfig) {
-                        /** @var ShippingRuleConfiguration $existingConfig */
-                        if ($existingConfig->getType() === $type) {
-                            $formData = $existingConfig;
-                        }
-                    }
+                if (array_key_exists($formName, $existingConfigs)
+                    && array_key_exists($type, $existingConfigs[$formName])
+                ) {
+                    $formData = $existingConfigs[$formName][$type];
                 }
                 $childForm = $this->factory->createNamed(count($data), $formName, $formData, [
                     'auto_initialize' => false

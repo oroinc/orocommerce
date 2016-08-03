@@ -138,7 +138,6 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('entity_name', 'string', ['length' => 255]);
         $table->addColumn('enabled', 'boolean', []);
         $table->addColumn('currency', 'string', ['length' => 255]);
-        $table->addIndex(['rule_id'], 'idx_b517b837744e0351', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -158,6 +157,7 @@ class OroB2BShippingBundleInstaller implements Installation
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
+        $table->addColumn('processing_type', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -205,7 +205,7 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('shipping_rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -299,7 +299,7 @@ class OroB2BShippingBundleInstaller implements Installation
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_shipping_rule'),
-            ['shipping_rule_id'],
+            ['rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

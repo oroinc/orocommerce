@@ -58,17 +58,19 @@ orob2b:
             enabled.label: Enabled
             enabled_yes.label: Yes
             enabled_no.label: No
-            priority.label: Priority
+            priority.label: Sort Order
             conditions.label: Conditions
             destinations.label: Destinations
             address.label: Address
             configurations.label: Configurations
             currency.label: Сurrency
-            stopProcessing.label: Stop Further Rule Processing
+            stop_processing.label: Stop Further Rule Processing
         shippingruleconfiguration:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
             id.label: Id
+            currency.label: Type
+            enabled.label: Type
             type.label: Type
             method.label: Method
             rule.label: Rule
@@ -77,14 +79,16 @@ orob2b:
             entity_plural_label: Flat Rate Rule Configuraitons
             currency.label: Currency
             id.label: Id
-            type:
+            enabled.label: Enabled
+            processing_type:
                 label: Type
                 per_item.label: Per Item
                 per_order.label: Per Order
+            type.label: Type
             method.label: Method
             value.label: Price
             rule.label: Rule
-            handlingFeeValue.label: Handling Fee
+            handling_fee_value.label: Handling Fee
             price.label: Price
         warehouse:
             use_system_configuration: Use System Configuration
@@ -115,7 +119,7 @@ orob2b:
             general: 'General Information'
             shippingrule_destination: 'Destinations'
             shippingrule_conditions: 'Conditions'
-            shippingrule_configurations: 'Configurations'
+            shippingrule_configurations: 'Shipping Method Configurations'
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'
