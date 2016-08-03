@@ -2,7 +2,12 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -22,6 +27,31 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TwigEngine
+     */
+    protected $templating;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|Session
+     */
+    protected $session;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FlashBagInterface
+     */
+    protected $flashBag;
 
     /**
      * {@inheritdoc}
@@ -46,6 +76,34 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         );
         $this->extension->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
         $this->extension->setConfigManager($this->configManager);
+
+        $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->templating = $this->getMockBuilder('Symfony\Bundle\TwigBundle\TwigEngine')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->flashBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->container->expects($this->any())->method('get')->with('templating')->willReturn($this->templating);
+
+        $this->session->expects($this->any())->method('getFlashBag')->willReturn($this->flashBag);
+
+        $this->extension->setContainer($this->container);
+        $this->extension->setTranslator($this->translator);
+        $this->extension->setSession($this->session);
 
         $this->entity = new RFPRequest();
     }

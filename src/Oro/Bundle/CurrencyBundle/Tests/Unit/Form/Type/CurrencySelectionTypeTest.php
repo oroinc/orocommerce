@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Intl\Intl;
 
@@ -79,8 +80,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
             $this->assertTrue($formConfig->hasOption($key));
-            $this->assertEquals($value, $formConfig->getOption($key));
         }
+        $this->assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
 
         $this->assertNull($form->getData());
         $form->submit($submittedData);
@@ -99,7 +100,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         $gbpName = $currencyBundle->getCurrencyName('GBP');
         $rubName = $currencyBundle->getCurrencyName('RUB');
         $uahName = $currencyBundle->getCurrencyName('UAH');
-
+        
         return [
             'full currency name and data from system config' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
@@ -107,7 +108,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => ['USD' => $usdName, 'UAH' => $uahName]
+                    'choices' => [new ChoiceView('UAH', 'UAH', $uahName), new ChoiceView('USD', 'USD', $usdName)]
                 ],
                 'submittedData' => 'UAH'
             ],
@@ -119,10 +120,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => true,
-                    'choices' => [
-                        'USD' => 'USD',
-                        'UAH' => 'UAH'
-                    ]
+                    'choices' => [ new ChoiceView('UAH', 'UAH', 'UAH'), new ChoiceView('USD', 'USD', 'USD') ]
                 ],
                 'submittedData' => 'UAH'
             ],
@@ -135,7 +133,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => ['EUR' => $eurName]
+                    'choices' => [ new ChoiceView('EUR', 'EUR', $eurName) ]
                 ],
                 'submittedData' => 'EUR'
             ],
@@ -148,7 +146,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => ['RUB' => $rubName]
+                    'choices' => [ new ChoiceView('RUB', 'RUB', $rubName) ]
                 ],
                 'submittedData' => 'RUB'
             ],
@@ -160,7 +158,10 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => ['GBP' => $gbpName, 'USD' => $usdName, 'UAH' => $uahName]
+                    'choices' => [
+                        new ChoiceView('GBP', 'GBP', $gbpName), new ChoiceView('UAH', 'UAH', $uahName),
+                        new ChoiceView('USD', 'USD', $usdName)
+                    ]
                 ],
                 'submittedData' => 'UAH'
             ],
@@ -174,7 +175,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => true,
-                    'choices' => ['GBP' => 'GBP', 'RUB' => 'RUB']
+                    'choices' => [new ChoiceView('GBP', 'GBP', 'GBP'), new ChoiceView('RUB', 'RUB', 'RUB')]
                 ],
                 'submittedData' => 'GBP'
             ],
@@ -184,11 +185,25 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'inputOptions' => ['full_currency_list' => true],
                 'expectedOptions' => [
                     'full_currency_list' => true,
-                    'choices' => $currencyBundle->getCurrencyNames('en')
+                    'choices' => $this->getChoiceViews($currencyBundle->getCurrencyNames('en'))
                 ],
                 'submittedData' => 'GBP'
             ]
         ];
+    }
+
+    /**
+     * @param array $legacyChoices
+     *
+     * @return array
+     */
+    protected function getChoiceViews(array $legacyChoices)
+    {
+        $choices = [];
+        foreach ($legacyChoices as $key => $value) {
+            $choices[] = new ChoiceView($key, $key, $value);
+        }
+        return $choices;
     }
 
     /**

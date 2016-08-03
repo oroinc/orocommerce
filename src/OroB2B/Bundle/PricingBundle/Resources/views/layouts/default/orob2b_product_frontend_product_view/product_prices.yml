@@ -8,5 +8,5 @@ layout:
             siblingId: product_specification
             blockType: product_prices
             options:
-                prices: {'@value': $data.frontend_product_prices}
-                visible: { '@has_elements': $data.product.unitPrecisions }
+                visible: '=data["product"].getUnitPrecisions()!=null'
+                prices: '=data["frontend_product_prices"]'

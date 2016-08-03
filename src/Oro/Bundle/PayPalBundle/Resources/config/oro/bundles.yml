@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\PayPalBundle\OroPayPalBundle, priority: 40 }
