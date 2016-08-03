@@ -34,3 +34,12 @@ services:
             - "@orob2b_shipping.formatter.shipping_method_label"
         tags:
             - { name: twig.extension }
+
+    orob2b_shipping.condition.has_applicable_shipping_methods:
+        class: 'OroB2B\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }

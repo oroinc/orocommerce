@@ -107,30 +107,32 @@ class ShippingMethodsDataProvider implements DataProviderInterface
                 $methodName = $configuration->getMethod();
                 $typeName = $configuration->getType();
                 $method = $this->registry->getShippingMethod($methodName);
-                if (!$typeName) {
-                    if (!array_key_exists($methodName, $shippingMethods)) {
-                        $shippingMethods[$methodName] = [
-                            'name' => $methodName,
-                            'label' => $method->getLabel(),
-                            'price' => $method->calculatePrice($context, $configuration),
-                            'shippingRuleConfig' => $configuration->getId(),
-                        ];
-                    }
-                } else {
-                    if (!array_key_exists($methodName, $shippingMethods)) {
-                        $shippingMethods[$methodName] = [
-                            'name' => $methodName,
-                            'label' => $method->getLabel(),
-                            'types' => []
-                        ];
-                    }
-                    if (!array_key_exists($typeName, $shippingMethods[$methodName])) {
-                        $shippingMethods[$methodName]['types'][$typeName] = [
-                            'name' => $typeName,
-                            'label' => $method->getShippingTypeLabel($typeName),
-                            'price' => $method->calculatePrice($context, $configuration),
-                            'shippingRuleConfig' => $configuration->getId(),
-                        ];
+                if (!empty($method)) {
+                    if (!$typeName) {
+                        if (!array_key_exists($methodName, $shippingMethods)) {
+                            $shippingMethods[$methodName] = [
+                                'name' => $methodName,
+                                'label' => $method->getLabel(),
+                                'price' => $method->calculatePrice($context, $configuration),
+                                'shippingRuleConfig' => $configuration->getId(),
+                            ];
+                        }
+                    } else {
+                        if (!array_key_exists($methodName, $shippingMethods)) {
+                            $shippingMethods[$methodName] = [
+                                'name' => $methodName,
+                                'label' => $method->getLabel(),
+                                'types' => []
+                            ];
+                        }
+                        if (!array_key_exists($typeName, $shippingMethods[$methodName])) {
+                            $shippingMethods[$methodName]['types'][$typeName] = [
+                                'name' => $typeName,
+                                'label' => $method->getShippingTypeLabel($typeName),
+                                'price' => $method->calculatePrice($context, $configuration),
+                                'shippingRuleConfig' => $configuration->getId(),
+                            ];
+                        }
                     }
                 }
             }

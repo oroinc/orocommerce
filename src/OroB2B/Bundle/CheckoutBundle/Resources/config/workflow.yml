@@ -398,10 +398,13 @@ workflows:
 
             continue_to_payment_definition:
                 pre_conditions:
-                    '@order_line_item_has_count':
-                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
+                        - '@has_applicable_shipping_methods':
+                                entity: $checkout
                 post_actions:
                     actions:
                         - '@find_entity':

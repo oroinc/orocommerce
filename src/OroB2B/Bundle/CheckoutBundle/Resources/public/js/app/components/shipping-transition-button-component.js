@@ -47,7 +47,9 @@ define(function(require) {
                     this.setElementsValue(selectedType.val(), method, shippingRuleConfig);
                 } else if (selectedMethod.val()) {
                     var shippingRuleConfig = $(selectedMethod).data('shipping-rule-config');
-                    this.setElementsValue('', selectedMethod.val(), shippingRuleConfig);
+                    this.setElementsValue(null, selectedMethod.val(), shippingRuleConfig);
+                } else {
+                    this.setElementsValue(null, null, null);
                 }
             }                
         },
@@ -94,7 +96,7 @@ define(function(require) {
         onShippingMethodChange: function(event) {
             var method = $(event.target);
             var shippingRuleConfig = method.data('shipping-rule-config');
-            this.setElementsValue('', method.val(), shippingRuleConfig);
+            this.setElementsValue(null, method.val(), shippingRuleConfig);
         },
 
         /**

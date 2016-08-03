@@ -23,20 +23,20 @@ class LoadShippingRules extends AbstractFixture
             'name'                 => 'Rule 1',
             'enabled'              => true,
             'priority'             => 0,
-            'conditions'           => 'condition 1',
+            'conditions'           => '1==1',
             'currency'             => 'EUR',
             'configurations'       => [
                 [
                     'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'UPS',
-                    'type'     => 'UPS Ground',
+                    'method'   => 'flat_rate',
+                    'type'     => 'per_order',
                     'value'    => 10,
                     'currency' => 'EUR',
                 ],
                 [
                     'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'UPS',
-                    'type'     => 'UPS Next Day Air',
+                    'method'   => 'flat_rate',
+                    'type'     => 'per_item',
                     'value'    => 20,
                     'currency' => 'EUR',
                 ]
@@ -94,6 +94,7 @@ class LoadShippingRules extends AbstractFixture
                     $flatConfig
                         ->setRule($entity)
                         ->setType($configuration['type'])
+                        ->setProcessingType($configuration['type'])
                         ->setMethod($configuration['method'])
                         ->setValue($configuration['value'])
                         ->setCurrency($configuration['currency'])
