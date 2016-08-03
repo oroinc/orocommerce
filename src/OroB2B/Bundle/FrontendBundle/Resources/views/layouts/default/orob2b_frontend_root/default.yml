@@ -23,9 +23,9 @@ layout:
                 featured_products:
                     blockType: embedded_list
                     options:
-                        items: { '@value': [[0, 1, 2, 3, 4, 5, 6, 7]] }
+                        items: { '@value': $data.featured_products }
                         label: 'featured_products'
-                        use_slider: { '@value': true }
+                        use_slider: { '@value': false }
                         slides_count: { '@value': 4 }
                 featured_products_item:
                     blockType: container
@@ -55,6 +55,6 @@ layout:
 
     imports:
         -
-            id: orob2b_frontend_product_showing
-            root: top_selling_items_container
-            namespace: root_top_selling
+            id: orob2b_frontend_product_cart
+            root: featured_products_item
+            namespace: featured_products_item

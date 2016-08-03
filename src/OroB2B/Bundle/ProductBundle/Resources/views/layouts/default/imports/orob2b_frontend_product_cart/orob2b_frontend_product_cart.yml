@@ -1,0 +1,75 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'orob2b_frontend_product_cart.html.twig'
+        - '@addTree':
+            items:
+                __wrapper:
+                    blockType: product_view_container
+                    options:
+                        product: {}
+                __template:
+                    blockType: container
+                __image_holder:
+                    blockType: container
+                __quick_view:
+                    blockType: block
+                    options:
+                        visible: false
+                __name:
+                    blockType: block
+                __primary_content_container:
+                    blockType: container
+                __number:
+                    blockType: block
+                __specification:
+                    blockType: container
+                __sku_container:
+                    blockType: container
+                __sku:
+                    blockType: block
+                __mfg:
+                    blockType: block
+                    options:
+                        visible: false
+                __short_description:
+                    blockType: block
+                __details:
+                    blockType: block
+                __secondary_content_container:
+                    blockType: container
+                __secondary_content_first_container:
+                    blockType: container
+                __specification_delivery:
+                    blockType: block
+                    options:
+                        visible: false
+                __secondary_content_second_container:
+                    blockType: container
+                __more_info:
+                    blockType: block
+                    options:
+                        visible: false
+                __additional_container:
+                    blockType: container
+            tree:
+                __root:
+                    __wrapper:
+                        __template:
+                            __image_holder:
+                                __quick_view: ~
+                            __name: ~
+                            __primary_content_container:
+                                __number: ~
+                                __specification:
+                                    __sku_container:
+                                        __sku: ~
+                                        __mfg: ~
+                                __short_description: ~
+                                __details: ~
+                            __secondary_content_container:
+                                __secondary_content_first_container:
+                                    __specification_delivery: ~
+                                __secondary_content_second_container:
+                                    __more_info: ~
+                                    __additional_container: ~
