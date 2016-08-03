@@ -2,55 +2,29 @@ services:
     orob2b_payment.payment_method.registry:
         class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
         public: false
-        calls:
-            - ['addPaymentMethod', ['@orob2b_payment.payment_method.payflow_gateway']]
-            - ['addPaymentMethod', ['@orob2b_payment.payment_method.paypal_payments_pro']]
-            - ['addPaymentMethod', ['@orob2b_payment.payment_method.payment_term']]
 
-    orob2b_payment.payment_method.payflow_gateway:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\PayflowGateway'
+    orob2b_payment.payment_method.payment_term.config:
+        class: 'OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfig'
         public: false
         arguments:
-            - '@orob2b_payment.paypal.payflow.gateway='
-            - '@oro_config.global'
-            - '@router'
-
-    orob2b_payment.payment_method.paypal_payments_pro:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro'
-        public: false
-        parent: orob2b_payment.payment_method.payflow_gateway
-
-    orob2b_payment.payment_method.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm'
-        public: false
-        arguments:
-            - '@orob2b_payment.provider.payment_term'
-            - '@oro_config.global'
-            - '@property_accessor'
-            - '@oro_entity.doctrine_helper'
+           - '@oro_config.global'
 
     orob2b_payment.payment_method.view.registry:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
         public: false
         arguments:
             - '@orob2b_payment.payment_method.registry'
-        calls:
-            - ['addPaymentMethodView', ['@orob2b_payment.payment_method.view.payflow_gateway']]
-            - ['addPaymentMethodView', ['@orob2b_payment.payment_method.view.paypal_payments_pro']]
-            - ['addPaymentMethodView', ['@orob2b_payment.payment_method.view.payment_term']]
 
-    orob2b_payment.payment_method.view.payflow_gateway:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayflowGatewayView'
+    orob2b_payment.payment_method.payment_term:
+        class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm'
         public: false
         arguments:
-            - '@form.factory'
-            - '@oro_config.global'
-            - '@orob2b_payment.provider.payment_transaction'
-
-    orob2b_payment.payment_method.view.paypal_payments_pro:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\View\PayPalPaymentsProView'
-        public: false
-        parent: orob2b_payment.payment_method.view.payflow_gateway
+            - '@orob2b_payment.provider.payment_term'
+            - '@orob2b_payment.payment_method.payment_term.config'
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: orob2b_payment.payment_method }
 
     orob2b_payment.payment_method.view.payment_term:
         class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView'
@@ -58,4 +32,6 @@ services:
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@translator'
-            - '@oro_config.global'
+            - '@orob2b_payment.payment_method.payment_term.config'
+        tags:
+            - { name: orob2b_payment.payment_method_view }

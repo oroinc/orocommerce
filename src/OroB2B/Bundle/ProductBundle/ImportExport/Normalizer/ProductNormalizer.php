@@ -38,15 +38,17 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     }
 
     /**
+     * @param Product $object
+     *
      * {@inheritdoc}
      */
     public function normalize($object, $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
 
-        if (array_key_exists('unitPrecisions', $data)) {
+        if (array_key_exists('unitPrecisions', $data) && is_array($data['unitPrecisions'])) {
             foreach ($data['unitPrecisions'] as $v) {
-                if ($v['unit']['code'] != $object->getPrimaryUnitPrecision()->getUnit()->getCode()) {
+                if ($v['unit']['code'] !== $object->getPrimaryUnitPrecision()->getUnit()->getCode()) {
                     $data['additionalUnitPrecisions'][] = $v;
                 }
             }
@@ -69,6 +71,10 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
         if (array_key_exists('additionalUnitPrecisions', $data)) {
             $data['unitPrecisions'] = $data['additionalUnitPrecisions'];
             unset($data['additionalUnitPrecisions']);
+            foreach ($data['unitPrecisions'] as &$unitPrecisionData) {
+                $unitPrecisionData['sell'] = !empty($unitPrecisionData['sell']);
+            }
+            unset($unitPrecisionData);
         }
         
         /**

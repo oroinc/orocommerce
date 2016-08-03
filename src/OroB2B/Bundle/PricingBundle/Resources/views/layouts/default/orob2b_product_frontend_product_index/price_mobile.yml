@@ -2,5 +2,5 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BPricingBundle:layouts:default/orob2b_product_frontend_product_index/price_mobile.html.twig'
-    conditions:
-         '@eq': [ $context.user_agent.mobile, true ]
+
+    conditions: 'context["user_agent"]["mobile"]==true'

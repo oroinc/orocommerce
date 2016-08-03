@@ -14,7 +14,7 @@ layout:
                             -
                                 label: 'orob2b.checkout.title.step.label'
                                 parameters:
-                                    '%step_label%': { '@value': $data.workflowStep.label }
+                                    '%step_label%': '=data["workflowStep"].getLabel()'
                 body:
                     blockType: body
             tree:

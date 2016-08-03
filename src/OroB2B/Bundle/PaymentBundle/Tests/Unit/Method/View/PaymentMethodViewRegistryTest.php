@@ -25,15 +25,9 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testRegistry()
     {
-        $testPaymentType = 'test_method_view';
-
-        /** @var PaymentMethodViewInterface $testView */
-        $testView = $this->getTypeMock($testPaymentType, 10);
-
-        /** @var PaymentMethodViewInterface $testView2 */
+        $testView = $this->getTypeMock('test_method_view', 10);
         $testView2 = $this->getTypeMock('test_method_view2', 5);
 
-        /** @var PaymentMethodViewInterface $testView2 */
         $testViewMethodDisabled = $this->getTypeMock('test_method_view_disabled');
 
         $this->assertEmpty($this->registry->getPaymentMethodViews());
@@ -51,19 +45,73 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
 
         $views = $this->registry->getPaymentMethodViews();
         $this->assertCount(1, $views);
-        $this->assertEquals($testView2, reset($views));
-        $this->assertEquals($testView, end($views));
+        $this->assertSame($testView, reset($views));
     }
 
-    /**
-     * @depends testRegistry
-     */
-    public function testGetPaymentMethodViews()
+    public function testGetPaymentMethodViewsWithCorrectOrder()
     {
-        $testPaymentType = 'test_method_view';
+        $testView = $this->getTypeMock('test_method_view', 10);
+        $testView2 = $this->getTypeMock('test_method_view2', 20);
 
-        /** @var PaymentMethodViewInterface $testView */
-        $testView = $this->getTypeMock($testPaymentType, 10);
+        $this->registry->addPaymentMethodView($testView);
+        $this->registry->addPaymentMethodView($testView2);
+
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+
+        $paymentMethod
+            ->expects($this->exactly(2))
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $paymentMethod
+            ->expects($this->exactly(2))
+            ->method('isApplicable')
+            ->willReturn(true);
+
+        $this->paymentMethodRegistry
+            ->expects($this->exactly(2))
+            ->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+
+        $views = $this->registry->getPaymentMethodViews();
+        $this->assertCount(2, $views);
+        $this->assertSame($testView, reset($views));
+        $this->assertSame($testView2, end($views));
+    }
+
+    public function testGetPaymentMethodViewsWithSameOrder()
+    {
+        $testView = $this->getTypeMock('test_method_view', 10);
+        $testView2 = $this->getTypeMock('test_method_view2', 10);
+
+        $this->registry->addPaymentMethodView($testView);
+        $this->registry->addPaymentMethodView($testView2);
+
+        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+
+        $paymentMethod
+            ->expects($this->exactly(2))
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $paymentMethod
+            ->expects($this->exactly(2))
+            ->method('isApplicable')
+            ->willReturn(true);
+
+        $this->paymentMethodRegistry
+            ->expects($this->exactly(2))
+            ->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+
+        $views = $this->registry->getPaymentMethodViews();
+        $this->assertCount(2, $views);
+        $this->assertEquals([$testView, $testView2], $views);
+    }
+
+    public function testGetPaymentMethodView()
+    {
+        $testView = $this->getTypeMock('test_method_view', 10);
 
         $this->registry->addPaymentMethodView($testView);
 

@@ -30,6 +30,7 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['accountUser', new AccountUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
+            ['isAllowedRFP', true],
         ];
 
         $this->assertPropertyAccessors(new ShoppingList(), $properties);
