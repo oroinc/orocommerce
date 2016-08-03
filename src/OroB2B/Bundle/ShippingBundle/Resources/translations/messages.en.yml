@@ -108,7 +108,7 @@ orob2b:
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'
-            no_method: 'No shipping methods are available, Please contact us to complete the order submission.'
+            no_method: 'No shipping methods are available, please contact us to complete the order submission.'
         menu:
             shipping_rule.description: Shipping Rules
             shortcut_shipping_rule.description: List of shipping rules
