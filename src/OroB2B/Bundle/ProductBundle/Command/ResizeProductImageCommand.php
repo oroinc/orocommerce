@@ -2,14 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Command;
 
-use Liip\ImagineBundle\Model\Binary;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
@@ -76,40 +72,15 @@ class ResizeProductImageCommand extends ContainerAwareCommand
      */
     private function resizeImage(File $image, $filterName, $force, $output)
     {
-        $container = $this->getContainer();
-        $cacheResolverName = $container->getParameter('oro_attachment.imagine.cache.resolver.custom_web_path.name');
-        $attachmentManager = $container->get('oro_attachment.manager');
-        $cacheManager = $container->get('liip_imagine.cache.manager');
-        $extensionGuesser = $container->get('liip_imagine.extension_guesser');
-        $path = $attachmentManager->getFilteredImageUrl($image, $filterName);
+        $resizer = $this->getContainer()->get('oro_attachment.image_resizer');
 
-        if ($cacheManager->isStored($path, $filterName, $cacheResolverName) && !$force) {
-            $output->writeln(
-                sprintf(
-                    'Resized image #%d for filter [%s] already exists.',
-                    $image->getId(),
-                    $filterName
-                )
-            );
-
-            return;
+        if ($resizer->resizeImage($image, $filterName, $force)) {
+            $message = 'Resized image #%d for filter [%s] successfully created.';
+        } else {
+            $message = 'Resized image #%d for filter [%s] already exists.';
         }
 
-        $mimeType = $image->getMimeType();
-        $format = $extensionGuesser->guess($mimeType);
-        $content = $attachmentManager->getContent($image);
-
-        $binary = new Binary($content, $mimeType, $format);
-        $filteredBinary = $container->get('liip_imagine.filter.manager')->applyFilter($binary, $filterName);
-
-        $cacheManager->store($filteredBinary, $path, $filterName, $cacheResolverName);
-        $output->writeln(
-            sprintf(
-                'Resized image #%d for filter [%s] successfully created.',
-                $image->getId(),
-                $filterName
-            )
-        );
+        $output->writeln(sprintf($message, $image->getId(), $filterName));
     }
 
     /**

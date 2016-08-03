@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProductImage;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductImageRepository")
  * @ORM\Table(name="orob2b_product_image")
  * @ORM\HasLifecycleCallbacks
  * @Config
