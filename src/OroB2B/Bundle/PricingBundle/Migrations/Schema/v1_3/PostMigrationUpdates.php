@@ -30,6 +30,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function updatePriceListTable(Schema $schema, QueryBag $queries)
@@ -46,6 +47,7 @@ class PostMigrationUpdates implements Migration, OrderedMigrationInterface
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function updatePriceListCombinedTable(Schema $schema, QueryBag $queries)

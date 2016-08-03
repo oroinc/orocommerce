@@ -6,5 +6,5 @@ layout:
             id: checkout_information
             optionName: stepOrder
             optionValue: 3
-    conditions:
-        '@eq': [$context.workflowStepName, 'enter_shipping_method']
+    conditions: 'context["workflowStepName"]=="enter_shipping_method"'
+

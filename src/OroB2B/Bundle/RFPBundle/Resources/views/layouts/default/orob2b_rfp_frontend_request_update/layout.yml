@@ -9,7 +9,7 @@ layout:
                 -
                     label: 'orob2b.frontend.rfp.request.edit_title.label'
                     parameters:
-                        '%id%': { '@value': $data.entity.id }
+                        '%id%': '=data["entity"].getId()'
 
         - '@setOption':
             id: page_title
@@ -22,7 +22,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.rfp.request.edit_title.label'
                 parameters:
-                    '%id%': { '@value': $data.entity.id }
+                    '%id%': '=data["entity"].getId()'
 
         - '@add':
             id: account_sidebar

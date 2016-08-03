@@ -50,7 +50,6 @@ class RemoveImageRelationOnProduct implements
                 self::PRODUCT_IMAGE_ASSOCCIATION_NAME
             )
         );
-
     }
 
     /**
