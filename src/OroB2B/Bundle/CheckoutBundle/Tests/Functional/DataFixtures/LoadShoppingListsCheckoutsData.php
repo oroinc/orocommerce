@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-class LoadCheckouts extends AbstractLoadCheckouts
+class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
 {
     const CHECKOUT_1 = 'checkout.1';
     const CHECKOUT_2 = 'checkout.2';
