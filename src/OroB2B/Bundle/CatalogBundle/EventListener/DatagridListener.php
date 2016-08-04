@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -58,23 +59,13 @@ class DatagridListener
      */
     protected function addCategoryRelation(DatagridConfiguration $config)
     {
-        // select
-        $categoryTitleSelect = 'categoryTitle.string as ' . self::CATEGORY_COLUMN;
-        $this->addConfigElement($config, '[source][query][select]', $categoryTitleSelect);
-
-        $joinCategoryTitles = [
-            'join' => 'productCategory.titles',
-            'alias' => 'categoryTitle',
-        ];
-        $this->addConfigElement($config, '[source][query][join][left]', $joinCategoryTitles);
-
-        // conditions - where condition is required to prevent selection of extra joined rows
-        $where = 'categoryTitle.localization IS NULL';
-        $this->addConfigElement($config, '[source][query][where][and]', $where);
-
         // columns
         $categoryColumn = ['label' => 'orob2b.catalog.category.entity_label'];
         $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
+
+        // properties
+        $categoryProperty = ['type' => LocalizedValueProperty::NAME, 'data_name' => 'productCategory.titles'];
+        $this->addConfigElement($config, '[properties]', $categoryProperty, self::CATEGORY_COLUMN);
 
         // sorter
         $categorySorter = ['data_name' => self::CATEGORY_COLUMN];
@@ -83,7 +74,7 @@ class DatagridListener
         // filter
         $categoryFilter = [
             'type' => 'string',
-            'data_name' => 'categoryTitle.string',
+            'data_name' => self::CATEGORY_COLUMN,
         ];
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
     }

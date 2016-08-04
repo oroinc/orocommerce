@@ -1,6 +1,6 @@
 {% block _top_nav_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " topbar"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " topbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -13,15 +13,18 @@
 
 {% block _top_nav_widget %}
     {% spaceless %}
-        <nav class="topbar__navigation topbar__navigation--has-sibling">
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " topbar__navigation topbar__navigation--has-sibling"
+        }) %}
+        <nav {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </nav>
     {% endspaceless %}
 {% endblock %}
 
 {% block _top_nav_menu_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-7 col-sm-7 text-right"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " col-md-7 col-sm-7 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -30,8 +33,8 @@
 
 
 {% block _top_nav_controls_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-5 col-sm-5"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " col-md-5 col-sm-5"
     }) %}
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation">
