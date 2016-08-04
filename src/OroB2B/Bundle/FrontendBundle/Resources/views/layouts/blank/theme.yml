@@ -1,7 +1,10 @@
+label: Blank theme
+description: Blank theme.
 groups: [ commerce ]
 data:
     assets:
         styles:
             inputs:
-                - 'bundles/orob2bfrontend/blank/scss/styles.scss'
+                - 'bundles/orob2bfrontend/blank/blocks/blocks.scss'
+            filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/blank/styles.css'
