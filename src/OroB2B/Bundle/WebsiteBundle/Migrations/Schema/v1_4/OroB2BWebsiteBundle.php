@@ -40,6 +40,14 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setDatabasePlatform(AbstractPlatform $platform)
+    {
+        $this->platform = $platform;
+    }
+
+    /**
      * @param Schema $schema
      * @param QueryBag $queries
      * @throws SchemaException
@@ -49,7 +57,7 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         $table = $schema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
 
-        $queries->addPostQuery(
+        $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
                 sprintf(
                     'UPDATE %s SET is_default = :is_default',
@@ -59,25 +67,18 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                 ['is_default' => Type::BOOLEAN]
             )
         );
-        $queries->addPostQuery(
+        $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
                 sprintf(
-                    'UPDATE %s SET is_default = :is_default WHERE id = :id',
+                    'UPDATE %s SET is_default = :is_default WHERE id = (SELECT MIN(id) FROM %s)',
+                    OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
                     OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME
                 ),
-                ['is_default' => true, 'id' => 1],
                 ['is_default' => Type::BOOLEAN, 'id' => Type::INTEGER]
             )
         );
 
-        $postSchema = clone $schema;
-        $postSchema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME)
-            ->changeColumn('is_default', ['notnull' => true]);
-        $postQueries = $this->getSchemaDiff($schema, $postSchema);
-
-        foreach ($postQueries as $query) {
-            $queries->addPostQuery($query);
-        }
+        $this->doPostUpdateChanges($schema, $queries);
     }
 
     /**
@@ -93,10 +94,19 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws SchemaException
      */
-    public function setDatabasePlatform(AbstractPlatform $platform)
+    protected function doPostUpdateChanges(Schema $schema, QueryBag $queries)
     {
-        $this->platform = $platform;
+        $postSchema = clone $schema;
+        $postSchema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME)
+            ->changeColumn('is_default', ['notnull' => true]);
+        $postQueries = $this->getSchemaDiff($schema, $postSchema);
+
+        foreach ($postQueries as $query) {
+            $queries->addPostQuery($query);
+        }
     }
 }
