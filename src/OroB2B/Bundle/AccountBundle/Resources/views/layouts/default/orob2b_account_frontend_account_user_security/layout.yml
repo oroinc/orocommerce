@@ -3,4 +3,6 @@ layout:
         - '@remove':
             id: footer
         - '@remove':
+            id: sidebar_left
+        - '@remove':
             id: header
