@@ -1,6 +1,16 @@
 {% block _quick_add_copy_paste_form_start_widget %}
     {% set attr = {
         'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-copy-paste-form-component',
+        'data-page-component-options': {
+            'dialogOptions': {
+                'title' : 'orob2b.product.frontend.quick_add.import_validation.title'|trans,
+                'modal': true,
+                'resizable': false,
+                'width': 820,
+                'autoResize': true,
+                'dialogClass': 'ui-dialog-no-scroll'
+            }
+        }
     }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}

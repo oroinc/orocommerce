@@ -6,7 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
@@ -71,7 +73,7 @@ class QuickAddController extends Controller
      * @Layout(action="redirect", vars={"targetUrl"})
      *
      * @param Request $request
-     * @return array
+     * @return JsonResponse
      */
     public function validationResultAction(Request $request)
     {
@@ -81,9 +83,13 @@ class QuickAddController extends Controller
         );
 
         if (!$response instanceof RedirectResponse) {
-            return ['targetUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')];
+            return new JsonResponse([
+                'redirectUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')
+            ]);
         }
 
-        return ['targetUrl' => $response->getTargetUrl()];
+        return new JsonResponse([
+            'redirectUrl' => $response->getTargetUrl()
+        ]);
     }
 }
