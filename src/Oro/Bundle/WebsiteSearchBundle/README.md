@@ -1,0 +1,3 @@
+Oro\Bundle\WebsiteSearchBundle
+===============================================
+
