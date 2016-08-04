@@ -1,0 +1,5 @@
+data:
+    assets:
+        styles:
+            inputs:
+                - 'bundles/orob2baccount/custom/scss/styles.scss'
