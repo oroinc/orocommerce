@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_index/layout.html.twig'
@@ -39,8 +41,3 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-requests-grid
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
