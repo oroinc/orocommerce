@@ -721,10 +721,10 @@ workflows:
                                 parameters: [$.result.customerShippingAddress]
                     - '@send_email_template':
                         parameters:
-                            from: $checkout.order.owner.email
-                            to: $checkout.order.accountUser.email
+                            from: $order.owner.email
+                            to: $order.accountUser.email
                             template: 'order_confirmation_email'
-                            entity: $checkout.order
+                            entity: $order
                     - '@remove_entity':
                         conditions:
                             '@or':
