@@ -31,7 +31,7 @@ Add placeholder using layout update:
 - '@add':
     id: sticky_element_notification
     parentId: sticky_panel_content
-    blockType: block
+    blockType: container
 ```
 
 Add placeholder template
@@ -49,4 +49,13 @@ Add `placeholderId` option to `data-sticky` attribute:
     <div id="flash-messages" class="notification"
          data-sticky='{"placeholderId": "sticky-element-notification"}'>
     </div>
+```
+
+**Always show element in sticky panel**
+
+Move element to sticky panel using layout update:
+```yaml
+- '@move':
+    id: notification
+    parentId: sticky_element_notification
 ```
