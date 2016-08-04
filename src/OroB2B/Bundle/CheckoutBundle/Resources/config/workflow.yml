@@ -61,6 +61,12 @@ workflows:
             payment_save_for_later:
                 type: bool
                 label: Save payment data for later use
+            state_token_storage:
+                type: array
+                label: Storage of checkout states
+            state_token:
+                type: string
+                label: Token to track checkout state
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -112,6 +118,10 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
+                    init_actions:
+                        - '@generate_checkout_state_snapshot':
+                            checkout: $checkout
+                            attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
                             form_type: orob2b_checkout_address
@@ -133,6 +143,8 @@ workflows:
                             form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Ship to this address
+                        state_token:
+                            form_type: hidden
 
             continue_to_shipping_method:
                 label: Continue
@@ -143,6 +155,10 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
+                    init_actions:
+                        - '@generate_checkout_state_snapshot':
+                            checkout: $checkout
+                            attribute: $.result.initCheckoutState
                     attribute_fields:
                         shipping_address:
                             form_type: orob2b_checkout_address
@@ -164,7 +180,8 @@ workflows:
                             form_type: orob2b_ship_to_billing_address
                             options:
                                 label: Use billing address
-
+                        state_token:
+                            form_type: hidden
             continue_to_payment:
                 label: Continue
                 step_to: enter_payment
@@ -172,7 +189,14 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-
+                form_options:
+                    init_actions:
+                        - '@generate_checkout_state_snapshot':
+                            checkout: $checkout
+                            attribute: $.result.initCheckoutState
+                    attribute_fields:
+                        state_token:
+                            form_type: hidden
             continue_to_order_review:
                 label: Continue
                 step_to: order_review
@@ -193,12 +217,17 @@ workflows:
                             conditions:
                                 '@not_empty': [$.result.validatePaymentTransaction]
                             parameters: [$payment_validate, false]
+                        - '@generate_checkout_state_snapshot':
+                            checkout: $checkout
+                            attribute: $.result.initCheckoutState
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
                             form_type: checkbox
                         payment_save_for_later:
                             form_type: checkbox
+                        state_token:
+                            form_type: hidden
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -248,12 +277,18 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
+                    init_actions:
+                        - '@generate_checkout_state_snapshot':
+                            checkout: $checkout
+                            attribute: $.result.initCheckoutState
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
                         ship_until: ~
                         customer_notes:
                             form_type: textarea
+                        state_token:
+                            form_type: hidden
 
             finish_checkout:
                 label: Finish checkout
@@ -271,6 +306,14 @@ workflows:
             __start___definition:
                 post_actions:
                     - '@assign_value': [$payment_save_for_later, true]
+                    - '@assign_value': [$state_token_storage, []]
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.startCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.startCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
             do_nothing:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -291,7 +334,14 @@ workflows:
                             parameters:
                                 entity: $checkout
                 conditions:
-                    '@not_empty': $checkout.billingAddress
+                    '@and':
+                        - '@not_empty': $checkout.billingAddress
+                        - '@not_empty': $.result.initCheckoutState
+                        - '@generate_and_check_checkout_state':
+                            checkout: $checkout
+                            token: $state_token
+                            getFrom: $state_token_storage
+                            state: $.result.initCheckoutState
                 post_actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
@@ -342,6 +392,13 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
             continue_to_shipping_method_definition:
                 pre_conditions:
                     '@and':
@@ -358,6 +415,11 @@ workflows:
                         - '@and':
                             - '@equal': [$checkout.shipToBillingAddress, false]
                             - '@not_empty': $checkout.shippingAddress
+                        - '@generate_and_check_checkout_state':
+                            checkout: $checkout
+                            token: $state_token
+                            getFrom: $state_token_storage
+                            state: $.result.initCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -382,13 +444,33 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
-
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
             continue_to_payment_definition:
                 pre_conditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
+                conditions:
+                        '@generate_and_check_checkout_state':
+                            checkout: $checkout
+                            token: $state_token
+                            getFrom: $state_token_storage
+                            state: $.result.initCheckoutState
+                post_actions:
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
 
             continue_to_order_review_definition:
                 pre_conditions:
@@ -411,6 +493,11 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
+                        - '@generate_and_check_checkout_state':
+                            checkout: $checkout
+                            token: $state_token
+                            getFrom: $state_token_storage
+                            state: $.result.initCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -440,7 +527,13 @@ workflows:
                                     saveForLaterUse: $payment_save_for_later
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
-
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
             verify_payment_definition:
                 pre_conditions:
                     '@and':
@@ -464,6 +557,12 @@ workflows:
                     '@not_equal':
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
+                conditions:
+                        '@generate_and_check_checkout_state':
+                            checkout: $checkout
+                            token: $state_token
+                            getFrom: $state_token_storage
+                            state: $.result.initCheckoutState
                 post_actions:
                     - '@assign_value':
                         conditions:
@@ -593,6 +692,14 @@ workflows:
                         route_parameters:
                             id: $.id
                             transition: payment_error
+
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
 
             finish_checkout_definition:
                 conditions:
