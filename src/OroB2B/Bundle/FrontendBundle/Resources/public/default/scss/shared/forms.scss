@@ -42,6 +42,10 @@ label {
   padding: 0 5px;
 
   @include clearfix;
+
+  &.no-padding {
+    padding: 0px;
+  }
 }
 
 .input,

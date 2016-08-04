@@ -17,7 +17,7 @@
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
+        '~class': " product-item__image-holder product-item__image-holder_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         {% set noImageUrl = Image.url(null, 'product_large') %}
@@ -38,7 +38,7 @@
 
 {% block _product_grid_row_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__title product-item__title_<%= themeOptions.view %>"
+        '~class': " product-item__title product-item__title_<%= themeOptions.currentRowView %>"
     }) %}
     <h3 {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
@@ -47,10 +47,10 @@
 
 {% block _product_grid_row_primary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__primary-content product-item__primary-content_<%= themeOptions.view %>"
+        '~class': " product-item__primary-content product-item__primary-content_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="product-item__primary-half product-item__primary-half_<%= themeOptions.view %>">
+        <div class="product-item__primary-half product-item__primary-half_<%= themeOptions.currentRowView %>">
             {{ block_widget(block) }}
         </div>
     </div>
@@ -58,7 +58,7 @@
 
 {% block _product_grid_row_number_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__number product-item__number_<%= themeOptions.view %>"
+        '~class': " product-item__number product-item__number_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         Item #: <span class="red"><%= model.sku %></span>
@@ -67,7 +67,7 @@
 
 {% block _product_grid_row_specification_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__specification product__specification_<%= themeOptions.view %> mb2-md"
+        '~class': " product__specification product__specification_<%= themeOptions.currentRowView %> mb2-md"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
@@ -95,7 +95,7 @@
 
 {% block _product_grid_row_short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__description product__description_<%= themeOptions.view %>"
+        '~class': " product__description product__description_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         <p><%= model.shortDescription %></p>
@@ -104,7 +104,7 @@
 
 {% block _product_grid_row_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__view-details-link product__view-details-link_<%= themeOptions.view %>"
+        '~class': " product__view-details-link product__view-details-link_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>" class="view-product">
@@ -115,21 +115,21 @@
 
 {% block _product_grid_row_secondary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-content product-item__secondary-content_<%= themeOptions.view %>"
+        '~class': " product-item__secondary-content product-item__secondary-content_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _product_grid_row_secondary_content_first_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>"
+        '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _product_grid_row_specification_delivery_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__specification product__specification_delivery product__specification_<%= themeOptions.view %> not-implemented"
+        '~class': " product__specification product__specification_delivery product__specification_<%= themeOptions.currentRowView %> not-implemented"
     }) %}
     <div {{ block('block_attributes') }}>
     </div>
@@ -137,20 +137,20 @@
 
 {% block _product_grid_row_secondary_content_second_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>"
+        '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _product_grid_row_more_info_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.view %>"
+        '~class': " oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         <i class="cf-play"></i>
         <a href="#" data-more-info-expand>More Info</a>
         <div class="oro-more-info-toggler__container" data-more-info>
-            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list_<%= themeOptions.view %>">
+            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list_<%= themeOptions.currentRowView %>">
                 <li><span class="text-uppercase">Mspr:</span> $24.99</li>
                 <li>Shipping Weight: .08 lbs.</li>
                 <li>80 Items to a Box</li>
@@ -180,7 +180,7 @@
 
 {% block _line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__qty product-item__qty_<%= themeOptions.view %>"
+        '~class': " product-item__qty product-item__qty_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

@@ -76,29 +76,4 @@ class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEv
 
         $this->listener->onDBQuery($this->event);
     }
-
-    public function testSystemConfigurationPathWrongConfig()
-    {
-        $this->setExpectedException(
-            'LogicException',
-            'SystemConfigurationPath is not configured properly for ProductSelectDBQueryEventListener'
-        );
-
-        $this->event->expects($this->once())
-            ->method('getDataParameters')
-            ->willReturn(new ParameterBag(['scope' => self::SCOPE]));
-
-        $this->frontendHelper->expects($this->any())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('wrong_path')
-            ->willReturn(null);
-
-        $this->listener->setFrontendSystemConfigurationPath('wrong_path');
-
-        $this->listener->onDBQuery($this->event);
-    }
 }

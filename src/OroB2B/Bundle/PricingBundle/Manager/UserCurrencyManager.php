@@ -120,10 +120,8 @@ class UserCurrencyManager
             $this->userManager->getStorageManager()->flush();
         } else {
             $sessionCurrencies = $this->getSessionCurrencies();
-            if (!in_array($currency, $sessionCurrencies, true)) {
-                $sessionCurrencies[$website->getId()] = $currency;
-                $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);
-            }
+            $sessionCurrencies[$website->getId()] = $currency;
+            $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);
         }
     }
 

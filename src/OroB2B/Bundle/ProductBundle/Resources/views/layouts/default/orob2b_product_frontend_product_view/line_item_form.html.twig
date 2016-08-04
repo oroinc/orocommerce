@@ -11,7 +11,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " form__col "
+            '~class': " form__col no-padding"
         }) %}
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({

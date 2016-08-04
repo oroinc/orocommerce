@@ -739,25 +739,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
-     * @return null|LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultName()
-    {
-        $names = $this->names->filter(function (LocalizedFallbackValue $name) {
-            return null === $name->getLocalization();
-        });
-
-        if ($names->count() > 1) {
-            throw new \LogicException('There must be only one default name');
-        } elseif ($names->count() === 1) {
-            return $names->first();
-        }
-
-        return null;
-    }
-
-    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getDescriptions()
@@ -791,23 +772,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         }
 
         return $this;
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultDescription()
-    {
-        $descriptions = $this->descriptions->filter(function (LocalizedFallbackValue $description) {
-            return null === $description->getLocalization();
-        });
-
-        if ($descriptions->count() > 1) {
-            throw new \LogicException('There must be only one default description');
-        }
-
-        return $descriptions->first();
     }
 
     /**
@@ -927,23 +891,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         }
 
         return $this;
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultShortDescription()
-    {
-        $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocalization();
-        });
-
-        if ($shortDescriptions->count() > 1) {
-            throw new \LogicException('There must be only one default short description');
-        }
-
-        return $shortDescriptions->first();
     }
 
     /**

@@ -64,7 +64,6 @@ services:
         tags:
             - { name: layout.block_type_extension, alias: widget_content }
 
-
     orob2b_shopping_list.layout.type.product_shopping_lists:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
@@ -72,3 +71,11 @@ services:
             - [setName, ['product_shopping_lists']]
         tags:
              - { name: layout.block_type, alias: product_shopping_lists }
+
+    orob2b_shopping_list.layout.block.type.shopping_lists_menu:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
+            - [setName, ['shopping_lists_menu']]
+        tags:
+             - { name: layout.block_type, alias: shopping_lists_menu }
