@@ -1,7 +1,7 @@
 label: Blank theme
 description: Blank theme.
 groups: [ commerce ]
-icon: bundles/orob2bfrontend/blank/blocks/favicon/favicon.ico
+icon: bundles/orob2bfrontend/blank/images/favicon.ico
 data:
     assets:
         styles:
