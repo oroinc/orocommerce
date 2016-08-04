@@ -184,6 +184,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
                     ]
                 )
             );
+        $privilege->expects($this->any())->method('getFields')->willReturn(new ArrayCollection());
 
         return $privilege;
     }
