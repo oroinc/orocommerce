@@ -1,0 +1,35 @@
+{% block _account_sidebar_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' account-menu'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h3 class="account-menu__title">{{ 'orob2b.account.frontend.menu.account_user_profile.label'|trans }}</h3>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_sidebar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' account-menu__list'
+    }) %}
+    <ul {{ block('block_attributes') }}>
+        {% set requestUrl = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+        {% set found = false %}
+
+        {% for child in block if child.vars.visible %}
+            {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
+
+            <li class="account-menu__item {% if currentUrl in requestUrl and not found %}account-menu__item--current{% endif %}">
+                {{ block_widget(child, {
+                    attr: layout_attr_defaults(child.vars.attr, {
+                        '~class': ' account-menu__link'
+                    })
+                }) }}
+            </li>
+
+            {% if currentUrl in requestUrl and not found %}
+                {% set found = true %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}

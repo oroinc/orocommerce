@@ -1,91 +1,70 @@
-.navigation-widget {
-  margin: .3rem 0 0;
-  background: $theme-slight-lightest-gray-color;
-
+.quick-access {
   &__list {
     @include list-normalize();
 
-    padding: 28px 0 11px 14px;
+    padding-top: 18px;
 
-    > li {
-      position: relative;
-
-      margin: 0 0 17px;
-
-      font-size: 13px;
-
-      > a {
-        display: inline-block;
-        overflow: hidden;
-        vertical-align: middle;
-
-        color: $base-font-color-light;
-        font-weight: 700;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-
-        &:hover {
-          text-decoration: none;
-
-          > span {
-            &:last-child {
-              text-decoration: underline;
-            }
-          }
-        }
-
-        &:visited, &:focus {
-          text-decoration: none;
-        }
-
-        > span {
-          vertical-align: middle;
-        }
-      }
-    }
-  }
-
-  &--right {
     text-align: right;
-  }
-
-  &--inline {
-    padding: 18px 0 0;
 
     @include clearfix();
+  }
 
-    > li {
-      display: inline-block;
-      margin: 0 0 0 10px;
+  &__item {
+    position: relative;
 
-      @media (max-width: $screen-md) {
-        margin: 0 0 0 5px;
-      }
+    display: inline-block;
+    margin-left: 10px;
 
-      > a {
-        font-weight: 400;
-      }
+    font-size: 13px;
+
+    @media (max-width: $screen-md) {
+      margin-left: 5px;
+    }
+  }
+
+  &__link {
+    display: inline-block;
+    vertical-align: middle;
+
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: $base-font-color-light;
+
+    overflow: hidden;
+
+    &:hover, &:visited, &:focus {
+      text-decoration: none;
+
+      color: $base-font-color-light;
     }
 
-    .navigation-widget__badge {
-      margin: 0 5px 0 0;
-
-      i {
-        font-size: 11px;
+    &:hover {
+      .quick-access__text {
+        text-decoration: underline;
       }
     }
+  }
+
+  &__text {
+    vertical-align: middle;
   }
 
   &__badge {
-    margin: 0 15px 0 0;
+    width: $badge-sm-xs;
+    height: $badge-sm-xs;
+
+    margin-right: 5px;
+
+    font-size: 12px;
+    line-height: $badge-sm-xs;
 
     i {
-      font-size: 16px;
+      font-size: 11px;
     }
   }
 }
-
-
 
 // *** Sticked navigation has not implemented yet!!!
 .navigation-widget__list_sticked {
@@ -103,6 +82,8 @@
     }
   }
 }
+
+
 
 // *** Static links list has not implemented yet!!!
 .static-links__list {
