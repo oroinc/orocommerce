@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
+namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
@@ -9,24 +9,12 @@ use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2\Checkout\MoveCheckoutAddressDataQuery;
-use OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2\Checkout\UpdateCheckoutWorkflowDataQuery;
-
-class UpdateBaseCheckoutTables implements Migration, DatabasePlatformAwareInterface, OrderedMigrationInterface
+class OroB2BCheckoutBundle implements Migration, DatabasePlatformAwareInterface
 {
     use DatabasePlatformAwareTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 10;
-    }
 
     /**
      * {@inheritdoc}

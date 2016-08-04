@@ -6,23 +6,11 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2\AlternativeCheckout\MoveCheckoutAddressDataQuery;
-use OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2\AlternativeCheckout\UpdateCheckoutWorkflowDataQuery;
-
-class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
+class OroB2BAlternativeCheckoutBundle implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 20;
-    }
-
     /**
      * {@inheritdoc}
      */

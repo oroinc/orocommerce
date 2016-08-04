@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2\AlternativeCheckout;
+namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -42,10 +42,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
 
         foreach ($rows as $row) {
             $data = json_decode($row['data'], true);
-            $data['allowed'] = $row['allowed'];
-            $data['allow_request_date'] = $this->serializeDate($row['allow_request_date']);
-            $data['request_approval_notes'] = $row['request_approval_notes'];
-            $data['requested_for_approve'] = $row['requested_for_approve'];
+            $data['order'] = $row['order_id'] ? ['id' => $row['order_id']] : null;
 
             $queries[] = [
                 'UPDATE oro_workflow_item SET data = :data WHERE id = :id',
@@ -71,33 +68,16 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
     {
         $castType = $this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform ? 'varchar' : 'char';
 
-        $sql = 'SELECT c.allowed, c.allow_request_date, c.request_approval_notes, c.requested_for_approve,
-                  wi.id AS workflow_item_id, wi.data
-                FROM orob2b_alternative_checkout AS c
+        $sql = 'SELECT c.order_id, wi.id AS workflow_item_id, wi.data
+                FROM orob2b_default_checkout AS c
                 INNER JOIN oro_workflow_item AS wi
                   ON CAST(c.id as %s) = CAST(wi.entity_id as %s) AND wi.entity_class = :class';
         $sql = sprintf($sql, $castType, $castType);
-        $params = ['class' => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
+        $params = ['class' => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout'];
         $types  = ['class' => 'string'];
 
         $this->logQuery($logger, $sql, $params, $types);
 
         return $this->connection->fetchAll($sql, $params, $types);
-    }
-
-    /**
-     * @param string $date
-     * @return string
-     */
-    protected function serializeDate($date)
-    {
-        if (!$date) {
-            return null;
-        }
-
-        $date = new \DateTime($date);
-        $date = serialize($date);
-
-        return base64_encode($date);
     }
 }
