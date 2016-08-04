@@ -7,7 +7,6 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ProductShoppingListsDataProvider
@@ -52,7 +51,6 @@ class ProductShoppingListsDataProvider
             return null;
         }
 
-        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->shoppingListManager->getCurrent();
 
         if (!$shoppingList) {
