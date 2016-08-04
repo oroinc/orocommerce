@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
