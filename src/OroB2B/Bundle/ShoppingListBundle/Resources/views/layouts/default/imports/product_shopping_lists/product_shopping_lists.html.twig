@@ -36,7 +36,7 @@
     <div class="shopping-lists__text">
         <div class="shopping-lists__description-row">
             <span class="shopping-lists__label"><%= _.__(
-                    'orob2b.shoppinglist.actions.added_to_shopping_list', {
+                    'orob2b.shoppinglist.actions.line_items_in_shopping_list', {
                     lineItems: _.__(
                         'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
                         {count: lineItem.quantity},
@@ -91,7 +91,7 @@
         },
         '~class': ' shopping-lists__link'
     }) %}
-    <a {{ block('block_attributes') }}>{{ 'orob2b.shoppinglist.actions.add_to_multiple'|trans }}</a>
+    <a {{ block('block_attributes') }}>({{ 'orob2b.shoppinglist.actions.add_to_multiple'|trans }})</a>
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}

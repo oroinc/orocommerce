@@ -56,6 +56,12 @@ define(function(require) {
                     }, this)];
                 }
 
+                if (this.modelEvents[modelKey + ' focus'] === undefined) {
+                    this.modelEvents[modelKey + ' focus'] = ['focus', _.bind(function(e) {
+                        this.getElement(elementKey).focus();
+                    }, this)];
+                }
+
                 this.setModelValueFromElement(modelKey, elementKey);
             }, this);
         },

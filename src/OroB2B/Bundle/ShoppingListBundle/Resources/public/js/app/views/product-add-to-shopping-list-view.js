@@ -199,6 +199,7 @@ define(function(require) {
         _editLineItem: function(lineItemId) {
             this._setEditLineItem(lineItemId);
             this.updateMainButton();
+            this.model.trigger('focus:quantity');
         },
 
         _setEditLineItem: function(lineItemId, setFirstLineItem) {
