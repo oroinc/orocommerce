@@ -69,7 +69,7 @@ class FlatRateShippingConfigurationTypeTest extends FormIntegrationTestCase
         return [
             [null],
             [
-                (new FlatRateRuleConfiguration)
+                (new FlatRateRuleConfiguration())
                     ->setMethod('test')
                     ->setType('test')
             ],
