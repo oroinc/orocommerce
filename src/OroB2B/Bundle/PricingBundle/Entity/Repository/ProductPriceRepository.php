@@ -6,7 +6,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ProductPriceRepository extends BasePriceListRepository
+class ProductPriceRepository extends BaseProductPriceRepository
 {
     /**
      * @param PriceList $priceList

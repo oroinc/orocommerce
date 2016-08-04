@@ -2,15 +2,31 @@
 
 namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 
 class PriceListProductPricesCurrencyValidator extends ConstraintValidator
 {
+    /**
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
+     * @param Registry $registry
+     */
+    public function __construct(Registry $registry)
+    {
+        $this->registry = $registry;
+    }
+
     /**
      * @param ProductPrice|object $value
      * @param ProductPriceCurrency $constraint
@@ -19,21 +35,14 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof BasePriceList) {
-            throw new UnexpectedTypeException($value, 'OroB2B\Bundle\PricingBundle\Entity\PriceList');
+        if (!$value instanceof PriceAttributePriceList) {
+            throw new UnexpectedTypeException($value, 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList');
         }
 
-        $availableCurrencies = $value->getCurrencies();
-
-        $invalidCurrencies = [];
-
-        /** @var ProductPrice $productPrice */
-        foreach ($value->getPrices() as $productPrice) {
-            $price = $productPrice->getPrice();
-            if ($price && !in_array($price->getCurrency(), $availableCurrencies, true)) {
-                $invalidCurrencies[$price->getCurrency()] = true;
-            }
-        }
+        /** @var ProductPriceRepository $repository */
+        $repository = $this->registry->getManagerForClass(PriceAttributeProductPrice::class)
+            ->getRepository(PriceAttributeProductPrice::class);
+        $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($value);
 
         foreach (array_keys($invalidCurrencies) as $currency) {
             $this->context->addViolationAt('currencies', $constraint->message, ['%invalidCurrency%' => $currency]);

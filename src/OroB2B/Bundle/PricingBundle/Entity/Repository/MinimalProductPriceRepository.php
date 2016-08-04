@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class MinimalProductPriceRepository extends BasePriceListRepository
+class MinimalProductPriceRepository extends BaseProductPriceRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertQueryExecutor

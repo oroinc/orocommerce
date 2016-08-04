@@ -20,18 +20,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 class PriceAttributePriceList extends BasePriceList
 {
     /**
-     * @var Collection|PriceAttributeProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
-     *      mappedBy="priceList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     **/
-    protected $prices;
-
-    /**
      * @var PriceAttributeCurrency[]|Collection
      *
      * @ORM\OneToMany(

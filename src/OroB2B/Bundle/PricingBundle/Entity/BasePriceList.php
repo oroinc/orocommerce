@@ -46,15 +46,9 @@ class BasePriceList implements DatesAwareInterface
      */
     protected $currencies;
 
-    /**
-     * @var Collection|BaseProductPrice[]
-     **/
-    protected $prices;
-
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
-        $this->prices = new ArrayCollection();
     }
 
     /**
@@ -185,41 +179,6 @@ class BasePriceList implements DatesAwareInterface
             ->where(Criteria::expr()->eq('currency', $currency));
 
         return $this->currencies->matching($criteria)->first();
-    }
-
-    /**
-     * @param BaseProductPrice $price
-     * @return $this
-     */
-    public function addPrice(BaseProductPrice $price)
-    {
-        if (!$this->prices->contains($price)) {
-            $price->setPriceList($this);
-            $this->prices->add($price);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param BaseProductPrice $price
-     * @return $this
-     */
-    public function removePrice(BaseProductPrice $price)
-    {
-        if ($this->prices->contains($price)) {
-            $this->prices->removeElement($price);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|BaseProductPrice[]
-     */
-    public function getPrices()
-    {
-        return $this->prices;
     }
 
     /**

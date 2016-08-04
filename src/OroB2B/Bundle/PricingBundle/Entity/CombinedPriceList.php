@@ -19,18 +19,6 @@ class CombinedPriceList extends BasePriceList
     protected $enabled = false;
 
     /**
-     * @var Collection|CombinedProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice",
-     *      mappedBy="priceList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     **/
-    protected $prices;
-
-    /**
      * @var CombinedPriceListCurrency[]|Collection
      *
      * @ORM\OneToMany(

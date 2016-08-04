@@ -15,7 +15,7 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-abstract class BasePriceListRepository extends EntityRepository
+abstract class BaseProductPriceRepository extends EntityRepository
 {
     /**
      * @param Product $product
@@ -375,5 +375,28 @@ abstract class BasePriceListRepository extends EntityRepository
         ];
 
         $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
+    }
+
+    /**
+     * @param BasePriceList $priceList
+     * @return array|string[]
+     */
+    public function getInvalidCurrenciesByPriceList(BasePriceList $priceList)
+    {
+        $supportedCurrencies = $priceList->getCurrencies();
+        $qb = $this->createQueryBuilder('productPrice');
+        $qb->select('DISTINCT productPrice.currency')
+            ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
+            ->andWhere($qb->expr()->notIn('productPrice.currency', ':supportedCurrencies'))
+            ->setParameter('priceList', $priceList)
+            ->setParameter('supportedCurrencies', $supportedCurrencies);
+
+        $productPrices = $qb->getQuery()->getArrayResult();
+        $result = [];
+        foreach ($productPrices as $productPrice) {
+            $result[] = $productPrice['currency'];
+        }
+
+        return $result;
     }
 }

@@ -12,7 +12,7 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class CombinedProductPriceRepository extends BasePriceListRepository
+class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor

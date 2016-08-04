@@ -366,6 +366,8 @@ services:
 
     orob2b_pricing.validator.price_list_product_prices_currency:
         class: 'OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator'
+        arguments:
+            - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
 
