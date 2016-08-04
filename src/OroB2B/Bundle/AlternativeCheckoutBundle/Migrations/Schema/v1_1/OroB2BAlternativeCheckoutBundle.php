@@ -12,8 +12,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
 {
-    const ALTERNATIVE_CHECKOUT_TYPE = 'alternativecheckout';
-
     /**
      * {@inheritdoc}
      */
@@ -122,9 +120,7 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         updated_at,
         shipping_estimate_amount,
         shipping_estimate_currency,
-        payment_method,
-        checkout_discriminator,
-        checkout_type
+        payment_method
     )
     SELECT workflow_step_id,
         workflow_item_id,
@@ -142,12 +138,10 @@ class OroB2BAlternativeCheckoutBundle implements Migration, OrderedMigrationInte
         updated_at,
         shipping_estimate_amount,
         shipping_estimate_currency,
-        payment_method,
-        '%s',
-        '%s'
+        payment_method
      FROM orob2b_alt_checkout_old
 SQL;
-        $queries->addQuery(sprintf($sql, self::ALTERNATIVE_CHECKOUT_TYPE, 'alternative'));
+        $queries->addQuery($sql);
     }
 
     /**
