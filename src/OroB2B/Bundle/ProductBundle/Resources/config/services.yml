@@ -350,7 +350,7 @@ services:
             - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
 
     orob2b_product.layout.data_provider.product_form:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormDataProvider'
+        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
         tags:

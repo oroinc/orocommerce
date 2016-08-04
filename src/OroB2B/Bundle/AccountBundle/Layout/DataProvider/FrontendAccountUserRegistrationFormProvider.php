@@ -6,19 +6,19 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
+use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class FrontendAccountUserRegistrationFormProvider extends AbstractFormDataProvider
+class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
 {
     const ACCOUNT_USER_REGISTER_ROUTE_NAME = 'orob2b_account_frontend_account_user_register';
     

@@ -11,4 +11,4 @@ layout:
             options:
                 visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
                 shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
-                unitsQuantity: '=data["orob2b_shopping_list_product_units_quantity"].getProductUnitsQuantity(context.has("product")?context["product"])'
+                unitsQuantity: '=data["orob2b_shopping_list_product_units_quantity"].getProductUnitsQuantity(data.offsetExists("product")?data["product"])'

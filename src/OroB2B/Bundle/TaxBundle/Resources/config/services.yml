@@ -449,7 +449,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_order.entity.order_line_item.class%', event: preRemove }
 
     orob2b_tax.layout.data_provider.tax:
-        class: 'OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider'
+        class: 'OroB2B\Bundle\TaxBundle\Layout\Provider\TaxProvider'
         arguments:
             - '@orob2b_tax.manager.tax_manager'
         tags:

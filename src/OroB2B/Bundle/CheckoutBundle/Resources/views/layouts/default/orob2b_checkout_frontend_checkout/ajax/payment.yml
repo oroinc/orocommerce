@@ -15,7 +15,7 @@ layout:
             prepend: true
             options:
                 class_prefix: 'checkout'
-                views: '=data["orob2b_payment_methods_provider"].getViews(context["checkout"])'
+                views: '=data["orob2b_payment_methods_provider"].getViews(data["checkout"])'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
         - '@move':
             id: checkout_form_buttons

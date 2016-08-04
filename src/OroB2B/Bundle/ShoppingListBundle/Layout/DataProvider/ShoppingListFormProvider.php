@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\DataProvider\AbstractFormDataProvider;
-
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+
+use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class ShoppingListFormProvider extends AbstractFormDataProvider
+class ShoppingListFormProvider extends AbstractFormProvider
 {
     const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'orob2b_shopping_list_frontend_create';
     const SHOPPING_LIST_VIEW_ROUTE_NAME     = 'orob2b_shopping_list_frontend_view';

@@ -213,8 +213,7 @@ class CheckoutController extends Controller
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
         return $this->get('orob2b_checkout.layout.data_provider.transition_form')
-            ->getTransitionForm($workflowItem, $transitionData)
-            ->getForm();
+            ->getTransitionForm($workflowItem, $transitionData);
     }
 
     /**

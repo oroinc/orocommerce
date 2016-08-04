@@ -18,7 +18,7 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormDataProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -26,9 +26,9 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 class QuickAddHandler
 {
     /**
-     * @var ProductFormDataProvider
+     * @var ProductFormProvider
      */
-    protected $productFormDataProvider;
+    protected $productFormProvider;
 
     /**
      * @var QuickAddRowCollectionBuilder
@@ -49,20 +49,20 @@ class QuickAddHandler
     protected $translator;
 
     /**
-     * @param ProductFormDataProvider $productFormDataProvider
+     * @param ProductFormProvider $productFormProvider
      * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
      * @param ComponentProcessorRegistry $componentRegistry
      * @param UrlGeneratorInterface $router
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        ProductFormDataProvider $productFormDataProvider,
+        ProductFormProvider $productFormProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         ComponentProcessorRegistry $componentRegistry,
         UrlGeneratorInterface $router,
         TranslatorInterface $translator
     ) {
-        $this->productFormDataProvider = $productFormDataProvider;
+        $this->productFormProvider = $productFormProvider;
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->componentRegistry = $componentRegistry;
         $this->router = $router;
@@ -90,7 +90,7 @@ class QuickAddHandler
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->productFormDataProvider->getBaseQuickAddForm([], $options)->getForm();
+        $form = $this->productFormProvider->getQuickAddForm([], $options)->getForm();
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -141,14 +141,14 @@ class QuickAddHandler
      */
     public function processImport(Request $request)
     {
-        $form = $this->productFormDataProvider->getQuickAddImportForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddImportForm()->getForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                $this->productFormDataProvider->getBaseQuickAddForm($collection->getFormData())->getForm();
+                $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
@@ -169,13 +169,13 @@ class QuickAddHandler
      */
     public function processCopyPaste(Request $request)
     {
-        $form = $this->productFormDataProvider->getQuickAddCopyPasteForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddCopyPasteForm()->getForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
-            $this->productFormDataProvider->getBaseQuickAddForm($collection->getFormData())->getForm();
+            $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
         }
 
         return $collection;

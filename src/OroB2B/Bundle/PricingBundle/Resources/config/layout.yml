@@ -16,7 +16,7 @@ services:
             - { name: layout.data_provider, alias: product_units_without_prices }
 
     orob2b_pricing.layout.data_provider.currency:
-        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\CurrencyDataProvider'
+        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\CurrencyProvider'
         public: true
         arguments:
             - '@orob2b_pricing.user_currency_manager'
