@@ -941,7 +941,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         return [
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
-            'name' => $this->getDefaultName()->getString()
+            'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }
 
