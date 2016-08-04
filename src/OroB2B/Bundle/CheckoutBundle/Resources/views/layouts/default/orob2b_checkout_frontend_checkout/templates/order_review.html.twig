@@ -16,8 +16,8 @@
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
                 <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm toggle-block">
-                    <label for="addShipDate" class="oro-checkbox toggle-block__trigger" data-checkbox>
-                        <input class="oro-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate"/>
+                    <label for="addShipDate" class="oro-checkbox toggle-block__trigger {{ (checkout.shipUntil is empty) ? '' : 'checked' }}" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {{ (checkout.shipUntil is empty) ? '' : 'checked="checked"' }}/>
                         <span class="oro-checkbox__icon"></span>
                         <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
                     </label>
@@ -31,8 +31,8 @@
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
                 <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
-                    <label for="addPoNumber" class="oro-checkbox toggle-block__trigger" data-checkbox>
-                        <input class="oro-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber"/>
+                    <label for="addPoNumber" class="oro-checkbox toggle-block__trigger {{ (checkout.poNumber) ? 'checked' : '' }}" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {{ (checkout.poNumber) ? 'checked="checked"' : '' }}/>
                         <span class="oro-checkbox__icon"></span>
                         <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.po_number"|trans }}</span>
                     </label>
@@ -45,8 +45,8 @@
                       data-trigger-selector="#addNote"
                       data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
                 <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
-                    <label for="addNote" class="oro-checkbox toggle-block__trigger" data-checkbox>
-                        <input class="oro-checkbox__input" type="checkbox" name="addNote" id="addNote"/>
+                    <label for="addNote" class="oro-checkbox toggle-block__trigger {{ (checkout.customerNotes) ? 'checked' : '' }}" data-checkbox>
+                        <input class="oro-checkbox__input" type="checkbox" name="addNote" id="addNote" {{ (checkout.customerNotes) ? 'checked="checked"' : '' }}/>
                         <span class="oro-checkbox__icon"></span>
                         <span class="oro-checkbox__text">{{ "orob2b.checkout.order_review.note"|trans }}</span>
                     </label>
