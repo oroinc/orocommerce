@@ -54,11 +54,16 @@ class PriceRuleExpressionValidator extends ConstraintValidator
                 $supportedFields[] = null;
                 $unsupportedFields = array_diff($fields, $supportedFields);
                 if (count($unsupportedFields) > 0) {
-                    $this->context->addViolation($constraint->message);
+                    foreach ($unsupportedFields as $invalidField) {
+                        $this->context->addViolation(
+                            'orob2b.pricing.validators.field_are_not_allowed.message',
+                            ['%fieldName%' => $invalidField]
+                        );
+                    }
                 }
             }
         } catch (SyntaxError $ex) {
-            $this->context->addViolation($constraint->message);
+            $this->context->addViolation($ex->getMessage());
         }
     }
 }
