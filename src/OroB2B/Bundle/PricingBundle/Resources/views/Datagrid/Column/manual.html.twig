@@ -1,0 +1,5 @@
+{% if record.getValue('manual') is not null %}
+    {{ 'orob2b.pricing.productprice.manual.label'|trans }}
+{% else %}
+    {{ 'orob2b.pricing.productprice.generated.label'|trans }}
+{% endif %}

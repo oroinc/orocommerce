@@ -377,6 +377,7 @@ datagrid:
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
+                    - IDENTITY(productPrice.priceRule) as ruleId
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -408,6 +409,11 @@ datagrid:
                 label:         orob2b.pricing.productprice.value.label
             currency:
                 label:         orob2b.pricing.productprice.currency.label
+            ruleId:
+                label:         orob2b.pricing.productprice.type.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BPricingBundle:Datagrid:Column/manual.html.twig
         sorters:
             columns:
                 productSku:

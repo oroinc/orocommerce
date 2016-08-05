@@ -118,6 +118,9 @@ orob2b.pricing:
             cancel: Cancel
         save.success: Product Price has been added
         applicable_from: 'Price is applicable starting from %amount%'
+        manual.label: Manual
+        generated.label: Generated
+        type.label: Type
 
     priceattributeprice:
         entity_label: Product Attribute Price
