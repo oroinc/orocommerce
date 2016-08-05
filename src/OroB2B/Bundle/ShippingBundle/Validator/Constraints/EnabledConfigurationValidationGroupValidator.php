@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\ShippingBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
@@ -17,16 +17,30 @@ class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
     protected $context;
 
     /**
-     * @param ShippingRule $value
+     * @param array $value
      * @param EnabledConfigurationValidationGroup|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
-        $enabledRules = $value->getConfigurations()->filter(function (ShippingRuleConfiguration $ruleConfiguration) {
-            return $ruleConfiguration->getEnabled();
-        });
-        if ($enabledRules->count() === 0) {
-            $this->context->buildViolation($constraint->message, ['{{ limit }}' => 1])
+        if (!is_array($value) && !($value instanceof \Traversable && $value instanceof \Countable)) {
+            throw new UnexpectedTypeException($value, 'array or Traversable and Countable');
+        }
+
+        $enabledRules = [];
+        foreach ($value as $configuration) {
+            if (!$configuration instanceof ShippingRuleConfiguration) {
+                throw new UnexpectedTypeException(
+                    $configuration,
+                    'OroB2B\Bundle\ShippingBundle\Model\ShippingRuleConfiguration'
+                );
+            }
+            if ($configuration->getEnabled()) {
+                $enabledRules[] = $configuration;
+            }
+        }
+
+        if (count($enabledRules) < $constraint->min) {
+            $this->context->buildViolation($constraint->message, ['{{ limit }}' => $constraint->min])
                 ->atPath('configurations')->addViolation();
         }
     }

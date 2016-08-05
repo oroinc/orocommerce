@@ -108,7 +108,7 @@ class ShippingMethodsDataProvider implements DataProviderInterface
                 $typeName = $configuration->getType();
                 $method = $this->registry->getShippingMethod($methodName);
                 if (!empty($method)) {
-                    if (!$typeName) {
+                    if (!$typeName || $typeName == $methodName) {
                         if (!array_key_exists($methodName, $shippingMethods)) {
                             $shippingMethods[$methodName] = [
                                 'name' => $methodName,
