@@ -13,3 +13,11 @@ orob2b:
         related_websites.label: Related websites
         default.label: Is Default Website
 
+        system_configuration:
+            groups:
+                webistes.title: Websites
+                routing.title: Routing
+                general.label: General
+            fields:
+                url.label: URL
+                secure_url.label: Secure URL

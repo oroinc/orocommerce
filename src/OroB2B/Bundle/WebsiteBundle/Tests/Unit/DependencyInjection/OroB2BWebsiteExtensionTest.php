@@ -16,5 +16,12 @@ class OroB2BWebsiteExtensionTest extends ExtensionTestCase
         ];
 
         $this->assertParametersLoaded($expectedParameters);
+        $this->assertExtensionConfigsLoaded([OroB2BWebsiteExtension::ALIAS]);
+    }
+
+    public function testGetAlias()
+    {
+        $extension = new OroB2BWebsiteExtension();
+        $this->assertEquals(OroB2BWebsiteExtension::ALIAS, $extension->getAlias());
     }
 }
