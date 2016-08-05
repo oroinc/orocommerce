@@ -8,6 +8,7 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface;
 
 /**
  * Check payment method requires verification after checkout page refreshed
@@ -58,11 +59,11 @@ class PaymentMethodRequiresVerification extends AbstractCondition implements Con
     /** {@inheritdoc} */
     protected function isConditionAllowed($context)
     {
-        $paymentMethod = $this->resolveValue($context, $this->paymentMethod, false);
+        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
+        $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
 
-        try {
-            return $this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->requiresVerification();
-        } catch (\InvalidArgumentException $e) {
+        if($paymentMethod instanceof PaymentMethodRequiresVerificationInterface) {
+            return $paymentMethod->requiresVerification();
         }
 
         return false;

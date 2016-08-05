@@ -65,10 +65,4 @@ class MoneyOrder implements PaymentMethodInterface
     {
         return $actionName === self::PURCHASE;
     }
-
-    /** {@inheritdoc} */
-    public function requiresVerification()
-    {
-        return false;
-    }
 }

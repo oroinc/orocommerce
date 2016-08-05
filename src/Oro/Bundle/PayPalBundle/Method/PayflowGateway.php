@@ -14,11 +14,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PayflowGateway implements PaymentMethodInterface
+class PayflowGateway implements PaymentMethodInterface, PaymentMethodRequiresVerificationInterface
 {
     const COMPLETE = 'complete';
 

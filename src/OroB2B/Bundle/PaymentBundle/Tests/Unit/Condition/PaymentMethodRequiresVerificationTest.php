@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Condition;
 use OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodRequiresVerification;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface;
 
 class PaymentMethodRequiresVerificationTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,8 +17,8 @@ class PaymentMethodRequiresVerificationTest extends \PHPUnit_Framework_TestCase
     ];
 
     /** @var array */
-    protected $paymentMethodWithValidateData = [
-        self::PAYMENT_METHOD_KEY => 'payment_method_with_validate',
+    protected $paymentMethodRequiresVerificationData = [
+        self::PAYMENT_METHOD_KEY => 'payment_method_requires_verification',
     ];
 
     /** @var PaymentMethodRequiresVerification */
@@ -46,27 +47,20 @@ class PaymentMethodRequiresVerificationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInitializeWithException()
-    {
-        $this->condition->initialize([]);
-    }
-
-    /**
      * @dataProvider evaluateDataProvider
      * @param array $data
-     * @param bool $supportsData
+     * @param string $paymentMethodInterface
+     * @param int $callsCount
+     * @param bool $requiresVerificationData
      * @param bool $expected
      */
-    public function testEvaluate(array $data, $requiresVerificationData, $expected)
+    public function testEvaluate(array $data, $paymentMethodInterface, $callsCount, $requiresVerificationData, $expected)
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
+        $paymentMethod = $this->getMock($paymentMethodInterface);
 
-        /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())
+        $paymentMethod->expects($this->exactly($callsCount))
             ->method('requiresVerification')
             ->willReturn($requiresVerificationData);
 
@@ -87,28 +81,26 @@ class PaymentMethodRequiresVerificationTest extends \PHPUnit_Framework_TestCase
         return [
             'payment_term' => [
                 'data' => $this->paymentTermData,
-                'supportsData' => false,
+                'paymentMethod' => 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface',
+                'callsCount' => 0,
+                'requiresVerificationData' => false,
                 'expected' => false
             ],
-            'payment_method_with_validate' => [
-                'data' => $this->paymentMethodWithValidateData,
-                'supportsData' => true,
+            'payment_method_requires_verification_false' => [
+                'data' => $this->paymentMethodRequiresVerificationData,
+                'paymentMethod' => 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface',
+                'callsCount' => 1,
+                'requiresVerificationData' => false,
+                'expected' => false
+            ],
+            'payment_method_requires_verification_true' => [
+                'data' => $this->paymentMethodRequiresVerificationData,
+                'paymentMethod' => 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface',
+                'callsCount' => 1,
+                'requiresVerificationData' => true,
                 'expected' => true
             ]
         ];
-    }
-
-    public function testEvaluateWithException()
-    {
-        $context = new \stdClass();
-        $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
-
-        $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethod')
-            ->will($this->throwException(new \InvalidArgumentException));
-
-        $this->condition->initialize($this->paymentTermData);
-        $this->assertFalse($this->condition->evaluate($context, $errors));
     }
 
     public function testToArray()
