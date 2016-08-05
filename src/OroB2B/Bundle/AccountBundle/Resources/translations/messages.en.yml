@@ -251,6 +251,7 @@ orob2b.account:
         id.label:               ID
         account_user.label:     Account User
         website.label:          Website
+        localization.label:     Localization
 
     visibility:
         event.saved.message: Product visibility has been saved

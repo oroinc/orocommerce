@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
@@ -47,10 +48,16 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     public function testChoices()
     {
         $form = $this->factory->create($this->productStatusType);
+        $availableProductStatuses = $this->productStatusProvider->getAvailableProductStatuses();
+        $choices = [];
+
+        foreach ($availableProductStatuses as $key => $value) {
+            $choices[] = new ChoiceView($key, $key, $value);
+        }
 
         $this->assertEquals(
-            $this->productStatusProvider->getAvailableProductStatuses(),
-            $form->getConfig()->getOptions()['choices']
+            $choices,
+            $form->createView()->vars['choices']
         );
 
         $this->assertEquals(
