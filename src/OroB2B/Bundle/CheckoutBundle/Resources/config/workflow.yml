@@ -411,13 +411,14 @@ workflows:
                             parameters:
                                 entity: $checkout
                 conditions:
-                    '@or':
-                        - '@and':
-                            - '@equal': [$billing_address_has_shipping, true]
-                            - '@equal': [$checkout.shipToBillingAddress, true]
-                        - '@and':
-                            - '@equal': [$checkout.shipToBillingAddress, false]
-                            - '@not_empty': $checkout.shippingAddress
+                    '@and':
+                        - '@or':
+                            - '@and':
+                                - '@equal': [$billing_address_has_shipping, true]
+                                - '@equal': [$checkout.shipToBillingAddress, true]
+                            - '@and':
+                                - '@equal': [$checkout.shipToBillingAddress, false]
+                                - '@not_empty': $checkout.shippingAddress
                         - '@generate_and_check_checkout_state':
                             checkout: $checkout
                             token: $state_token
