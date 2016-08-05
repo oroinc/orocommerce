@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: orob2b_account_user_address_form
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -11,11 +16,3 @@ layout:
             optionName: text
             optionValue:
                 label: orob2b.account.frontend.address.page_title.create
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-    imports:
-        -
-            id: orob2b_account_user_address_form
-            root: content

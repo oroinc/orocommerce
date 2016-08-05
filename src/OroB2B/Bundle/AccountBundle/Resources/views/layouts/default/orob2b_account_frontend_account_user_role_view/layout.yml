@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
@@ -9,10 +11,6 @@ layout:
                 - 'orob2b.account.menu.account_user.label'
                 - 'orob2b.account.frontend.account_user.role.entity_plural_label'
                 - '=data["entity"].getLabel()'
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
         - '@addTree':
             items:
                 account_user_role_view_container:

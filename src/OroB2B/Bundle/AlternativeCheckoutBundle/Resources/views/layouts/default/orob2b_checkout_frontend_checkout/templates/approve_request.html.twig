@@ -1,16 +1,16 @@
 {% block _checkout_form_fields_widget -%}
-    {% if checkout.allowed and checkout.allowRequestDate %}
+    {% if workflowItem.data.get('allowed') and workflowItem.data.get('allow_request_date') %}
         <div class="notification notification_xmd notification_notice notification-radiused mb1-md">
-            {{ 'orob2b.alternativecheckout.messages.approved_at'|trans }} {{ checkout.allowRequestDate|oro_format_datetime }}
+            {{ 'orob2b.alternativecheckout.messages.approved_at'|trans }} {{ workflowItem.data.get('allow_request_date')|oro_format_datetime }}
         </div>
     {% else %}
         <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
             {{ 'orob2b.alternativecheckout.messages.waiting_for_approve'|trans }}
         </div>
     {% endif %}
-    {% if checkout.requestApprovalNotes %}
+    {% if workflowItem.data.get('request_approval_notes') %}
         <label>{{ 'orob2b.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
-        <span>{{ checkout.requestApprovalNotes|nl2br|raw }}</span>
+        <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
     {% endif %}
 
     {{ block_widget(block) }}
