@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsProvider;
 
-class FrontendAccountUserRoleOptionsDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendAccountUserRoleOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
