@@ -48,8 +48,6 @@ OroB2B\Bundle\ShippingBundle\Model\Weight:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
 OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
-    constraints:
-        - OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
     properties:
         name:
             - NotBlank: ~
@@ -59,6 +57,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
             - Valid: ~
         configurations:
             - Valid: ~
+            - OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
         currency:
             - Currency: ~
             - NotBlank: ~

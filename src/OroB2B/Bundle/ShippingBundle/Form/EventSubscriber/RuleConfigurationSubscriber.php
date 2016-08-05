@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
@@ -28,23 +27,13 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
     protected $methodRegistry;
 
     /**
-     * @var \Doctrine\Common\Persistence\ObjectManager|null
-     */
-    protected $manager;
-
-    /**
      * @param FormFactoryInterface $factory
      * @param ShippingMethodRegistry $methodRegistry
-     * @param RegistryInterface $doctrine
      */
-    public function __construct(
-        FormFactoryInterface $factory,
-        ShippingMethodRegistry $methodRegistry,
-        RegistryInterface $doctrine
-    ) {
+    public function __construct(FormFactoryInterface $factory, ShippingMethodRegistry $methodRegistry)
+    {
         $this->factory = $factory;
         $this->methodRegistry = $methodRegistry;
-        $this->manager = $doctrine->getManagerForClass('OroB2BShippingBundle:FlatRateRuleConfiguration');
     }
 
     /**
@@ -67,6 +56,10 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
         /** @var Collection|ShippingRuleConfiguration[] $data */
         $data = $event->getData();
 
+        if (!$data) {
+            return;
+        }
+
         $existingConfigs = [];
         foreach ($data as $index => $ruleConfiguration) {
             $method = $this->methodRegistry->getShippingMethod($ruleConfiguration->getMethod());
@@ -77,33 +70,32 @@ class RuleConfigurationSubscriber implements EventSubscriberInterface
         }
         $data->clear();
 
+        $index = 0;
         foreach ($this->methodRegistry->getShippingMethods() as $method) {
-            $methods = $method->getShippingTypes();
-            if (count($methods) === 0) {
-                $methods = [$method->getName()];
+            $types = $method->getShippingTypes();
+            if (count($types) === 0) {
+                $types = [$method->getName()];
             }
-            foreach ($methods as $type) {
-                $formName = $method->getFormType();
-                $formData = null;
+            $formName = $method->getFormType();
+            foreach ($types as $type) {
                 if (array_key_exists($formName, $existingConfigs)
                     && array_key_exists($type, $existingConfigs[$formName])
                 ) {
                     $formData = $existingConfigs[$formName][$type];
-                }
-                $childForm = $this->factory->createNamed(count($data), $formName, $formData, [
-                    'auto_initialize' => false
-                ]);
-                if ($formData === null) {
-                    $class = $childForm->getConfig()->getDataClass();
+                } else {
+                    $class = $method->getRuleConfigurationClass();
                     /** @var ShippingRuleConfiguration $formData */
                     $formData = new $class;
                     $formData->setType($type)
                         ->setMethod($method->getName())
                         ->setRule($form->getParent()->getData());
-                    $childForm->setData($formData);
                 }
+                $childForm = $this->factory->createNamed($index, $formName, null, [
+                    'auto_initialize' => false
+                ]);
                 $form->add($childForm);
-                $data->add($formData);
+                $data->set($index, $formData);
+                $index++;
             }
         }
         $event->setData($data);
