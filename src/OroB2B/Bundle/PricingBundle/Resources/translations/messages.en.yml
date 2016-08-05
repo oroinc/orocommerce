@@ -26,7 +26,7 @@ orob2b.pricing:
         currencies.label: Currencies
         schedule.label: Schedule
         has_price_list.label: Has Price List
-        product_assignment_rule.label: Product Assignment Rule
+        product_assignment_rule.label: Rule
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
@@ -159,7 +159,7 @@ orob2b.pricing:
     sections:
         general: General
         price_rules: Price Calculation Rules
-        product_assignment_rules: Product Assignment Rules
+        product_assignment: Product Assignment
 
     widgets:
         pricing_information: Price List Information
