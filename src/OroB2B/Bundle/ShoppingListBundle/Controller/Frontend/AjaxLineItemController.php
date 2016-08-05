@@ -205,9 +205,8 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productShoppingLists = $this->get(
-            'orob2b_shopping_list.data_provider.product_shopping_lists'
-        )->getProductUnitsQuantity($product);
+        $productShoppingLists = $this->get('orob2b_shopping_list.data_provider.product_shopping_lists')
+            ->getProductUnitsQuantity($product);
 
         return [
             'successful' => true,

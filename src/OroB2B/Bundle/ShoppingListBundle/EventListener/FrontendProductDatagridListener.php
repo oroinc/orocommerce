@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
@@ -113,14 +112,14 @@ class FrontendProductDatagridListener
      * @param ResultRecord[] $records
      * @param EntityManagerInterface $em
      * @param AccountUser $accountUser
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
         EntityManagerInterface $em,
         AccountUser $accountUser,
-        ShoppingList $shoppingList
+        ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
         $lineItemRepository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
@@ -135,16 +134,15 @@ class FrontendProductDatagridListener
             $accountUser
         );
 
-
         $groupedUnits = [];
         $shoppingListLabels = [];
         foreach ($lineItems as $lineItem) {
             $shoppingListId = $lineItem->getShoppingList()->getId();
             $productId = $lineItem->getProduct()->getId();
             $groupedUnits[$productId][$shoppingListId][] = [
-                    'line_item_id' => $lineItem->getId(),
-                    'unit' => $lineItem->getProductUnitCode(),
-                    'quantity' => $lineItem->getQuantity()
+                'line_item_id' => $lineItem->getId(),
+                'unit' => $lineItem->getProductUnitCode(),
+                'quantity' => $lineItem->getQuantity()
             ];
             if (!isset($shoppingListLabels[$shoppingListId])) {
                 $shoppingListLabels[$shoppingListId] = $lineItem->getShoppingList()->getLabel();
@@ -152,9 +150,9 @@ class FrontendProductDatagridListener
         }
 
         $productShoppingLists = [];
+        $activeShoppingListId = $currentShoppingList->getId();
         foreach ($groupedUnits as $productId => $productGroupedUnits) {
             /* Active shopping list goes first*/
-            $activeShoppingListId = $shoppingList->getId();
             if (isset($productGroupedUnits[$activeShoppingListId])) {
                 $productShoppingLists[$productId][] = [
                     'shopping_list_id' => $activeShoppingListId,
