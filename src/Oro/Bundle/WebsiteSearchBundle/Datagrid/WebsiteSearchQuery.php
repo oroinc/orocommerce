@@ -24,22 +24,9 @@ class WebsiteSearchQuery extends AbstractSearchQuery
     }
 
     /**
-     * No longer needed since we are calling the search engine
-     * directly in execute().
-     *
-     * @deprecated Should be removed from the entire interface
-     *
-     * @return bool
-     */
-    public function query()
-    {
-        throw new \BadMethodCallException('This method should not be called. Use execute() instead');
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function execute()
+    protected function query()
     {
         return $this->engine->search($this->query);
     }
