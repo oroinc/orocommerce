@@ -12,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestData implements ProcessorInterface
@@ -126,7 +127,7 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
     {
         if (!$this->isRelationshipValid($relationships, self::PRODUCT)) {
             // sku is required on request in order to identify a product
-            return;
+            return null;
         }
 
         /** @var ProductRepository $productRepository */
@@ -142,7 +143,10 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
      */
     protected function resolveWarehouse()
     {
-        return $this->doctrineHelper->getEntityRepository(Warehouse::class)->getSingularWarehouse();
+        /** @var WarehouseRepository $warehouseRepository */
+        $warehouseRepository = $this->doctrineHelper->getEntityRepository(Warehouse::class);
+
+        return $warehouseRepository->getSingularWarehouse();
     }
 
     /**

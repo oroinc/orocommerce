@@ -9,6 +9,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
@@ -105,8 +106,11 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
      */
     protected function getUnit(array $requestData, $sku)
     {
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
+
         return array_key_exists('unit', $requestData) ?
             $requestData['unit'] :
-            $this->doctrineHelper->getEntityRepositoryForClass(Product::class)->getPrimaryUnitPrecisionCode($sku);
+            $productRepository->getPrimaryUnitPrecisionCode($sku);
     }
 }
