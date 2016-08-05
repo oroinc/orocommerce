@@ -4,7 +4,7 @@ parameters:
 services:
     orob2b_website.manager:
         class: 'OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager'
-        public: false
+        public: true
         arguments:
             - "@doctrine"
 

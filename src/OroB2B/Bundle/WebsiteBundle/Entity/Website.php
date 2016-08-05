@@ -122,6 +122,13 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     protected $url;
 
     /**
+     * @ORM\Column(name="is_default", type="boolean")
+     *
+     * @var bool
+     */
+    protected $default = false;
+
+    /**
      * Website constructor.
      */
     public function __construct()
@@ -307,5 +314,24 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     public function __toString()
     {
         return (string)$this->name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param boolean $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (bool)$default;
+
+        return $this;
     }
 }

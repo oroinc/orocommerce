@@ -29,7 +29,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -77,6 +77,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('url', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('is_default', 'boolean', []);
 
         $table->setPrimaryKey(['id']);
 
