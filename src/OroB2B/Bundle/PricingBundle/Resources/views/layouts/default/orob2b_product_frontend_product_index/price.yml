@@ -14,7 +14,7 @@ layout:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block
                     options:
-                        visible: false
+                        visible: '=false'
                 product_grid_row_price:
                     parentId: product_grid_row_secondary_content_first_container
                     blockType: block

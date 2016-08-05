@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Action\CaptureAction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 

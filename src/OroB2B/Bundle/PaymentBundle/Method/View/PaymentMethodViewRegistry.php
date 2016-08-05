@@ -48,18 +48,15 @@ class PaymentMethodViewRegistry
                 continue;
             }
 
-            $paymentMethodViews[$paymentMethodView->getOrder()] = $paymentMethodView;
+            $paymentMethodViews[$paymentMethodView->getOrder()][] = $paymentMethodView;
         }
 
         ksort($paymentMethodViews);
-
-        $orderedPaymentMethodViews = [];
-        /** @var PaymentMethodViewInterface $paymentMethodView */
-        foreach ($paymentMethodViews as $paymentMethodView) {
-            $orderedPaymentMethodViews[$paymentMethodView->getPaymentMethodType()] = $paymentMethodView;
+        if ($paymentMethodViews) {
+            $paymentMethodViews = call_user_func_array('array_merge', $paymentMethodViews);
         }
 
-        return $orderedPaymentMethodViews;
+        return $paymentMethodViews;
     }
 
     /**

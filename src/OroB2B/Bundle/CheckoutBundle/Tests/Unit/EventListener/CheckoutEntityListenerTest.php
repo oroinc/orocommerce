@@ -75,12 +75,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new CheckoutEntityListener($this->workflowManager, $registry, $this->userCurrencyManager);
     }
 
-    public function testCheckoutType()
-    {
-        $this->listener->setCheckoutType('test');
-        $this->assertAttributeEquals('test', 'checkoutType', $this->listener);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Checkout class must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface
@@ -100,14 +94,12 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider existingCheckoutByIdProvider
      *
-     * @param string $type
      * @param int $id
      * @param CheckoutInterface $found
      * @param CheckoutInterface $expected
      * @param string $userCurrency
      */
     public function testOnGetCheckoutEntityExistingById(
-        $type,
         $id,
         CheckoutInterface $found = null,
         CheckoutInterface $expected = null,
@@ -126,7 +118,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getApplicableWorkflows')
             ->willReturn([]);
 
-        $event->setType($type);
         $event->setCheckoutId($id);
 
         if ($expected instanceof Checkout) {
@@ -148,28 +139,18 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $checkout->setCurrency('USD');
         return [
             'find existing by id' => [
-                'type' => '',
                 'id' => 1,
                 'found' => $checkout,
                 'expected' => $checkout,
                 'userCurrency' => 'USD'
             ],
             'find existing by id with not actual currency' => [
-                'type' => '',
                 'id' => 1,
                 'found' => $checkout,
                 'expected' => $checkout->setCurrency('EUR'),
                 'userCurrency' => 'EUR'
             ],
-            'find existing by id another type' => [
-                'type' => 'unknown',
-                'id' => 1,
-                'found' => $checkout,
-                'expected' => null,
-                'userCurrency' => 'USD'
-            ],
             'find existing by id none' => [
-                'type' => '',
                 'id' => 1,
                 'found' => null,
                 'expected' => null,
