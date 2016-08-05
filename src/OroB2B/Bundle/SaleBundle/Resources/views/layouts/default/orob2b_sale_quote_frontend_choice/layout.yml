@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
@@ -28,11 +30,6 @@ layout:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
                     '%id%': '=data["quote"].getQid()'
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
 
         - '@addTree':
             items:
