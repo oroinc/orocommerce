@@ -19,8 +19,10 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -167,8 +169,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2),
-                3 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3),
+                2 => $this->getEntity(Product::class, 2),
+                3 => $this->getEntity(Product::class, 3),
             ]
         );
 
@@ -242,8 +244,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         return new ProductUnitSelectionTypeStub(
             [
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+                'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
+                'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
             ]
         );
     }
@@ -348,7 +350,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $product = null;
 
         if ($productId) {
-            $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+            $product = $this->getEntity(Product::class, $productId);
 
             foreach ($this->getProductUnitPrecisions() as $precision) {
                 $product->addUnitPrecision($precision);
@@ -357,7 +359,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $quoteProduct = new QuoteProduct();
         $quoteProduct
-            ->setQuote($this->getEntity('OroB2B\Bundle\SaleBundle\Entity\Quote', $productId))
+            ->setQuote($this->getEntity(Quote::class, $productId))
             ->setProduct($product)
             ->setType($type)
             ->setComment($comment)
@@ -399,7 +401,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         if (null !== $unitCode) {
             $quoteProductOffer->setProductUnit(
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
+                $this->getEntity(ProductUnit::class, $unitCode, 'code')
             );
         }
 
@@ -434,7 +436,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         if (null !== $unitCode) {
             $quoteProductRequest->setProductUnit(
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
+                $this->getEntity(ProductUnit::class, $unitCode, 'code')
             );
         }
 
