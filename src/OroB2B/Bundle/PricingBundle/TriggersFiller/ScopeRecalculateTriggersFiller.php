@@ -107,8 +107,11 @@ class ScopeRecalculateTriggersFiller
         
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass(ProductPriceChangeTrigger::class);
-        $em->persist($trigger);
-        $em->flush($trigger);
+        $repository = $em->getRepository(ProductPriceChangeTrigger::class);
+        if (!$repository->isExisting($trigger)) {
+            $em->persist($trigger);
+            $em->flush($trigger);
+        }
     }
 
     /**
