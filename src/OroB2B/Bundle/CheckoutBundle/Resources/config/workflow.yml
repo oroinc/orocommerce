@@ -123,6 +123,10 @@ workflows:
                             checkout: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
+                        ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
+                            options:
+                                label: Ship to this address
                         billing_address:
                             form_type: orob2b_checkout_address
                             options:
@@ -139,10 +143,6 @@ workflows:
                         save_billing_address:
                             options:
                                 label: Save address
-                        ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
-                            options:
-                                label: Ship to this address
                         state_token:
                             form_type: hidden
 
@@ -160,6 +160,12 @@ workflows:
                             checkout: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
+                        # This field should be above "shipping_address" field
+                        # It's required to disable "shipping_address" field when "ship_to_billing_address" checked
+                        ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
+                            options:
+                                label: Use billing address
                         shipping_address:
                             form_type: orob2b_checkout_address
                             options:
@@ -176,12 +182,9 @@ workflows:
                         save_shipping_address:
                             options:
                                 label: Save address
-                        ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
-                            options:
-                                label: Use billing address
                         state_token:
                             form_type: hidden
+
             continue_to_payment:
                 label: Continue
                 step_to: enter_payment

@@ -87,7 +87,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@event_dispatcher"
-            - "@oro_attachment.manager"
+            - "@oro_attachment.file_manager"
             - "@oro_attachment.provider.attachment"
         calls:
             - [setSkuIncrementor,  ["@orob2b_product.service.sku_incrementor"]]
