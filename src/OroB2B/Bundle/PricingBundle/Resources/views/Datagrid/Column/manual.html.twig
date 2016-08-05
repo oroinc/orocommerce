@@ -1,4 +1,4 @@
-{% if record.getValue('manual') is not null %}
+{% if record.getValue('ruleId') is null %}
     {{ 'orob2b.pricing.productprice.manual.label'|trans }}
 {% else %}
     {{ 'orob2b.pricing.productprice.generated.label'|trans }}
