@@ -113,7 +113,6 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
-                        # This field should be above "shipping_address" field
                         ship_to_billing_address:
                             form_type: orob2b_ship_to_billing_address
                             options:
@@ -146,6 +145,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         # This field should be above "shipping_address" field
+                        # It's required to disable "shipping_address" field when "ship_to_billing_address" checked
                         ship_to_billing_address:
                             form_type: orob2b_ship_to_billing_address
                             options:
