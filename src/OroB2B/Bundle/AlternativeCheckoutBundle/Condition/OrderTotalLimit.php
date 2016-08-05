@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Condition;
 
 use Oro\Component\ConfigExpression\Condition\AbstractComparison;
-use Oro\Component\ConfigExpression\Exception;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\OrderBundle\Entity\Order;

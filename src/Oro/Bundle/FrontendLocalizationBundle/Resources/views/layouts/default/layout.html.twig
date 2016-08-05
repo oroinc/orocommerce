@@ -1,0 +1,29 @@
+{% block localization_switcher_widget %}
+    {% if localizations|length > 1 %}
+        <div class="oro-toolbar"
+             data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
+             data-page-component-options="{{ {
+                 'selectedLocalization': selected_localization.titles|localized_value,
+                 'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+             }|json_encode }}">
+            <div class="oro-toolbar__content" data-toggle="dropdown">
+                {{ selected_localization.titles|localized_value }}
+                <span class="oro-toolbar__icon">
+                    <i class="cf-down-open-mini"></i>
+                </span>
+            </div>
+
+            <div class="oro-toolbar__dropdown dropdown-menu">
+                <ul class="oro-toolbar__list">
+                    {% for localization in localizations %}
+                    <li class="oro-toolbar__list-item">
+                        <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
+                            {{ localization.titles|localized_value }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

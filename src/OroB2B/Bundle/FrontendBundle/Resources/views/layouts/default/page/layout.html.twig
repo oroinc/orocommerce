@@ -67,15 +67,18 @@
 
 {% block _content_widget %}
     {% set visibleSidebarChildren = [] %}
-    {% for child in blocks.sidebar_left.children %}
-        {% if child.vars.visible %}
-            {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
-        {% endif %}
-    {% endfor %}
-    {% set hasSidebarLeft = blocks.sidebar_left is defined and visibleSidebarChildren|length > 0 %}
+    {% if blocks.sidebar_left is defined %}
+        {% for child in blocks.sidebar_left.children %}
+            {% if child.vars.visible %}
+                {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' content' ~ (hasSidebarLeft ? ' content--has-sidebar')
+        '~class': ' content' ~ (visibleSidebarChildren|length > 0 ? ' content--has-sidebar')
     }) %}
+
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">
@@ -177,5 +180,5 @@
     {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky-element-notification'
     }) %}
-    <div {{ block('block_attributes') }}></div>
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
