@@ -14,10 +14,11 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class CombinedPriceListRepository extends EntityRepository
+class CombinedPriceListRepository extends BasePriceListRepository
 {
     const CPL_BATCH_SIZE = 100;
 

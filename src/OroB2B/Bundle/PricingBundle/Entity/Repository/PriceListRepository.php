@@ -2,13 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
-class PriceListRepository extends EntityRepository
+class PriceListRepository extends BasePriceListRepository
 {
     /**
      * @todo: should be dropped in scope of BB-1858

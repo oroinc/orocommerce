@@ -50,6 +50,19 @@ class PriceList extends BasePriceList
     protected $active = true;
 
     /**
+     * @var Collection|ProductPrice[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
+     * )
+     **/
+    protected $prices;
+
+    /**
      * @var PriceListCurrency[]|Collection
      *
      * @ORM\OneToMany(

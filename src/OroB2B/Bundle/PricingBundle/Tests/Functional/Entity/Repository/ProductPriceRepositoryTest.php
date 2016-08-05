@@ -650,15 +650,6 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($pricesCount + 1, $this->getPricesCount());
     }
 
-    public function testGetInvalidCurrenciesByPriceList()
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
-        $currencies = $this->repository->getInvalidCurrenciesByPriceList($priceList);
-
-        $this->assertEquals(['EUR'], $currencies);
-    }
-
     /**
      * @param ProductPrice[] $prices
      * @return array

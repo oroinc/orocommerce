@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
-class PriceAttributePriceListRepository extends EntityRepository
+class PriceAttributePriceListRepository extends BasePriceListRepository
 {
     /**
      * @param array $currencies

@@ -46,9 +46,15 @@ class BasePriceList implements DatesAwareInterface
      */
     protected $currencies;
 
+    /**
+     * @var Collection|BaseProductPrice[]
+     */
+    protected $prices;
+
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     /**

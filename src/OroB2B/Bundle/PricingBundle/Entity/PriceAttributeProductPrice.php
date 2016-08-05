@@ -30,7 +30,7 @@ class PriceAttributeProductPrice extends BaseProductPrice
     /**
      * @var PriceAttributePriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList", inversedBy="prices")
      * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;

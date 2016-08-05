@@ -10,6 +10,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
@@ -27,6 +28,7 @@ class PriceListRepositoryTest extends WebTestCase
 
         $this->loadFixtures([
             LoadPriceRules::class,
+            LoadProductPrices::class,
         ]);
 
         $this->defaultPriceList = $this->getDefaultPriceList();
@@ -99,6 +101,15 @@ class PriceListRepositoryTest extends WebTestCase
         foreach ($priceListsIterator as $priceList) {
             $this->assertContains($priceList->getId(), $expectedPriceLists);
         }
+    }
+
+    public function testGetInvalidCurrenciesByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $currencies = $this->getRepository()->getInvalidCurrenciesByPriceList($priceList);
+
+        $this->assertEquals(['EUR'], $currencies);
     }
 
     /**

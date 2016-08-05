@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class PriceListProductPricesCurrencyValidator extends ConstraintValidator
@@ -35,16 +36,17 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof PriceAttributePriceList) {
-            throw new UnexpectedTypeException($value, 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList');
+        if (!$value instanceof BasePriceList) {
+            throw new UnexpectedTypeException($value, BasePriceList::class);
         }
 
-        /** @var ProductPriceRepository $repository */
-        $repository = $this->registry->getManagerForClass(PriceAttributeProductPrice::class)
-            ->getRepository(PriceAttributeProductPrice::class);
+        $class = ClassUtils::getClass($value);
+        /** @var BasePriceListRepository $repository */
+        $repository = $this->registry->getManagerForClass($class)
+            ->getRepository($class);
         $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($value);
 
-        foreach (array_keys($invalidCurrencies) as $currency) {
+        foreach ($invalidCurrencies as $currency) {
             $this->context->addViolationAt('currencies', $constraint->message, ['%invalidCurrency%' => $currency]);
         }
     }
