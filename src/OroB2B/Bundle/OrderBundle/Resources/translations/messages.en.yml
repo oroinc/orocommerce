@@ -28,6 +28,8 @@ orob2b:
         line_items_count.label: '# Line Items'
         shipping_cost.label: 'Shipping Cost'
         shipping_cost_amount.label: 'Shipping Cost Ammount'
+        shipping_method: Shipping Method
+        shipping_method_type: Shipping Method Type
         source_document.label: Source Document
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id

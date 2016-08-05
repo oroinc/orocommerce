@@ -551,6 +551,8 @@ workflows:
                     - '@assign_value': [$checkout.order.customerNotes, $checkout.customerNotes]
                     - '@assign_value': [$checkout.order.shipUntil, $checkout.shipUntil]
                     - '@assign_value': [$checkout.order.sourceEntityIdentifier, $checkout.sourceEntity.sourceDocumentIdentifier]
+                    - '@assign_value': [$checkout.order.shippingMethod, $checkout.shippingMethod]
+                    - '@assign_value': [$checkout.order.shippingMethodType, $checkout.shippingMethodType]
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
