@@ -92,10 +92,8 @@ class LineItemRepository extends EntityRepository
      * @param AccountUser $accountUser
      * @return array|LineItem[]
      */
-    public function getOneProductItemsWithShoppingListNames(
-        Product $product,
-        AccountUser $accountUser
-    ) {
+    public function getOneProductItemWithShoppingListNames(Product $product, AccountUser $accountUser)
+    {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
@@ -103,6 +101,7 @@ class LineItemRepository extends EntityRepository
             ->andWhere('li.accountUser = :accountUser')
             ->setParameter('product', $product)
             ->setParameter('accountUser', $accountUser);
+
         return $qb->getQuery()->getResult();
     }
 }

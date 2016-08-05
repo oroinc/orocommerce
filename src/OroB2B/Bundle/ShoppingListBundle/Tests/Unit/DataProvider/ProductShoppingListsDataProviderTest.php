@@ -84,7 +84,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $accountUser = new AccountUser();
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
-            ->method('getOneProductItemsWithShoppingListNames')
+            ->method('getOneProductItemWithShoppingListNames')
             ->with($product, $accountUser)
             ->willReturn($lineItems);
 
@@ -102,6 +102,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         /** @var  ShoppingList $activeShoppingList */
         $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1');
+        /** @var  ShoppingList $activeShoppingListSecond */
+        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 1');
         /** @var  ShoppingList $otherShoppingList */
         $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2');
         return [
@@ -140,10 +142,10 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'a_few_shopping_lists' => [
                 'product' => new Product(),
-                'shoppingList' => $activeShoppingList,
+                'shoppingList' => $activeShoppingListSecond,
                 'lineItems' => [
-                    $this->createLineItem(1, 'code1', 42, $activeShoppingList),
-                    $this->createLineItem(2, 'code2', 100, $activeShoppingList),
+                    $this->createLineItem(1, 'code1', 42, $activeShoppingListSecond),
+                    $this->createLineItem(2, 'code2', 100, $activeShoppingListSecond),
                     $this->createLineItem(3, 'code3', 30, $otherShoppingList),
                 ],
                 'expected' => [
@@ -210,6 +212,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $shoppingList->expects($this->any())->method('getId')->willReturn($id);
         $shoppingList->expects($this->any())->method('getLabel')->willReturn($label);
+
         return $shoppingList;
     }
 }

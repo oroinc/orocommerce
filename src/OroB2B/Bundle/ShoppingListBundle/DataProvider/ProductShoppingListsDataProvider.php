@@ -60,7 +60,7 @@ class ProductShoppingListsDataProvider
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository
-            ->getOneProductItemsWithShoppingListNames($product, $accountUser);
+            ->getOneProductItemWithShoppingListNames($product, $accountUser);
 
         $groupedUnits = [];
         $shoppingListLabels = [];
