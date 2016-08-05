@@ -38,6 +38,31 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
     public function doExecute(LoggerInterface $logger, $dryRun = false)
     {
         $queries = [];
+        $rows = $this->getWorkflowItems($logger);
+        foreach ($rows as $row) {
+            $data = json_decode($row['data'], true);
+
+            if (array_key_exists('edit_order_link', $data)) {
+                $link = $data['edit_order_link'];
+                $parts = explode('/', $link);
+
+                $id = array_pop($parts);
+                if (filter_var($id, FILTER_VALIDATE_INT)) {
+                    $newId = $this->getCheckoutId($logger, $id);
+                    if ($newId) {
+                        $queries[] = [
+                            'UPDATE oro_workflow_item SET entity_id = :entity_id WHERE id = :id',
+                            ['entity_id' => $newId, 'id' => $row['id']],
+                            ['entity_id' => Type::INTEGER, 'id' => Type::INTEGER]
+                        ];
+                    }
+                }
+            }
+        }
+
+        $this->executeQueries($queries, $logger, $dryRun);
+
+        $queries = [];
         $rows = $this->getCheckouts($logger);
 
         foreach ($rows as $row) {
@@ -48,19 +73,55 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
             $data['requested_for_approve'] = $row['requested_for_approve'];
 
             $queries[] = [
-                'UPDATE oro_workflow_item SET data = :data WHERE id = :id',
-                ['data' => json_encode($data), 'id' => $row['workflow_item_id']],
-                ['data' => Type::STRING, 'id' => Type::INTEGER]
+                'UPDATE oro_workflow_item SET data = :data, entity_class = :entity_class WHERE id = :id',
+                [
+                    'data' => json_encode($data),
+                    'entity_class' => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+                    'id' => $row['workflow_item_id']
+                ],
+                ['data' => Type::STRING, 'entity_class' => Type::STRING, 'id' => Type::INTEGER]
             ];
         }
 
-        // execute update queries
-        foreach ($queries as $val) {
-            $this->logQuery($logger, $val[0], $val[1], $val[2]);
-            if (!$dryRun) {
-                $this->connection->executeUpdate($val[0], $val[1], $val[2]);
-            }
-        }
+        $this->executeQueries($queries, $logger, $dryRun);
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return array
+     */
+    protected function getWorkflowItems(LoggerInterface $logger)
+    {
+        $sql = 'SELECT id, data FROM oro_workflow_item AS wi WHERE entity_class = :entity_class';
+        $params = ['entity_class' => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
+        $types = ['entity_class' => Type::STRING];
+
+        $this->logQuery($logger, $sql, $params, $types);
+
+        return $this->connection->fetchAll($sql, $params, $types);
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @param int $shoppingListId
+     * @return int|null
+     */
+    protected function getCheckoutId(LoggerInterface $logger, $shoppingListId)
+    {
+        $sql = 'SELECT ac.id
+                FROM orob2b_alternative_checkout AS ac
+                INNER JOIN orob2b_checkout AS c ON c.id = ac.id
+                INNER JOIN orob2b_checkout_source AS cs ON cs.id = c.source_id
+                WHERE cs.shoppingList_id = :id
+                LIMIT 1';
+        $params = ['id' => $shoppingListId];
+        $types  = ['id' => Type::INTEGER];
+
+        $this->logQuery($logger, $sql, $params, $types);
+
+        $rows = $this->connection->fetchAll($sql, $params, $types);
+
+        return $rows ? $rows[0]['id'] : null;
     }
 
     /**
@@ -72,13 +133,13 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
         $castType = $this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform ? 'varchar' : 'char';
 
         $sql = 'SELECT c.allowed, c.allow_request_date, c.request_approval_notes, c.requested_for_approve,
-                  wi.id AS workflow_item_id, wi.data
+                  wi.id AS workflow_item_id, wi.data, wi.entity_id
                 FROM orob2b_alternative_checkout AS c
                 INNER JOIN oro_workflow_item AS wi
                   ON CAST(c.id as %s) = CAST(wi.entity_id as %s) AND wi.entity_class = :class';
         $sql = sprintf($sql, $castType, $castType);
         $params = ['class' => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
-        $types  = ['class' => 'string'];
+        $types = ['class' => Type::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
 
@@ -99,5 +160,20 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
         $date = serialize($date);
 
         return base64_encode($date);
+    }
+
+    /**
+     * @param array $queries
+     * @param LoggerInterface $logger
+     * @param bool $dryRun
+     */
+    protected function executeQueries(array $queries, LoggerInterface $logger, $dryRun = false)
+    {
+        foreach ($queries as $val) {
+            $this->logQuery($logger, $val[0], $val[1], $val[2]);
+            if (!$dryRun) {
+                $this->connection->executeUpdate($val[0], $val[1], $val[2]);
+            }
+        }
     }
 }
