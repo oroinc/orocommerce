@@ -44,4 +44,9 @@ interface PaymentMethodInterface
      * @return bool
      */
     public function supports($actionName);
+
+    /**
+     * @return bool
+     */
+    public function requiresVerification();
 }

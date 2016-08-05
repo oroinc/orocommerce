@@ -202,3 +202,11 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'payment_method_supports' }
             - { name: oro_action.condition, alias: 'payment_method_supports' }
+
+    orob2b_payment.condition.payment_method_requires_verification:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodRequiresVerification'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        tags:
+            - { name: oro_workflow.condition, alias: 'payment_method_requires_verification' }
+            - { name: oro_action.condition, alias: 'payment_method_requires_verification' }

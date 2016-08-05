@@ -24,4 +24,9 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
     {
         return 'payflow_gateway_';
     }
+
+    public function testRequiresVerification()
+    {
+        $this->assertTrue($this->method->requiresVerification());
+    }
 }

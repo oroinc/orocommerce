@@ -311,4 +311,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->method->isApplicable([]));
     }
+
+    public function testRequiresVerification()
+    {
+        $this->assertFalse($this->method->requiresVerification());
+    }
 }

@@ -113,4 +113,9 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
     {
         return OroB2BMoneyOrderExtension::ALIAS;
     }
+
+    public function testRequiresVerification()
+    {
+        $this->assertFalse($this->method->requiresVerification());
+    }
 }
