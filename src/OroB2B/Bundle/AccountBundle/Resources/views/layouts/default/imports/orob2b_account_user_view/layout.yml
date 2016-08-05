@@ -13,7 +13,10 @@ layout:
                     options:
                         visible: '=data["entity"]!=null'
                         actions: '=data["actions"].getAll()'
-                        entity: '=data["entity"]'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
 
                 __account_user_view_information:
                     blockType: container
