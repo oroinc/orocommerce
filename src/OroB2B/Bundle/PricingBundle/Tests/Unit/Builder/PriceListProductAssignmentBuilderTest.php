@@ -12,6 +12,8 @@ use OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
@@ -105,21 +107,32 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertClearGeneratedPricesCall(PriceList $priceList)
     {
-        $repo = $this->getMockBuilder(PriceListToProductRepository::class)
+        $priceListToProductRepository = $this->getMockBuilder(PriceListToProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
+        $priceListToProductRepository->expects($this->once())
             ->method('deleteGeneratedRelations')
             ->with($priceList);
 
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($repo);
+        $repoProductPrice = $this->getMockBuilder(BasePriceListRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->registry->expects($this->once())
+        $priceListToProductRepository->method('deleteInvalidPrices')
+            ->with($priceList);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->expects($this->exactly(2))
+            ->method('getRepository')
+            ->willReturnMap(
+                [
+                    [PriceListToProduct::class, $priceListToProductRepository],
+                    [ProductPrice::class, $repoProductPrice],
+                ]
+            );
+
+        $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
-            ->with(PriceListToProduct::class)
             ->willReturn($em);
     }
 }
