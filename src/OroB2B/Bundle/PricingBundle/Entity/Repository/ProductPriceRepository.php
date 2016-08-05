@@ -2,12 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceRepository extends BaseProductPriceRepository
 {
+    const BUFFER_SIZE = 500;
     /**
      * @param PriceList $priceList
      * @param Product|null $product
@@ -31,5 +36,45 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->setParameter('priceRule', $priceRule)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    public function deleteInvalidPrices(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('invalidPrice');
+        $qb->select('invalidPrice.id')
+            ->leftJoin(
+                PriceListToProduct::class,
+                'productRelation',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('invalidPrice.priceList', 'productRelation.priceList'),
+                    $qb->expr()->eq('invalidPrice.product', 'productRelation.product')
+                )
+            )
+            ->where($qb->expr()->eq('invalidPrice.priceList', ':priceList'))
+            ->andWhere($qb->expr()->isNull('productRelation.id'))
+            ->setParameter('priceList', $priceList);
+        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
+
+        $ids = [];
+        $i = 0;
+
+        $qbDelete = $this->getDeleteQbByPriceList($priceList);
+        $qbDelete->andWhere('productPrice.id IN (:ids)');
+        foreach ($iterator as $priceId) {
+            $i++;
+            $ids[] = $priceId;
+            if ($i === 500) {
+                $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
+                $ids = [];
+            }
+        }
+        if (!empty($ids)) {
+            $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
+        }
     }
 }

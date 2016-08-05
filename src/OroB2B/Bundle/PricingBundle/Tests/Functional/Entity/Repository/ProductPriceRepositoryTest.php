@@ -9,6 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -648,6 +649,26 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->assertEmpty($repository->findBy(['priceRule'=>$rule1]));
         $this->assertCount(1, $repository->findBy(['priceRule'=>$rule2]));
         $this->assertEquals($pricesCount + 1, $this->getPricesCount());
+    }
+
+    public function testDeleteInvalidPrices()
+    {
+        $this->getContainer()->get('doctrine')
+            ->getRepository(PriceListToProduct::class)
+            ->createQueryBuilder('productRelation')
+            ->delete(PriceListToProduct::class)
+            ->getQuery()
+            ->execute();
+
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+
+        $prices = $this->repository->findBy(['priceList' => $priceList]);
+        $this->assertNotEmpty($prices);
+
+        $this->repository->deleteInvalidPrices($priceList);
+
+        $prices = $this->repository->findBy(['priceList' => $priceList]);
+        $this->assertEmpty($prices);
     }
 
     /**

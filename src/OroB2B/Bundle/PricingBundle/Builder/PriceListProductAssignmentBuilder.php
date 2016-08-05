@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class PriceListProductAssignmentBuilder
 {
@@ -65,5 +66,8 @@ class PriceListProductAssignmentBuilder
         $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class)
             ->deleteGeneratedRelations($priceList);
+        $this->registry->getManagerForClass(ProductPrice::class)
+            ->getRepository(ProductPrice::class)
+            ->deleteInvalidPrices($priceList);
     }
 }
