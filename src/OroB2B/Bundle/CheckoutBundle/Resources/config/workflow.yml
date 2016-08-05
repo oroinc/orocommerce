@@ -113,6 +113,11 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
+                        # This field should be above "shipping_address" field
+                        ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
+                            options:
+                                label: Ship to this address
                         billing_address:
                             form_type: orob2b_checkout_address
                             options:
@@ -129,10 +134,6 @@ workflows:
                         save_billing_address:
                             options:
                                 label: Save address
-                        ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
-                            options:
-                                label: Ship to this address
 
             continue_to_shipping_method:
                 label: Continue
@@ -144,6 +145,11 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
+                        # This field should be above "shipping_address" field
+                        ship_to_billing_address:
+                            form_type: orob2b_ship_to_billing_address
+                            options:
+                                label: Use billing address
                         shipping_address:
                             form_type: orob2b_checkout_address
                             options:
@@ -160,10 +166,6 @@ workflows:
                         save_shipping_address:
                             options:
                                 label: Save address
-                        ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
-                            options:
-                                label: Use billing address
 
             continue_to_payment:
                 label: Continue

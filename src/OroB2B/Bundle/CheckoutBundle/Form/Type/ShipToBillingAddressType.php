@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+use Oro\Bundle\FormBundle\Utils\FormUtils;
+
 class ShipToBillingAddressType extends AbstractType
 {
     const NAME = 'orob2b_ship_to_billing_address';
@@ -29,8 +31,7 @@ class ShipToBillingAddressType extends AbstractType
         $parent = $form->getParent();
 
         if ($event->getData() && $parent->has(self::SHIPPING_ADDRESS_FORM_FIELD)) {
-            // @todo: Remove this type
-//            $parent->remove(self::SHIPPING_ADDRESS_FORM_FIELD);
+            FormUtils::replaceField($parent, self::SHIPPING_ADDRESS_FORM_FIELD, ['disabled' => true]);
         }
     }
 
