@@ -13,15 +13,15 @@ layout:
                 quick_add_import_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_import_form_provider }
+                        form: '=data["orob2b_product_quick_add_import_form_provider"]'
                 quick_add_import_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_import_form_provider }
+                        form: '=data["orob2b_product_quick_add_import_form_provider"]'
                 quick_add_import_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_product_quick_add_import_form_provider }
+                        form: '=data["orob2b_product_quick_add_import_form_provider"]'
             tree:
                 widget_content:
                     quick_add_import_help: ~
@@ -50,5 +50,6 @@ layout:
             id: widget_actions
             parentId: widget_content
             siblingId: quick_add_import_form_fields
-    conditions:
-        '@eq': [$context.import_step, 'form']
+
+    conditions: 'context["import_step"]=="form"'
+

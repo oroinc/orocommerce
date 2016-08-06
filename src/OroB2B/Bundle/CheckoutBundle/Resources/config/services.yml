@@ -1,5 +1,4 @@
 parameters:
-    orob2b_checkout.entity.base_checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 
@@ -90,6 +89,7 @@ services:
             - '@property_accessor'
             - '@oro_action.action.redirect'
             - '@event_dispatcher'
+            - '@oro_workflow.manager'
         tags:
             - { name: oro_action.action, alias: start_checkout }
 
@@ -109,22 +109,29 @@ services:
         tags:
             - { name: twig.extension }
 
-    # Listener in checkout bundle should be handled first to allow custom listeners overwrite result
-    orob2b_checkout.event_listener.checkout_entity.abstract:
-        class: OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener
+    orob2b_checkout.event_listener.checkout_entity:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener'
         lazy: true
         arguments:
             - '@oro_workflow.manager'
             - '@doctrine'
             - '@orob2b_pricing.user_currency_manager'
-
-    orob2b_checkout.event_listener.checkout_entity:
-        parent: 'orob2b_checkout.event_listener.checkout_entity.abstract'
         calls:
             - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
             - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
+
+    orob2b_checkout.event_listener.shopping_list:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
+        public: false
+        arguments:
+            - '@doctrine'
+        calls:
+            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
+            - [setCheckoutSourceClassName, ['%orob2b_checkout.entity.checkout_source.class%']]
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_shopping_list.entity.shopping_list.class%', event: preRemove }
 
     orob2b_checkout.grid_totals_metadata.cache:
         public: false
@@ -132,12 +139,12 @@ services:
         calls:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
-    orob2b_checkout.repository.base_checkout:
+    orob2b_checkout.repository.checkout:
         class: Doctrine\ORM\EntityRepository
         public: false
         factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
         arguments:
-            - '%orob2b_checkout.entity.base_checkout.class%'
+            - '%orob2b_checkout.entity.checkout.class%'
 
     orob2b_checkout.datagrid.checkout_grid_helper:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper
@@ -150,7 +157,7 @@ services:
         class: OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
         arguments:
             - '@orob2b_pricing.user_currency_manager'
-            - '@orob2b_checkout.repository.base_checkout'
+            - '@orob2b_checkout.repository.checkout'
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@oro_entity.entity_name_resolver'
             - '@orob2b_checkout.grid_totals_metadata.cache'
@@ -179,3 +186,8 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
+
+    orob2b_checkout.migration.post_up.listener:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -80 }

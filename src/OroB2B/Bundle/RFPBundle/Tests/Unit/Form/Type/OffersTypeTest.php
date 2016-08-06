@@ -23,7 +23,7 @@ class OffersTypeTest extends FormIntegrationTestCase
     public function testOffersOption()
     {
         $offers = [['offer1'], ['offer2']];
-        $form = $this->factory->create(new OffersType(), [], ['offers' => $offers]);
+        $form = $this->factory->create(new OffersType(), null, ['offers' => $offers]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
         $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
@@ -39,7 +39,7 @@ class OffersTypeTest extends FormIntegrationTestCase
      */
     public function testOffersOptionInvalid()
     {
-        $form = $this->factory->create(new OffersType(), [], ['offers' => 1]);
+        $form = $this->factory->create(new OffersType(), null, ['offers' => 1]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
         $this->assertTrue($form->getConfig()->getOption('choices_as_values'));

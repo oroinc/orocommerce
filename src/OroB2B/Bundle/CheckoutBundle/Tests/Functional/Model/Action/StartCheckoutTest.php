@@ -8,10 +8,12 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -97,7 +99,10 @@ class StartCheckoutTest extends WebTestCase
         }
 
         // Check that checkout is started and step is correct
-        $workflowItem = $checkout->getWorkflowItem();
+        $workflowItems = $this->getWorkflowItems($checkout);
+        $this->assertCount(1, $workflowItems);
+
+        $workflowItem = array_shift($workflowItems);
         $this->assertEquals($workflowItem->getEntity()->getId(), $checkout->getId());
         $this->assertEquals(
             $workflowItem->getDefinition()->getStartStep()->getName(),
@@ -113,11 +118,11 @@ class StartCheckoutTest extends WebTestCase
 
         // Check redirection
         $this->assertEquals(
-            $context->offsetGet('redirectUrl'),
             $this->client->getContainer()->get('router')->generate(
                 'orob2b_checkout_frontend_checkout',
                 ['id' => $checkout->getId()]
-            )
+            ),
+            $context->offsetGet('redirectUrl')
         );
     }
 
@@ -167,5 +172,16 @@ class StartCheckoutTest extends WebTestCase
         $checkouts = $this->getCheckouts();
         $this->assertCount(1, $checkouts);
         $this->assertData($data, $checkouts[0]);
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     * @return WorkflowItem[]
+     */
+    protected function getWorkflowItems(CheckoutInterface $checkout)
+    {
+        $workflowManager = $this->getContainer()->get('oro_workflow.manager');
+
+        return $workflowManager->getWorkflowItemsByEntity($checkout);
     }
 }

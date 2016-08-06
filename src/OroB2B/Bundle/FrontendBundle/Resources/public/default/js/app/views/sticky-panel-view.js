@@ -120,9 +120,18 @@ define(function(require) {
                 });
                 options.$placeholder = options.placeholderId ? $('#' + options.placeholderId) : $placeholder;
                 options.toggleClass += ' ' + this.options.elementClass;
+                options.alwaysInSticky = false;
+                options.currentState = false;
 
                 $element.data('sticky', options);
             }, this);
+
+            this.$el.find('[data-sticky]').each(function() {
+                var $element = $(this);
+                var sticky = $element.data('sticky');
+                sticky.alwaysInSticky = true;
+                $element.data('sticky', sticky);
+            });
 
             if (this.elements.length) {
                 this.delegateEvents();
@@ -142,21 +151,11 @@ define(function(require) {
             var contentChanged = false;
             for (var i = 0, iMax = this.elements.length; i < iMax; i++) {
                 var $element = this.elements[i];
+                var newState = this.getNewElementState($element);
 
-                if ($element.hasClass(this.options.elementClass)) {
-                    if (this.inViewPort(
-                        $element.data('sticky').$elementPlaceholder, $element) ||
-                        $element.is(':empty')
-                    ) {
-                        contentChanged = true;
-                        this.toggleElementState($element, false);
-                    }
-                } else if (!$element.is(':empty') && !this.inViewPort($element)) {
+                if (newState !== null) {
                     contentChanged = true;
-                    this.toggleElementState($element, true);
-                }
-
-                if (contentChanged) {
+                    this.toggleElementState($element, newState);
                     break;
                 }
             }
@@ -165,6 +164,23 @@ define(function(require) {
                 this.$el.toggleClass('has-content', this.$el.find('.' + this.options.elementClass).length > 0);
                 this.onScroll();
             }
+        },
+
+        getNewElementState: function($element) {
+            var options = $element.data('sticky');
+            var isEmpty = $element.is(':empty');
+
+            if (options.currentState) {
+                if (isEmpty) {
+                    return false;
+                } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
+                    return false;
+                }
+            } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
+                return true;
+            }
+
+            return null;
         },
 
         updateViewPort: function() {
@@ -200,16 +216,20 @@ define(function(require) {
         toggleElementState: function($element, state) {
             var options = $element.data('sticky');
 
-            if (state) {
-                this.updateElementPlaceholder($element);
-                $element.addClass(options.toggleClass);
-                $element.after(options.$elementPlaceholder);
-                options.$placeholder.append($element);
-            } else {
-                $element.removeClass(options.toggleClass);
-                options.$elementPlaceholder.before($element)
-                    .remove();
+            if (!options.alwaysInSticky) {
+                if (state) {
+                    this.updateElementPlaceholder($element);
+                    $element.after(options.$elementPlaceholder);
+                    options.$placeholder.append($element);
+                } else {
+                    options.$elementPlaceholder.before($element)
+                        .remove();
+                }
             }
+
+            $element.toggleClass(options.toggleClass, state);
+            options.currentState = state;
+            $element.data('sticky', options);
 
             mediator.trigger('sticky-panel:toggle-state', {$element: $element, state: state});
         },

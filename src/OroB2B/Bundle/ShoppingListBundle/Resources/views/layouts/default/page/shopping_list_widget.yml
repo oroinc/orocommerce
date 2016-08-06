@@ -9,13 +9,13 @@ layout:
                 main_menu_shopping_lists_widget:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
                 main_menu_shopping_lists_widget_content:
                     blockType: container
                 main_menu_shopping_lists_widget_content_item_container:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: { '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
                 main_menu_shopping_lists_widget_content_item:
                     blockType: block
                 main_menu_shopping_lists_widget_content_new_item_btn:
@@ -28,5 +28,5 @@ layout:
                                 main_menu_shopping_lists_widget_content_item_container:
                                     main_menu_shopping_lists_widget_content_item: ~
                                 main_menu_shopping_lists_widget_content_new_item_btn: ~
-    conditions:
-        '@neq': [ $context.logged_user, null ]
+
+    conditions: 'context["logged_user"]!=null'

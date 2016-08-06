@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
 {
     const CHECKOUT_1 = 'checkout.1';
     const CHECKOUT_2 = 'checkout.2';
+    const CHECKOUT_3 = 'checkout.3';
 
     /**
      * {@inheritDoc}
@@ -20,17 +20,21 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
         return [
             self::CHECKOUT_1 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_1,
-                'checkout' => ['payment_method' => PayflowGateway::TYPE]
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],
             self::CHECKOUT_2 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_2,
-                'checkout' => ['payment_method' => PayflowGateway::TYPE]
-            ]
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
+            ],
+            self::CHECKOUT_3 => [
+                'source' => LoadShoppingLists::SHOPPING_LIST_3,
+                'checkout' => ['payment_method' => PaymentTerm::TYPE]
+            ],
         ];
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     protected function getWorkflowName()
     {
@@ -38,7 +42,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * @return BaseCheckout
+     * {@inheritDoc}
      */
     protected function createCheckout()
     {
@@ -60,7 +64,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     {
         return array_merge(
             parent::getDependencies(),
-            ['OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems']
+            ['OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists']
         );
     }
 }

@@ -1,0 +1,15 @@
+{% block _payment_methods_payflow_express_checkout_widget %}
+    <div class="{{ class_prefix }}__form__payment-methods"
+         data-page-component-module="oropaypal/js/app/components/payflow-express-checkout-component"
+         data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
+        <img src="{% image '@OroPayPalBundle/Resources/public/default/images/pp-express-checkout-method.png' %}{{ asset_url }}{% endimage %}">
+        <div>{{ 'oro.paypal.payflow_express_checkout.redirect_to_paypal'|trans|nl2br }}</div>
+    </div>
+{% endblock %}
+
+{% block _payment_methods_credit_card_widget %}
+    {{ form_widget(
+    view.options.formView,
+    {class_prefix: class_prefix, paymentMethod: name, options: view.options})
+    }}
+{% endblock %}
