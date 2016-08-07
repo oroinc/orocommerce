@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 
 /**
  * @dbIsolation
  */
-class BaseCheckoutRepositoryTest extends WebTestCase
+class CheckoutRepositoryTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -20,17 +20,17 @@ class BaseCheckoutRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData',
-                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckouts',
+                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
             ]
         );
     }
 
     /**
-     * @return BaseCheckoutRepository
+     * @return CheckoutRepository
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BCheckoutBundle:BaseCheckout');
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BCheckoutBundle:Checkout');
     }
 
     public function testCountItemsPerCheckout()

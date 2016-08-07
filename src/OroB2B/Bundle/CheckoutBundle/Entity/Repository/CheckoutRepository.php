@@ -4,7 +4,10 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-class BaseCheckoutRepository extends EntityRepository
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+
+class CheckoutRepository extends EntityRepository
 {
     /**
      * This method is returning the count of all line items,
@@ -112,5 +115,25 @@ class BaseCheckoutRepository extends EntityRepository
         );
 
         return $result;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return Checkout
+     */
+    public function getCheckoutByQuote(Quote $quote)
+    {
+        $qb = $this->createQueryBuilder('checkout');
+
+        return $qb->addSelect(['source', 'qd', 'quote'])
+            ->innerJoin('checkout.source', 'source')
+            ->innerJoin('source.quoteDemand', 'qd')
+            ->innerJoin('qd.quote', 'quote')
+            ->where(
+                $qb->expr()->eq('quote', ':quote')
+            )
+            ->setParameter('quote', $quote)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

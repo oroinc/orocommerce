@@ -298,6 +298,15 @@ class ProductRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetPrimaryUnitPrecisionCode()
+    {
+        /** @var Product $product */
+        $product = $this->getRepository()->findOneBy(['sku' => ProductFixture::PRODUCT_1]);
+
+        $result = $this->repository->getPrimaryUnitPrecisionCode($product->getSku());
+        $this->assertEquals($product->getPrimaryUnitPrecision()->getProductUnitCode(), $result);
+    }
+
     /**
      * @param array $references
      * @return array
