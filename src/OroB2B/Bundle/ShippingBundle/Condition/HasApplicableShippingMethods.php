@@ -7,9 +7,9 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 /**
  * Check applicable shipping methods
@@ -29,19 +29,25 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     /** ShippingRulesProvider */
     protected $shippingRulesProvider;
 
+    /** ShippingContextProviderFactory */
+    protected $shippingContextProviderFactory;
+
     /** @var object */
     protected $entity;
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
      * @param ShippingRulesProvider $shippingRulesProvider
+     * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
     public function __construct(
         ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingRulesProvider $shippingRulesProvider
+        ShippingRulesProvider $shippingRulesProvider,
+        ShippingContextProviderFactory $shippingContextProviderFactory
     ) {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
         $this->shippingRulesProvider = $shippingRulesProvider;
+        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
     /** {@inheritdoc} */
@@ -75,16 +81,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         $entity = $this->resolveValue($context, $this->entity, false);
 
         if (!empty($entity)) {
-            $context = [
-                'checkout' => $entity,
-                'billingAddress' => $entity->getBillingAddress(),
-                'currency' => $entity->getCurrency(),
-            ];
-            $sourceEntity = $entity->getSourceEntity();
-            if (!empty($sourceEntity)) {
-                $context['line_items'] = $sourceEntity->getLineItems();
-            }
-            $shippingContext = new ShippingContextProvider($context);
+            $shippingContext = $this->shippingContextProviderFactory->create($entity);
             $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
         }
         if (!empty($rules)) {

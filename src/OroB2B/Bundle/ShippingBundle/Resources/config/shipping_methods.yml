@@ -40,6 +40,7 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.factory.shipping_context_provider_factory'
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }

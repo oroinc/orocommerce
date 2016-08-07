@@ -10,6 +10,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -25,6 +26,9 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $shippingRulesProvider;
+
+    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingContextProviderFactory;
 
     /**
      * @var LayoutContext|\PHPUnit_Framework_MockObject_MockObject
@@ -44,6 +48,11 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->shippingRulesProvider = $this
             ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->shippingContextProviderFactory = $this
+            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -67,7 +76,11 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('data')
             ->willReturn($contextData);
 
-        $this->provider = new ShippingMethodsDataProvider($this->registry, $this->shippingRulesProvider);
+        $this->provider = new ShippingMethodsDataProvider(
+            $this->registry,
+            $this->shippingRulesProvider,
+            $this->shippingContextProviderFactory
+        );
     }
 
     public function testGetIdentifier()
@@ -78,6 +91,11 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetDataEmpty()
     {
         $this->shippingRulesProvider->expects($this->any())->method('getApplicableShippingRules')->willReturn([]);
+
+        $this->shippingContextProviderFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn(new ShippingContextProvider([]));
 
         $data = $this->provider->getData($this->context);
         $this->assertEmpty($data);
@@ -112,6 +130,11 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($method);
+
+        $this->shippingContextProviderFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn(new ShippingContextProvider([]));
 
         $data = $this->provider->getData($this->context);
         $expectedData = [

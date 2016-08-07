@@ -81,6 +81,7 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.factory.shipping_context_provider_factory'
         tags:
             - { name: layout.data_provider, alias: shipping_methods_data_provider }
 
@@ -198,3 +199,4 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
         arguments:
           - '@orob2b_shipping.shipping_method.registry'
+          - '@orob2b_shipping.factory.shipping_context_provider_factory'
