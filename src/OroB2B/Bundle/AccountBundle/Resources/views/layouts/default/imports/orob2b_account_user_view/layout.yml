@@ -46,11 +46,12 @@ layout:
                     blockType: address_book
                     options:
                         entity: '=data["entity"]'
-                        addressListRouteName: 'orob2b_api_account_frontend_get_accountuser_addresses'
-                        addressCreateRouteName: 'orob2b_account_frontend_account_user_address_create'
-                        addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
-                        addressUpdateRouteName: 'orob2b_account_frontend_account_user_address_update'
-                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
+                        addressListRouteName: '=data["account_user_address_provider"].getAddressListRouteName()'
+                        addressCreateRouteName: '=data["account_user_address_provider"].getAddressCreateRouteName()'
+                        addressCreateAclResource: '=data["account_user_address_provider"].getAddressCreateAclResource()'
+                        addressUpdateRouteName: '=data["account_user_address_provider"].getAddressUpdateRouteName()'
+                        addressUpdateAclResource: '=data["account_user_address_provider"].getAddressUpdateAclResource()'
+                        componentOptions: '=data["account_user_address_provider"].getComponentOptions(data["entity"])'
             tree:
                 __root:
                     __account_user_view_page:

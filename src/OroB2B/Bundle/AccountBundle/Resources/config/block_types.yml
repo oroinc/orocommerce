@@ -1,11 +1,11 @@
 services:
-    orob2b_account.layout.block_type.address_book:
-        class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
-        arguments:
-            - '@router'
-            - '@fragment.handler'
-        tags:
-             - { name: layout.block_type, alias: address_book }
+#    orob2b_account.layout.block_type.address_book:
+#        class: OroB2B\Bundle\AccountBundle\Layout\Block\Type\AddressBookType
+#        arguments:
+#            - '@router'
+#            - '@fragment.handler'
+#        tags:
+#             - { name: layout.block_type, alias: address_book }
 
     orob2b_account.layout.block_type.account_user_awere_block:
         parent: oro_layout.block_type.abstract_configurable
@@ -30,3 +30,22 @@ services:
             - [setName, ['login_page']]
         tags:
              - { name: layout.block_type, alias: login_page }
+
+    orob2b_account.layout.block_type.address_book:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['address_book']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        addressCreateAclResource: {default: 'null'}
+                        addressUpdateAclResource: {default: 'null'}
+                        useFormDialog: {default: false}
+                        entity: {required: true}
+                        addressListRouteName: {required: true}
+                        addressCreateRouteName: {required: true}
+                        addressUpdateRouteName: {required: true}
+                        componentOptions: {required: true}
+        tags:
+             - { name: layout.block_type, alias: address_book }
