@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: orob2b_rfp_frontend_request_edit
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -23,13 +28,3 @@ layout:
                 label: 'orob2b.frontend.rfp.request.edit_title.label'
                 parameters:
                     '%id%': '=data["entity"].getId()'
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-
-    imports:
-        -
-            id: orob2b_rfp_frontend_request_edit
-            root: content

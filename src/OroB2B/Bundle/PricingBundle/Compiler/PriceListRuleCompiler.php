@@ -72,6 +72,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
             $qb = $this->createQueryBuilder($rule);
             $rootAlias = $this->getRootAlias($qb);
+            $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
 
             $this->modifySelectPart($qb, $rule, $rootAlias);
             $this->applyRuleConditions($qb, $rule);
@@ -246,6 +247,22 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $qb->andWhere($qb->expr()->eq($this->getRootAlias($qb), ':product'))
                 ->setParameter('product', $product->getId());
         }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param PriceRule $rule
+     * @param string $rootAlias
+     */
+    protected function restrictBySupportedUnits(QueryBuilder $qb, PriceRule $rule, $rootAlias)
+    {
+        $qb
+            ->join(
+                $rootAlias . '.unitPrecisions',
+                '_allowedUnit'
+            )
+            ->andWhere($qb->expr()->eq('_allowedUnit.unit', ':requiredUnitUnit'))
+            ->setParameter('requiredUnitUnit', $rule->getProductUnit());
     }
 
     /**
