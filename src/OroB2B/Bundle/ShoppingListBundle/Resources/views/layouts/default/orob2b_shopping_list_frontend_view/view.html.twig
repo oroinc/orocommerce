@@ -201,7 +201,7 @@
                                 </div>
                                 <div class="product-item__desctiption product-item__desctiption_in-cart">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">
-                                        <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product }}</a>
+                                        <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product.names|localized_value }}</a>
                                     </h3>
                                     <div>{{ 'orob2b.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ lineItem.product.sku }}</span></div>
                                 </div>

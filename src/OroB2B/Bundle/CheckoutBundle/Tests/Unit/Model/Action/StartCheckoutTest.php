@@ -141,7 +141,6 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function ($eventName, $event) use ($checkout) {
                 if ($eventName === CheckoutEvents::GET_CHECKOUT_ENTITY && $event instanceof CheckoutEntityEvent) {
                     $event->setCheckoutEntity($checkout);
-                    $event->setWorkflowName('test');
                 }
             });
 
@@ -188,12 +187,12 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                 );
 
             $this->workflowManager->expects($this->at(0))
-                ->method('getWorkflowItem')
-                ->willReturn(null);
+                ->method('getWorkflowItemsByEntity')
+                ->willReturn([]);
 
             $this->workflowManager->expects($this->at(1))
-                ->method('getWorkflowItem')
-                ->willReturn($workflowItem);
+                ->method('getWorkflowItemsByEntity')
+                ->willReturn([$workflowItem]);
 
             $em->expects($this->once())
                 ->method('persist')
@@ -201,8 +200,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $em->expects($this->exactly(2))->method('flush');
         } else {
             $this->workflowManager->expects($this->once())
-                ->method('getWorkflowItem')
-                ->willReturn($workflowItem);
+                ->method('getWorkflowItemsByEntity')
+                ->willReturn([$workflowItem]);
         }
 
         $this->redirect
@@ -211,7 +210,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId(), 'checkoutType' => $checkout->getCheckoutType()]
+                    'route_parameters' => ['id' => $checkout->getId()]
                 ]
             );
         $this->redirect->expects($this->once())

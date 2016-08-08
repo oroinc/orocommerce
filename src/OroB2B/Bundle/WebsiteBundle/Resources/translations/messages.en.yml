@@ -8,6 +8,8 @@ orob2b:
         url.label: URL
         owner.label: Owner
         organization.label: Organization
+        default_localization.label: Default Localization
+        enabled_localizations.label: Enabled Localizations
         localizations.label: Localizations
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
