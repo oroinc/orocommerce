@@ -92,7 +92,7 @@ class LineItemRepository extends EntityRepository
      * @param AccountUser $accountUser
      * @return array|LineItem[]
      */
-    public function getOneProductItemWithShoppingListNames(Product $product, AccountUser $accountUser)
+    public function getOneProductLineItemsWithShoppingListNames(Product $product, AccountUser $accountUser)
     {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')

@@ -84,7 +84,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $accountUser = new AccountUser();
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
-            ->method('getOneProductItemWithShoppingListNames')
+            ->method('getOneProductLineItemsWithShoppingListNames')
             ->with($product, $accountUser)
             ->willReturn($lineItems);
 

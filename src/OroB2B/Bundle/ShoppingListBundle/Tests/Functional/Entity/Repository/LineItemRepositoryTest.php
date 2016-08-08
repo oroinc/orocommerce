@@ -63,7 +63,7 @@ class LineItemRepositoryTest extends WebTestCase
     }
 
 
-    public function testGetOneProductItemWithShoppingListNames()
+    public function testGetOneProductLineItemsWithShoppingListNames()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -74,7 +74,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        $lineItems = $this->getRepository()->getOneProductItemWithShoppingListNames($product, $accountUser);
+        $lineItems = $this->getRepository()->getOneProductLineItemsWithShoppingListNames($product, $accountUser);
 
         $this->assertTrue(count($lineItems) > 1);
 
