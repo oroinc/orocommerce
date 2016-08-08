@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 
 /**
  * Change namespace in all loaded migrations, fixtures and entity config data
@@ -221,6 +222,14 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
                 $data[$key] = $this->replaceArrayValue($value);
             } elseif (is_string($value)) {
                 $data[$key] = $this->replaceStringValue($value);
+            } elseif ($value instanceof ConfigIdInterface) {
+                $originalClass = $value->getClassName();
+                $alteredClass = $this->replaceStringValue($originalClass);
+                if ($alteredClass !== $originalClass) {
+                    $reflectionProperty = new \ReflectionProperty(get_class($value), 'className');
+                    $reflectionProperty->setAccessible(true);
+                    $reflectionProperty->setValue($value, $alteredClass);
+                }
             }
         }
 
@@ -238,8 +247,8 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         }
 
         return str_replace(
-            ['OroB2B\\Bundle\\', 'orob2b.'],
-            ['Oro\\Bundle\\', 'oro.'],
+            ['OroB2B\\Bundle\\', 'orob2b.', 'Extend\Entity\EX_OroB2B'],
+            ['Oro\\Bundle\\', 'oro.', 'Extend\Entity\EX_Oro'],
             $value
         );
     }
