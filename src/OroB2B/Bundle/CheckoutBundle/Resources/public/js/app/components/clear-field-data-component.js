@@ -20,7 +20,7 @@ define(function(require) {
         },
         clear: function() {
             if (this.$trigger.attr('checked') !== 'checked') {
-                this.$el.find('input[type=text], textarea').val('');
+                this.$el.find('input[type=text], input[type=date], textarea').val('');
             }
         }
     });
