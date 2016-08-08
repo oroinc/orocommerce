@@ -20,7 +20,7 @@
 {% block __orob2b_frontend_product_showing__image_holder_widget %}
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__image-holder product-item__image-holder_<%= themeOptions.view %>'
+        '~class': ' product-item__image-holder product-item__image-holder_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -45,7 +45,7 @@
 
 {% block __orob2b_frontend_product_showing__name_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__title product-item__title_<%= themeOptions.view %>'
+        '~class': ' product-item__title product-item__title_<%= themeOptions.currentRowView %>'
     }) %}
 
     <h3 {{ block('block_attributes') }}>
@@ -55,11 +55,11 @@
 
 {% block __orob2b_frontend_product_showing__primary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__primary-content product-item__primary-content_<%= themeOptions.view %>'
+        '~class': ' product-item__primary-content product-item__primary-content_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <div class="product-item__primary-half product-item__primary-half_<%= themeOptions.view %>">
+        <div class="product-item__primary-half product-item__primary-half_<%= themeOptions.currentRowView %>">
             {{ block_widget(block) }}
         </div>
     </div>
@@ -67,7 +67,7 @@
 
 {% block __orob2b_frontend_product_showing__number_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': '  product-item__number product-item__number_<%= themeOptions.view %>'
+        '~class': '  product-item__number product-item__number_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -77,7 +77,7 @@
 
 {% block __orob2b_frontend_product_showing__specification_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__specification product__specification_<%= themeOptions.view %> mb2-md'
+        '~class': ' product__specification product__specification_<%= themeOptions.currentRowView %> mb2-md'
     }) %}
 
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
@@ -107,7 +107,7 @@
 
 {% block __orob2b_frontend_product_showing__short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': '  product__description product__description_<%= themeOptions.view %>'
+        '~class': '  product__description product__description_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -117,7 +117,7 @@
 
 {% block __orob2b_frontend_product_showing__details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__view-details-link product__view-details-link_<%= themeOptions.view %>'
+        '~class': ' product__view-details-link product__view-details-link_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -129,7 +129,7 @@
 
 {% block __orob2b_frontend_product_showing__secondary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__secondary-content product-item__secondary-content_<%= themeOptions.view %>'
+        '~class': ' product-item__secondary-content product-item__secondary-content_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
@@ -137,7 +137,7 @@
 
 {% block __orob2b_frontend_product_showing__secondary_content_first_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>'
+        '~class': ' product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
@@ -145,7 +145,7 @@
 
 {% block __orob2b_frontend_product_showing__specification_delivery_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__specification product__specification_delivery product__specification_<%= themeOptions.view %> not-implemented'
+        '~class': ' product__specification product__specification_delivery product__specification_<%= themeOptions.currentRowView %> not-implemented'
     }) %}
 
     <div {{ block('block_attributes') }}></div>
@@ -153,7 +153,7 @@
 
 {% block __orob2b_frontend_product_showing__secondary_content_second_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>'
+        '~class': ' product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
@@ -161,14 +161,14 @@
 
 {% block __orob2b_frontend_product_showing__more_info_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.view %>'
+        '~class': ' oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.currentRowView %>'
     }) %}
 
     <div {{ block('block_attributes') }}>
         <i class="cf-play"></i>
         <a href="#" data-more-info-expand>More Info</a>
         <div class="oro-more-info-toggler__container" data-more-info>
-            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list_<%= themeOptions.view %>">
+            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list_<%= themeOptions.currentRowView %>">
                 <li><span class="text-uppercase">Mspr:</span> $24.99</li>
                 <li>Shipping Weight: .08 lbs.</li>
                 <li>80 Items to a Box</li>

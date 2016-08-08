@@ -150,11 +150,6 @@ abstract class AbstractCurrencySelectionType extends AbstractType
     }
 
     /**
-     * {@inheritDoc}
-     */
-    abstract public function getName();
-
-    /**
      * @return string
      */
     abstract public function getCurrencySelectorConfigKey();
