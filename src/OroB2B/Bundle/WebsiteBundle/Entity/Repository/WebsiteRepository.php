@@ -15,6 +15,11 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
     use BatchIteratorTrait;
 
     /**
+     * @var array|null
+     */
+    protected $websiteIdentifiers;
+
+    /**
      * @return Website[]|Collection
      */
     public function getAllWebsites()
@@ -38,9 +43,13 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
      */
     public function getWebsiteIdentifiers()
     {
-        $qb = $this->createQueryBuilder('website')
-            ->select('website.id');
-        
-        return ArrayUtil::arrayColumn($qb->getQuery()->getArrayResult(), 'id');
+        if (null === $this->websiteIdentifiers) {
+            $qb = $this->createQueryBuilder('website')
+                ->select('website.id');
+
+            $this->websiteIdentifiers = ArrayUtil::arrayColumn($qb->getQuery()->getArrayResult(), 'id');
+        }
+
+        return $this->websiteIdentifiers;
     }
 }
