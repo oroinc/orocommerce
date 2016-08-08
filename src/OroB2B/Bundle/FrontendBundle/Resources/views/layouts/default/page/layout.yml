@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BFrontendBundle:layouts:default/page/layout.html.twig'
+            themes: 'layout.html.twig'
         - '@addTree':
             items:
                 wrapper:

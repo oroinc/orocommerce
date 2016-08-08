@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
-use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
@@ -42,7 +42,7 @@ class LoadAlternativeCheckouts extends AbstractLoadCheckouts
      */
     protected function createCheckout()
     {
-        return new AlternativeCheckout();
+        return new Checkout();
     }
 
     /**

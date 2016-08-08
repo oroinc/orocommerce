@@ -6,27 +6,23 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
@@ -61,9 +57,9 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $totalProcessor;
 
     /**
-     * @var BaseCheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $baseCheckoutRepository;
+    protected $checkoutRepository;
 
     /**
      * @var CheckoutGridListener
@@ -114,14 +110,14 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->cache->method('contains')
                       ->willReturn(false);
 
-        $this->baseCheckoutRepository = $this->getMockBuilder(
-            BaseCheckoutRepository::class
+        $this->checkoutRepository = $this->getMockBuilder(
+            CheckoutRepository::class
         )
                                              ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
                                              ->disableOriginalConstructor()
                                              ->getMock();
 
-        $this->baseCheckoutRepository->expects($this->any())
+        $this->checkoutRepository->expects($this->any())
                                      ->method('find')
                                      ->willReturn(new Checkout());
 
@@ -143,7 +139,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
-            $this->baseCheckoutRepository,
+            $this->checkoutRepository,
             $this->totalProcessor,
             $this->entityNameResolver,
             $this->cache,
@@ -269,7 +265,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $data = array_combine(range(1, 10), range(1, 10));
 
-        $this->baseCheckoutRepository->expects($this->atLeastOnce())
+        $this->checkoutRepository->expects($this->atLeastOnce())
                                      ->method('countItemsPerCheckout')
                                      ->will($this->returnValue($data));
 
@@ -311,7 +307,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $quote = new Quote();
 
-        $this->baseCheckoutRepository->expects($this->atLeastOnce())
+        $this->checkoutRepository->expects($this->atLeastOnce())
                                      ->method('getSourcePerCheckout')
                                      ->will($this->returnValue([
                                                                    3 => $shoppingList,
@@ -405,7 +401,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                              ->method('getTotal')
                              ->willReturn((new Subtotal())->setAmount(10));
 
-        $this->baseCheckoutRepository->expects($this->once())
+        $this->checkoutRepository->expects($this->once())
                                      ->method('find')
                                      ->with(2)
                                      ->willReturn(new Checkout());

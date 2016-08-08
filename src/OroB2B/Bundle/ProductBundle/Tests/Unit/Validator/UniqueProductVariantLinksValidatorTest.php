@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
@@ -51,7 +51,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesNothingIfProductDoesNotHaveVariants()
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setHasVariants(false);
 
         $this->context->expects($this->never())->method('addViolation');
@@ -130,7 +130,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSkipIfProductIsMissingAndValidatedByNotBlank()
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setHasVariants(true);
         $product->setVariantFields(['field1']);
         $variantLink = new ProductVariantLink($product);
@@ -150,12 +150,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
      */
     private function prepareProduct(array $variantFields, array $variantLinkFields)
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setHasVariants(true);
         $product->setVariantFields($variantFields);
 
         foreach ($variantLinkFields as $fields) {
-            $variantProduct = new StubProduct();
+            $variantProduct = new Product();
 
             if (array_key_exists(self::VARIANT_FIELD_KEY_SIZE, $fields)) {
                 $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);

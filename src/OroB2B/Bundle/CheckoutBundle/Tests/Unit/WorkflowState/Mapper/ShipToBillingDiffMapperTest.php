@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -17,10 +20,15 @@ class ShipToBillingDiffMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $checkout;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->mapper = new ShipToBillingDiffMapper();
         $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+    }
+
+    protected function tearDown()
+    {
+        unset($this->mapper, $this->checkout);
     }
 
     public function testIsEntitySupported()
