@@ -164,12 +164,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 $imagePath = current($imagePath);
             }
 
-            $attachmentManager = $this->container->get('oro_attachment.manager');
-
-            $image = $attachmentManager->prepareRemoteFile($imagePath);
-
-            $attachmentManager->upload($image);
-
+            $fileManager = $this->container->get('oro_attachment.file_manager');
+            $image = $fileManager->createFileEntity($imagePath);
             $manager->persist($image);
 
             $productImage = new ProductImage();

@@ -15,11 +15,6 @@ interface CheckoutInterface
     public function getId();
 
     /**
-     * @return string
-     */
-    public function getCheckoutType();
-
-    /**
      * @param CheckoutSource $source
      * @return $this
      */
