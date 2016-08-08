@@ -44,6 +44,7 @@ class OroB2BShippingBundle implements Migration
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['enabled', 'currency'], 'orob2b_shipping_rl_en_cur_idx', []);
     }
 
     /**

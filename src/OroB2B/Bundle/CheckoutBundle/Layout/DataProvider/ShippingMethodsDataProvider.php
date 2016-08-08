@@ -6,12 +6,12 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutAddressesTrait;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
 {
@@ -50,17 +50,16 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     public function getData(ContextInterface $layoutContext)
     {
         if (null === $this->data) {
-            /** @var BaseCheckout $entity */
+            /** @var BaseCheckout|CheckoutAddressesTrait $entity */
             $entity = $this->getEntity($layoutContext);
-            if (!empty($entity)) {
+            if ($entity) {
                 $context = [
                     'checkout' => $entity,
-                    'billingAddress' => $entity->getBillingAddress(),
+                    'shippingAddress' => $entity->getShippingAddress(),
                     'currency' => $entity->getCurrency(),
                 ];
-                /** @var ShoppingList $sourceEntity */
                 $sourceEntity = $entity->getSourceEntity();
-                if (!empty($sourceEntity)) {
+                if ($sourceEntity) {
                     $context['line_items'] = $sourceEntity->getLineItems();
                 }
                 $shippingContext = new ShippingContextProvider($context);

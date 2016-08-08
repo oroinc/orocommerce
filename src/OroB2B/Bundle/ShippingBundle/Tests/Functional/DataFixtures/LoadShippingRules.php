@@ -7,78 +7,55 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingRules extends AbstractFixture
 {
-    const SHIPPING_RULE_1 = 'shipping_rule.1';
-
-    /**
-     * @var array
-     */
-    protected $data = [
-        self::SHIPPING_RULE_1 => [
-            'name' => 'Rule 1',
-            'enabled' => true,
-            'priority' => 0,
-            'conditions' => 'condition 1',
-            'currency' => 'EUR',
-            'configurations' => [
-                [
-                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                    'value' => 10,
-                    'currency' => 'EUR',
-                ],
-                [
-                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
-                    'value' => 20,
-                    'currency' => 'EUR',
-                ]
-
-            ],
-            'destinations' => [
-                [
-                    'postalCode' => '12345',
-                    'country' => 'US',
-                    'region' => 'NY'
-                ]
-            ]
-        ],
-    ];
-
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->data as $reference => $data) {
+        foreach ($this->getShippingRuleData() as $reference => $data) {
             $entity = new ShippingRule();
             $entity
-                ->setName($data['name'])
+                ->setName($reference)
                 ->setEnabled($data['enabled'])
                 ->setPriority($data['priority'])
                 ->setConditions($data['conditions'])
                 ->setCurrency($data['currency']);
+
+            if (!array_key_exists('destinations', $data)) {
+                $data['destinations'] = [];
+            }
 
             foreach ($data['destinations'] as $destination) {
                 /** @var Country $country */
                 $country = $manager
                     ->getRepository('OroAddressBundle:Country')
                     ->findOneBy(['iso2Code' => $destination['country']]);
-                /** @var Region $region */
-                $region = $manager
-                    ->getRepository('OroAddressBundle:Region')
-                    ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
 
                 $shippingRuleDestination = new ShippingRuleDestination();
                 $shippingRuleDestination
                     ->setRule($entity)
-                    ->setPostalCode($destination['postalCode'])
-                    ->setCountry($country)
-                    ->setRegion($region);
+                    ->setCountry($country);
+
+                if (array_key_exists('region', $destination)) {
+                    /** @var Region $region */
+                    $region = $manager
+                        ->getRepository('OroAddressBundle:Region')
+                        ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
+                    $shippingRuleDestination->setRegion($region);
+                }
+
+                if (array_key_exists('postalCode', $destination)) {
+                    $shippingRuleDestination->setPostalCode($destination['postalCode']);
+                }
 
                 $manager->persist($shippingRuleDestination);
                 $entity->addDestination($shippingRuleDestination);
@@ -105,5 +82,13 @@ class LoadShippingRules extends AbstractFixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getShippingRuleData()
+    {
+        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_rules.yml'));
     }
 }
