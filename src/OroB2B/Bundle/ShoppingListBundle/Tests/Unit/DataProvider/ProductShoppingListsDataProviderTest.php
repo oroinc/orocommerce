@@ -2,9 +2,12 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -19,11 +22,11 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $lineItemRepository;
 
-    /** @var FrontendShoppingListProductUnitsQuantityDataProvider */
+    /** @var ProductShoppingListsDataProvider */
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $securityFacade;
 
@@ -176,7 +179,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $unit
      * @param int $quantity
      * @param ShoppingList $shoppingList
-     * @return LineItem
+     * @return LineItem|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createLineItem($id, $unit, $quantity, $shoppingList)
     {
@@ -203,7 +206,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      * @param string $label
-     * @return ShoppingList
+     * @return ShoppingList|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createShoppingList($id, $label)
     {

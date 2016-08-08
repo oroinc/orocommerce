@@ -35,7 +35,7 @@ class LineItemRepositoryTest extends WebTestCase
     {
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
-        $repository = $this->getRepository();
+        $repository = $this->getLineItemRepository();
 
         $duplicate = $repository->findDuplicate($lineItem);
         $this->assertNull($duplicate);
@@ -56,7 +56,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
-        $lineItems = $this->getRepository()->getItemsByShoppingListAndProduct($shoppingList, $product);
+        $lineItems = $this->getLineItemRepository()->getItemsByShoppingListAndProduct($shoppingList, $product);
 
         $this->assertCount(1, $lineItems);
         $this->assertContains($lineItem, $lineItems);
@@ -74,7 +74,9 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        $lineItems = $this->getRepository()->getOneProductLineItemsWithShoppingListNames($product, $accountUser);
+        $lineItems = $this
+            ->getLineItemRepository()
+            ->getOneProductLineItemsWithShoppingListNames($product, $accountUser);
 
         $this->assertTrue(count($lineItems) > 1);
 
@@ -100,7 +102,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        $lineItems = $this->getRepository()->getProductItemsWithShoppingListNames($product, $accountUser);
+        $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames($product, $accountUser);
 
         $this->assertTrue(count($lineItems) > 1);
 
@@ -122,7 +124,7 @@ class LineItemRepositoryTest extends WebTestCase
     /**
      * @return LineItemRepository
      */
-    protected function getRepository()
+    protected function getLineItemRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BShoppingListBundle:LineItem');
     }

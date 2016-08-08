@@ -38,7 +38,7 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
-     * @param array $products
+     * @param array|Product $products
      * @param AccountUser $accountUser
      * @return array|LineItem[]
      */
