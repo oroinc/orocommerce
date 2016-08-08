@@ -4,7 +4,7 @@ layout:
             id: payment_methods
             optionName: views
             optionValue:
-                'payment_term': '=data["orob2b_payment_methods_provider"].isPaymentMethodApplicable("payment_term", data["checkout"]) ? data["orob2b_payment_methods_provider"].getViews()["payment_term"] : null'
+                'payment_term': '=data["orob2b_payment_methods_provider"].isPaymentMethodApplicable("payment_term", data["checkout"]) ? data["orob2b_payment_methods_provider"].getViews(data["checkout"])["payment_term"] : null'
 
     conditions: 'context["workflowName"]=="b2b_flow_alternative_checkout"'
 
