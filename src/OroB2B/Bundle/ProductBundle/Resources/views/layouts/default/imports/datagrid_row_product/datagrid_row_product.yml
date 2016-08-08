@@ -1,0 +1,16 @@
+layout:
+    imports:
+        -
+            id: oro_product_list_item
+            root: product_grid_row_template
+            namespace: datagrid_row
+    actions:
+        - '@setBlockTheme':
+            themes: 'datagrid_row_product.html.twig'
+        - '@addTree':
+            items:
+                product_grid_row_template:
+                    blockType: container
+            tree:
+                scripts_before:
+                    product_grid_row_template:
