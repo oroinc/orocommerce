@@ -1,0 +1,101 @@
+$shopping-list-items-count: 6;
+
+.shopping-list-navigation {
+    display: table-cell;
+    width: 100%;
+    margin-top: 0;
+    margin-left: 0;
+
+    .shopping-list {
+        margin: 0;
+
+        border-radius: 3px 3px 0 0;
+        background: $theme-lightest-gray-color;
+        box-shadow: inset 0 1px 0 0 $theme-lighter-gray-color,
+                    inset -1px 0 0 0 $theme-lighter-gray-color,
+                    0 1px 0 0 #d9d9d9;
+
+        @include clearfix;
+
+        &__item {
+            width: 100% / $shopping-list-items-count;
+            float: left;
+
+            border: 0;
+            background: $theme-lightest-gray-color;
+            box-shadow: inset 0 1px 0 0 $theme-lighter-gray-color,
+                        inset -1px 0 0 0 $theme-lighter-gray-color;
+
+            &:first-child {
+                border-radius: 3px 0 0 0;
+                border: 0;
+                box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
+                            inset 0 1px 0 0 $theme-lighter-gray-color,
+                            inset -1px 0 0 0 $theme-lighter-gray-color;
+            }
+
+            &--current,
+            &:hover {
+                border: 0;
+                background: $base-white-color;
+                box-shadow: inset 0 1px 0 0 $theme-lighter-gray-color,
+                            inset -1px 0 0 0 $theme-lighter-gray-color,
+                            0 1px 0 0 $base-white-color;
+           }
+
+           &--current:first-child,
+           &:first-child:hover {
+               box-shadow: inset 1px 0 0 0 $theme-lighter-gray-color,
+                           inset 0 1px 0 0 $theme-lighter-gray-color,
+                           inset -1px 0 0 0 $theme-lighter-gray-color,
+                           0 1px 0 0 $base-white-color;
+          }
+        }
+
+        &__link {
+            padding: 0;
+
+            text-align: center;
+
+            border-left: 0;
+
+            &:hover {
+                color: $base-font-color;
+                border-left: 0;
+            }
+        }
+
+        &__item-indicator,
+        &__name {
+            vertical-align: baseline;;
+        }
+
+        &__item-indicator {
+            position: static;
+
+            display: inline-block;
+            margin-right: 10px;
+            min-width: 26px;
+        }
+
+        &__name {
+            padding: 16px 15px 12px;
+        }
+
+        &__title {
+            overflow: hidden;
+            display: inline-block;
+            max-width: 100%;
+
+            line-height: 26px;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: text-bottom;
+        }
+
+        &__desc {
+            display: none;
+        }
+    }
+}

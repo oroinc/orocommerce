@@ -19,7 +19,6 @@ $oro-toolbar-toolbar-min-width: 95px;
 
     padding: 0 $offset-y-m;
 
-    font-size: $font-size - 0.1;
     line-height: ($font-size - 0.1) * 2;
     font-family: $roboto-font;
     text-align: center;
@@ -41,8 +40,6 @@ $oro-toolbar-toolbar-min-width: 95px;
     min-width: $oro-toolbar-toolbar-min-width;
 
     padding: 10px 15px;
-
-    font-size: $font-size;
 
     background: $base-background-color;
     border-radius: 2px;
@@ -81,7 +78,7 @@ $oro-toolbar-toolbar-min-width: 95px;
   &__currency,
   &__text {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: baseline;
   }
 
   &__currency {
