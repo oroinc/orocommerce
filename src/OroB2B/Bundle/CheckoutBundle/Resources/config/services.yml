@@ -237,7 +237,7 @@ services:
         tags:
             - { name: oro_workflow.action, alias: generate_checkout_state_snapshot }
 
-
+    # TODO: Rename to states at the end
     orob2b_checkout.condition.generate_and_check_checkout_state:
         class: 'OroB2B\Bundle\CheckoutBundle\Condition\GenerateAndCheckCheckoutStates'
         arguments:
@@ -245,3 +245,11 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: generate_and_check_checkout_state }
             - { name: oro_action.condition, alias: generate_and_check_checkout_state }
+
+    orob2b_checkout.condition.check_checkout_states:
+        class: 'OroB2B\Bundle\CheckoutBundle\Condition\CheckCheckoutStates'
+        arguments:
+            - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
+        tags:
+            - { name: oro_workflow.condition, alias: check_checkout_states }
+            - { name: oro_action.condition, alias: check_checkout_states }

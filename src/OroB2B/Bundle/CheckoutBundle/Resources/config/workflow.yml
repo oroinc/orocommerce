@@ -339,6 +339,20 @@ workflows:
                     - '@assign_value': [$payment_method, null]
 
             continue_to_shipping_address_definition:
+                preactions:
+                    - '@get_checkout_state':
+#                        conditions:
+#                            '@empty': $.result.savedCheckoutState
+                        getFrom: $state_token_storage
+                        token: $state_token
+                        attribute: $.result.savedCheckoutState
+                    - '@generate_checkout_state_snapshot':
+                        checkout: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        state: $.result.actualCheckoutState
+                        saveTo: $state_token_storage
+                        tokenAttribute: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -350,11 +364,10 @@ workflows:
                     '@and':
                         - '@not_empty': $checkout.billingAddress
                         - '@not_empty': $.result.initCheckoutState
-                        - '@generate_and_check_checkout_state':
-                            checkout: $checkout
-                            token: $state_token
-                            getFrom: $state_token_storage
-                            state: $.result.initCheckoutState
+                        - '@check_checkout_states':
+                            entity: $checkout
+                            state1: $.result.initCheckoutState
+                            state2: $.result.savedCheckoutState
                 post_actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
@@ -405,6 +418,21 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
+#                    - '@generate_checkout_state_snapshot':
+#                        checkout: $checkout
+#                        attribute: $.result.actualCheckoutState
+#                    - '@save_checkout_state':
+#                        state: $.result.actualCheckoutState
+#                        saveTo: $state_token_storage
+#                        tokenAttribute: $state_token
+            continue_to_shipping_method_definition:
+                preactions:
+                    - '@get_checkout_state':
+                        conditions:
+                            '@empty': $.result.savedCheckoutState
+                        getFrom: $state_token_storage
+                        token: $state_token
+                        attribute: $.result.savedCheckoutState
                     - '@generate_checkout_state_snapshot':
                         checkout: $checkout
                         attribute: $.result.actualCheckoutState
@@ -412,7 +440,6 @@ workflows:
                         state: $.result.actualCheckoutState
                         saveTo: $state_token_storage
                         tokenAttribute: $state_token
-            continue_to_shipping_method_definition:
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -429,11 +456,10 @@ workflows:
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
-                        - '@generate_and_check_checkout_state':
-                            checkout: $checkout
-                            token: $state_token
-                            getFrom: $state_token_storage
-                            state: $.result.initCheckoutState
+                        - '@check_checkout_states':
+                            entity: $checkout
+                            state1: $.result.initCheckoutState
+                            state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -458,6 +484,21 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
+#                    - '@generate_checkout_state_snapshot':
+#                        checkout: $checkout
+#                        attribute: $.result.actualCheckoutState
+#                    - '@save_checkout_state':
+#                        state: $.result.actualCheckoutState
+#                        saveTo: $state_token_storage
+#                        tokenAttribute: $state_token
+            continue_to_payment_definition:
+                preactions:
+                    - '@get_checkout_state':
+                        conditions:
+                            '@empty': $.result.savedCheckoutState
+                        getFrom: $state_token_storage
+                        token: $state_token
+                        attribute: $.result.savedCheckoutState
                     - '@generate_checkout_state_snapshot':
                         checkout: $checkout
                         attribute: $.result.actualCheckoutState
@@ -465,26 +506,24 @@ workflows:
                         state: $.result.actualCheckoutState
                         saveTo: $state_token_storage
                         tokenAttribute: $state_token
-            continue_to_payment_definition:
                 pre_conditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
                 conditions:
-                        '@generate_and_check_checkout_state':
-                            checkout: $checkout
-                            token: $state_token
-                            getFrom: $state_token_storage
-                            state: $.result.initCheckoutState
-                post_actions:
-                    - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                    '@check_checkout_states':
+                        entity: $checkout
+                        state1: $.result.initCheckoutState
+                        state2: $.result.savedCheckoutState
+#                post_actions:
+#                    - '@generate_checkout_state_snapshot':
+#                        checkout: $checkout
+#                        attribute: $.result.actualCheckoutState
+#                    - '@save_checkout_state':
+#                        state: $.result.actualCheckoutState
+#                        saveTo: $state_token_storage
+#                        tokenAttribute: $state_token
 
             continue_to_order_review_definition:
                 pre_conditions:
