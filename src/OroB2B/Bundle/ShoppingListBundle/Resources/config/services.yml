@@ -163,22 +163,6 @@ services:
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
-    orob2b_shopping_list.layout.block.type.shopping_list_selector:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_list_selector']]
-        tags:
-             - { name: layout.block_type, alias: shopping_list_selector }
-
-    orob2b_shopping_list.layout.block.type.shopping_lists_sidebar_list:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_lists_sidebar_list']]
-        tags:
-             - { name: layout.block_type, alias: shopping_lists_sidebar_list }
-
     orob2b_shopping_list.data_provider.checkout_line_item:
         class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
         public: false
@@ -223,3 +207,10 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
+            - '@oro_config.global'
+
+    orob2b_shopping_list.provider.shopping_list_entity_name:
+        class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

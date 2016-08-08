@@ -22,6 +22,7 @@ services:
         public: false
         arguments:
             - "@orob2b_sale.formatter.quote_product"
+            - "@oro_config.manager"
         tags:
             - { name: twig.extension }
 
@@ -124,7 +125,7 @@ services:
 
     orob2b_sale.manager.quote_demand_manager:
         class: 'OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager'
-        public: false
+        public: true
         arguments:
             - "@orob2b_pricing.subtotal_processor.total_processor_provider"
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
@@ -139,3 +140,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+
+    orob2b_sale.provider.quote_entity_name:
+          class: OroB2B\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
+          public: false
+          arguments:
+            - "@translator"
+          tags:
+            - { name: oro_entity.name_provider, priority: 100 }

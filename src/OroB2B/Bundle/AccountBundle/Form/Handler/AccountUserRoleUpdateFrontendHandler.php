@@ -154,4 +154,20 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
 
         return $privileges;
     }
+
+    /**
+     * "Success" form handler
+     *
+     * @param AbstractRole $entity
+     * @param User[] $appendUsers
+     * @param User[] $removeUsers
+     */
+    protected function onSuccess(AbstractRole $entity, array $appendUsers, array $removeUsers)
+    {
+        if ($entity instanceof AccountUserRole) {
+            $entity->setSelfManaged(true);
+        }
+
+        parent::onSuccess($entity, $appendUsers, $removeUsers);
+    }
 }

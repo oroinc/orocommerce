@@ -86,10 +86,15 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider onErrorProvider
      * @param bool $errorAlreadyInFlashBag
      * @param array $options
-     * @param RedirectResponse|Response $expectedResponse
+     * @param Response $expectedResponse
+     * @param string $expectedFlashError
      */
-    public function testOnError($errorAlreadyInFlashBag, $options, $expectedResponse)
-    {
+    public function testOnError(
+        $errorAlreadyInFlashBag,
+        $options,
+        $expectedResponse,
+        $expectedFlashError = null
+    ) {
         $this->paymentTransaction
             ->setTransactionOptions($options);
 
@@ -106,7 +111,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $flashBag->expects($errorAlreadyInFlashBag ? $this->never() : $this->once())
             ->method('add')
-            ->with('error', 'orob2b.payment.result.error');
+            ->with('error', $expectedFlashError);
 
         $this->session->expects($this->once())
             ->method('getFlashBag')
@@ -126,13 +131,21 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
-                'expectedResponse' => new RedirectResponse('testUrl')
+                'expectedResponse' => new RedirectResponse('testUrl'),
+                'expectedFlashError' => 'orob2b.payment.result.error'
             ],
             [
                 'errorAlreadyInFlashBag' => true,
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN)
+                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN),
+                'expectedFlashError' => null
             ],
+            [
+                'errorAlreadyInFlashBag' => false,
+                'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
+                'expectedResponse' => new RedirectResponse('testUrl'),
+                'expectedFlashError' => 'orob2b.payment.result.error'
+            ]
         ];
     }
 

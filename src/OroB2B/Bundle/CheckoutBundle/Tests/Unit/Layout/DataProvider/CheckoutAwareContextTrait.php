@@ -2,16 +2,20 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+
 use Oro\Component\Layout\ContextInterface;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 trait CheckoutAwareContextTrait
 {
     /**
      * @param Checkout $checkout
-     * @return \PHPUnit_Framework_MockObject_MockObject|ContextInterface
+     * @param WorkflowItem $workflowItem
+     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function prepareContext(Checkout $checkout)
+    protected function prepareContext(Checkout $checkout, WorkflowItem $workflowItem)
     {
         $context = $this->getMock('Oro\Component\Layout\ContextInterface');
 
@@ -19,11 +23,15 @@ trait CheckoutAwareContextTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $data->expects($this->once())
+        $data->expects($this->exactly(1))
             ->method('get')
-            ->with('checkout')
-            ->will($this->returnValue($checkout));
-        $context->expects($this->once())
+            ->willReturnMap(
+                [
+                    ['checkout', $checkout],
+                    ['workflowItem', $workflowItem]
+                ]
+            );
+        $context->expects($this->exactly(1))
             ->method('data')
             ->will($this->returnValue($data));
 

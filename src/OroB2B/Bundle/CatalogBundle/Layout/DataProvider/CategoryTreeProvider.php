@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Layout\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
@@ -21,12 +23,17 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
      */
     protected $categoryProvider;
 
+    /** @var ManagerRegistry */
+    protected $doctrine;
+
     /**
      * @param CategoryProvider $categoryProvider
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(CategoryProvider $categoryProvider)
+    public function __construct(CategoryProvider $categoryProvider, ManagerRegistry $doctrine)
     {
         $this->categoryProvider = $categoryProvider;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -39,13 +46,10 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
         $userId = $user ? $user->getId() : null;
 
         if (!array_key_exists($userId, $this->data)) {
-            $categories = $this->categoryProvider->getCategories($user, null, false);
-            $rootCategory = $this->findRootCategory($categories);
+            $rootCategory = $this->doctrine->getRepository(Category::class)->getMasterCatalogRoot();
 
-            $this->data[$userId] = [
-                'all' => $categories,
-                'main' => $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [],
-            ];
+            $this->data[$userId] =
+                $rootCategory ? $this->categoryProvider->getCategories($user, $rootCategory, false) : [];
         }
 
         return $this->data[$userId];

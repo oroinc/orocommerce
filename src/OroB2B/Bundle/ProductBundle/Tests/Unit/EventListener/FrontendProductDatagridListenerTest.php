@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -15,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
@@ -114,28 +113,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 DataGridThemeHelper::VIEW_GRID,
                 [
                     'name' => 'grid-name',
-                    'source' => [
-                        'query' => [
-                            'select' => [
-                                'productShortDescriptions.text as shortDescription'
-                            ],
-                            'join' => [
-                                'inner' => [
-                                    [
-                                        'join' => 'product.shortDescriptions',
-                                        'alias' => 'productShortDescriptions',
-                                        'conditionType' => 'WITH',
-                                        'condition' => 'productShortDescriptions.localization IS NULL'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
                     'properties' => [
                         'product_units' => [
                             'type' => 'field',
                             'frontend_type' => 'row_array',
-                        ]
+                        ],
+                        'shortDescription' => [
+                            'type' => LocalizedValueProperty::NAME,
+                            'data_name' => 'shortDescriptions',
+                        ],
                     ],
                     'columns' => [
                         'image' => ['label' => 'orob2b.product.image.label'],
@@ -184,7 +170,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $ids[] = $record['id'];
             $records[] = new ResultRecord($record);
         }
-        
+
         /**
          * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
          */
@@ -194,7 +180,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
-        
+
         /**
          * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
          */
@@ -239,7 +225,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $products = [];
+        $images = [];
         foreach ($productWithImages as $index => $productId) {
             $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
             $product->expects($this->any())
@@ -247,16 +233,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($productId);
 
             $image = $this->getMock('Oro\Bundle\AttachmentBundle\Entity\File');
-
-            $productImage = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductImage', ['getImage']);
-            $productImage->expects($this->any())
-                ->method('getImage')
-                ->willReturn($image);
-
-            $product->expects($this->once())
-                ->method('getImages')
-                ->willReturn(new ArrayCollection([$productImage]));
-            $products[$productId] = $product;
+            $images[$productId] = $image;
 
             $this->attachmentManager->expects($this->at($index))
                 ->method('getFilteredImageUrl')
@@ -268,9 +245,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         $productRepository->expects($this->once())
-            ->method('getProductsWithImage')
-            ->with($ids, FrontendProductDatagridListener::PRODUCT_IMAGE_TYPE)
-            ->willReturn($products);
+            ->method('getListingImagesFilesByProductIds')
+            ->with($ids)
+            ->willReturn($images);
+
         $productUnitRepository->expects($this->once())
             ->method('getProductsUnits')
             ->with($ids)

@@ -34,7 +34,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
     const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
-    const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
+    const PAYMENT_METHOD_SIGN = 'Payment - Open Order';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
 

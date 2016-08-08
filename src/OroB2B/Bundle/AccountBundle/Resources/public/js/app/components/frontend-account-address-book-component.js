@@ -8,6 +8,7 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var AddressBook = require('orob2baccount/js/address-book');
+    var deleteConfirmation = require('orob2bfrontend/js/app/components/delete-confirmation');
 
     AccountAddressBook = BaseComponent.extend({
         /**
@@ -19,18 +20,20 @@ define(function(require) {
             'addressCreateUrl': null,
             'addressUpdateRouteName': null,
             'currentAddresses': [],
-            'useFormDialog': false
+            'useFormDialog': false,
+            'template': ''
         },
 
         /**
          * @param {Object} options
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            options = _.defaults(options || {}, this.defaultOptions);
 
             /** @type oroaddress.AddressBook */
             var addressBook = new AddressBook({
-                el: '#address-book',
+                el: options._sourceElement.get(0),
+                template: options.template,
                 addressListUrl: options.addressListUrl,
                 addressCreateUrl: options.addressCreateUrl,
                 addressUpdateUrl: function() {
@@ -41,10 +44,14 @@ define(function(require) {
                     );
                 },
                 addressMapOptions: {'phone': 'phone'},
-                useFormDialog: options.useFormDialog
+                useFormDialog: options.useFormDialog,
+                allowToRemovePrimary: true,
+                confirmRemove: true,
+                confirmRemoveComponent: deleteConfirmation
             });
 
             addressBook.getCollection().reset(JSON.parse(options.currentAddresses));
+            options._sourceElement.children('.view-loading').remove();
         }
     });
 

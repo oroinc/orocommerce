@@ -65,7 +65,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         /** @var AccountUserRole[] $roles */
         $roles = $this->getUserRoleRepository()
-            ->getAvailableRolesByAccountUserQueryBuilder(
+            ->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
                 $loggedUser->getOrganization(),
                 $loggedUser->getAccount()
             )

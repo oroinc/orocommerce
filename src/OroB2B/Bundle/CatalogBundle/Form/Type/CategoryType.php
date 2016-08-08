@@ -43,6 +43,8 @@ class CategoryType extends AbstractType
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -138,6 +140,13 @@ class CategoryType extends AbstractType
                     'label'    => 'orob2b.catalog.category.large_image.label',
                     'required' => false
                 ]
+            )
+            ->add(
+                'defaultProductOptions',
+                CategoryDefaultProductOptionsType::NAME,
+                [
+                    'required' => false
+                ]
             );
     }
 
@@ -157,6 +166,14 @@ class CategoryType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

@@ -119,7 +119,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -416,6 +416,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('role', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255]);
+        $table->addColumn('self_managed', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('public', 'boolean', ['notnull' => true, 'default' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
@@ -737,7 +739,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_user_id', 'integer');
         $table->addColumn('website_id', 'integer');
-        $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('currency', 'string', ['length' => 3, 'notnull' => false]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
     }
@@ -1704,6 +1707,14 @@ class OroB2BAccountBundleInstaller implements
             ['id'],
             ['onDelete' => 'CASCADE'],
             'fk_website_id'
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL'],
+            'fk_localization_id'
         );
 
         $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');

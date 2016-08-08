@@ -18,7 +18,6 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
@@ -32,10 +31,10 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider;
+use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
@@ -56,7 +55,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $roundingService;
 
-    /** @var  DefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $defaultProductUnitProvider;
 
     /**
@@ -79,7 +78,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->defaultProductUnitProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProvider')
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -305,6 +304,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param bool|false $withProductUnitPrecision
      * @param bool|false $withNamesAndDescriptions
      * @param bool|true $hasVariants
+     * @param bool|true hasImages
      * @return StubProduct
      */
     protected function createExpectedProductEntity(
@@ -313,13 +313,15 @@ class ProductTypeTest extends FormIntegrationTestCase
         $hasVariants = true,
         $hasImages = false
     ) {
-        $expectedProduct = new StubProduct();
+        $expectedProduct = new Product();
 
         $expectedProduct->setHasVariants($hasVariants);
 
         if ($hasVariants) {
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
+
+        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withProductUnitPrecision) {
             $productUnit = new ProductUnit();
@@ -335,8 +337,6 @@ class ProductTypeTest extends FormIntegrationTestCase
 
             $expectedProduct->addAdditionalUnitPrecision($productUnitPrecision);
         }
-
-        $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withNamesAndDescriptions) {
             $expectedProduct
@@ -392,7 +392,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function createDefaultProductEntity($hasVariants = true)
     {
-        $defaultProduct = new StubProduct();
+        $defaultProduct = new Product();
         $defaultProduct->setHasVariants($hasVariants);
 
         if ($hasVariants) {

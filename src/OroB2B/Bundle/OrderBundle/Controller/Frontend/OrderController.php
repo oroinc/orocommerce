@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -42,7 +38,7 @@ class OrderController extends AbstractOrderController
             'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
         ];
     }
-
+    
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_order_frontend_view")
