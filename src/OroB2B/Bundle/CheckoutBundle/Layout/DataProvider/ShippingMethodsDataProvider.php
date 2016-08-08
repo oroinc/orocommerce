@@ -7,6 +7,7 @@ use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
@@ -15,10 +16,10 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider implements DataProviderInterface
 {
-    const NAME = 'shipping_methods_provider';
+    const NAME = 'shipping_methods_data_provider';
 
-    /** @var array[] */
-    protected $data;
+    /** @var array[]|null */
+    protected $data = null;
 
     /** @var ShippingMethodRegistry */
     protected $registry;
@@ -100,28 +101,43 @@ class ShippingMethodsDataProvider implements DataProviderInterface
     {
         $shippingMethods = [];
         foreach ($applicableRules as $priority => $rule) {
+            /** @var ShippingRuleConfiguration $configuration */
             $configurations = $rule->getConfigurations();
             foreach ($configurations as $configuration) {
                 $methodName = $configuration->getMethod();
                 $typeName = $configuration->getType();
                 $method = $this->registry->getShippingMethod($methodName);
-                if (!array_key_exists($methodName, $shippingMethods)) {
-                    $shippingMethods[$methodName] = [
-                        'name' => $methodName,
-                        'label' => $method->getLabel(),
-                        'types' => []
-                    ];
-                }
-                if (!array_key_exists($typeName, $shippingMethods[$methodName])) {
-                    $price = $method->calculatePrice($context, $configuration);
-                    $shippingMethods[$methodName]['types'][$typeName] = [
-                        'name' => $typeName,
-                        'label' => $method->getShippingTypeLabel($typeName),
-                        'price' => $price,
-                    ];
+                if (!empty($method)) {
+                    if (!$typeName || $typeName == $methodName) {
+                        if (!array_key_exists($methodName, $shippingMethods)) {
+                            $shippingMethods[$methodName] = [
+                                'name' => $methodName,
+                                'label' => $method->getLabel(),
+                                'price' => $method->calculatePrice($context, $configuration),
+                                'shippingRuleConfig' => $configuration->getId(),
+                            ];
+                        }
+                    } else {
+                        if (!array_key_exists($methodName, $shippingMethods)) {
+                            $shippingMethods[$methodName] = [
+                                'name' => $methodName,
+                                'label' => $method->getLabel(),
+                                'types' => []
+                            ];
+                        }
+                        if (!array_key_exists($typeName, $shippingMethods[$methodName])) {
+                            $shippingMethods[$methodName]['types'][$typeName] = [
+                                'name' => $typeName,
+                                'label' => $method->getShippingTypeLabel($typeName),
+                                'price' => $method->calculatePrice($context, $configuration),
+                                'shippingRuleConfig' => $configuration->getId(),
+                            ];
+                        }
+                    }
                 }
             }
         }
+        
         return $shippingMethods;
     }
 }

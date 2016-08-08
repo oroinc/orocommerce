@@ -66,6 +66,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
                 'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
+                'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
