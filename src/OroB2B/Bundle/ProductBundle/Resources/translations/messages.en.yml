@@ -138,11 +138,14 @@ orob2b:
                 product_inventory.title: 'Inventory'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
+                product_images.title: 'Product Images'
+                product_image_watermark.title: 'Product Image Watermark'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
+                product_image_watermark.label: 'Watermark'
 
         grid:
             action:
