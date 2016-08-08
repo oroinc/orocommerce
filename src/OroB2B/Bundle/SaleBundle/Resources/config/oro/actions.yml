@@ -11,7 +11,9 @@ operations:
         button_options:
             icon: icon-time
         frontend_options:
-            confirmation: orob2b.sale.quote.actions.quote_expire_confirm
+            confirmation:
+                message: orob2b.sale.quote.actions.quote_expire_confirm
+                okText: orob2b.sale.quote.actions.mark_as_expired
         preconditions:
             '@equal': [$expired, false]
         actions:

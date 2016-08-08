@@ -104,6 +104,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
+            $this->addReference(
+                sprintf('product_unit_precision.%s', implode('.', [$product->getSku(), $unit->getCode()])),
+                $unitPrecision
+            );
         }
 
         $manager->flush();
