@@ -7,14 +7,10 @@ use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository;
+use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
@@ -38,9 +34,9 @@ class CheckoutGridListener
     protected $currencyManager;
 
     /**
-     * @var BaseCheckoutRepository
+     * @var CheckoutRepository
      */
-    protected $baseCheckoutRepository;
+    protected $checkoutRepository;
     
     /**
      * @var TotalProcessorProvider
@@ -58,28 +54,27 @@ class CheckoutGridListener
     private $entityNameResolver;
 
     /**
-     * @param UserCurrencyManager    $currencyManager
-     * @param BaseCheckoutRepository $baseCheckoutRepository
+     * @param UserCurrencyManager $currencyManager
+     * @param CheckoutRepository $checkoutRepository
      * @param TotalProcessorProvider $totalProcessor
-     * @param EntityNameResolver     $entityNameResolver
-     * @param Cache                  $cache
-     * @param CheckoutGridHelper     $checkoutGridHelper
-     * @internal param Getter $getter
+     * @param EntityNameResolver $entityNameResolver
+     * @param Cache $cache
+     * @param CheckoutGridHelper $checkoutGridHelper
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
-        BaseCheckoutRepository $baseCheckoutRepository,
+        CheckoutRepository $checkoutRepository,
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
         Cache $cache,
         CheckoutGridHelper $checkoutGridHelper
     ) {
-        $this->currencyManager        = $currencyManager;
-        $this->baseCheckoutRepository = $baseCheckoutRepository;
-        $this->totalProcessor         = $totalProcessor;
-        $this->entityNameResolver     = $entityNameResolver;
-        $this->cache                  = $cache;
-        $this->checkoutGridHelper     = $checkoutGridHelper;
+        $this->currencyManager = $currencyManager;
+        $this->checkoutRepository = $checkoutRepository;
+        $this->totalProcessor = $totalProcessor;
+        $this->entityNameResolver = $entityNameResolver;
+        $this->cache = $cache;
+        $this->checkoutGridHelper = $checkoutGridHelper;
     }
 
     /**
@@ -137,7 +132,7 @@ class CheckoutGridListener
             $ids[] = $record->getValue('id');
         }
 
-        $counts = $this->baseCheckoutRepository->countItemsPerCheckout($ids);
+        $counts = $this->checkoutRepository->countItemsPerCheckout($ids);
 
         foreach ($records as $record) {
             if (isset($counts[$record->getValue('id')])) {
@@ -157,7 +152,7 @@ class CheckoutGridListener
             $ids[] = $record->getValue('id');
         }
 
-        $sources = $this->baseCheckoutRepository->getSourcePerCheckout($ids);
+        $sources = $this->checkoutRepository->getSourcePerCheckout($ids);
 
         foreach ($records as $record) {
             $id = $record->getValue('id');
@@ -197,7 +192,7 @@ class CheckoutGridListener
      */
     protected function buildTotalColumn($records)
     {
-        $em = $this->baseCheckoutRepository;
+        $em = $this->checkoutRepository;
 
         // todo: Reduce db queries count
         foreach ($records as $record) {

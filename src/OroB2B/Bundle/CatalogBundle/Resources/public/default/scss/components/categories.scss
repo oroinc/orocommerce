@@ -3,6 +3,10 @@
 
   background: $theme-lightest-gray-color;
 
+  &:first-child {
+    margin-top: 0;
+  }
+
   &__badge {
     i {
       font-size: 16px;

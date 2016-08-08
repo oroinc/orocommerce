@@ -13,9 +13,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageExtensionStub;
 
 /**
@@ -120,7 +119,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function getProductEntity($sku, ProductUnit $productUnit = null)
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setSku($sku);
 
         if ($productUnit) {
