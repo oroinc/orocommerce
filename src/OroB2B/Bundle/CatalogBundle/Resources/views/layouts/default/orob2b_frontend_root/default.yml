@@ -10,16 +10,16 @@ layout:
                 hero_promo:
                     blockType: embedded_list
                     options:
-                        items: { '@value': [[0, 1, 2]] }
-                        use_slider: { '@value': true }
-                        slides_count: { '@value': 1 }
+                        items: [0, 1, 2]
+                        use_slider: true
+                        slides_count: 1
                 hero_promo_item:
                     blockType: container
                 featured_categories:
                     blockType: embedded_list
                     siblingId: hero_promo_container
                     options:
-                        items: { '@value': $data.featured_categories }
+                        items: '=data["featured_categories"]'
                 featured_category:
                     blockType: container
             tree:

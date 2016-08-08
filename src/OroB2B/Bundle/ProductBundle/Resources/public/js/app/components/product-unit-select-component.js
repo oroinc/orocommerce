@@ -25,7 +25,11 @@ define(function(require) {
         },
 
         initSelect: function() {
-            var productUnits = this.options._sourceElement.data('product-units');
+            var model = this.options.productModel || null;
+            if (!model) {
+                return;
+            }
+            var productUnits = model.get('product_units');
             var select = this.options._sourceElement.find('select');
             select.empty();
             for (var productCode in productUnits) {

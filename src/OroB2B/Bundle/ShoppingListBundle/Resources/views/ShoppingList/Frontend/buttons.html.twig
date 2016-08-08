@@ -31,12 +31,12 @@
 {% macro buttonTemplate(options) %}
     {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% import _self as buttons %}
-    {{ utils.underscoreRaw(buttons.addToCurrentButton({
+    {{ buttons.addToCurrentButton({
         shoppingList: {
             id: '<%= id %>',
             label: '<%= label %>'
         }
-    }|merge(options))) }}
+    }|merge(options)) }}
 {% endmacro %}
 
 {% macro getButton(options) %}

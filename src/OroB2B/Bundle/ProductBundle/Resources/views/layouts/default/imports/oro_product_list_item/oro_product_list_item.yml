@@ -8,72 +8,46 @@ layout:
                     blockType: container
                 __product_image_holder:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_quick_view:
                     blockType: block
                     options:
                         visible: '=false'
                 __product_title:
                     blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_primary_content_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_number:
                     blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_specification:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_sku_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_sku:
                     blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_mfg:
                     blockType: block
                     options:
                         visible: '=false'
                 __product_short_description:
                     blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_details:
                     blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_secondary_content_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_secondary_content_first_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_specification_delivery:
                     blockType: block
                     options:
                         visible: '=false'
                 __product_secondary_content_second_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_more_info:
                     blockType: block
                     options:
                         visible: '=false'
                 __product_line_item_form:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 __product_line_item_form_start:
                     blockType: form_start
                     options:

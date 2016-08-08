@@ -7,3 +7,62 @@
         {{ block_widget(block) }}
     </script>
 {% endblock %}
+
+{% block _datagrid_row_product_widget %}
+    {% do block|merge_context({
+        product: {
+            id: '<%= model.id %>',
+            sku: '<%= model.sku %>',
+            getDefaultName: '<%= model.name %>',
+            shortDescription: '<%= model.shortDescription %>',
+        },
+        class_prefix: '<%= themeOptions.currentRowView %>'
+    }) %}
+    {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {{ utils.underscoreRaw(block_widget(block)) }}
+{% endblock %}
+
+{% block _datagrid_row_product_image_holder_widget %}
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item__image-holder product-item__image-holder_{{ class_prefix }}"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% set noImageUrl = Image.url(null, 'product_large') %}
+        <a href="<%= model.view_link %>" class="view-product"
+           style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')">
+        </a>
+    </div>
+{% endblock %}
+
+{% block _datagrid_row_product_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item__title product-item__title_{{ class_prefix }}"
+    }) %}
+    <h3 {{ block('block_attributes') }}>
+        <a href="<%= model.view_link %>"
+           class="view-product">{{ product.getDefaultName }}</a>
+    </h3>
+{% endblock %}
+
+{% block _datagrid_row_product_details_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product__view-details-link product__view-details-link_{{ class_prefix }}"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <a href="<%= model.view_link %>" class="view-product">
+            <span class="underlined">{{ 'orob2b.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
+        </a>
+    </div>
+{% endblock %}
+
+{% block _datagrid_row_product_line_item_form_fields_widget %}
+    <% if (!_.isEmpty(model.product_units)) { %>
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " product-item__qty__current-grid",
+            'data-page-component-module': "orob2bproduct/js/app/components/product-unit-select-component"
+        }) %}
+        {{ block_widget(block, {attr: attr}) }}
+    <% } %>
+{% endblock %}

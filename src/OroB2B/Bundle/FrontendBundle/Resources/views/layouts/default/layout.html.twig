@@ -138,7 +138,9 @@
         <div {{ block('block_attributes') }}>
             {% for item in items %}
                 <div class="embedded-list__item">
-                    {% do block|merge_context({'item': item}) %}
+                    {% do block|merge_context({
+                        (item_key): item
+                    }) %}
                     {{ block('container_widget') }}
                 </div>
             {% endfor %}
