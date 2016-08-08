@@ -7,7 +7,7 @@ services:
         class: 'OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod'
         public: false
         tags:
-            - {name: orob2b_shipping.shipping_method}
+            - { name: orob2b_shipping_method }
 
     orob2b_shipping.provider.shipping_rules:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
@@ -21,3 +21,25 @@ services:
             - '@form.factory'
             - '@orob2b_shipping.shipping_method.registry'
             - '@doctrine'
+
+    orob2b_shipping.formatter.shipping_method_label:
+        class: 'OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'
+        arguments:
+            - "@orob2b_shipping.shipping_method.registry"
+
+    orob2b_shipping.twig.shipping_method_extension:
+        class: 'OroB2B\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
+        public: false
+        arguments:
+            - "@orob2b_shipping.formatter.shipping_method_label"
+        tags:
+            - { name: twig.extension }
+
+    orob2b_shipping.condition.has_applicable_shipping_methods:
+        class: 'OroB2B\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }

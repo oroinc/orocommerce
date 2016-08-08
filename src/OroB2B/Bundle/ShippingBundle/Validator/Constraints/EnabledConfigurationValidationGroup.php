@@ -12,18 +12,15 @@ class EnabledConfigurationValidationGroup extends Constraint
     public $message = 'orob2b.shipping.shippingrule.configuration.count.message';
 
     /**
+     * @var int
+     */
+    public $min = 1;
+
+    /**
      * {@inheritdoc}
      */
     public function validatedBy()
     {
         return 'orob2b_shipping_enabled_configuration_validation_group_validator';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTargets()
-    {
-        return self::CLASS_CONSTRAINT;
     }
 }

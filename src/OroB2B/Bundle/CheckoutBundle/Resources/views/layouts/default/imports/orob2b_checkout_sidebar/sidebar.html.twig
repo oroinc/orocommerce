@@ -65,11 +65,14 @@
 {% endblock %}
 
 {% block __orob2b_checkout_sidebar__enter_shipping_method_information_widget %}
+    {% if checkout.shippingMethod %}
+        <div>{{ get_shipping_method_label(checkout.shippingMethod)|trans }}</div>
+    {% endif %}
+    {% if checkout.shippingMethodType %}
+        <div>{{ get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans }}</div>
+    {% endif %}
     {% if checkout.shippingCost %}
-        <div>{{ 'orob2b.checkout.quoted_shipping_amount.label'|trans}}:
-            {{ checkout.shippingCost|oro_format_price }}</div>
-    {% else %}
-        <div>{{ 'orob2b.checkout.preferred_shipping_method.label'|trans}}</div>
+        <div>{{ checkout.shippingCost|oro_format_price }}</div>
     {% endif %}
 {% endblock %}
 

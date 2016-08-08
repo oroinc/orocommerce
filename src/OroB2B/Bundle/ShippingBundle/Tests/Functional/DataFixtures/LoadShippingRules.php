@@ -10,6 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 
 class LoadShippingRules extends AbstractFixture
 {
@@ -20,24 +21,20 @@ class LoadShippingRules extends AbstractFixture
      */
     protected $data = [
         self::SHIPPING_RULE_1 => [
-            'name'                 => 'Rule 1',
-            'enabled'              => true,
-            'priority'             => 0,
-            'conditions'           => 'condition 1',
-            'currency'             => 'EUR',
-            'configurations'       => [
+            'name' => 'Rule 1',
+            'enabled' => true,
+            'priority' => 0,
+            'conditions' => '1==1',
+            'currency' => 'EUR',
+            'configurations' => [
                 [
-                    'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'UPS',
-                    'type'     => 'UPS Ground',
-                    'value'    => 10,
+                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                    'value' => 10,
                     'currency' => 'EUR',
                 ],
                 [
-                    'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'UPS',
-                    'type'     => 'UPS Next Day Air',
-                    'value'    => 20,
+                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
+                    'value' => 20,
                     'currency' => 'EUR',
                 ]
 
@@ -45,8 +42,8 @@ class LoadShippingRules extends AbstractFixture
             'destinations' => [
                 [
                     'postalCode' => '12345',
-                    'country'    => 'US',
-                    'region'     => 'NY'
+                    'country' => 'US',
+                    'region' => 'NY'
                 ]
             ]
         ],
@@ -74,7 +71,7 @@ class LoadShippingRules extends AbstractFixture
                 /** @var Region $region */
                 $region = $manager
                     ->getRepository('OroAddressBundle:Region')
-                    ->findOneBy(['combinedCode' => $destination['country'] . '-' . $destination['region']]);
+                    ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
 
                 $shippingRuleDestination = new ShippingRuleDestination();
                 $shippingRuleDestination
@@ -88,20 +85,18 @@ class LoadShippingRules extends AbstractFixture
             }
 
             foreach ($data['configurations'] as $configuration) {
-                if ($configuration['class'] === 'flatrateruleconfiguration') {
-                    $flatConfig = new FlatRateRuleConfiguration();
+                $flatConfig = new FlatRateRuleConfiguration();
 
-                    $flatConfig
-                        ->setRule($entity)
-                        ->setType($configuration['type'])
-                        ->setMethod($configuration['method'])
-                        ->setValue($configuration['value'])
-                        ->setCurrency($configuration['currency'])
-                        ->createPrices();
+                $flatConfig
+                    ->setRule($entity)
+                    ->setType(FlatRateShippingMethod::NAME)
+                    ->setMethod(FlatRateShippingMethod::NAME)
+                    ->setProcessingType($configuration['processingType'])
+                    ->setValue($configuration['value'])
+                    ->setCurrency($configuration['currency']);
 
-                    $manager->persist($flatConfig);
-                    $entity->addConfiguration($flatConfig);
-                }
+                $manager->persist($flatConfig);
+                $entity->addConfiguration($flatConfig);
             }
 
             $manager->persist($entity);

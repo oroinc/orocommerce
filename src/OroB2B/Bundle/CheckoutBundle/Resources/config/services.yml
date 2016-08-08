@@ -193,3 +193,8 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -80 }
+
+    orob2b_checkout.shipping_cost.calculator:
+        class: 'OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
+        arguments:
+          - '@orob2b_shipping.shipping_method.registry'

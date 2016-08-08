@@ -7,7 +7,7 @@ services:
                 -
                     -
                         methods: {required: true}
-                        currentShippingMethod: {required: true}
+                        currentShippingMethodType: {required: true}
             - [setName, ['shipping_methods']]
         tags:
             - { name: layout.block_type, alias: shipping_methods }
