@@ -1,0 +1,101 @@
+{% block presentation_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' presentation'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="presentation__centered">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _login_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form'
+    }) %}
+
+    <form {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </form>
+{% endblock %}
+
+{% block _login_form_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-title'
+    }) %}
+
+    <h2 {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
+{% block _login_form_error_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-error'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_username_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-label'
+    }) %}
+
+    <label {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </label>
+{% endblock %}
+
+{% block _login_form_password_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-label'
+    }) %}
+
+    <label {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </label>
+{% endblock %}
+
+{% block _login_form_remenber_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-item'
+    }) %}
+
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}
+
+{% block _login_form_submit_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-item'
+    }) %}
+
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}
+
+{% block _login_form_forgot_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-item'
+    }) %}
+
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}
+
+{% block _login_form_register_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form-item'
+    }) %}
+
+    <span {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </span>
+{% endblock %}

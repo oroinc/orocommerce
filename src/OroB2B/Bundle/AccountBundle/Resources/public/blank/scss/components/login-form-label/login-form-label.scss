@@ -1,0 +1,11 @@
+@import '_config.scss';
+
+.login-form-label {
+    display: block;
+    margin-top: $login-form-label-margin;
+
+    & .input {
+        display: block;
+        margin-top: 4px;
+    }
+}

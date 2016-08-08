@@ -1,5 +1,5 @@
 groups: [ commerce ]
-icon: bundles/orob2bfrontend/blank/images/favicon.ico
+icon: bundles/orob2bfrontend/blank/components/favicon/favicon.ico
 data:
     assets:
         styles:
