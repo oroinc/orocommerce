@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -72,7 +71,6 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('url', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('is_default', 'boolean', []);
@@ -80,7 +78,6 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->setPrimaryKey(['id']);
 
         $table->addUniqueIndex(['name']);
-        $table->addUniqueIndex(['url']);
         $table->addIndex(['created_at'], 'idx_orob2b_website_created_at', []);
         $table->addIndex(['updated_at'], 'idx_orob2b_website_updated_at', []);
     }

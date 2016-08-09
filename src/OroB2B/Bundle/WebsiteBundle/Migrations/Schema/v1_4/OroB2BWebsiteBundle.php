@@ -7,12 +7,10 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
-
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
 use OroB2B\Bundle\WebsiteBundle\Migrations\Schema\OroB2BWebsiteBundleInstaller;
 
 class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
@@ -37,6 +35,9 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     public function updateWebsiteTable(Schema $schema, QueryBag $queries)
     {
         $this->addIsDefaultColumn($schema, $queries);
+        $table = $schema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
+        $table->dropIndex('url');
+        $table->dropColumn('url');
     }
 
     /**

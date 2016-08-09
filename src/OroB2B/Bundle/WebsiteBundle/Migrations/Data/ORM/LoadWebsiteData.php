@@ -6,15 +6,14 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-
+use OroB2B\Bundle\WebsiteBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\WebsiteBundle\DependencyInjection\OroB2BWebsiteExtension;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -55,18 +54,32 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
             ->getRepository('OroOrganizationBundle:BusinessUnit')
             ->findOneBy(['name' => LoadOrganizationAndBusinessUnitData::MAIN_BUSINESS_UNIT]);
 
-        $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
-
         $website = new Website();
         $website
             ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
-            ->setDefault(true)
-            ->setUrl($url);
+            ->setDefault(true);
 
         $manager->persist($website);
         /** @var EntityManager $manager */
         $manager->flush($website);
+
+        $configManager = $this->container->get('oro_config.manager');
+
+        $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
+        // Store website url in configuration
+        $configManager->set(
+            OroB2BWebsiteExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . Configuration::URL,
+            $url,
+            $website->getId()
+        );
+        $configManager->set(
+            OroB2BWebsiteExtension::ALIAS
+            . ConfigManager::SECTION_MODEL_SEPARATOR . Configuration::SECURE_URL,
+            $url,
+            $website->getId()
+        );
+        $configManager->flush();
     }
 }

@@ -5,13 +5,9 @@ namespace OroB2B\Bundle\WebsiteBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
-
 use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
 /**
@@ -99,20 +95,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     protected $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $url;
-
-    /**
      * @ORM\Column(name="is_default", type="boolean")
      *
      * @var bool
@@ -153,25 +135,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
-     * @param string $url
-     * @return $this
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
 
         return $this;
     }
