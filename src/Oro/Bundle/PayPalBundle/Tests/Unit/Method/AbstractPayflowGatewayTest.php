@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
@@ -611,14 +612,14 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
-                    true,
+                    UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
                     'orob2b_payment_callback_error',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
-                    true,
+                    UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
                     'orob2b_payment_callback_notify',
@@ -626,7 +627,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                         'accessToken' => $transaction->getAccessToken(),
                     ],
-                    true,
+                    UrlGeneratorInterface::ABSOLUTE_URL
                 ]
             )
             ->willReturnArgument(0);

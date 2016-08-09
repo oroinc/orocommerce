@@ -9,6 +9,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -151,8 +154,26 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
-        $form = $this->getFakeForm($crawler);
-        $crawler = $this->client->submit($form);
+        $form = $this->getTransitionForm($crawler);
+        /** @var ShippingRule $shippingRule */
+        $shippingRule = $this->getReference(LoadShippingRules::SHIPPING_RULE_1);
+        /** @var ShippingRuleConfiguration $shippingRuleConfig */
+        $shippingRuleConfig = $shippingRule->getConfigurations()->first();
+        $values = $this->explodeArrayPaths($form->getValues());
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $shippingRuleConfig->getType();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
+        $values['_widgetContainer'] = 'ajax';
+        $values['_wid'] = 'ajax_checkout';
+
+        $crawler = $this->client->request(
+            'POST',
+            $form->getUri(),
+            $values,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+        
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
     }
 

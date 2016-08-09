@@ -18,21 +18,21 @@ layout:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 __quick_add_validation_valid_items_count:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 __quick_add_validation_invalid_items_count:
                     blockType: import_validation_items_count_text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
                 __quick_add_validation_invalid_items:
                     blockType: import_validation_items
                     options:
-                        collection: { '@value': $data.collection }
+                        collection: '=data["collection"]'
             tree:
                 __root:
                     __quick_add_validation:
@@ -43,5 +43,4 @@ layout:
                                 __quick_add_validation_valid_items_count: ~
                                 __quick_add_validation_invalid_items_count: ~
                         __quick_add_validation_invalid_items: ~
-    conditions:
-        '@eq': [$context.import_step, 'result']
+    conditions: 'context["import_step"]=="result"'

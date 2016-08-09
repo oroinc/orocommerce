@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -12,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -123,20 +122,15 @@ class FrontendProductDatagridListener
     protected function addShortDescriptionToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productShortDescriptions.text as shortDescription'
-            ],
-            '[source][query][join][inner]' => [
-                [
-                    'join' => 'product.shortDescriptions',
-                    'alias' => 'productShortDescriptions',
-                    'conditionType' => 'WITH',
-                    'condition' => 'productShortDescriptions.localization IS NULL'
-                ]
-            ],
             '[columns]' => [
                 'shortDescription' => [
                     'label' => 'orob2b.product.short_descriptions.label',
+                ]
+            ],
+            '[properties]' => [
+                'shortDescription' => [
+                    'type' => LocalizedValueProperty::NAME,
+                    'data_name' => 'shortDescriptions',
                 ]
             ],
         ];

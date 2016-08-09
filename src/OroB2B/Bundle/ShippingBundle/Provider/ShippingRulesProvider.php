@@ -76,11 +76,16 @@ class ShippingRulesProvider
      */
     protected function expressionApplicable($condition, array $shippingRuleContext)
     {
+        $result = true;
         if ($condition) {
             $language = new ExpressionLanguage();
-            return $language->evaluate($condition, $shippingRuleContext);
+            try {
+                $result = $language->evaluate($condition, $shippingRuleContext);
+            } catch (\Exception $e) {
+                $result = false;
+            }
         }
-        return true;
+        return $result;
     }
 
     /**

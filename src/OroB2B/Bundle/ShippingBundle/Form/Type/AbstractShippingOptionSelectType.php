@@ -80,6 +80,28 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
                 return $this->unitProvider->getUnits(!$options['full_list']);
             }
         );
+
+        $resolver->setNormalizer(
+            'choice_label',
+            function (Options $options) {
+                $choices = $options->offsetGet('choices');
+
+                if ($choices) {
+                    return function ($choice, $key) use ($choices) {
+                        return $key;
+                    };
+                }
+                return;
+            }
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return static::NAME;
     }
 
     /**
@@ -87,7 +109,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
      */
     public function getName()
     {
-        return static::NAME;
+        return $this->getBlockPrefix();
     }
 
     /**
