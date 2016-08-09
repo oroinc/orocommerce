@@ -34,16 +34,14 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
-     * @param Checkout $checkout
-     * @param array $savedState
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isStateActual($checkout, array $savedState)
+    public function isStatesEqual($state1, $state2)
     {
-        if (!isset($savedState[$this->getName()]) || !($savedState[$this->getName()] instanceof \DateTimeInterface)) {
+        if (!isset($state1[$this->getName()], $state2[$this->getName()])) {
             return true;
         }
 
-        return $savedState[$this->getName()] === $this->getCurrentState($checkout);
+        return $state1[$this->getName()] == $state2[$this->getName()];
     }
 }

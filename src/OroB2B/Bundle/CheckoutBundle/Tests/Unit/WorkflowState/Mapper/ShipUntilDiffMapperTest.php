@@ -32,76 +32,69 @@ class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertEquals($now, $result);
     }
 
-    public function testIsStateActualTrue()
+    public function testIsStatesEqualTrue()
     {
-        $now = new \DateTimeImmutable();
-
-        $this->checkout
-            ->expects($this->once())
-            ->method('getShipUntil')
-            ->willReturn($now);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'shipUntil' => $now,
+            'shipUntil' => new \DateTime('2016-01-01'),
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'shipUntil' => new \DateTime('2016-01-01'),
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalse()
+    public function testIsStatesEqualFalse()
     {
-        $now = new \DateTimeImmutable();
-
-        $this->checkout
-            ->expects($this->once())
-            ->method('getShipUntil')
-            ->willReturn($now->modify('-1 minute'));
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'shipUntil' => $now,
+            'shipUntil' => new \DateTime(),
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'shipUntil' => new \DateTime('2016-01-01'),
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterDoesntExist()
+    public function testIsStatesEqualParameterNotExistInState1()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getShipUntil');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'shipUntil' => new \DateTime(),
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterOfWrongType()
+    public function testIsStatesEqualParameterNotExistInState2()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getShipUntil');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'shipUntil' => 1,
+            'parameter3' => 'green',
+            'shipUntil' => new \DateTime(),
+        ];
+
+        $state2 = [
+            'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 }

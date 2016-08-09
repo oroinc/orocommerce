@@ -30,72 +30,69 @@ class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertEquals('testPoNumber', $result);
     }
 
-    public function testIsStateActualTrue()
+    public function testIsStatesEqualTrue()
     {
-        $this->checkout
-            ->expects($this->once())
-            ->method('getPoNumber')
-            ->willReturn('testPoNumber');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'poNumber' => 'testPoNumber',
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'poNumber' => '100000001',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalse()
+    public function testIsStatesEqualFalse()
     {
-        $this->checkout
-            ->expects($this->once())
-            ->method('getPoNumber')
-            ->willReturn('changedPoNumber');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'poNumber' => 'testPoNumber',
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'poNumber' => '100000002',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterDoesntExist()
+    public function testIsStatesEqualParameterNotExistInState1()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getPoNumber');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $state2 = [
+            'parameter1' => 10,
+            'poNumber' => '100000001',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterOfWrongType()
+    public function testIsStatesEqualParameterNotExistInState2()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getPoNumber');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'poNumber' => 1,
+            'parameter3' => 'green',
+            'poNumber' => '100000001',
+        ];
+
+        $state2 = [
+            'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 }

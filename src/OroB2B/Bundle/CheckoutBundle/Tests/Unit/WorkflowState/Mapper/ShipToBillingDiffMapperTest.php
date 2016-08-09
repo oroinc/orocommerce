@@ -4,9 +4,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
 
-/**
- * @SuppressWarnings("TooManyPublicMethods")
- */
 class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     protected function setUp()
@@ -30,80 +27,69 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertEquals(true, $this->mapper->getCurrentState($this->checkout));
     }
 
-    public function testGetCurrentStateWithFalse()
+    public function testIsStatesEqualTrue()
     {
-        $this->checkout->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(false);
-
-        $this->assertEquals(false, $this->mapper->getCurrentState($this->checkout));
-    }
-
-    public function testIsStateActualTrue()
-    {
-        $this->checkout
-            ->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(true);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualFalse()
-    {
-        $this->checkout
-            ->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(false);
-
-        $savedState = [
+        $state2 = [
             'parameter1' => 10,
             'shipToBillingAddress' => true,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterNotExist()
+    public function testIsStatesEqualFalse()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('isShipToBillingAddress');
+        $state1 = [
+            'parameter1' => 10,
+            'shipToBillingAddress' => true,
+            'parameter3' => 'green',
+        ];
 
-        $savedState = [
+        $state2 = [
+            'parameter1' => 10,
+            'shipToBillingAddress' => false,
+            'parameter3' => 'green',
+        ];
+
+        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
+    }
+
+    public function testIsStatesEqualParameterNotExistInState1()
+    {
+        $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterOfWrongType()
-    {
-        $this->checkout->expects($this->never())
-            ->method('isShipToBillingAddress');
-
-        $savedState = [
+        $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => 1,
+            'shipToBillingAddress' => true,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+    }
 
-        $this->assertEquals(true, $result);
+    public function testIsStatesEqualParameterNotExistInState2()
+    {
+        $state1 = [
+            'parameter1' => 10,
+            'parameter3' => 'green',
+            'shipToBillingAddress' => true,
+        ];
+
+        $state2 = [
+            'parameter1' => 10,
+            'parameter3' => 'green',
+        ];
+
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 }

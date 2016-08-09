@@ -45,7 +45,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountAddress;
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository")
  */
-class AccountAddress extends ExtendAccountAddress
+class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareInterface
 {
     /**
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="addresses", cascade={"persist"})

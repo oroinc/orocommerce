@@ -45,7 +45,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository")
  */
-class AccountUserAddress extends ExtendAccountUserAddress
+class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhoneAwareInterface
 {
     /**
      * @ORM\ManyToOne(

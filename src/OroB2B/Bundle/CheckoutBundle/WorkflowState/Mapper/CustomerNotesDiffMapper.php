@@ -6,6 +6,8 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
+    use IsStateEqualTrait;
+
     const DATA_NAME = 'customerNotes';
 
     /**
@@ -31,19 +33,5 @@ class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return $checkout->getCustomerNotes();
-    }
-
-    /**
-     * @param Checkout $checkout
-     * @param array $savedState
-     * @return bool
-     */
-    public function isStateActual($checkout, array $savedState)
-    {
-        if (!isset($savedState[$this->getName()]) || !is_string($savedState[$this->getName()])) {
-            return true;
-        }
-
-        return $savedState[$this->getName()] === $this->getCurrentState($checkout);
     }
 }

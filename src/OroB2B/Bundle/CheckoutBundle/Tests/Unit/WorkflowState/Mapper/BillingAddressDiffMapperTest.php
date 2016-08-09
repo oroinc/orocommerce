@@ -2,9 +2,13 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\Country;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
 /**
@@ -12,38 +16,11 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
  */
 class BillingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var OrderAddress|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $billingAddress;
-
     protected function setUp()
     {
         parent::setUp();
 
         $this->mapper = new BillingAddressDiffMapper();
-        $this->billingAddress = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        unset($this->billingAddress);
-    }
-
-    /**
-     * @param mixed $billingAddress
-     * @return Checkout|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getCheckout($billingAddress)
-    {
-        $this->checkout
-            ->expects($this->any())
-            ->method('getBillingAddress')
-            ->willReturn($billingAddress);
-
-        return $this->checkout;
     }
 
     public function testGetName()
@@ -53,336 +30,157 @@ class BillingAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testGetCurrentStateAccountUserAddress()
     {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now);
+        $accountUserAddress = $this->fillAddress(new AccountUserAddress(), 'accountUserAddress');
+        $orderAddress = new OrderAddress();
+        $orderAddress->setAccountUserAddress($accountUserAddress);
 
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
+        $addressString = 'testNamePrefix accountUserAddress testLastName testMiddleName testNameSuffix ' .
+            'testOrganization testStreet testStreet2 testCity testRegionText  12344555M 00099988877766';
 
-        $result = $this->mapper->getCurrentState(
-            $this->getCheckout($billingAddress = $this->billingAddress)
-        );
+        $this->checkout->expects($this->once())
+            ->method('getBillingAddress')
+            ->willReturn($orderAddress);
 
-        $this->assertEquals(
-            [
-                'id' => 123,
-                'updated' => $now,
-            ],
-            $result
-        );
+        $result = $this->mapper->getCurrentState($this->checkout);
+
+        $this->assertEquals($addressString, $result);
     }
 
-    public function testGetCurrentStateTextAddress()
+    public function testGetCurrentStateAccountAddress()
     {
-        $this->billingAddress
-            ->expects($this->once())
-            ->method('getAccountUserAddress')
-            ->willReturn(null);
+        $accountAddress = $this->fillAddress(new AccountAddress(), 'accountAddress');
+        $orderAddress = new OrderAddress();
+        $orderAddress->setAccountAddress($accountAddress);
 
-        $this->billingAddress
-            ->expects($this->once())
-            ->method('__toString')
-            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
+        $addressString = 'testNamePrefix accountAddress testLastName testMiddleName testNameSuffix ' .
+            'testOrganization testStreet testStreet2 testCity testRegionText  12344555M 00099988877766';
 
-        $result = $this->mapper->getCurrentState(
-            $this->getCheckout($billingAddress = $this->billingAddress)
-        );
+        $this->checkout->expects($this->once())
+            ->method('getBillingAddress')
+            ->willReturn($orderAddress);
 
-        $this->assertEquals(
-            [
-                'text' => "First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip",
-            ],
-            $result
-        );
+        $result = $this->mapper->getCurrentState($this->checkout);
+
+        $this->assertEquals($addressString, $result);
+    }
+
+    public function testGetCurrentState()
+    {
+        $orderAddress = $this->fillAddress(new OrderAddress(), 'orderAddress');
+
+        $addressString = 'testNamePrefix orderAddress testLastName testMiddleName testNameSuffix ' .
+            'testOrganization testStreet testStreet2 testCity testRegionText  12344555M 00099988877766';
+
+        $this->checkout->expects($this->once())
+            ->method('getBillingAddress')
+            ->willReturn($orderAddress);
+
+        $result = $this->mapper->getCurrentState($this->checkout);
+
+        $this->assertEquals($addressString, $result);
     }
 
     public function testGetCurrentStateEmptyBillingAddress()
     {
-        $result = $this->mapper->getCurrentState(
-            $this->getCheckout($billingAddress = null)
-        );
+        $this->checkout->expects($this->any())
+            ->method('getBillingAddress')
+            ->willReturn(null);
+
+        $result = $this->mapper->getCurrentState($this->checkout);
 
         $this->assertEquals([], $result);
     }
 
-    public function testIsStateActualTrueAccountUserAddress()
+    public function testIsStatesEqualTrue()
     {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'billingAddress' => [
-                'id' => 123,
-                'updated' => $now,
-            ],
+            'billingAddress' => 'test address',
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
+        $state2 = [
+            'parameter1' => 10,
+            'billingAddress' => 'test address',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualTrueTextAddress()
+    public function testIsStatesEqualFalse()
     {
-        $this->billingAddress
-            ->expects($this->never())
-            ->method('getAccountUserAddress');
-
-        $this->billingAddress
-            ->expects($this->once())
-            ->method('__toString')
-            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'billingAddress' => [
-                'text' => "First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip",
-            ],
+            'billingAddress' => 'test address',
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
+        $state2 = [
+            'parameter1' => 10,
+            'billingAddress' => 'test other address',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalseId()
+    public function testIsStatesEqualParameterNotExistInState1()
     {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'billingAddress' => [
-                'id' => 124,
-                'updated' => $now,
-            ],
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
+        $state2 = [
+            'parameter1' => 10,
+            'billingAddress' => 'test address',
+            'parameter3' => 'green',
+        ];
 
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalseUpdated()
+    public function testIsStatesEqualParameterNotExistInState2()
     {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('+1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
-            'billingAddress' => [
-                'id' => 123,
-                'updated' => $now,
-            ],
+            'parameter3' => 'green',
+            'billingAddress' => 'test address',
+        ];
+
+        $state2 = [
+            'parameter1' => 10,
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalseText()
+    /**
+     * @param AbstractAddress $address
+     * @param string $firstName
+     * @return AbstractAddress
+     */
+    private function fillAddress(AbstractAddress $address, $firstName)
     {
-        $this->billingAddress
-            ->expects($this->never())
-            ->method('getAccountUserAddress');
+        $address->setNamePrefix('testNamePrefix')
+            ->setFirstName($firstName)
+            ->setLastName('testLastName')
+            ->setMiddleName('testMiddleName')
+            ->setNameSuffix('testNameSuffix')
+            ->setOrganization('testOrganization')
+            ->setStreet('testStreet')
+            ->setStreet2('testStreet2')
+            ->setCity('testCity')
+            ->setRegionText('testRegionText')
+            ->setCountry(new Country('US'))
+            ->setPostalCode('12344555M');
 
-        $this->billingAddress
-            ->expects($this->once())
-            ->method('__toString')
-            ->willReturn("First name Last name , Street Street 2 City Kyïvs'ka Oblast' , Ukraine Zip");
+        if ($address instanceof AddressPhoneAwareInterface) {
+            $address->setPhone('00099988877766');
+        }
 
-        $savedState = [
-            'parameter1' => 10,
-            'billingAddress' => [
-                'text' => "First name Last name , Street Street 2 City Pomorskie , Poland Zip",
-            ],
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(false, $result);
-    }
-
-    public function testIsStateActualParameterDoesntExist()
-    {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterOfWrongType()
-    {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
-            'parameter1' => 10,
-            'billingAddress' => 1,
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterOfWrongTypeUpdated()
-    {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
-            'parameter1' => 10,
-            'billingAddress' => [
-                'id' => 123,
-                'updated' => 'yesterday',
-            ],
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterNotSetId()
-    {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
-            'parameter1' => 10,
-            'billingAddress' => [
-                'updated' => new \DateTimeImmutable(),
-            ],
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterNotSetUpdated()
-    {
-        $now = new \DateTimeImmutable();
-        $accountUserAddress = new AccountUserAddress();
-        $accountUserAddress->setId(123);
-        $accountUserAddress->setUpdated($now->modify('-1 minute'));
-
-        $this->billingAddress
-            ->expects($this->any())
-            ->method('getAccountUserAddress')
-            ->willReturn($accountUserAddress);
-
-        $savedState = [
-            'parameter1' => 10,
-            'billingAddress' => [
-                'id' => 123,
-            ],
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual(
-            $this->getCheckout($billingAddress = $this->billingAddress),
-            $savedState
-        );
-
-        $this->assertEquals(true, $result);
+        return $address;
     }
 }

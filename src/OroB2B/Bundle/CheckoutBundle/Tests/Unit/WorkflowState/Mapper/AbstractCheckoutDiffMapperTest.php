@@ -19,7 +19,7 @@ abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->checkout = $this->getMockBuilder('OroB2B\Bundle\CheckoutBundle\Entity\Checkout')->getMock();
     }
 
     protected function tearDown()

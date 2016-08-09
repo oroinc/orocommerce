@@ -22,6 +22,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         )
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->mapper = new TotalAmountDiffMapper($this->totalProcessorProvider);
     }
 
@@ -60,160 +61,137 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         );
     }
 
-    public function testIsStateActualTrue()
+    public function testIsStatesEqualTrue()
     {
-        $total = new Subtotal();
-        $total->setAmount(1264);
-        $total->setCurrency('EUR');
-
-        $this->totalProcessorProvider
-            ->expects($this->exactly(2))
-            ->method('getTotal')
-            ->with($this->checkout)
-            ->willReturn($total);
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
             'totalAmount' => [
-                'amount' => 1264,
-                'currency' => 'EUR',
+                'amount' => 1234,
+                'currency' => 'EUR'
             ],
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualFalseAmount()
-    {
-        $total = new Subtotal();
-        $total->setAmount(1264);
-        $total->setCurrency('EUR');
-
-        $this->totalProcessorProvider
-            ->expects($this->once())
-            ->method('getTotal')
-            ->with($this->checkout)
-            ->willReturn($total);
-
-        $savedState = [
+        $state2 = [
             'parameter1' => 10,
             'totalAmount' => [
-                'amount' => 6407,
-                'currency' => 'EUR',
+                'amount' => 1234,
+                'currency' => 'EUR'
             ],
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualFalseCurrency()
+    /**
+     * @dataProvider isStatesEqualFalseProvider
+     * @param array $state1
+     * @param array $state2
+     */
+    public function testIsStatesEqualFalse($state1, $state2)
     {
-        $total = new Subtotal();
-        $total->setAmount(1264);
-        $total->setCurrency('EUR');
+        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
+    }
 
-        $this->totalProcessorProvider
-            ->expects($this->exactly(2))
-            ->method('getTotal')
-            ->with($this->checkout)
-            ->willReturn($total);
+    /**
+     * @return array
+     */
+    public function isStatesEqualFalseProvider()
+    {
+        return [
+            'with different currency and amount' => [
+                'state1' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 1234,
+                        'currency' => 'EUR'
+                    ],
+                    'parameter3' => 'green'
+                ],
+                'state2' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 12,
+                        'currency' => 'USD'
+                    ],
+                    'parameter3' => 'green'
+                ]
+            ],
+            'with different currency' => [
+                'state1' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 1234,
+                        'currency' => 'EUR'
+                    ],
+                    'parameter3' => 'green'
+                ],
+                'state2' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 1234,
+                        'currency' => 'USD'
+                    ],
+                    'parameter3' => 'green'
+                ]
+            ],
+            'with different mount' => [
+                'state1' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 1234,
+                        'currency' => 'EUR'
+                    ],
+                    'parameter3' => 'green'
+                ],
+                'state2' => [
+                    'parameter1' => 10,
+                    'totalAmount' => [
+                        'amount' => 11,
+                        'currency' => 'EUR'
+                    ],
+                    'parameter3' => 'green'
+                ]
+            ]
+        ];
+    }
 
-        $savedState = [
+    public function testIsStatesEqualParameterNotExistInState1()
+    {
+        $state1 = [
+            'parameter1' => 10,
+            'parameter3' => 'green',
+        ];
+
+        $state2 = [
             'parameter1' => 10,
             'totalAmount' => [
-                'amount' => 1264,
-                'currency' => 'CAD',
+                'amount' => 1234,
+                'currency' => 'EUR'
             ],
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(false, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 
-    public function testIsStateActualParameterDoesntExist()
+    public function testIsStatesEqualParameterNotExistInState2()
     {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getTotalAmount');
-
-        $savedState = [
+        $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterOfWrongType()
-    {
-        $this->checkout
-            ->expects($this->never())
-            ->method('getTotalAmount');
-
-        $savedState = [
-            'parameter1' => 10,
-            'totalAmount' => 1,
-            'parameter3' => 'green',
-        ];
-
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterNotSetAmount()
-    {
-        $total = new Subtotal();
-        $total->setAmount(1264);
-        $total->setCurrency('EUR');
-
-        $this->totalProcessorProvider
-            ->expects($this->never())
-            ->method('getTotal');
-
-        $savedState = [
-            'parameter1' => 10,
             'totalAmount' => [
-                'currency' => 'EUR',
-            ],
-            'parameter3' => 'green',
+                'amount' => 1234,
+                'currency' => 'EUR'
+            ]
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testIsStateActualParameterNotSetCurrency()
-    {
-        $total = new Subtotal();
-        $total->setAmount(1264);
-        $total->setCurrency('EUR');
-
-        $this->totalProcessorProvider
-            ->expects($this->never())
-            ->method('getTotal');
-
-        $savedState = [
+        $state2 = [
             'parameter1' => 10,
-            'totalAmount' => [
-                'amount' => 1264,
-            ],
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStateActual($this->checkout, $savedState);
-
-        $this->assertEquals(true, $result);
+        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
     }
 }

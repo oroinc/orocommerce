@@ -3,22 +3,12 @@
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
+    use IsStateEqualTrait;
+
     const DATA_NAME = 'paymentMethod';
-
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
-    /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
-    {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-    }
 
     /**
      * {@inheritdoc}
@@ -43,29 +33,5 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return $checkout->getPaymentMethod();
-    }
-
-    /**
-     * @param Checkout $checkout
-     * @param array $savedState
-     * @return bool
-     */
-    public function isStateActual($checkout, array $savedState)
-    {
-        if (empty($savedState[$this->getName()]) || !is_string($savedState[$this->getName()])) {
-            return true;
-        }
-
-        $paymentMethod = $savedState[$this->getName()];
-
-        try {
-            if (!$this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->isEnabled()) {
-                return false;
-            }
-        } catch (\InvalidArgumentException $e) {
-            return true;
-        }
-
-        return $paymentMethod === $this->getCurrentState($checkout);
     }
 }
