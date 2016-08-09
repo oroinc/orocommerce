@@ -17,9 +17,6 @@ class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
 {
     const NAME = 'shipping_methods_data_provider';
 
-    /** @var array[]|null */
-    protected $shippingMethods;
-
     /** @var ShippingMethodRegistry */
     protected $registry;
 
@@ -55,10 +52,10 @@ class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
             }
             $shippingContext = new ShippingContextProvider($context);
             $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
-            $this->shippingMethods = $this->calculateApplicableShippingMethods($shippingContext, $rules);
+            return $this->calculateApplicableShippingMethods($shippingContext, $rules);
+        } else {
+            return null;
         }
-
-        return $this->shippingMethods;
     }
 
     /**
