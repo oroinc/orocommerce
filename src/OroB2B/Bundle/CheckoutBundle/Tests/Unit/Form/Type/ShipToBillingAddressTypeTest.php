@@ -29,7 +29,10 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
         ]);
 
         $this->assertTrue($form->has(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD));
-        $this->assertTrue($form->get(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD)->isDisabled());
+        $formConfig = $form->get(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD)->getConfig();
+        $constraints = $formConfig->getOption('constraints');
+        $this->assertInternalType('array', $constraints);
+        $this->assertEquals([], $constraints);
     }
 
     public function testSubmitWhenAddressFormIsNotPresent()
