@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\WebsiteBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
@@ -35,7 +34,7 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
      */
     public function getDefaultWebsite()
     {
-        return $this->findOneBy([], ['id' => Criteria::ASC]);
+        return $this->findOneBy(['default' => true]);
     }
 
     /**
