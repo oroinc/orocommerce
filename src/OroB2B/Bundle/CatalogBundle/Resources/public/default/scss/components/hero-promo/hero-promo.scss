@@ -4,11 +4,14 @@
     margin-top: 25px;
 
     .embedded-list__container--slider {
+        // Hide content before slick slider is inited
         overflow: hidden;
+
         height: 1px;
     }
 
     .embedded-list__container--slider.slick-initialized {
+        // Show content after slick slider is inited
         height: auto;
     }
 
