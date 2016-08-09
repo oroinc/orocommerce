@@ -376,7 +376,7 @@ datagrid:
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
-                    - IDENTITY(productPrice.priceRule) as ruleId
+                    - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -449,6 +449,16 @@ datagrid:
                     options:
                         field_options:
                             choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                filter:
+                    type:       single_choice
+                    data_name:  ruleId
+                    label:      orob2b.pricing.productprice.type.label
+                    options:
+                        field_options:
+                            choices:
+                                generated: orob2b.pricing.productprice.generated.label
+                                manual: orob2b.pricing.productprice.manual.label
+
         properties:
             id: ~
             productId: ~
