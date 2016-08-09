@@ -209,7 +209,7 @@ class PriceListControllerTest extends WebTestCase
         $rules = [
             [
                 'quantity' => 99,
-                'productUnit' => 'item',
+                'productUnit' => 'liter',
                 'currency' => 'USD',
                 'rule' => 1,
                 'ruleCondition' => 'product.category.id == ' . $category->getId(),
@@ -217,7 +217,7 @@ class PriceListControllerTest extends WebTestCase
             ],
             [
                 'quantity' => 99,
-                'productUnit' => 'item',
+                'productUnit' => 'liter',
                 'currency' => 'USD',
                 'rule' => 2,
                 'ruleCondition' => '',
