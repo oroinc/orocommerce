@@ -1,6 +1,10 @@
 .notification-flash {
   padding: 15px 0 10px;
 
+  &:empty {
+    display: none;
+  }
+
   @media (max-width: $screen-md) {
     padding: 10px 0 5px;
   }

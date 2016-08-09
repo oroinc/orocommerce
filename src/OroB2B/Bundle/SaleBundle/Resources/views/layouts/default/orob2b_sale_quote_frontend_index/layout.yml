@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -20,7 +22,3 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-quotes-grid
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
