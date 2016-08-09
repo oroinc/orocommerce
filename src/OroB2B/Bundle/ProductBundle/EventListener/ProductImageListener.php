@@ -79,10 +79,12 @@ class ProductImageListener
      */
     protected function sendProductImageResizeEvent(ProductImage $productImage, $forceOption)
     {
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption)
-        );
+        if ($this->eventDispatcher->hasListeners(ProductImageResizeEvent::NAME)) {
+            $this->eventDispatcher->dispatch(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage, $forceOption)
+            );
+        }
     }
 
     /**
