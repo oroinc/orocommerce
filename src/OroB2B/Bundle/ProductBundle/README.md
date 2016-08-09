@@ -11,6 +11,7 @@ Table of Contents
  - Product creation
     - [Two Step Product Creation](./Resources/doc/two-step-product-creation.md)
     - [Default Product Unit](./Resources/doc/default-product-unit.md)
+ - [Product API](./Resources/doc/product-api.md)
 
 Description:
 ------------

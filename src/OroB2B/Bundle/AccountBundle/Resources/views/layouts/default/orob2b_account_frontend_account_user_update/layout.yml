@@ -1,10 +1,15 @@
 layout:
+    imports:
+        -
+            id: orob2b_account_user_form
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - { '@value': $data.entity.fullName }
+                - '=data["entity"].getFullName()'
                 - 'orob2b.account.frontend.title.account_user.edit'
                 - 'orob2b.account.frontend.account_user.entity_plural_label'
 
@@ -14,19 +19,9 @@ layout:
             optionValue:
                 label: 'orob2b.account.frontend.title.page.account_user.edit'
                 parameters:
-                    '%identifier%': { '@value': $data.entity.fullName }
+                    '%identifier%': '=data["entity"].getFullName()'
 
         - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'user'
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-
-    imports:
-        -
-            id: orob2b_account_user_form
-            root: content
