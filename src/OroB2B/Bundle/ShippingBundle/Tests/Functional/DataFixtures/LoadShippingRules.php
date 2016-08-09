@@ -10,6 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 
 class LoadShippingRules extends AbstractFixture
 {
@@ -27,17 +28,13 @@ class LoadShippingRules extends AbstractFixture
             'currency'             => 'EUR',
             'configurations'       => [
                 [
-                    'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'flat_rate',
-                    'type'     => 'per_order',
-                    'value'    => 10,
+                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                    'value' => 10,
                     'currency' => 'EUR',
                 ],
                 [
-                    'class'    => 'flatrateruleconfiguration',
-                    'method'   => 'flat_rate',
-                    'type'     => 'per_item',
-                    'value'    => 20,
+                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
+                    'value' => 20,
                     'currency' => 'EUR',
                 ]
 
@@ -88,21 +85,18 @@ class LoadShippingRules extends AbstractFixture
             }
 
             foreach ($data['configurations'] as $configuration) {
-                if ($configuration['class'] === 'flatrateruleconfiguration') {
-                    $flatConfig = new FlatRateRuleConfiguration();
+                $flatConfig = new FlatRateRuleConfiguration();
 
-                    $flatConfig
-                        ->setRule($entity)
-                        ->setType($configuration['type'])
-                        ->setProcessingType($configuration['type'])
-                        ->setMethod($configuration['method'])
-                        ->setValue($configuration['value'])
-                        ->setCurrency($configuration['currency'])
-                        ->createPrices();
+                $flatConfig
+                    ->setRule($entity)
+                    ->setType(FlatRateShippingMethod::NAME)
+                    ->setMethod(FlatRateShippingMethod::NAME)
+                    ->setProcessingType($configuration['processingType'])
+                    ->setValue($configuration['value'])
+                    ->setCurrency($configuration['currency']);
 
-                    $manager->persist($flatConfig);
-                    $entity->addConfiguration($flatConfig);
-                }
+                $manager->persist($flatConfig);
+                $entity->addConfiguration($flatConfig);
             }
 
             $manager->persist($entity);

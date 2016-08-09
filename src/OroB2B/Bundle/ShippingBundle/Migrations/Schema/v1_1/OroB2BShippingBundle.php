@@ -87,7 +87,7 @@ class OroB2BShippingBundle implements Migration
             $schema->getTable(self::ORO_B2B_SHIPPING_RULE_TABLE_NAME),
             ['rule_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE']
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

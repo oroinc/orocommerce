@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -38,8 +37,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData',
-            'Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData'
+            'Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData'
         ];
     }
 
@@ -56,16 +54,12 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
 
-        /** @var Localization $localization */
-        $localization = $this->getReference('default_localization');
-
         $website = new Website();
         $website
             ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
-            ->setUrl($url)
-            ->addLocalization($localization);
+            ->setUrl($url);
 
         $manager->persist($website);
         /** @var EntityManager $manager */

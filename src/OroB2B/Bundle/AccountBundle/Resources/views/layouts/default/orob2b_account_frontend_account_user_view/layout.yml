@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: orob2b_account_user_view
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -6,7 +11,7 @@ layout:
             optionValue:
                 - 'orob2b.account.menu.account_user.label'
                 - 'orob2b.account.frontend.account_user.entity_plural_label'
-                - { '@value': $data.entity.fullName }
+                - '=data["entity"].getFullName()'
 
         - '@setOption':
             id: page_title
@@ -14,17 +19,12 @@ layout:
             optionValue:
                 label: 'orob2b.account.frontend.title.account_user.view'
                 parameters:
-                    '%identifier%': { '@value': $data.entity.fullName }
+                    '%identifier%': '=data["entity"].getFullName()'
 
         - '@setOption':
             id: content
             optionName: class_prefix
             optionValue: 'user'
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
 
         - '@add':
             id: account_user_list_link
@@ -35,7 +35,3 @@ layout:
                 route_name: orob2b_account_frontend_account_user_index
                 text: 'orob2b.account.frontend.account_user_link.text'
 
-    imports:
-        -
-            id: orob2b_account_user_view
-            root: content
