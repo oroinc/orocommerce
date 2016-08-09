@@ -653,22 +653,29 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     public function testDeleteInvalidPrices()
     {
-        $this->getContainer()->get('doctrine')
-            ->getRepository(PriceListToProduct::class)
-            ->createQueryBuilder('productRelation')
-            ->delete(PriceListToProduct::class)
-            ->getQuery()
-            ->execute();
+        $objectRepository = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceListToProduct::class);
 
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $objectRepository
+            ->createQueryBuilder('productRelation')
+            ->delete(PriceListToProduct::class, 'productRelation')
+            ->where('productRelation.priceList = :priceList AND productRelation.product = :product')
+            ->setParameter('priceList', $priceList)
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
 
         $prices = $this->repository->findBy(['priceList' => $priceList]);
         $this->assertNotEmpty($prices);
 
         $this->repository->deleteInvalidPrices($priceList);
 
-        $prices = $this->repository->findBy(['priceList' => $priceList]);
-        $this->assertEmpty($prices);
+        /** @var ProductPrice $price */
+        $price = $this->repository->findOneBy(['priceList' => $priceList]);
+        $this->assertEquals($price->getProduct()->getId(), $this->getReference(LoadProductData::PRODUCT_1)->getId());
     }
 
     /**

@@ -7,6 +7,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
@@ -46,8 +47,12 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
             ->getRepository($class);
         $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($value);
 
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
         foreach ($invalidCurrencies as $currency) {
-            $this->context->addViolationAt('currencies', $constraint->message, ['%invalidCurrency%' => $currency]);
+            $context->buildViolation($constraint->message, ['%invalidCurrency%' => $currency])
+                ->atPath('currencies')
+                ->addViolation();
         }
     }
 }

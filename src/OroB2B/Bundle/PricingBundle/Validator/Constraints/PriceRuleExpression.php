@@ -9,7 +9,7 @@ class PriceRuleExpression extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.product_price.expression_is_invalid.message';
+    public $message = 'orob2b.pricing.validators.field_are_not_allowed.message';
 
     /**
      * @var bool

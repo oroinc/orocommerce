@@ -36,7 +36,6 @@ class PriceRuleEntityListener
      */
     public function postPersist(PriceRule $priceRule)
     {
-        $this->clearCache($priceRule);
         $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
     }
 

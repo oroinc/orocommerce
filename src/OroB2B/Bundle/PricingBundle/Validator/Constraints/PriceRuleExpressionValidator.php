@@ -56,7 +56,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
                 if (count($unsupportedFields) > 0) {
                     foreach ($unsupportedFields as $invalidField) {
                         $this->context->addViolation(
-                            'orob2b.pricing.validators.field_are_not_allowed.message',
+                            $constraint->message,
                             ['%fieldName%' => $invalidField]
                         );
                     }

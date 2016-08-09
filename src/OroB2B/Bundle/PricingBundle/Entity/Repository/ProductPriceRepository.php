@@ -59,6 +59,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->setParameter('priceList', $priceList);
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
+        $iterator->setBufferSize(self::BUFFER_SIZE);
 
         $ids = [];
         $i = 0;
@@ -68,7 +69,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         foreach ($iterator as $priceId) {
             $i++;
             $ids[] = $priceId;
-            if ($i === 500) {
+            if ($i % self::BUFFER_SIZE === 0) {
                 $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
                 $ids = [];
             }
