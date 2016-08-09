@@ -49,10 +49,24 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         // attachments
         $attachments = $schema->getTable('oro_attachment');
         $extension->renameColumn($schema, $queries, $attachments, 'order_f0cd67_id', 'order_50627d4f_id');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'OroB2B\Bundle\AttachmentBundle\Entity\Attachment',
+            'OroB2B\Bundle\OrderBundle\Entity\Order',
+            'order_f0cd67',
+            'order_50627d4f',
+            RelationType::MANY_TO_ONE
+        ));
 
         // notes
         $notes = $schema->getTable('oro_note');
         $extension->renameColumn($schema, $queries, $notes, 'order_f0cd67_id', 'order_50627d4f_id');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'OroB2B\Bundle\NoteBundle\Entity\Note',
+            'OroB2B\Bundle\OrderBundle\Entity\Order',
+            'order_f0cd67',
+            'order_50627d4f',
+            RelationType::MANY_TO_ONE
+        ));
     }
 
     /**
