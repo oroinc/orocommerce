@@ -43,28 +43,34 @@ class PriceRuleExpressionValidator extends ConstraintValidator
             return;
         }
         try {
+            $unsupportedFields = [];
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $fields) {
-                $supportedFields = $this->priceRuleFieldsProvider->getFields(
-                    $class,
-                    $constraint->numericOnly,
-                    $constraint->withRelations
-                );
-                // Add possibility lexemes without fields
-                $supportedFields[] = null;
-                $unsupportedFields = array_diff($fields, $supportedFields);
-                if (count($unsupportedFields) > 0) {
-                    foreach ($unsupportedFields as $invalidField) {
-                        $this->context->addViolation(
-                            $constraint->message,
-                            ['%fieldName%' => $invalidField]
-                        );
+                try {
+                    $supportedFields = $this->priceRuleFieldsProvider->getFields(
+                        $class,
+                        $constraint->numericOnly,
+                        $constraint->withRelations
+                    );
+                    // Add possibility lexemes without fields
+                    $supportedFields[] = null;
+                    $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
+                } catch (\InvalidArgumentException $ex) {
+                    if (strpos($class, '::') !== false) {
+                        $relationInfo = explode('::', $class);
+                        $unsupportedFields[] = $relationInfo[1];
                     }
                 }
             }
+            if (count($unsupportedFields) > 0) {
+                foreach ($unsupportedFields as $invalidField) {
+                    $this->context->addViolation(
+                        $constraint->message,
+                        ['%fieldName%' => $invalidField]
+                    );
+                }
+            }
         } catch (SyntaxError $ex) {
-            $this->context->addViolation($ex->getMessage());
-        } catch (\InvalidArgumentException $ex) {
             $this->context->addViolation($ex->getMessage());
         }
     }
