@@ -98,7 +98,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
         $method = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $method->expects(static::once())->method('getLabel')->willReturn('label');
         $method->expects(static::once())->method('getShippingTypeLabel')->willReturn('typeLabel');
-        $method->expects(static::once())->method('calculatePrice')->willReturn((new Price()));
+        $method->expects(static::once())->method('calculatePrice')->willReturn(new Price());
 
         $this->registry->expects(static::once())
             ->method('getShippingMethod')

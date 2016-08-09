@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Factory;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -11,10 +11,10 @@ class ShippingContextProviderFactory
 {
 
     /**
-     * @param CheckoutInterface $checkout
+     * @param Checkout $checkout
      * @return ShippingContextAwareInterface
      */
-    public function create(CheckoutInterface $checkout)
+    public function create(Checkout $checkout)
     {
         $context = [
             'checkout' => $checkout,

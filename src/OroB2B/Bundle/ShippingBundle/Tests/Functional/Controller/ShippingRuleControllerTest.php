@@ -113,7 +113,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
         $configurations = $shippingRule->getConfigurations();
-        //$this->assertContains($configurations[0]->getType(), $html);
+        $this->assertContains($configurations[0]->getType(), $html);
         $this->assertContains($configurations[0]->getMethod(), $html);
     }
 
