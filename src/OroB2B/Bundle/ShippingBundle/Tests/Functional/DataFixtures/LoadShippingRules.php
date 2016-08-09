@@ -24,7 +24,7 @@ class LoadShippingRules extends AbstractFixture
             'name' => 'Rule 1',
             'enabled' => true,
             'priority' => 0,
-            'conditions' => 'condition 1',
+            'conditions' => '1==1',
             'currency' => 'EUR',
             'configurations' => [
                 [

@@ -86,9 +86,18 @@ class Checkout implements
     protected $website;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
      */
     protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
 
     /**
      * @var string
@@ -211,7 +220,7 @@ class Checkout implements
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getShippingMethod()
     {
@@ -377,5 +386,24 @@ class Checkout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return Checkout
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
     }
 }

@@ -8,7 +8,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider;
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
@@ -86,10 +85,15 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetData()
     {
-        $shippingConfig = new FlatRateRuleConfiguration();
-        $shippingConfig->setMethod('flat_rate')
-            ->setType('per_order')
-            ->setPrice((new Price()));
+        $shippingConfig = $this->getEntity(
+            'OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
+            [
+                'id'     => 1,
+                'method' => 'flat_rate',
+                'type'   => 'per_order',
+                'price'  => new Price()
+            ]
+        );
 
         $shippingRule = new ShippingRule();
         $shippingRule->setName('TetsRule')
@@ -98,7 +102,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->shippingRulesProvider->expects($this->any())
             ->method('getApplicableShippingRules')
-            ->willReturn([$shippingRule]);
+            ->willReturn([10 => $shippingRule]);
 
         $method = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $method->expects($this->once())->method('getLabel')->willReturn('label');
@@ -118,7 +122,8 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
                     'per_order' => [
                         'label' => 'typeLabel',
                         'name'  => 'per_order',
-                        'price' => new Price()
+                        'price' => new Price(),
+                        'shippingRuleConfig' => $shippingConfig->getID()
                     ]
                 ]
             ]

@@ -85,7 +85,11 @@ class ShippingRulesProvider
     protected function evaluateConditions($context, $conditions)
     {
         $language = new ExpressionLanguage();
-        $result = ($language->evaluate($conditions, $context));
+        try {
+            $result = ($language->evaluate($conditions, $context));
+        } catch (\Exception $e) {
+            $result = false;
+        }
 
         return $result;
     }

@@ -82,6 +82,8 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('save_shipping_address', 'boolean', ['default' => true]);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->setPrimaryKey(['id']);
     }
