@@ -86,9 +86,18 @@ class Checkout implements
     protected $website;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
      */
     protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
 
     /**
      * @var string
@@ -227,6 +236,25 @@ class Checkout implements
         $this->shippingMethod = $shippingMethod;
 
         return $this;
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
     }
 
     /**
