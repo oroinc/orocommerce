@@ -1,0 +1,9 @@
+.featured-product {
+    margin-left: 24px;
+    margin-right: 3px;
+
+    // TODO: refactor this dirty class selector
+    & .line_item_form_fields__form__col {
+        margin-bottom: 0;
+    }
+}

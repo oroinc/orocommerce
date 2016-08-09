@@ -1,0 +1,11 @@
+.top-selling-items {
+    position: relative;
+
+    margin-top: 52px;
+
+    background: olive;
+
+    & .embedded-list {
+        margin: 0 42px;
+    }
+}

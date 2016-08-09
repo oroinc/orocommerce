@@ -13,7 +13,7 @@ layout:
                     blockType: embedded_list
                     options:
                         items: '=data["featured_products"]'
-                        label: featured_products
+                        label: orob2b.product.featured_products.label
                         item_key: product
                         use_slider: true
                         slides_count: 4

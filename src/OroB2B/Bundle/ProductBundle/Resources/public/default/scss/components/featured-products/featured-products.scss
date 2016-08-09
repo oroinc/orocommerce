@@ -1,0 +1,9 @@
+.featured-products {
+    position: relative;
+
+    margin-top: 52px;
+
+    & .embedded-list {
+        margin: 0 42px;
+    }
+}
