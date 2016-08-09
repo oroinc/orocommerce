@@ -1,0 +1,42 @@
+$shopping-lists-popup-offset: 15px;
+
+.shopping-lists-popup {
+    width: 100%;
+
+    font-family: $lato-font;
+
+    &__item {
+        border-bottom: 1px solid $base-topbar-background-color;
+    }
+
+    &__list {
+        width: 54%;
+        padding: $shopping-lists-popup-offset $shopping-lists-popup-offset;
+    }
+
+    &__quantity {
+        width: 46%;
+        padding: ($shopping-lists-popup-offset / 2) 0 ($shopping-lists-popup-offset / 2) $shopping-lists-popup-offset;
+    }
+
+    &__headline {
+        background: $base-sidebar-background-color-light;
+    }
+
+    &__headline &__item {
+        border: 0;
+    }
+
+    &__headline &__list,
+    &__headline &__quantity {
+        padding: ($shopping-lists-popup-offset / 2) $shopping-lists-popup-offset;
+
+        font-weight: normal;
+    }
+
+    &__cancel {
+        padding: $shopping-lists-popup-offset 0;
+
+        text-align: right;
+    }
+}
