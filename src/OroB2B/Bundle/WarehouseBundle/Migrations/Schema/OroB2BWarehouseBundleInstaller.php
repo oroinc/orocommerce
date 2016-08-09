@@ -141,6 +141,6 @@ class OroB2BWarehouseBundleInstaller implements Installation, NoteExtensionAware
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_2';
     }
 }

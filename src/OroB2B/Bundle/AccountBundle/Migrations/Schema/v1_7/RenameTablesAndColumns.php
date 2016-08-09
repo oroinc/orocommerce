@@ -53,7 +53,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'OroB2B\Bundle\AttachmentBundle\Entity\Attachment',
             'OroB2B\Bundle\AccountBundle\Entity\Account',
             'account_557018f',
-            'account_8d93c122_id',
+            'account_8d93c122',
             RelationType::MANY_TO_ONE
         ));
         $extension->renameColumn(
