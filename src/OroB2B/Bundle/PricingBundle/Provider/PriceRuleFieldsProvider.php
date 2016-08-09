@@ -112,7 +112,7 @@ class PriceRuleFieldsProvider
                 $className = $fields[$fieldName]['related_entity_name'];
             } else {
                 throw new \InvalidArgumentException(
-                    sprintf('Field "%s" is not found is class %s', $fieldName, $className)
+                    sprintf('Field "%s" is not found in class %s', $fieldName, $className)
                 );
             }
         }

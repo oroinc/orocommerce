@@ -64,6 +64,8 @@ class PriceRuleExpressionValidator extends ConstraintValidator
             }
         } catch (SyntaxError $ex) {
             $this->context->addViolation($ex->getMessage());
+        } catch (\InvalidArgumentException $ex) {
+            $this->context->addViolation($ex->getMessage());
         }
     }
 }
