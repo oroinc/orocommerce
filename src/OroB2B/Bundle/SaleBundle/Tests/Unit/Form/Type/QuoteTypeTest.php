@@ -12,12 +12,14 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -48,9 +50,19 @@ class QuoteTypeTest extends AbstractTest
     protected $formType;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider
      */
     protected $quoteAddressSecurityProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider
+     */
+    protected $paymentTermProvider;
 
     /**
      * {@inheritdoc}
@@ -59,13 +71,25 @@ class QuoteTypeTest extends AbstractTest
     {
         parent::setUp();
 
+        $this->securityFacade = $this
+            ->getMockBuilder(SecurityFacade::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->quoteAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
+            ->getMockBuilder(QuoteAddressSecurityProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->paymentTermProvider = $this
+            ->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new QuoteType($this->quoteAddressSecurityProvider);
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
+        $this->formType = new QuoteType(
+            $this->securityFacade,
+            $this->quoteAddressSecurityProvider,
+            $this->paymentTermProvider
+        );
+        $this->formType->setDataClass(Quote::class);
     }
 
     public function testConfigureOptions()
