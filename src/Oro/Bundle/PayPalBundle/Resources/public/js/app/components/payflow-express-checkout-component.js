@@ -17,19 +17,12 @@ define(function(require) {
         },
 
         /**
-         * @property {Boolean}
-         */
-        disposable: true,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
-            mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
-            mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
         },
 
         /**
@@ -53,20 +46,8 @@ define(function(require) {
             }
 
             mediator.off('checkout:place-order:response', this.handleSubmit, this);
-            mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
-            mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
 
             PayflowExpressCheckoutComponent.__super__.dispose.call(this);
-        },
-
-        beforeHideFilledForm: function() {
-            this.disposable = false;
-        },
-
-        beforeRestoreFilledForm: function() {
-            if (this.disposable) {
-                this.dispose();
-            }
         }
     });
 

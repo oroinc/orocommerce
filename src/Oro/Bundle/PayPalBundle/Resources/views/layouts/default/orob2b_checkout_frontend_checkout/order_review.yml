@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'OroPayPalBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
+        - '@addTree':
+            items:
+                checkout_paypal_ec_component:
+                    blockType: container
+            tree:
+                checkout_content:
+                    checkout_paypal_ec_component: ~
