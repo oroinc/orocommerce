@@ -107,6 +107,7 @@ services:
         arguments:
             - '@doctrine'
             - '@security.token_storage'
+            - '@event_dispatcher'
             - '%orob2b_payment.entity.payment_term.class%'
 
     orob2b_payment.provider.credit_form_provider:

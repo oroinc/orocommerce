@@ -126,6 +126,13 @@ services:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
             - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
+    orob2b_checkout.event_listener.resolve_payment_term:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'
+        arguments:
+            - '@orob2b_checkout.checkout.provider'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.resolve.payment_term, method: onResolvePaymentTerm }
+
     orob2b_checkout.grid_totals_metadata.cache:
         public: false
         parent: oro.cache.abstract
@@ -179,3 +186,9 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
+
+    orob2b_checkout.checkout.provider:
+        class: 'OroB2B\Bundle\CheckoutBundle\Provider\CheckoutProvider'
+        arguments:
+            - '@request_stack'
+            - '@event_dispatcher'

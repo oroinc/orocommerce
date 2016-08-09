@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -11,6 +12,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use OroB2B\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
 
 class PaymentTermProvider
 {
@@ -30,15 +32,26 @@ class PaymentTermProvider
     protected $tokenStorage;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param ManagerRegistry $registry
      * @param TokenStorageInterface $tokenStorage
+     * @param EventDispatcherInterface $eventDispatcher
      * @param string $paymentTermClass
      */
-    public function __construct(ManagerRegistry $registry, TokenStorageInterface $tokenStorage, $paymentTermClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        TokenStorageInterface $tokenStorage,
+        EventDispatcherInterface $eventDispatcher,
+        $paymentTermClass
+    ) {
         $this->registry = $registry;
         $this->paymentTermClass = $paymentTermClass;
         $this->tokenStorage = $tokenStorage;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -61,6 +74,13 @@ class PaymentTermProvider
      */
     public function getCurrentPaymentTerm()
     {
+        $resolvePaymentTermEvent = new ResolvePaymentTermEvent();
+        $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $resolvePaymentTermEvent);
+        $paymentTerm = $resolvePaymentTermEvent->getPaymentTerm();
+        if ($paymentTerm) {
+            return $paymentTerm;
+        }
+
         $token = $this->tokenStorage->getToken();
 
         /** @var AccountUser $user */
