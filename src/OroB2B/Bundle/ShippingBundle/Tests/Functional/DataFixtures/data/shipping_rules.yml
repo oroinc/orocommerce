@@ -98,3 +98,13 @@ shipping_rule.7:
             postalCode: '12346'
             country: 'US'
             region: 'NY'
+shipping_rule.8:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'USD'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+            value: 10
+            currency: 'EUR'

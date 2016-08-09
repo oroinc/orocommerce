@@ -11,10 +11,9 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
@@ -156,7 +155,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
         $form = $this->getTransitionForm($crawler);
         /** @var ShippingRule $shippingRule */
-        $shippingRule = $this->getReference(LoadShippingRules::SHIPPING_RULE_1);
+        $shippingRule = $this->getReference('shipping_rule.8');
         /** @var ShippingRuleConfiguration $shippingRuleConfig */
         $shippingRuleConfig = $shippingRule->getConfigurations()->first();
         $values = $this->explodeArrayPaths($form->getValues());
