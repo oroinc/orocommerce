@@ -220,7 +220,7 @@ class Checkout implements
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getShippingMethod()
     {
