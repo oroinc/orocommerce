@@ -56,7 +56,6 @@ define(function(require) {
             );
 
             mediator.on('layout:reposition',  _.debounce(this.onScroll, this.options.layoutTimeout), this);
-            mediator.on('layout:adjustHeight',  _.debounce(this.onScroll, this.options.layoutTimeout), this);
 
             return this;
         },
