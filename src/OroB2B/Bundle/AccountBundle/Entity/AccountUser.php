@@ -19,6 +19,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @ORM\Table(name="orob2b_account_user")
  * @ORM\HasLifecycleCallbacks()
+ * @ORM\EntityListeners({"OroB2B\Bundle\AccountBundle\Entity\EntityListener\AccountUserEntityListener"})
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="organizations",
@@ -72,8 +73,10 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          }
  *      }
  * )
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
 {
@@ -319,6 +322,21 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * )
      */
     protected $settings;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     public function __construct()
     {
@@ -809,6 +827,25 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
         $websiteSettings->setAccountUser($this);
         $this->settings->add($websiteSettings);
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
 
         return $this;
     }

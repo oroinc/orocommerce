@@ -883,3 +883,11 @@ services:
             - '@orob2b_account.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-role-permission-provider }
+
+    orob2b_account.entity_listener.account_user:
+        class: OroB2B\Bundle\AccountBundle\Entity\EntityListener\AccountUserEntityListener
+        public: false
+        arguments:
+            - '@orob2b_website.manager'
+        tags:
+            - { name: doctrine.orm.entity_listener }
