@@ -9,8 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
@@ -33,7 +31,6 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
 class MenuItem extends ExtendMenuItem
 {
     use TreeTrait;
-    use FallbackTrait;
 
     const LOCALE_OPTION = 'orob2b_website_locale';
 
@@ -163,40 +160,6 @@ class MenuItem extends ExtendMenuItem
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
         }
-
-        return $this;
-    }
-
-    /**
-     * @param Localization|null $localization
-     * @return LocalizedFallbackValue
-     */
-    public function getTitle(Localization $localization = null)
-    {
-        return $this->getLocalizedFallbackValue($this->titles, $localization);
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultTitle()
-    {
-        return $this->getLocalizedFallbackValue($this->titles);
-    }
-
-    /**
-     * @param $string
-     * @return $this
-     */
-    public function setDefaultTitle($string)
-    {
-        $oldTitle = $this->getDefaultTitle();
-        if ($oldTitle) {
-            $this->removeTitle($oldTitle);
-        }
-        $newTitle = new LocalizedFallbackValue();
-        $newTitle->setString($string);
-        $this->addTitle($newTitle);
 
         return $this;
     }
