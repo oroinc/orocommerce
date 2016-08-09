@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 
 class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
 {
@@ -99,6 +100,15 @@ class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
                 $data['extend']['relation'][$fullRelationTo] =
                     $data['extend']['relation'][$fullRelationFrom];
                 unset($data['extend']['relation'][$fullRelationFrom]);
+
+                if (isset($data['extend']['relation'][$fullRelationTo]['field_id'])) {
+                    /** @var FieldConfigId $fieldId */
+                    $fieldId = $data['extend']['relation'][$fullRelationTo]['field_id'];
+                    $reflectionProperty = new \ReflectionProperty(get_class($fieldId), 'fieldName');
+                    $reflectionProperty->setAccessible(true);
+                    $reflectionProperty->setValue($fieldId, $this->relationTo);
+                    $data['extend']['relation'][$fullRelationTo]['field_id'] = $fieldId;
+                }
             }
             if (isset($data['extend']['schema']['relation'][$this->relationFrom])) {
                 $data['extend']['schema']['relation'][$this->relationTo] =
