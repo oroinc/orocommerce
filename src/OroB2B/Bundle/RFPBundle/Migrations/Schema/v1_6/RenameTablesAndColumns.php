@@ -24,13 +24,10 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $extension = $this->renameExtension;
+
         // email to request association
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            'oro_rel_26535370f42ab603f15753',
-            'oro_rel_26535370f42ab603ec4b1d'
-        );
+        $extension->renameTable($schema, $queries, 'oro_rel_26535370f42ab603f15753', 'oro_rel_26535370f42ab603ec4b1d');
         $queries->addQuery(new UpdateExtendRelationQuery(
             'OroB2B\Bundle\EmailBundle\Entity\Email',
             'OroB2B\Bundle\RFPBundle\Entity\Request',
@@ -40,12 +37,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         ));
 
         // calendar event to request association
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            'oro_rel_46a29d19f42ab603f15753',
-            'oro_rel_46a29d19f42ab603ec4b1d'
-        );
+        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19f42ab603f15753', 'oro_rel_46a29d19f42ab603ec4b1d');
         $queries->addQuery(new UpdateExtendRelationQuery(
             'OroB2B\Bundle\CalendarBundle\Entity\CalendarEvent',
             'OroB2B\Bundle\RFPBundle\Entity\Request',
@@ -53,6 +45,10 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'request_d1d045e1',
             RelationType::MANY_TO_MANY
         ));
+
+        // notes
+        $notes = $schema->getTable('oro_note');
+        $extension->renameColumn($schema, $queries, $notes, 'request_86063709_id', 'request_d6948721_id');
     }
 
     /**
