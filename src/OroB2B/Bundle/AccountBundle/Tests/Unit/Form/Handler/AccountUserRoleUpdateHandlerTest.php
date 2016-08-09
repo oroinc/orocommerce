@@ -112,27 +112,6 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action', true);
 
-        $entityForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $entityForm->expects($this->once())
-            ->method('setData')
-            ->willReturnCallback(
-                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege, $secondEntityPrivilege) {
-                    $this->assertEquals(
-                        [$firstEntityPrivilege, $secondEntityPrivilege],
-                        array_values($actualPrivileges->toArray())
-                    );
-                }
-            );
-
-        $actionForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $actionForm->expects($this->once())
-            ->method('setData')
-            ->willReturnCallback(
-                function (ArrayCollection $actualPrivileges) use ($actionPrivilege) {
-                    $this->assertEquals([$actionPrivilege], array_values($actualPrivileges->toArray()));
-                }
-            );
-
         $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $privilegesForm->expects($this->once())
             ->method('setData');
@@ -142,8 +121,6 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->method('get')
             ->willReturnMap(
                 [
-                    ['entity', $entityForm],
-                    ['action', $actionForm],
                     ['privileges', $privilegesForm],
                 ]
             );

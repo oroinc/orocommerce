@@ -7,6 +7,8 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
+ * @group segfault
+ *
  * @dbIsolation
  */
 class MenuItemControllerTest extends WebTestCase

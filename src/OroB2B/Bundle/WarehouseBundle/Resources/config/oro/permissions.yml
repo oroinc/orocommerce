@@ -10,7 +10,3 @@ oro_permissions:
     ASSIGN:
         exclude_entities:
             - OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
-
-    SHARE:
-        exclude_entities:
-            - OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
