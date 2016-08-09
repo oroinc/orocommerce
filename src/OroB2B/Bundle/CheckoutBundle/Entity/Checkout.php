@@ -239,6 +239,25 @@ class Checkout implements
     }
 
     /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getShipUntil()
@@ -386,24 +405,5 @@ class Checkout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
-    }
-
-    /**
-     * @param string $shippingMethodType
-     * @return Checkout
-     */
-    public function setShippingMethodType($shippingMethodType)
-    {
-        $this->shippingMethodType = $shippingMethodType;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getShippingMethodType()
-    {
-        return $this->shippingMethodType;
     }
 }

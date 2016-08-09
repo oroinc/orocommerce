@@ -23,6 +23,8 @@ orob2b:
         website.label: Website
         shipping_estimate_amount.label: Shipping Estimate Ammount
         shipping_estimate_currency.label: Shipping Estimate Currency
+        shipping_method.label: Shipping Method
+        shipping_method_type.label: Shipping Method Type
         payment_method.label: Payment Method
         order.label: Order
         created_at.label: Started At

@@ -4,26 +4,32 @@ namespace OroB2B\Bundle\CheckoutBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 class ShippingCostCalculationProvider
 {
+    /**
+     * @var ShippingMethodRegistry
+     */
     protected $registry;
-    
+
+    /**
+     * @param ShippingMethodRegistry $registry
+     */
     public function __construct(ShippingMethodRegistry $registry)
     {
         $this->registry = $registry;
     }
 
     /**
-     * @param BaseCheckout $entity
+     * @param Checkout $entity
      * @param ShippingRuleConfiguration $config
      * @return Price
      */
-    public function calculatePrice(BaseCheckout $entity, ShippingRuleConfiguration $config)
+    public function calculatePrice(Checkout $entity, ShippingRuleConfiguration $config)
     {
         $method = $this->registry->getShippingMethod($config->getMethod());
         $context = [
