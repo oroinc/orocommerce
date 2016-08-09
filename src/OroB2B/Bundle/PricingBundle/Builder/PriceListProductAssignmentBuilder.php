@@ -56,6 +56,9 @@ class PriceListProductAssignmentBuilder
                 $this->ruleCompiler->compile($priceList)
             );
         }
+        $this->registry->getManagerForClass(ProductPrice::class)
+            ->getRepository(ProductPrice::class)
+            ->deleteInvalidPrices($priceList);
     }
 
     /**
@@ -66,8 +69,5 @@ class PriceListProductAssignmentBuilder
         $this->registry->getManagerForClass(PriceListToProduct::class)
             ->getRepository(PriceListToProduct::class)
             ->deleteGeneratedRelations($priceList);
-        $this->registry->getManagerForClass(ProductPrice::class)
-            ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($priceList);
     }
 }
