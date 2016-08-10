@@ -560,6 +560,8 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            shippingMethod: $checkout.shippingMethod
+                            shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout

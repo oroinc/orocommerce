@@ -19,6 +19,7 @@ class ShippingContextProviderFactory
         $context = [
             'checkout' => $checkout,
             'billingAddress' => $checkout->getBillingAddress(),
+            'shippingAddress' => $checkout->getShippingAddress(),
             'currency' => $checkout->getCurrency(),
         ];
         /** @var ShoppingList $sourceEntity */

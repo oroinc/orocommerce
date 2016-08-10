@@ -11,11 +11,12 @@ use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingCostCalculationProvider
 {
-    /** @var ShippingMethodRegistry */
+    /**
+     * @var ShippingMethodRegistry
+     */
     protected $registry;
 
     /**
-     * ShippingCostCalculationProvider constructor.
      * @param ShippingMethodRegistry $registry
      * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */

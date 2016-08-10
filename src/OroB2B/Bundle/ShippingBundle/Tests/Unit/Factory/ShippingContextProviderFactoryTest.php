@@ -43,6 +43,7 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
         $context = [
             'checkout'       => $this->checkout,
             'billingAddress' => 'address1',
+            'shippingAddress' => 'address2',
             'currency'       => 'USD',
             'line_items'     => 'some line items'
         ];
@@ -50,6 +51,10 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getBillingAddress')
             ->willReturn($context['billingAddress']);
+        $this->checkout
+            ->expects($this->once())
+            ->method('getShippingAddress')
+            ->willReturn($context['shippingAddress']);
         $this->checkout
             ->expects($this->once())
             ->method('getCurrency')
@@ -71,13 +76,18 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $context = [
             'checkout'       => $this->checkout,
-            'billingAddress' => 'address2',
+            'billingAddress' => 'address1',
+            'shippingAddress' => 'address2',
             'currency'       => 'EUR',
         ];
         $this->checkout
             ->expects($this->once())
             ->method('getBillingAddress')
             ->willReturn($context['billingAddress']);
+        $this->checkout
+            ->expects($this->once())
+            ->method('getShippingAddress')
+            ->willReturn($context['shippingAddress']);
         $this->checkout
             ->expects($this->once())
             ->method('getCurrency')

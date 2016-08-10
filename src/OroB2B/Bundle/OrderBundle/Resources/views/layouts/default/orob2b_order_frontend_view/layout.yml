@@ -128,7 +128,7 @@ layout:
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: 'orob2b.checkout.preferred_shipping_method.label'
+                        text: '=data["orob2b_order_frontend_shipping_method_provider"]'
                         label: 'orob2b.order.shipping_method.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_method:
