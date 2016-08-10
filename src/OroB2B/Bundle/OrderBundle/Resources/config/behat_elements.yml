@@ -1,0 +1,3 @@
+OrderWidgetDropdown:
+  selector: '#order-widget-dropdown'
+  class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

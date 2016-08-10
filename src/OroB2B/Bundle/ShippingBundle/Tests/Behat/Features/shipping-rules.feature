@@ -8,23 +8,22 @@ Feature: Applying shipping rules applying
 #  Given The product unit "Some unit" was uploaded in database
 
   Background:
-    Given Admin User has "Shipping Rules" Full permissions
     And Buyer User with Edit Shipping Address permissions
     And Shopping Rule Flat Rate Shipping Cost = 1.5
     And Shopping Rule Flat Rate Type = per Order by default
     And Shopping Rule Flat Rate Handling Fee = 1.5
 
-
   Scenario Outline: "SHIPPING” > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
-    Given Admin User created Flat Rate Shipping Rule #1 with next data:
-      | Country       | Germany |
-      | Rule Currency | EUR     |
-      | Rule Status   | Enabled |
-    And Buyer created order with:
-      | Shipping Address | Berlin, Germany,10115 |
-      | Currency         | EUR                   |
-      | Price            | <orderPrice>          |
-    When Buyer is on “Shipping Method” Checkout step
+    Given I login as AmandaRCole@example.org
+#    Given Admin User created Flat Rate Shipping Rule #1 with next data:
+#      | Country       | Germany |
+#      | Rule Currency | EUR     |
+#      | Rule Status   | Enabled |
+#    And Buyer created order with:
+#      | Shipping Address | Berlin, Germany,10115 |
+#      | Currency         | EUR                   |
+#      | Price            | <orderPrice>          |
+    When Buyer is on Shipping Method Checkout step on Shopping List 1
     Then Shipping Type "<shippingRate>" is shown for Buyer selection
     And One the next Checkout step order subtotal is recalculated to <orderSubTotal>
     Examples:
@@ -41,8 +40,8 @@ Feature: Applying shipping rules applying
     And Buyer created order with:
       | Shipping Address | Berlin,Germany,10115 |
       | Currency         | EUR                  |
-    When Buyer is on "Shipping Method" Checkout step
-    Then "Flat Rate" is non-visible for Buyer selection
+    When Buyer is on Shipping Method Checkout step on Shopping List 1
+    Then There is no shipping method available for this order
 
   Scenario: "SHIPPING" > DIFFERENT CURRENCIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
     Given Admin User edited "Flat Rate Shipping Rule #1" with next data:
@@ -52,5 +51,5 @@ Feature: Applying shipping rules applying
     And Buyer created order with:
       | Shipping Address | Berlin,Germany,10115 |
       | Currency         | EUR                  |
-    When Buyer is on "Shipping Method" Checkout step
-    Then "Flat Rate" is non-visible for Buyer selection
+    When Buyer is on Shipping Method Checkout step on Shopping List 1
+    Then There is no shipping method available for this order

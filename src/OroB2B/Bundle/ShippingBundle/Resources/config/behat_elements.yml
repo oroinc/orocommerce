@@ -1,0 +1,6 @@
+ShoppingListWidget:
+  selector: 'li.shopping-lists-frontend-widget'
+  class: Oro\Bundle\ApplicationBundle\Tests\Behat\Elements\ShoppingListWidget
+
+ShoppingListItem:
+  class: Oro\Bundle\ApplicationBundle\Tests\Behat\Elements\ShoppingListItem
