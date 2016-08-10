@@ -68,13 +68,12 @@
     {% set notes = shoppingList.notes %}
     {% set hasRecords = notes is not empty %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " collapse-view" }) %}
-    {% if hasRecords  %}
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " expanded" }) %}
-    {% endif %}
     <div{{ block('block_attributes') }}
             data-page-component-module="oroui/js/app/components/jquery-widget-component"
             data-page-component-options="{{ {
-                widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget'
+                widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget',
+                storageKey: 'shoppinglist',
+                hasRecords: hasRecords
             }|json_encode() }}"
     >
         <span class="collapse-view__trigger" data-collapse-trigger>

@@ -1,10 +1,13 @@
 define(['jquery', 'jquery-ui'], function($) {
     'use strict';
+    var localStorage = window.localStorage;
 
     $.widget('oroui.collapseWidget', {
         options: {
             trigger: '[data-collapse-trigger]',
             container: '[data-collapse-container]',
+            storageKey: '',
+            hasRecords: false,
             open: false,
             openClass: 'expanded',
             animationSpeed: 250
@@ -19,9 +22,13 @@ define(['jquery', 'jquery-ui'], function($) {
             this.$trigger = this.$el.find(this.options.trigger);
             this.$container = this.$el.find(this.options.container);
 
-            if (this.options.open) {
-                this.$el.addClass(this.options.openClass);
+            if (this.options.storageKey && localStorage.getItem(this.options.storageKey)) {
+                this.options.open = JSON.parse(localStorage.getItem(this.options.storageKey)) || this.options.open;
+            } else if (this.options.hasRecords) {
+                this.options.open = this.options.hasRecords || this.options.open;
             }
+
+            this.$el.toggleClass(this.options.openClass, this.options.open);
 
             this.$el.addClass('init');
 
@@ -58,6 +65,10 @@ define(['jquery', 'jquery-ui'], function($) {
 
                 self.$el.toggleClass(self.options.openClass, isOpen);
                 $trigger.trigger('collapse:toggle', params);
+
+                if (self.options.storageKey) {
+                    localStorage.setItem(self.options.storageKey, isOpen);
+                }
             });
         }
     });
