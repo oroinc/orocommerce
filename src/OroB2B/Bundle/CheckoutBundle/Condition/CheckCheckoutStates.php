@@ -48,7 +48,6 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
         $state1 = $this->resolveValue($context, $this->state1);
         $state2 = $this->resolveValue($context, $this->state2);
 
-
         return $this->diffManager->isStatesEqual($checkout, $state1, $state2);
     }
 

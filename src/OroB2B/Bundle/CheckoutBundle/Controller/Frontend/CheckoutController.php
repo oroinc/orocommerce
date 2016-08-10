@@ -177,11 +177,7 @@ class CheckoutController extends Controller
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
-                        // TODO: Change this hardcoded value
-                        $this->get('session')->getFlashBag()->add(
-                            'error',
-                            'There was a change to the contents of your order.'
-                        );
+                        $this->handleCheckoutErrors();
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -248,5 +244,13 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
+    }
+
+    protected function handleCheckoutErrors()
+    {
+        $this->get('session')->getFlashBag()->add(
+            'error',
+            'There was a change to the contents of your order.'
+        );
     }
 }
