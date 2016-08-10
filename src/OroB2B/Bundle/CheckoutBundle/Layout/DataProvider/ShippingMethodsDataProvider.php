@@ -42,7 +42,7 @@ class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
         if (null !== $entity) {
             $context = [
                 'checkout' => $entity,
-                'billingAddress' => $entity->getBillingAddress(),
+                'shippingAddress' => $entity->getShippingAddress(),
                 'currency' => $entity->getCurrency(),
             ];
             /** @var ShoppingList $sourceEntity */

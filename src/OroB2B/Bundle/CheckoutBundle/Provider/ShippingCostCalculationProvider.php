@@ -38,12 +38,10 @@ class ShippingCostCalculationProvider
             'currency' => $entity->getCurrency(),
         ];
         $sourceEntity = $entity->getSourceEntity();
-        if (!empty($sourceEntity)) {
+        if (null !== $sourceEntity) {
             $context['line_items'] = $sourceEntity->getLineItems();
         }
         $shippingContext = new ShippingContextProvider($context);
-        $cost = $method->calculatePrice($shippingContext, $config);
-        
-        return $cost;
+        return $method->calculatePrice($shippingContext, $config);
     }
 }

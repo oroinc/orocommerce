@@ -7,6 +7,7 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
@@ -72,12 +73,13 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     protected function isConditionAllowed($context)
     {
         $result = false;
+        /** @var Checkout $entity */
         $entity = $this->resolveValue($context, $this->entity, false);
 
         if (!empty($entity)) {
             $context = [
                 'checkout' => $entity,
-                'billingAddress' => $entity->getBillingAddress(),
+                'shippingAddress' => $entity->getShippingAddress(),
                 'currency' => $entity->getCurrency(),
             ];
             $sourceEntity = $entity->getSourceEntity();
