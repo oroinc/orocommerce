@@ -45,7 +45,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),
             $container->get('translator'),
-            $container->get('oro_importexport.strategy.new_entities_helper')
+            $container->get('oro_importexport.strategy.new_entities_helper'),
+            $container->get('oro_entity.doctrine_helper')
         );
         $this->strategy->setLocalizedFallbackValueClass(
             $container->getParameter('oro_locale.entity.localized_fallback_value.class')
