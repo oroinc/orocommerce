@@ -1,0 +1,38 @@
+$shopping-lists-actions-width: 55px;
+
+.shopping-lists-units {
+    position: relative;
+
+    display: block;
+    padding: 4px $shopping-lists-actions-width 4px 0;
+
+    &:first-child {
+        display: block;
+        margin-top: 0;
+    }
+
+    &__number {
+        display: inline-block;
+        min-width: 10px;
+    }
+
+    &__separate {
+        margin: 0 3px;
+    }
+
+    &__actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        width: $shopping-lists-actions-width;
+
+        color: $base-link-color;
+
+        transition: opacity .3s linear;
+    }
+
+    &:hover &__actions {
+        transition-delay: 0.1s;
+    }
+}

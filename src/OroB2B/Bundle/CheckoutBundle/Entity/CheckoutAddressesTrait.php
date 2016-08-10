@@ -10,7 +10,7 @@ trait CheckoutAddressesTrait
     /**
      * @var bool
      *
-     * @ORM\Column(name="ship_to_billing_address", type="boolean")
+     * @ORM\Column(name="ship_to_billing_address", type="boolean", options={"default"=false})
      */
     protected $shipToBillingAddress = false;
 

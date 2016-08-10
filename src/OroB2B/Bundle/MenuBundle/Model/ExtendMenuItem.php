@@ -3,12 +3,17 @@
 namespace OroB2B\Bundle\MenuBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 
 /**
  * @method File getImage()
  * @method MenuItem setImage(File $image)
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue setDefaultTitle($string)
  */
 class ExtendMenuItem
 {
