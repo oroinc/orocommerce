@@ -81,5 +81,4 @@ class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListToProductDuplicator->duplicate($sourcePriceList, $targetPriceList);
     }
-
 }
