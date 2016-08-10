@@ -14,8 +14,8 @@
     }}
 {% endblock %}
 
-{% block checkout_paypal_ec_component_widget -%}
-    {% if checkout.paymentMethod == 'payflow_express_checkout' %}
+{% block _checkout_paypal_ec_component_widget -%}
+    {% if checkout.paymentMethod in ['payflow_express_checkout', 'paypal_payments_pro_express_checkout'] %}
         <div class="hidden"
              data-page-component-module="oropaypal/js/app/components/payflow-express-checkout-component"
              data-page-component-options="{{ {paymentMethod: checkout.paymentMethod}|json_encode }}">
