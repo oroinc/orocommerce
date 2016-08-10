@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
@@ -25,6 +27,11 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
     protected $tokenStorage;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $paymentTermClass = 'testClass';
@@ -36,11 +43,16 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
 
-        $this->provider = new PaymentTermProvider($this->registry, $this->tokenStorage, $this->paymentTermClass);
+        $this->provider = new PaymentTermProvider(
+            $this->registry,
+            $this->tokenStorage,
+            $this->eventDispatcher,
+            $this->paymentTermClass
+        );
     }
 
     protected function tearDown()
@@ -171,8 +183,26 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         return $repository;
     }
 
+    public function testGetCurrentFormResolvePaymentTermEvent()
+    {
+        $paymentTerm = new PaymentTerm();
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class))
+            ->will($this->returnCallback(function ($eventName, ResolvePaymentTermEvent  $event) use ($paymentTerm) {
+                $event->setPaymentTerm($paymentTerm);
+            }));
+
+        $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
+    }
+
     public function testGetCurrentWithoutToken()
     {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
 
         $this->assertNull($this->provider->getCurrentPaymentTerm());
@@ -180,6 +210,10 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentWithoutUser()
     {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())->method('getUser')->willReturn(null);
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
@@ -189,6 +223,10 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrent()
     {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
         $repository = $this->assertPaymentTermRepositoryCall();
         $paymentTerm = new PaymentTerm();
         $repository->expects($this->once())->method('getOnePaymentTermByAccount')->willReturn($paymentTerm);
