@@ -6,8 +6,6 @@
 OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
-       destination: '@germany_destination'
-       configuration: '@flatrate_configuration'
        enabled: true
        priority: '1'
        conditions: 'true'
@@ -16,13 +14,15 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
 
 Oro\Bundle\AddressBundle\Entity\Region:
    berlin:
+       __construct: ['DE-BE']
        combinedCode: 'DE-BE'
-       country: 'DE'
+       country: '@germany'
        code: 'BE'
        name: 'Berlin'
 
 Oro\Bundle\AddressBundle\Entity\Country:
    germany:
+       __construct: ['DE']
        iso2Code: 'DE'
        iso3Code: 'DEU'
        name: 'Germany'
@@ -37,12 +37,15 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
 
 OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
    flatrate_configuration:
+      currency: 'EUR'
       type: 'per_order'
       method: 'flat_rate'
-      enabled: true
-      currency: 'EUR'
+      enabled: 'true'
+      price: '1'
       handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
+
+
 
 
 #
