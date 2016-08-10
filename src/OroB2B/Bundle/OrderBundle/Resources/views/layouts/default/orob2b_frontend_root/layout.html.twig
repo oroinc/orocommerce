@@ -1,6 +1,6 @@
-{% block _top_selling_items_container_widget %}
+{% block _top_selling_products_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-items'
+        '~class': ' top-selling-products'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -8,7 +8,7 @@
     </div>
 {% endblock %}
 
-{% block _top_selling_items_widget %}
+{% block _top_selling_products_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~data-page-component-options': {
             autoplaySpeed: 4000,
@@ -20,12 +20,11 @@
     }) }}
 {% endblock %}
 
-{% block _top_selling_item_widget %}
+{% block _top_selling_product_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-item'
+        '~class': ' top-selling-product'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ item }}
-    </div>
+    0
+
 {% endblock %}

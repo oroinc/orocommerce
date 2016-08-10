@@ -95,6 +95,8 @@
         }
 
         & .slick-arrow {
+            overflow: hidden;
+            
             position: absolute;
             top: 25%;
             z-index: 4;

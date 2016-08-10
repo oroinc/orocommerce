@@ -1,9 +1,9 @@
-.top-selling-item {
+.top-selling-product {
     margin-left: 24px;
 }
 
 @include breakpoint('mobile') {
-    .top-selling-item {
+    .top-selling-product {
         margin-left: 0;
     }
 }
