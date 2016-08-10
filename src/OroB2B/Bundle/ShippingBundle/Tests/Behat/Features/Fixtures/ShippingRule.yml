@@ -1,0 +1,53 @@
+#OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
+#   unit1:
+#       code: 'aabb'
+#       defaultPrecision: '1'
+
+OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
+   shipping_rule1:
+       name: 'Shipping Rule 1'
+       destination: '@germany_destination'
+       configuration: '@flatrate_configuration'
+       enabled: true
+       priority: '1'
+       conditions: 'true'
+       currency: 'EUR'
+       stopProcessing: 'false'
+
+Oro\Bundle\AddressBundle\Entity\Region:
+   berlin:
+       combinedCode: 'DE-BE'
+       country: 'DE'
+       code: 'BE'
+       name: 'Berlin'
+
+Oro\Bundle\AddressBundle\Entity\Country:
+   germany:
+       iso2Code: 'DE'
+       iso3Code: 'DEU'
+       name: 'Germany'
+
+OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+   germany_destination:
+      postalCode: '10115'
+      region: '@berlin'
+      regionText: 'Berlin'
+      country: '@germany'
+      rule: '@shipping_rule1'
+
+OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+   flatrate_configuration:
+      type: 'per_order'
+      method: 'flat_rate'
+      enabled: true
+      currency: 'EUR'
+      handlingFeeValue: '1.5'
+      rule: '@shipping_rule1'
+
+
+#
+#OroB2B\Bundle\CheckoutBundle\Entity\Checkout:
+#   checkout1:
+#       id: 1
+#       currency: 'EUR'
+#       shippingEstimateCurrency: 'EUR'
