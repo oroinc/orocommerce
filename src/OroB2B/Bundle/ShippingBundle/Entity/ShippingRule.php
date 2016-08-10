@@ -42,6 +42,8 @@ use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRule;
 class ShippingRule extends ExtendShippingRule
 {
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")

@@ -1,3 +1,5 @@
-{% set destinations = record.getValue('destinations').toArray() %}
+{% spaceless %}
+    {% set destinations = record.getValue('destinations').toArray() %}
 
-{{ destinations|join('</br>')|raw }}
+    {{ destinations|join('</br>')|raw }}
+{% endspaceless %}
