@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -21,7 +24,7 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->getMock(ManagerRegistry::class);
 
         $this->manager = new WebsiteManager($this->managerRegistry);
     }
@@ -33,24 +36,23 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCurrentWebsite()
     {
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $repository = $this->getMockBuilder(WebsiteRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $repository->expects($this->once())
-            ->method('findOneBy')
-            ->with($this->isType('array'), $this->isType('array'))
+            ->method('getDefaultWebsite')
             ->willReturn(new Website());
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->getMock(ObjectManager::class);
         $objectManager->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BWebsiteBundle:Website')
+            ->with(Website::class)
             ->willReturn($repository);
 
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BWebsiteBundle:Website')
+            ->with(Website::class)
             ->willReturn($objectManager);
 
         $this->assertEquals(new Website(), $this->manager->getCurrentWebsite());

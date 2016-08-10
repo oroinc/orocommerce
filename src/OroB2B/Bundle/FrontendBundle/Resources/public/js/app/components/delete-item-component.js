@@ -7,6 +7,7 @@ define(function (require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var DeleteConfirmation = require('orob2bfrontend/js/app/components/delete-confirmation');
     var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
@@ -14,16 +15,18 @@ define(function (require) {
     DeleteItemComponent = BaseComponent.extend({
         initialize: function(options) {
             this.$elem = options._sourceElement;
-            this.url = options.url;
+            this.url = options.url || routing.generate(options.route, options.routeParams || {});
             this.removeClass = options.removeClass;
             this.redirect = options.redirect;
             this.confirmMessage = options.confirmMessage;
             this.sucsessMessage = options.sucsessMessage || __('item_deleted');
             this.okButtonClass = options.okButtonClass;
             this.cancelButtonClass = options.cancelButtonClass;
+            this.triggerData = options.triggerData || null;
 
             this.$elem.on('click', _.bind(this.deleteItem, this));
         },
+
         deleteItem: function() {
             if (this.confirmMessage) {
                 this.deleteWithConfirmation();
@@ -31,6 +34,7 @@ define(function (require) {
                 this.deleteWithoutConfirmation();
             }
         },
+
         deleteWithConfirmation: function() {
             var options = {
                 content: this.confirmMessage
@@ -48,13 +52,16 @@ define(function (require) {
             confirm.on('ok',_.bind(this.deleteWithoutConfirmation, this));
             confirm.open();
         },
+
         deleteWithoutConfirmation: function(e) {
             var self = this;
             $.ajax({
                 url: self.url,
                 type: 'DELETE',
                 success: function() {
-                    self.$elem.closest('.' + self.removeClass).remove();
+                    if (self.removeClass) {
+                        self.$elem.closest('.' + self.removeClass).remove();
+                    }
 
                     if (self.redirect) {
                         self.deleteWithRedirect(e);
@@ -69,13 +76,15 @@ define(function (require) {
                 }
             })
         },
+
         deleteWithRedirect: function(e) {
             mediator.execute('showFlashMessage', 'success', this.sucsessMessage);
             mediator.execute('redirectTo', {url: this.redirect}, {redirect: true});
         },
+
         deleteWithoutRedirect: function(e) {
-            mediator.trigger('frontend:item:delete', e);
             mediator.execute('showMessage', 'success', this.sucsessMessage, {'flash': true});
+            mediator.trigger('frontend:item:delete', this.triggerData || e);
         }
     });
 
