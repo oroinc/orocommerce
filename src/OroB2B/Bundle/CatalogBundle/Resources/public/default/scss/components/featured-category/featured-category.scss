@@ -1,6 +1,6 @@
 .featured-category {
     display: inline-block;
-    margin-top: 50px;
+    margin-top: 52px;
 
     vertical-align: top;
 
@@ -44,8 +44,10 @@
             text-decoration: underline;
         }
     }
+}
 
-    @include breakpoint($phone-width) {
+@include breakpoint('mobile') {
+    .featured-category {
         margin-top: 20px;
 
         &__name {

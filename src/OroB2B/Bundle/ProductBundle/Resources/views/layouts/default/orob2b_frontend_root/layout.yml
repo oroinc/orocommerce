@@ -6,9 +6,11 @@ layout:
             namespace: featured
     actions:
         - '@setBlockTheme':
-            themes: 'default.html.twig'
+            themes: 'layout.html.twig'
         - '@addTree':
             items:
+                featured_products_container:
+                    blockType: container
                 featured_products:
                     blockType: embedded_list
                     options:
@@ -19,7 +21,8 @@ layout:
                         slides_count: 4
             tree:
                 content:
-                    featured_products: ~
+                    featured_products_container:
+                        featured_products: ~
         - '@setOption':
             id: featured_product
             optionName: class_prefix

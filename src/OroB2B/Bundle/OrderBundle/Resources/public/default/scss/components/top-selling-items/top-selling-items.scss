@@ -7,3 +7,13 @@
         margin: 0 42px;
     }
 }
+
+@include breakpoint('mobile') {
+    .top-selling-items {
+        margin-top: 20px;
+
+        & .embedded-list {
+            margin: 0;
+        }
+    }
+}

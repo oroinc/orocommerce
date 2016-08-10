@@ -84,8 +84,14 @@
   }
 }
 
-@mixin breakpoint($device-width) {
-  @media (max-width: #{$device-width}) {
-    @content;
-  }
+@mixin breakpoint($type) {
+    $breakpoints: (
+        'large': '(max-width: ' + #{$breakpoint-large} + ')',
+        'tablet': '(max-width: ' + #{$breakpoint-tablet} + ')',
+        'mobile': '(max-width: ' + #{$breakpoint-mobile} + ')'
+    );
+
+    @media #{map-get($breakpoints, $type)} {
+        @content;
+    }
 }

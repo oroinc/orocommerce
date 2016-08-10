@@ -7,3 +7,10 @@
         margin-bottom: 0;
     }
 }
+
+@include breakpoint('mobile') {
+    .featured-product {
+        margin-left: 16px;
+        margin-right: 1px;
+    }
+}

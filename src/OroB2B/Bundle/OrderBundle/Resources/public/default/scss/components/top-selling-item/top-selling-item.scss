@@ -1,3 +1,9 @@
 .top-selling-item {
     margin-left: 24px;
 }
+
+@include breakpoint('mobile') {
+    .top-selling-item {
+        margin-left: 0;
+    }
+}

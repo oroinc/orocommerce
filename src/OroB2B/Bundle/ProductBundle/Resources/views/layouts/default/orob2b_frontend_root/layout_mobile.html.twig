@@ -1,0 +1,12 @@
+{% block _featured_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            autoplay: false,
+            arrows: false
+        }
+    }) %}
+
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
+{% endblock %}

@@ -11,13 +11,15 @@
 {% block _hero_promo_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~data-page-component-options': {
-            autoplaySpeed: 4000,
+            autoplaySpeed: 6000,
             arrows: false,
             dots: true
         }
     }) %}
 
-    {{ block_widget(block, {attr: attr}) }}
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
 {% endblock %}
 
 {% block _hero_promo_item_widget %}

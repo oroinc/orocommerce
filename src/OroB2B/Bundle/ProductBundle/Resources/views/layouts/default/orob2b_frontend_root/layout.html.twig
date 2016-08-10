@@ -1,6 +1,6 @@
-{% block _top_selling_items_container_widget %}
+{% block _featured_products_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-items'
+        '~class': ' featured-products'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -8,22 +8,24 @@
     </div>
 {% endblock %}
 
-{% block _top_selling_items_widget %}
+{% block _featured_products_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~data-page-component-options': {
-            mobileEnabled: true
+            autoplaySpeed: 5000,
         }
     }) %}
 
-    {{ block_widget(block, {attr: attr}) }}
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
 {% endblock %}
 
-{% block _top_selling_item_widget %}
+{% block _featured_product_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' top-selling-item'
+        '~class': ' featured-product'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ item }}
-    </div>
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
 {% endblock %}

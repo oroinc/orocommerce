@@ -129,6 +129,10 @@
                 },
                 '~class': ' embedded-list__container--slider'
             }) %}
+        {% else %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' embedded-list__container--tiles'
+            }) %}
         {% endif %}
 
         {% if label is defined %}

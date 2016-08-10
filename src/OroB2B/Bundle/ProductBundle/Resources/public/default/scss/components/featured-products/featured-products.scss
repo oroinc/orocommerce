@@ -7,3 +7,23 @@
         margin: 0 42px;
     }
 }
+
+@include breakpoint('mobile') {
+    .featured-products {
+        margin-top: 20px;
+
+        & .embedded-list {
+            margin: 0;
+
+            &__container--slider {
+                margin: 16px 0 0 -16px;
+            }
+
+            &__container--slider::before {
+                left: 0;
+
+                width: 16px;
+            }
+        }
+    }
+}
