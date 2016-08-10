@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
+use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -177,6 +178,10 @@ class CheckoutController extends Controller
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
+                        $this->getWorkflowManager()->get
+                        $this->getTransitionFormProvider()->removeFormCache($continueTransition, $workflowItem);
+                        $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
+                        $transitionForm->setData($workflowItem->getData());
                         $this->handleCheckoutErrors();
                     }
                 } else {
@@ -207,14 +212,21 @@ class CheckoutController extends Controller
     }
 
     /**
+     * @return TransitionFormDataProvider
+     */
+    protected function getTransitionFormProvider()
+    {
+        return $this->get('orob2b_checkout.layout.data_provider.transition_form');
+    }
+
+    /**
      * @param TransitionData $transitionData
      * @param WorkflowItem $workflowItem
      * @return FormInterface
      */
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        return $this->get('orob2b_checkout.layout.data_provider.transition_form')
-            ->getForm($transitionData, $workflowItem);
+        return $this->getTransitionFormProvider()->getForm($transitionData, $workflowItem);
     }
 
     /**

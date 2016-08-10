@@ -2,17 +2,20 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPath;
-
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 
+/**
+ * @todo: add doc
+ * tokenAttribute and tokenValue are optional
+ */
 class SaveCheckoutStateAction extends AbstractAction
 {
     const OPTION_KEY_STATE = 'state';
     const OPTION_KEY_SAVE_TO = 'saveTo';
-    const OPTION_KEY_TOKEN = 'tokenAttribute';
+    const OPTION_KEY_TOKEN_VALUE = 'tokenValue';
+    const OPTION_KEY_TOKEN_ATTRIBUTE = 'tokenAttribute';
 
     /** @var array */
     protected $options;
@@ -24,10 +27,16 @@ class SaveCheckoutStateAction extends AbstractAction
     {
         $statePath = $this->getOption($this->options, self::OPTION_KEY_STATE);
         $saveToPath = $this->getOption($this->options, self::OPTION_KEY_SAVE_TO);
-        $tokenPath = $this->getOption($this->options, self::OPTION_KEY_TOKEN);
+        $tokenAttributePath = $this->getOption($this->options, self::OPTION_KEY_TOKEN_ATTRIBUTE);
+        $tokenValuePath = $this->getOption($this->options, self::OPTION_KEY_TOKEN_VALUE);
 
         $stateValue = $this->contextAccessor->getValue($context, $statePath);
         $saveToValue = $this->contextAccessor->getValue($context, $saveToPath);
+
+        $tokenValue = null;
+        if ($tokenValuePath) {
+            $tokenValue = $this->contextAccessor->getValue($context, $tokenValuePath);
+        }
 
         if (!is_array($saveToValue)) {
             throw new InvalidParameterException(
@@ -39,11 +48,15 @@ class SaveCheckoutStateAction extends AbstractAction
             );
         }
 
-        $token = UUIDGenerator::v4();
+        $token = $tokenValue ?: UUIDGenerator::v4();
         $saveToValue[$token] = $stateValue;
 
         $this->contextAccessor->setValue($context, $saveToPath, $saveToValue);
-        $this->contextAccessor->setValue($context, $tokenPath, $token);
+
+        if ($tokenAttributePath) {
+            $this->contextAccessor->setValue($context, $tokenAttributePath, $token);
+        }
+
 
     }
 

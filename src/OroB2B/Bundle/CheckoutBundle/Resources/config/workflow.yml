@@ -354,10 +354,23 @@ workflows:
 
             continue_to_shipping_address_definition:
                 preactions:
-                    - '@get_checkout_state':
-                        getFrom: $state_token_storage
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not_equal': [$state_token, $saved_state_token]
+                        actions:
+                            - '@get_checkout_state':
+                                getFrom: $state_token_storage
+                                token: $state_token
+                                attribute: $.result.savedCheckoutState
+#                            - '@get_checkout_state':
+#                                getFrom: $state_token_storage
+#                                token: $saved_state_token
+#                                attribute: $.result.workflowCheckoutState
+                            - '@save_checkout_state':
+#                                state: $.result.workflowCheckoutState
+                                state: $.result.initCheckoutState
+                                saveTo: $state_token_storage
+                                tokenValue: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -369,10 +382,12 @@ workflows:
                     '@and':
                         - '@not_empty': $checkout.billingAddress
                         - '@not_empty': $.result.initCheckoutState
-                        - '@check_checkout_states':
-                            entity: $checkout
-                            state1: $.result.initCheckoutState
-                            state2: $.result.savedCheckoutState
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 post_actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
@@ -434,10 +449,23 @@ workflows:
 
             continue_to_shipping_method_definition:
                 preactions:
-                    - '@get_checkout_state':
-                        getFrom: $state_token_storage
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not_equal': [$state_token, $saved_state_token]
+                        actions:
+                            - '@get_checkout_state':
+                                getFrom: $state_token_storage
+                                token: $state_token
+                                attribute: $.result.savedCheckoutState
+#                            - '@get_checkout_state':
+#                                getFrom: $state_token_storage
+#                                token: $saved_state_token
+#                                attribute: $.result.workflowCheckoutState
+                            - '@save_checkout_state':
+#                                state: $.result.workflowCheckoutState
+                                state: $.result.initCheckoutState
+                                saveTo: $state_token_storage
+                                tokenValue: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -454,10 +482,12 @@ workflows:
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
-                        - '@check_checkout_states':
-                            entity: $checkout
-                            state1: $.result.initCheckoutState
-                            state2: $.result.savedCheckoutState
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -493,20 +523,35 @@ workflows:
 
             continue_to_payment_definition:
                 preactions:
-                    - '@get_checkout_state':
-                        getFrom: $state_token_storage
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not_equal': [$state_token, $saved_state_token]
+                        actions:
+                            - '@get_checkout_state':
+                                getFrom: $state_token_storage
+                                token: $state_token
+                                attribute: $.result.savedCheckoutState
+#                            - '@get_checkout_state':
+#                                getFrom: $state_token_storage
+#                                token: $saved_state_token
+#                                attribute: $.result.workflowCheckoutState
+                            - '@save_checkout_state':
+#                                state: $.result.workflowCheckoutState
+                                state: $.result.initCheckoutState
+                                saveTo: $state_token_storage
+                                tokenValue: $state_token
                 pre_conditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
                 conditions:
-                    '@check_checkout_states':
-                        entity: $checkout
-                        state1: $.result.initCheckoutState
-                        state2: $.result.savedCheckoutState
+                    '@or':
+                        - '@empty': $.result.savedCheckoutState
+                        - '@check_checkout_states':
+                            entity: $checkout
+                            state1: $.result.initCheckoutState
+                            state2: $.result.savedCheckoutState
                 post_actions:
                     - '@generate_checkout_state_snapshot':
                         checkout: $checkout
@@ -519,10 +564,23 @@ workflows:
 
             continue_to_order_review_definition:
                 preactions:
-                    - '@get_checkout_state':
-                        getFrom: $state_token_storage
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not_equal': [$state_token, $saved_state_token]
+                        actions:
+                            - '@get_checkout_state':
+                                getFrom: $state_token_storage
+                                token: $state_token
+                                attribute: $.result.savedCheckoutState
+#                            - '@get_checkout_state':
+#                                getFrom: $state_token_storage
+#                                token: $saved_state_token
+#                                attribute: $.result.workflowCheckoutState
+                            - '@save_checkout_state':
+#                                state: $.result.workflowCheckoutState
+                                state: $.result.initCheckoutState
+                                saveTo: $state_token_storage
+                                tokenValue: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -543,10 +601,12 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-                        - '@check_checkout_states':
-                            entity: $checkout
-                            state1: $.result.initCheckoutState
-                            state2: $.result.savedCheckoutState
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -584,6 +644,7 @@ workflows:
                         saveTo: $state_token_storage
                         tokenAttribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
+
             verify_payment_definition:
                 pre_conditions:
                     '@and':
@@ -604,19 +665,34 @@ workflows:
 
             place_order_definition:
                 preactions:
-                    - '@get_checkout_state':
-                        getFrom: $state_token_storage
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not_equal': [$state_token, $saved_state_token]
+                        actions:
+                            - '@get_checkout_state':
+                                getFrom: $state_token_storage
+                                token: $state_token
+                                attribute: $.result.savedCheckoutState
+#                            - '@get_checkout_state':
+#                                getFrom: $state_token_storage
+#                                token: $saved_state_token
+#                                attribute: $.result.workflowCheckoutState
+                            - '@save_checkout_state':
+#                                state: $.result.workflowCheckoutState
+                                state: $.result.initCheckoutState
+                                saveTo: $state_token_storage
+                                tokenValue: $state_token
                 pre_conditions:
                     '@not_equal':
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
                 conditions:
-                    '@check_checkout_states':
-                        entity: $checkout
-                        state1: $.result.initCheckoutState
-                        state2: $.result.savedCheckoutState
+                    '@or':
+                        - '@empty': $.result.savedCheckoutState
+                        - '@check_checkout_states':
+                            entity: $checkout
+                            state1: $.result.initCheckoutState
+                            state2: $.result.savedCheckoutState
                 post_actions:
                     - '@assign_value':
                         conditions:

@@ -72,7 +72,7 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
      */
     public function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        $key = $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
+        $key = $this->getCacheKey($transitionData, $workflowItem);
         if ($transitionData->getTransition()->hasForm()) {
             if (!array_key_exists($key, $this->forms)) {
                 $transition = $transitionData->getTransition();
@@ -95,5 +95,33 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         }
 
         return $this->forms[$key];
+    }
+
+    /**
+     * @param TransitionData $transitionData
+     * @param WorkflowItem $workflowItem
+     * @return bool
+     */
+    public function removeFormCache(TransitionData $transitionData, WorkflowItem $workflowItem)
+    {
+        $key = $this->getCacheKey($transitionData, $workflowItem);
+
+        if (!isset($this->forms[$key])) {
+            return false;
+        }
+
+        unset($this->forms[$key]);
+
+        return true;
+    }
+
+    /**
+     * @param TransitionData $transitionData
+     * @param WorkflowItem $workflowItem
+     * @return string
+     */
+    protected function getCacheKey(TransitionData $transitionData, WorkflowItem $workflowItem)
+    {
+        return $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
     }
 }
