@@ -24,6 +24,7 @@ parameters:
     orob2b_pricing.entity.price_attribute_price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList
     orob2b_pricing.entity.price_attribute_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributeCurrency
     orob2b_pricing.entity.price_attribute_product_price.class: OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
+    orob2b_pricing.entity.price_list_to_product.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -847,3 +848,11 @@ services:
         arguments:
             - '@orob2b_pricing.cache.rule_cache.storage'
             - '@doctrine'
+
+    orob2b_pricing.duplicator.price_list_to_product_duplicator:
+        class: 'OroB2B\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+        calls:
+            - [setEntityName, ['%orob2b_pricing.entity.price_list_to_product.class%']]

@@ -350,6 +350,28 @@ abstract class BaseProductPriceRepository extends EntityRepository
         BasePriceList $targetPriceList,
         InsertFromSelectQueryExecutor $insertQueryExecutor
     ) {
+        $qb = $this->createQBForCopy($sourcePriceList, $targetPriceList);
+
+        $fields = [
+            'product',
+            'unit',
+            'priceList',
+            'productSku',
+            'quantity',
+            'value',
+            'currency',
+        ];
+
+        $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
+    }
+
+    /**
+     * @param BasePriceList $sourcePriceList
+     * @param BasePriceList $targetPriceList
+     * @return QueryBuilder
+     */
+    protected function createQBForCopy(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
+    {
         $qb = $this->createQueryBuilder('productPrice');
         $qb
             ->select(
@@ -364,16 +386,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->where($qb->expr()->eq('productPrice.priceList', ':sourcePriceList'))
             ->setParameter('sourcePriceList', $sourcePriceList);
 
-        $fields = [
-            'product',
-            'unit',
-            'priceList',
-            'productSku',
-            'quantity',
-            'value',
-            'currency',
-        ];
-
-        $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
+        return $qb;
     }
 }

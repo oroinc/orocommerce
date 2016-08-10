@@ -65,14 +65,14 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
         $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice';
         $this->priceDuplicator->setPriceListClass($priceListClass);
 
-            $this->manager->expects($this->once())
-                ->method('getRepository')
-                ->with($priceListClass)
-                ->willReturn($this->repository);
-            $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
-            $this->repository->expects($this->once())
-                ->method('copyPrices')
-                ->with($sourcePriceList, $targetPriceList, $this->insertExecutor);
+        $this->manager->expects($this->once())
+            ->method('getRepository')
+            ->with($priceListClass)
+            ->willReturn($this->repository);
+        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
+        $this->repository->expects($this->once())
+            ->method('copyPrices')
+            ->with($sourcePriceList, $targetPriceList, $this->insertExecutor);
 
         $this->priceDuplicator->duplicate($sourcePriceList, $targetPriceList);
     }

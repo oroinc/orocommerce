@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -66,5 +67,36 @@ class PriceListToProductRepository extends EntityRepository
             ->setParameter('isManual', true);
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param PriceList $sourcePriceList
+     * @param PriceList $targetPriceList
+     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
+     * @internal param PriceList $priceList
+     */
+    public function copyRelations(
+        PriceList $sourcePriceList,
+        PriceList $targetPriceList,
+        InsertFromSelectQueryExecutor $insertQueryExecutor
+    ) {
+        $qb = $this->createQueryBuilder('priceListToProduct');
+        $qb
+            ->select(
+                'IDENTITY(priceListToProduct.product)',
+                (string)$qb->expr()->literal($targetPriceList->getId()),
+                'priceListToProduct.manual'
+            )
+            ->where($qb->expr()->eq('priceListToProduct.priceList', ':sourcePriceList'))
+            ->andWhere($qb->expr()->eq('priceListToProduct.manual', ':isManual'))
+            ->setParameter('sourcePriceList', $sourcePriceList)
+            ->setParameter('isManual', true);
+        $fields = [
+            'product',
+            'priceList',
+            'manual',
+        ];
+
+        $insertQueryExecutor->execute($this->getClassName(), $fields, $qb);
     }
 }

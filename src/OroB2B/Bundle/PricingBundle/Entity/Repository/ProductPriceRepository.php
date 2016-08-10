@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
@@ -77,5 +79,16 @@ class ProductPriceRepository extends BaseProductPriceRepository
         if (!empty($ids)) {
             $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createQBForCopy(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
+    {
+        $qb = parent::createQBForCopy($sourcePriceList, $targetPriceList);
+        $qb->andWhere($qb->expr()->isNull('productPrice.priceRule'));
+
+        return $qb;
     }
 }

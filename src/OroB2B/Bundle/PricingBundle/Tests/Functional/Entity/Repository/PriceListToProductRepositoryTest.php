@@ -96,6 +96,38 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $this->assertEquals($manualRelation->getId(), $actual[0]->getId());
     }
 
+    public function testCopyRelations()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceListToProduct::class);
+        $targetPriceList = new PriceList();
+        $targetPriceList->setName('test price list');
+        $em->persist($targetPriceList);
+        $em->flush();
+
+        /** @var PriceList $sourcePriceList */
+        $sourcePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_5);
+        $generatedRelation = new PriceListToProduct();
+        $generatedRelation->setPriceList($sourcePriceList);
+        $generatedRelation->setProduct($product);
+        $generatedRelation->setManual(false);
+        $em->persist($generatedRelation);
+        $em->flush($generatedRelation);
+
+        $insertQueryExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
+        $this->repository->copyRelations($sourcePriceList, $targetPriceList, $insertQueryExecutor);
+
+        $relations = $this->repository->findBy(['priceList' => $sourcePriceList]);
+        $this->assertCount(4, $relations);
+        /** @var PriceListToProduct[] $newRelations */
+        $newRelations = $this->repository->findBy(['priceList' => $targetPriceList]);
+        $this->assertCount(3, $newRelations);
+        foreach ($newRelations as $newRelation) {
+            $this->assertTrue($newRelation->isManual());
+        }
+    }
+
     /**
      * @param PriceList $priceList
      * @param Product $product

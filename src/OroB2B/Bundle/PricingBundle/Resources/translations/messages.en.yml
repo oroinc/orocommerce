@@ -76,6 +76,7 @@ orob2b.pricing:
         rule_condition.label: Condition
         rule.label: Rule
         priority.label: Priority
+        price_calculated_as.label: Price Calculated As
 
     quantity.label: Quantity
     fallback:

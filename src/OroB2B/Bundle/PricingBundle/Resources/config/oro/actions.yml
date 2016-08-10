@@ -132,7 +132,11 @@ operations:
                   - [[setNull], [propertyName, [id]]]
                   - [[emptyCollection], [propertyName, [prices]]]
                   - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[collection], [propertyName, [priceRules]]]
+                  - [[collection], [propertyName, [lexemes]]]
+                  - [[keep], [propertyName, [productUnit]]]
                   - [[collection], [propertyName, [currencies]]]
+                  - [[shallowCopy], [propertyType, ['\DateTime']]]
             - '@assign_value': [$.newPriceList.name, $.newName]
             - '@assign_value': [$.newPriceList.active, false]
             - '@assign_value': [$.newPriceList.default, false]
@@ -141,6 +145,10 @@ operations:
                 method: duplicateSchedule
                 method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.price_list_to_product_duplicator
+                method: duplicate
+                method_parameters: [$.entity, $.newPriceList]
             - '@call_service_method':
                 service: orob2b_pricing.duplicator.product_price_duplicator
                 method: duplicate
