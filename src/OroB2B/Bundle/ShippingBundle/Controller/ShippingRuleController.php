@@ -104,7 +104,12 @@ class ShippingRuleController extends Controller
 
     /**
      * @Route("/{gridName}/massAction/{actionName}", name="orob2b_status_shipping_rule_massaction")
-     *
+     * @Acl(
+     *     id="orob2b_shipping_rule_update",
+     *     type="entity",
+     *     permission="EDIT",
+     *     class="OroB2BShippingBundle:ShippingRule"
+     * )
      * @param string $gridName
      * @param string $actionName
      * @param Request $request

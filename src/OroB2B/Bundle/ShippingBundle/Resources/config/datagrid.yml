@@ -129,7 +129,7 @@ datagrid:
             delete:
                 type:         delete
                 link:         delete_link
-                acl_resource: orob2b_api_shipping_rule_delete
+                acl_resource: orob2b_shipping_rule_delete
                 icon:         trash
                 label:        oro.grid.action.delete
                 defaultMessages:
@@ -140,12 +140,14 @@ datagrid:
         mass_actions:
             enable:
                 type:         shippingruleenable
+                acl_resource: orob2b_shipping_rule_update
                 label:        orob2b.shipping.datagrid.action.enable
                 icon:         ok
                 entity_name:  %orob2b_shipping.entity.shipping_rule.class%
                 data_identifier: shipping_rule.id
             disable:
                 type:         shippingruledisable
+                acl_resource: orob2b_shipping_rule_update
                 label:        orob2b.shipping.datagrid.action.disable
                 icon:         remove
                 entity_name:  %orob2b_shipping.entity.shipping_rule.class%
