@@ -63,12 +63,14 @@ oro_system_configuration:
 
         orob2b_product.product_image_watermark_file:
             data_type: string
-            type: oro_config_file
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
             priority: 30
             options:
                 label: orob2b.product.system_configuration.fields.product_image_watermark_file.label
                 resettable: false
                 required: false
+                fileConstraints:
+                    - Image: ~
 
         orob2b_product.product_image_watermark_size:
             data_type: integer
