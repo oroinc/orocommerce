@@ -6,11 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\OroB2BWebsiteExtension;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -69,17 +66,8 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
         // Store website url in configuration
-        $configManager->set(
-            OroB2BWebsiteExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . Configuration::URL,
-            $url,
-            $website->getId()
-        );
-        $configManager->set(
-            OroB2BWebsiteExtension::ALIAS
-            . ConfigManager::SECTION_MODEL_SEPARATOR . Configuration::SECURE_URL,
-            $url,
-            $website->getId()
-        );
+        $configManager->set('oro_b2b_website.url', $url, $website->getId());
+        $configManager->set('oro_b2b_website.secure_url', $url, $website->getId());
         $configManager->flush();
     }
 }

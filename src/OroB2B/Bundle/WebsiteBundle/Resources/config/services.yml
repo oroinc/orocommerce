@@ -55,3 +55,10 @@ services:
             - '@translation.warmer.default'
             - '@oro_translation.strategy.provider'
             - '@oro_locale.translation.strategy.localization_fallback_strategy'
+
+    orob2b_website.event_listener.routing:
+        class: 'OroB2B\Bundle\WebsiteBundle\EventListener\RoutingListener'
+        arguments:
+            - '@orob2b_website.manager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: 10 }
