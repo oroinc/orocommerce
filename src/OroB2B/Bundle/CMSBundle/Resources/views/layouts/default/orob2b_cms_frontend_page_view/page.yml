@@ -5,17 +5,17 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: { '@value': $data.page.title }
+            optionValue: '=data["page"].getTitle()'
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: {'@value': $data.page.title }
+            optionValue: '=data["page"].getTitle()'
         - '@addTree':
             items:
                 cms_page_content:
                     blockType: text
                     options:
-                        text: { '@value': $data.page.content }
+                        text: '=data["page"].getContent()'
                         escape: false
             tree:
                 content:

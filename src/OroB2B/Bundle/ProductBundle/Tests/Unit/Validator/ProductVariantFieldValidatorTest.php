@@ -9,7 +9,7 @@ use Doctrine\Common\Util\ClassUtils;
 use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -85,7 +85,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesNothingIfEmptyProductCustomFields()
     {
-        $product = new StubProduct();
+        $product = new Product();
         $productClass = ClassUtils::getClass($product);
 
         $this->customFieldProvider->expects($this->once())
@@ -152,7 +152,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
      */
     private function prepareProductWithVariantFields(array $variantFields)
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setHasVariants(true);
         $product->setVariantFields($variantFields);
 

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Event;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
@@ -16,8 +17,7 @@ class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['checkoutEntity', new Checkout()],
             ['source', new CheckoutSource()],
-            ['checkoutId', 12],
-            ['type', 'type']
+            ['checkoutId', 12]
         ];
 
         $event = new CheckoutEntityEvent();

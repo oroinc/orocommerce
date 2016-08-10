@@ -18,7 +18,6 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
@@ -35,7 +34,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
@@ -314,14 +313,14 @@ class ProductTypeTest extends FormIntegrationTestCase
         $hasVariants = true,
         $hasImages = false
     ) {
-        $expectedProduct = new StubProduct();
+        $expectedProduct = new Product();
 
         $expectedProduct->setHasVariants($hasVariants);
 
         if ($hasVariants) {
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
-        
+
         $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
 
         if ($withProductUnitPrecision) {
@@ -393,7 +392,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function createDefaultProductEntity($hasVariants = true)
     {
-        $defaultProduct = new StubProduct();
+        $defaultProduct = new Product();
         $defaultProduct->setHasVariants($hasVariants);
 
         if ($hasVariants) {

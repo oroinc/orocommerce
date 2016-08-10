@@ -6,7 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 class MenuItemTest extends \PHPUnit_Framework_TestCase
 {

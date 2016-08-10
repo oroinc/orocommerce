@@ -13,7 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
 use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -136,7 +136,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
     private function prepareRepositoryProduct()
     {
-        $product = new StubProduct();
+        $product = new Product();
         $product->setVariantFields($this->parentProductCustomFields);
         $product->setSize(self::SIZE);
 

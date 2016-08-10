@@ -30,7 +30,7 @@ class FrontendControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $menuHtml = $crawler->filter('ul.top-nav__list')->text();
+        $menuHtml = $crawler->filter('ul.main-menu__list')->text();
 
         /** @var \Knp\Menu\ItemInterface $menuItem */
         foreach ($menu->getChildren() as $menuItem) {
