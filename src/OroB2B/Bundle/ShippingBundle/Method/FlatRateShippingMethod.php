@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
@@ -96,11 +95,15 @@ class FlatRateShippingMethod implements ShippingMethodInterface
         ShippingContextAwareInterface $context,
         ShippingRuleConfiguration $configEntity
     ) {
-        if (!($configEntity instanceof FlatRateRuleConfiguration)) {
+        if (!($configEntity instanceof FlatRateRuleConfiguration) ||
+            ($configEntity->getPrice() === null) ||
+            empty($configEntity->getType())
+        ) {
             return null;
         }
 
         /** @var FlatRateRuleConfiguration $configEntity */
+        /** @var string $currency */
         $currency = $configEntity->getCurrency();
         /** @var Price|null $price */
         $price = $configEntity->getPrice();
@@ -109,30 +112,44 @@ class FlatRateShippingMethod implements ShippingMethodInterface
         /** @var Price $handlingFee */
         $handlingFee = $configEntity->getHandlingFeeValue();
 
-        if (empty($price) || empty($shippingRuleType)) {
+        if ($shippingRuleType === FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER) {
+            return $this->calculatePricePerOrder($price, $handlingFee, $currency);
+        }
+
+        return $this->calculatePricePerItem($context, $price, $handlingFee, $currency);
+    }
+
+    /**
+     * @param Price|null $price
+     * @param Price $handlingFee
+     * @param string $currency
+     * @return Price
+     */
+    protected function calculatePricePerOrder($price, $handlingFee, $currency)
+    {
+        return Price::create((float)$price->getValue() + (float)$handlingFee, $currency);
+    }
+
+    /**
+     * @param ShippingContextAwareInterface $context
+     * @param Price|null $price
+     * @param Price $handlingFee
+     * @param string $currency
+     * @return Price
+     */
+    protected function calculatePricePerItem($context, $price, $handlingFee, $currency)
+    {
+        /** @var array $context */
+        $shippingContext = $context->getShippingContext();
+
+        if (!isset($shippingContext['lineItems'])) {
             return null;
         }
 
-        if ($shippingRuleType == FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER) {
-            return Price::create((float)$price->getValue() + (float)$handlingFee, $currency);
-        } else {
-            /** @var array $context */
-            $shippingContext = $context->getShippingContext();
+        /** @var ArrayCollection|null $items */
+        $items = $shippingContext['lineItems'];
+        $countItems = ($items !== null) ? $items->count() : 0;
 
-            if (empty($shippingContext) ||
-                !array_key_exists('checkout', $shippingContext) ||
-                empty($shippingContext['checkout'])
-            ) {
-                return null;
-            }
-
-            /** @var Checkout|null $checkout */
-            $checkout = $shippingContext['checkout'];
-            /** @var ArrayCollection|null $items */
-            $items = $checkout->getLineItems();
-            $countItems = !empty($items) && ($items instanceof ArrayCollection) ? $items->count() : 0;
-
-            return Price::create($countItems * (float)$price->getValue() + (float)$handlingFee, $currency);
-        }
+        return Price::create($countItems * (float)$price->getValue() + (float)$handlingFee, $currency);
     }
 }

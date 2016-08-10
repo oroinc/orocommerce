@@ -6,13 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 
 class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var FlatRateShippingMethod
      */
@@ -24,11 +26,11 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * $currency
-     * $price
-     * $handlingFeeValue
-     * $type
-     * $expectedPrice
+     * @param string $currency
+     * @param Price $price
+     * @param float $handlingFeeValue
+     * @param string $type
+     * @param float $expectedPrice
      *
      * @dataProvider ruleConfigProvider
      */
@@ -37,45 +39,25 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $dataEntity **/
         $dataEntity = $this->getMock(ShippingContextAwareInterface::class);
 
-        /** @var FlatRateRuleConfiguration|\PHPUnit_Framework_MockObject_MockObject $configEntity **/
-        $configEntity = $this->getMock(FlatRateRuleConfiguration::class);
+        /** @var FlatRateRuleConfiguration|object $configEntity **/
+        $configEntity = $this->getEntity(
+            FlatRateRuleConfiguration::class,
+            [
+                'currency' => $currency,
+                'price' => $price,
+                'type' => $type,
+                'handlingFeeValue' => $handlingFeeValue
+            ]
+        );
 
-        /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout **/
-        $checkout = $this->getMock(Checkout::class);
-
-        /** @var ArrayCollection|\PHPUnit_Framework_MockObject_MockObject $checkout **/
+        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems **/
         $lineItems = $this->getMock(ArrayCollection::class);
 
-        $context = ['checkout' => $checkout];
-
-        $configEntity->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn($currency)
-        ;
-
-        $configEntity->expects($this->once())
-            ->method('getPrice')
-            ->willReturn($price)
-        ;
-
-        $configEntity->expects($this->once())
-            ->method('getType')
-            ->willReturn($type)
-        ;
-
-        $configEntity->expects($this->once())
-            ->method('getHandlingFeeValue')
-            ->willReturn($handlingFeeValue)
-        ;
+        $context = ['lineItems' => $lineItems];
 
         $dataEntity->expects($this->any())
             ->method('getShippingContext')
             ->willReturn($context)
-        ;
-
-        $checkout->expects($this->any())
-            ->method('getLineItems')
-            ->willReturn($lineItems)
         ;
 
         $lineItems->expects($this->any())
@@ -84,10 +66,14 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
         ;
 
         $price = $this->flatRate->calculatePrice($dataEntity, $configEntity);
-        $this->assertTrue($price instanceof Price);
+
+        $this->assertInstanceOf(Price::class, $price);
         $this->assertEquals($expectedPrice, $price->getValue());
     }
 
+    /**
+     * @return array
+     */
     public function ruleConfigProvider()
     {
         return [
@@ -101,23 +87,23 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
             [
                 'currency' => 'USD',
                 'price' => Price::create(25, 'USD'),
-                'handlingFeeValue' => 5,
+                'handlingFeeValue' => 15,
                 'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
-                'expectedPrice' => 130
+                'expectedPrice' => 140
             ],
             [
                 'currency' => 'EUR',
                 'price' => Price::create(25, 'EUR'),
-                'handlingFeeValue' => 5,
+                'handlingFeeValue' => 3,
                 'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                'expectedPrice' => 30
+                'expectedPrice' => 28
             ],
             [
                 'currency' => 'EUR',
                 'price' => Price::create(25, 'EUR'),
-                'handlingFeeValue' => 5,
+                'handlingFeeValue' => 25,
                 'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
-                'expectedPrice' => 130
+                'expectedPrice' => 150
             ]
         ];
     }
