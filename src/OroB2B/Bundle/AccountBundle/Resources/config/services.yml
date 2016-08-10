@@ -883,3 +883,19 @@ services:
             - '@orob2b_account.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-role-permission-provider }
+
+    orob2b_account.layout.data_provider.account_address_provider:
+        class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountAddressProvider
+        arguments:
+            - '@router'
+            - '@fragment.handler'
+        tags:
+             - { name: layout.data_provider, alias: account_address_provider }
+
+    orob2b_account.layout.data_provider.account_user_address_provider:
+        class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountUserAddressProvider
+        arguments:
+            - '@router'
+            - '@fragment.handler'
+        tags:
+             - { name: layout.data_provider, alias: account_user_address_provider }
