@@ -31,12 +31,12 @@
 {% macro buttonTemplate(options) %}
     {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% import _self as buttons %}
-    {{ buttons.addToCurrentButton({
+    {{ utils.underscoreRaw(buttons.addToCurrentButton({
         shoppingList: {
             id: '<%= id %>',
             label: '<%= label %>'
         }
-    }|merge(options)) }}
+    }|merge(options))) }}
 {% endmacro %}
 
 {% macro getButton(options) %}
@@ -87,8 +87,8 @@
          {{ UI.renderPageComponentAttributes({
              module: options.componentModule|default('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view'),
              options: {
-                 buttonTemplate: buttons.buttonTemplate(options.current),
-                 removeButtonTemplate: options.remove is defined ? buttons.buttonTemplate(options.remove),
+                 buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
+                 removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
              }|merge(options.componentOptions|default({}))
          }) }}
         >

@@ -1,7 +1,16 @@
 layout:
+    imports:
+        -
+            id: product_shopping_lists
+            root: datagrid_row_product_line_item_form
+            namespace: datagrid_row_product
     actions:
         - '@setBlockTheme':
             themes: 'shopping_list_buttons.html.twig'
+        - '@move':
+            id: __product_shopping_lists
+            parentId: __product_line_item_form
+            prepend: true
         - '@add':
             id: __product_line_item_form_buttons_shopping_list
             blockType: add_to_shopping_list_form_button

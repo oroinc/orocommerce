@@ -180,21 +180,19 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
 
-    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider'
+    orob2b_shopping_list.data_provider.product_shopping_lists:
+        class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'
         arguments:
             - '@orob2b_shopping_list.shopping_list.manager'
             - '@orob2b_shopping_list.repository.line_item'
+            - '@oro_security.security_facade'
+
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider'
+        arguments:
+            - '@orob2b_shopping_list.data_provider.product_shopping_lists'
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
-
-    orob2b_shopping_list.layout.data_provider.featured_products_shopping_lists:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FeaturedProductsShoppingListsProvider'
-        arguments:
-            - '@orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units'
-            - '@orob2b_product.layout.data_provider.featured_products'
-        tags:
-            - { name: layout.data_provider, alias: featured_products_shopping_lists }
 
     orob2b_shopping_list.repository.line_item:
         class: Doctrine\ORM\EntityRepository
