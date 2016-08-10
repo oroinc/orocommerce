@@ -19,7 +19,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @ORM\Table(name="orob2b_account_user")
  * @ORM\HasLifecycleCallbacks()
- * @ORM\EntityListeners({"OroB2B\Bundle\AccountBundle\Entity\EntityListener\AccountUserEntityListener"})
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="organizations",
@@ -840,10 +839,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,7 +72,13 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        return $this->update(new AccountUser(), $request);
+        $accountUser = new AccountUser();
+        $website = $request->attributes->get('current_website');
+        if ($website instanceof Website) {
+            $accountUser->setWebsite($website);
+        }
+
+        return $this->update($accountUser, $request);
     }
 
     /**
