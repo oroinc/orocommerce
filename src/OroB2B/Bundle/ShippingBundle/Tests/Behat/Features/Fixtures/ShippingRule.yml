@@ -12,21 +12,6 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
        currency: 'EUR'
        stopProcessing: 'false'
 
-Oro\Bundle\AddressBundle\Entity\Region:
-   berlin:
-       __construct: ['DE-BE']
-       combinedCode: 'DE-BE'
-       country: '@germany'
-       code: 'BE'
-       name: 'Berlin'
-
-Oro\Bundle\AddressBundle\Entity\Country:
-   germany:
-       __construct: ['DE']
-       iso2Code: 'DE'
-       iso3Code: 'DEU'
-       name: 'Germany'
-
 OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
    germany_destination:
       postalCode: '10115'
@@ -35,15 +20,32 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
       country: '@germany'
       rule: '@shipping_rule1'
 
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+   price1:
+       value: '1'
+       currency: 'EUR'
+
 OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
    flatrate_configuration:
       currency: 'EUR'
-      type: 'per_order'
+      processingType: 'per_order'
       method: 'flat_rate'
+      type: 'flat_rate'
       enabled: 'true'
-      price: '1'
+      price: '@price1'
       handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
+
+OroB2B\Bundle\AccountBundle\Entity\Account:
+   account1:
+       name: 'Company A'
+       organization: '@organization'
+
+#OroB2B\Bundle\AccountBundle\Entity\AccountUser:
+#   amanda:
+#       email: 'AmandaRCole@example.org'
+#       username: 'Amanda'
+#       setPlainPassword: ['AmandaRCole@example.org']
 
 
 
