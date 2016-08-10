@@ -61,12 +61,45 @@ oro_system_configuration:
             options:
                 label: orob2b.product.system_configuration.fields.default_unit_precision.label
 
-        orob2b_product.product_image_watermark:
+        orob2b_product.product_image_watermark_file:
             data_type: string
             type: oro_config_file
+            priority: 30
+            options:
+                label: orob2b.product.system_configuration.fields.product_image_watermark_file.label
+                resettable: false
+                required: false
+
+        orob2b_product.product_image_watermark_size:
+            data_type: integer
+            type: integer
+            priority: 20
+            options:
+                label: orob2b.product.system_configuration.fields.product_image_watermark_size.label
+                tooltip: orob2b.product.system_configuration.fields.product_image_watermark_size.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+                        max: 100
+
+        orob2b_product.product_image_watermark_position:
+            data_type: string
+            type: choice
             priority: 10
             options:
-                label: orob2b.product.system_configuration.fields.product_image_watermark.label
+                label: orob2b.product.system_configuration.fields.product_image_watermark_position.label
+                choice_translation_domain: messages
+                choices:
+                    topleft: orob2b.product.system_configuration.fields.product_image_watermark_position.topleft.label
+                    top: orob2b.product.system_configuration.fields.product_image_watermark_position.top.label
+                    topright: orob2b.product.system_configuration.fields.product_image_watermark_position.topright.label
+                    left: orob2b.product.system_configuration.fields.product_image_watermark_position.left.label
+                    center: orob2b.product.system_configuration.fields.product_image_watermark_position.center.label
+                    right: orob2b.product.system_configuration.fields.product_image_watermark_position.right.label
+                    bottomleft: orob2b.product.system_configuration.fields.product_image_watermark_position.bottomleft.label
+                    bottom: orob2b.product.system_configuration.fields.product_image_watermark_position.bottom.label
+                    bottomright: orob2b.product.system_configuration.fields.product_image_watermark_position.bottomright.label
 
     tree:
         system_configuration:
@@ -96,4 +129,7 @@ oro_system_configuration:
                                 children:
                                     product_image_watermark:
                                         children:
-                                            - orob2b_product.product_image_watermark
+                                            - orob2b_product.product_image_watermark_file
+                                            - orob2b_product.product_image_watermark_size
+                                            - orob2b_product.product_image_watermark_position
+

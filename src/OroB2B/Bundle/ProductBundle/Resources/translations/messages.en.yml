@@ -145,7 +145,21 @@ orob2b:
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
-                product_image_watermark.label: 'Watermark'
+                product_image_watermark_file.label: 'File'
+                product_image_watermark_size:
+                    label: 'Size'
+                    tooltip: 'Watermark image size relative to product image size (in percents)'
+                product_image_watermark_position:
+                    label: 'Position'
+                    topleft.label: 'Top Left'
+                    top.label: 'Top'
+                    topright.label: 'Top Right'
+                    left.label: 'Left'
+                    center.label: 'Center'
+                    right.label: 'Right'
+                    bottomleft.label: 'Bottom Left'
+                    bottom.label: 'Bottom'
+                    bottomright.label: 'Bottom Right'
 
         grid:
             action:

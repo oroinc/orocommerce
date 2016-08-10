@@ -33,7 +33,9 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
                 ],
-                'product_image_watermark' => ['value' => null]
+                'product_image_watermark_file' => ['value' => null],
+                'product_image_watermark_size' => ['value' => 100],
+                'product_image_watermark_position' => ['value' => 'center']
             ]
         );
 
