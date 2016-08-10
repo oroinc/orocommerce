@@ -40,6 +40,14 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     /**
      * {@inheritdoc}
      */
+    public function getRuleConfigurationClass()
+    {
+        return FlatRateRuleConfiguration::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getShippingTypeLabel($type)
     {
         $labels = [

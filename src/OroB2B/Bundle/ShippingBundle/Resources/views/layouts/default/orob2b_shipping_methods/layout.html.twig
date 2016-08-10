@@ -33,8 +33,7 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    <span class="{{ class_prefix }}__form__label">{{ 'orob2b.shipping.methods.select_method'|trans }}<sup class="red">*</sup></span>
-                    <span class="checkbox_custom__text fs13">{{ 'orob2b.shipping.methods.no_method'|trans }}</span>
+                    <span class="{{ class_prefix }}__form__label notification notification_xmd notification_alert notification-radiused mb1-md" >{{ 'orob2b.shipping.methods.no_method'|trans }}</span>
                 {% endif %}
             </div>
         </div>

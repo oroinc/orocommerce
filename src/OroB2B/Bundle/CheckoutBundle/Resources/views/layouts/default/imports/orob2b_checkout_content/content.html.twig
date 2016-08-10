@@ -31,7 +31,7 @@
         {{ form_errors(form) }}
         {{ form_start(form, {
             'method': 'post',
-            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'checkoutType': checkout.checkoutType}),
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
             'attr' : {
                 'class': 'checkout__form',
                 'data-nohash': 'true',
@@ -193,16 +193,18 @@
 {% endblock %}
 
 {% block _checkout_button_continue_widget -%}
-    <fieldset class="checkout__form__row">
+    {% if transitionData is defined and transitionData %}
         <fieldset class="checkout__form__row">
-            <div class="create-account__form__req-text"><sup>*</sup>
-                {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+            <fieldset class="checkout__form__row">
+                <div class="create-account__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
+                    {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+                </div>
+            </fieldset>
+            <div class="create-account__form__col form__col_x12">
+                {{ block_widget(block) }}
             </div>
         </fieldset>
-        <div class="create-account__form__col form__col_x12">
-            {{ block_widget(block) }}
-        </div>
-    </fieldset>
+    {% endif %}
 {% endblock %}
 
 {% block _checkout_button_back_widget -%}

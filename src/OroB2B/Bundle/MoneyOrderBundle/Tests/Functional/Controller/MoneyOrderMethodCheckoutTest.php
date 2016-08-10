@@ -55,6 +55,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     {
         $this->moveToPaymentPage();
 
+        var_dump(self::$checkoutUrl);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
         $this->assertContains(Configuration::MONEY_ORDER_LABEL, $crawler->html());

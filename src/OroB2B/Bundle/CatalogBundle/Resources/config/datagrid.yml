@@ -8,7 +8,6 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
-                    - productNames.string as name
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
@@ -36,12 +35,6 @@ datagrid:
                             conditionType: WITH
                             condition: 'productCategory = :category_id'
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                    inner:
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
             bind_parameters:
                 - category_id
         columns:
@@ -70,6 +63,9 @@ datagrid:
                 frontend_type: datetime
         properties:
             id: ~
+            name:
+                type: localized_value
+                data_name: names
         sorters:
             columns:
                 inCategory:
