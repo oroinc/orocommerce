@@ -10,6 +10,7 @@ use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FlatRateShippingMethod implements ShippingMethodInterface
 {
@@ -52,14 +53,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getShippingTypeLabel($type)
     {
-        $labels = [
-            FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM => 'Per Item',
-            FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER => 'Per Order'
-        ];
-        if (in_array($type, $this->getShippingTypes(), true)) {
-            return $labels[$type];
-        }
-        return null;
+        return '';
     }
 
     /**
@@ -97,7 +91,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     ) {
         if (!($configEntity instanceof FlatRateRuleConfiguration) ||
             ($configEntity->getPrice() === null) ||
-            empty($configEntity->getType())
+            ($configEntity->getType() === null)
         ) {
             return null;
         }
@@ -142,13 +136,18 @@ class FlatRateShippingMethod implements ShippingMethodInterface
         /** @var array $context */
         $shippingContext = $context->getShippingContext();
 
-        if (!isset($shippingContext['lineItems'])) {
+        if (!isset($shippingContext['line_items'])) {
             return null;
         }
 
-        /** @var ArrayCollection|null $items */
-        $items = $shippingContext['lineItems'];
-        $countItems = ($items !== null) ? $items->count() : 0;
+        /** @var ArrayCollection $items */
+        $items = $shippingContext['line_items'];
+        $countItems = 0;
+
+        /** @var LineItem $item */
+        foreach ($items as $item) {
+            $countItems += $item->getQuantity();
+        }
 
         return Price::create($countItems * (float)$price->getValue() + (float)$handlingFee, $currency);
     }

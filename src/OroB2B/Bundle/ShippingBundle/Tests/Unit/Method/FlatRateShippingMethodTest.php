@@ -10,6 +10,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,9 +37,6 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     public function testCalculatePrice($currency, $price, $handlingFeeValue, $type, $expectedPrice)
     {
-        /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $dataEntity **/
-        $dataEntity = $this->getMock(ShippingContextAwareInterface::class);
-
         /** @var FlatRateRuleConfiguration|object $configEntity **/
         $configEntity = $this->getEntity(
             FlatRateRuleConfiguration::class,
@@ -50,22 +48,19 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
+        $lineItem = $this->getEntity(LineItem::class, ['quantity' => 5]);
         /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems **/
-        $lineItems = $this->getMock(ArrayCollection::class);
+        $lineItems = $this->getEntity(ArrayCollection::class, [], [$lineItem]);
 
-        $context = ['lineItems' => $lineItems];
+        /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $shippingContext */
+        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
 
-        $dataEntity->expects($this->any())
+        $shippingContext->expects($this->any())
             ->method('getShippingContext')
-            ->willReturn($context)
+            ->willReturn(['line_items' => $lineItems])
         ;
 
-        $lineItems->expects($this->any())
-            ->method('count')
-            ->willReturn(5)
-        ;
-
-        $price = $this->flatRate->calculatePrice($dataEntity, $configEntity);
+        $price = $this->flatRate->calculatePrice($shippingContext, $configEntity);
 
         $this->assertInstanceOf(Price::class, $price);
         $this->assertEquals($expectedPrice, $price->getValue());
