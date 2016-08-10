@@ -196,4 +196,15 @@ class PriceRuleTriggerFillerTest extends \PHPUnit_Framework_TestCase
 
         $this->filler->addTriggersForPriceList($priceList, $product2);
     }
+
+    public function testIgnoreDisabledPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList->setActive(false);
+
+        $this->extraActionsStorage->expects($this->never())->method('scheduleForExtraInsert');
+
+        $this->filler->addTriggersForPriceList($priceList);
+    }
 }

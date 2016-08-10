@@ -34,11 +34,13 @@ class PriceRuleTriggerFiller
      */
     public function addTriggersForPriceList(PriceList $priceList, Product $product = null)
     {
-        if (!$this->isExistingTriggerWithPriseList($priceList, $product)) {
-            $trigger = new PriceRuleChangeTrigger($priceList, $product);
-            $this->extraActionsStorage->scheduleForExtraInsert($trigger);
+        if ($priceList->isActive()) {
+            if (!$this->isExistingTriggerWithPriseList($priceList, $product)) {
+                $trigger = new PriceRuleChangeTrigger($priceList, $product);
+                $this->extraActionsStorage->scheduleForExtraInsert($trigger);
+            }
+            $this->dispatcher->dispatch(PriceRuleChange::NAME);
         }
-        $this->dispatcher->dispatch(PriceRuleChange::NAME);
     }
 
     /**
