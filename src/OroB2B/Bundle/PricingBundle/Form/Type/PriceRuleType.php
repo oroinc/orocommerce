@@ -33,7 +33,7 @@ class PriceRuleType extends AbstractType
                 self::RULE,
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricerule.price_calculated_as.label'
+                    'label' => 'orob2b.pricing.pricerule.calculate_as.label'
                 ]
             )
             ->add(
