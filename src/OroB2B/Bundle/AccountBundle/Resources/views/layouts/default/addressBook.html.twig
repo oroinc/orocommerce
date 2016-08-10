@@ -1,6 +1,6 @@
 {% block address_book_widget %}
     {% set attr = attr|merge({
-    useFormDialog: useFormDialog
+        useFormDialog: useFormDialog
     }) %}
 
     <div>
@@ -8,7 +8,7 @@
         <script type="text/html" id="template-addressbook-item">
             <div class="actions pull-right">
                 {% if addressUpdateAclResource is not defined or resource_granted(addressUpdateAclResource) %}
-                    <a class="item-edit-button" title="<%= _.__('orob2b.account.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('orob2b.account.address.edit') %></i></a>
+                    <a class="item-edit-button" title="<%= _.__('orob2b.account.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('orob2b.account.address.edit') %>ohjkhjkjk</i></a>
                     <% if (!primary) { %><a class="item-remove-button" title="<%= _.__('orob2b.account.address.remove') %>"><i class="icon-trash mml2-md mml2-sm hide-text"><%= _.__('orob2b.account.address.remove') %></i></a><% } %>
                 {% endif %}
             </div>
