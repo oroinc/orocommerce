@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+// TODO: Remove extends from AbstractServerRenderDataProvider after closing ticket BB-2188
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 class AccountAddressProvider extends AbstractServerRenderDataProvider
@@ -58,21 +59,6 @@ class AccountAddressProvider extends AbstractServerRenderDataProvider
             'addressUpdateRouteName' => self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
             'currentAddresses' => $this->fragmentHandler->render($addressListUrl),
         ];
-    }
-
-    public function getAddressListRouteName()
-    {
-        return self::ACCOUNT_ADDRESS_LIST_ROUTE_NAME;
-    }
-
-    public function getAddressCreateRouteName()
-    {
-        return self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME;
-    }
-
-    public function getAddressUpdateRouteName()
-    {
-        return self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME;
     }
 
     public function getAddressCreateAclResource()

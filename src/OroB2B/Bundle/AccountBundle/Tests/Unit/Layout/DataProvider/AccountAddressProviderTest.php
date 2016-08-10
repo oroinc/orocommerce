@@ -37,27 +37,6 @@ class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new AccountAddressProvider($this->router, $this->fragmentHandler);
     }
 
-    public function testGetAddressListRouteName()
-    {
-        $result = 'orob2b_api_account_frontend_get_account_addresses';
-
-        $this->assertSame($result, $this->provider->getAddressListRouteName());
-    }
-
-    public function testGetAddressCreateRouteName()
-    {
-        $result = 'orob2b_account_frontend_account_address_create';
-
-        $this->assertSame($result, $this->provider->getAddressCreateRouteName());
-    }
-
-    public function testGetAddressUpdateRouteName()
-    {
-        $result = 'orob2b_account_frontend_account_address_update';
-
-        $this->assertSame($result, $this->provider->getAddressUpdateRouteName());
-    }
-
     public function testGetAddressCreateAclResource()
     {
         $result = 'orob2b_account_frontend_account_address_create';

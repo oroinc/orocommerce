@@ -31,13 +31,10 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        addressCreateAclResource: {default: 'null'}
-                        addressUpdateAclResource: {default: 'null'}
+                        addressCreateAclResource: {default: null}
+                        addressUpdateAclResource: {default: null}
                         useFormDialog: {default: false}
                         entity: {required: true}
-                        addressListRouteName: {required: true}
-                        addressCreateRouteName: {required: true}
-                        addressUpdateRouteName: {required: true}
                         componentOptions: {required: true}
         tags:
              - { name: layout.block_type, alias: address_book }

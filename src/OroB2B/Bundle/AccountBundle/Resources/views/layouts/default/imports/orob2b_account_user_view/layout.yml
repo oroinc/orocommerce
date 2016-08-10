@@ -46,10 +46,7 @@ layout:
                     blockType: address_book
                     options:
                         entity: '=data["entity"]'
-                        addressListRouteName: '=data["account_user_address_provider"].getAddressListRouteName()'
-                        addressCreateRouteName: '=data["account_user_address_provider"].getAddressCreateRouteName()'
                         addressCreateAclResource: '=data["account_user_address_provider"].getAddressCreateAclResource()'
-                        addressUpdateRouteName: '=data["account_user_address_provider"].getAddressUpdateRouteName()'
                         addressUpdateAclResource: '=data["account_user_address_provider"].getAddressUpdateAclResource()'
                         componentOptions: '=data["account_user_address_provider"].getComponentOptions(data["entity"])'
             tree:
