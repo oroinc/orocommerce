@@ -31,7 +31,7 @@ class ShipToBillingAddressType extends AbstractType
         $parent = $form->getParent();
 
         if ($event->getData() && $parent->has(self::SHIPPING_ADDRESS_FORM_FIELD)) {
-            FormUtils::replaceField($parent, self::SHIPPING_ADDRESS_FORM_FIELD, ['disabled' => true]);
+            FormUtils::replaceField($parent, self::SHIPPING_ADDRESS_FORM_FIELD, [], ['constraints']);
         }
     }
 

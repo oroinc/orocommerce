@@ -8,7 +8,7 @@ datagrid:
             type:         orm
             query:
                 select:
-                    - order1.id
+                    - DISTINCT order1.id
                     - order1.identifier
                     - order1.poNumber
                     - order1.currency
