@@ -13,7 +13,7 @@ orob2b:
         localizations.label: Localizations
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
-        default.label: Is Default Website
+        default.label: Default
 
         system_configuration:
             groups:
