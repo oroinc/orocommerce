@@ -1,3 +1,5 @@
-{% set configurations = record.getValue('configurations').toArray() %}
+{% spaceless %}
+    {% set configurations = record.getValue('configurations').toArray() %}
 
-{{ configurations|join('</br>')|raw }}
+    {{ configurations|join('</br>')|raw }}
+{% endspaceless %}

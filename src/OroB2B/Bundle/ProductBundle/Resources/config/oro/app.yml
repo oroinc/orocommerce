@@ -14,9 +14,9 @@ liip_imagine:
         product_small:
             quality:          95
             filters:
-                upscale: { min: [56, 56] }
-                thumbnail:    { size: [56, 56], mode: inset}
-                background: { size: [56, 56], color: '#fff' }
+                upscale: { min: [82, 82] }
+                thumbnail:    { size: [82, 82], mode: inset}
+                background: { size: [82, 82], color: '#fff' }
                 strip:        ~
 
 assetic:

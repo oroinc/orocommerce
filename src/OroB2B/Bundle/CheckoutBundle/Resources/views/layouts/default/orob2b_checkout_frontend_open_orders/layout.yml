@@ -1,10 +1,7 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-
         - '@setBlockTheme':
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
 

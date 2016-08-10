@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@add':
+            id: account_sidebar_request
+            parentId: account_sidebar
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("orob2b_rfp_frontend_request_view")'
+                route_name: orob2b_rfp_frontend_request_index
+                text: orob2b.frontend.rfp.request.entity_plural_label

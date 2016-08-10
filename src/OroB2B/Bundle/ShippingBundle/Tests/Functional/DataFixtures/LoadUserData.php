@@ -13,6 +13,7 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
+use Oro\Bundle\UserBundle\Entity\UserApi;
 
 class LoadUserData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -150,8 +151,13 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
         $organization = $defaultUser->getOrganization();
 
         foreach ($this->users as $item) {
-            /* @var $user User */
             $user = $userManager->createUser();
+
+            $apiKey = new UserApi();
+            $apiKey
+                ->setApiKey($item['password'])
+                ->setUser($user)
+                ->setOrganization($organization);
 
             $user
                 ->setEmail($item['email'])
@@ -163,7 +169,8 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
                 ->addOrganization($organization)
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
-                ->setEnabled(true);
+                ->setEnabled(true)
+                ->addApiKey($apiKey);
 
             foreach ($item['roles'] as $role) {
                 /** @var Role $roleEntity */

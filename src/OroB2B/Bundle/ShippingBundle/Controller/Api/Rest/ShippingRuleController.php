@@ -2,18 +2,22 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Routing\ClassResourceInterface;
+use Symfony\Component\HttpFoundation\Response;
+
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\View\View;
 
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
@@ -35,12 +39,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
-     * @Acl(
-     *      id="orob2b_shipping_rule_update",
-     *      type="entity",
-     *      permission="EDIT",
-     *      class="OroB2BShippingBundle:ShippingRule"
-     * )
+     * @AclAncestor("orob2b_shipping_rule_update")
      *
      * @return Response
      */
@@ -51,6 +50,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
 
         if ($shippingRule) {
             $shippingRule->setEnabled(true);
+            /** @var ObjectManager $objectManager */
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
             $objectManager->flush();
@@ -62,6 +62,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
                 Codes::HTTP_OK
             );
         } else {
+            /** @var View $view */
             $view = $this->view(null, Codes::HTTP_NOT_FOUND);
         }
 
@@ -83,12 +84,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
-     * @Acl(
-     *      id="orob2b_shipping_rule_update",
-     *      type="entity",
-     *      permission="EDIT",
-     *      class="OroB2BShippingBundle:ShippingRule"
-     * )
+     * @AclAncestor("orob2b_shipping_rule_update")
      *
      * @return Response
      */
@@ -99,6 +95,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
 
         if ($shippingRule) {
             $shippingRule->setEnabled(false);
+            /** @var ObjectManager $objectManager */
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
             $objectManager->flush();
@@ -110,6 +107,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
                 Codes::HTTP_OK
             );
         } else {
+            /** @var View $view */
             $view = $this->view(null, Codes::HTTP_NOT_FOUND);
         }
 
@@ -120,9 +118,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
     }
 
     /**
-     * REST DELETE
-     *
-     * @param int $id
+     * Rest delete
      *
      * @ApiDoc(
      *      description="Delete Shipping Rule",
@@ -134,7 +130,10 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      permission="DELETE",
      *      class="OroB2BShippingBundle:ShippingRule"
      * )
+     *
+     * @param int $id
      * @return Response
+     *
      */
     public function deleteAction($id)
     {
