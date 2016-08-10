@@ -12,6 +12,11 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'orob2b_product';
+    const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
+    const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
+    const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
+
     /**
      * {@inheritDoc}
      */
@@ -19,7 +24,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('orob2b_product');
+        $rootNode = $treeBuilder->root(self::ROOT_NODE);
 
         SettingsBuilder::append(
             $rootNode,
@@ -33,9 +38,9 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
                 ],
-                'product_image_watermark_file' => ['value' => null],
-                'product_image_watermark_size' => ['value' => 100],
-                'product_image_watermark_position' => ['value' => 'center']
+                self::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
+                self::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
+                self::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center']
             ]
         );
 

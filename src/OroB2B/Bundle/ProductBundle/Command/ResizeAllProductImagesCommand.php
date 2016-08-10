@@ -50,12 +50,10 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
 
         $eventDispatcher = $container->get('event_dispatcher');
         foreach ($productImages as $productImage) {
-            if ($eventDispatcher->hasListeners(ProductImageResizeEvent::NAME)) {
-                $eventDispatcher->dispatch(
-                    ProductImageResizeEvent::NAME,
-                    new ProductImageResizeEvent($productImage, $forceOption)
-                );
-            }
+            $eventDispatcher->dispatch(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($productImage, $forceOption)
+            );
         }
         $output->writeln(sprintf('%d product images successfully queued for resize.', $productImageCount));
     }
