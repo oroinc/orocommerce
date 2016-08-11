@@ -18,11 +18,6 @@ class ProductPriceChangeTriggerRepository extends EntityRepository
      */
     public function isExisting(ProductPriceChangeTrigger $trigger)
     {
-        //product or priceList can be not flushed yet
-        if (!$trigger->getProduct()->getId() || !$trigger->getPriceList()->getId()) {
-            return false;
-        }
-
         return (bool)$this->createQueryBuilder('cpp')
             ->select('1')
             ->where('cpp.priceList = :priceList')

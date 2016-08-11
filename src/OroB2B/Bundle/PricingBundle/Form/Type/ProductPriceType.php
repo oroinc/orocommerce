@@ -78,6 +78,28 @@ class ProductPriceType extends AbstractType
                 }
             }
         );
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $submittedData = $event->getData();
+        $productPrice = $event->getForm()->getData();
+        if (!$productPrice instanceof ProductPrice) {
+            return;
+        }
+        $oldPrice = $productPrice->getPrice();
+        if ($submittedData['quantity'] != $productPrice->getQuantity()
+            || $submittedData['unit'] != $productPrice->getUnit()->getCode()
+            || $submittedData['price']['value'] != $oldPrice->getValue()
+            || $submittedData['price']['currency'] != $oldPrice->getCurrency()
+        ) {
+            $productPrice->setPriceRule(null);
+        }
     }
 
     /**

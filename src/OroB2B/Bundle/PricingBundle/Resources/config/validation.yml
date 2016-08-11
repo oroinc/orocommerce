@@ -12,12 +12,26 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         schedules:
             - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
+        priceRules:
+            - Valid: ~
+        productAssignmentRule:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
         - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
     properties:
         name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        fieldName:
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_]+$/'
+                htmlPattern: '/^[a-zA-Z0-9_]+$/'
+                message: 'orob2b.pricing.validators.price_attrirute_price_list.fieldName.message'
             - NotBlank: ~
             - Length:
                 max: 255
@@ -31,6 +45,33 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
             chain:
                 activeAt: 'Active At'
                 deactivateAt: 'Deactivate At'
+
+OroB2B\Bundle\PricingBundle\Entity\PriceRule:
+    properties:
+        currency:
+            - NotBlank: ~
+            - Currency: ~
+        quantity:
+            - NotBlank:
+                message: 'orob2b.pricing.validators.product_price.quantity.blank'
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank:
+                message: 'orob2b.product.productunit.invalid'
+        ruleCondition:
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+        rule:
+            - NotBlank: ~
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                numericOnly: true
+                withRelations: true
+        priority:
+            - NotBlank: ~
+            - Type:
+                type: integer
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:

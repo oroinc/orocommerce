@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: orob2b_account_user_role_form
+            root: content
+        - orob2b_account_menu
     actions:
         - '@appendOption':
             id: title
@@ -12,10 +17,6 @@ layout:
             optionName: text
             optionValue:
                 label: 'orob2b.account.frontend.title.page.account_user_role.create'
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
         - '@setOption':
             id: account_user_role_form_actions_update_top
             optionName: text
@@ -24,7 +25,3 @@ layout:
             id: account_user_role_form_actions_update_bottom
             optionName: text
             optionValue: orob2b.account.action.account_user_role.create_label
-    imports:
-        -
-            id: orob2b_account_user_role_form
-            root: content
