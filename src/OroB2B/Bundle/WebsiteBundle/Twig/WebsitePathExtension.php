@@ -35,14 +35,8 @@ class WebsitePathExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            'website_path' => new \Twig_SimpleFunction(
-                $this->websiteUrlResolver,
-                'getWebsitePath'
-            ),
-            'website_secure_path' => new \Twig_SimpleFunction(
-                $this->websiteUrlResolver,
-                'getWebsiteSecurePath'
-            )
+            new \Twig_SimpleFunction('website_path', [$this->websiteUrlResolver, 'getWebsitePath']),
+            new \Twig_SimpleFunction('website_secure_path', [$this->websiteUrlResolver, 'getWebsiteSecurePath'])
         ];
     }
 }
