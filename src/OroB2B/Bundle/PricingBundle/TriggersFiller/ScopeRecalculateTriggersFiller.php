@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller;
+namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
@@ -12,7 +12,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ScopeRecalculateTriggersFiller
@@ -96,13 +98,32 @@ class ScopeRecalculateTriggersFiller
     }
 
     /**
+     * @param PriceList $priceList
+     * @param Product $product
+     */
+    public function createTriggerByPriceListProduct(PriceList $priceList, Product $product)
+    {
+        $trigger = new ProductPriceChangeTrigger($priceList, $product);
+        
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(ProductPriceChangeTrigger::class);
+        $repository = $em->getRepository(ProductPriceChangeTrigger::class);
+        if (!$repository->isExisting($trigger)) {
+            $em->persist($trigger);
+            $em->flush($trigger);
+        }
+    }
+
+    /**
      * @param EntityManager $em
      */
     protected function createConfigTriggers(EntityManager $em)
     {
         $this->clearAllExistingTriggers();
+        
         $priceListChangeTrigger = new PriceListChangeTrigger();
         $priceListChangeTrigger->setForce(true);
+        
         $em->persist($priceListChangeTrigger);
     }
 

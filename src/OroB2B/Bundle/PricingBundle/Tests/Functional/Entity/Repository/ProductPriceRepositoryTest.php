@@ -9,14 +9,20 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
@@ -25,14 +31,16 @@ class ProductPriceRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         $this->initClient();
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+                LoadProductPrices::class,
             ]
         );
 
@@ -68,13 +76,13 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         return [
             [
-                'price_list_1',
+                LoadPriceLists::PRICE_LIST_1,
                 'product.1',
                 null,
                 ['liter', 'bottle']
             ],
             [
-                'price_list_1',
+                LoadPriceLists::PRICE_LIST_1,
                 'product.1',
                 'EUR',
                 ['bottle']
@@ -120,7 +128,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         return [
             [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [
                     'product.1',
                     'product.2',
@@ -134,7 +142,7 @@ class ProductPriceRepositoryTest extends WebTestCase
                 ]
             ],
             [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [
                     'product.1',
                     'product.2',
@@ -263,12 +271,12 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'empty products' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [],
                 'expectedPrices' => [],
             ],
             'empty products without tier prices' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [],
                 'expectedPrices' => [],
             ],
@@ -283,43 +291,43 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'expectedPrices' => [],
             ],
             'first valid set' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => ['product.1'],
                 'expectedPrices' => ['product_price.10', 'product_price.2', 'product_price.7', 'product_price.1'],
             ],
             'first valid set without tier prices' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => ['product.1'],
                 'expectedPrices' => ['product_price.10', 'product_price.7'],
                 'getTierPrices' => false
             ],
             'first valid set without tier prices with currency' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => ['product.1'],
                 'expectedPrices' => ['product_price.10'],
                 'getTierPrices' => false,
                 'currency' => 'EUR'
             ],
             'second valid set' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.1', 'product.2'],
                 'expectedPrices' => ['product_price.5', 'product_price.12', 'product_price.4', 'product_price.6'],
             ],
             'second valid set without tier prices' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.1', 'product.2'],
                 'expectedPrices' => [],
                 'getTierPrices' => false
             ],
             'second valid set with currency' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.1', 'product.2'],
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
                 'getTierPrices' => true,
                 'currency' => 'USD'
             ],
             'first valid set with order by currency, unit and quantity' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.1', 'product.2'],
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6', 'product_price.12'],
                 'getTierPrices' => true,
@@ -397,13 +405,13 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'empty' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [],
                 'productUnits' => [],
                 'expectedPrices' => [],
             ],
             'first valid set' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => ['product.1', 'product.2'],
                 'productUnits' => ['product_unit.liter'],
                 'expectedPrices' => [
@@ -415,20 +423,20 @@ class ProductPriceRepositoryTest extends WebTestCase
                 ],
             ],
             'first valid set with currency' => [
-                'priceList' => 'price_list_1',
+                'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => ['product.1', 'product.2'],
                 'productUnits' => ['product_unit.liter'],
                 'expectedPrices' => ['product_price.11'],
                 'currencies' => ['EUR']
             ],
             'second valid set' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.2'],
                 'productUnits' => ['product_unit.bottle'],
                 'expectedPrices' => ['product_price.5', 'product_price.12'],
             ],
             'second valid set with currency' => [
-                'priceList' => 'price_list_2',
+                'priceList' => LoadPriceLists::PRICE_LIST_2,
                 'products' => ['product.2'],
                 'productUnits' => ['product_unit.bottle'],
                 'expectedPrices' => ['product_price.5'],
@@ -498,7 +506,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $unit = $this->getReference('product_unit.liter');
 
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
 
         $productPrice = new ProductPrice();
         $productPrice
@@ -520,7 +528,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     public function testCountByPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
 
         $this->assertCount(
             $this->repository->countByPriceList($priceList),
@@ -531,14 +539,14 @@ class ProductPriceRepositoryTest extends WebTestCase
     public function testDeleteByPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
 
         $this->repository->deleteByPriceList($priceList);
 
         $this->assertEmpty($this->repository->findBy(['priceList' => $priceList->getId()]));
 
         /** @var PriceList $priceList2 */
-        $priceList2 = $this->getReference('price_list_2');
+        $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $this->assertNotEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
 
         $this->repository->deleteByPriceList($priceList2);
@@ -548,7 +556,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     public function testCopyPrices()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $newPriceList = new PriceList();
         $newPriceList->setName('test');
 
@@ -590,6 +598,86 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->assertSame($sourcePricesArray, $targetPricesArray);
     }
 
+    public function testDeleteGeneratedPrices()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        $manager = $registry->getManagerForClass(PriceRule::class);
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        /** @var ProductPriceRepository $repository */
+        $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+        $manualPrices = $repository->findBy(['priceList' => $priceList, 'priceRule' => null]);
+
+        $rule = $this->createPriceListRule($priceList);
+        $productPrice = $this->createProductPrice($priceList, $rule);
+
+        $manager->persist($rule);
+        $manager->persist($productPrice);
+        $manager->flush();
+
+        $repository->deleteGeneratedPrices($priceList, $productPrice->getProduct());
+
+        $actual = $repository->findBy(['priceList' => $priceList]);
+        $this->assertEquals($manualPrices, $actual);
+    }
+
+    public function testDeleteGeneratedPricesByRule()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        $manager = $registry->getManagerForClass(PriceRule::class);
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        /** @var ProductPriceRepository $repository */
+        $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+
+        $pricesCount = $this->getPricesCount();
+
+        $rule1 = $this->createPriceListRule($priceList);
+        $rule2 = $this->createPriceListRule($priceList);
+        $productPrice1 = $this->createProductPrice($priceList, $rule1);
+        $productPrice2 = $this->createProductPrice($priceList, $rule2, 'EUR');
+
+        $manager->persist($rule1);
+        $manager->persist($rule2);
+        $manager->persist($productPrice1);
+        $manager->persist($productPrice2);
+        $manager->flush();
+
+        $repository->deleteGeneratedPricesByRule($rule1);
+        $this->assertEmpty($repository->findBy(['priceRule'=>$rule1]));
+        $this->assertCount(1, $repository->findBy(['priceRule'=>$rule2]));
+        $this->assertEquals($pricesCount + 1, $this->getPricesCount());
+    }
+
+    public function testDeleteInvalidPrices()
+    {
+        $objectRepository = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceListToProduct::class);
+
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $objectRepository
+            ->createQueryBuilder('productRelation')
+            ->delete(PriceListToProduct::class, 'productRelation')
+            ->where('productRelation.priceList = :priceList AND productRelation.product = :product')
+            ->setParameter('priceList', $priceList)
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
+
+        $prices = $this->repository->findBy(['priceList' => $priceList]);
+        $this->assertNotEmpty($prices);
+
+        $this->repository->deleteInvalidPrices($priceList);
+
+        /** @var ProductPrice $price */
+        $price = $this->repository->findOneBy(['priceList' => $priceList]);
+        $this->assertEquals($price->getProduct()->getId(), $this->getReference(LoadProductData::PRODUCT_1)->getId());
+    }
+
     /**
      * @param ProductPrice[] $prices
      * @return array
@@ -602,5 +690,59 @@ class ProductPriceRepositoryTest extends WebTestCase
         }
 
         return $priceIds;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getPricesCount()
+    {
+        $repository = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:ProductPrice');
+        return (int)$repository->createQueryBuilder('pp')
+            ->select('count(pp.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return PriceRule
+     */
+    protected function createPriceListRule(PriceList $priceList)
+    {
+        $rule = new PriceRule();
+        $rule->setRule('10')
+            ->setPriority(1)
+            ->setQuantity(1)
+            ->setPriceList($priceList)
+            ->setCurrency('USD');
+
+        return $rule;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param PriceRule $rule
+     * @param string $currency
+     * @return ProductPrice
+     */
+    protected function createProductPrice(PriceList $priceList, PriceRule $rule, $currency = 'USD')
+    {
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.box');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setPriceList($priceList)
+            ->setPrice(Price::create(1, $currency))
+            ->setQuantity(1)
+            ->setPriceRule($rule)
+            ->setUnit($unit)
+            ->setProduct($product);
+
+        return $productPrice;
     }
 }
