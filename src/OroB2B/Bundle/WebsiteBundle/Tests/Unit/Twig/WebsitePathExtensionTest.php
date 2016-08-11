@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Twig;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use OroB2B\Bundle\WebsiteBundle\Twig\WebsitePathExtension;
 
@@ -51,64 +50,5 @@ class WebsitePathExtensionTest extends \PHPUnit_Framework_TestCase
             $this->assertInstanceOf(\Twig_SimpleFunction::class, $function);
             $this->assertTrue(in_array($name, $availableFunctions, true));
         }
-    }
-
-    /**
-     * @dataProvider testGetWebsitePathDataProvider
-     *
-     * @param string $rout
-     * @param array $routeParams
-     * @param string $expected
-     */
-    public function testGetWebsitePath($rout, array $routeParams, $expected)
-    {
-        /** @var Website $website **/
-        $website = $this->getEntity(Website::class, ['id' => 42]);
-
-        $this->websiteUrlResolver->expects($this->once())
-            ->method('getWebsitePath')
-            ->with($rout, $routeParams, $website)
-            ->willReturn($expected);
-
-        $actual = $this->websitePathExtension->getWebsitePath($rout, $routeParams, $website);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-
-    /**
-     * @dataProvider testGetWebsitePathDataProvider
-     *
-     * @param string $rout
-     * @param array $routeParams
-     * @param string $expected
-     */
-    public function testGetWebsiteSecurePath($rout, array $routeParams, $expected)
-    {
-        /** @var Website $website **/
-        $website = $this->getEntity(Website::class, ['id' => 42]);
-
-        $this->websiteUrlResolver->expects($this->once())
-            ->method('getWebsiteSecurePath')
-            ->with($rout, $routeParams, $website)
-            ->willReturn($expected);
-
-        $actual = $this->websitePathExtension->getWebsiteSecurePath($rout, $routeParams, $website);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return array
-     */
-    public function testGetWebsitePathDataProvider()
-    {
-        return [
-            [
-                'route' => 'test',
-                'routeParams' => ['param' => 123],
-                'expected' => 'hhtp://website.com/test?param=123'
-            ]
-        ];
     }
 }

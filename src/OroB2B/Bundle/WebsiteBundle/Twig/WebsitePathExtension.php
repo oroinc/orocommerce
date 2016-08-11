@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\WebsiteBundle\Twig;
 
 use OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsitePathExtension extends \Twig_Extension
 {
@@ -37,35 +36,13 @@ class WebsitePathExtension extends \Twig_Extension
     {
         return [
             'website_path' => new \Twig_SimpleFunction(
-                $this,
+                $this->websiteUrlResolver,
                 'getWebsitePath'
             ),
             'website_secure_path' => new \Twig_SimpleFunction(
-                $this,
+                $this->websiteUrlResolver,
                 'getWebsiteSecurePath'
             )
         ];
-    }
-
-    /**
-     * @param string $route
-     * @param array $routeParams
-     * @param Website|null $website
-     * @return string
-     */
-    public function getWebsitePath($route, array $routeParams, Website $website = null)
-    {
-        return $this->websiteUrlResolver->getWebsitePath($route, $routeParams, $website);
-    }
-
-    /**
-     * @param string $route
-     * @param array $routeParams
-     * @param Website|null $website
-     * @return string
-     */
-    public function getWebsiteSecurePath($route, array $routeParams, Website $website = null)
-    {
-        return $this->websiteUrlResolver->getWebsiteSecurePath($route, $routeParams, $website);
     }
 }
