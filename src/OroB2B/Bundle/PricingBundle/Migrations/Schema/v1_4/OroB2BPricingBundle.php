@@ -37,7 +37,6 @@ class OroB2BPricingBundle implements Migration
         $table = $schema->createTable('orob2b_price_attribute_pl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('field_name', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
