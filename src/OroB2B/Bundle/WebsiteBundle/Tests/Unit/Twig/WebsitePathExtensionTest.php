@@ -36,7 +36,7 @@ class WebsitePathExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFunctions()
     {
-        /** @var \Twig_SimpleFunction[] $filters */
+        /** @var \Twig_SimpleFunction[] $functions */
         $functions = $this->websitePathExtension->getFunctions();
 
         $this->assertCount(2, $functions);
@@ -46,9 +46,9 @@ class WebsitePathExtensionTest extends \PHPUnit_Framework_TestCase
             'website_secure_path'
         ];
 
-        foreach ($functions as $name => $function) {
+        foreach ($functions as $function) {
             $this->assertInstanceOf(\Twig_SimpleFunction::class, $function);
-            $this->assertTrue(in_array($name, $availableFunctions, true));
+            $this->assertTrue(in_array($function->getName(), $availableFunctions, true));
         }
     }
 }
