@@ -1,0 +1,34 @@
+services:
+    oro_website_search.placeholder.resolver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\PlaceholderResolver'
+        arguments:
+            - '@oro_website_search.placeholder.registry'
+
+    oro_website_search.search.engine:
+        abstract: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_website_search.placeholder.resolver'
+
+    oro_website_search.search.indexer:
+        abstract: true
+
+    oro_website_search.orm.engine:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
+        parent: 'oro_website_search.search.engine'
+        calls:
+            - [setEntityManager, ['@doctrine.orm.entity_manager']]
+
+    oro_website_search.placeholder.registry:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
+        calls:
+            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
+            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
+
+    oro_website_search.website_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
+        arguments:
+            - '@orob2b_website.manager'
+
+    oro_website_search.localization_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
