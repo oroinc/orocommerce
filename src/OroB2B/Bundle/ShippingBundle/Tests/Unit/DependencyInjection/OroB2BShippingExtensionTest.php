@@ -37,7 +37,6 @@ class OroB2BShippingExtensionTest extends ExtensionTestCase
             'orob2b_shipping.provider.shipping_rules',
             'orob2b_shipping.formatter.shipping_method_label',
             'orob2b_shipping.twig.shipping_method_extension',
-            'orob2b_shipping.condition.has_applicable_shipping_methods',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

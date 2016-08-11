@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Condition;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods;
+use OroB2B\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;

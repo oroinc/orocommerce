@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Condition;
+namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
 class ToStringStub
 {
