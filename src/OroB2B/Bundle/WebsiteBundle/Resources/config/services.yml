@@ -66,7 +66,7 @@ services:
     orob2b_website.event_listener.install_command:
         class: 'OroB2B\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
         arguments:
-            - '@oro_config.manager'
+            - '@oro_config.global'
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
