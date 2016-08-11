@@ -24,19 +24,19 @@ class WebsiteUrlResolver
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return string|null
      */
-    public function getWebsiteUrl(Website $website)
+    public function getWebsiteUrl(Website $website = null)
     {
         return $this->configManager->get(self::CONFIG_URL, false, false, $website);
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return string|null
      */
-    public function getWebsiteSecureUrl(Website $website)
+    public function getWebsiteSecureUrl(Website $website = null)
     {
         $url = null;
         if ($websiteSecureUrl = $this->getWebsiteScopeConfigValue(self::CONFIG_SECURE_URL, $website)) {
@@ -55,10 +55,10 @@ class WebsiteUrlResolver
     /**
      * @param string $route
      * @param array $routeParams
-     * @param Website $website
+     * @param Website|null $website
      * @return string
      */
-    public function getWebsitePath($route, array $routeParams, Website $website)
+    public function getWebsitePath($route, array $routeParams, Website $website = null)
     {
         $url = $this->getWebsiteUrl($website);
 
@@ -68,10 +68,10 @@ class WebsiteUrlResolver
     /**
      * @param string $route
      * @param array $routeParams
-     * @param Website $website
+     * @param Website|null $website
      * @return string
      */
-    public function getWebsiteSecurePath($route, array $routeParams, Website $website)
+    public function getWebsiteSecurePath($route, array $routeParams, Website $website = null)
     {
         $url = $this->getWebsiteSecureUrl($website);
 
@@ -80,10 +80,10 @@ class WebsiteUrlResolver
 
     /**
      * @param string $configKey
-     * @param Website $website
+     * @param Website|null $website
      * @return null|string
      */
-    protected function getWebsiteScopeConfigValue($configKey, Website $website)
+    protected function getWebsiteScopeConfigValue($configKey, Website $website = null)
     {
         $configValue = $this->configManager->get($configKey, false, true, $website);
         if (!empty($configValue['value']) && empty($configValue['use_parent_scope_value'])) {
@@ -95,10 +95,10 @@ class WebsiteUrlResolver
 
     /**
      * @param string $configKey
-     * @param Website $website
+     * @param Website|null $website
      * @return null|string
      */
-    protected function getDefaultConfigValue($configKey, Website $website)
+    protected function getDefaultConfigValue($configKey, Website $website = null)
     {
         return $this->configManager->get($configKey, true, false, $website);
     }
