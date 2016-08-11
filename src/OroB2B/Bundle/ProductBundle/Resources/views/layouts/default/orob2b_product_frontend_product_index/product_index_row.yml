@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+            themes: 'product_index_row.html.twig'
         - '@addTree':
             items:
                 product_grid_row_template:
