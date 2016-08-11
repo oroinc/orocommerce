@@ -41,6 +41,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetWebsiteUrl()
     {
         $url = 'http://global.website.url/';
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
         $this->configManager->expects($this->once())
             ->method('get')
@@ -56,6 +58,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $urlConfig = [
             'value' => $url
         ];
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
 
         $this->configManager->expects($this->once())
@@ -77,6 +81,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $urlConfig = [
             'value' => $url
         ];
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
 
         $this->configManager->expects($this->exactly(2))
@@ -107,6 +113,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
             'value' => $url,
             'use_parent_scope_value' => true
         ];
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
 
         $this->configManager->expects($this->exactly(3))
@@ -138,6 +146,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
             'value' => $url,
             'use_parent_scope_value' => true
         ];
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
 
         $this->configManager->expects($this->exactly(4))
@@ -165,6 +175,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $route = 'test';
         $routeParams = ['id' =>1 ];
         $url = 'http://global.website.url/';
+
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
         $this->configManager->expects($this->once())
             ->method('get')
@@ -189,6 +201,8 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $urlConfig = [
             'value' => $url
         ];
+        
+        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 2]);
         $this->configManager->expects($this->once())
             ->method('get')
