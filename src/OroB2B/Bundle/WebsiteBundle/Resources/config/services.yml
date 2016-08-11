@@ -55,3 +55,9 @@ services:
             - '@translation.warmer.default'
             - '@oro_translation.strategy.provider'
             - '@oro_locale.translation.strategy.localization_fallback_strategy'
+
+    orob2b_website.resolver.website_url_resolver:
+        class: 'OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver'
+        arguments:
+            - '@oro_config.manager'
+            - '@router'
