@@ -29,7 +29,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getLabel()
     {
-        return "Flat Rate";
+        return 'Flat Rate';
     }
 
     /**
@@ -53,7 +53,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getShippingTypeLabel($type)
     {
-        return '';
+        return null;
     }
 
     /**
@@ -69,7 +69,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getOptions(array $context = [])
     {
-        // TODO: Implement getOptions() method.
+        return [];
     }
 
     /**
@@ -77,7 +77,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getSortOrder()
     {
-        // TODO: Implement getSortOrder() method.
+        return 10;
     }
 
     /**
@@ -91,7 +91,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     ) {
         if (!($configEntity instanceof FlatRateRuleConfiguration) ||
             ($configEntity->getPrice() === null) ||
-            ($configEntity->getType() === null)
+            ($configEntity->getProcessingType() === null)
         ) {
             return null;
         }
@@ -102,7 +102,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
         /** @var Price|null $price */
         $price = $configEntity->getPrice();
         /** @var string $shippingRuleType */
-        $shippingRuleType = $configEntity->getType();
+        $shippingRuleType = $configEntity->getProcessingType();
         /** @var Price $handlingFee */
         $handlingFee = $configEntity->getHandlingFeeValue();
 
@@ -133,10 +133,10 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     protected function calculatePricePerItem($context, $price, $handlingFee, $currency)
     {
-        /** @var array $context */
+        /** @var array $shippingContext */
         $shippingContext = $context->getShippingContext();
 
-        if (!isset($shippingContext['line_items'])) {
+        if (!array_key_exists('line_items', $shippingContext)) {
             return null;
         }
 

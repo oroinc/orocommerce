@@ -26,7 +26,7 @@ interface ShippingMethodInterface
 
     /**
      * @param string $type
-     * @return string
+     * @return string|null
      */
     public function getShippingTypeLabel($type);
 

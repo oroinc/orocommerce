@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Method;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -24,6 +25,46 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->flatRate = new FlatRateShippingMethod();
+    }
+
+    public function testGetName()
+    {
+        static::assertEquals(FlatRateShippingMethod::NAME, $this->flatRate->getName());
+    }
+
+    public function testGetLabel()
+    {
+        static::assertEquals('Flat Rate', $this->flatRate->getLabel());
+    }
+
+    public function testGetShippingTypes()
+    {
+        static::assertEmpty($this->flatRate->getShippingTypes());
+    }
+
+    public function testGetRuleConfigurationClass()
+    {
+        static::assertEquals(FlatRateRuleConfiguration::class, $this->flatRate->getRuleConfigurationClass());
+    }
+
+    public function testGetFormType()
+    {
+        static::assertEquals(FlatRateShippingConfigurationType::NAME, $this->flatRate->getFormType());
+    }
+
+    public function testGetShippingTypeLabel()
+    {
+        static::assertNull($this->flatRate->getShippingTypeLabel('anyType'));
+    }
+
+    public function testGetOptions()
+    {
+        static::assertEmpty($this->flatRate->getOptions([]));
+    }
+
+    public function testGetSortOrder()
+    {
+        static::assertEquals(10, $this->flatRate->getSortOrder());
     }
 
     /**
@@ -43,7 +84,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
             [
                 'currency' => $currency,
                 'price' => $price,
-                'type' => $type,
+                'processingType' => $type,
                 'handlingFeeValue' => $handlingFeeValue
             ]
         );
@@ -55,15 +96,15 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $shippingContext */
         $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
 
-        $shippingContext->expects($this->any())
+        $shippingContext->expects(static::any())
             ->method('getShippingContext')
             ->willReturn(['line_items' => $lineItems])
         ;
 
         $price = $this->flatRate->calculatePrice($shippingContext, $configEntity);
 
-        $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals($expectedPrice, $price->getValue());
+        static::assertInstanceOf(Price::class, $price);
+        static::assertEquals($expectedPrice, $price->getValue());
     }
 
     /**
