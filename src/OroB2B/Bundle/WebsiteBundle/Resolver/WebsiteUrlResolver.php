@@ -53,31 +53,6 @@ class WebsiteUrlResolver
     }
 
     /**
-     * @param string $configKey
-     * @param Website $website
-     * @return null|string
-     */
-    protected function getWebsiteScopeConfigValue($configKey, Website $website)
-    {
-        $configValue = $this->configManager->get($configKey, false, true, $website);
-        if (!empty($configValue['value']) && empty($configValue['use_parent_scope_value'])) {
-            return $configValue['value'];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $configKey
-     * @param Website $website
-     * @return null|string
-     */
-    protected function getDefaultConfigValue($configKey, Website $website)
-    {
-        return $this->configManager->get($configKey, true, false, $website);
-    }
-
-    /**
      * @param string $route
      * @param array $routeParams
      * @param Website $website
@@ -101,6 +76,31 @@ class WebsiteUrlResolver
         $url = $this->getWebsiteSecureUrl($website);
 
         return $this->preparePath($url, $route, $routeParams);
+    }
+
+    /**
+     * @param string $configKey
+     * @param Website $website
+     * @return null|string
+     */
+    protected function getWebsiteScopeConfigValue($configKey, Website $website)
+    {
+        $configValue = $this->configManager->get($configKey, false, true, $website);
+        if (!empty($configValue['value']) && empty($configValue['use_parent_scope_value'])) {
+            return $configValue['value'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $configKey
+     * @param Website $website
+     * @return null|string
+     */
+    protected function getDefaultConfigValue($configKey, Website $website)
+    {
+        return $this->configManager->get($configKey, true, false, $website);
     }
 
     /**
