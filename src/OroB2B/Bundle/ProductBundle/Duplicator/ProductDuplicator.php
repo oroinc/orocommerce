@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -29,9 +29,9 @@ class ProductDuplicator
     protected $skuIncrementor;
 
     /**
-     * @var AttachmentManager
+     * @var FileManager
      */
-    protected $attachmentManager;
+    protected $fileManager;
 
     /**
      * @var AttachmentProvider
@@ -41,18 +41,18 @@ class ProductDuplicator
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param EventDispatcherInterface $eventDispatcher
-     * @param AttachmentManager $attachmentManager
+     * @param FileManager $fileManager
      * @param AttachmentProvider $attachmentProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EventDispatcherInterface $eventDispatcher,
-        AttachmentManager $attachmentManager,
+        FileManager $fileManager,
         AttachmentProvider $attachmentProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->eventDispatcher = $eventDispatcher;
-        $this->attachmentManager = $attachmentManager;
+        $this->fileManager = $fileManager;
         $this->attachmentProvider = $attachmentProvider;
     }
 
@@ -141,7 +141,7 @@ class ProductDuplicator
             $productImageCopy = clone $productImage;
             $productImageCopy->setProduct($productCopy);
 
-            $imageFileCopy = $this->attachmentManager->copyAttachmentFile($productImageCopy->getImage());
+            $imageFileCopy = $this->fileManager->cloneFileEntity($productImageCopy->getImage());
             $productImageCopy->setImage($imageFileCopy);
 
             $this->doctrineHelper->getEntityManager($productImageCopy)->persist($productImageCopy);
@@ -151,7 +151,7 @@ class ProductDuplicator
 
         foreach ($attachments as $attachment) {
             $attachmentCopy = clone $attachment;
-            $attachmentFileCopy = $this->attachmentManager->copyAttachmentFile($attachment->getFile());
+            $attachmentFileCopy = $this->fileManager->cloneFileEntity($attachment->getFile());
             $attachmentCopy->setFile($attachmentFileCopy);
 
             $attachmentCopy->setTarget($productCopy);

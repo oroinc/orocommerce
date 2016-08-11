@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -29,7 +30,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected static $expectedTemplate = [
         'source' => [
             'query' => [
-                'select' => [],
                 'join' => [
                     'left' => [
                         [
@@ -38,20 +38,19 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'conditionType' => 'WITH',
                             'condition' => 'product MEMBER OF productCategory.products'
                         ],
-                        [
-                            'join' => 'productCategory.titles',
-                            'alias' => 'categoryTitle'
-                        ]
                     ]
                 ],
-                'where' => [
-                    'and' => ['categoryTitle.localization IS NULL']
-                ]
             ],
         ],
         'columns' => [
             DatagridListener::CATEGORY_COLUMN => [
                 'label' => 'orob2b.catalog.category.entity_label'
+            ]
+        ],
+        'properties' => [
+            DatagridListener::CATEGORY_COLUMN => [
+                'type' => LocalizedValueProperty::NAME,
+                'data_name' => 'productCategory.titles',
             ]
         ],
         'sorters' => [
@@ -65,7 +64,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             'columns' => [
                 DatagridListener::CATEGORY_COLUMN => [
                     'type' => 'string',
-                    'data_name' => 'categoryTitle.string'
+                    'data_name' => DatagridListener::CATEGORY_COLUMN
                 ]
             ],
         ]
@@ -103,10 +102,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onBuildBeforeProductsSelect($event);
 
-        $expected = self::$expectedTemplate;
-        $expected['source']['query']['select'] = ['categoryTitle.string as '.DatagridListener::CATEGORY_COLUMN];
-
-        $this->assertEquals($expected, $config->toArray());
+        $this->assertEquals(self::$expectedTemplate, $config->toArray());
     }
 
     /**

@@ -44,7 +44,7 @@ class PaymentMethodsProvider
     public function getViews($entity = null)
     {
         if (null === $this->paymentMethodViews) {
-            $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
+            $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
             foreach ($views as $view) {

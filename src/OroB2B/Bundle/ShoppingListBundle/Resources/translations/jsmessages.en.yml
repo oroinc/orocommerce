@@ -13,4 +13,6 @@ orob2b:
             add_to_shopping_list: Add To Shopping List
         actions:
             add_to_shopping_list: Add to {{ shoppingList }}
-            added_to_shopping_list: Added {{ lineItems }} to {{ shoppingList }}
+            line_items_in_shopping_list: '{{ lineItems }} in {{ shoppingList }}'
+            in_shopping_lists: In Shopping Lists ({{ count }})
+            update_shopping_list: Update {{ shoppingList }}

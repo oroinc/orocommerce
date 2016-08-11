@@ -7,4 +7,71 @@
   .grid, .grid-scrollable-container {
     overflow: visible;
   }
+  .grid-header-cell:first-child {
+    width: 160px;
+  }
+  .collapse-expand-action-container {
+    .collapse-action{
+      color: #727272;
+      font-size: 13px;
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      &:before {
+        content: '−';
+        display: inline-block;
+        width: 13px;
+        height: 13px;
+        font-weight: normal;
+        border: 1px solid #c3c3c3;
+        border-radius: 3px;
+        margin-right: 8px;
+        background-color: #fcfcfc;
+        font-size: 12px;
+        line-height: 10px;
+        padding: 1px 0 0px 0;
+        text-align: center;
+        color: #727272;
+      }
+      &.collapsed:before {
+        content: '+';
+      }
+    }
+  }
+  .entity-name {
+    float: left;
+    width: 136px;
+    font-weight: bold;
+  }
+  .entity-row-action {
+    position: relative;
+    float: right;
+    width: 20px;
+  }
+  .fields-list {
+    display: none;
+  }
+}
+.collapse-expand-action-container .collapse-action {
+  .field-less & {
+    visibility: hidden;
+  }
+  .collapsed &:before {
+    content: '+';
+  }
+}
+.field-permission-container {
+  margin-left: 40px;
+  padding: 4px 0;
+  border-top: 1px solid #ebebeb;
+  &:first-child {
+    border-top: 0 none;
+  }
+  .field-name{
+    float: left;
+    width: 120px;
+    padding-left: 10px;
+  }
+  .action-permissions {
+    margin-left: 120px;
+  }
 }

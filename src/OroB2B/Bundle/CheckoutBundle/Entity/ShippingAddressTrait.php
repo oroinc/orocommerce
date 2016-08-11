@@ -17,7 +17,7 @@ trait ShippingAddressTrait
     /**
      * @var bool
      *
-     * @ORM\Column(name="save_shipping_address", type="boolean")
+     * @ORM\Column(name="save_shipping_address", type="boolean", options={"default"=true})
      */
     protected $saveShippingAddress = true;
 
