@@ -142,7 +142,6 @@ datagrid:
                     - inventory.id
                     - product.id as productId
                     - product.sku as sku
-                    - productNames.string as productName
                     - productInventoryStatus.name as inventoryStatusName
                     - productInventoryStatus.id as inventoryStatusId
                     - warehouse.name as warehouseName
@@ -159,16 +158,13 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: inventory.productUnitPrecision, alias: productPrecision}
                         - { join: productPrecision.unit, alias: precisionUnit}
-                    inner:
-                        -
-                            join: product.names
-                            alias: productNames
-                            conditionType: WITH
-                            condition: productNames.localization IS NULL
         properties:
             id: ~
             productId: ~
             inventoryLevelPrecision: ~
+            productName:
+                type: localized_value
+                data_name: product.names
             delete_link:
                 type: url
                 route: orob2b_api_warehouse_delete_warehouse_inventory_level

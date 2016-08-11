@@ -1,0 +1,6 @@
+oro_frontend_localization_frontend_ajax:
+    resource:     "@OroFrontendLocalizationBundle/Controller/Frontend/AjaxLocalizationController.php"
+    type:         annotation
+    prefix:       /localization
+    options:
+        frontend: true
