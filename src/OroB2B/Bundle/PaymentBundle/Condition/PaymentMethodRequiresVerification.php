@@ -62,7 +62,7 @@ class PaymentMethodRequiresVerification extends AbstractCondition implements Con
         $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
         $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
 
-        if($paymentMethod instanceof PaymentMethodRequiresVerificationInterface) {
+        if ($paymentMethod instanceof PaymentMethodRequiresVerificationInterface) {
             return $paymentMethod->requiresVerification();
         }
 

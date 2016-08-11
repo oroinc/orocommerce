@@ -54,8 +54,13 @@ class PaymentMethodRequiresVerificationTest extends \PHPUnit_Framework_TestCase
      * @param bool $requiresVerificationData
      * @param bool $expected
      */
-    public function testEvaluate(array $data, $paymentMethodInterface, $callsCount, $requiresVerificationData, $expected)
-    {
+    public function testEvaluate(
+        array $data,
+        $paymentMethodInterface,
+        $callsCount,
+        $requiresVerificationData,
+        $expected
+    ) {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
         $paymentMethod = $this->getMock($paymentMethodInterface);
