@@ -7,7 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;

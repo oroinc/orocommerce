@@ -1,7 +1,8 @@
-.top-nav {
+.main-menu {
   position: relative;
 
   max-height: 49px;
+
   border-bottom: 1px solid $theme-lighter-gray-color;
 
   @media (max-width: $screen-sm) {
@@ -21,6 +22,7 @@
 
     &--nested {
       display: block;
+
       font-size: 0;
     }
   }
@@ -32,7 +34,7 @@
 
     &[data-dropdown-trigger] {
       &:hover {
-        .top-nav__sublist-container {
+        .main-menu__sublist-container {
           display: block;
         }
 
@@ -71,12 +73,12 @@
     }
 
     &--ancestor {
-      .top-nav__link {
+      .main-menu__link {
         text-indent: 4px;
       }
 
       &:hover {
-        .top-nav__link {
+        .main-menu__link {
           background: $theme-lightest-gray-color;
         }
       }
@@ -104,7 +106,7 @@
         padding-right: 10px;
       }
 
-      + .top-nav__item--nested {
+      + .main-menu__item--nested {
         border-left: 1px solid $base-white-color;
       }
 
@@ -122,8 +124,7 @@
     }
   }
 
-  &__link,
-  .top-nav__list__item__link { //todo: find usage in backend
+  &__link {
     display: block;
     min-height: 49px;
     padding: 14px 0;
@@ -142,13 +143,12 @@
       margin: 0;
     }
 
-    &:hover {
+    &:hover, &:focus {
       color: $base-font-color-lighter;
       text-decoration: none;
     }
   }
 
-  // *** All code below has not implemented yet!!!
   &__sublist-container {
     position: absolute;
     top: 48px;
@@ -222,49 +222,51 @@
       }
     }
 
+    &__sublist-item {
+      margin: 10px 0 0;
+
+      a {
+        color: $base-font-color;
+
+        &:hover {
+          color: $base-font-color;
+        }
+      }
+
+      ul {
+        @include list-normalize();
+        padding: 0 0 0 15px;
+
+        li {
+          margin: 10px 0 0;
+        }
+
+        a {
+          color: $base-font-color-lighter;
+
+          &:hover {
+            color: $base-font-color-lighter;
+          }
+        }
+      }
+    }
+
     &__title {
       color: $theme-orange-color;
       text-transform: uppercase;
     }
 
-    &_nested {
+    &--nested {
       @include list-normalize();
+
       margin: 15px 0 0;
 
-      &.top-nav__sublist_nested_has-sibling {
+      &.top-nav__sublist--has-sibling {
         float: left;
         width: 50%;
         margin: 5px 0 0;
       }
-
-      &__item {
-        margin: 10px 0 0;
-
-        a {
-          color: $base-font-color;
-
-          &:hover {
-            color: $base-font-color;
-          }
-        }
-
-        ul {
-          @include list-normalize();
-          padding: 0 0 0 15px;
-
-          li {
-            margin: 10px 0 0;
-          }
-
-          a {
-            color: $base-font-color-lighter;
-
-            &:hover {
-              color: $base-font-color-lighter;
-            }
-          }
-        }
-      }
     }
   }
 }
+

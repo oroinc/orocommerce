@@ -98,7 +98,7 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
     /**
      * {@inheritdoc}
      */
-    protected function processPrivileges(AbstractRole $role)
+    protected function processPrivileges(AbstractRole $role, $className = null)
     {
         $objectIdentityDescriptor = 'entity:OroB2B\Bundle\ProductBundle\Entity\Product';
 

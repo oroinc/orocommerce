@@ -5,12 +5,15 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\LocaleBundle\Helper\LocalizationQueryTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 
 abstract class CategoryCacheTestCase extends WebTestCase
 {
+    use LocalizationQueryTrait;
+
     public function setUp()
     {
         $this->initClient();
@@ -199,13 +202,14 @@ abstract class CategoryCacheTestCase extends WebTestCase
      */
     protected function selectHiddenCategoryTitles(QueryBuilder $queryBuilder, $alias)
     {
-        $queryBuilder->addSelect('categoryTitle.string as title')
+        $queryBuilder
             ->join($alias . '.category', 'category')
-            ->join('category.titles', 'categoryTitle', 'WITH', 'categoryTitle.localization IS NULL')
             ->andWhere($queryBuilder->expr()->eq(
                 $alias . '.visibility',
                 BaseVisibilityResolved::VISIBILITY_HIDDEN
             ))
-            ->addOrderBy('categoryTitle.string');
+            ->addOrderBy('title');
+
+        $this->joinDefaultLocalizedValue($queryBuilder, 'category.titles', 'categoryTitles', 'title');
     }
 }

@@ -29,7 +29,7 @@ define(function(require) {
             this.trigger('unit-changed', {
                 lineItemId: this.lineItemId,
                 product: this.model.get('id'),
-                unit: data.unit
+                unit: data.value.unit
             });
         }
     });

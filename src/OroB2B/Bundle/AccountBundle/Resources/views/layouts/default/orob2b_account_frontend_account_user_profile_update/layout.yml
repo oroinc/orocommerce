@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/layout.html.twig'
@@ -21,11 +23,6 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'user'
-
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
 
         - '@addTree':
             items:

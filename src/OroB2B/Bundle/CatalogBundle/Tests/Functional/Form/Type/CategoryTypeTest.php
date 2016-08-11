@@ -81,7 +81,7 @@ class CategoryTypeTest extends WebTestCase
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
         $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, null, true);
-        
+
         $productUnit = $productUnitRepository->findOneBy(['code' => 'kg']);
         $unitPrecision = new CategoryUnitPrecision();
         $unitPrecision->setUnit($productUnit)->setPrecision(3);
@@ -125,9 +125,9 @@ class CategoryTypeTest extends WebTestCase
         $category = $form->getData();
         $this->assertInstanceOf('OroB2B\Bundle\CatalogBundle\Entity\Category', $category);
         $this->assertEquals($parentCategory->getId(), $category->getParentCategory()->getId());
-        $this->assertEquals($defaultTitle, $category->getDefaultTitle()->getString());
-        $this->assertEquals($defaultShortDescription, $category->getDefaultShortDescription()->getText());
-        $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription()->getText());
+        $this->assertEquals($defaultTitle, (string)$category->getDefaultTitle());
+        $this->assertEquals($defaultShortDescription, (string)$category->getDefaultShortDescription());
+        $this->assertEquals($defaultLongDescription, (string)$category->getDefaultLongDescription());
         $this->assertEquals($unitPrecision, $category->getDefaultProductOptions()->getUnitPrecision());
 
         foreach ($localizations as $localization) {

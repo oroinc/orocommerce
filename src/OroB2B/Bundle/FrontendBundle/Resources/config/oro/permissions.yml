@@ -13,6 +13,3 @@ oro_permissions:
 
     ASSIGN:
         group_names: ['default', 'commerce']
-
-    SHARE:
-        group_names: ['default', 'commerce']
