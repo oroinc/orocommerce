@@ -1,8 +1,3 @@
-#OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
-#   unit1:
-#       code: 'aabb'
-#       defaultPrecision: '1'
-
 OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
@@ -41,18 +36,44 @@ OroB2B\Bundle\AccountBundle\Entity\Account:
        name: 'Company A'
        organization: '@organization'
 
-#OroB2B\Bundle\AccountBundle\Entity\AccountUser:
-#   amanda:
-#       email: 'AmandaRCole@example.org'
-#       username: 'Amanda'
-#       setPlainPassword: ['AmandaRCole@example.org']
+OroB2B\Bundle\AccountBundle\Entity\AccountUser:
+   amanda:
+       email: 'AmandaRCole@example.org'
+       username: 'AmandaRCole@example.org'
+       password: 'oDtYtiEYgEDiXcd/VRDmqPjg+I6lNOG7sVi3V3WvyMRXvI8CfBINJ+aGR3eKGMlPgQRLmqNI80SnGyMK9vSLmg=='
+       salt: 'rerzaxy1gnk88g0w4g40cgs8ows88cw'
+       enabled: '1'
+       confirmed: '1'
+       account: '@account1'
+       organization: '@organization'
+       role: ['@buyer']
 
+OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+   precision1:
+       unit: '@item'
+       precision: '1'
 
+OroB2B\Bundle\ProductBundle\Entity\Product:
+   product1:
+       sku: 'AA1'
+       primaryUnitPrecision: '@precision1'
 
+OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
+   shoppinglist1:
+       label: 'Shopping List 1'
 
-#
-#OroB2B\Bundle\CheckoutBundle\Entity\Checkout:
-#   checkout1:
-#       id: 1
-#       currency: 'EUR'
-#       shippingEstimateCurrency: 'EUR'
+OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
+   lineitem1:
+       product: '@product1'
+       quantity: '1'
+       unit: '@item'
+       accountUser: '@amanda'
+       shoppingList: '@shoppinglist1'
+
+OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+   shoppinglisttotal:
+       __construct: ['@shoppinglist1','EUR']
+       shoppingList: '@shoppinglist1'
+       currency: 'EUR'
+       subtotalValue: '10.1'
+       valid: 'true'
