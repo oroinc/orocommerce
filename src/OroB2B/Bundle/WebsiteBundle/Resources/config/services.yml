@@ -62,3 +62,18 @@ services:
             - '@orob2b_website.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: 10 }
+
+    orob2b_website.event_listener.install_command:
+        class: 'OroB2B\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
+
+
+    orob2b_website.resolver.website_url_resolver:
+        class: 'OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver'
+        arguments:
+            - '@oro_config.manager'
+            - '@router'

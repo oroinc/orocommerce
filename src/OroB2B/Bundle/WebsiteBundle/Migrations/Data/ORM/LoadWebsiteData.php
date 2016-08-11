@@ -61,13 +61,5 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
         $manager->persist($website);
         /** @var EntityManager $manager */
         $manager->flush($website);
-
-        $configManager = $this->container->get('oro_config.manager');
-
-        $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
-        // Store website url in configuration
-        $configManager->set('oro_b2b_website.url', $url, $website->getId());
-        $configManager->set('oro_b2b_website.secure_url', $url, $website->getId());
-        $configManager->flush();
     }
 }
