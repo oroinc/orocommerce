@@ -38,7 +38,6 @@ class InstallCommandListener
             $repo = $this->registry->getRepository(Website::class);
             $website = $repo->getDefaultWebsite();
             $url = $this->configManager->get('oro_ui.application_url');
-            var_dump($url);
             $this->configManager->set('oro_b2b_website.url', $url, $website->getId());
             $this->configManager->set('oro_b2b_website.secure_url', $url, $website->getId());
             $this->configManager->flush();

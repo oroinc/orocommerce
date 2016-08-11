@@ -56,14 +56,11 @@ class WebsiteUrlResolver
 
     public function getWebsiteUrl(Website $website)
     {
-        return $this->configManager->get('oro_b2b_website.url', false, false, $website)
-            ? : $this->configManager->get('oro_b2b_website.url', false, false);
+        return '';
     }
 
     public function getWebsiteSecureUrl(Website $website)
     {
-        return $this->configManager->get('oro_b2b_website.secure_url', false, false, $website)
-            ? : $this->configManager->get('oro_b2b_website.url', false, false, $website)
-                ? : $this->configManager->get('oro_b2b_website.url', false, false);
+        return '';
     }
 }
