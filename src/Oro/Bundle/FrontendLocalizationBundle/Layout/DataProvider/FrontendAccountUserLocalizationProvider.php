@@ -4,13 +4,8 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
-
-class FrontendAccountUserLocalizationProvider implements DataProviderInterface
+class FrontendAccountUserLocalizationProvider
 {
-    const NAME = 'frontend_account_user_localization';
-
     /**
      * @var UserLocalizationManager
      */
@@ -27,15 +22,7 @@ class FrontendAccountUserLocalizationProvider implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
+    public function getCurrentLocalization()
     {
         return $this->userLocalizationManager->getCurrentLocalization();
     }
