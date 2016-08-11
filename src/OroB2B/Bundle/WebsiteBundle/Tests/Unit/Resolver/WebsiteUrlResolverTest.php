@@ -38,215 +38,184 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $this->websiteUrlResolver = new WebsiteUrlResolver($this->configManager, $this->urlGenerator);
     }
 
-    /**
-     * @dataProvider websiteUrlsConfigDataProvider
-     *
-     * @param string $rout
-     * @param array $parameters
-     * @param string $websiteDomain
-     * @param string $path
-     * @param string $expected
-     */
-    public function testGetWebsitePathWithWebsiteUrlConfig($rout, array $parameters, $websiteDomain, $path, $expected)
+    public function testGetWebsiteUrl()
     {
+        $url = 'http://global.website.url/';
+
         /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 42]);
+        $website = $this->getEntity(Website::class, ['id' => 2]);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(WebsiteUrlResolver::CONFIG_URL, false, false, $website)
+            ->willReturn($url);
+
+        $this->assertSame($url, $this->websiteUrlResolver->getWebsiteUrl($website));
+    }
+
+    public function testGetWebsiteSecureUrlHasSecureUrl()
+    {
+        $url = 'https://website.url/';
+        $urlConfig = [
+            'value' => $url
+        ];
+
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 2]);
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_website.url', false, false, $website)
-            ->willReturn($websiteDomain);
+            ->with(WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website)
+            ->willReturn($urlConfig);
 
-        $this->urlGenerator->expects($this->once())
-            ->method('generate')
-            ->with($rout, $parameters)
-            ->willReturn($path);
-
-        $actualUrl = $this->websiteUrlResolver->getWebsitePath($rout, $parameters, $website);
-        $this->assertEquals($expected, $actualUrl);
+        $this->assertSame($url, $this->websiteUrlResolver->getWebsiteSecureUrl($website));
     }
 
-    /**
-     * @dataProvider websiteUrlsConfigDataProvider
-     *
-     * @param string $rout
-     * @param array $parameters
-     * @param string $websiteDomain
-     * @param string $path
-     * @param string $expected
-     */
-    public function testGetWebsitePathWithoutWebsiteUrlConfig(
-        $rout,
-        array $parameters,
-        $websiteDomain,
-        $path,
-        $expected
-    ) {
+    public function testGetWebsiteSecureUrlHasUrl()
+    {
+        $secureUrl = 'http://global.website.url/';
+        $url = 'https://website.url/';
+        $secureUrlConfig = [
+            'value' => $secureUrl,
+            'use_parent_scope_value' => true
+        ];
+        $urlConfig = [
+            'value' => $url
+        ];
+
         /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 42]);
+        $website = $this->getEntity(Website::class, ['id' => 2]);
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_b2b_website.url', false, false, $website)
-            ->willReturn(null);
+            ->withConsecutive(
+                [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website],
+                [WebsiteUrlResolver::CONFIG_URL, false, true, $website]
+            )
+            ->willReturnMap(
+                [
+                    [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website, $secureUrlConfig],
+                    [WebsiteUrlResolver::CONFIG_URL, false, true, $website, $urlConfig]
+                ]
+            );
 
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_b2b_website.url', false, false)
-            ->willReturn($websiteDomain);
-
-        $this->urlGenerator->expects($this->once())
-            ->method('generate')
-            ->with($rout, $parameters)
-            ->willReturn($path);
-
-        $actualUrl = $this->websiteUrlResolver->getWebsitePath($rout, $parameters, $website);
-        $this->assertEquals($expected, $actualUrl);
+        $this->assertSame($url, $this->websiteUrlResolver->getWebsiteSecureUrl($website));
     }
 
-    /**
-     * @dataProvider getWebsiteSecurePathWithWebsiteSecureUrlConfigDataProvider
-     *
-     * @param string $rout
-     * @param array $parameters
-     * @param string $websiteDomain
-     * @param string $path
-     * @param string $expected
-     */
-    public function testGetWebsiteSecurePathWithWebsiteSecureUrlConfig(
-        $rout,
-        array $parameters,
-        $websiteDomain,
-        $path,
-        $expected
-    ) {
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 42]);
+    public function testGetWebsiteSecureUrlHasGlobalSecureUrl()
+    {
+        $secureUrl = 'http://global.website.url/';
+        $url = 'https://global.website.url/';
+        $secureUrlConfig = [
+            'value' => $secureUrl,
+            'use_parent_scope_value' => true
+        ];
+        $urlConfig = [
+            'value' => $url,
+            'use_parent_scope_value' => true
+        ];
 
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 2]);
+
+        $this->configManager->expects($this->exactly(3))
+            ->method('get')
+            ->withConsecutive(
+                [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website],
+                [WebsiteUrlResolver::CONFIG_URL, false, true, $website],
+                [WebsiteUrlResolver::CONFIG_SECURE_URL, true, false, $website]
+            )
+            ->willReturnMap(
+                [
+                    [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website, $secureUrlConfig],
+                    [WebsiteUrlResolver::CONFIG_URL, false, true, $website, $urlConfig],
+                    [WebsiteUrlResolver::CONFIG_SECURE_URL, true, false, $website, $secureUrl]
+                ]
+            );
+
+        $this->assertSame($secureUrl, $this->websiteUrlResolver->getWebsiteSecureUrl($website));
+    }
+
+    public function testGetWebsiteSecureUrlHasGlobalUrl()
+    {
+        $url = 'https://global.website.url/';
+        $secureUrlConfig = [
+            'value' => null,
+            'use_parent_scope_value' => true
+        ];
+        $urlConfig = [
+            'value' => $url,
+            'use_parent_scope_value' => true
+        ];
+
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 2]);
+
+        $this->configManager->expects($this->exactly(4))
+            ->method('get')
+            ->withConsecutive(
+                [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website],
+                [WebsiteUrlResolver::CONFIG_URL, false, true, $website],
+                [WebsiteUrlResolver::CONFIG_SECURE_URL, true, false, $website],
+                [WebsiteUrlResolver::CONFIG_URL, true, false, $website]
+            )
+            ->willReturnMap(
+                [
+                    [WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website, $secureUrlConfig],
+                    [WebsiteUrlResolver::CONFIG_URL, false, true, $website, $urlConfig],
+                    [WebsiteUrlResolver::CONFIG_SECURE_URL, true, false, $website, null],
+                    [WebsiteUrlResolver::CONFIG_URL, true, false, $website, $url]
+                ]
+            );
+
+        $this->assertSame($url, $this->websiteUrlResolver->getWebsiteSecureUrl($website));
+    }
+
+    public function testGetWebsitePath()
+    {
+        $route = 'test';
+        $routeParams = ['id' =>1 ];
+        $url = 'http://global.website.url/';
+
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 2]);
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_website.secure_url', false, false, $website)
-            ->willReturn($websiteDomain);
-
+            ->with(WebsiteUrlResolver::CONFIG_URL, false, false, $website)
+            ->willReturn($url);
         $this->urlGenerator->expects($this->once())
             ->method('generate')
-            ->with($rout, $parameters)
-            ->willReturn($path);
+            ->with($route, $routeParams)
+            ->willReturn('/test/1');
 
-        $actualUrl = $this->websiteUrlResolver->getWebsiteSecurePath($rout, $parameters, $website);
-        $this->assertEquals($expected, $actualUrl);
+        $this->assertSame(
+            'http://global.website.url/test/1',
+            $this->websiteUrlResolver->getWebsitePath($route, $routeParams, $website)
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function getWebsiteSecurePathWithWebsiteSecureUrlConfigDataProvider()
+    public function testGetWebsiteSecurePath()
     {
-        return [
-            [
-                'rout' => 'test_rout',
-                'parameters' => ['param1' => 123],
-                'websiteDomain' => 'https://website-secure.com',
-                'path' => '/test?param1=123',
-                'expected' => 'https://website-secure.com/test?param1=123'
-            ]
+        $route = 'test';
+        $routeParams = ['id' =>1 ];
+        $url = 'https://website.url/';
+        $urlConfig = [
+            'value' => $url
         ];
-    }
-
-    /**
-     * @dataProvider websiteUrlsConfigDataProvider
-     *
-     * @param string $rout
-     * @param array $parameters
-     * @param string $websiteDomain
-     * @param string $path
-     * @param string $expected
-     */
-    public function testGetWebsiteSecurePathWithoutWebsiteSecureUrlConfig(
-        $rout,
-        array $parameters,
-        $websiteDomain,
-        $path,
-        $expected
-    ) {
+        
         /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 42]);
-
-        $this->configManager->expects($this->at(0))
+        $website = $this->getEntity(Website::class, ['id' => 2]);
+        $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_website.secure_url', false, false, $website)
-            ->willReturn(null);
-
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_b2b_website.url', false, false, $website)
-            ->willReturn($websiteDomain);
-
+            ->with(WebsiteUrlResolver::CONFIG_SECURE_URL, false, true, $website)
+            ->willReturn($urlConfig);
         $this->urlGenerator->expects($this->once())
             ->method('generate')
-            ->with($rout, $parameters)
-            ->willReturn($path);
+            ->with($route, $routeParams)
+            ->willReturn('/test/1');
 
-        $actualUrl = $this->websiteUrlResolver->getWebsiteSecurePath($rout, $parameters, $website);
-        $this->assertEquals($expected, $actualUrl);
-    }
-
-    /**
-     * @dataProvider websiteUrlsConfigDataProvider
-     *
-     * @param string $rout
-     * @param array $parameters
-     * @param string $websiteDomain
-     * @param string $path
-     * @param string $expected
-     */
-    public function testGetWebsiteSecurePathWithoutUrlsConfig(
-        $rout,
-        array $parameters,
-        $websiteDomain,
-        $path,
-        $expected
-    ) {
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 42]);
-
-        $this->configManager->expects($this->at(0))
-            ->method('get')
-            ->with('oro_b2b_website.secure_url', false, false, $website)
-            ->willReturn(null);
-
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_b2b_website.url', false, false, $website)
-            ->willReturn(null);
-
-        $this->configManager->expects($this->at(2))
-            ->method('get')
-            ->with('oro_b2b_website.url', false, false)
-            ->willReturn($websiteDomain);
-
-        $this->urlGenerator->expects($this->once())
-            ->method('generate')
-            ->with($rout, $parameters)
-            ->willReturn($path);
-
-        $actualUrl = $this->websiteUrlResolver->getWebsiteSecurePath($rout, $parameters, $website);
-        $this->assertEquals($expected, $actualUrl);
-    }
-
-    /**
-     * @return array
-     */
-    public function websiteUrlsConfigDataProvider()
-    {
-        return [
-            [
-                'rout' => 'test_rout',
-                'parameters' => ['param1' => 123],
-                'websiteDomain' => 'http://website.com',
-                'path' => '/test?param1=123',
-                'expected' => 'http://website.com/test?param1=123'
-            ]
-        ];
+        $this->assertSame(
+            'https://website.url/test/1',
+            $this->websiteUrlResolver->getWebsiteSecurePath($route, $routeParams, $website)
+        );
     }
 }
