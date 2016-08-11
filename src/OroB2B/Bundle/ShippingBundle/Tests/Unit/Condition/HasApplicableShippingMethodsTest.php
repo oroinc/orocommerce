@@ -7,7 +7,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
@@ -25,6 +27,9 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     /** @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingRulesProvider;
 
+    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingContextProviderFactory;
+
     protected function setUp()
     {
         $this->shippingMethodRegistry = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
@@ -34,9 +39,18 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->shippingContextProviderFactory = $this
+            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->shippingContextProviderFactory->expects(static::any())
+            ->method('create')
+            ->willReturn(new ShippingContextProvider([]));
+
         $this->condition = new HasApplicableShippingMethods(
             $this->shippingMethodRegistry,
-            $this->shippingRulesProvider
+            $this->shippingRulesProvider,
+            $this->shippingContextProviderFactory
         );
     }
 

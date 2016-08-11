@@ -6,8 +6,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 class ShippingCostCalculationProvider
 {
@@ -18,10 +18,14 @@ class ShippingCostCalculationProvider
 
     /**
      * @param ShippingMethodRegistry $registry
+     * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
-    public function __construct(ShippingMethodRegistry $registry)
-    {
+    public function __construct(
+        ShippingMethodRegistry $registry,
+        ShippingContextProviderFactory $shippingContextProviderFactory
+    ) {
         $this->registry = $registry;
+        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
     /**
@@ -32,16 +36,8 @@ class ShippingCostCalculationProvider
     public function calculatePrice(Checkout $entity, ShippingRuleConfiguration $config)
     {
         $method = $this->registry->getShippingMethod($config->getMethod());
-        $context = [
-            'checkout' => $entity,
-            'billingAddress' => $entity->getBillingAddress(),
-            'currency' => $entity->getCurrency(),
-        ];
-        $sourceEntity = $entity->getSourceEntity();
-        if (null !== $sourceEntity) {
-            $context['line_items'] = $sourceEntity->getLineItems();
-        }
-        $shippingContext = new ShippingContextProvider($context);
+        $shippingContext = $this->shippingContextProviderFactory->create($entity);
+
         return $method->calculatePrice($shippingContext, $config);
     }
 }

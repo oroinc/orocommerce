@@ -7,11 +7,10 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
 {
@@ -23,14 +22,22 @@ class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
     /** @var ShippingRulesProvider */
     protected $shippingRulesProvider;
 
+    /** @var  ShippingContextProviderFactory */
+    protected $shippingContextProviderFactory;
+
     /**
      * @param ShippingMethodRegistry $registry
      * @param ShippingRulesProvider $shippingRuleProvider
+     * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
-    public function __construct(ShippingMethodRegistry $registry, ShippingRulesProvider $shippingRuleProvider)
-    {
+    public function __construct(
+        ShippingMethodRegistry $registry,
+        ShippingRulesProvider $shippingRuleProvider,
+        ShippingContextProviderFactory $shippingContextProviderFactory
+    ) {
         $this->registry = $registry;
         $this->shippingRulesProvider = $shippingRuleProvider;
+        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
     /**
@@ -40,17 +47,7 @@ class ShippingMethodsDataProvider extends AbstractServerRenderDataProvider
     public function getMethods(Checkout $entity)
     {
         if (null !== $entity) {
-            $context = [
-                'checkout' => $entity,
-                'shippingAddress' => $entity->getShippingAddress(),
-                'currency' => $entity->getCurrency(),
-            ];
-            /** @var ShoppingList $sourceEntity */
-            $sourceEntity = $entity->getSourceEntity();
-            if (null !== $sourceEntity) {
-                $context['line_items'] = $sourceEntity->getLineItems();
-            }
-            $shippingContext = new ShippingContextProvider($context);
+            $shippingContext = $this->shippingContextProviderFactory->create($entity);
             $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
             return $this->calculateApplicableShippingMethods($shippingContext, $rules);
         } else {

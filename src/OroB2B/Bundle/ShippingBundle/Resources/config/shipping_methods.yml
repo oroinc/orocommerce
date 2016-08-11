@@ -13,7 +13,6 @@ services:
         class: 'OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@orob2b_shipping.shipping_method.registry'
 
     orob2b_shipping.form_event_subscriber.rule_configuration_subscriber:
         class: 'OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
@@ -40,6 +39,10 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.factory.shipping_context_provider_factory'
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
+
+    orob2b_shipping.factory.shipping_context_provider_factory:
+        class: 'OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory'

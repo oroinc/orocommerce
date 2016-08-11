@@ -8,9 +8,9 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 /**
  * Check applicable shipping methods
@@ -30,19 +30,25 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     /** ShippingRulesProvider */
     protected $shippingRulesProvider;
 
+    /** ShippingContextProviderFactory */
+    protected $shippingContextProviderFactory;
+
     /** @var object */
     protected $entity;
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
      * @param ShippingRulesProvider $shippingRulesProvider
+     * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
     public function __construct(
         ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingRulesProvider $shippingRulesProvider
+        ShippingRulesProvider $shippingRulesProvider,
+        ShippingContextProviderFactory $shippingContextProviderFactory
     ) {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
         $this->shippingRulesProvider = $shippingRulesProvider;
+        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
     /** {@inheritdoc} */
@@ -76,25 +82,17 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         /** @var Checkout $entity */
         $entity = $this->resolveValue($context, $this->entity, false);
 
-        if (!empty($entity)) {
-            $context = [
-                'checkout' => $entity,
-                'shippingAddress' => $entity->getShippingAddress(),
-                'currency' => $entity->getCurrency(),
-            ];
-            $sourceEntity = $entity->getSourceEntity();
-            if (!empty($sourceEntity)) {
-                $context['line_items'] = $sourceEntity->getLineItems();
-            }
-            $shippingContext = new ShippingContextProvider($context);
+        $rules = [];
+        if (null !==$entity) {
+            $shippingContext = $this->shippingContextProviderFactory->create($entity);
             $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
         }
-        if (!empty($rules)) {
+        if (0 !== count($rules)) {
             $result = true;
             foreach ($rules as $rule) {
                 foreach ($rule->getConfigurations() as $config) {
                     $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
-                    if (empty($method)) {
+                    if (null === $method) {
                         $result = false;
                     }
                 }

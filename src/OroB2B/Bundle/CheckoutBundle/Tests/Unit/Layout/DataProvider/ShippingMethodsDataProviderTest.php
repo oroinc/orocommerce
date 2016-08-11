@@ -10,7 +10,9 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -26,6 +28,9 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $shippingRulesProvider;
+
+    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingContextProviderFactory;
 
     /**
      * @var ShippingMethodsDataProvider
@@ -43,12 +48,26 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new ShippingMethodsDataProvider($this->registry, $this->shippingRulesProvider);
+        $this->shippingContextProviderFactory = $this
+            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->provider = new ShippingMethodsDataProvider(
+            $this->registry,
+            $this->shippingRulesProvider,
+            $this->shippingContextProviderFactory
+        );
     }
 
     public function testGetMethodsEmpty()
     {
         $this->shippingRulesProvider->expects(static::any())->method('getApplicableShippingRules')->willReturn([]);
+
+        $this->shippingContextProviderFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn(new ShippingContextProvider([]));
 
         $data = $this->provider->getMethods(new Checkout());
         static::assertEmpty($data);
@@ -79,11 +98,16 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
         $method = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $method->expects(static::once())->method('getLabel')->willReturn('label');
         $method->expects(static::once())->method('getShippingTypeLabel')->willReturn('typeLabel');
-        $method->expects(static::once())->method('calculatePrice')->willReturn((new Price()));
+        $method->expects(static::once())->method('calculatePrice')->willReturn(new Price());
 
         $this->registry->expects(static::once())
             ->method('getShippingMethod')
             ->willReturn($method);
+
+        $this->shippingContextProviderFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn(new ShippingContextProvider([]));
 
         $data = $this->provider->getMethods(new Checkout());
         $expectedData = [
