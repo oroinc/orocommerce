@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -40,39 +39,39 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     }
 
     /**
-     * @dataProvider getDataDataProvider
+     * @dataProvider getByProductDataProvider
      *
      * @param Product|null $product
      * @param array|null $expected
      */
-    public function testGetData(Product $product = null, array $expected = null)
+    public function testGetByProduct(Product $product = null, array $expected = null)
     {
-        $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
-
         $this->productShoppingListsDataProvider
             ->expects($this->any())
-            ->method('getProductUnitsQuantity')
-            ->willReturn($expected);
+            ->method('getProductsUnitsQuantity')
+            ->willReturn($expected ? [$expected] : $expected);
 
-        $this->assertEquals($expected, $this->provider->getData($context));
+        $this->assertEquals($expected, $this->provider->getByProduct($product));
     }
 
     /**
      * @return array
      */
-    public function getDataDataProvider()
+    public function getByProductDataProvider()
     {
+        $product = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $product->expects($this->any())->method('getId')->willReturn(0);
         return [
             'no_product' => [
                 'product' => null,
             ],
             'no_prices' => [
-                'product' => new Product(),
-                'expected' => []
+                'product' => new Product()
             ],
             'single_shopping_list' => [
-                'product' => new Product(),
+                'product' => $product,
                 'expected' => [
                     [
                         'shopping_list_id' => 1,
@@ -86,7 +85,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 ]
             ],
             'a_few_shopping_lists' => [
-                'product' => new Product(),
+                'product' => $product,
                 'expected' => [
                     [
                         'shopping_list_id' => 1,
@@ -108,14 +107,5 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
                 ]
             ],
         ];
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: product.
-     */
-    public function testGetDataWithEmptyContext()
-    {
-        $this->provider->getData(new LayoutContext());
     }
 }

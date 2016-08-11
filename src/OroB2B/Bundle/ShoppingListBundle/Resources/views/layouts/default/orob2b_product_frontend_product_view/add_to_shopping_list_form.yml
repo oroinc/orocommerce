@@ -10,7 +10,7 @@ layout:
         - '@setOption':
             id: product_shopping_lists
             optionName: shoppingLists
-            optionValue: '=data["orob2b_shopping_list_product_units_quantity"]'
+            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data["product"])'
         - '@add':
             id: line_item_form_shopping_lists
             parentId: line_item_form
