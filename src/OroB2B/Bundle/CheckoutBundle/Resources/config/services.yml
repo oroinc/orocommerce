@@ -23,14 +23,20 @@ services:
             - '@orob2b_pricing.user_currency_manager'
             - '@oro_config.manager'
 
-    orob2b_checkout.layout.data_provider.summary:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider'
+    orob2b_checkout.layout.data_provider.line_items_totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsDataProvider'
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_summary }
+            - { name: layout.data_provider, alias: orob2b_checkout_line_items_totals }
+
+    orob2b_checkout.layout.data_provider.totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TotalsDataProvider'
+        arguments:
+            - '@orob2b_checkout.provider.checkout_totals'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_totals }
 
     orob2b_checkout.layout.data_provider.transition_form:
         class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider'
@@ -207,7 +213,6 @@ services:
           - '@orob2b_shipping.shipping_method.registry'
           - '@orob2b_shipping.factory.shipping_context_provider_factory'
 
-
     orob2b_checkout.condition.has_applicable_shipping_methods:
         class: 'OroB2B\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
         arguments:
@@ -217,3 +222,16 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
+
+    orob2b_checkout.provider.checkout_totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
+        arguments:
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+
+    orob2b_checkout.action.default_shipping_method_setter:
+        class: 'OroB2B\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
+        arguments:
+            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_checkout.shipping_cost.calculator'

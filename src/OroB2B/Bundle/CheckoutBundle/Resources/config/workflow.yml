@@ -186,10 +186,24 @@ workflows:
                     is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
                 form_options:
+                    init_actions:
+                        - '@call_service_method':
+                            service: orob2b_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
                     attribute_fields:
-                        shipping_method: ~
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
                         shipping_method_type: ~
-                        shipping_rule_config: ~
+                        shipping_rule_config:
+                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                            options:
+                                class: 'OroB2BShippingBundle:ShippingRuleConfiguration'
+                                multiple: false
+                                constraints:
+                                    - NotBlank: ~
 
             continue_to_order_review:
                 label: Continue

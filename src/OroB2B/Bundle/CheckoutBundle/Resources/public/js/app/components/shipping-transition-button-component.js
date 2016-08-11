@@ -51,7 +51,7 @@ define(function(require) {
                 } else {
                     this.setElementsValue(null, null, null);
                 }
-            }                
+            }
         },
 
         /**
@@ -84,6 +84,7 @@ define(function(require) {
          * @param {Event} event
          */
         onShippingMethodTypeChange: function(event) {
+            mediator.trigger('checkout:shipping-method:changed');
             var method_type = $(event.target);
             var method = method_type.data('shipping-method');
             var shippingRuleConfig = method_type.data('shipping-rule-config');
@@ -94,6 +95,7 @@ define(function(require) {
          * @param {Event} event
          */
         onShippingMethodChange: function(event) {
+            mediator.trigger('checkout:shipping-method:changed');
             var method = $(event.target);
             var shippingRuleConfig = method.data('shipping-rule-config');
             this.setElementsValue(null, method.val(), shippingRuleConfig);

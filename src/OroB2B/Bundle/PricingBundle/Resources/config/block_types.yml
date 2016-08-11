@@ -6,3 +6,22 @@ services:
             - [setName, ['product_prices']]
         tags:
              - { name: layout.block_type, alias: product_prices }
+
+    orob2b_pricing.layout.type.totals:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        route: {default: 'orob2b_pricing_frontend_entity_totals'}
+                        pageComponent: ~
+                        events: ~
+                        selectors: ~
+                        entityClassName: {required: true}
+                        entityId: {required: true}
+                        skipMaskView: ~
+                        data: {required: true}
+            - [setName, ['price_totals']]
+        tags:
+             - { name: layout.block_type, alias: price_totals }

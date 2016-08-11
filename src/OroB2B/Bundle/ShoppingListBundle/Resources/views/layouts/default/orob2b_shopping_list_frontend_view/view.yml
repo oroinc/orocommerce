@@ -54,11 +54,16 @@ layout:
                         visible: '=data["entity"]!=null'
                         shoppingList: '=data["entity"]'
                 shopping_list_totals:
-                    blockType: shopping_list_totals
+                    blockType: price_totals
                     options:
                         visible: '=data["entity"]!=null'
-                        shoppingList: '=data["entity"]'
-                        totals: '=data["totals"]'
+                        data: '=data["totals"]'
+                        events:
+                            - 'frontend:item:delete'
+                            - 'frontend:shopping-list-item-quantity:update'
+                        entityClassName: 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                        entityId: '=data["entity"].getId()'
+                        skipMaskView: true
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:

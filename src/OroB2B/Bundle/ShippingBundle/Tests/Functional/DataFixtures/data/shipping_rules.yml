@@ -92,7 +92,7 @@ shipping_rule.7:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'EUR'
+            currency: 'USD'
     destinations:
         -
             postalCode: '12346'
@@ -107,4 +107,4 @@ shipping_rule.8:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
             value: 10
-            currency: 'EUR'
+            currency: 'USD'

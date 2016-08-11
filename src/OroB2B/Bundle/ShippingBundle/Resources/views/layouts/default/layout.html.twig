@@ -1,5 +1,6 @@
-{% block _shipping_methods_widget %}
-    {% set currentShippingMethod = currentShippingMethod|default(methods|keys|first) %}
+{% block shipping_methods_widget %}
+    {% set currentShippingMethod = currentShippingMethod|default(null) %}
+    {% set currentShippingMethodType = currentShippingMethodType|default(null) %}
     <div class="{{ class_prefix }}__form" data-content="shipping_method_form">
         <div class="{{ class_prefix }}__form__row">
             <div class="{{ class_prefix }}__form__col form__col_x6" data-shipping-method-forms>
