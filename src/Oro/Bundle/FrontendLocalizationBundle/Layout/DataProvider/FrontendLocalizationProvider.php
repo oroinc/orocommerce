@@ -4,7 +4,7 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 
-class FrontendAccountUserLocalizationProvider
+class FrontendLocalizationProvider
 {
     /**
      * @var UserLocalizationManager
@@ -17,6 +17,14 @@ class FrontendAccountUserLocalizationProvider
     public function __construct(UserLocalizationManager $userLocalizationManager)
     {
         $this->userLocalizationManager = $userLocalizationManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEnabledLocalizations()
+    {
+        return $this->userLocalizationManager->getEnabledLocalizations();
     }
 
     /**

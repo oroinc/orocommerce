@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendEnabledLocalizationsProvider;
+use Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendLocalizationProvider;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 use Oro\Component\Layout\ContextInterface;
 
-class FrontendEnabledLocalizationsProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendLocalizationProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
@@ -17,7 +17,7 @@ class FrontendEnabledLocalizationsProviderTest extends \PHPUnit_Framework_TestCa
     protected $userLocalizationManager;
 
     /**
-     * @var FrontendEnabledLocalizationsProvider
+     * @var FrontendLocalizationProvider
      */
     protected $dataProvider;
 
@@ -27,25 +27,28 @@ class FrontendEnabledLocalizationsProviderTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dataProvider = new FrontendEnabledLocalizationsProvider($this->userLocalizationManager);
+        $this->dataProvider = new FrontendLocalizationProvider($this->userLocalizationManager);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals(FrontendEnabledLocalizationsProvider::NAME, $this->dataProvider->getIdentifier());
-    }
-
-    public function testGetData()
+    public function testGetEnabledLocalization()
     {
         $localizations = [new Localization(), new Localization()];
-
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
 
         $this->userLocalizationManager->expects($this->once())
             ->method('getEnabledLocalizations')
             ->willReturn($localizations);
 
-        $this->assertSame($localizations, $this->dataProvider->getData($context));
+        $this->assertSame($localizations, $this->dataProvider->getEnabledLocalizations());
+    }
+
+    public function getGetCurrentLocalization()
+    {
+        $localization = new Localization();
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        $this->assertSame($localization, $this->dataProvider->getCurrentLocalization());
     }
 }
