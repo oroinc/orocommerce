@@ -71,7 +71,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
 
-
     orob2b_website.resolver.website_url_resolver:
         class: 'OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver'
         arguments:
