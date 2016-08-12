@@ -1,0 +1,22 @@
+services:
+    oro_frontend_localization.layout.data_provider.enabled_currencies:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendEnabledLocalizationsProvider'
+        public: true
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: layout.data_provider, alias: frontend_enabled_localizations }
+
+    oro_frontend_localization.provider.fronted_account_user_currency:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendAccountUserLocalizationProvider'
+        public: true
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: layout.data_provider, alias: frontend_account_user_localization }
+
+    oro_frontend_localization.layout.block_type.localization_switcher:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Layout\Block\Type\LocalizationSwitcherType'
+        public: true
+        tags:
+             - { name: layout.block_type, alias: localization_switcher }

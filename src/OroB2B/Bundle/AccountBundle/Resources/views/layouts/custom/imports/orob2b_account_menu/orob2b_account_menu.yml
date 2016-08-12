@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'orob2b_account_menu.html.twig'
+        - '@setOption':
+            id: account_sidebar
+            optionName: attr.data-collapse-container
+            optionValue: true

@@ -15,7 +15,7 @@ use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStu
 
 use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\TooltipFormExtensionStub;
 use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItemStub;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
 
 class MenuItemTypeTest extends FormIntegrationTestCase
@@ -79,8 +79,8 @@ class MenuItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormForRegularMenuItem()
     {
-        $menuItem = new MenuItemStub();
-        $menuItem->setParent(new MenuItemStub());
+        $menuItem = new MenuItem();
+        $menuItem->setParent(new MenuItem());
         $form = $this->factory->create($this->formType, $menuItem);
 
         $this->assertTrue($form->has('titles'));
@@ -126,8 +126,8 @@ class MenuItemTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $root = new MenuItemStub();
-        $menuItem = new MenuItemStub();
+        $root = new MenuItem();
+        $menuItem = new MenuItem();
         $menuItem->setDefaultTitle('menu_item_title');
         $menuItem->setUri('uri');
         $menuItem->setCondition('1 > 2');
