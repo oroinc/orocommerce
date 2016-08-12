@@ -17,7 +17,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
     /**
      * @var RenameExtension
      */
-    protected $renameExtension;
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -28,6 +28,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         // notes
         $notes = $schema->getTable('oro_note');
+
         $notes->removeForeignKey('FK_BA066CE1271A24E0');
         $extension->renameColumn($schema, $queries, $notes, 'website_63ea35fe_id', 'website_eb2ef553_id');
         $extension->addForeignKeyConstraint(

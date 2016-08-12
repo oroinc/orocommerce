@@ -17,7 +17,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
     /**
      * @var RenameExtension
      */
-    protected $renameExtension;
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -28,7 +28,18 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         // notes
         $notes = $schema->getTable('oro_note');
+
+        $notes->removeForeignKey('FK_BA066CE14F8DA267');
         $extension->renameColumn($schema, $queries, $notes, 'price_list_895c1635_id', 'price_list_9919ee5_id');
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_note',
+            'orob2b_price_list',
+            ['price_list_9919ee5_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
+        );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'OroB2B\Bundle\NoteBundle\Entity\Note',
             'OroB2B\Bundle\PricingBundle\Entity\PriceList',

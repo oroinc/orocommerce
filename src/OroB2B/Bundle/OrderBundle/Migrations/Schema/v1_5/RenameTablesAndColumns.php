@@ -17,7 +17,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
     /**
      * @var RenameExtension
      */
-    protected $renameExtension;
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -48,7 +48,18 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         // attachments
         $attachments = $schema->getTable('oro_attachment');
+
+        $attachments->removeForeignKey('FK_FA0FE08139C4E2D');
         $extension->renameColumn($schema, $queries, $attachments, 'order_f0cd67_id', 'order_50627d4f_id');
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_attachment',
+            'orob2b_order',
+            ['order_50627d4f_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
+        );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'OroB2B\Bundle\AttachmentBundle\Entity\Attachment',
             'OroB2B\Bundle\OrderBundle\Entity\Order',
@@ -59,7 +70,19 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         // notes
         $notes = $schema->getTable('oro_note');
+
+        $notes->removeForeignKey('fk_oro_note_order_f0cd67_id');
         $extension->renameColumn($schema, $queries, $notes, 'order_f0cd67_id', 'order_50627d4f_id');
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_note',
+            'orob2b_order',
+            ['order_50627d4f_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL'],
+            'fk_oro_note_order_50627d4f_id'
+        );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'OroB2B\Bundle\NoteBundle\Entity\Note',
             'OroB2B\Bundle\OrderBundle\Entity\Order',
