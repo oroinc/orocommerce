@@ -64,7 +64,7 @@ services:
 
     orob2b_website.twig.website_path:
         class: OroB2B\Bundle\WebsiteBundle\Twig\WebsitePathExtension
-        public: true
+        public: false
         arguments:
             - '@orob2b_website.resolver.website_url_resolver'
         tags:

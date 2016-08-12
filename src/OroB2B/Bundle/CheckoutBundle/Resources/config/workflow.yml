@@ -603,13 +603,6 @@ workflows:
                             id: $.id
                             transition: payment_error
 
-                    - '@send_email_template':
-                        parameters:
-                            from: $order.owner.email
-                            to: $order.accountUser.email
-                            template: 'order_confirmation_email'
-                            entity: $order
-
             finish_checkout_definition:
                 conditions:
                     '@and':
