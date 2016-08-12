@@ -34,13 +34,13 @@
                 <tbody>
                     <% var addNewLine = false %>
                     <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
-                    <% _.each(model.product_units, function(label, key) { %>
+                    <% _.each(model.product_units, function(key) { %>
                         <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
                         <% if (prices.length) { %>
                             <tr>
                                 <td colspan="2" class="text-capitalize">
                                     <%= addNewLine ? '<br/>' : '' %>
-                                    <b><%= label %></b>
+                                    <b><%= _.__('orob2b.product.product_unit.' + key + '.label.full') %></b>
                                 </td>
                             </tr>
                             <% addNewLine = true %>
