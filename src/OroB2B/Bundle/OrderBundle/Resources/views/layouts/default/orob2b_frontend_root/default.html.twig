@@ -1,0 +1,19 @@
+{% block _top_selling_items_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' top-selling-items'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _top_selling_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' top-selling-item'
+    }) %}
+
+    <div class="top-selling-item">
+        {{ item }}
+    </div>
+{% endblock %}

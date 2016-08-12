@@ -1,5 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'layout_mobile.html.twig'
-    conditions: 'context["user_agent"]["mobile"]==true'

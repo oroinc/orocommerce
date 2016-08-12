@@ -15,7 +15,7 @@ define(function(require) {
             mobileEnabled: true,
             slidesToShow: 4,
             slidesToScroll: 1,
-            autoplay: true,
+            autoplay: false,
             autoplaySpeed: 2000,
             arrows: true,
             dots: false

@@ -1,4 +1,4 @@
-.top-selling-products {
+.top-selling-items {
     position: relative;
 
     margin-top: 52px;
@@ -9,7 +9,7 @@
 }
 
 @include breakpoint('mobile') {
-    .top-selling-products {
+    .top-selling-items {
         margin-top: 20px;
 
         & .embedded-list {

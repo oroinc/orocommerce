@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'default.html.twig'
         - '@addTree':
             items:
                 hero_promo_container:

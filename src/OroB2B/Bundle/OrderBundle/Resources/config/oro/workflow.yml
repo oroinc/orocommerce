@@ -1,0 +1,142 @@
+workflows:
+    b2b_order_workflow1:
+        label: Order1
+        entity: OroB2B\Bundle\OrderBundle\Entity\Order
+        entity_attribute: order
+        start_step: step1
+        steps_display_ordered: true
+
+        steps:
+            step1:
+                label: step1
+                order: 10
+                allowed_transitions:
+                    - to_step2
+            step2:
+                label: step2
+                order: 20
+                allowed_transitions:
+                    - to_step3
+                    - to_step1
+                    - to_step4
+            step3:
+                label: step3
+                order: 30
+                allowed_transitions:
+                    - to_step2
+                    - to_step1
+            step4:
+                label: step4
+                order: 40
+        transitions:
+            to_step1:
+                label: to step 1
+                step_to: step1
+                transition_definition: to_step1_definition
+
+            to_step2:
+                label: to step 2
+                step_to: step2
+                transition_definition: to_step2_definition
+
+            to_step3:
+                label: to step 3
+                step_to: step3
+                transition_definition: to_step3_definition
+
+            to_step4:
+                label: to step 4
+                step_to: step4
+                transition_definition: to_step4_definition
+
+        transition_definitions:
+            to_step1_definition: ~
+            to_step2_definition: ~
+            to_step3_definition: ~
+            to_step4_definition: ~
+
+    b2b_order_workflow2:
+        label: Order2
+        entity: OroB2B\Bundle\OrderBundle\Entity\Order
+        entity_attribute: order
+        start_step: step1
+        steps_display_ordered: false
+
+        steps:
+            step1:
+                label: step1
+                order: 10
+                allowed_transitions:
+                    - to_step2
+            step2:
+                label: step2
+                order: 20
+                allowed_transitions:
+                    - to_step3
+                    - to_step1
+            step3:
+                label: step3
+                order: 30
+        transitions:
+            to_step1:
+                label: step2
+                step_to: step1
+                transition_definition: to_step1_definition
+
+            to_step2:
+                label: step1
+                step_to: step2
+                transition_definition: to_step2_definition
+
+            to_step3:
+                label: step2
+                step_to: step3
+                transition_definition: to_step3_definition
+
+        transition_definitions:
+            to_step1_definition: ~
+            to_step2_definition: ~
+            to_step3_definition: ~
+
+    b2b_order_workflow3:
+        label: Order3
+        entity: OroB2B\Bundle\OrderBundle\Entity\Order
+        entity_attribute: order
+        start_step: step1
+        steps_display_ordered: true
+
+        steps:
+            step1:
+                label: step1
+                order: 10
+                allowed_transitions:
+                    - to_step2
+            step2:
+                label: step2
+                order: 20
+                allowed_transitions:
+                    - to_step3
+                    - to_step1
+            step3:
+                label: step3
+                order: 30
+        transitions:
+            to_step1:
+                label: step2
+                step_to: step1
+                transition_definition: to_step1_definition
+
+            to_step2:
+                label: step1
+                step_to: step2
+                transition_definition: to_step2_definition
+
+            to_step3:
+                label: step2
+                step_to: step3
+                transition_definition: to_step3_definition
+
+        transition_definitions:
+            to_step1_definition: ~
+            to_step2_definition: ~
+            to_step3_definition: ~
