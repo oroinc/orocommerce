@@ -8,18 +8,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 // TODO: Remove extends from AbstractServerRenderDataProvider after closing ticket BB-2188
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+
 class AccountUserAddressProvider extends AbstractServerRenderDataProvider
 {
     const ACCOUNT_USER_ADDRESS_LIST_ROUTE_NAME = 'orob2b_api_account_frontend_get_accountuser_addresses';
     const ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME = 'orob2b_account_frontend_account_user_address_create';
     const ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME = 'orob2b_account_frontend_account_user_address_update';
 
-    const ACCOUNT_USER_ADDRESS_CREATE_ACL = 'orob2b_account_frontend_account_user_address_create';
-    const ACCOUNT_USER_ADDRESS_UPDATE_ACL = 'orob2b_account_frontend_account_user_address_update';
-
-   /**
-    * @var UrlGeneratorInterface
-    */
+    /**
+     * @var UrlGeneratorInterface
+     */
     protected $router;
 
     /**
@@ -38,10 +37,10 @@ class AccountUserAddressProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param $entity
+     * @param AccountUser $entity
      * @return array
      */
-    public function getComponentOptions($entity)
+    public function getComponentOptions(AccountUser $entity)
     {
         $addressListUrl = $this->router->generate(
             self::ACCOUNT_USER_ADDRESS_LIST_ROUTE_NAME,
@@ -59,15 +58,5 @@ class AccountUserAddressProvider extends AbstractServerRenderDataProvider
             'addressUpdateRouteName' => self::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
             'currentAddresses' => $this->fragmentHandler->render($addressListUrl),
         ];
-    }
-
-    public function getAddressCreateAclResource()
-    {
-        return self::ACCOUNT_USER_ADDRESS_CREATE_ACL;
-    }
-
-    public function getAddressUpdateAclResource()
-    {
-        return self::ACCOUNT_USER_ADDRESS_UPDATE_ACL;
     }
 }

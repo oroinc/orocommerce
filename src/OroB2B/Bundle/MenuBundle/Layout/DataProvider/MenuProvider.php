@@ -22,16 +22,16 @@ class MenuProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param $menuTitle
+     * @param string $name
      *
      * @return ItemInterface
      */
-    public function getMenu($menuTitle)
+    public function getMenu($name)
     {
-        if (!$this->menuProvider->has($menuTitle)) {
-            throw new \RuntimeException(sprintf('Menu "%s" doesn\'t exist.', $menuTitle));
+        if (!$this->menuProvider->has($name)) {
+            throw new \RuntimeException(sprintf('Menu "%s" doesn\'t exist.', $name));
         }
 
-        return $this->menuProvider->get($menuTitle);
+        return $this->menuProvider->get($name);
     }
 }

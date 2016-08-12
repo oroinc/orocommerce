@@ -49,8 +49,8 @@ layout:
                     blockType: address_book
                     options:
                         entity: '=data["entity"]'
-                        addressCreateAclResource: '=data["account_user_address_provider"].getAddressCreateAclResource()'
-                        addressUpdateAclResource: '=data["account_user_address_provider"].getAddressUpdateAclResource()'
+                        addressCreateAclResource: 'orob2b_account_frontend_account_user_address_create'
+                        addressUpdateAclResource: 'orob2b_account_frontend_account_user_address_update'
                         componentOptions: '=data["account_user_address_provider"].getComponentOptions(data["entity"])'
             tree:
                 __root:

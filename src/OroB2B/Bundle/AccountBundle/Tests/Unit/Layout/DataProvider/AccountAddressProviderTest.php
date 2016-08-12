@@ -2,23 +2,22 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountAddressProvider;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use Oro\Component\Testing\Unit\EntityTrait;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountAddressProvider;
 
 class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $router;
 
-    /**
-     * @var FragmentHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var FragmentHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $fragmentHandler;
 
     /** @var AccountAddressProvider */
@@ -37,22 +36,9 @@ class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new AccountAddressProvider($this->router, $this->fragmentHandler);
     }
 
-    public function testGetAddressCreateAclResource()
-    {
-        $result = 'orob2b_account_frontend_account_address_create';
-
-        $this->assertSame($result, $this->provider->getAddressCreateAclResource());
-    }
-
-    public function testGetAddressUpdateAclResource()
-    {
-        $result = 'orob2b_account_frontend_account_address_update';
-
-        $this->assertSame($result, $this->provider->getAddressUpdateAclResource());
-    }
-
     public function testGetComponentOptions()
     {
+        /** @var Account $entity */
         $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 40]);
 
         $this->router->expects($this->exactly(2))
