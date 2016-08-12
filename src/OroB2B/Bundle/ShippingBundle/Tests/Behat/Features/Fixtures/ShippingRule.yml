@@ -45,7 +45,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
        enabled: '1'
        confirmed: '1'
        account: '@account1'
-       organization: '@organization'
+       organization: ['@organization']
        role: ['@buyer']
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
@@ -61,6 +61,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
        label: 'Shopping List 1'
+       accountUser: '@amanda'
 
 OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
@@ -77,3 +78,50 @@ OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        currency: 'EUR'
        subtotalValue: '10.1'
        valid: 'true'
+
+OroB2B\Bundle\PricingBundle\Entity\PriceList:
+   pricelist1:
+       default: 'true'
+       name: 'PriceList 1'
+
+OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+   productprice1:
+       priceList: '@pricelist1'
+       quantity: 1
+       unit: '@item'
+       value: '10'
+       currency: 'EUR'
+       product: '@product1'
+       productSku: 'AA1'
+
+OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
+    address1:
+        country: '@germany'
+        region: '@berlin'
+        label: 'label'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '2222'
+        organization: '@organization'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        type: ['@shippingType', '@billingType']
+        organization: '@organization'
+
+#OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+#    billing:
+#         address: '@address1'
+#         type: '@billingType'
+#         default: false
+#    shipping:
+#         address: '@address1'
+#         type: '@shippingType'
+#         default: false
+
+
+
+
+
+
