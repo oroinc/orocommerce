@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+            themes: 'product_index_row.html.twig'
         - '@addTree':
             items:
                 product_grid_row_template:
@@ -77,16 +77,16 @@ layout:
                 line_item_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["orob2b_product_line_item_form"]'
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                 line_item_form_fields:
                     blockType: form_fields
                     options:
                         preferred_fields: [quantity]
-                        form: '=data["orob2b_product_line_item_form"]'
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                 line_item_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["orob2b_product_line_item_form"]'
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                 line_item_buttons:
                     blockType: container
             tree:

@@ -53,7 +53,7 @@ layout:
                     blockType: action_combined_buttons
                     options:
                         visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
-                        actions: '=data["actions"].getAll()'
+                        actions: '=data["actions"].getAll(data["entity"])'
                         entityId: '=data["action_buttons"].getEntityId(data["quote"])'
                         entityClass: '=data["action_buttons"].getEntityClass(data["quote"])'
                         dialogRoute: '=data["action_buttons"].getDialogRoute()'

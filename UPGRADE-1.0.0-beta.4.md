@@ -3,7 +3,7 @@ Upgrade from beta.3
 
 CheckoutBundle:
 ---------------
-- Second argument of method `OroB2B\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController::checkoutAction` changed from `$id` to `WorkflowItem $workflowItem` and third argument `$checkoutType = null` was removed.
+- Second argument `$checkoutType = null` of method `OroB2B\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController::checkoutAction` was removed.
 - Added ninth argument `WorkflowManager $workflowManager` to constructor of `OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout`;
 - Protected method `OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout::getCheckout` was renamed to `getCheckoutWithWorkflowName`.
 - Added second argument to protected method `string $workflowName` to method `OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout::isNewCheckoutEntity`.

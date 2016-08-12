@@ -29,7 +29,7 @@ layout:
                     blockType: action_line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll()'
+                        actions: '=data["actions"].getAll(data["entity"])'
                         entityId: '=data["action_buttons"].getEntityId(data["entity"])'
                         entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
                         dialogRoute: '=data["action_buttons"].getDialogRoute()'
@@ -48,7 +48,9 @@ layout:
                             themeOptions:
                                 readonly: true
                         vars:
-                            options: '=data["orob2b_account_fronted_account_user_role_options"]'
+                            options:
+                                tabsOptions: '=data["orob2b_account_fronted_account_user_role_options"].getTabsOptions()'
+                                capabilitySetOptions: '=data["orob2b_account_fronted_account_user_role_options"].getCapabilitySetOptions(data["entity"])'
                 account_user_role_items_view_users:
                     blockType: datagrid
                     options:

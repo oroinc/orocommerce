@@ -186,7 +186,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResultAfter()
     {
         $user = new AccountUser();
-        $shoppingList = new ShoppingList();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -195,6 +194,14 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $recordTwo = new ResultRecord(['id' => 2]);
         $records = [$recordOne, $recordTwo];
 
+        /** @var Product $productOne */
+        $productOne = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $lineItemRepository = $this->getMockBuilder('LineItemRepository')
+                                    ->setMethods(['getProductItemsWithShoppingListNames'])
+                                    ->getMock();
+        $shoppingList1 = $this->createShoppingList(1, 'Shopping List1');
+        $shoppingList2 = $this->createShoppingList(2, 'Shopping List2');
+
         $shoppingListRepository = $this
             ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
@@ -202,30 +209,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $shoppingListRepository->expects($this->once())
             ->method('findAvailableForAccountUser')
             ->with($user)
-            ->willReturn($shoppingList);
+            ->willReturn($shoppingList1);
 
-        /** @var Product $productOne */
-        $productOne = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
-        $lineItemRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $lineItemRepository->expects($this->once())
-            ->method('findBy')
-            ->with(
-                [
-                    'product' => [1, 2],
-                    'accountUser' => $user,
-                    'shoppingList' => $shoppingList
-                ]
-            )
+            ->method('getProductItemsWithShoppingListNames')
+            ->with([1, 2], $user)
             ->willReturn(
                 [
-                    (new LineItem())
-                        ->setUnit((new ProductUnit())->setCode('unt1'))
-                        ->setQuantity(1)
-                        ->setProduct($productOne),
-                    (new LineItem())
-                        ->setUnit((new ProductUnit())->setCode('unt2'))
-                        ->setQuantity(2)
-                        ->setProduct($productOne)
+                    $this->createLineItem(1, 'unt1', 1, $shoppingList1, $productOne),
+                    $this->createLineItem(2, 'unt2', 2, $shoppingList2, $productOne),
+                    $this->createLineItem(3, 'unt3', 5, $shoppingList2, $productOne),
                 ]
             );
 
@@ -255,7 +248,79 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals(['unt1' => 1, 'unt2' => 2], $recordOne->getValue('current_shopping_list_line_items'));
-        $this->assertEmpty($recordTwo->getValue('current_shopping_list_line_items'));
+        $this->assertEquals(
+            [
+                [
+                    'shopping_list_id' => 1,
+                    'shopping_list_label' => 'Shopping List1',
+                    'is_current' => true,
+                    'line_items' => [['line_item_id' => 1, 'unit' => 'unt1','quantity' => 1]]
+                ],
+                [
+                    'shopping_list_id' => 2,
+                    'shopping_list_label' => 'Shopping List2',
+                    'is_current' => false,
+                    'line_items' => [
+                        ['line_item_id' => 2, 'unit' => 'unt2','quantity' => 2],
+                        ['line_item_id' => 3, 'unit' => 'unt3','quantity' => 5],
+                    ],
+                ],
+            ],
+            $recordOne->getValue('shopping_lists')
+        );
+        $this->assertEmpty($recordTwo->getValue('shopping_lists'));
+    }
+
+    /**
+     * @param int $id
+     * @param string $label
+     * @return  ShoppingList
+     */
+    private function createShoppingList($id, $label)
+    {
+        $shoppingList = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->setMethods(['getId', 'getLabel'])
+            ->getMock();
+        $shoppingList ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $shoppingList ->expects($this->any())
+            ->method('getLabel')
+            ->will($this->returnValue($label));
+        return $shoppingList;
+    }
+
+    /**
+     * @param int $id
+     * @param string $unit
+     * @param int $quantity
+     * @param shoppingList $shoppingList
+     * @param product $product
+     * @return  LineItem
+     */
+    private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
+    {
+        $lineItem = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList', 'getProduct'])
+            ->getMock();
+        $lineItem ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $lineItem ->expects($this->any())
+            ->method('getUnit')
+            ->will($this->returnValue((new ProductUnit())->setCode($unit)));
+        $lineItem ->expects($this->any())
+            ->method('getQuantity')
+            ->will($this->returnValue($quantity));
+        $lineItem ->expects($this->any())
+            ->method('getShoppingList')
+            ->will($this->returnValue($shoppingList));
+        $lineItem ->expects($this->any())
+            ->method('getProduct')
+            ->will($this->returnValue($product));
+
+        return $lineItem;
     }
 }
