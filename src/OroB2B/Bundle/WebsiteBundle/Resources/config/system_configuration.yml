@@ -6,6 +6,7 @@ oro_system_configuration:
             title: orob2b.website.system_configuration.groups.general.title
         routing:
             title: orob2b.website.system_configuration.groups.routing.title
+            icon: 'icon-sitemap'
     fields:
         oro_b2b_website.url:
             data_type: string
@@ -28,10 +29,10 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            commerce:
+            platform:
                 children:
                     websites:
-                        priority: 300
+                        priority: 0
                         children:
                             routing:
                                 priority: 100

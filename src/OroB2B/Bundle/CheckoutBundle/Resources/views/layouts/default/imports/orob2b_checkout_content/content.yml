@@ -15,18 +15,18 @@ layout:
                     blockType: checkout_form
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["orob2b_checkout_transition_form"]'
+                        form: '=data["orob2b_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                 __checkout_form_fields:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["orob2b_checkout_transition_form"]'
+                        form: '=data["orob2b_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
                         visible: '=context["workflowStepName"]!="order_review"'
-                        summary: '=data["orob2b_checkout_summary"]'
+                        summary: '=data["orob2b_checkout_summary"].getSummary(data["checkout"])'
                         checkout: '=data["checkout"]'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary_table:
@@ -34,19 +34,19 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         workflowStep: '=data["workflowStep"]'
-                        summary: '=data["orob2b_checkout_summary"]'
+                        summary: '=data["orob2b_checkout_summary"].getSummary(data["checkout"])'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:
                     blockType: checkout_transition_continue
                     options:
-                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getContinueTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
                 __checkout_button_back:
                     blockType: checkout_transition_back
                     options:
-                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getBackTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
             tree:
                 __root:

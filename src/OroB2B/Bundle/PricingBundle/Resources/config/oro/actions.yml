@@ -132,7 +132,11 @@ operations:
                   - [[setNull], [propertyName, [id]]]
                   - [[emptyCollection], [propertyName, [prices]]]
                   - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[collection], [propertyName, [priceRules]]]
+                  - [[collection], [propertyName, [lexemes]]]
+                  - [[keep], [propertyName, [productUnit]]]
                   - [[collection], [propertyName, [currencies]]]
+                  - [[shallowCopy], [propertyType, ['\DateTime']]]
             - '@assign_value': [$.newPriceList.name, $.newName]
             - '@assign_value': [$.newPriceList.active, false]
             - '@assign_value': [$.newPriceList.default, false]
@@ -141,6 +145,10 @@ operations:
                 method: duplicateSchedule
                 method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: orob2b_pricing.duplicator.price_list_to_product_duplicator
+                method: duplicate
+                method_parameters: [$.entity, $.newPriceList]
             - '@call_service_method':
                 service: orob2b_pricing.duplicator.product_price_duplicator
                 method: duplicate
@@ -163,6 +171,25 @@ operations:
             '@not_blank': $.data
         datagrids:
             - price-list-product-prices-grid
+
+    orob2b_pricing_recalculate_price_list:
+        label: orob2b.pricing.pricelist.recalculate.label
+        routes: [orob2b_pricing_price_list_view]
+        order: 10
+        button_options:
+            icon: icon-money
+        actions:
+            - '@call_service_method':
+                service: 'orob2b_pricing.builder.price_list_product_assignment_builder'
+                method: 'buildByPriceList'
+                method_parameters: [$.entity]
+            - '@call_service_method':
+                service: 'orob2b_pricing.builder.product_price_builder'
+                method: 'buildByPriceList'
+                method_parameters: [$.entity]
+            - '@flash_message':
+                message: orob2b.pricing.pricelist.recalculate.message
+                type: 'success'
 
 action_groups:
     orob2b_pricing_add_product_price:

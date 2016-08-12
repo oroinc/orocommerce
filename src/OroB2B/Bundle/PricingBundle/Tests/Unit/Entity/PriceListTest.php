@@ -8,6 +8,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 
 class PriceListTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,7 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
             [
                 ['default', false],
                 ['active', true],
+                ['productAssignmentRule', 'test rule'],
             ]
         );
     }
@@ -77,5 +79,39 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
             new \DateTime($date1),
             new \DateTime($date3)
         )));
+    }
+
+    public function testAddPriceRule()
+    {
+        $priceList = $this->createPriceList();
+        $priceRule = new PriceRule();
+
+        $priceList->addPriceRule($priceRule);
+        $this->assertSame($priceRule->getPriceList(), $priceList);
+        $this->assertSame($priceList->getPriceRules()->first(), $priceRule);
+    }
+
+    public function testSetPriceRules()
+    {
+        $priceList = $this->createPriceList();
+        $priceRule1 = new PriceRule();
+        $priceRule2 = new PriceRule();
+
+        $priceList->setPriceRules(new ArrayCollection([$priceRule1, $priceRule2]));
+
+        $this->assertCount(2, $priceList->getPriceRules());
+    }
+
+    public function testRemovePriceRule()
+    {
+        $priceList = $this->createPriceList();
+        $priceRule1 = new PriceRule();
+        $priceRule2 = new PriceRule();
+
+        $priceList->setPriceRules(new ArrayCollection([$priceRule1, $priceRule2]));
+
+        $priceList->removePriceRule($priceRule1);
+        $this->assertCount(1, $priceList->getPriceRules());
+        $this->assertSame($priceList->getPriceRules()->first(), $priceRule2);
     }
 }

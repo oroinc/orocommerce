@@ -63,11 +63,11 @@ class LoadCombinedPriceListsActivationRules extends AbstractFixture implements D
 
             $combinedPriceListRule->setActive($priceLisRuleData['active']);
             if ($priceLisRuleData['activateAtOffset']) {
-                $combinedPriceListRule->setActivateAt((new \DateTime('now', new \DateTimeZone("UTC")))
+                $combinedPriceListRule->setActivateAt((new \DateTime('now', new \DateTimeZone('UTC')))
                     ->modify($priceLisRuleData['activateAtOffset']));
             }
             if ($priceLisRuleData['expiredAtOffset']) {
-                $combinedPriceListRule->setExpireAt((new \DateTime('now', new \DateTimeZone("UTC")))
+                $combinedPriceListRule->setExpireAt((new \DateTime('now', new \DateTimeZone('UTC')))
                     ->modify($priceLisRuleData['expiredAtOffset']));
             }
 
