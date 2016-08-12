@@ -37,9 +37,9 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type' => ProductShippingOptionsType::NAME,
+                'entry_type' => ProductShippingOptionsType::NAME,
                 'show_form_when_empty' => false,
-                'options' => [
+                'entry_options' => [
                     'data_class' => self::DATA_CLASS
                 ]
             ])

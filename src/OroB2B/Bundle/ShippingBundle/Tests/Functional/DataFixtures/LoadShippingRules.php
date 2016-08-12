@@ -69,8 +69,7 @@ class LoadShippingRules extends AbstractFixture
                     ->setType(FlatRateShippingMethod::NAME)
                     ->setMethod(FlatRateShippingMethod::NAME)
                     ->setProcessingType($configuration['processingType'])
-                    ->setValue($configuration['value'])
-                    ->setCurrency($configuration['currency']);
+                    ->setValue($configuration['value']);
 
                 $manager->persist($flatConfig);
                 $entity->addConfiguration($flatConfig);

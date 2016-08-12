@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -59,7 +61,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'postalCode',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.postal_code.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.postal_code.label']
@@ -67,7 +69,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'city',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.city.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.city.label']
@@ -75,7 +77,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'street',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.street.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street.label']
@@ -83,7 +85,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'street2',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'orob2b.shipping.shipping_origin.street2.label',
@@ -92,7 +94,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 [
                     'required' => false,
                     'random_id' => true,
@@ -110,7 +112,7 @@ class ShippingOriginType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'shipping_origin'
+                'csrf_token_id' => 'shipping_origin'
             ]
         );
     }

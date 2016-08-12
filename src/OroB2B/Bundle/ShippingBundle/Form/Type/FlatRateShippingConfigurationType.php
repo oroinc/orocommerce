@@ -3,8 +3,12 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Valid;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
@@ -38,14 +42,15 @@ class FlatRateShippingConfigurationType extends AbstractType
         ];
 
         $builder
-            ->add('value', 'number', array_merge([
+            ->add('value', NumberType::class, array_merge([
                 'required' => true,
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.value.label',
+                'constraints' => [new Valid(), new NotBlank(['groups' => ['Enabled']])]
             ], $priceOptions))
-            ->add('handlingFeeValue', 'number', array_merge([
+            ->add('handlingFeeValue', NumberType::class, array_merge([
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.handling_fee_value.label',
             ], $priceOptions))
-            ->add('processingType', 'choice', [
+            ->add('processingType', ChoiceType::class, [
                 'choices' => [
                     FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM
                     => 'orob2b.shipping.flatrateruleconfiguration.processing_type.per_item.label',
@@ -79,6 +84,14 @@ class FlatRateShippingConfigurationType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

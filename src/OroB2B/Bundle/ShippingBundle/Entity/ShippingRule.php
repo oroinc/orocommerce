@@ -352,9 +352,7 @@ class ShippingRule extends ExtendShippingRule
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-        foreach ($this->configurations as $configuration) {
-            $configuration->setCurrency($currency);
-        }
+
         return $this;
     }
 

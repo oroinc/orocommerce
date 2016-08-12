@@ -41,7 +41,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
             ->method('setDefaults')
             ->with([
                 'data_class' => self::DATA_CLASS,
-                'intention' => 'shipping_origin'
+                'csrf_token_id' => 'shipping_origin'
             ]);
 
         $this->formType->configureOptions($resolver);

@@ -83,20 +83,6 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     protected $rule;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40
-     *          }
-     *      }
-     * )
-     */
-    protected $currency;
-
-    /**
      * @return string
      */
     abstract public function __toString();
@@ -142,8 +128,15 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setRule(ShippingRule $rule)
     {
         $this->rule = $rule;
-        $this->setCurrency($rule->getCurrency());
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->rule->getCurrency();
     }
 
     /**
@@ -179,24 +172,6 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * @param string $currency
-     * @return $this
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
         return $this;
     }
 }

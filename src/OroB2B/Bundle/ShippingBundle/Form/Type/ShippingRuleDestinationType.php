@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,10 +41,10 @@ class ShippingRuleDestinationType extends AbstractType
             ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 ['required' => false, 'random_id' => true, 'label' => 'oro.address.region_text.label']
             )
-            ->add('postalCode', 'text', ['required' => false, 'label' => 'oro.address.postal_code.label']);
+            ->add('postalCode', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
     }
 
     /**
@@ -70,6 +72,14 @@ class ShippingRuleDestinationType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

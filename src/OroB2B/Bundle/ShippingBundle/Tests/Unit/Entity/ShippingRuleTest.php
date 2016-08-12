@@ -45,19 +45,6 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testSetCurrency()
-    {
-        $config = new CustomShippingRuleConfiguration();
-        $this->assertNull($config->getCurrency());
-        $configurations = new ArrayCollection([$config]);
-        $shippingRule = new ShippingRule();
-        $shippingRule->setConfigurations($configurations);
-        $shippingRule->setCurrency('USD');
-        foreach ($shippingRule->getConfigurations() as $configuration) {
-            $this->assertEquals('USD', $configuration->getCurrency());
-        }
-    }
-
     public function testRelations()
     {
         $this->assertPropertyCollections(new ShippingRule(), [

@@ -75,11 +75,6 @@ OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
         value:
             - NotBlank:
                 groups: ['Enabled']
-        currency:
-            - Currency:
-                groups: ['Enabled']
-            - NotBlank:
-                groups: ['Enabled']
         type:
             - NotBlank: ~
         method:

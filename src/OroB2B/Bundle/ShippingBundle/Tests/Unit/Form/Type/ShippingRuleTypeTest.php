@@ -105,7 +105,6 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
                     ->setType(FlatRateShippingMethod::NAME)
                     ->setProcessingType(FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER)
                     ->setValue(21)
-                    ->setCurrency('USD')
                     ->setEnabled(true)
             );
 

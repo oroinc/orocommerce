@@ -69,7 +69,6 @@ orob2b:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
             id.label: Id
-            currency.label: Type
             enabled.label: Type
             type.label: Type
             method.label: Method
@@ -77,7 +76,6 @@ orob2b:
         flatrateruleconfiguration:
             entity_label: Flat Rate Rule Configuraiton
             entity_plural_label: Flat Rate Rule Configuraitons
-            currency.label: Currency
             id.label: Id
             enabled.label: Enabled
             processing_type:

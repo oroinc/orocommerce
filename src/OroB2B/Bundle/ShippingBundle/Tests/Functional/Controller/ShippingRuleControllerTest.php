@@ -78,8 +78,6 @@ class ShippingRuleControllerTest extends WebTestCase
             ],
         ];
 
-        $this->assertEquals(count($expectedData['data']), count($data));
-
         if (isset($expectedData['columns'])) {
             $testedColumns = array_keys($data[0]);
             $expectedColumns = $expectedData['columns'];
@@ -90,7 +88,8 @@ class ShippingRuleControllerTest extends WebTestCase
             $this->assertEquals($expectedColumns, $testedColumns);
         }
 
-        for ($i = 0; $i < count($expectedData['data']); $i++) {
+        $expectedDataCount = count($expectedData['data']);
+        for ($i = 0; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
                 $this->assertEquals($value, $data[$i][$key]);
@@ -198,7 +197,6 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $this->assertNotEmpty($shippingRule);
 
-        $id = $shippingRule->getId();
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])

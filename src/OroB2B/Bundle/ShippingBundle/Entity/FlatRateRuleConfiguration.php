@@ -62,43 +62,6 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     protected $handlingFeeValue;
 
     /**
-     * @var Price
-     */
-    protected $price;
-
-    /**
-     * @ORM\PostLoad
-     */
-    public function createPrices()
-    {
-        if (null !== $this->value && null !== $this->currency) {
-            $this->price = Price::create($this->value, $this->currency);
-        }
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updatePrices()
-    {
-        $this->value = $this->price ? $this->price->getValue() : null;
-        $this->currency = $this->price ? $this->price->getCurrency() : null;
-    }
-
-    /**
-     * @param string $currency
-     * @return $this
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-        $this->createPrices();
-
-        return $this;
-    }
-
-    /**
      * @return float
      */
     public function getValue()
@@ -113,33 +76,8 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setValue($value)
     {
         $this->value = $value;
-        $this->createPrices();
 
         return $this;
-    }
-
-    /**
-     * Set price
-     *
-     * @param Price $price
-     * @return $this
-     */
-    public function setPrice(Price $price = null)
-    {
-        $this->price = $price;
-        $this->updatePrices();
-
-        return $this;
-    }
-
-    /**
-     * Get price
-     *
-     * @return Price|null
-     */
-    public function getPrice()
-    {
-        return $this->price;
     }
 
     /**
@@ -157,7 +95,6 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function setHandlingFeeValue($handlingFeeValue)
     {
         $this->handlingFeeValue = $handlingFeeValue;
-        $this->createPrices();
 
         return $this;
     }
@@ -181,15 +118,24 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     }
 
     /**
+     * Get price
+     *
+     * @return Price|null
+     */
+    public function getPrice()
+    {
+        return Price::create($this->value, $this->getCurrency());
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
         return sprintf(
-            '%s, %g %s',
+            '%s, %g',
             $this->getMethod(),
-            $this->getValue(),
-            $this->getCurrency()
+            $this->getValue()
         );
     }
 }

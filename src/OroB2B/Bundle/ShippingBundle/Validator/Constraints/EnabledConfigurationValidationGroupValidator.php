@@ -12,11 +12,6 @@ use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
 {
     /**
-     * @var ExecutionContextInterface $context
-     */
-    protected $context;
-
-    /**
      * @param array $value
      * @param EnabledConfigurationValidationGroup|Constraint $constraint
      */
