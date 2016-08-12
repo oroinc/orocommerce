@@ -76,3 +76,11 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@router'
+
+    orob2b_website.twig.website_path:
+        class: OroB2B\Bundle\WebsiteBundle\Twig\WebsitePathExtension
+        public: true
+        arguments:
+            - '@orob2b_website.resolver.website_url_resolver'
+        tags:
+            - { name: twig.extension }

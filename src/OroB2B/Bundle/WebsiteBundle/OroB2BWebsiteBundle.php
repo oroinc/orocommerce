@@ -2,18 +2,24 @@
 
 namespace OroB2B\Bundle\WebsiteBundle;
 
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TranslationStrategyPass;
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\OroB2BWebsiteExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use OroB2B\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TranslationStrategyPass;
+use OroB2B\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
+use OroB2B\Bundle\WebsiteBundle\DependencyInjection\OroB2BWebsiteExtension;
+
 class OroB2BWebsiteBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
 
         $container->addCompilerPass(new TranslationStrategyPass());
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 
     /**
