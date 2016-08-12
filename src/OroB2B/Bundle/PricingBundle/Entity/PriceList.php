@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * @ORM\Table(name="orob2b_price_list")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
- * @ORM\EntityListeners("OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
  *      routeView="orob2b_pricing_price_list_view",
@@ -57,7 +56,8 @@ class PriceList extends BasePriceList
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
      *      mappedBy="priceList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
      **/
     protected $prices;
@@ -94,12 +94,32 @@ class PriceList extends BasePriceList
     protected $containSchedule = false;
 
     /**
+     * @var string
+     * @ORM\Column(name="product_assignment_rule", type="text", nullable=true)
+     */
+    protected $productAssignmentRule;
+
+    /**
+     * @var Collection|PriceRule[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule",
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"priority" = "ASC"})
+     **/
+    protected $priceRules;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
     {
         parent::__construct();
         $this->schedules = new ArrayCollection();
+        $this->priceRules = new ArrayCollection();
     }
 
     /**
@@ -183,6 +203,64 @@ class PriceList extends BasePriceList
         $this->containSchedule = $containSchedule;
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection|PriceRule[]
+     */
+    public function getPriceRules()
+    {
+        return $this->priceRules;
+    }
+
+    /**
+     * @param ArrayCollection|PriceRule[] $priceRules
+     * @return $this
+     */
+    public function setPriceRules($priceRules)
+    {
+        $this->priceRules = $priceRules;
+
+        return $this;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @return $this
+     */
+    public function addPriceRule(PriceRule $priceRule)
+    {
+        $priceRule->setPriceList($this);
+        $this->priceRules->add($priceRule);
+
+        return $this;
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     * @return $this
+     */
+    public function removePriceRule(PriceRule $priceRule)
+    {
+        $this->priceRules->removeElement($priceRule);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductAssignmentRule()
+    {
+        return $this->productAssignmentRule;
+    }
+
+    /**
+     * @param string $productAssignmentRule
+     */
+    public function setProductAssignmentRule($productAssignmentRule)
+    {
+        $this->productAssignmentRule = $productAssignmentRule;
     }
 
     /**

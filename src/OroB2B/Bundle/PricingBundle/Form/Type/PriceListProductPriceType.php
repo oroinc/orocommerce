@@ -83,6 +83,7 @@ class PriceListProductPriceType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
     /**
@@ -103,6 +104,25 @@ class PriceListProductPriceType extends AbstractType
                         'placeholder' => false
                     ]
                 );
+        }
+    }
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $submittedData = $event->getData();
+        $productPrice = $event->getForm()->getData();
+        if (!$productPrice instanceof ProductPrice) {
+            return;
+        }
+        $oldPrice = $productPrice->getPrice();
+        if ($submittedData['quantity'] != $productPrice->getQuantity()
+            || ($productPrice->getUnit() && $submittedData['unit'] != $productPrice->getUnit()->getCode())
+            || $submittedData['price']['value'] != $oldPrice->getValue()
+            || $submittedData['price']['currency'] != $oldPrice->getCurrency()
+        ) {
+            $productPrice->setPriceRule(null);
         }
     }
 
