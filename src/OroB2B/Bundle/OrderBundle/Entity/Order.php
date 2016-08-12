@@ -55,7 +55,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="orders"
  *          }
  *      }
  * )

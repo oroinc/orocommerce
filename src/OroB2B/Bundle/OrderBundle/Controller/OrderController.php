@@ -29,7 +29,8 @@ class OrderController extends AbstractOrderController
      *      id="orob2b_order_view",
      *      type="entity",
      *      class="OroB2BOrderBundle:Order",
-     *      permission="VIEW"
+     *      permission="VIEW",
+     *      category="orders"
      * )
      *
      * @param Order $order
@@ -94,7 +95,8 @@ class OrderController extends AbstractOrderController
      *      id="orob2b_order_create",
      *      type="entity",
      *      class="OroB2BOrderBundle:Order",
-     *      permission="CREATE"
+     *      permission="CREATE",
+     *      category="orders"
      * )
      *
      * @param Request $request
@@ -116,7 +118,8 @@ class OrderController extends AbstractOrderController
      *      id="orob2b_order_update",
      *      type="entity",
      *      class="OroB2BOrderBundle:Order",
-     *      permission="EDIT"
+     *      permission="EDIT",
+     *      category="orders"
      * )
      *
      * @param Order $order

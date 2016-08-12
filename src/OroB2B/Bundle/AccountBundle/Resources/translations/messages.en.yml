@@ -145,6 +145,13 @@ orob2b.account:
             label:                  'Public'
             value.true.label:       'Yes'
             value.false.label:      'No'
+        privilege:
+            category:
+                shopping.label:           'Shopping'
+                quotes.label:             'Quotes'
+                checkout.label:           'Checkout'
+                orders.label:             'Orders'
+                miscellaneous.label:      'Miscellaneous'
 
     accountuseraddress:
         city.label:                 City

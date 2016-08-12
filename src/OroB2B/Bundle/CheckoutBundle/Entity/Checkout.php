@@ -39,7 +39,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          },
  *          "workflow"={
  *              "active_workflows"={"b2b_flow_checkout","b2b_flow_alternative_checkout"}

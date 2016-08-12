@@ -2,6 +2,7 @@
 orob2b_order_address_shipping_account_use_any:
     label: orob2b.order.security.permission.address_shipping_account_use_any
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_shipping_account_use_any_backend:
@@ -12,6 +13,7 @@ orob2b_order_address_shipping_account_use_any_backend:
 orob2b_order_address_shipping_account_user_use_default:
     label: orob2b.order.security.permission.address_shipping_account_user_use_default
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_shipping_account_user_use_default_backend:
@@ -22,6 +24,7 @@ orob2b_order_address_shipping_account_user_use_default_backend:
 orob2b_order_address_shipping_account_user_use_any:
     label: orob2b.order.security.permission.address_shipping_account_user_use_any
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_shipping_account_user_use_any_backend:
@@ -32,6 +35,7 @@ orob2b_order_address_shipping_account_user_use_any_backend:
 orob2b_order_address_shipping_allow_manual:
     label: orob2b.order.security.permission.address_shipping_allow_manual
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_shipping_allow_manual_backend:
@@ -42,6 +46,7 @@ orob2b_order_address_shipping_allow_manual_backend:
 orob2b_order_address_billing_account_use_any:
     label: orob2b.order.security.permission.address_billing_account_use_any
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_billing_account_use_any_backend:
@@ -52,6 +57,7 @@ orob2b_order_address_billing_account_use_any_backend:
 orob2b_order_address_billing_account_user_use_default:
     label: orob2b.order.security.permission.address_billing_account_user_use_default
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_billing_account_user_use_default_backend:
@@ -62,6 +68,7 @@ orob2b_order_address_billing_account_user_use_default_backend:
 orob2b_order_address_billing_account_user_use_any:
     label: orob2b.order.security.permission.address_billing_account_user_use_any
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_billing_account_user_use_any_backend:
@@ -72,6 +79,7 @@ orob2b_order_address_billing_account_user_use_any_backend:
 orob2b_order_address_billing_allow_manual:
     label: orob2b.order.security.permission.address_billing_allow_manual
     type: action
+    category: "checkout"
     group_name: "commerce"
 
 orob2b_order_address_billing_allow_manual_backend:

@@ -30,7 +30,8 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="shopping"
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",

@@ -35,7 +35,8 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="quotes"
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
