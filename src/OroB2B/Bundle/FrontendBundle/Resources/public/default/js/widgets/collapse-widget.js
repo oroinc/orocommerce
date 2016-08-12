@@ -1,5 +1,6 @@
 define(['jquery', 'jquery-ui'], function($) {
     'use strict';
+
     var localStorage = window.localStorage;
 
     $.widget('oroui.collapseWidget', {
@@ -19,14 +20,12 @@ define(['jquery', 'jquery-ui'], function($) {
         },
 
         _init: function() {
+            var storedState = this.options.storageKey ? JSON.parse(localStorage.getItem(this.options.storageKey)) : undefined;
+
             this.$trigger = this.$el.find(this.options.trigger);
             this.$container = this.$el.find(this.options.container);
 
-            if (this.options.storageKey && localStorage.getItem(this.options.storageKey)) {
-                this.options.open = JSON.parse(localStorage.getItem(this.options.storageKey)) || this.options.open;
-            } else if (this.options.hasRecords) {
-                this.options.open = this.options.hasRecords || this.options.open;
-            }
+            this.options.open = _.isBoolean(storedState) ? storedState : (this.options.hasRecords || this.options.open);
 
             this.$el.toggleClass(this.options.openClass, this.options.open);
 
