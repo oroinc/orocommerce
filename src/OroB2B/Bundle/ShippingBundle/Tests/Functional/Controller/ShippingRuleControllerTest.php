@@ -13,7 +13,7 @@ use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @dbIsolation
  */
 class ShippingRuleControllerTest extends WebTestCase
@@ -230,7 +230,6 @@ class ShippingRuleControllerTest extends WebTestCase
                 'type' => FlatRateShippingMethod::NAME,
                 'value' => 12,
                 'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                'currency' => 'USD',
             ]
         ];
 
@@ -404,7 +403,6 @@ class ShippingRuleControllerTest extends WebTestCase
         $form['orob2b_shipping_rule[conditions]'] = $shippingRule->getConditions() . ' new data';
         $form['orob2b_shipping_rule[destinations][0][postalCode]'] = '11111';
         $form['orob2b_shipping_rule[configurations][0][enabled]'] = '1';
-        $form['orob2b_shipping_rule[configurations][0][currency]'] = 'USD';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

@@ -7,7 +7,6 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
@@ -45,7 +44,7 @@ class FlatRateShippingConfigurationType extends AbstractType
             ->add('value', NumberType::class, array_merge([
                 'required' => true,
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.value.label',
-                'constraints' => [new Valid(), new NotBlank(['groups' => ['Enabled']])]
+                'constraints' => [new NotBlank(['groups' => ['Enabled']])]
             ], $priceOptions))
             ->add('handlingFeeValue', NumberType::class, array_merge([
                 'label' => 'orob2b.shipping.flatrateruleconfiguration.handling_fee_value.label',
