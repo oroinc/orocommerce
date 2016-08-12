@@ -2,26 +2,24 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Action;
 
-use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
+use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
 
 /**
- * Get checkout state from the storage
+ * Delete checkout state from the storage
  *
  * Usage:
- * @get_checkout_state:
+ * @delete_checkout_state:
  *      entity: $checkout
  *      token: $token
- *      attribute: $.result.checkout_state
  */
-class GetCheckoutStateAction extends AbstractAction
+class DeleteCheckoutStateAction extends AbstractAction
 {
     const OPTION_KEY_ENTITY = 'entity';
-    const OPTION_KEY_ATTRIBUTE = 'attribute';
-    const OPTION_KEY_TOKEN = 'token';
+    const OPTION_KEY_TOKEN_VALUE = 'token';
 
     /** @var array */
     protected $options;
@@ -29,7 +27,10 @@ class GetCheckoutStateAction extends AbstractAction
     /** @var CheckoutDiffStorageInterface */
     protected $diffStorage;
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     * @param CheckoutDiffStorageInterface $diffStorage
+     */
     public function __construct(ContextAccessor $contextAccessor, CheckoutDiffStorageInterface $diffStorage)
     {
         $this->diffStorage = $diffStorage;
@@ -40,25 +41,22 @@ class GetCheckoutStateAction extends AbstractAction
     protected function executeAction($context)
     {
         $entityPath = $this->getOption($this->options, self::OPTION_KEY_ENTITY);
-        $tokenPath = $this->getOption($this->options, self::OPTION_KEY_TOKEN);
-        $attributePath = $this->getOption($this->options, self::OPTION_KEY_ATTRIBUTE);
+        $tokenPath = $this->getOption($this->options, self::OPTION_KEY_TOKEN_VALUE);
 
         $entity = $this->contextAccessor->getValue($context, $entityPath);
-        $token = $this->contextAccessor->getValue($context, $tokenPath);
 
-        $state = $this->diffStorage->getState($entity, $token);
+        $token = null;
+        if ($tokenPath) {
+            $token = $this->contextAccessor->getValue($context, $tokenPath);
+        }
 
-        $this->contextAccessor->setValue($context, $attributePath, $state);
-
+        $this->diffStorage->deleteStates($entity, $token);
     }
 
     /** {@inheritdoc} */
     public function initialize(array $options)
     {
-
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ENTITY);
-        $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_TOKEN);
-        $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ATTRIBUTE);
 
         $this->options = $options;
 

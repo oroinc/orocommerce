@@ -100,7 +100,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
             ->with($entityId, get_class($entity), $token)
             ->willReturn($storageEntity);
 
-        $this->assertEquals($expectedData, $this->storage->readState($entity, $token));
+        $this->assertEquals($expectedData, $this->storage->getState($entity, $token));
     }
 
     public function testReadStateWhenNoDataExists()
@@ -118,7 +118,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
             ->with($entityId, get_class($entity), $token)
             ->willReturn(null);
 
-        $this->assertEquals([], $this->storage->readState($entity, $token));
+        $this->assertEquals([], $this->storage->getState($entity, $token));
     }
 
     public function testDeleteStates()

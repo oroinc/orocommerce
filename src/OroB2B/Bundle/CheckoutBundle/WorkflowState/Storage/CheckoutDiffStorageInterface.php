@@ -7,20 +7,21 @@ interface CheckoutDiffStorageInterface
     /**
      * @param object $entity
      * @param array $data
-     * @return $token
+     * @param array $options
+     * @return string
      */
-    public function addState($entity, array $data);
+    public function addState($entity, array $data, $options = []);
 
     /**
      * @param object $entity
      * @param string $token
      * @return array
      */
-    public function readState($entity, $token);
+    public function getState($entity, $token);
 
     /**
      * @param object $entity
-     * @return mixed
+     * @param string|null $token
      */
-    public function deleteStates($entity);
+    public function deleteStates($entity, $token = null);
 }

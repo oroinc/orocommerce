@@ -61,9 +61,6 @@ workflows:
             payment_save_for_later:
                 type: bool
                 label: Save payment data for later use
-            state_token_storage:
-                type: array
-                label: Storage of checkout states
             state_token:
                 type: string
                 label: Token to track checkout state
@@ -128,7 +125,7 @@ workflows:
                 form_options:
                     init_actions:
                         - '@generate_checkout_state_snapshot':
-                            checkout: $checkout
+                            entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
@@ -167,7 +164,7 @@ workflows:
                 form_options:
                     init_actions:
                         - '@generate_checkout_state_snapshot':
-                            checkout: $checkout
+                            entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         shipping_address:
@@ -205,7 +202,7 @@ workflows:
                 form_options:
                     init_actions:
                         - '@generate_checkout_state_snapshot':
-                            checkout: $checkout
+                            entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         state_token:
@@ -234,7 +231,7 @@ workflows:
                                 '@not_empty': [$.result.validatePaymentTransaction]
                             parameters: [$payment_validate, false]
                         - '@generate_checkout_state_snapshot':
-                            checkout: $checkout
+                            entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         payment_method: ~
@@ -297,7 +294,7 @@ workflows:
                 form_options:
                     init_actions:
                         - '@generate_checkout_state_snapshot':
-                            checkout: $checkout
+                            entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         remove_source: ~
@@ -331,14 +328,13 @@ workflows:
                             - '@payment_method_enabled': 'payment_term'
                 post_actions:
                     - '@assign_value': [$payment_save_for_later, true]
-                    - '@assign_value': [$state_token_storage, []]
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.startCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.startCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
 
             do_nothing:
@@ -359,18 +355,19 @@ workflows:
                             '@not_equal': [$state_token, $saved_state_token]
                         actions:
                             - '@get_checkout_state':
-                                getFrom: $state_token_storage
+                                entity: $checkout
                                 token: $state_token
                                 attribute: $.result.savedCheckoutState
-#                            - '@get_checkout_state':
-#                                getFrom: $state_token_storage
-#                                token: $saved_state_token
-#                                attribute: $.result.workflowCheckoutState
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.actualCheckoutState
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
                             - '@save_checkout_state':
-#                                state: $.result.workflowCheckoutState
-                                state: $.result.initCheckoutState
-                                saveTo: $state_token_storage
-                                tokenValue: $state_token
+                                entity: $checkout
+                                state: $.result.actualCheckoutState
+                                token: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -385,9 +382,11 @@ workflows:
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                                message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 post_actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
@@ -439,12 +438,12 @@ workflows:
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.actualCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
 
             continue_to_shipping_method_definition:
@@ -454,18 +453,19 @@ workflows:
                             '@not_equal': [$state_token, $saved_state_token]
                         actions:
                             - '@get_checkout_state':
-                                getFrom: $state_token_storage
+                                entity: $checkout
                                 token: $state_token
                                 attribute: $.result.savedCheckoutState
-#                            - '@get_checkout_state':
-#                                getFrom: $state_token_storage
-#                                token: $saved_state_token
-#                                attribute: $.result.workflowCheckoutState
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.actualCheckoutState
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
                             - '@save_checkout_state':
-#                                state: $.result.workflowCheckoutState
-                                state: $.result.initCheckoutState
-                                saveTo: $state_token_storage
-                                tokenValue: $state_token
+                                entity: $checkout
+                                state: $.result.actualCheckoutState
+                                token: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -485,9 +485,11 @@ workflows:
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                                message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -513,12 +515,12 @@ workflows:
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.actualCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
 
             continue_to_payment_definition:
@@ -528,18 +530,19 @@ workflows:
                             '@not_equal': [$state_token, $saved_state_token]
                         actions:
                             - '@get_checkout_state':
-                                getFrom: $state_token_storage
+                                entity: $checkout
                                 token: $state_token
                                 attribute: $.result.savedCheckoutState
-#                            - '@get_checkout_state':
-#                                getFrom: $state_token_storage
-#                                token: $saved_state_token
-#                                attribute: $.result.workflowCheckoutState
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.actualCheckoutState
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
                             - '@save_checkout_state':
-#                                state: $.result.workflowCheckoutState
-                                state: $.result.initCheckoutState
-                                saveTo: $state_token_storage
-                                tokenValue: $state_token
+                                entity: $checkout
+                                state: $.result.actualCheckoutState
+                                token: $state_token
                 pre_conditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
@@ -549,17 +552,19 @@ workflows:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
                         - '@check_checkout_states':
-                            entity: $checkout
-                            state1: $.result.initCheckoutState
-                            state2: $.result.savedCheckoutState
+                            message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 post_actions:
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.actualCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
 
             continue_to_order_review_definition:
@@ -569,18 +574,19 @@ workflows:
                             '@not_equal': [$state_token, $saved_state_token]
                         actions:
                             - '@get_checkout_state':
-                                getFrom: $state_token_storage
+                                entity: $checkout
                                 token: $state_token
                                 attribute: $.result.savedCheckoutState
-#                            - '@get_checkout_state':
-#                                getFrom: $state_token_storage
-#                                token: $saved_state_token
-#                                attribute: $.result.workflowCheckoutState
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.actualCheckoutState
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
                             - '@save_checkout_state':
-#                                state: $.result.workflowCheckoutState
-                                state: $.result.initCheckoutState
-                                saveTo: $state_token_storage
-                                tokenValue: $state_token
+                                entity: $checkout
+                                state: $.result.actualCheckoutState
+                                token: $state_token
                 pre_conditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -604,9 +610,11 @@ workflows:
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                                message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
@@ -637,12 +645,12 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.actualCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@assign_value': [$saved_state_token, $state_token]
 
             verify_payment_definition:
@@ -670,18 +678,19 @@ workflows:
                             '@not_equal': [$state_token, $saved_state_token]
                         actions:
                             - '@get_checkout_state':
-                                getFrom: $state_token_storage
+                                entity: $checkout
                                 token: $state_token
                                 attribute: $.result.savedCheckoutState
-#                            - '@get_checkout_state':
-#                                getFrom: $state_token_storage
-#                                token: $saved_state_token
-#                                attribute: $.result.workflowCheckoutState
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.actualCheckoutState
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
                             - '@save_checkout_state':
-#                                state: $.result.workflowCheckoutState
-                                state: $.result.initCheckoutState
-                                saveTo: $state_token_storage
-                                tokenValue: $state_token
+                                entity: $checkout
+                                state: $.result.actualCheckoutState
+                                token: $state_token
                 pre_conditions:
                     '@not_equal':
                         message: Payment process is running for this checkout
@@ -690,9 +699,11 @@ workflows:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
                         - '@check_checkout_states':
-                            entity: $checkout
-                            state1: $.result.initCheckoutState
-                            state2: $.result.savedCheckoutState
+                            message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 post_actions:
                     - '@assign_value':
                         conditions:
@@ -822,12 +833,12 @@ workflows:
                             id: $.id
                             transition: payment_error
                     - '@generate_checkout_state_snapshot':
-                        checkout: $checkout
+                        entity: $checkout
                         attribute: $.result.actualCheckoutState
                     - '@save_checkout_state':
+                        entity: $checkout
                         state: $.result.actualCheckoutState
-                        saveTo: $state_token_storage
-                        tokenAttribute: $state_token
+                        attribute: $state_token
                     - '@send_email_template':
                         parameters:
                             from: $order.owner.email
@@ -961,6 +972,8 @@ workflows:
                     - '@remove_entity': $checkout.billingAddress
                     - '@remove_entity': $checkout.shippingAddress
                     - '@remove_entity': $checkout
+                    - '@delete_checkout_state':
+                        entity: $checkout
                     - '@redirect':
                         route: orob2b_order_frontend_success
                         route_parameters:

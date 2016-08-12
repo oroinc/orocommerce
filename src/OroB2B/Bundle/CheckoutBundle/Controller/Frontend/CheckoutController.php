@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -178,11 +177,7 @@ class CheckoutController extends Controller
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
-                        $this->getWorkflowManager()->get
-                        $this->getTransitionFormProvider()->removeFormCache($continueTransition, $workflowItem);
-                        $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
-                        $transitionForm->setData($workflowItem->getData());
-                        $this->handleCheckoutErrors();
+                        $this->handleCheckoutErrors($transitionForm);
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -212,21 +207,14 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @return TransitionFormDataProvider
-     */
-    protected function getTransitionFormProvider()
-    {
-        return $this->get('orob2b_checkout.layout.data_provider.transition_form');
-    }
-
-    /**
      * @param TransitionData $transitionData
      * @param WorkflowItem $workflowItem
      * @return FormInterface
      */
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        return $this->getTransitionFormProvider()->getForm($transitionData, $workflowItem);
+        return $this->get('orob2b_checkout.layout.data_provider.transition_form')
+            ->getForm($transitionData, $workflowItem);
     }
 
     /**
@@ -258,11 +246,16 @@ class CheckoutController extends Controller
         return reset($items);
     }
 
-    protected function handleCheckoutErrors()
+    /**
+     * @param FormInterface $form
+     */
+    protected function handleCheckoutErrors(FormInterface $form)
     {
-        $this->get('session')->getFlashBag()->add(
-            'error',
-            'There was a change to the contents of your order.'
-        );
+        foreach ($form->getErrors() as $error) {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                $error->getMessage()
+            );
+        }
     }
 }

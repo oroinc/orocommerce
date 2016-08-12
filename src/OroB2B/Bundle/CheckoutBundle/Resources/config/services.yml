@@ -219,6 +219,7 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\Action\GetCheckoutStateAction'
         arguments:
             - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_workflow.action, alias: get_checkout_state }
 
@@ -226,8 +227,17 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\Action\SaveCheckoutStateAction'
         arguments:
             - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_workflow.action, alias: save_checkout_state }
+
+    orob2b_checkout.action.delete_checkout_state:
+        class: 'OroB2B\Bundle\CheckoutBundle\Action\DeleteCheckoutStateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: oro_workflow.action, alias: delete_checkout_state }
 
     orob2b_checkout.action.generate_checkout_state_snapshot:
         class: 'OroB2B\Bundle\CheckoutBundle\Action\GenerateCheckoutStateSnapshotAction'
@@ -236,15 +246,6 @@ services:
             - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
         tags:
             - { name: oro_workflow.action, alias: generate_checkout_state_snapshot }
-
-    # TODO: Rename to states at the end
-    orob2b_checkout.condition.generate_and_check_checkout_state:
-        class: 'OroB2B\Bundle\CheckoutBundle\Condition\GenerateAndCheckCheckoutStates'
-        arguments:
-            - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
-        tags:
-            - { name: oro_workflow.condition, alias: generate_and_check_checkout_state }
-            - { name: oro_action.condition, alias: generate_and_check_checkout_state }
 
     orob2b_checkout.condition.check_checkout_states:
         class: 'OroB2B\Bundle\CheckoutBundle\Condition\CheckCheckoutStates'

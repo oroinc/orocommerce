@@ -34,18 +34,20 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
      * {@inheritdoc}
      * @throws InvalidEntityException
      */
-    public function addState($entity, array $data)
+    public function addState($entity, array $data, $options = [])
     {
+        // @todo check $entity is object
         /** @var CheckoutWorkflowState $storageEntity */
         $storageEntity = new $this->checkoutWorkflowStateEntity;
         $storageEntity->setStateData($data);
         $storageEntity->setEntityClass($this->doctrineHelper->getEntityClass($entity));
         $storageEntity->setEntityId($this->doctrineHelper->getSingleEntityIdentifier($entity));
 
-        $em = $this->doctrineHelper->getEntityManager($storageEntity);
+        if (isset($options['token'])) {
+            $storageEntity->setToken($options['token']);
+        }
 
-        $em->persist($storageEntity);
-        $em->flush($storageEntity);
+        $this->saveStorageEntity($storageEntity);
 
         return $storageEntity->getToken();
     }
@@ -54,29 +56,51 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
      * {@inheritdoc}
      * @throws InvalidEntityException
      */
-    public function readState($entity, $token)
+    public function getState($entity, $token)
     {
-        $storageEntity = $this->getRepository()->getEntityByToken(
-            $this->doctrineHelper->getSingleEntityIdentifier($entity),
-            $this->doctrineHelper->getEntityClass($entity),
-            $token
-        );
+        $storageEntity = $this->getStorageEntity($entity, $token);
 
-        return (null === $storageEntity) ? [] : $storageEntity->getStateData();
+        return $storageEntity ? $storageEntity->getStateData() : [];
     }
 
     /**
      * {@inheritdoc}
      * @throws InvalidEntityException
      */
-    public function deleteStates($entity)
+    public function deleteStates($entity, $token = null)
     {
         $this
             ->getRepository()
             ->deleteEntityStates(
                 $this->doctrineHelper->getSingleEntityIdentifier($entity),
-                $this->doctrineHelper->getEntityClass($entity)
+                $this->doctrineHelper->getEntityClass($entity),
+                $token
             );
+    }
+
+    /**
+     * @param object $entity
+     * @param string $token
+     * @return null|CheckoutWorkflowState
+     */
+    protected function getStorageEntity($entity, $token)
+    {
+        return $this->getRepository()->getEntityByToken(
+            $this->doctrineHelper->getSingleEntityIdentifier($entity),
+            $this->doctrineHelper->getEntityClass($entity),
+            $token
+        );
+    }
+
+    /**
+     * @param CheckoutWorkflowState $storageEntity
+     */
+    protected function saveStorageEntity($storageEntity)
+    {
+        $em = $this->doctrineHelper->getEntityManager($storageEntity);
+
+        $em->persist($storageEntity);
+        $em->flush($storageEntity);
     }
 
     /**

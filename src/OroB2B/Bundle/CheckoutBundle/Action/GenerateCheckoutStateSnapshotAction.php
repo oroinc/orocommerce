@@ -2,18 +2,23 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPath;
-
 use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 
+/**
+ * Generate checkout state snapshot
+ *
+ * Usage:
+ * @generate_checkout_state_snapshot:
+ *      entity: $checkout
+ *      attribute: $.result.checkout_state
+ */
 class GenerateCheckoutStateSnapshotAction extends AbstractAction
 {
-    const OPTION_KEY_CHECKOUT = 'checkout';
+    const OPTION_KEY_ENTITY = 'entity';
     const OPTION_KEY_ATTRIBUTE = 'attribute';
 
     /** @var array */
@@ -33,46 +38,39 @@ class GenerateCheckoutStateSnapshotAction extends AbstractAction
         parent::__construct($contextAccessor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     protected function executeAction($context)
     {
-        $checkoutPath = $this->getOption($this->options, self::OPTION_KEY_CHECKOUT);
+        $entityPath = $this->getOption($this->options, self::OPTION_KEY_ENTITY);
         $attributePath = $this->getOption($this->options, self::OPTION_KEY_ATTRIBUTE);
 
-        $checkout = $this->contextAccessor->getValue($context, $checkoutPath);
+        $entity = $this->contextAccessor->getValue($context, $entityPath);
 
-        if (!is_object($checkout) || !$checkout instanceof Checkout) {
-            throw new InvalidParameterException(
-                sprintf(
-                    'Entity must be instance of "%s", "%s" given',
-                    Checkout::class,
-                    is_object($checkout) ? get_class($checkout) : gettype($checkout)
-                )
-            );
-        }
-
-        $state = $this->diffManager->getCurrentState($checkout);
+        $state = $this->diffManager->getCurrentState($entity);
 
         $this->contextAccessor->setValue($context, $attributePath, $state);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function initialize(array $options)
     {
-        if (empty($options[self::OPTION_KEY_CHECKOUT])) {
-            throw new InvalidParameterException(sprintf('Parameter "%s" is required', self::OPTION_KEY_CHECKOUT));
-        }
-
-        if (empty($options[self::OPTION_KEY_ATTRIBUTE])) {
-            throw new InvalidParameterException(sprintf('Parameter "%s" is required', self::OPTION_KEY_ATTRIBUTE));
-        }
+        $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ENTITY);
+        $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ATTRIBUTE);
 
         $this->options = $options;
 
         return $this;
+    }
+
+    /**
+     * @param array $options
+     * @param string $parameter
+     * @throws InvalidParameterException
+     */
+    protected function throwExceptionIfRequiredParameterEmpty($options, $parameter)
+    {
+        if (empty($options[$parameter])) {
+            throw new InvalidParameterException(sprintf('Parameter "%s" is required', $parameter));
+        }
     }
 }

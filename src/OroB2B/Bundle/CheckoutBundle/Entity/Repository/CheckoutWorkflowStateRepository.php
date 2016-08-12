@@ -4,17 +4,18 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Doctrine\ORM\QueryBuilder;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class CheckoutWorkflowStateRepository extends EntityRepository
 {
     /**
-     * @param string $token
      * @param int $entityId
      * @param string $entityClass
-     * @return CheckoutWorkflowState
+     * @param string $token
+     * @return CheckoutWorkflowState|null
      */
-    public function getEntityByToken($token, $entityId, $entityClass)
+    public function getEntityByToken($entityId, $entityClass, $token)
     {
         $qb = $this->createQueryBuilder('t');
         return $qb
@@ -35,8 +36,9 @@ class CheckoutWorkflowStateRepository extends EntityRepository
     /**
      * @param int $entityId
      * @param string $entityClass
+     * @param string|null $token
      */
-    public function deleteEntityStates($entityId, $entityClass)
+    public function deleteEntityStates($entityId, $entityClass, $token = null)
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -47,9 +49,18 @@ class CheckoutWorkflowStateRepository extends EntityRepository
                 $qb->expr()->eq('t.entityClass', ':entityClass')
             ))
             ->setParameters([
-                'entityId' => $entityId,
+                'entityId' => (int)$entityId,
                 'entityClass' => $entityClass
-            ])
+            ]);
+
+
+        if ($token) {
+            $qb
+                ->andWhere($qb->expr()->eq('t.token', ':token'))
+                ->setParameter('token', $token);
+        }
+
+        $qb
             ->getQuery()
             ->execute();
     }
