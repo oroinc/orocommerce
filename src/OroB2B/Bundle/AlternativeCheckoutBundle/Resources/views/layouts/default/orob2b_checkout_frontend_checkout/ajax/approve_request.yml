@@ -26,12 +26,12 @@ layout:
                 checkout_button_continue_right:
                     blockType: checkout_transition_continue
                     options:
-                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getContinueTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
                 checkout_button_back_right:
                     blockType: checkout_transition_back
                     options:
-                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getBackTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
             tree:
                 checkout_form_buttons:

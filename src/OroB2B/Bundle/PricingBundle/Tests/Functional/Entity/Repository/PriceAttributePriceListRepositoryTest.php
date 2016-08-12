@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
 
@@ -63,6 +64,28 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    public function testGetFieldNames()
+    {
+        $actual = $this->getRepository()->getFieldNames();
+
+        $priceAttributePriceLists = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceAttributePriceList::class)
+            ->getRepository(PriceAttributePriceList::class)
+            ->findAll();
+
+        $expected = [];
+
+        foreach ($priceAttributePriceLists as $priceAttributePriceList) {
+            $item['id'] = $priceAttributePriceList->getId();
+            $item['name'] = $priceAttributePriceList->getName();
+            $item['fieldName'] = $priceAttributePriceList->getFieldName();
+
+            array_push($expected, $item);
+        }
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
