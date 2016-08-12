@@ -6,7 +6,7 @@ layout:
             namespace: featured
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'default.html.twig'
         - '@addTree':
             items:
                 featured_products_container:
