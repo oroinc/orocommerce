@@ -9,11 +9,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
@@ -154,16 +152,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
         $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
         $form = $this->getTransitionForm($crawler);
-        /** @var ShippingRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.8');
-        /** @var ShippingRuleConfiguration $shippingRuleConfig */
-        $shippingRuleConfig = $shippingRule->getConfigurations()->first();
+
         $values = $this->explodeArrayPaths($form->getValues());
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $shippingRuleConfig->getType();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
-        $values['_widgetContainer'] = 'ajax';
-        $values['_wid'] = 'ajax_checkout';
+        $values = $this->setShippingRuleFormData($values);
 
         $crawler = $this->client->request(
             'POST',
@@ -273,6 +264,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function setCurrentAccountOnAddresses(Account $account)
     {
         $addresses = $this->registry->getRepository('OroB2BAccountBundle:AccountAddress')->findAll();
+        /** @var AccountAddress $address */
         foreach ($addresses as $address) {
             $address->setFrontendOwner($account);
         }
@@ -328,7 +320,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @return ShoppingList
+     * @return ShoppingList|object
      */
     protected function getSourceEntity()
     {

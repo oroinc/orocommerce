@@ -13,6 +13,7 @@ use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class ShippingRuleControllerTest extends WebTestCase
@@ -77,8 +78,6 @@ class ShippingRuleControllerTest extends WebTestCase
                 'view_link',
             ],
         ];
-
-        $this->assertEquals(count($expectedData['data']), count($data));
 
         if (isset($expectedData['columns'])) {
             $testedColumns = array_keys($data[0]);
@@ -297,42 +296,69 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertContains($configurations[0]->getMethod(), $html);
     }
 
-    public function testStatusEnableMass()
-    {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $url = $this->getUrl(
-            'orob2b_status_shipping_rule_massaction',
-            [
-                'gridName'   => 'shipping-rule-grid',
-                'actionName' => 'enable',
-                'inset'      => 1,
-                'values'     => $this->getReference('shipping_rule.1')->getId()
-            ]
-        );
-        $this->client->request('GET', $url);
-        $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
-        $this->assertTrue($data['successful'] === true);
-        $this->assertTrue($data['count'] === 1);
-    }
-
     public function testStatusDisableMass()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $shippingRule1 = $this->getReference('shipping_rule.1');
+        $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
             'orob2b_status_shipping_rule_massaction',
             [
                 'gridName'   => 'shipping-rule-grid',
                 'actionName' => 'disable',
                 'inset'      => 1,
-                'values'     => $this->getReference('shipping_rule.1')->getId()
+                'values'     => sprintf(
+                    '%s,%s',
+                    $shippingRule1->getId(),
+                    $shippingRule2->getId()
+                )
             ]
         );
         $this->client->request('GET', $url);
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
-        $this->assertTrue($data['successful'] === true);
-        $this->assertTrue($data['count'] === 1);
+        $this->assertTrue($data['successful']);
+        $this->assertSame(2, $data['count']);
+        $this->assertFalse(
+            $this->getShippingRuleByName($shippingRule1->getName())->isEnabled()
+        );
+        $this->assertFalse(
+            $this->getShippingRuleByName($shippingRule2->getName())->isEnabled()
+        );
+    }
+
+    /**
+     * @depends testStatusDisableMass
+     */
+    public function testStatusEnableMass()
+    {
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $shippingRule1 = $this->getReference('shipping_rule.1');
+        $shippingRule2 = $this->getReference('shipping_rule.2');
+        $url = $this->getUrl(
+            'orob2b_status_shipping_rule_massaction',
+            [
+                'gridName'   => 'shipping-rule-grid',
+                'actionName' => 'enable',
+                'inset'      => 1,
+                'values'     => sprintf(
+                    '%s,%s',
+                    $shippingRule1->getId(),
+                    $shippingRule2->getId()
+                )
+            ]
+        );
+        $this->client->request('GET', $url);
+        $result = $this->client->getResponse();
+        $data = json_decode($result->getContent(), true);
+        $this->assertTrue($data['successful']);
+        $this->assertSame(2, $data['count']);
+        $this->assertTrue(
+            $this->getShippingRuleByName($shippingRule1->getName())->isEnabled()
+        );
+        $this->assertTrue(
+            $this->getShippingRuleByName($shippingRule2->getName())->isEnabled()
+        );
     }
 
 
