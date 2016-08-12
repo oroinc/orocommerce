@@ -41,6 +41,8 @@ label {
   margin: 0 0 15px;
   padding: 0 5px;
 
+  @include clearfix;
+
   &.no-padding {
     padding: 0px;
   }

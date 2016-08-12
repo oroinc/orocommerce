@@ -49,7 +49,7 @@ class FeaturedProductsProvider extends AbstractServerRenderDataProvider
         return $this->data;
     }
 
-    public function getFeaturedProducts()
+    protected function getFeaturedProducts()
     {
         $queryBuilder = $this->productRepository->getProductWithNamesQueryBuilder()
             ->setMaxResults(10)

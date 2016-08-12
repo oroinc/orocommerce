@@ -52,13 +52,11 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param ContextInterface $context
+     * @param Product $product
      * @return ProductPrice[]
      */
-    public function getData(ContextInterface $context)
+    public function getByProduct(Product $product)
     {
-        /** @var Product $product */
-        $product = $context->data()->get('product');
         if (!$product) {
             return null;
         }
@@ -68,7 +66,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         return $this->data[$product->getId()];
     }
 
-    public function getProductsPrices($products)
+    public function getByProducts($products)
     {
         $this->setProductsPrices($products);
         $productsUnits = [];
@@ -83,7 +81,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         return $productsUnits;
     }
 
-    public function setProductsPrices($products)
+    protected function setProductsPrices($products)
     {
         $products = array_filter($products, function ($product) {
             return !array_key_exists($product->getId(), $this->data);

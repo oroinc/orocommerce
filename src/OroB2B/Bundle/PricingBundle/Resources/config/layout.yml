@@ -8,14 +8,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 
-    orob2b_pricing.layout.data_provider.featured_products_prices:
-        class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FeaturedProductsPricesProvider'
-        arguments:
-            - '@orob2b_pricing.layout.data_provider.frontend_product_prices'
-            - '@orob2b_product.layout.data_provider.featured_products'
-        tags:
-            - { name: layout.data_provider, alias: featured_products_prices }
-
     orob2b_pricing.layout.data_provider.product_units_without_prices:
         class: 'OroB2B\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider'
         arguments:
