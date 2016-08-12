@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
@@ -25,9 +26,10 @@ class PriceAttributePriceList extends BasePriceList
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
      *      mappedBy="priceList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
-     **/
+     */
     protected $prices;
 
     /**
@@ -41,6 +43,39 @@ class PriceAttributePriceList extends BasePriceList
      * )
      */
     protected $currencies;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="field_name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $fieldName;
+
+    /**
+     * @return string
+     */
+    public function getFieldName()
+    {
+        return $this->fieldName;
+    }
+
+    /**
+     * @param string $fieldName
+     * @return $this
+     */
+    public function setFieldName($fieldName)
+    {
+        $this->fieldName = $fieldName;
+
+        return $this;
+    }
 
     /**
      * {@inheritdoc}

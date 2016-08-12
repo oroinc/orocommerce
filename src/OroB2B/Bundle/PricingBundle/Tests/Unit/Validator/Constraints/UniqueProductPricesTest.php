@@ -9,8 +9,8 @@ use Symfony\Component\Validator\Constraint;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -127,11 +127,11 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
         $unit->setCode($unitCode);
 
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
+        $product = $this->getEntity(Product::class, 42);
         $product->setSku('sku');
 
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', $priceListId);
+        $priceList = $this->getEntity(PriceList::class, $priceListId);
         $priceList->setName('price_list_' . $priceListId);
 
         $productPrice = new ProductPrice();

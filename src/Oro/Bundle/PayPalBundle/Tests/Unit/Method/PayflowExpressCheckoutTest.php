@@ -18,7 +18,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

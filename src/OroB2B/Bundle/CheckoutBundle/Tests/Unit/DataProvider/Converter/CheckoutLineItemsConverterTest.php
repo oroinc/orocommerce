@@ -10,8 +10,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
 {
