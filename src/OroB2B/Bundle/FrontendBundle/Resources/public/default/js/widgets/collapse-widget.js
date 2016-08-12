@@ -1,4 +1,4 @@
-define(['jquery', 'jquery-ui'], function($) {
+define(['jquery', 'underscore', 'jquery-ui'], function($, _) {
     'use strict';
 
     var localStorage = window.localStorage;
@@ -8,8 +8,7 @@ define(['jquery', 'jquery-ui'], function($) {
             trigger: '[data-collapse-trigger]',
             container: '[data-collapse-container]',
             storageKey: '',
-            hasRecords: false,
-            open: false,
+            open: null,
             openClass: 'expanded',
             animationSpeed: 250
         },
@@ -20,12 +19,12 @@ define(['jquery', 'jquery-ui'], function($) {
         },
 
         _init: function() {
-            var storedState = this.options.storageKey ? JSON.parse(localStorage.getItem(this.options.storageKey)) : undefined;
+            var storedState = this.options.storageKey ? JSON.parse(localStorage.getItem(this.options.storageKey)) : false;
 
             this.$trigger = this.$el.find(this.options.trigger);
             this.$container = this.$el.find(this.options.container);
 
-            this.options.open = _.isBoolean(storedState) ? storedState : (this.options.hasRecords || this.options.open);
+            this.options.open = !_.isNull(this.options.open) ? this.options.open : storedState;
 
             this.$el.toggleClass(this.options.openClass, this.options.open);
 
