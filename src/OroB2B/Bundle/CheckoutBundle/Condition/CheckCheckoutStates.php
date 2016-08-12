@@ -86,19 +86,6 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
 
         return $options[$key];
     }
-//
-//    /** {@inheritdoc} */
-//    protected function getMessage()
-//    {
-//        $message = parent::getMessage();
-//
-//        if ($message === null) {
-//            // @todo: Move it to translations
-//            $message = 'There was a change to the contents of your order.';
-//        }
-//
-//        return $message;
-//    }
 
 
     /** {@inheritdoc} */

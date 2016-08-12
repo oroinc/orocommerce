@@ -251,11 +251,14 @@ class CheckoutController extends Controller
      */
     protected function handleCheckoutErrors(FormInterface $form)
     {
-        foreach ($form->getErrors() as $error) {
-            $this->get('session')->getFlashBag()->add(
-                'error',
-                $error->getMessage()
-            );
+        foreach ($form->getErrors(true) as $error) {
+            // @todo: Fix this hardcode
+            if ($error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message') {
+                $this->get('session')->getFlashBag()->add(
+                    'error',
+                    $error->getMessage()
+                );
+            }
         }
     }
 }
