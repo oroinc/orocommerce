@@ -5,12 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// TODO: Remove extends from AbstractServerRenderDataProvider after closing ticket BB-2188
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class AccountUserAddressProvider extends AbstractServerRenderDataProvider
+class AccountUserAddressProvider
 {
     const ACCOUNT_USER_ADDRESS_LIST_ROUTE_NAME = 'orob2b_api_account_frontend_get_accountuser_addresses';
     const ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME = 'orob2b_account_frontend_account_user_address_create';

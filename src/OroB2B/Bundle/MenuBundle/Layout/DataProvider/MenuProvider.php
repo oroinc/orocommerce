@@ -5,10 +5,7 @@ namespace OroB2B\Bundle\MenuBundle\Layout\DataProvider;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
-// TODO: Remove extends from AbstractServerRenderDataProvider after closing ticket BB-2188
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
-class MenuProvider extends AbstractServerRenderDataProvider
+class MenuProvider
 {
     /** @var MenuProviderInterface */
     protected $menuProvider;
