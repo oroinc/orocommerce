@@ -30,8 +30,10 @@ workflows:
             shipping_method_type:
                 property_path: checkout.shippingMethodType
             shipping_rule_config:
-                type: int
+                type: entity
                 label: Shipping Rule Configuration
+                options:
+                    class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -431,14 +433,10 @@ workflows:
                                 entity: $checkout
                 post_actions:
                     actions:
-                        - '@find_entity':
-                            class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
-                            attribute: $.result.ShippingRuleConfiguration
-                            identifier: $shipping_rule_config
-                        - '@call_service_method':
+                        '@call_service_method':
                             service: orob2b_checkout.shipping_cost.calculator
                             method: calculatePrice
-                            method_parameters: [$checkout, $.result.ShippingRuleConfiguration]
+                            method_parameters: [$checkout, $shipping_rule_config]
                             attribute: $checkout.shippingCost
 
             continue_to_order_review_definition:
