@@ -1,6 +1,8 @@
-.account-form {
-    max-width: 400px;
-    padding: 50px;
+@import './_config';
 
-    background: #ccc;
+.login-form {
+    max-width: $login-form-width;
+    padding: $login-form-offset;
+
+    background: $login-form-bg;
 }

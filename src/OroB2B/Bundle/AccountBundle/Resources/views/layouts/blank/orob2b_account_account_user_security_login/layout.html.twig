@@ -1,28 +1,18 @@
-{% block presentation_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' presentation'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        <div class="presentation__centered">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
 {% block _login_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' login-form'
     }) %}
 
     <form {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="grid">
+            {{ block_widget(block) }}
+        </div>
     </form>
 {% endblock %}
 
 {% block _login_form_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-title'
+        '~class': ' page-title'
     }) %}
 
     <h2 {{ block('block_attributes') }}>
@@ -30,14 +20,17 @@
     </h2>
 {% endblock %}
 
-{% block _login_form_error_widget %}
+{% block _login_form_notifications_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-error'
+        '~class': ' notifications'
     }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+    <div class="grid__row">
+        <p  class="notifications">Info</p>
+        <p  class="notifications notifications--error">Error</p>
+        <p  class="notifications notifications--success">Success</p>
+        <p  class="notifications notifications--warring">Warring</p>
     </div>
+
 {% endblock %}
 
 {% block _login_form_username_label_widget %}
@@ -60,42 +53,62 @@
     </label>
 {% endblock %}
 
-{% block _login_form_remenber_item_widget %}
+{% block _login_form_email_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-item'
+    '~class': ' grid__row grid__row--offset-m'
     }) %}
 
-    <span {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </span>
+    </div>
+{% endblock %}
+
+{% block _login_form_passwors_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' grid__row grid__row--offset-m'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_remenber_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__row grid__row--offset-m'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _login_form_submit_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-item'
+        '~class': ' grid__row'
     }) %}
 
-    <span {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </span>
+    </div>
 {% endblock %}
 
 {% block _login_form_forgot_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-item'
+        '~class': ' grid__row grid__row--offset-m'
     }) %}
 
-    <span {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </span>
+    </div>
 {% endblock %}
 
 {% block _login_form_register_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-item'
+        '~class': ' grid__row grid__row--offset-none'
     }) %}
 
-    <span {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </span>
+    </div>
 {% endblock %}
