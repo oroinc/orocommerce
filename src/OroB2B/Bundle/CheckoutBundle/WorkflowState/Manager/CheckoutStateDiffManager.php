@@ -53,7 +53,7 @@ class CheckoutStateDiffManager
                 continue;
             }
 
-            if (!$mapper->isStatesEqual($state1, $state2)) {
+            if (!$mapper->isStatesEqual($entity, $state1, $state2)) {
                 return false;
             }
         }

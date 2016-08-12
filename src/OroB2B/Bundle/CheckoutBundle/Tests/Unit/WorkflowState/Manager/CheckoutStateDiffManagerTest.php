@@ -164,13 +164,13 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         $mapper1
             ->expects($this->once())
             ->method('isStatesEqual')
-            ->with($state1, $state2)
+            ->with($object, $state1, $state2)
             ->willReturn(true);
 
         $mapper2
             ->expects($this->once())
             ->method('isStatesEqual')
-            ->with($state1, $state2)
+            ->with($object, $state1, $state2)
             ->willReturn(true);
 
         $this->mapperRegistry->expects($this->once())
@@ -229,7 +229,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
         $mapper1
             ->expects($this->once())
             ->method('isStatesEqual')
-            ->with($state1, $state2)
+            ->with($object, $state1, $state2)
             ->willReturn(true);
 
         $mapper2

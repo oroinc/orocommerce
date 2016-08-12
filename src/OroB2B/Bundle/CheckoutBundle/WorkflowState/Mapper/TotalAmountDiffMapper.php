@@ -53,11 +53,12 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
+     * @param array $entity
      * @param array $state1
      * @param array $state2
      * @return bool
      */
-    public function isStatesEqual($state1, $state2)
+    public function isStatesEqual($entity, $state1, $state2)
     {
         if (!isset(
             $state1[$this->getName()]['amount'],

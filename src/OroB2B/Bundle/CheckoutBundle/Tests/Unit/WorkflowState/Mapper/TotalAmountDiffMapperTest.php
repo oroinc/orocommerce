@@ -81,7 +81,9 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $entity = new \stdClass();
+
+        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
     }
 
     /**
@@ -91,7 +93,9 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     public function testIsStatesEqualFalse($state1, $state2)
     {
-        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
+        $entity = new \stdClass();
+
+        $this->assertEquals(false, $this->mapper->isStatesEqual($entity, $state1, $state2));
     }
 
     /**
@@ -173,7 +177,9 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $entity = new \stdClass();
+
+        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
     }
 
     public function testIsStatesEqualParameterNotExistInState2()
@@ -192,6 +198,8 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $entity = new \stdClass();
+
+        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
     }
 }

@@ -7,7 +7,7 @@ trait IsStateEqualTrait
     /**
      * {@inheritdoc}
      */
-    public function isStatesEqual($state1, $state2)
+    public function isStatesEqual($entity, $state1, $state2)
     {
         if (!isset($state1[$this->getName()], $state2[$this->getName()])) {
             return true;

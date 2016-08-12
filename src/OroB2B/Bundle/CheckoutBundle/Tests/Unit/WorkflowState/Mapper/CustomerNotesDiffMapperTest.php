@@ -44,7 +44,9 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStatesEqual($state1, $state2);
+        $entity = new \stdClass();
+
+        $result = $this->mapper->isStatesEqual($entity, $state1, $state2);
 
         $this->assertEquals(true, $result);
     }
@@ -63,7 +65,9 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStatesEqual($state1, $state2);
+        $entity = new \stdClass();
+
+        $result = $this->mapper->isStatesEqual($entity, $state1, $state2);
 
         $this->assertEquals(false, $result);
     }
@@ -80,8 +84,9 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
             'customerNotes' => 'CustomerNotes'
         ];
+        $entity = new \stdClass();
 
-        $result = $this->mapper->isStatesEqual($state1, $state2);
+        $result = $this->mapper->isStatesEqual($entity, $state1, $state2);
 
         $this->assertEquals(true, $result);
     }
@@ -99,7 +104,9 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $result = $this->mapper->isStatesEqual($state1, $state2);
+        $entity = new \stdClass();
+
+        $result = $this->mapper->isStatesEqual($entity, $state1, $state2);
 
         $this->assertEquals(true, $result);
     }
