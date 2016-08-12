@@ -1,9 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes:
-                - 'OroB2BShippingBundle:layouts:default/orob2b_shipping_methods/layout.html.twig'
-                - '../templates/shipping_method.html.twig'
+            themes: '../templates/shipping_method.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
@@ -16,6 +14,7 @@ layout:
             options:
                 class_prefix: 'checkout'
                 methods: '=data["shipping_methods_data_provider"].getMethods(data["checkout"])'
+                currentShippingMethod: '=data["checkout"].getShippingMethod()'
                 currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
         - '@move':
             id: checkout_form_buttons
