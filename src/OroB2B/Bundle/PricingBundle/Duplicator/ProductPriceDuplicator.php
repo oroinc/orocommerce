@@ -49,9 +49,7 @@ class ProductPriceDuplicator
      */
     public function duplicate(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
     {
-        if ($targetPriceList->getPrices()->isEmpty()) {
-            $this->getRepository()->copyPrices($sourcePriceList, $targetPriceList, $this->insertQueryExecutor);
-        }
+        $this->getRepository()->copyPrices($sourcePriceList, $targetPriceList, $this->insertQueryExecutor);
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 

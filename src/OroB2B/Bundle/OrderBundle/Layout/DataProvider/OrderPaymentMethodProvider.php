@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
-class OrderPaymentMethodProvider extends AbstractServerRenderDataProvider
+class OrderPaymentMethodProvider
 {
     /**
      * @var PaymentTransactionProvider
@@ -23,11 +21,12 @@ class OrderPaymentMethodProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param Order $order
+     *
+     * @return bool|string
      */
-    public function getData(ContextInterface $context)
+    public function getPaymentMethod(Order $order)
     {
-        $order = $context->data()->get('order');
         $paymentTransaction = $this->paymentTransactionProvider->getPaymentTransaction($order);
 
         if (!$paymentTransaction) {
