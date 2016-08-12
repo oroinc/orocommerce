@@ -24,8 +24,6 @@ class CombinedPriceList extends BasePriceList
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice",
      *      mappedBy="priceList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true,
      *      fetch="EXTRA_LAZY"
      * )
      */

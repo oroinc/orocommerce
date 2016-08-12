@@ -25,8 +25,6 @@ class PriceAttributePriceList extends BasePriceList
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
      *      mappedBy="priceList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true,
      *      fetch="EXTRA_LAZY"
      * )
      */
