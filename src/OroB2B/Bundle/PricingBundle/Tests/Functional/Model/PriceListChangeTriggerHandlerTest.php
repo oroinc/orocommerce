@@ -13,7 +13,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller;
+use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Model\Stub\CombinedPriceListQueueListenerStub;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -70,7 +70,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $dispatcher->addListener(PriceListQueueChangeEvent::BEFORE_CHANGE, [$this->listener, 'onQueueChanged']);
 
         $this->triggersFiller = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\RecalculateTriggersFiller\ScopeRecalculateTriggersFiller')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -185,6 +185,6 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
 
     protected function assertRealTimeCPLQueueListenerDispatched()
     {
-        $this->assertTrue($this->listener->hasCollectionChanges(), "CPL Queue Listener was not dispatched");
+        $this->assertTrue($this->listener->hasCollectionChanges(), 'CPL Queue Listener was not dispatched');
     }
 }

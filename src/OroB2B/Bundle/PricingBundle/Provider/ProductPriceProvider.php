@@ -87,7 +87,7 @@ class ProductPriceProvider
             $productPrices = array_filter(
                 $prices,
                 function (array $price) use ($id, $code, $currency) {
-                    return $price['id'] === $id && $price['code'] === $code && $price['currency'] === $currency;
+                    return (int)$price['id'] === $id && $price['code'] === $code && $price['currency'] === $currency;
                 }
             );
 

@@ -5,10 +5,9 @@ namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
-class OrderShippingMethodProvider extends AbstractServerRenderDataProvider
+class OrderShippingMethodProvider
 {
     /**
      * @var ShippingMethodLabelFormatter

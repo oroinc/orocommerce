@@ -47,10 +47,12 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
             return;
         }
 
-        if ($this->storage->hasScheduledForInsert()) {
-            foreach ($this->storage->getScheduledForInsert() as $entity) {
-                $em = $this->getEntityManager($entity);
-                $em->persist($entity);
+        if ($this->storage->getScheduledForInsert()) {
+            foreach ($this->storage->getScheduledForInsert() as $entitiesByClass) {
+                foreach ($entitiesByClass as $entity) {
+                    $em = $this->getEntityManager($entity);
+                    $em->persist($entity);
+                }
             }
             $this->storage->clearScheduledForInsert();
 

@@ -15,19 +15,19 @@ layout:
                     blockType: checkout_form
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["orob2b_checkout_transition_form"]'
+                        form: '=data["orob2b_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                 __checkout_form_fields:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["orob2b_checkout_transition_form"]'
+                        form: '=data["orob2b_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
                         visible: '=context["workflowStepName"]!="order_review"'
-                        lineItemsWithTotals: '=data["orob2b_checkout_line_items_totals"]'
-                        total: '=data["orob2b_checkout_totals"]["subtotal"]'
+                        lineItemsWithTotals: '=data["orob2b_checkout_line_items_totals"].getData(data["checkout"])'
+                        total: '=data["orob2b_checkout_totals"].getData(data["checkout"])["subtotal"]'
                         checkout: '=data["checkout"]'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary_table:
@@ -37,7 +37,7 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         workflowStep: '=data["workflowStep"]'
-                        lineItemsWithTotals: '=data["orob2b_checkout_line_items_totals"]'
+                        lineItemsWithTotals: '=data["orob2b_checkout_line_items_totals"].getData(data["checkout"])'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary_totals:
                     blockType: price_totals
@@ -56,12 +56,12 @@ layout:
                 __checkout_button_continue:
                     blockType: checkout_transition_continue
                     options:
-                        transitionData: '=data["orob2b_checkout_continue_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getContinueTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
                 __checkout_button_back:
                     blockType: checkout_transition_back
                     options:
-                        transitionData: '=data["orob2b_checkout_back_transition"]'
+                        transitionData: '=data["orob2b_checkout_transition"].getBackTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
             tree:
                 __root:

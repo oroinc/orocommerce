@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 use OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider;
 
@@ -30,12 +28,9 @@ class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->setLoginPageClass(self::LOGIN_PAGE_CLASS);
     }
 
-    public function testGetData()
+    public function testGetDefaultLoginPage()
     {
         $loginPage = new LoginPage();
-
-        /** @var ContextInterface $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
 
         /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
@@ -49,7 +44,6 @@ class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
             ->with(self::LOGIN_PAGE_CLASS)
             ->willReturn($repository);
 
-        $this->assertEquals($loginPage, $this->provider->getData($context));
-        $this->assertEquals($loginPage, $this->provider->getData($context));
+        $this->assertEquals($loginPage, $this->provider->getDefaultLoginPage());
     }
 }

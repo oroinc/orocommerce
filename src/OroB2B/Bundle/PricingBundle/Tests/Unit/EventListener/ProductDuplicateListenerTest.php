@@ -30,12 +30,12 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var ProductPriceRepository
+     * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productPriceRepository;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $objectManager;
 
