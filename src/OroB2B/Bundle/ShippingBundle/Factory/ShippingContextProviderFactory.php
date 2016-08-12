@@ -29,5 +29,4 @@ class ShippingContextProviderFactory
         }
         return new ShippingContextProvider($context);
     }
-
 }
