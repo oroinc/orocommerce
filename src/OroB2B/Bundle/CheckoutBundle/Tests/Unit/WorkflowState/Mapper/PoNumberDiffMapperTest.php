@@ -2,42 +2,45 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PoNumberDiffMapper;
 
-class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
+class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     protected function setUp()
     {
         parent::setUp();
 
-        $this->mapper = new ShipToBillingDiffMapper();
+        $this->mapper = new PoNumberDiffMapper();
     }
 
     public function testGetName()
     {
-        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+        $this->assertEquals('poNumber', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
     {
-        $this->checkout->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(true);
+        $this->checkout
+            ->expects($this->once())
+            ->method('getPoNumber')
+            ->willReturn('testPoNumber');
 
-        $this->assertEquals(true, $this->mapper->getCurrentState($this->checkout));
+        $result = $this->mapper->getCurrentState($this->checkout);
+
+        $this->assertEquals('testPoNumber', $result);
     }
 
     public function testIsStatesEqualTrue()
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
@@ -48,13 +51,13 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => false,
+            'poNumber' => '100000002',
             'parameter3' => 'green',
         ];
 
@@ -70,7 +73,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'poNumber' => '100000001',
             'parameter3' => 'green',
         ];
 
@@ -82,7 +85,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
-            'shipToBillingAddress' => true,
+            'poNumber' => '100000001',
         ];
 
         $state2 = [

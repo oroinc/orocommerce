@@ -2,63 +2,70 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CustomerNotesDiffMapper;
 
-class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
+class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     protected function setUp()
     {
         parent::setUp();
 
-        $this->mapper = new ShipToBillingDiffMapper();
+        $this->mapper = new CustomerNotesDiffMapper();
     }
 
     public function testGetName()
     {
-        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+        $this->assertEquals('customerNotes', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
     {
-        $this->checkout->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(true);
+        $this->checkout
+            ->expects($this->once())
+            ->method('getCustomerNotes')
+            ->willReturn('testCustomerNotes');
 
-        $this->assertEquals(true, $this->mapper->getCurrentState($this->checkout));
+        $result = $this->mapper->getCurrentState($this->checkout);
+
+        $this->assertEquals('testCustomerNotes', $result);
     }
 
     public function testIsStatesEqualTrue()
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'customerNotes' => 'testCustomerNotes',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'customerNotes' => 'testCustomerNotes',
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $result = $this->mapper->isStatesEqual($state1, $state2);
+
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStatesEqualFalse()
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'customerNotes' => 'testCustomerNotes',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => false,
+            'customerNotes' => 'incorrectCustomerNotes',
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(false, $this->mapper->isStatesEqual($state1, $state2));
+        $result = $this->mapper->isStatesEqual($state1, $state2);
+
+        $this->assertEquals(false, $result);
     }
 
     public function testIsStatesEqualParameterNotExistInState1()
@@ -70,11 +77,13 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
             'parameter3' => 'green',
+            'customerNotes' => 'CustomerNotes'
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $result = $this->mapper->isStatesEqual($state1, $state2);
+
+        $this->assertEquals(true, $result);
     }
 
     public function testIsStatesEqualParameterNotExistInState2()
@@ -82,7 +91,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
-            'shipToBillingAddress' => true,
+            'customerNotes' => 'CustomerNotes'
         ];
 
         $state2 = [
@@ -90,6 +99,8 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
             'parameter3' => 'green',
         ];
 
-        $this->assertEquals(true, $this->mapper->isStatesEqual($state1, $state2));
+        $result = $this->mapper->isStatesEqual($state1, $state2);
+
+        $this->assertEquals(true, $result);
     }
 }

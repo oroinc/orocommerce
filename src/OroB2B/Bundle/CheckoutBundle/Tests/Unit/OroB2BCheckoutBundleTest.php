@@ -14,7 +14,7 @@ class OroB2BCheckoutBundleTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder');
         $kernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
 
-        $container->expects($this->at(0))
+        $container->expects($this->exactly(3))
             ->method('addCompilerPass')
             ->with($this->isInstanceOf('Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface'))
             ->will($this->returnSelf());

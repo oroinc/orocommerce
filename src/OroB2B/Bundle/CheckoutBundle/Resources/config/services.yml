@@ -213,7 +213,55 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
         public: false
         tags:
+             - { name: checkout.workflow_state.mapper, priority: 10 }
+
+    orob2b_checkout.workflow_state.mapper.billing_address_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper'
+        public: false
+        tags:
              - { name: checkout.workflow_state.mapper, priority: 20 }
+
+    orob2b_checkout.workflow_state.mapper.shipping_address_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 30 }
+
+    orob2b_checkout.workflow_state.mapper.payment_method_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 40 }
+
+    orob2b_checkout.workflow_state.mapper.total_amount_diff:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\TotalAmountDiffMapper'
+        arguments:
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 50 }
+
+#   TODO: These mappers are disabled for now as the functionality of storing
+#   TODO: these fields in checkout object should be fixed in BB-3842
+#    orob2b_checkout.workflow_state.mapper.ship_until_diff:
+#        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper'
+#        public: false
+#        tags:
+#             - { name: checkout.workflow_state.mapper, priority: 60 }
+
+#    orob2b_checkout.workflow_state.mapper.po_number_diff:
+#        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PoNumberDiffMapper'
+#        public: false
+#        tags:
+#             - { name: checkout.workflow_state.mapper, priority: 70 }
+
+#    orob2b_checkout.workflow_state.mapper.customer_notes_diff:
+#        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CustomerNotesDiffMapper'
+#        public: false
+#        tags:
+#             - { name: checkout.workflow_state.mapper, priority: 80 }
 
     orob2b_checkout.action.get_checkout_state:
         class: 'OroB2B\Bundle\CheckoutBundle\Action\GetCheckoutStateAction'

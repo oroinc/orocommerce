@@ -41,29 +41,6 @@ class CheckoutStateDiffManager
 
     /**
      * @param object $entity
-     * @param array $savedState
-     * @return bool
-     * @deprecated
-     */
-    public function isStateActual($entity, array $savedState)
-    {
-        /** @var CheckoutStateDiffMapperInterface $mapper */
-        foreach ($this->mapperRegistry->getMappers() as $mapper) {
-            if (!$mapper->isEntitySupported($entity)) {
-                continue;
-            }
-
-            if (!$mapper->isStateActual($entity, $savedState)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
-    /**
-     * @param object $entity
      * @param array $state1
      * @param array $state2
      * @return bool

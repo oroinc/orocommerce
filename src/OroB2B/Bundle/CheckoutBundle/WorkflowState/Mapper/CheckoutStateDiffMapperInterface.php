@@ -22,13 +22,6 @@ interface CheckoutStateDiffMapperInterface
     public function getCurrentState($entity);
 
     /**
-     * @param object $entity
-     * @param array $savedState
-     * @return bool
-     */
-    public function isStateActual($entity, array $savedState);
-
-    /**
      * @param array $state1
      * @param array $state2
      * @return bool

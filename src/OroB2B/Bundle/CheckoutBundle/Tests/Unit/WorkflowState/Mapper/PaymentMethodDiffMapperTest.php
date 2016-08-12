@@ -2,42 +2,43 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper;
+use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper;
 
-class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
+class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     protected function setUp()
     {
         parent::setUp();
 
-        $this->mapper = new ShipToBillingDiffMapper();
+        $this->mapper = new PaymentMethodDiffMapper();
     }
 
     public function testGetName()
     {
-        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+        $this->assertEquals('paymentMethod', $this->mapper->getName());
     }
 
     public function testGetCurrentState()
     {
-        $this->checkout->expects($this->once())
-            ->method('isShipToBillingAddress')
-            ->willReturn(true);
+        $this->checkout
+            ->expects($this->once())
+            ->method('getPaymentMethod')
+            ->willReturn('payflow_gateway');
 
-        $this->assertEquals(true, $this->mapper->getCurrentState($this->checkout));
+        $this->assertEquals('payflow_gateway', $this->mapper->getCurrentState($this->checkout));
     }
 
     public function testIsStatesEqualTrue()
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'paymentMethod' => 'payflow_gateway',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'paymentMethod' => 'payflow_gateway',
             'parameter3' => 'green',
         ];
 
@@ -48,13 +49,13 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
     {
         $state1 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'paymentMethod' => 'payflow_gateway',
             'parameter3' => 'green',
         ];
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => false,
+            'paymentMethod' => 'creditCard',
             'parameter3' => 'green',
         ];
 
@@ -70,7 +71,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $state2 = [
             'parameter1' => 10,
-            'shipToBillingAddress' => true,
+            'paymentMethod' => 'payflow_gateway',
             'parameter3' => 'green',
         ];
 
@@ -82,7 +83,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $state1 = [
             'parameter1' => 10,
             'parameter3' => 'green',
-            'shipToBillingAddress' => true,
+            'paymentMethod' => 'payflow_gateway',
         ];
 
         $state2 = [

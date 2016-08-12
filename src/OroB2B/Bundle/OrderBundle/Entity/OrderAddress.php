@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
 /**
@@ -32,7 +33,7 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrderAddress;
  * )
  * @ORM\Entity
  */
-class OrderAddress extends ExtendOrderAddress
+class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterface
 {
     /**
      * @var AccountAddress
