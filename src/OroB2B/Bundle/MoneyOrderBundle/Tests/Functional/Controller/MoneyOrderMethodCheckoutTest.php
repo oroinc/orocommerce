@@ -2,11 +2,13 @@
 
 namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -55,7 +57,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     {
         $this->moveToPaymentPage();
 
-        var_dump(self::$checkoutUrl);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
         $this->assertContains(Configuration::MONEY_ORDER_LABEL, $crawler->html());
@@ -113,6 +114,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             $this->registry->getRepository('OroB2BShoppingListBundle:ShoppingList')->find($sourceEntityId)
         );
 
+        /** @var EntityRepository $objectManager */
         $objectManager = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BPaymentBundle:PaymentTransaction')
@@ -130,22 +132,41 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     private function moveToPaymentPage()
     {
         $this->startCheckout($this->getSourceEntity());
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
+        $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
-        $values = $this->explodeArrayPaths($form->getValues());
-        $data = $this->setFormData($values, self::BILLING_ADDRESS);
-        $this->client->request('POST', $form->getUri(), $data);
+        $this->setAccountAddress(
+            $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
+            $form,
+            self::BILLING_ADDRESS
+        );
+        $crawler = $this->client->submit($form);
 
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
+        $this->setAccountAddress(
+            $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
+            $form,
+            self::SHIPPING_ADDRESS
+        );
+        $crawler = $this->client->submit($form);
+
+        $form = $this->getTransitionForm($crawler);
+
         $values = $this->explodeArrayPaths($form->getValues());
-        $data = $this->setFormData($values, self::SHIPPING_ADDRESS);
-        $this->client->request('POST', $form->getUri(), $data);
+        $values = $this->setShippingRuleFormData($values);
+
+        $crawler = $this->client->request(
+            'POST',
+            $form->getUri(),
+            $values,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getFakeForm($crawler);
@@ -162,10 +183,23 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @return ShoppingList
+     * @return ShoppingList|object
      */
     protected function getSourceEntity()
     {
         return $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+    }
+
+    /**
+     * @param integer $addressId
+     * @param Form $form
+     * @param string $addressType
+     */
+    protected function setAccountAddress($addressId, Form $form, $addressType)
+    {
+        $addressId = $addressId === 0 ?: 'a_' . $addressId;
+
+        $addressTypePath = sprintf('%s[%s][accountAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
+        $form->setValues([$addressTypePath => $addressId]);
     }
 }

@@ -69,7 +69,8 @@ orob2b:
             entity_label: Shipping Rule Configuration
             entity_plural_label: Shipping Rule Configurations
             id.label: Id
-            enabled.label: Type
+            currency.label: Currency
+            enabled.label: Enabled
             type.label: Type
             method.label: Method
             rule.label: Rule
@@ -87,7 +88,6 @@ orob2b:
             value.label: Price
             rule.label: Rule
             handling_fee_value.label: Handling Fee
-            price.label: Price
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'

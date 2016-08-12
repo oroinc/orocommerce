@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 
 /**
@@ -38,10 +39,18 @@ class ShippingRuleRepositoryTest extends WebTestCase
      */
     public function testGetOrderedRulesByCurrency($currency, $country, array $expectedRules)
     {
-        $this->assertEquals(
-            $this->getEntitiesByReferences($expectedRules),
-            $this->repository->getEnabledOrderedRulesByCurrencyAndCountry($currency, $this->findCountry($country))
+        /** @var ShippingRule[]|array $expectedShippingRule */
+        $expectedShippingRule = $this->getEntitiesByReferences($expectedRules);
+        /** @var ShippingRule $expectedShippingRule */
+        $expectedShippingRule = $expectedShippingRule[0];
+        $shippingRules = $this->repository->getEnabledOrderedRulesByCurrencyAndCountry(
+            $currency,
+            $this->findCountry($country)
         );
+
+        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getName()));
+        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
+        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
     }
 
     /**

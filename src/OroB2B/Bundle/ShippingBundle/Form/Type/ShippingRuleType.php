@@ -14,7 +14,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use Symfony\Component\Validator\Constraints\Valid;
 
 class ShippingRuleType extends AbstractType
 {
