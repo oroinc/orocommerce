@@ -25,9 +25,10 @@ class CombinedPriceList extends BasePriceList
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice",
      *      mappedBy="priceList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
-     **/
+     */
     protected $prices;
 
     /**
