@@ -19,7 +19,7 @@ services:
             - '@oro_config.manager'
 
     orob2b_checkout.layout.data_provider.line_items_totals:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsDataProvider'
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider'
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -27,7 +27,7 @@ services:
             - { name: layout.data_provider, alias: orob2b_checkout_line_items_totals }
 
     orob2b_checkout.layout.data_provider.totals:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TotalsDataProvider'
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider'
         arguments:
             - '@orob2b_checkout.provider.checkout_totals'
         tags:
@@ -65,7 +65,7 @@ services:
             - { name: oro_workflow.action, alias: get_order_line_items }
 
     orob2b_checkout.layout.data_provider.shipping_methods:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider'
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider'
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
