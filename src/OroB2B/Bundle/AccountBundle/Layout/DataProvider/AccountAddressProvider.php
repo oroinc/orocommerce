@@ -9,19 +9,20 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class AccountAddressProvider
 {
-    const ACCOUNT_ADDRESS_LIST_ROUTE_NAME = 'orob2b_api_account_frontend_get_account_addresses';
-    const ACCOUNT_ADDRESS_CREATE_ROUTE_NAME = 'orob2b_account_frontend_account_address_create';
-    const ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME = 'orob2b_account_frontend_account_address_update';
-
-    /**
-     * @var UrlGeneratorInterface
-     */
+    /** @var UrlGeneratorInterface */
     protected $router;
 
-    /**
-     * @var FragmentHandler
-     */
+    /** @var FragmentHandler */
     protected $fragmentHandler;
+
+    /** @var string */
+    protected $listRouteName = 'orob2b_api_account_frontend_get_account_addresses';
+
+    /** @var string */
+    protected $createRouteName = 'orob2b_account_frontend_account_address_create';
+
+    /** @var string */
+    protected $updateRouteName = 'orob2b_account_frontend_account_address_update';
 
     /**
      * @param UrlGeneratorInterface $router
@@ -34,25 +35,43 @@ class AccountAddressProvider
     }
 
     /**
+     * @param string $listRouteName
+     */
+    public function setListRouteName($listRouteName)
+    {
+        $this->listRouteName = $listRouteName;
+    }
+
+    /**
+     * @param string $createRouteName
+     */
+    public function setCreateRouteName($createRouteName)
+    {
+        $this->createRouteName = $createRouteName;
+    }
+
+    /**
+     * @param string $updateRouteName
+     */
+    public function setUpdateRouteName($updateRouteName)
+    {
+        $this->updateRouteName = $updateRouteName;
+    }
+
+    /**
      * @param Account $entity
      * @return array
      */
     public function getComponentOptions(Account $entity)
     {
-        $addressListUrl = $this->router->generate(
-            self::ACCOUNT_ADDRESS_LIST_ROUTE_NAME,
-            ['entityId' => $entity->getId()]
-        );
-        $addressCreateUrl = $this->router->generate(
-            self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME,
-            ['entityId' => $entity->getId()]
-        );
+        $addressListUrl = $this->router->generate($this->listRouteName, ['entityId' => $entity->getId()]);
+        $addressCreateUrl = $this->router->generate($this->createRouteName, ['entityId' => $entity->getId()]);
 
         return [
             'entityId' => $entity->getId(),
             'addressListUrl' => $addressListUrl,
             'addressCreateUrl' => $addressCreateUrl,
-            'addressUpdateRouteName' => self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
+            'addressUpdateRouteName' => $this->updateRouteName,
             'currentAddresses' => $this->fragmentHandler->render($addressListUrl),
         ];
     }

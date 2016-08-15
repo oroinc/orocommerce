@@ -863,9 +863,10 @@ services:
              - { name: layout.data_provider, alias: account_address_provider }
 
     orob2b_account.layout.data_provider.account_user_address_provider:
-        class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountUserAddressProvider
-        arguments:
-            - '@router'
-            - '@fragment.handler'
+        parent: orob2b_account.layout.data_provider.account_address_provider
+        calls:
+            - [setListRouteName, ['orob2b_api_account_frontend_get_accountuser_addresses']]
+            - [setCreateRouteName, ['orob2b_account_frontend_account_user_address_create']]
+            - [setUpdateRouteName, ['orob2b_account_frontend_account_user_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
