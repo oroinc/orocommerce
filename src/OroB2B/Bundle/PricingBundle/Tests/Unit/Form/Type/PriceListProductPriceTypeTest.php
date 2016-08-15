@@ -152,7 +152,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $priceList = new PriceList();
-        $priceList->setCurrencies(['GBP']);
+        $priceList->setCurrencies(['USD', 'GBP']);
 
         /** @var Product $expectedProduct */
         $expectedProduct = $this->getProductEntityWithPrecision(2, 'kg', 3);
@@ -223,6 +223,38 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                 'rounding'     => true
             ]
         ];
+    }
+
+    public function testSubmitPriceWithInvalidCurrency()
+    {
+        $priceList = new PriceList();
+        $priceList->setCurrencies(['USD']);
+        $defaultProductPrice = new ProductPrice();
+        $defaultProductPrice->setPriceList($priceList);
+        $submittedData = [
+            'product' => 2,
+            'quantity'  => 123.5555,
+            'unit'      => 'kg',
+            'price'     => [
+                'value'    => 42,
+                'currency' => 'CAD'
+            ]
+        ];
+        $form = $this->factory->create($this->formType, $defaultProductPrice, []);
+
+        // unit placeholder must not be available for specific entity
+        $unitPlaceholder = $form->get('unit')->getConfig()->getOption('placeholder');
+        $defaultProductPrice->getId() ? $this->assertNull($unitPlaceholder) : $this->assertNotNull($unitPlaceholder);
+
+        $this->assertEquals($defaultProductPrice, $form->getData());
+
+        $form->submit($submittedData);
+        $errors = $form->getErrors(true, true);
+        $this->assertCount(1, $errors);
+        $this->assertFalse($form->isValid());
+        $error = $errors->current();
+        $this->assertEquals('This value is not valid.', $error->getMessage());
+        $this->assertEquals(['{{ value }}' => 'CAD'], $error->getMessageParameters());
     }
 
     /**
