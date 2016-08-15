@@ -169,12 +169,21 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_line_item_form_fields_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__qty__current-grid',
-        'data-page-component-module': 'orob2bproduct/js/app/components/product-unit-select-component'    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {% if renderCache is not defined %}
+        {% set renderCache %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-item__qty__current-grid',
+                'data-page-component-module': 'orob2bproduct/js/app/components/product-unit-select-component'
+            }) %}
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% endset %}
+        {% do block|merge_context({
+            renderCache: renderCache
+        }) %}
+    {% endif %}
+    {{ renderCache }}
 {% endblock %}
 
 {% block __oro_product_list_item__product_line_item_form_widget %}
