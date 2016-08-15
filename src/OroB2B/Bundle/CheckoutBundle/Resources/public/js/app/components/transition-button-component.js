@@ -106,7 +106,7 @@ define(function(require) {
 
                 _.each($flashNotifications, function(element) {
                     var $element = $(element);
-                    var type = $(element).data('type');
+                    var type = $element.data('type');
                     var message = $element.data('message');
                     mediator.execute('showFlashMessage', type, message);
                 });

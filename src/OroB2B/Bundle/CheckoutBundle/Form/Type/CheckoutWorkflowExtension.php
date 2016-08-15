@@ -7,21 +7,21 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 
 class CheckoutWorkflowExtension extends AbstractTypeExtension
 {
-    /** @var Session */
-    protected $session;
+    /** @var FlashBagInterface */
+    protected $flashBag;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function __construct(Session $session)
+    public function __construct(FlashBagInterface $flashBag)
     {
-        $this->session = $session;
+        $this->flashBag = $flashBag;
     }
 
     /** {@inheritdoc} */
@@ -29,25 +29,42 @@ class CheckoutWorkflowExtension extends AbstractTypeExtension
     {
         /** @var FormErrorIterator $errors */
         $errors = array_key_exists('errors', $view->vars) ? $view->vars['errors'] : [];
-        $newErrors = [];
+        $filteredErrors = [];
 
         foreach ($errors as $error) {
             if ($error instanceof FormError
-                && $error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message') {
-                $this->session->getFlashBag()->add('error', $error->getMessage());
+                && $error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message'
+            ) {
+                $this->addUniqueErrorMessage($error->getMessage());
 
                 continue;
             }
 
-            $newErrors[] = $error;
+            $filteredErrors[] = $error;
         }
 
-        $view->vars['errors'] = new FormErrorIterator($form, $newErrors);
+        $view->vars['errors'] = new FormErrorIterator($form, $filteredErrors);
     }
 
     /** {@inheritdoc} */
     public function getExtendedType()
     {
         return WorkflowTransitionType::class;
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function addUniqueErrorMessage($message)
+    {
+        $errorMessages = $this->flashBag->peek('error');
+
+        $filteredMessages = array_filter($errorMessages, function ($value) use ($message) {
+            return $value === $message;
+        });
+
+        if (count($filteredMessages) === 0) {
+            $this->flashBag->add('error', $message);
+        }
     }
 }

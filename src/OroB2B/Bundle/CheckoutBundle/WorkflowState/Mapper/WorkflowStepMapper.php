@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowTransitionRecord;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
@@ -44,12 +45,21 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
             return null;
         }
 
-        return $workflowItem->getCurrentStep()->getName();
+        /** @var WorkflowTransitionRecord $lastTransitionRecord */
+        $lastTransitionRecord = $workflowItem->getTransitionRecords()->last();
+        if ($lastTransitionRecord) {
+            $stepTo = $lastTransitionRecord->getStepTo();
+
+            return $stepTo->getName();
+        }
+
+
+        return null;
     }
 
     /** {@inheritdoc} */
     public function isStatesEqual($entity, $state1, $state2)
     {
-        return $state1 === $state2 || $state1 === null || $state2 === null;
+        return $state1 === $state2;
     }
 }

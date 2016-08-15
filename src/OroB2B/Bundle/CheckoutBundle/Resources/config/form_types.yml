@@ -13,6 +13,6 @@ services:
     orob2b_checkout.form.extension.checkout_workflow:
         class: 'OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutWorkflowExtension'
         arguments:
-            - '@session'
+            - '@session.flash_bag'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }
