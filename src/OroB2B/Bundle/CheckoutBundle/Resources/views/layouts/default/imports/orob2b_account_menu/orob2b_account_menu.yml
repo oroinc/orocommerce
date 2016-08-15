@@ -15,4 +15,4 @@ layout:
             options:
                 route_name: orob2b_checkout_frontend_open_orders
                 text: orob2b.checkout.entity_plural_label
-                visible: '=data["orob2b_checkout_separate_open_orders"]'
+                visible: '=data["orob2b_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()'
