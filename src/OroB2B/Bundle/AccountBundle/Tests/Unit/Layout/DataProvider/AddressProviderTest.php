@@ -8,9 +8,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\AccountAddressProvider;
+use OroB2B\Bundle\AccountBundle\Layout\DataProvider\AddressProvider;
 
-class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
+class AddressProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -20,7 +20,7 @@ class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
     /** @var FragmentHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $fragmentHandler;
 
-    /** @var AccountAddressProvider */
+    /** @var AddressProvider */
     protected $provider;
 
     /**
@@ -33,11 +33,16 @@ class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new AccountAddressProvider($this->router, $this->fragmentHandler);
+        $this->provider = new AddressProvider($this->router, $this->fragmentHandler);
     }
 
     public function testGetComponentOptions()
     {
+        $this->provider->setEntityClass('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $this->provider->setListRouteName('orob2b_api_account_frontend_get_account_addresses');
+        $this->provider->setCreateRouteName('orob2b_account_frontend_account_address_create');
+        $this->provider->setUpdateRouteName('orob2b_account_frontend_account_address_update');
+
         /** @var Account $entity */
         $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 40]);
 
@@ -75,5 +80,29 @@ class AccountAddressProviderTest extends \PHPUnit_Framework_TestCase
             ],
             $data
         );
+    }
+
+    /**
+     * @expectedException \UnexpectedValueException
+     */
+    public function testGetComponentOptionsWithoutRouteName()
+    {
+        /** @var Account $entity */
+        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account');
+
+        $this->provider->setListRouteName('');
+        $this->provider->getComponentOptions($entity);
+    }
+
+    /**
+     * @expectedException \UnexpectedValueException
+     */
+    public function testGetComponentOptionsWithWrongEntityClass()
+    {
+        /** @var Account $entity */
+        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account');
+
+        $this->provider->setEntityClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->provider->getComponentOptions($entity);
     }
 }
