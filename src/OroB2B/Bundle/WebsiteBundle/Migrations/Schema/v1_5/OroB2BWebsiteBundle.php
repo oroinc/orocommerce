@@ -120,7 +120,6 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
             )
         );
         $queries->addPreQuery($this->getConfigInsertQuery('url'));
-        $queries->addPreQuery($this->getConfigInsertQuery('secure_url'));
     }
 
     /**
