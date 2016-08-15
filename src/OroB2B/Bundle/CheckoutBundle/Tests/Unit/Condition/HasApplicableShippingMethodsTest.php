@@ -61,7 +61,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('has_applicable_shipping_methods', $this->condition->getName());
+        $this->assertEquals(HasApplicableShippingMethods::NAME, $this->condition->getName());
     }
 
     /**

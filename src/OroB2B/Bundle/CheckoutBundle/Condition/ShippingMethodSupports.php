@@ -5,24 +5,27 @@ namespace OroB2B\Bundle\CheckoutBundle\Condition;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
+use Oro\Component\ConfigExpression\Exception;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 /**
- * Check applicable shipping methods
+ * Check shipping method supports
  * Usage:
- * @has_applicable_shipping_methods:
- *      entity: ~
+ * @shipping_method_supports:
+ *      entity: $checkout
+ *      shipping_rule_config_id: $shipping_rule_config
  */
-class HasApplicableShippingMethods extends AbstractCondition implements ContextAccessorAwareInterface
+class ShippingMethodSupports extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'has_applicable_shipping_methods';
+    const NAME = 'shipping_method_supports';
 
     /** @var ShippingMethodRegistry */
     protected $shippingMethodRegistry;
@@ -35,6 +38,9 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
 
     /** @var Checkout */
     protected $entity;
+
+    /** @var  ShippingRuleConfiguration */
+    protected $shippingRuleConfig;
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
@@ -54,27 +60,38 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function initialize(array $options)
     {
         if (array_key_exists('entity', $options)) {
             $this->entity = $options['entity'];
-        } elseif (array_key_exists(0, $options)) {
+        }
+        if (array_key_exists('shipping_rule_config', $options)) {
+            $this->shippingRuleConfig = $options['shipping_rule_config'];
+        }
+        if (!$this->entity && array_key_exists(0, $options)) {
             $this->entity = $options[0];
+        }
+        if (!$this->shippingRuleConfig && array_key_exists(1, $options)) {
+            $this->shippingRuleConfig = $options[1];
         }
 
         if (!$this->entity) {
             throw new InvalidArgumentException('Missing "entity" option');
         }
 
-        return $this;
-    }
+        if (!$this->shippingRuleConfig) {
+            throw new InvalidArgumentException('Missing "shipping_rule_config" option');
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
+        return $this;
     }
 
     /**
@@ -85,6 +102,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         $result = false;
         /** @var Checkout $entity */
         $entity = $this->resolveValue($context, $this->entity, false);
+        $shippingRuleConfig = $this->resolveValue($context, $this->shippingRuleConfig, false);
 
         $rules = [];
         if (null !==$entity) {
@@ -92,18 +110,39 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
             $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
         }
         if (0 !== count($rules)) {
-            $result = true;
             foreach ($rules as $rule) {
                 foreach ($rule->getConfigurations() as $config) {
-                    $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
-                    if (null === $method) {
-                        $result = false;
+                    if ($config === $shippingRuleConfig) {
+                        $result = $this->evaluateShippingConfiguration($entity, $config);
+                    }
+                    if ($result) {
+                        return $result;
                     }
                 }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param Checkout $entity
+     * @param ShippingRuleConfiguration $config
+     * @return bool
+     */
+    protected function evaluateShippingConfiguration(Checkout $entity, ShippingRuleConfiguration $config)
+    {
+        if ($config->getMethod() === $entity->getShippingMethod()) {
+            $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
+            $types = $method->getShippingTypes();
+            if (!$entity->getShippingMethodType() && 0 === count($types)) {
+                return true;
+            } elseif (in_array($entity->getShippingMethodType(), $types, true)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
