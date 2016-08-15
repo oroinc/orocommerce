@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_4;
+namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
@@ -35,6 +35,7 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     public function updateWebsiteTable(Schema $schema, QueryBag $queries)
     {
         $this->addIsDefaultColumn($schema, $queries);
+        $this->moveUrlToConfigValue($schema, $queries);
         $table = $schema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
         $table->dropIndex('url');
         $table->dropColumn('url');
@@ -60,22 +61,16 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
 
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
-                sprintf(
-                    'UPDATE %s SET is_default = :is_default',
-                    OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME
-                ),
+                'UPDATE orob2b_website SET is_default = :is_default',
                 ['is_default' => false],
                 ['is_default' => Type::BOOLEAN]
             )
         );
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
-                sprintf(
-                    'UPDATE %s SET is_default = :is_default WHERE id = (SELECT MIN(id) FROM %s)',
-                    OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
-                    OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME
-                ),
-                ['is_default' => Type::BOOLEAN, 'id' => Type::INTEGER]
+                'UPDATE orob2b_website SET is_default = :is_default WHERE id = (SELECT MIN(id) FROM orob2b_website)',
+                ['is_default' => true],
+                ['is_default' => Type::BOOLEAN]
             )
         );
 
@@ -109,5 +104,24 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         foreach ($postQueries as $query) {
             $queries->addPostQuery($query);
         }
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws SchemaException
+     */
+    protected function moveUrlToConfigValue(Schema $schema, QueryBag $queries)
+    {
+        $queries->addPreQuery(
+            new ParametrizedSqlMigrationQuery(
+                "INSERT INTO oro_config (entity, record_id)
+            SELECT :entity_name, id FROM orob2b_website w
+            WHERE NOT exists(SELECT record_id FROM oro_config oc WHERE oc.record_id = w.id AND oc.entity = 'website');",
+                ['entity_name' => 'website'],
+                ['entity_name' => Type::STRING]
+            )
+        );
+//        $queries->addPreQuery()
     }
 }
