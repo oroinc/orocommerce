@@ -6,7 +6,6 @@ define(function(require) {
     var $ = require('jquery');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
 
     QuickAddImportValidationComponent = BaseComponent.extend({
         /**
@@ -36,7 +35,6 @@ define(function(require) {
             this.$container.find(this.options.errorToggleSelector).on('click', _.bind(this.toggleErrors, this));
             this.$container.find(this.options.navigateButtonSelector).on('click', _.bind(this.navigateAction, this));
             this.$container.find(this.options.cancelButtonSelector).on('click', _.bind(this.cancelAction, this));
-            mediator.on('quick-add-form-button-component:submit', _.bind(this.onSubmitAction, this));
         },
 
         toggleErrors: function(e) {
@@ -58,26 +56,8 @@ define(function(require) {
             widgetManager.getWidgetInstance(this.options._wid, _.bind(this.closeWidget));
         },
 
-        onSubmitAction: function() {
-            widgetManager.getWidgetInstance(this.options._wid, _.bind(this.onSubmit));
-        },
-
-        onSubmit: function(widget) {
-            widget.on('contentLoad', function(content) {
-                if (_.has(content, 'redirectUrl')) {
-                    widget.dispose();
-                    mediator.execute('showLoading');
-                    mediator.execute('redirectTo', {url: content.redirectUrl}, {redirect: true});
-                }
-            });
-        },
-
         closeWidget: function(widget) {
             widget.dispose();
-        },
-
-        dispose: function() {
-            mediator.off(null, null, this);
         }
     });
 

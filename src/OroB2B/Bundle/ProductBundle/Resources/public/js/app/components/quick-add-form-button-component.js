@@ -5,7 +5,6 @@ define(function(require) {
     var QuickAddFormButtonComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
 
     QuickAddFormButtonComponent = BaseComponent.extend({
         /**
@@ -51,12 +50,6 @@ define(function(require) {
             }, this));
 
             this.$form.submit();
-
-            mediator.trigger('quick-add-form-button-component:submit');
-        },
-
-        dispose: function() {
-            mediator.off(null, null, this);
         }
     });
 
