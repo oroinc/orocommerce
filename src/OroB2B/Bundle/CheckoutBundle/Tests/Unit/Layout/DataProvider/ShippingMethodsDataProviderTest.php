@@ -7,7 +7,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsDataProvider;
+use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider;
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
@@ -33,7 +33,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $shippingContextProviderFactory;
 
     /**
-     * @var ShippingMethodsDataProvider
+     * @var ShippingMethodsProvider
      */
     protected $provider;
 
@@ -53,7 +53,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new ShippingMethodsDataProvider(
+        $this->provider = new ShippingMethodsProvider(
             $this->registry,
             $this->shippingRulesProvider,
             $this->shippingContextProviderFactory
