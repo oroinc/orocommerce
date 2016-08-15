@@ -209,6 +209,14 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
         public: false
 
+    orob2b_checkout.workflow_state.mapper.workflow_step:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper'
+        arguments:
+            - '@orob2b_checkout.workflow.manager.b2b_flow_checkout'
+        public: false
+        tags:
+            - { name: checkout.workflow_state.mapper, priority: 5 }
+
     orob2b_checkout.workflow_state.mapper.ship_to_billing_diff:
         class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
         public: false
@@ -300,3 +308,8 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: check_checkout_states }
             - { name: oro_action.condition, alias: check_checkout_states }
+
+    orob2b_checkout.workflow.manager.b2b_flow_checkout:
+        parent: oro_workflow.abstract.workflow_aware_manager
+        calls:
+            - ['setWorkflowName', ['b2b_flow_checkout']]
