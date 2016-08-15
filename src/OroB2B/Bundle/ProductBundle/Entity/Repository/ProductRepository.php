@@ -206,4 +206,21 @@ class ProductRepository extends EntityRepository
         
         return $images;
     }
+
+    /**
+     * @param string $sku
+     * @return string
+     */
+    public function getPrimaryUnitPrecisionCode($sku)
+    {
+        $qb = $this->createQueryBuilder('product');
+
+        return $qb
+            ->select('IDENTITY(productPrecision.unit)')
+            ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
+            ->where($qb->expr()->eq('product.sku', ':sku'))
+            ->setParameter('sku', $sku)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

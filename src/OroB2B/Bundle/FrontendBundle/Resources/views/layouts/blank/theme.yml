@@ -1,8 +1,2 @@
 groups: [ commerce ]
-icon: bundles/orob2bfrontend/blank/images/favicon/favicon.ico
-data:
-    assets:
-        styles:
-            inputs:
-                - 'bundles/orob2bfrontend/blank/scss/styles.scss'
-            output: 'css/layout/blank/styles.css'
+icon: bundles/orob2bfrontend/blank/images/favicon.ico

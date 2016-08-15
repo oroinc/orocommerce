@@ -2,17 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
-class PaymentMethodsProvider extends AbstractServerRenderDataProvider
+class PaymentMethodsProvider
 {
-    const NAME = 'orob2b_payment_methods_provider';
-
     /**
      * @var array[]
      */
@@ -43,21 +38,12 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return self::NAME;
-    }
-
-    /**
      * @param $entity
      * @return array[]
      */
     public function getViews($entity = null)
     {
         if (null === $this->paymentMethodViews) {
-            $entity = $this->getEntity($entity);
             $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
 
             $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentContext);
@@ -71,6 +57,26 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
         }
 
         return $this->paymentMethodViews;
+    }
+
+    /**
+     * @param $paymentMethod
+     * @param $entity
+     * @return array[]
+     */
+    public function getView($paymentMethod, $entity = null)
+    {
+        if (!$this->paymentMethodViews) {
+            $this->getViews($entity);
+        }
+
+        if ($this->isPaymentMethodEnabled($paymentMethod) &&
+            $this->isPaymentMethodApplicable($paymentMethod, $entity)
+        ) {
+            return $this->paymentMethodViews[$paymentMethod];
+        }
+        return null;
+
     }
 
     /**
@@ -103,7 +109,7 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
         if (!$paymentMethod->isEnabled()) {
             return false;
         }
-        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+        $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
         return $paymentMethod->isApplicable($paymentContext);
     }
@@ -114,7 +120,7 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
      */
     public function hasApplicablePaymentMethods($entity)
     {
-        $paymentContext = $this->paymentContextProvider->processContext(['entity'=> $entity], $entity);
+        $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
         $paymentMethods = $this->paymentMethodRegistry->getPaymentMethods();
         foreach ($paymentMethods as $paymentMethod) {
@@ -130,24 +136,5 @@ class PaymentMethodsProvider extends AbstractServerRenderDataProvider
         }
 
         return false;
-    }
-
-    /**
-     * @param $entity
-     * @return object|null
-     */
-    protected function getEntity($entity)
-    {
-        if ($entity instanceof ContextInterface) {
-            $contextData = $entity->data();
-            if ($contextData->has('entity')) {
-                $entity = $contextData->get('entity');
-            }
-            if (!$entity && $contextData->has('checkout')) {
-                $entity = $contextData->get('checkout');
-            }
-        }
-
-        return $entity;
     }
 }

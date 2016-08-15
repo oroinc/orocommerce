@@ -1,0 +1,10 @@
+@import '_config.scss';
+
+.login-form-error {
+    margin-top: 16px;
+    padding: 6px 12px;
+
+    color: red;
+    border: 1px solid;
+    border-radius: 4px;
+}

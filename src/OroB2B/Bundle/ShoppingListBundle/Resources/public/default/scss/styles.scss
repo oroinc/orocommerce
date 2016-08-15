@@ -1,7 +1,13 @@
-@import 'orob2bfrontend/default/scss/shared/_vars.scss';
-@import 'orob2bfrontend/default/scss/shared/_mixins.scss';
-@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins.scss';
+@import 'orob2bfrontend/default/scss/shared/_vars';
+@import 'orob2bfrontend/default/scss/shared/_mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/variables';
 
-@import 'components/products-widget.scss';
-@import 'components/shopping-list-widget.scss';
-@import 'components/sidebar.scss';
+@import 'components/products-widget';
+@import 'components/shopping-list-widget';
+@import 'components/shopping-lists/shopping-lists';
+@import 'components/shopping-lists-link/shopping-lists-link';
+@import 'components/shopping-lists-popup/shopping-lists-popup';
+@import 'components/shopping-lists-units/shopping-lists-units';
+@import 'components/shopping-lists-modify/shopping-lists-modify';
+@import 'components/sidebar';

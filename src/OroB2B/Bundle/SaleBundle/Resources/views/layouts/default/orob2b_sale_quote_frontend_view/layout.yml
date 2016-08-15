@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
@@ -27,11 +29,6 @@ layout:
                 parameters:
                     '%id%': '=data["entity"].getQid()'
 
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-
         - '@addTree':
             items:
                 quote_view_page:
@@ -56,7 +53,7 @@ layout:
                     blockType: action_combined_buttons
                     options:
                         visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
-                        actions: '=data["actions"].getAll()'
+                        actions: '=data["actions"].getAll(data["entity"])'
                         entity: '=data["quote"]'
                 quote_view_accept_container:
                     blockType: container

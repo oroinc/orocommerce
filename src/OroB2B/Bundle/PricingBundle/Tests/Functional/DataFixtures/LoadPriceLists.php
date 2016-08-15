@@ -25,6 +25,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
             'active' => true,
+            'assignmentRule' => null,
         ],
         [
             'name' => 'priceList2',
@@ -32,6 +33,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD'],
             'active' => true,
+            'assignmentRule' => 'product.category.id == 2',
         ],
         [
             'name' => 'priceList3',
@@ -39,6 +41,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['CAD'],
             'active' => true,
+            'assignmentRule' => null,
         ],
         [
             'name' => 'priceList4',
@@ -46,6 +49,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
+            'assignmentRule' => 'product.sku == "product.1"',
         ],
         [
             'name' => 'priceList5',
@@ -53,6 +57,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
+            'assignmentRule' => 'product.category == 1 or product.category.id == 2',
         ],
         [
             'name' => 'priceList6',
@@ -60,6 +65,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['USD'],
             'active' => false,
+            'assignmentRule' => null,
         ],
     ];
 
@@ -79,7 +85,8 @@ class LoadPriceLists extends AbstractFixture
                 ->setCurrencies($priceListData['currencies'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
-                ->setActive($priceListData['active']);
+                ->setActive($priceListData['active'])
+                ->setProductAssignmentRule($priceListData['assignmentRule']);
 
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);

@@ -2,14 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
@@ -26,7 +27,8 @@ class PriceListRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+            LoadPriceRules::class,
+            LoadProductPrices::class,
         ]);
 
         $this->defaultPriceList = $this->getDefaultPriceList();
@@ -64,9 +66,9 @@ class PriceListRepositoryTest extends WebTestCase
         $defaultPriceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::DEFAULT_PRICE_LIST_NAME]);
 
         $expectedCurrencies = [
-            $defaultPriceList->getId() => $defaultPriceList->getCurrencies()
+            $defaultPriceList->getId() => $defaultPriceList->getCurrencies(),
         ];
-        
+
         foreach (LoadPriceLists::getPriceListData() as $priceListData) {
             $priceList = $this->getReference($priceListData['reference']);
             $expectedCurrencies[$priceList->getId()] = $priceList->getCurrencies();
@@ -87,6 +89,29 @@ class PriceListRepositoryTest extends WebTestCase
         return reset($defaultPriceLists);
     }
 
+    public function testGetPriceListsWithRules()
+    {
+        $priceListsIterator = $this->getRepository()->getPriceListsWithRules();
+        $expectedPriceLists = [
+            $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_4)->getId(),
+            $this->getReference(LoadPriceLists::PRICE_LIST_5)->getId(),
+        ];
+        foreach ($priceListsIterator as $priceList) {
+            $this->assertContains($priceList->getId(), $expectedPriceLists);
+        }
+    }
+
+    public function testGetInvalidCurrenciesByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $currencies = $this->getRepository()->getInvalidCurrenciesByPriceList($priceList);
+
+        $this->assertEquals(['EUR'], $currencies);
+    }
+
     /**
      * @return PriceListRepository
      */
@@ -96,7 +121,7 @@ class PriceListRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return ObjectManager
+     * @return EntityManager
      */
     protected function getManager()
     {
