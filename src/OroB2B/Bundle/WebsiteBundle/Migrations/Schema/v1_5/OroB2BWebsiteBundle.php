@@ -129,16 +129,16 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
      */
     private function getConfigInsertQuery($name)
     {
-        $now = new \DateTime();
+        $now = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
         return new ParametrizedSqlMigrationQuery(
-            "INSERT INTO oro_config_value (
+            'INSERT INTO oro_config_value (
                         config_id, name, section, text_value, object_value, array_value, type, created_at, updated_at
                     )
                 SELECT
                   oc.id,
                   :name,
                   :section,
-                  CASE WHEN w.url = 'http://localhost/oro/' THEN 'http://localhost/' ELSE w.url END,
+                  CASE WHEN w.url = :default_url THEN :new_default_url ELSE w.url END,
                   :object_value,
                   :array_value,
                   :type,
@@ -146,24 +146,30 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                   :updated_at
                 FROM oro_config oc
                 JOIN orob2b_website w ON w.id = oc.record_id
-                WHERE entity = 'website';",
+                WHERE entity = :entity;',
             [
                 'name' => $name,
                 'section' => 'oro_b2b_website',
-                'object_value' => 'Tjs=',
-                'array_value' => 'Tjs=',
+                'object_value' => null,
+                'array_value' => null,
                 'type' => 'scalar',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'entity' => 'website',
+                'default_url' => 'http://localhost/oro/',
+                'new_default_url' => 'http://localhost/'
             ],
             [
                 'name' => Type::STRING,
                 'section' => Type::STRING,
-                'object_value' => Type::STRING,
-                'array_value' => Type::STRING,
+                'object_value' => Type::OBJECT,
+                'array_value' => Type::TARRAY,
                 'type' => Type::STRING,
                 'created_at' => Type::DATETIME,
                 'updated_at' => Type::DATETIME,
+                'entity' => Type::STRING,
+                'default_url' => Type::STRING,
+                'new_default_url' => Type::STRING,
             ]
         );
     }
