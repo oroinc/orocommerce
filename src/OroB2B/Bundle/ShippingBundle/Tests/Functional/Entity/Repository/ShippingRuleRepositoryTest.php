@@ -63,7 +63,8 @@ class ShippingRuleRepositoryTest extends WebTestCase
                 'currency' => 'USD',
                 'country' => 'US',
                 'expectedRules' => [
-                    'shipping_rule.7'
+                    'shipping_rule.8',
+                    'shipping_rule.7',
                 ]
             ],
             [
