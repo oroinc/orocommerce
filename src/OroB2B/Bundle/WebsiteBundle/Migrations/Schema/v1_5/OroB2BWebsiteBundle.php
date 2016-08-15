@@ -35,9 +35,8 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     public function updateWebsiteTable(Schema $schema, QueryBag $queries)
     {
         $this->addIsDefaultColumn($schema, $queries);
-        $this->moveUrlToConfigValue($schema, $queries);
+        $this->moveUrlToConfigValue($queries);
         $table = $schema->getTable(OroB2BWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
-        $table->dropIndex('url');
         $table->dropColumn('url');
     }
 
@@ -107,11 +106,9 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     }
 
     /**
-     * @param Schema $schema
      * @param QueryBag $queries
-     * @throws SchemaException
      */
-    protected function moveUrlToConfigValue(Schema $schema, QueryBag $queries)
+    protected function moveUrlToConfigValue(QueryBag $queries)
     {
         $queries->addPreQuery(
             new ParametrizedSqlMigrationQuery(
@@ -122,6 +119,52 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                 ['entity_name' => Type::STRING]
             )
         );
-//        $queries->addPreQuery()
+        $queries->addPreQuery($this->getConfigInsertQuery('url'));
+        $queries->addPreQuery($this->getConfigInsertQuery('secure_url'));
+    }
+
+    /**
+     * @param string $name
+     * @return ParametrizedSqlMigrationQuery
+     */
+    private function getConfigInsertQuery($name)
+    {
+        $now = new \DateTime();
+        return new ParametrizedSqlMigrationQuery(
+            "INSERT INTO oro_config_value (
+                        config_id, name, section, text_value, object_value, array_value, type, created_at, updated_at
+                    )
+                SELECT
+                  oc.id,
+                  :name,
+                  :section,
+                  CASE WHEN w.url = 'http://localhost/oro/' THEN 'http://localhost/' ELSE w.url END,
+                  :object_value,
+                  :array_value,
+                  :type,
+                  :created_at,
+                  :updated_at
+                FROM oro_config oc
+                JOIN orob2b_website w ON w.id = oc.record_id
+                WHERE entity = 'website';",
+            [
+                'name' => $name,
+                'section' => 'oro_b2b_website',
+                'object_value' => 'Tjs=',
+                'array_value' => 'Tjs=',
+                'type' => 'scalar',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => Type::STRING,
+                'section' => Type::STRING,
+                'object_value' => Type::STRING,
+                'array_value' => Type::STRING,
+                'type' => Type::STRING,
+                'created_at' => Type::DATETIME,
+                'updated_at' => Type::DATETIME,
+            ]
+        );
     }
 }
