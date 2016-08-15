@@ -2,29 +2,27 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 {
@@ -241,14 +239,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ]
         ];
         $form = $this->factory->create($this->formType, $defaultProductPrice, []);
-
-        // unit placeholder must not be available for specific entity
-        $unitPlaceholder = $form->get('unit')->getConfig()->getOption('placeholder');
-        $defaultProductPrice->getId() ? $this->assertNull($unitPlaceholder) : $this->assertNotNull($unitPlaceholder);
-
-        $this->assertEquals($defaultProductPrice, $form->getData());
-
         $form->submit($submittedData);
+
         $errors = $form->getErrors(true, true);
         $this->assertCount(1, $errors);
         $this->assertFalse($form->isValid());
