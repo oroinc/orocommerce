@@ -61,32 +61,26 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
     /** {@inheritdoc} */
     public function initialize(array $options)
     {
-        $this->entity = $this->getValueFromOption(self::OPTION_KEY_ENTITY, $options);
-        $this->state1 = $this->getValueFromOption(self::OPTION_KEY_STATE1, $options);
-        $this->state2 = $this->getValueFromOption(self::OPTION_KEY_STATE2, $options);
+        $this->entity = $this->getValueFromOption($options, self::OPTION_KEY_ENTITY);
+        $this->state1 = $this->getValueFromOption($options, self::OPTION_KEY_STATE1);
+        $this->state2 = $this->getValueFromOption($options, self::OPTION_KEY_STATE2);
 
         return $this;
     }
 
     /**
-     * @param string $key
      * @param array $options
-     * @param bool $required
+     * @param string $key
      * @return mixed
      */
-    protected function getValueFromOption($key, $options, $required = true)
+    protected function getValueFromOption($options, $key)
     {
         if (!array_key_exists($key, $options)) {
-            if (!$required) {
-                return null;
-            }
-
             throw new InvalidArgumentException(sprintf('Missing "%s" option', $key));
         }
 
         return $options[$key];
     }
-
 
     /** {@inheritdoc} */
     public function getName()

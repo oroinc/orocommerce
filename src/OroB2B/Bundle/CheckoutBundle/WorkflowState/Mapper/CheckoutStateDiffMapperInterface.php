@@ -17,14 +17,14 @@ interface CheckoutStateDiffMapperInterface
 
     /**
      * @param object $entity
-     * @return array
+     * @return mixed
      */
     public function getCurrentState($entity);
 
     /**
      * @param object $entity
-     * @param array $state1
-     * @param array $state2
+     * @param mixed $state1
+     * @param mixed $state2
      * @return bool
      */
     public function isStatesEqual($entity, $state1, $state2);

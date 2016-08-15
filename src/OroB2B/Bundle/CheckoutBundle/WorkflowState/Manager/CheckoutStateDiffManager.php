@@ -53,7 +53,13 @@ class CheckoutStateDiffManager
                 continue;
             }
 
-            if (!$mapper->isStatesEqual($entity, $state1, $state2)) {
+            $name = $mapper->getName();
+
+            if (!isset($state1[$name], $state2[$name])) {
+                continue;
+            }
+
+            if (!$mapper->isStatesEqual($entity, $state1[$name], $state2[$name])) {
                 return false;
             }
         }

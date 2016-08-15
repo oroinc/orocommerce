@@ -34,7 +34,6 @@ class GenerateCheckoutStateSnapshotAction extends AbstractAction
     public function __construct(ContextAccessor $contextAccessor, CheckoutStateDiffManager $diffManager)
     {
         $this->diffManager = $diffManager;
-
         parent::__construct($contextAccessor);
     }
 

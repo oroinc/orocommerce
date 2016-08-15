@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Doctrine\ORM\QueryBuilder;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class CheckoutWorkflowStateRepository extends EntityRepository

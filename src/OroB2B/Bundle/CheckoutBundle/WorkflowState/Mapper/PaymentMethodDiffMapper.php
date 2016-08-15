@@ -6,8 +6,6 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    use IsStateEqualTrait;
-
     const DATA_NAME = 'paymentMethod';
 
     /**
@@ -33,5 +31,11 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return $checkout->getPaymentMethod();
+    }
+
+    /** {@inheritdoc} */
+    public function isStatesEqual($entity, $state1, $state2)
+    {
+        return $state1 === $state2;
     }
 }

@@ -10,13 +10,42 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
 abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    use IsStateEqualTrait;
-
     /**
      * @param Checkout $checkout
-     * @return OrderAddress
+     * @return array
      */
-    abstract public function getAddress(Checkout $checkout);
+    public function getCurrentState($checkout)
+    {
+        $address = $this->getAddress($checkout);
+
+        if (!$address) {
+            return [];
+        }
+
+        if ($address->getAccountAddress()) {
+            return $this->getCompareString($address->getAccountAddress());
+        }
+
+        if ($address->getAccountUserAddress()) {
+            return $this->getCompareString($address->getAccountUserAddress());
+        }
+
+        return $this->getCompareString($address);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEntitySupported($entity)
+    {
+        return is_object($entity) && $entity instanceof Checkout;
+    }
+
+    /** {@inheritdoc} */
+    public function isStatesEqual($entity, $state1, $state2)
+    {
+        return $state1 === $state2;
+    }
 
     /**
      * @param AbstractAddress $address
@@ -48,32 +77,7 @@ abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInter
 
     /**
      * @param Checkout $checkout
-     * @return array
+     * @return OrderAddress
      */
-    public function getCurrentState($checkout)
-    {
-        $address = $this->getAddress($checkout);
-
-        if (!$address) {
-            return [];
-        }
-
-        if ($address->getAccountAddress()) {
-            return $this->getCompareString($address->getAccountAddress());
-        }
-
-        if ($address->getAccountUserAddress()) {
-            return $this->getCompareString($address->getAccountUserAddress());
-        }
-
-        return $this->getCompareString($address);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEntitySupported($entity)
-    {
-        return is_object($entity) && $entity instanceof Checkout;
-    }
+    abstract public function getAddress(Checkout $checkout);
 }

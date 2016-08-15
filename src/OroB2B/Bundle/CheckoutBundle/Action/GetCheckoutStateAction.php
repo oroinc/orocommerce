@@ -49,13 +49,11 @@ class GetCheckoutStateAction extends AbstractAction
         $state = $this->diffStorage->getState($entity, $token);
 
         $this->contextAccessor->setValue($context, $attributePath, $state);
-
     }
 
     /** {@inheritdoc} */
     public function initialize(array $options)
     {
-
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ENTITY);
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_TOKEN);
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ATTRIBUTE);

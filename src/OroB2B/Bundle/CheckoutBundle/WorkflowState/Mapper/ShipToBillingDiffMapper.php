@@ -6,8 +6,6 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    use IsStateEqualTrait;
-
     const DATA_NAME = 'shipToBillingAddress';
 
     /**
@@ -33,5 +31,11 @@ class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return $checkout->isShipToBillingAddress();
+    }
+
+    /** {@inheritdoc} */
+    public function isStatesEqual($entity, $state1, $state2)
+    {
+        return $state1 === $state2;
     }
 }

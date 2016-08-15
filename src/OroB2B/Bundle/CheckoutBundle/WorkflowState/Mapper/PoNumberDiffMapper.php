@@ -6,8 +6,6 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PoNumberDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    use IsStateEqualTrait;
-
     const DATA_NAME = 'poNumber';
 
     /**
@@ -33,5 +31,11 @@ class PoNumberDiffMapper implements CheckoutStateDiffMapperInterface
     public function getCurrentState($checkout)
     {
         return $checkout->getPoNumber();
+    }
+
+    /** {@inheritdoc} */
+    public function isStatesEqual($entity, $state1, $state2)
+    {
+        return $state1 === $state2;
     }
 }
