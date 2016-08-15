@@ -91,7 +91,6 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, array $submittedData, $expectedData, $defaultData = null, array $options = [])
     {
-        /** @var FormInterface $form */
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());

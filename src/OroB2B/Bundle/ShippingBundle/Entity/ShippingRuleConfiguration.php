@@ -139,7 +139,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
         if ($this->rule) {
             return $this->rule->getCurrency();
         }
-        return '';
+        return null;
     }
 
     /**

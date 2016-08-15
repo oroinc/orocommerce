@@ -79,7 +79,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     public function testCalculatePrice($rule, $value, $handlingFeeValue, $type, $expectedPrice)
     {
-        /** @var FlatRateRuleConfiguration|object $configEntity * */
+        /** @var FlatRateRuleConfiguration|object $configEntity */
         $configEntity = $this->getEntity(
             FlatRateRuleConfiguration::class,
             [
@@ -91,7 +91,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
         );
 
         $lineItem = $this->getEntity(LineItem::class, ['quantity' => 5]);
-        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems **/
+        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems */
         $lineItems = $this->getEntity(ArrayCollection::class, [], [$lineItem]);
 
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $shippingContext */
