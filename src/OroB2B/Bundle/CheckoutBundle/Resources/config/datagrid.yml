@@ -16,6 +16,8 @@ datagrid:
                     - checkout.shippingEstimateAmount
                     - checkout.shippingEstimateCurrency
                     - checkout.customerNotes
+                    - checkout.shippingMethod
+                    - checkout.shippingMethodType
                 from:
                     - { table: '%orob2b_checkout.entity.checkout.class%', alias: checkout }
                 join:
@@ -68,6 +70,12 @@ datagrid:
                 label: orob2b.checkout.customer_notes.label
                 renderable: false
                 order: 90
+            shippingMethod:
+                label:         orob2b.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BCheckoutBundle:Checkout:Datagrid/shippingMethodFull.html.twig'
+                order: 100
         sorters:
             columns:
                 createdAt:

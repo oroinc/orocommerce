@@ -105,6 +105,8 @@ datagrid:
             query:
                 select:
                     - transaction.paymentMethod
+                    - order1.shippingMethod
+                    - order1.shippingMethodType
                 join:
                     left:
                         - { join: '%orob2b_payment.entity.payment_transaction.class%', alias: transaction, conditionType: WITH, condition: "transaction.entityIdentifier = order1.id AND transaction.entityClass = '%orob2b_order.entity.order.class%'" }
@@ -123,6 +125,11 @@ datagrid:
                 template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
+            shippingMethod:
+                label:         orob2b.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
                 label:         orob2b.order.po_number.label
             shipUntil:
