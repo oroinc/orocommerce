@@ -103,7 +103,9 @@ class AccountUserController extends Controller
      */
     protected function update(AccountUser $accountUser, Request $request)
     {
-        $form = $this->get('orob2b_account.provider.frontend_account_user_form')->getForm($accountUser);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+            ->getAccountUserForm($accountUser)
+            ->getForm();
         $handler = new AccountUserHandler(
             $form,
             $request,

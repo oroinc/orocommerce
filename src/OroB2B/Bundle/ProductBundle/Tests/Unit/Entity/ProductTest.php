@@ -9,11 +9,11 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -78,8 +78,9 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
         $product->setPrimaryUnitPrecision($unitPrecision);
+        $product->addName((new LocalizedFallbackValue())->setString('1234'));
 
-        $this->assertEquals('{"id":123,"product_units":["kg"]}', json_encode($product));
+        $this->assertEquals('{"id":123,"product_units":["kg"],"name":"1234"}', json_encode($product));
     }
 
     public function testPrePersist()
@@ -272,20 +273,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($defaultName, $category->getDefaultName());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default name
-     */
-    public function testGetDefaultNameException()
-    {
-        $product = new Product();
-        $names = [new LocalizedFallbackValue(), new LocalizedFallbackValue()];
-        foreach ($names as $title) {
-            $product->addName($title);
-        }
-        $product->getDefaultName();
-    }
-
     public function testNoDefaultName()
     {
         $product = new Product();
@@ -320,38 +307,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->addShortDescription($defaultShortDescription)->addShortDescription($localizedShortDescription);
 
         $this->assertEquals($defaultShortDescription, $product->getDefaultShortDescription());
-    }
-
-    /**
-     * @param array $descriptions
-     * @dataProvider getDefaultDescriptionExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default description
-     */
-    public function testGetDefaultDescriptionException(array $descriptions)
-    {
-        $product = new Product();
-        foreach ($descriptions as $description) {
-            $product->addDescription($description);
-        }
-        $product->getDefaultDescription();
-    }
-
-    /**
-     * @param array $shortDescriptions
-     * @dataProvider getDefaultDescriptionExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default short description
-     */
-    public function testGetDefaultShortDescriptionException(array $shortDescriptions)
-    {
-        $product = new Product();
-        foreach ($shortDescriptions as $shortDescription) {
-            $product->addShortDescription($shortDescription);
-        }
-        $product->getDefaultShortDescription();
     }
 
     public function testVariantLinksRelation()

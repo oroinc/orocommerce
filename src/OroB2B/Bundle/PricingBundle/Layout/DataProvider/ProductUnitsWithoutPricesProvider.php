@@ -2,19 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
+class ProductUnitsWithoutPricesProvider
 {
     /**
      * @var array
      */
-    protected $data = [];
+    protected $productUnits = [];
 
     /**
      * @var PriceListRequestHandler
@@ -30,14 +28,14 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * @param Product $product
+     *
+     * @return ProductUnit[]
      */
-    public function getData(ContextInterface $context)
+    public function getProductUnits(Product $product)
     {
-        /** @var Product $product */
-        $product = $context->data()->get('product');
-        if (!array_key_exists($product->getId(), $this->data)) {
-            $prices = $this->pricesProvider->getData($context);
+        if (!array_key_exists($product->getId(), $this->productUnits)) {
+            $prices = $this->pricesProvider->getProductPrices($product);
 
             $unitWithPrices = [];
             foreach ($prices as $price) {
@@ -45,9 +43,7 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
             }
             $units = $product->getUnitPrecisions()->map(
                 function (ProductUnitPrecision $unitPrecision) {
-                    if ($unitPrecision->isSell()) {
-                        return $unitPrecision->getUnit();
-                    }
+                    return $unitPrecision->isSell() ? $unitPrecision->getUnit() : null;
                 }
             )->toArray();
 
@@ -57,9 +53,9 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
                 }
             }
 
-            $this->data[$product->getId()] = array_diff($units, $unitWithPrices);
+            $this->productUnits[$product->getId()] = array_diff($units, $unitWithPrices);
         }
 
-        return $this->data[$product->getId()];
+        return $this->productUnits[$product->getId()];
     }
 }

@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+
+use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
@@ -12,56 +15,100 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider testOnTerminateDataProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListQueueConsumer
+     */
+    protected $priceListQueueConsumer;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceQueueConsumer
+     */
+    protected $productPriceQueueConsumer;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleQueueConsumer
+     */
+    protected $priceRuleQueueConsumer;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
+     */
+    protected $configManager;
+
+    /**
+     * @var CombinedPriceListQueueListener
+     */
+    protected $listener;
+
+    protected function setUp()
+    {
+        $this->priceListQueueConsumer = $this
+            ->getMockBuilder(CombinedPriceListQueueConsumer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productPriceQueueConsumer = $this
+            ->getMockBuilder(CombinedProductPriceQueueConsumer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->priceRuleQueueConsumer = $this
+            ->getMockBuilder(PriceRuleQueueConsumer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new CombinedPriceListQueueListener(
+            $this->priceListQueueConsumer,
+            $this->productPriceQueueConsumer,
+            $this->priceRuleQueueConsumer,
+            $this->configManager
+        );
+    }
+
+    /**
+     * @dataProvider onTerminateDataProvider
      * @param bool $changes
      * @param array $expects
      * @param string $queueConsumerMode
      */
     public function testOnTerminate($changes, array $expects, $queueConsumerMode)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListQueueConsumer $priceListQueueConsumer */
-        $priceListQueueConsumer = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $priceListQueueConsumer->expects($this->exactly($expects['process']))->method('process');
-
-        /**
-         * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceQueueConsumer $productPriceQueueConsumer
-         */
-        $productPriceQueueConsumer = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productPriceQueueConsumer->expects($this->exactly($expects['process']))->method('process');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configManager->expects($this->exactly($expects['config.get']))
+        $this->priceListQueueConsumer->expects($this->exactly($expects['process']))->method('process');
+        $this->productPriceQueueConsumer->expects($this->exactly($expects['process']))->method('process');
+        $this->configManager->expects($this->exactly($expects['config.get']))
             ->method('get')
             ->with(OroB2BPricingExtension::ALIAS . '.price_lists_update_mode')
             ->willReturn($queueConsumerMode);
 
-        $listener = new CombinedPriceListQueueListener(
-            $priceListQueueConsumer,
-            $productPriceQueueConsumer,
-            $configManager
-        );
-
         if ($changes) {
-            $listener->onQueueChanged();
-            $listener->onProductPriceChanged();
+            $this->listener->onQueueChanged();
+            $this->listener->onProductPriceChanged();
         }
-        $listener->onTerminate();
+        $this->listener->onTerminate();
+    }
+
+    public function testPriceRuleChange()
+    {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(OroB2BPricingExtension::ALIAS
+                . ConfigManager::SECTION_MODEL_SEPARATOR
+                . Configuration::PRICE_LISTS_UPDATE_MODE)
+            ->willReturn(CombinedPriceListQueueConsumer::MODE_REAL_TIME);
+
+        $this->listener->onPriceRuleChanged();
+        $this->priceRuleQueueConsumer->expects($this->once())->method('process');
+        $this->priceListQueueConsumer->expects($this->once())->method('process');
+        $this->listener->onTerminate();
     }
 
     /**
      * @return array
      */
-    public function testOnTerminateDataProvider()
+    public function onTerminateDataProvider()
     {
         return [
             [
