@@ -176,7 +176,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
         /** @var ShippingRuleConfiguration $shippingRuleConfig */
         $shippingRuleConfig = $shippingRule->getConfigurations()->first();
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $shippingRuleConfig->getType();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = null;
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';

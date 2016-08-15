@@ -206,6 +206,16 @@ services:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
+    orob2b_checkout.condition.shipping_method_supports:
+        class: 'OroB2B\Bundle\CheckoutBundle\Condition\ShippingMethodSupports'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+        tags:
+            - { name: oro_workflow.condition, alias: 'shipping_method_supports' }
+            - { name: oro_action.condition, alias: 'shipping_method_supports' }
+
     orob2b_checkout.provider.checkout_totals:
         class: 'OroB2B\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
         arguments:
