@@ -1,0 +1,5 @@
+OroB2B\Bundle\TestPageBundle\Entity\Page:
+    fields:
+      -
+        name: custom_field
+        type: text

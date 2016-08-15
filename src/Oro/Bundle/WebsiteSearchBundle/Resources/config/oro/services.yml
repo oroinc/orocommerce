@@ -1,0 +1,30 @@
+parameters:
+    oro_website_search.cache.resources_dependent_provider_cache_clearer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ResourcesDependentProviderCacheClearer
+    oro_website_search.provider.resources_based_mapping_configuration_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesBasedMappingConfigurationProvider
+    oro_website_search.cache.resources_dependent_caching_configuration_provider.class: Oro\Bundle\WebsiteSearchBundle\Cache\ResourcesDependentCachingConfigurationProvider
+
+services:
+    oro_website_search.provider.resources_based_mapping_configuration_provider:
+        public: false
+        class: '%oro_website_search.provider.resources_based_mapping_configuration_provider.class%'
+
+    oro_website_search.mapping_configuration_provider.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_mapping_configuration' ] ]
+
+    oro_website_search.cache.resources_dependent_caching_configuration_provider:
+        class: '%oro_website_search.provider.mapping_configuration_provider.class%'
+        arguments:
+            - '@oro_website_search.mapping_configuration_provider.cache'
+            - '%kernel.debug%'
+            - '@oro_website_search.provider.resources_based_mapping_configuration_provider'
+
+    oro_website_search.cache.resources_dependent_provider_cache_clearer:
+        public: false
+        class: '%oro_website_search.cache.resources_dependent_provider_cache_clearer.class%'
+        arguments:
+            - '@oro_website_search.mapping_configuration_provider.cache'
+        tags:
+            - { name: kernel.cache_clearer }
