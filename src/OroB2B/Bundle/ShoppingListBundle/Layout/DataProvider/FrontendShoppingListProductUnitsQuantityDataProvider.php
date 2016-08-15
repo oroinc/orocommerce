@@ -6,9 +6,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {
@@ -18,80 +16,64 @@ class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServe
     protected $data = [];
 
     /**
-     * @var ShoppingListManager
+     * @var ProductShoppingListsDataProvider
      */
-    protected $shoppingListManager;
+    protected $productShoppingListsDataProvider;
 
     /**
-     * @var LineItemRepository
+     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
      */
-    protected $lineItemRepository;
-
-    /**
-     * @param ShoppingListManager $shoppingListManager
-     * @param LineItemRepository $lineItemRepository
-     */
-    public function __construct(ShoppingListManager $shoppingListManager, LineItemRepository $lineItemRepository)
+    public function __construct(ProductShoppingListsDataProvider $productShoppingListsDataProvider)
     {
-        $this->shoppingListManager = $shoppingListManager;
-        $this->lineItemRepository = $lineItemRepository;
+        $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
+    public function getByProduct(Product $product = null)
     {
-        /** @var Product $product */
-        $product = $context->data()->get('product');
         if (!$product) {
             return null;
         }
 
-        $this->setProductsShoppingLists([$product]);
+        $this->setByProducts([$product]);
 
         return $this->data[$product->getId()];
     }
 
-    public function getProductsShoppingLists($products)
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getByProducts($products)
     {
-        $this->setProductsShoppingLists($products);
-        $productsUnits = [];
+        $this->setByProducts($products);
 
+        $shoppingLists = [];
         foreach ($products as $product) {
             $productId = $product->getId();
             if ($this->data[$productId]) {
-                $productsUnits[$productId] = $this->data[$productId];
+                $shoppingLists[$productId] = $this->data[$productId];
             }
         }
 
-        return $productsUnits;
+        return $shoppingLists;
     }
 
-    protected function setProductsShoppingLists($products)
+    /**
+     * @param Product[] $products
+     */
+    protected function setByProducts($products)
     {
-        $products = array_filter($products, function ($product) {
+        $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->data);
         });
         if (!$products) {
             return;
         }
 
-        $shoppingList = $this->shoppingListManager->getCurrent();
-        if (!$shoppingList) {
-            return;
-        }
-
-        $items = $this->lineItemRepository->getItemsByShoppingListAndProducts($shoppingList, $products);
-        $productsUnits = [];
-
-        foreach ($items as $item) {
-            $productsUnits[$item->getProduct()->getId()][$item->getProductUnitCode()] = $item->getQuantity();
-        }
-
+        $shoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
         foreach ($products as $product) {
             $productId = $product->getId();
-            $this->data[$productId] = isset($productsUnits[$productId]) ? $productsUnits[$productId] : [];
+            $this->data[$productId] = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : null;
         }
     }
 }

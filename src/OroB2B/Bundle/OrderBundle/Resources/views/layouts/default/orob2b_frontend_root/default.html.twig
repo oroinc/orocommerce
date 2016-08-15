@@ -13,7 +13,7 @@
         '~class': ' top-selling-item'
     }) %}
 
-    <div class="top-selling-item">
-        {{ item }}
+    <div {{ block('block_attributes') }}>
+        {{ product }}
     </div>
 {% endblock %}

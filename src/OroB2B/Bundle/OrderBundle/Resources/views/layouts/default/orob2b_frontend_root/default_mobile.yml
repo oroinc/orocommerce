@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setOption':
-            id: top_selling_products
+            id: top_selling_items
             optionName: use_slider
             optionValue: false
     conditions: 'context["user_agent"]["mobile"]==true'

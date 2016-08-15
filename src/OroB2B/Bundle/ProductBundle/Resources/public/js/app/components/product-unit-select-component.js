@@ -13,7 +13,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            unitLabel: 'orob2b.product.product_unit.%s.label.full'
+        },
 
         /**
          * @param {Object} additionalOptions
@@ -32,8 +34,10 @@ define(function(require) {
             var productUnits = model.get('product_units');
             var select = this.options._sourceElement.find('select');
             select.empty();
-            for (var productCode in productUnits) {
-                select.append($('<option></option>').attr('value', productCode).text(productUnits[productCode]));
+            for (var i = 0; i < productUnits.length; i++) {
+                var unitCode = productUnits[i];
+                var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
+                select.append($('<option></option>').attr('value', unitCode).text(unitValue));
             }
             select.change();
         }

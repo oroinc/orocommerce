@@ -2,7 +2,8 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'orob2bproduct/js/app/views/base-product-view'
+            view: 'orob2bproduct/js/app/views/base-product-view',
+            modelAttr: product|default({})
         },
         'data-layout': 'separate'
     }) %}
@@ -15,7 +16,7 @@
     {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__image-holder product-item__image-holder_{{ class_prefix }}"
+        '~class': ' product-item__image-holder product-item__image-holder_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
@@ -27,7 +28,7 @@
 
 {% block __oro_product_list_item__product_quick_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__quick-view-btn",
+        '~class': ' product-item__quick-view-btn',
         'data-toggle': 'modal',
         'data-target': '#product',
     }) %}
@@ -38,7 +39,7 @@
 
 {% block __oro_product_list_item__product_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__title product-item__title_{{ class_prefix }}"
+        '~class': ' product-item__title product-item__title_{{ class_prefix }}'
     }) %}
     <h3 {{ block('block_attributes') }}>
         <a href="{{ path('orob2b_product_frontend_product_view', {id: product.id}) }}"
@@ -48,7 +49,7 @@
 
 {% block __oro_product_list_item__product_primary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__primary-content product-item__primary-content_{{ class_prefix }}"
+        '~class': ' product-item__primary-content product-item__primary-content_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="product-item__primary-half product-item__primary-half_{{ class_prefix }}">
@@ -59,7 +60,7 @@
 
 {% block __oro_product_list_item__product_number_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__number product-item__number_{{ class_prefix }}"
+        '~class': ' product-item__number product-item__number_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         Item #: <span class="red">{{ product.sku }}</span>
@@ -68,14 +69,14 @@
 
 {% block __oro_product_list_item__product_specification_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__specification product__specification_{{ class_prefix }} mb2-md"
+        '~class': ' product__specification product__specification_{{ class_prefix }} mb2-md'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_sku_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " mb0-md mb0-sm"
+        '~class': ' mb0-md mb0-sm'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -96,7 +97,7 @@
 
 {% block __oro_product_list_item__product_short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__description product__description_{{ class_prefix }}"
+        '~class': ' product__description product__description_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         <p>{{ product.shortDescription }}</p>
@@ -105,7 +106,7 @@
 
 {% block __oro_product_list_item__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__view-details-link product__view-details-link_{{ class_prefix }}"
+        '~class': ' product__view-details-link product__view-details-link_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ path('orob2b_product_frontend_product_view', {id: product.id}) }}" class="view-product">
@@ -116,21 +117,21 @@
 
 {% block __oro_product_list_item__product_secondary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-content product-item__secondary-content_{{ class_prefix }}"
+        '~class': ' product-item__secondary-content product-item__secondary-content_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_secondary_content_first_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-half product-item__secondary-half_{{ class_prefix }}"
+        '~class': ' product-item__secondary-half product-item__secondary-half_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_specification_delivery_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__specification product__specification_delivery product__specification_{{ class_prefix }} not-implemented"
+        '~class': ' product__specification product__specification_delivery product__specification_{{ class_prefix }} not-implemented'
     }) %}
     <div {{ block('block_attributes') }}>
     </div>
@@ -138,14 +139,14 @@
 
 {% block __oro_product_list_item__product_secondary_content_second_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__secondary-half product-item__secondary-half_{{ class_prefix }}"
+        '~class': ' product-item__secondary-half product-item__secondary-half_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_more_info_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " oro-more-info-toggler oro-more-info-toggler_{{ class_prefix }}"
+        '~class': ' oro-more-info-toggler oro-more-info-toggler_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         <i class="cf-play"></i>
@@ -169,8 +170,8 @@
 
 {% block __oro_product_list_item__product_line_item_form_fields_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__qty__current-grid"
-    }) %}
+        '~class': ' product-item__qty__current-grid',
+        'data-page-component-module': 'orob2bproduct/js/app/components/product-unit-select-component'    }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -178,7 +179,7 @@
 
 {% block __oro_product_list_item__product_line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__qty product-item__qty_{{ class_prefix }}"
+        '~class': ' product-item__qty product-item__qty_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -189,7 +190,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " add-product-from-view-component "
+            '~class': ' add-product-from-view-component '
         }) %}
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({

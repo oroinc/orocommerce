@@ -9,8 +9,9 @@ layout:
                 top_selling_items:
                     blockType: embedded_list
                     options:
-                        items: [0, 1, 2, 3, 4, 5, 6, 7]
+                        items: '=data["top_selling_items"]'
                         label: orob2b.order.top_selling_items.label
+                        item_key: product
                         use_slider: true
                         slides_count: 4
                 top_selling_item:

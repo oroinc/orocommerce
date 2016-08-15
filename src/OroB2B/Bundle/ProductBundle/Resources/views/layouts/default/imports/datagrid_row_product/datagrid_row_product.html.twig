@@ -59,10 +59,6 @@
 
 {% block _datagrid_row_product_line_item_form_fields_widget %}
     <% if (!_.isEmpty(model.product_units)) { %>
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': " product-item__qty__current-grid",
-            'data-page-component-module': "orob2bproduct/js/app/components/product-unit-select-component"
-        }) %}
         {{ block_widget(block, {attr: attr}) }}
     <% } %>
 {% endblock %}
