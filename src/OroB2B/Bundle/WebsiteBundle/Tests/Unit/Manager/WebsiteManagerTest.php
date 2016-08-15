@@ -37,10 +37,11 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $website = new Website();
         $repository->expects($this->once())
             ->method('findOneBy')
             ->with($this->isType('array'), $this->isType('array'))
-            ->willReturn(new Website());
+            ->willReturn($website);
 
         $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $objectManager->expects($this->once())
@@ -53,6 +54,6 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BWebsiteBundle:Website')
             ->willReturn($objectManager);
 
-        $this->assertEquals(new Website(), $this->manager->getCurrentWebsite());
+        $this->assertSame($website, $this->manager->getCurrentWebsite());
     }
 }
