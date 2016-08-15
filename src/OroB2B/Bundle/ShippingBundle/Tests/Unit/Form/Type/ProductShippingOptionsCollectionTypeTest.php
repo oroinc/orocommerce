@@ -53,8 +53,8 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ProductShippingOptionsCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductShippingOptionsCollectionType::NAME, $this->formType->getBlockPrefix());
     }
 }

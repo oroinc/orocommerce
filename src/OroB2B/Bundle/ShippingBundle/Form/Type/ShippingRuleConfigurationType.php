@@ -12,8 +12,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraint;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Valid;
 
 class ShippingRuleConfigurationType extends AbstractType
 {
@@ -46,14 +44,6 @@ class ShippingRuleConfigurationType extends AbstractType
                 return [Constraint::DEFAULT_GROUP];
             },
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

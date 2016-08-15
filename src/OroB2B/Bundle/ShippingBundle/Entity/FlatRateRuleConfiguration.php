@@ -133,9 +133,10 @@ class FlatRateRuleConfiguration extends ShippingRuleConfiguration
     public function __toString()
     {
         return sprintf(
-            '%s, %g',
+            '%s, %g %s',
             $this->getMethod(),
-            $this->getValue()
+            $this->getValue(),
+            $this->getCurrency()
         );
     }
 }

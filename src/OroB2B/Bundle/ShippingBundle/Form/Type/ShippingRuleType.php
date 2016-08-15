@@ -27,22 +27,22 @@ class ShippingRuleType extends AbstractType
         $builder->add('name', TextType::class, ['label' => 'orob2b.shipping.shippingrule.name.label'])
             ->add('enabled', CheckboxType::class, ['label' => 'orob2b.shipping.shippingrule.enabled.label'])
             ->add('priority', NumberType::class, ['label' => 'orob2b.shipping.shippingrule.priority.label'])
-            ->add('currency', CurrencySelectionType::NAME, [
+            ->add('currency', CurrencySelectionType::class, [
                 'label' => 'orob2b.shipping.shippingrule.currency.label',
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
-            ->add('destinations', CollectionType::NAME, [
+            ->add('destinations', CollectionType::class, [
                 'required' => false,
-                'entry_type' => ShippingRuleDestinationType::NAME,
+                'entry_type' => ShippingRuleDestinationType::class,
                 'label' => 'orob2b.shipping.shippingrule.shipping_destinations.label',
             ])
             ->add('conditions', TextareaType::class, [
                 'required' => false,
                 'label' => 'orob2b.shipping.shippingrule.conditions.label',
             ])
-            ->add('configurations', ShippingRuleConfigurationCollectionType::NAME, [
+            ->add('configurations', ShippingRuleConfigurationCollectionType::class, [
                 'required' => false,
-                'entry_type' => ShippingRuleConfigurationType::NAME,
+                'entry_type' => ShippingRuleConfigurationType::class,
                 'label' => 'orob2b.shipping.shippingrule.configurations.label',
             ])
             ->add('stopProcessing', CheckboxType::class, [
@@ -59,14 +59,6 @@ class ShippingRuleType extends AbstractType
         $resolver->setDefaults([
             'data_class' => ShippingRule::class,
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

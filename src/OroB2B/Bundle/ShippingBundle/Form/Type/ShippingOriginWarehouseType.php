@@ -21,14 +21,6 @@ class ShippingOriginWarehouseType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
         return self::NAME;
@@ -39,6 +31,6 @@ class ShippingOriginWarehouseType extends AbstractType
      */
     public function getParent()
     {
-        return ShippingOriginType::NAME;
+        return ShippingOriginType::class;
     }
 }

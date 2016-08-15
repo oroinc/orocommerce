@@ -76,15 +76,7 @@ class FlatRateShippingConfigurationType extends AbstractType
      */
     public function getParent()
     {
-        return ShippingRuleConfigurationType::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
+        return ShippingRuleConfigurationType::class;
     }
 
     /**

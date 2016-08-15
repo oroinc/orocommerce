@@ -94,7 +94,7 @@ class ShippingRuleController extends Controller
      */
     protected function update(ShippingRule $entity)
     {
-        $form = $this->createForm(ShippingRuleType::NAME, $entity);
+        $form = $this->createForm(ShippingRuleType::class, $entity);
         return $this->get('oro_form.model.update_handler')->update(
             $entity,
             $form,

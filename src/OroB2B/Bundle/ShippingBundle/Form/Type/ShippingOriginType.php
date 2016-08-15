@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
 class ShippingOriginType extends AbstractType
@@ -45,7 +47,7 @@ class ShippingOriginType extends AbstractType
         $builder
             ->add(
                 'country',
-                'oro_country',
+                CountryType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.country.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_country']
@@ -53,7 +55,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'region',
-                'oro_region',
+                RegionType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.region.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_region']
@@ -115,14 +117,6 @@ class ShippingOriginType extends AbstractType
                 'csrf_token_id' => 'shipping_origin'
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

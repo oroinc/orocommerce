@@ -50,7 +50,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormType()
     {
-        static::assertEquals(FlatRateShippingConfigurationType::NAME, $this->flatRate->getFormType());
+        static::assertEquals(FlatRateShippingConfigurationType::class, $this->flatRate->getFormType());
     }
 
     public function testGetShippingTypeLabel()
@@ -84,14 +84,14 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
             FlatRateRuleConfiguration::class,
             [
                 'rule'             => $rule,
-                'value'             => $value,
+                'value'            => $value,
                 'processingType'   => $type,
                 'handlingFeeValue' => $handlingFeeValue
             ]
         );
 
         $lineItem = $this->getEntity(LineItem::class, ['quantity' => 5]);
-        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems * */
+        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems **/
         $lineItems = $this->getEntity(ArrayCollection::class, [], [$lineItem]);
 
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $shippingContext */
@@ -99,7 +99,8 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $shippingContext->expects(static::any())
             ->method('getShippingContext')
-            ->willReturn(['line_items' => $lineItems]);
+            ->willReturn(['line_items' => $lineItems])
+        ;
 
         $price = $this->flatRate->calculatePrice($shippingContext, $configEntity);
 
@@ -117,7 +118,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'rule'             => (new ShippingRule())
                     ->setName('new rule')
                     ->setCurrency('USD'),
-                'value' => 25,
+                'value'            => 25,
                 'handlingFeeValue' => 5,
                 'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
                 'expectedPrice'    => 30
@@ -126,7 +127,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'rule'             => (new ShippingRule())
                     ->setName('new rule')
                     ->setCurrency('USD'),
-                'value' => 15,
+                'value'            => 15,
                 'handlingFeeValue' => 15,
                 'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
                 'expectedPrice'    => 90
@@ -135,7 +136,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'rule'             => (new ShippingRule())
                     ->setName('new rule')
                     ->setCurrency('USD'),
-                'value' => 25,
+                'value'            => 25,
                 'handlingFeeValue' => 3,
                 'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
                 'expectedPrice'    => 28
@@ -144,7 +145,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'rule'             => (new ShippingRule())
                     ->setName('new rule')
                     ->setCurrency('USD'),
-                'value' => 25,
+                'value'            => 25,
                 'handlingFeeValue' => 25,
                 'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
                 'expectedPrice'    => 150

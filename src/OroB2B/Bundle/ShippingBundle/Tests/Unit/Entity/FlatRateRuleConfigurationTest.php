@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +29,7 @@ class FlatRateRuleConfigurationTest extends \PHPUnit_Framework_TestCase
         $entity->setValue(42);
         $entity->setMethod('UPS');
         $entity->setType('TEST');
-        $this->assertEquals('UPS, 42', (string)$entity);
+        $entity->setRule((new ShippingRule())->setCurrency('USD'));
+        $this->assertEquals('UPS, 42 USD', (string)$entity);
     }
 }

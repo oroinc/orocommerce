@@ -136,7 +136,10 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
      */
     public function getCurrency()
     {
-        return $this->rule->getCurrency();
+        if ($this->rule) {
+            return $this->rule->getCurrency();
+        }
+        return '';
     }
 
     /**

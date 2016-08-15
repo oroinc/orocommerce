@@ -47,9 +47,9 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingOriginType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingOriginType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**

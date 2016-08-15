@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -74,9 +75,9 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ProductShippingOptionsType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductShippingOptionsType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**
@@ -90,6 +91,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, array $submittedData, $expectedData, $defaultData = null, array $options = [])
     {
+        /** @var FormInterface $form */
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());

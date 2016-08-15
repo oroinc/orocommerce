@@ -188,16 +188,19 @@ services:
 
     orob2b_shipping.form.data_transformer.length_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.length_unit'
 
     orob2b_shipping.form.data_transformer.weight_unit:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.weight_unit'
 
     orob2b_shipping.form.data_transformer.freight_class:
         parent: 'orob2b_shipping.form.data_transformer.measure'
+        public: true
         arguments:
             - '@orob2b_shipping.repository.freight_class'
 

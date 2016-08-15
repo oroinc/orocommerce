@@ -133,7 +133,8 @@ class ShippingRule extends ExtendShippingRule
      *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
-     *     fetch="EAGER"
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
     protected $destinations;
