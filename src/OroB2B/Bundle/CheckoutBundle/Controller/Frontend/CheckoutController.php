@@ -176,8 +176,6 @@ class CheckoutController extends Controller
                     $transitionForm->submit($request);
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
-                    } else {
-                        $this->handleCheckoutErrors($transitionForm);
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -244,21 +242,5 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
-    }
-
-    /**
-     * @param FormInterface $form
-     */
-    protected function handleCheckoutErrors(FormInterface $form)
-    {
-        foreach ($form->getErrors(true) as $error) {
-            // @todo: Fix this hardcode
-            if ($error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message') {
-                $this->get('session')->getFlashBag()->add(
-                    'error',
-                    $error->getMessage()
-                );
-            }
-        }
     }
 }

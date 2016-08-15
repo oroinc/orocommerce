@@ -484,13 +484,6 @@ workflows:
                 conditions:
                     '@and':
                         - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
-                            - '@and':
-                                - '@equal': [$checkout.shipToBillingAddress, false]
-                                - '@not_empty': $checkout.shippingAddress
-                        - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
                                 message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
@@ -498,6 +491,13 @@ workflows:
                                     entity: $checkout
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
+                        - '@or':
+                            - '@and':
+                                - '@equal': [$billing_address_has_shipping, true]
+                                - '@equal': [$checkout.shipToBillingAddress, true]
+                            - '@and':
+                                - '@equal': [$checkout.shipToBillingAddress, false]
+                                - '@not_empty': $checkout.shippingAddress
                 post_actions:
                     - '@tree':
                         conditions:
@@ -606,6 +606,14 @@ workflows:
                             entity: $checkout
                 conditions:
                     '@and':
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                         - '@not_empty':
                             message: Payment method was not selected
                             parameters: $checkout.paymentMethod
@@ -615,14 +623,6 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: orob2b.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
                 post_actions:
                     - '@tree':
                         conditions:
