@@ -9,8 +9,8 @@ define(function(require) {
 
     QuickAddCopyPasteFormComponent = BaseComponent.extend({
         /**
-        * @property {jQuery}
-        */
+         * @property {jQuery}
+         */
         $form: null,
 
         /**
@@ -32,6 +32,7 @@ define(function(require) {
                 }
 
                 var widget = new QuickAddImportWidget({});
+
                 widget.firstRun = false;
                 widget.loadContent(form.serialize(), form.attr('method'), form.attr('action'));
             });
