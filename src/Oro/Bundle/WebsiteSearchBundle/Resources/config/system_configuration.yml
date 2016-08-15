@@ -1,0 +1,75 @@
+oro_system_configuration:
+    groups:
+        search:
+            title: oro.website_search.engine_parameters.groups.search.title
+        search_engine:
+            title: oro.website_search.engine_parameters.groups.search_engine.title
+        search_engine_name:
+            title: oro.website_search.engine_parameters.groups.search_engine_name.title
+        search_engine_connection:
+            title: oro.website_search.engine_parameters.groups.search_engine_connection.title
+
+    fields:
+        oro_search.engine_parameters.name:
+            data_type: string
+            type: oro_search_engine_provider_type
+            options:
+                label: oro.website_search.engine_parameters.fields.name.label
+                required: true
+
+        oro_search.engine_parameters.host:
+            data_type: string
+            type: string
+            options:
+                label: oro.website_search.engine_parameters.fields.host.label
+
+        oro_search.engine_parameters.port:
+            data_type: string
+            type: string
+            options:
+                label: oro.website_search.engine_parameters.fields.port.label
+
+        oro_search.engine_parameters.username:
+            data_type: string
+            type: string
+            options:
+                label: oro.website_search.engine_parameters.fields.username.label
+
+        oro_search.engine_parameters.password:
+            data_type: string
+            type: string
+            options:
+                label: oro.website_search.engine_parameters.fields.password.label
+
+        oro_search.engine_parameters.auth_type:
+            data_type: string
+            type: choice
+            options:
+                label: oro.website_search.engine_parameters.fields.auth_type.label
+                choice_translation_domain: messages
+                choices:
+                    basic: oro.website_search.engine_parameters.fields.auth_type.basic.label
+                    digest: oro.website_search.engine_parameters.fields.auth_type.digest.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    search:
+                        priority: 800
+                        children:
+                            search_engine:
+                                priority: 100
+                                children:
+                                    search_engine_name:
+                                        priority: 100
+                                        children:
+                                            - oro_search.engine_parameters.name
+                                    search_engine_connection:
+                                        priority: 90
+                                        children:
+                                            - oro_search.engine_parameters.host
+                                            - oro_search.engine_parameters.port
+                                            - oro_search.engine_parameters.username
+                                            - oro_search.engine_parameters.password
+                                            - oro_search.engine_parameters.auth_type

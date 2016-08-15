@@ -1,0 +1,18 @@
+oro:
+    website_search:
+        engine_parameters:
+            groups:
+                search.title: Search
+                search_engine: Search engine
+                search_engine_name: Search engine name
+                search_engine_connection: Connection
+            fields:
+                name.label: Name
+                host.label: Host
+                port.label: Port
+                username.label: Username
+                password.label: Password
+                auth_type:
+                    label: Authentication type
+                    basic.label: Basic
+                    digest.label: Digest
