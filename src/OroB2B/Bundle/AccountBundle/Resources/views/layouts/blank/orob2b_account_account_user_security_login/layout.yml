@@ -43,7 +43,7 @@ layout:
                     options:
                         id: userNameSignIn
                         name: _username
-                        value: '=data["orob2b_account_sign_in"]["last_username"]'
+                        value: '=data["orob2b_account_sign_in"].getLastName()'
                         placeholder: orob2b.account.accountuser.email.label
                         label: orob2b.account.accountuser.email.label
                 login_form_password_text:
@@ -76,7 +76,7 @@ layout:
                     options:
                         type: hidden
                         name: _csrf_token
-                        value: '=data["orob2b_account_sign_in"]["csrf_token"]'
+                        value: '=data["orob2b_account_sign_in"].getCSRFToken()'
                 login_form_submit:
                     blockType: button
                     options:
