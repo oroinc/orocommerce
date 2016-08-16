@@ -1,5 +1,6 @@
 .hero-promo-item {
     display: flex;
+    margin-top: 26px;
 
     font-size: 0;
 
@@ -85,6 +86,8 @@
 
 @include breakpoint('mobile') {
     .hero-promo-item {
+        margin-top: 0;
+
         &__pretitle {
             font-size: 10px;
         }

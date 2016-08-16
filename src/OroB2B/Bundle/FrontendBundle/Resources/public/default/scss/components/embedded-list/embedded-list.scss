@@ -1,9 +1,12 @@
 .embedded-list {
+    position: relative;
+
     &__label {
         position: relative;
 
         margin-left: -42px;
         margin-right: -42px;
+        margin-top: 52px;
 
         line-height: 20px;
         text-align: center;
@@ -70,15 +73,18 @@
     &__container--slider {
         // Hide content before slick slider is inited
         overflow: hidden;
+        margin: 0 0 0 -26px;
 
-        height: 1px;
-        margin: 26px 0 0 -26px;
+        font-size: 0;
 
-        &.slick-initialized {
-            // Show content after slick slider is inited
-            overflow: visible;;
+        white-space: nowrap;
 
-            height: auto;
+        & .embedded-list__item {
+            display: inline-block;
+
+            font-size: $base-font-size;
+
+            white-space: normal;
         }
 
         &::before {
@@ -86,7 +92,7 @@
             left: -16px;
             z-index: 2;
 
-            display: block;
+            display: none;
             width: 40px;
             height: 100%;
 
@@ -94,9 +100,18 @@
             background: $base-white-color;
         }
 
+        &.slick-initialized {
+            // Show content after slick slider is inited
+            overflow: visible;
+
+            &::before {
+                display: block;
+            }
+        }
+
         & .slick-arrow {
             overflow: hidden;
-            
+
             position: absolute;
             top: 25%;
             z-index: 4;
@@ -125,6 +140,8 @@
             left: -16px;
 
             &::before {
+                margin-left: 1px;
+
                 background: url('components/embedded-list/__arrow/embedded-list__arrow--prev.svg') 0 0 no-repeat;
                 background-size: cover;
             }
@@ -134,6 +151,8 @@
             right: -42px;
 
             &::before {
+                margin-left: 3px;
+
                 background: url('components/embedded-list/__arrow/embedded-list__arrow--next.svg') 0 0 no-repeat;
                 background-size: cover;
             }
@@ -179,6 +198,7 @@
     .embedded-list {
         &__label {
             margin: 0;
+            margin-top: 20px;
         }
 
         &__label-inner {

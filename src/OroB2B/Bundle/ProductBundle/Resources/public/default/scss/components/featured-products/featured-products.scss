@@ -1,8 +1,4 @@
 .featured-products {
-    position: relative;
-
-    margin-top: 52px;
-
     & .embedded-list {
         margin: 0 42px;
     }
@@ -10,20 +6,18 @@
 
 @include breakpoint('mobile') {
     .featured-products {
-        margin-top: 20px;
-
         & .embedded-list {
             margin: 0;
+        }
 
-            &__container--slider {
-                margin: 16px 0 0 -16px;
-            }
+        & .embedded-list__container--slider {
+            margin: 0 0 0 -16px;
+        }
 
-            &__container--slider::before {
-                left: 0;
+        & .embedded-list__container--slider::before {
+            left: 0;
 
-                width: 16px;
-            }
+            width: 16px;
         }
     }
 }

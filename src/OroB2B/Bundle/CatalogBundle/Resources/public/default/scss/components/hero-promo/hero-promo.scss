@@ -1,11 +1,9 @@
 .hero-promo {
-    position: relative;
+    & .embedded-list__container--slider {
+        margin-left: 0;
+    }
 
-    margin-top: 26px;
-}
-
-@include breakpoint('mobile') {
-    .hero-promo {
-        margin-top: 0;
+    & .embedded-list__container--slider::before {
+        display: none;
     }
 }
