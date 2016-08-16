@@ -5,7 +5,7 @@ workflows:
         entity_attribute: checkout
         start_step: enter_billing_address
         steps_display_ordered: true
-
+        
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
