@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use OroB2B\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceRuleChangeTriggerHandler
      */
     protected $priceRuleTriggersFiller;
 
@@ -26,12 +26,12 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceRuleChangeTriggerHandler $priceRuleTriggersFiller
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceRuleTriggerFiller $priceRuleTriggersFiller,
+        PriceRuleChangeTriggerHandler $priceRuleTriggersFiller,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {

@@ -15,9 +15,7 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
 class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implements CronCommandInterface
 {
@@ -176,12 +174,6 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
                 ->getRepository(PriceList::class);
 
             if (!$priceListIds) {
-                /** @var PriceRuleChangeTriggerRepository $triggerRepository */
-                $triggerRepository = $this->getContainer()->get('doctrine')
-                    ->getManagerForClass(PriceRuleChangeTrigger::class)
-                    ->getRepository(PriceRuleChangeTrigger::class);
-
-                $triggerRepository->deleteAll();
                 $priceListIterator = $priceListRepository->getPriceListsWithRules();
             } else {
                 $priceListIterator = $priceListRepository->findBy(['id' => $priceListIds]);

@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use OroB2B\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
 
 class PriceListEntityListener
 {
@@ -23,23 +23,23 @@ class PriceListEntityListener
     protected $cache;
 
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceRuleChangeTriggerHandler
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleChangeTriggerHandler;
 
     /**
      * @param PriceListChangeTriggerHandler $triggerHandler
      * @param Cache $cache
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
      */
     public function __construct(
         PriceListChangeTriggerHandler $triggerHandler,
         Cache $cache,
-        PriceRuleTriggerFiller $priceRuleTriggersFiller
+        PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
     ) {
         $this->triggerHandler = $triggerHandler;
         $this->cache = $cache;
-        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
+        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
     }
 
     /**
@@ -52,7 +52,7 @@ class PriceListEntityListener
     {
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULES)) {
             $this->clearCache($priceList);
-            $this->priceRuleTriggersFiller->addTriggersForPriceList($priceList);
+            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList($priceList);
         }
     }
 
