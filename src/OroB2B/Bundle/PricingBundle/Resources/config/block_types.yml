@@ -7,6 +7,19 @@ services:
         tags:
              - { name: layout.block_type, alias: product_prices }
 
+    orob2b_pricing.block_type.currency_switcher:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        currencies: {required: true}
+                        selected_currency: {required: true}
+            - [setName, ['currency_switcher']]
+        tags:
+             - { name: layout.block_type, alias: currency_switcher }
+
     orob2b_pricing.layout.type.totals:
         parent: oro_layout.block_type.abstract_configurable
         calls:
