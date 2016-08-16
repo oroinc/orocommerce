@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Async\Message;
+namespace OroB2B\Bundle\PricingBundle\Model\DTO;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class PriceRuleCalculateMessage
+class PriceRuleTrigger
 {
     /**
      * @var PriceList

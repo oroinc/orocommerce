@@ -285,19 +285,19 @@ services:
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
 
-    orob2b_pricing.message.price_rule_change_message_factory:
-        class: 'OroB2B\Bundle\PricingBundle\Async\Message\PriceRuleCalculateMessageFactory'
+    orob2b_pricing.price_rule_trigger_factory:
+        class: 'OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory'
         arguments:
             - '@doctrine'
 
     orob2b_pricing.price_rule_change_trigger_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler'
         arguments:
-            - '@orob2b_pricing.message.price_rule_change_message_factory'
+            - '@orob2b_pricing.price_rule_trigger_factory'
             - '@oro_message_queue.client.message_producer'
             - '@event_dispatcher'
         tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'
