@@ -43,7 +43,7 @@ class OroWebsiteSearchBundle implements Migration
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'decimal', ['scale' => 2]);
-        $table->addIndex(['item_id'], 'idx_22b9bb33126f525e', []);
+        $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -58,7 +58,7 @@ class OroWebsiteSearchBundle implements Migration
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'integer', []);
-        $table->addIndex(['item_id'], 'idx_224ba3ab126f525e', []);
+        $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -73,7 +73,7 @@ class OroWebsiteSearchBundle implements Migration
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['item_id'], 'idx_229f212a126f525e', []);
+        $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -92,10 +92,10 @@ class OroWebsiteSearchBundle implements Migration
         $table->addColumn('changed', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['entity', 'record_id'], 'idx_entity');
+        $table->addUniqueIndex(['entity', 'record_id'], 'oro_website_search_item_uidx');
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['entity'], 'idx_entities', []);
-        $table->addIndex(['alias'], 'idx_alias', []);
+        $table->addIndex(['entity'], 'oro_website_search_item_idxe', []);
+        $table->addIndex(['alias'], 'oro_website_search_item_idxa', []);
     }
 
     /**
@@ -109,7 +109,7 @@ class OroWebsiteSearchBundle implements Migration
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'text', []);
-        $table->addIndex(['item_id'], 'idx_22243539126f525e', []);
+        $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
     }
 
