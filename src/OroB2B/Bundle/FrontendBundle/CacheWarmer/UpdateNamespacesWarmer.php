@@ -91,9 +91,13 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
      */
     protected function isUpdateRequired()
     {
-        $id = $this->defaultConnection->fetchColumn(
-            "SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1"
-        );
+        try {
+            $id = $this->defaultConnection->fetchColumn(
+                "SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1"
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
 
         return !empty($id);
     }
