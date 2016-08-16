@@ -22,9 +22,9 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(DimensionsValueType::NAME, $this->formType->getName());
+        $this->assertEquals(DimensionsValueType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**

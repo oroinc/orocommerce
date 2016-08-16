@@ -82,7 +82,6 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id'     => 1,
                 'method' => 'flat_rate',
                 'type'   => 'per_order',
-                'price'  => new Price()
             ]
         );
 

@@ -4,18 +4,12 @@ namespace OroB2B\Bundle\ShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
 {
-    /**
-     * @var ExecutionContextInterface $context
-     */
-    protected $context;
-
     /**
      * @param array $value
      * @param EnabledConfigurationValidationGroup|Constraint $constraint

@@ -430,7 +430,14 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_shipping_methods':
+                            parameters:
                                 entity: $checkout
+                conditions:
+                    '@shipping_method_supports':
+                        message: orob2b.checkout.workflow.condition.shipping_method_supports.message
+                        parameters:
+                            entity: $checkout
+                            shipping_rule_config: $shipping_rule_config
                 post_actions:
                     actions:
                         '@call_service_method':

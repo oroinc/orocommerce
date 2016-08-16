@@ -76,7 +76,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'shipping_origin_warehouse',
-                ShippingOriginWarehouseType::NAME,
+                ShippingOriginWarehouseType::class,
                 [
                     'mapped' => false,
                     'label' => 'orob2b.shipping.warehouse.section.shipping_origin'

@@ -25,9 +25,9 @@ class ShippingRuleConfigurationCollectionTypeTest extends FormIntegrationTestCas
         $this->formType = new ShippingRuleConfigurationCollectionType($this->subscriber);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingRuleConfigurationCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingRuleConfigurationCollectionType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testBuildFormSubscriber()

@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
@@ -35,14 +39,14 @@ class ShippingRuleDestinationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->subscriber);
-        $builder->add('country', 'oro_country', ['required' => true, 'label' => 'oro.address.country.label'])
-            ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
+        $builder->add('country', CountryType::class, ['required' => true, 'label' => 'oro.address.country.label'])
+            ->add('region', RegionType::class, ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 ['required' => false, 'random_id' => true, 'label' => 'oro.address.region_text.label']
             )
-            ->add('postalCode', 'text', ['required' => false, 'label' => 'oro.address.postal_code.label']);
+            ->add('postalCode', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
     }
 
     /**
@@ -69,7 +73,7 @@ class ShippingRuleDestinationType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

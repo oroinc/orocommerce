@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
@@ -49,7 +50,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormType()
     {
-        static::assertEquals(FlatRateShippingConfigurationType::NAME, $this->flatRate->getFormType());
+        static::assertEquals(FlatRateShippingConfigurationType::class, $this->flatRate->getFormType());
     }
 
     public function testGetShippingTypeLabel()
@@ -68,29 +69,29 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $currency
-     * @param Price $price
+     * @param ShippingRule $rule
+     * @param float $value
      * @param float $handlingFeeValue
      * @param string $type
      * @param float $expectedPrice
      *
      * @dataProvider ruleConfigProvider
      */
-    public function testCalculatePrice($currency, $price, $handlingFeeValue, $type, $expectedPrice)
+    public function testCalculatePrice($rule, $value, $handlingFeeValue, $type, $expectedPrice)
     {
-        /** @var FlatRateRuleConfiguration|object $configEntity **/
+        /** @var FlatRateRuleConfiguration|object $configEntity */
         $configEntity = $this->getEntity(
             FlatRateRuleConfiguration::class,
             [
-                'currency' => $currency,
-                'price' => $price,
-                'processingType' => $type,
+                'rule'             => $rule,
+                'value'            => $value,
+                'processingType'   => $type,
                 'handlingFeeValue' => $handlingFeeValue
             ]
         );
 
         $lineItem = $this->getEntity(LineItem::class, ['quantity' => 5]);
-        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems **/
+        /** @var ArrayCollection|null|\PHPUnit_Framework_MockObject_MockObject $lineItems */
         $lineItems = $this->getEntity(ArrayCollection::class, [], [$lineItem]);
 
         /** @var ShippingContextAwareInterface|\PHPUnit_Framework_MockObject_MockObject $shippingContext */
@@ -114,32 +115,40 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'currency' => 'USD',
-                'price' => Price::create(25, 'USD'),
+                'rule'             => (new ShippingRule())
+                    ->setName('new rule')
+                    ->setCurrency('USD'),
+                'value'            => 25,
                 'handlingFeeValue' => 5,
-                'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                'expectedPrice' => 30
+                'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                'expectedPrice'    => 30
             ],
             [
-                'currency' => 'USD',
-                'price' => Price::create(25, 'USD'),
+                'rule'             => (new ShippingRule())
+                    ->setName('new rule')
+                    ->setCurrency('USD'),
+                'value'            => 15,
                 'handlingFeeValue' => 15,
-                'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
-                'expectedPrice' => 140
+                'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
+                'expectedPrice'    => 90
             ],
             [
-                'currency' => 'EUR',
-                'price' => Price::create(25, 'EUR'),
+                'rule'             => (new ShippingRule())
+                    ->setName('new rule')
+                    ->setCurrency('USD'),
+                'value'            => 25,
                 'handlingFeeValue' => 3,
-                'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                'expectedPrice' => 28
+                'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                'expectedPrice'    => 28
             ],
             [
-                'currency' => 'EUR',
-                'price' => Price::create(25, 'EUR'),
+                'rule'             => (new ShippingRule())
+                    ->setName('new rule')
+                    ->setCurrency('USD'),
+                'value'            => 25,
                 'handlingFeeValue' => 25,
-                'type' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
-                'expectedPrice' => 150
+                'type'             => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM,
+                'expectedPrice'    => 150
             ]
         ];
     }

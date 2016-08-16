@@ -106,7 +106,6 @@ class OroB2BShippingBundle implements Migration
         $table->addColumn('method', 'string', ['length' => 255]);
         $table->addColumn('entity_name', 'string', ['length' => 255]);
         $table->addColumn('enabled', 'boolean', []);
-        $table->addColumn('currency', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 

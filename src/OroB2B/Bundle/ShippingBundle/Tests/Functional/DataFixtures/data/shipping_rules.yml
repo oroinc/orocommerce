@@ -7,7 +7,6 @@ shipping_rule.1:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
             value: 10
-            currency: 'EUR'
     destinations:
         -
             postalCode: '12345'
@@ -22,7 +21,6 @@ shipping_rule.2:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'EUR'
     destinations:
         -
             country: 'US'
@@ -38,7 +36,6 @@ shipping_rule.3:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
             value: 10
-            currency: 'EUR'
     destinations:
         -
             country: 'US'
@@ -54,7 +51,6 @@ shipping_rule.4:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'EUR'
     destinations:
         -
             postalCode: '12345, 12346'
@@ -69,7 +65,6 @@ shipping_rule.5:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'EUR'
 shipping_rule.6:
     enabled: true
     priority: 2
@@ -79,7 +74,6 @@ shipping_rule.6:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'EUR'
     destinations:
         -
             country: 'FR'
@@ -92,7 +86,6 @@ shipping_rule.7:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
             value: 10
-            currency: 'USD'
     destinations:
         -
             postalCode: '12346'
@@ -107,4 +100,3 @@ shipping_rule.8:
          -
             processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
             value: 10
-            currency: 'USD'

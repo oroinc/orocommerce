@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
@@ -20,10 +23,9 @@ class ShippingRuleConfigurationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('enabled', 'checkbox');
-        $builder->add('currency', 'hidden');
-        $builder->add('type', 'hidden');
-        $builder->add('method', 'hidden');
+        $builder->add('enabled', CheckboxType::class);
+        $builder->add('type', HiddenType::class);
+        $builder->add('method', HiddenType::class);
     }
 
     /**
@@ -47,7 +49,7 @@ class ShippingRuleConfigurationType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

@@ -4,7 +4,7 @@ services:
         arguments:
             - '@oro_entity_merge.metadata.registry'
             - '@translator'
-        scope: prototype
+        shared: false
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: shippingruleenable }
 
@@ -13,7 +13,7 @@ services:
         arguments:
             - '@oro_entity_merge.metadata.registry'
             - '@translator'
-        scope: prototype
+        shared: false
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: shippingruledisable }
 

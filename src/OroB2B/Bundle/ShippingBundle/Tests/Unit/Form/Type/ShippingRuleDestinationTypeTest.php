@@ -38,9 +38,9 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
         $this->formType = new ShippingRuleDestinationType($this->subscriber);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingRuleDestinationType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingRuleDestinationType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testBuildFormSubscriber()

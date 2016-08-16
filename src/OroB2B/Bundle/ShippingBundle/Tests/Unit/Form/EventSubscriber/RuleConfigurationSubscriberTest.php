@@ -93,8 +93,7 @@ class RuleConfigurationSubscriberTest extends FormIntegrationTestCase
         $config = new FlatRateRuleConfiguration();
         $config->setMethod(FlatRateShippingMethod::NAME)
             ->setType(FlatRateShippingMethod::NAME)
-            ->setProcessingType(FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER)
-            ->setPrice(Price::create(10, 'USD'));
+            ->setProcessingType(FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER);
         $shippingRule->addConfiguration($config);
         $form->setData($shippingRule);
         $this->assertCount(1, $shippingRule->getConfigurations());

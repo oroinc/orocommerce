@@ -31,9 +31,9 @@ class FlatRateShippingConfigurationTypeTest extends FormIntegrationTestCase
         $this->formType = new FlatRateShippingConfigurationType($roundingService);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(FlatRateShippingConfigurationType::NAME, $this->formType->getName());
+        $this->assertEquals(FlatRateShippingConfigurationType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**

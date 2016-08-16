@@ -63,9 +63,9 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
         $this->formType = new ShippingRuleType();
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingRuleType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingRuleType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**
@@ -105,7 +105,6 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
                     ->setType(FlatRateShippingMethod::NAME)
                     ->setProcessingType(FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER)
                     ->setValue(21)
-                    ->setCurrency('USD')
                     ->setEnabled(true)
             );
 

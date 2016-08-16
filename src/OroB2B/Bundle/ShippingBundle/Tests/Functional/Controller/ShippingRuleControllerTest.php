@@ -13,7 +13,7 @@ use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @dbIsolation
  */
 class ShippingRuleControllerTest extends WebTestCase
@@ -89,7 +89,8 @@ class ShippingRuleControllerTest extends WebTestCase
             $this->assertEquals($expectedColumns, $testedColumns);
         }
 
-        for ($i = 0; $i < count($expectedData['data']); $i++) {
+        $expectedDataCount = count($expectedData['data']);
+        for ($i = 0; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
                 $this->assertEquals($value, $data[$i][$key]);
@@ -198,10 +199,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertNotEmpty($shippingRule);
 
         $id = $shippingRule->getId();
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
-        );
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_update', ['id' => $id]));
 
         $html = $crawler->html();
 
@@ -213,7 +211,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $newName = 'New name for new rule';
         $formValues = $form->getPhpValues();
         $formValues['orob2b_shipping_rule']['name'] = $newName;
-        $formValues['orob2b_shipping_rule']['enabled'] = true;
+        $formValues['orob2b_shipping_rule']['enabled'] = false;
         $formValues['orob2b_shipping_rule']['currency'] = 'USD';
         $formValues['orob2b_shipping_rule']['priority'] = 1;
         $formValues['orob2b_shipping_rule']['destinations'] = [
@@ -230,7 +228,6 @@ class ShippingRuleControllerTest extends WebTestCase
                 'type' => FlatRateShippingMethod::NAME,
                 'value' => 12,
                 'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                'currency' => 'USD',
             ]
         ];
 
@@ -241,31 +238,27 @@ class ShippingRuleControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Shipping rule has been saved', $html);
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shipping_rule_view', ['id' => $shippingRule->getId()])
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $shippingRule = $this->getShippingRuleByName($newName);
-
-        $html = $crawler->html();
-        $this->assertContains($shippingRule->getName(), $html);
-        $this->assertContains($shippingRule->getCurrency(), $html);
+        $this->assertEquals($id, $shippingRule->getId());
+        $this->assertEquals('USD', $shippingRule->getCurrency());
         $destination = $shippingRule->getDestinations();
-        $this->assertContains((string)$destination[0], $html);
+        $this->assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
+        $this->assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
+        $this->assertEquals('54321', $destination[0]->getPostalCode());
         $configurations = $shippingRule->getConfigurations();
-        $this->assertContains($configurations[0]->getMethod(), $html);
-        $this->assertContains('Yes', $html);
+        $this->assertEquals(FlatRateShippingMethod::NAME, $configurations[0]->getMethod());
+        $this->assertEquals(FlatRateShippingMethod::NAME, $configurations[0]->getType());
+        $this->assertEquals(12, $configurations[0]->getValue());
+        $this->assertFalse($shippingRule->isEnabled());
 
         return $shippingRule;
     }
 
-
     /**
      * @depends testUpdate
-     * @param ShippingRule|object|null $shippingRule
+     * @param ShippingRule $shippingRule
      */
-    public function testCancel($shippingRule)
+    public function testCancel(ShippingRule $shippingRule)
     {
         $shippingRule = $this->getShippingRuleByName($shippingRule->getName());
 
@@ -294,6 +287,39 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertContains((string)$destination[0], $html);
         $configurations = $shippingRule->getConfigurations();
         $this->assertContains($configurations[0]->getMethod(), $html);
+    }
+
+    /**
+     * @depends testUpdate
+     * @param ShippingRule $shippingRule
+     */
+    public function testUpdateRemoveDestination(ShippingRule $shippingRule)
+    {
+        $this->assertNotEmpty($shippingRule);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+        );
+
+        $html = $crawler->html();
+
+        $this->assertContains($shippingRule->getCurrency(), $html);
+
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $formValues = $form->getPhpValues();
+        $formValues['orob2b_shipping_rule']['destinations'] = [];
+
+        $this->client->followRedirects(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $shippingRule = $this->getEntityManager()->find('OroB2BShippingBundle:ShippingRule', $shippingRule->getId());
+        $this->assertCount(0, $shippingRule->getDestinations());
+
+        return $shippingRule;
     }
 
     public function testStatusDisableMass()
@@ -404,7 +430,6 @@ class ShippingRuleControllerTest extends WebTestCase
         $form['orob2b_shipping_rule[conditions]'] = $shippingRule->getConditions() . ' new data';
         $form['orob2b_shipping_rule[destinations][0][postalCode]'] = '11111';
         $form['orob2b_shipping_rule[configurations][0][enabled]'] = '1';
-        $form['orob2b_shipping_rule[configurations][0][currency]'] = 'USD';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

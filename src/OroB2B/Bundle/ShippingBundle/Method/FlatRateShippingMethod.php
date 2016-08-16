@@ -61,7 +61,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getFormType()
     {
-        return FlatRateShippingConfigurationType::NAME;
+        return FlatRateShippingConfigurationType::class;
     }
 
     /**
