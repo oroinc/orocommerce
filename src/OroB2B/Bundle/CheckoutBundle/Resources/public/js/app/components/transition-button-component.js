@@ -108,6 +108,7 @@ define(function(require) {
                     var $element = $(element);
                     var type = $element.data('type');
                     var message = $element.data('message');
+                    message = message.replace(/\n/g,"<br>");
                     _.delay(function() {
                         mediator.execute('showFlashMessage', type, message);
                     }, 100);
