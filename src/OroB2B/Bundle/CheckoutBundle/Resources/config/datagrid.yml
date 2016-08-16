@@ -74,7 +74,7 @@ datagrid:
                 label:         orob2b.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroB2BCheckoutBundle:Checkout:Datagrid/shippingMethodFull.html.twig'
+                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
                 order: 100
         sorters:
             columns:
