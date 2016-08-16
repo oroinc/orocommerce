@@ -64,7 +64,7 @@ workflows:
             state_token:
                 type: string
                 label: Token to track checkout state
-            saved_state_token:
+            internal_state_token:
                 type: string
                 label: Internal checkout state token
             order:
@@ -152,7 +152,7 @@ workflows:
                         state_token:
                             form_type: hidden
                             options:
-                                data: $saved_state_token
+                                data: $internal_state_token
 
             continue_to_shipping_method:
                 label: Continue
@@ -191,7 +191,7 @@ workflows:
                         state_token:
                             form_type: hidden
                             options:
-                                data: $saved_state_token
+                                data: $internal_state_token
 
             continue_to_payment:
                 label: Continue
@@ -209,7 +209,7 @@ workflows:
                         state_token:
                             form_type: hidden
                             options:
-                                data: $saved_state_token
+                                data: $internal_state_token
 
             continue_to_order_review:
                 label: Continue
@@ -243,7 +243,7 @@ workflows:
                         state_token:
                             form_type: hidden
                             options:
-                                data: $saved_state_token
+                                data: $internal_state_token
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -312,7 +312,7 @@ workflows:
                         state_token:
                             form_type: hidden
                             options:
-                                data: $saved_state_token
+                                data: $internal_state_token
 
             finish_checkout:
                 label: Finish checkout
@@ -342,7 +342,7 @@ workflows:
                         entity: $checkout
                         state: $.result.startCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             # @todo not used anymore. Remove?
             do_nothing:
@@ -362,7 +362,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             continue_to_shipping_address_definition:
                 preactions:
@@ -465,7 +465,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             continue_to_shipping_method_definition:
                 preactions:
@@ -547,7 +547,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             continue_to_payment_definition:
                 preactions:
@@ -596,7 +596,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             continue_to_order_review_definition:
                 preactions:
@@ -688,7 +688,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             verify_payment_definition:
                 pre_conditions:
@@ -1035,7 +1035,7 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             unblock_and_recalculate_definition:
                 post_actions:
@@ -1047,4 +1047,4 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@assign_value': [$saved_state_token, $state_token]
+                    - '@assign_value': [$internal_state_token, $state_token]
