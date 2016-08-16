@@ -160,7 +160,11 @@ orob2b:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
-
+            notice:
+                product_image_watermark: >
+                   The updated product image watermark settings will be used for the newly uploaded images only.
+                   In order to update the existing images please run the following command:
+                   <code>php app/console product:image:resize-all --force</code>
         grid:
             action:
                 duplicate: Duplicate

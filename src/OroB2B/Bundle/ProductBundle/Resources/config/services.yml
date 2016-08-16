@@ -390,3 +390,11 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_image.resize, method: resizeProductImage }
+
+    orob2b.product.event_listener.product_images_configuration_listener:
+        class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
+        arguments:
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
