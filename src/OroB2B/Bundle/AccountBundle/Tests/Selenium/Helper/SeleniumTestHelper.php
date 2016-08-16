@@ -5,6 +5,42 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper;
 trait SeleniumTestHelper
 {
     /**
+     * @param string $xpathQuery
+     * @param bool $onlyVisible
+     * @param bool $onlyOneElement
+     * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
+     */
+    public function getElement($xpathQuery, $onlyVisible = true, $onlyOneElement = true)
+    {
+        try {
+            $matcher = $this->getTest()->using('xpath')->value($xpathQuery);
+            $result = $this->getTest()->elements($matcher);
+        } catch (\Throwable $e) {
+            return $onlyOneElement ? null : [];
+        }
+
+        if (empty($result)) {
+            return $onlyOneElement ? null : [];
+        }
+
+        if ($onlyVisible) {
+            $result = $this->filterVisibleElements($result);
+        } else {
+            // put visible elements first
+            $result = array_merge(
+                $this->filterVisibleElements($result),
+                $this->filterVisibleElements($result, false)
+            );
+        }
+
+        if ($onlyOneElement) {
+            $result = reset($result);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param bool $andClose
      * @return $this
      */
@@ -39,42 +75,6 @@ trait SeleniumTestHelper
         $this->getElement("//a[text() = 'Yes, Delete']")->click();
 
         return $this;
-    }
-
-    /**
-     * @param string $xpathQuery
-     * @param bool $onlyVisible
-     * @param bool $onlyOneElement
-     * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
-     */
-    protected function getElement($xpathQuery, $onlyVisible = true, $onlyOneElement = true)
-    {
-        try {
-            $matcher = $this->getTest()->using('xpath')->value($xpathQuery);
-            $result = $this->getTest()->elements($matcher);
-        } catch (\Throwable $e) {
-            return $onlyOneElement ? null : [];
-        }
-
-        if (empty($result)) {
-            return $onlyOneElement ? null : [];
-        }
-
-        if ($onlyVisible) {
-            $result = $this->filterVisibleElements($result);
-        } else {
-            // put visible elements first
-            $result = array_merge(
-                $this->filterVisibleElements($result),
-                $this->filterVisibleElements($result, false)
-            );
-        }
-
-        if ($onlyOneElement) {
-            $result = reset($result);
-        }
-
-        return $result;
     }
 
     /**

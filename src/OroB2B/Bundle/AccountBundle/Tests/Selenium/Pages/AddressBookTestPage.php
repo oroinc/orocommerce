@@ -14,6 +14,7 @@ class AddressBookTestPage extends AbstractPage
         "//h1[contains(@class,'page-title')]/following-sibling::div[2]";
     const USER_ADDRESS_BLOCK_SELECTOR =
         "//h1[contains(@class,'page-title')]/following-sibling::div[4]";
+    const ADDRESS_BOOK_URL = '/account/user/address';
 
     /**
      * @param string $username
@@ -75,6 +76,34 @@ class AddressBookTestPage extends AbstractPage
     public function getUserAddressBlock()
     {
         return $this->getElement(self::USER_ADDRESS_BLOCK_SELECTOR);
+    }
+
+    /**
+     * @param bool $isGrid
+     */
+    public function deleteUserAddresses($isGrid)
+    {
+        $this->getTest()->url(self::ADDRESS_BOOK_URL);
+        $this->waitPageToLoad();
+        foreach ($this->getUserAddressDeleteButtons($isGrid) as $button) {
+            $button->click();
+            $this->confirmModalDelete();
+            $this->waitForAjax();
+        }
+    }
+
+    /**
+     * @param bool $isGrid
+     */
+    public function deleteAccountAddresses($isGrid)
+    {
+        $this->getTest()->url(self::ADDRESS_BOOK_URL);
+        $this->waitPageToLoad();
+        foreach ($this->getAccountAddressDeleteButtons($isGrid) as $button) {
+            $button->click();
+            $this->confirmModalDelete();
+            $this->waitForAjax();
+        }
     }
 
     /**
@@ -146,6 +175,45 @@ class AddressBookTestPage extends AbstractPage
     }
 
     /**
+     * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
+     */
+    public function getAccountAddressShowOnMapButtons()
+    {
+        return $this->getElement(
+            self::ACCOUNT_ADDRESS_BLOCK_SELECTOR . "//li//i[contains(@class, 'icon-map-marker')]",
+            true,
+            false
+        );
+    }
+
+    /**
+     * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
+     */
+    public function getUserAddressShowOnMapButtons()
+    {
+        return $this->getElement(
+            self::USER_ADDRESS_BLOCK_SELECTOR . "//li//i[contains(@class, 'icon-map-marker')]",
+            true,
+            false
+        );
+    }
+
+    /**
+     * @param string $gridXpath
+     * @return array
+     */
+    public function getGridHeaders($gridXpath)
+    {
+        $columns = $this->getElement($gridXpath . "//th[not(contains(@class, 'action-column'))]", true, false);
+        $headers = [];
+        foreach ($columns as $column) {
+            $headers[] = $column->text();
+        }
+
+        return $headers;
+    }
+
+    /**
      * @param string $selectorPrefix
      * @param bool $grid
      * @return string
@@ -167,5 +235,10 @@ class AddressBookTestPage extends AbstractPage
         $iconClass = $grid ? "icon-trash" : 'cf-trash';
 
         return $selectorPrefix . sprintf("//i[contains(@class, '%s')]", $iconClass);
+    }
+
+    protected function confirmModalDelete()
+    {
+        $this->getElement("//button[text()='Yes, Delete']")->click();
     }
 }

@@ -2,22 +2,20 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 
+use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\UserManager;
-
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -304,26 +302,27 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
         /* @var $chainMetadataProvider ChainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
 
-        if ($aclManager->isAclEnabled()) {
-            $sid = $aclManager->getSid($role);
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
+        $sid = $aclManager->getSid($role);
 
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
-
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+        foreach ($aclManager->getAllExtensions() as $extension) {
+            if (!$extension instanceof EntityAclExtension) {
+                continue;
             }
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+            $oid = $aclManager->getOid('entity:' . $className);
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
+            }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
-
 
     /**
      * @param ObjectManager $manager

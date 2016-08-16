@@ -8,7 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Cache\AddressBookCache;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAddressPages;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAdminPages;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddressBookTestPage;
@@ -20,8 +19,6 @@ use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddressBookTestPage;
  */
 class AddressBookTest extends Selenium2TestCase
 {
-    use SeleniumTestHelper;
-
     // View/create/edit/delete account address and account user address
     const ROLE1 = 'ROLE__VCED-AC_AD-VCED-ACU_AD';
     const ROLE2 = 'ROLE__VED-AC_AD-VED-ACU_AD';
@@ -33,8 +30,9 @@ class AddressBookTest extends Selenium2TestCase
     const USER3 = 'user3@test.com';
     const USER4 = 'user4@test.com';
 
-    const ADDRESS_BOOK_URL = '/account/user/address';
     const ADDRESS_LIST_LIMIT = 8;
+
+    protected static $gridHeaders = ["Address", "City", "State", "Zip/Postal Code", "Country", "Type"];
 
     public function testInit()
     {
@@ -56,7 +54,7 @@ class AddressBookTest extends Selenium2TestCase
     /**
      * @param SeleniumAccountUser $frontendUser
      * @param bool $usrAddrIsGrid           Account user address should be in grid on not (list)
-     * @param bool $accountAddressIsGrid    Account address should be in grid on not (list)
+     * @param bool $accAddrIsGrid           Account address should be in grid on not (list)
      * @param bool $usrAddrHasAddBtn        Account user address should have add address button
      * @param bool $accAddrHasAddBtn        Account address should have add address button
      * @param bool $usrAddrHasEditButtons   Account user address should have edit address button
@@ -80,7 +78,7 @@ class AddressBookTest extends Selenium2TestCase
     public function testAddressBook(
         SeleniumAccountUser $frontendUser,
         $usrAddrIsGrid,
-        $accountAddressIsGrid,
+        $accAddrIsGrid,
         $usrAddrHasAddBtn,
         $accAddrHasAddBtn,
         $usrAddrHasEditButtons,
@@ -96,9 +94,9 @@ class AddressBookTest extends Selenium2TestCase
     ) {
         $frontendUserInfo = $this->getUsersInfo()[$frontendUser->email];
         $usrAddrGridClass = $usrAddrIsGrid ? 'oro-grid__row' : 'address-list';
-        $accAddrGridClass = $accountAddressIsGrid ? 'oro-grid__row' : 'address-list';
+        $accAddrGridClass = $accAddrIsGrid ? 'oro-grid__row' : 'address-list';
         $nrOfUsrAddrAddBtn = $usrAddrHasAddBtn ? ($usrAddrIsGrid ? 2 : 1) : 0;
-        $nrOfAccAddrAddBtn = $accAddrHasAddBtn ? ($accountAddressIsGrid ? 2 : 1) : 0;
+        $nrOfAccAddrAddBtn = $accAddrHasAddBtn ? ($accAddrIsGrid ? 2 : 1) : 0;
 
         $page = $this->getAddressBookPage();
         $addressPage = $this->getAccountAddressPage();
@@ -116,23 +114,26 @@ class AddressBookTest extends Selenium2TestCase
 
         try {
             $page->login($frontendUser->email, $frontendUser->password);
-            $page->getTest()->url(self::ADDRESS_BOOK_URL);
+            $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
             $page->waitPageToLoad();
             $page->waitForAjax();
 
             // Account User Address section assertions
-            $userAddress = $page->getUserAddressBlock();
-            $this->assertContains($usrAddrGridClass, $userAddress->attribute('class'));
+            $this->assertGridColumns($page, $usrAddrIsGrid, AddressBookTestPage::USER_ADDRESS_BLOCK_SELECTOR);
+
+            $this->assertContains($usrAddrGridClass, $page->getUserAddressBlock()->attribute('class'));
+            $this->assertButtons($page, $usrAddrIsGrid, 'showOnMap', 'user', $usrAddrIsGrid, $nrOfUsrAddr);
             $this->assertButtons($page, $usrAddrHasAddBtn, 'add', 'user', $usrAddrIsGrid, $nrOfUsrAddrAddBtn);
             $this->assertButtons($page, $usrAddrHasEditButtons, 'edit', 'user', $usrAddrIsGrid, $nrOfUsrAddr);
             $this->assertButtons($page, $usrAddrHasDeleteButtons, 'delete', 'user', $usrAddrIsGrid, $nrOfUsrAddr);
 
             // Account Address section assertions
-            $accountAddress = $page->getAccountAddressBlock();
-            $this->assertContains($accAddrGridClass, $accountAddress->attribute('class'));
-            $this->assertButtons($page, $accAddrHasAddBtn, 'add', 'account', $usrAddrIsGrid, $nrOfAccAddrAddBtn);
-            $this->assertButtons($page, $accAddrHasEditBtn, 'edit', 'account', $usrAddrIsGrid, $nrOfAccAddr);
-            $this->assertButtons($page, $accAddrHasDeleteBtn, 'delete', 'account', $usrAddrIsGrid, $nrOfAccAddr);
+            $this->assertGridColumns($page, $accAddrIsGrid, AddressBookTestPage::ACCOUNT_ADDRESS_BLOCK_SELECTOR);
+            $this->assertContains($accAddrGridClass, $page->getAccountAddressBlock()->attribute('class'));
+            $this->assertButtons($page, $usrAddrIsGrid, 'showOnMap', 'account', $accAddrIsGrid, $nrOfAccAddr);
+            $this->assertButtons($page, $accAddrHasAddBtn, 'add', 'account', $accAddrIsGrid, $nrOfAccAddrAddBtn);
+            $this->assertButtons($page, $accAddrHasEditBtn, 'edit', 'account', $accAddrIsGrid, $nrOfAccAddr);
+            $this->assertButtons($page, $accAddrHasDeleteBtn, 'delete', 'account', $accAddrIsGrid, $nrOfAccAddr);
         } catch (\Throwable $e) {
             // making sure fixtures are also deleted in case of test failure
             $this->cleanupAddresses($addressPage, $frontendUserInfo, $nrOfUsrAddrToDelete, $nrOfAccAddrToDelete);
@@ -153,9 +154,9 @@ class AddressBookTest extends Selenium2TestCase
             [$this->getAccountUsers(self::USER2), false, false, false, false, true, true, true, true, 1, 1],
             [$this->getAccountUsers(self::USER3), false, false, false, false, true, true, false, false, 1, 1],
             [$this->getAccountUsers(self::USER4), false, false, false, false, false, false, false, false, 1, 1],
-            [$this->getAccountUsers(self::USER1), true, true, true, true, true, true, true, true, 9, 9, 8, 8],
-            [$this->getAccountUsers(self::USER2), true, true, false, false, true, true, true, true, 9, 9],
-            [$this->getAccountUsers(self::USER3), true, true, false, false, true, true, false, false, 9, 9],
+            [$this->getAccountUsers(self::USER1), true, true, true, true, true, true, true, true, 9, 9, 8, 8, 8, 0],
+            [$this->getAccountUsers(self::USER2), true, true, false, false, true, true, true, true, 9, 9, 8, 0, 8, 0],
+            [$this->getAccountUsers(self::USER3), true, true, false, false, true, true, false, false, 9, 9, 8, 0, 8, 0],
             [
                 $this->getAccountUsers(self::USER4),
                 true,
@@ -168,7 +169,7 @@ class AddressBookTest extends Selenium2TestCase
                 false,
                 9,
                 9,
-                0,
+                8,
                 0,
                 8,
                 8
@@ -179,12 +180,53 @@ class AddressBookTest extends Selenium2TestCase
     /**
      * @depends testAddressBook
      */
+    public function testNoAddresses()
+    {
+        $page = $this->getAddressBookPage();
+        $user = $this->getAccountUsers(self::USER1);
+        $page->login($user->email, $user->password);
+
+        $page->deleteAccountAddresses(false);
+        $page->deleteUserAddresses(false);
+        $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
+        $page->waitPageToLoad();
+        $page->waitForAjax();
+        $this->assertNotEmpty(
+            $page->getElement(
+                AddressBookTestPage::ACCOUNT_ADDRESS_BLOCK_SELECTOR . "//div[contains(@class, 'no-data')]"
+            )
+        );
+        $this->assertNotEmpty(
+            $page->getElement(
+                AddressBookTestPage::USER_ADDRESS_BLOCK_SELECTOR . "//div[contains(@class, 'no-data')]"
+            )
+        );
+    }
+
+    /**
+     * @depends testNoAddresses
+     */
     public function testFinish()
     {
         $this->getAddressBookPage()->loginAdmin();
         $this->getAccountAdminPage()
             ->deleteRoles($this->getRoles())
             ->deleteAccountUsers($this->getAccountUsers());
+    }
+
+    /**
+     * @param AddressBookTestPage $page
+     * @param $isGrid
+     * @param string $gridXpath
+     */
+    protected function assertGridColumns($page, $isGrid, $gridXpath)
+    {
+        if (!$isGrid) {
+            return;
+        }
+
+        $headers = $page->getGridHeaders($gridXpath);
+        $this->assertEquals($headers, self::$gridHeaders);
     }
 
     /**
@@ -337,29 +379,6 @@ class AddressBookTest extends Selenium2TestCase
      */
     protected function getUsersInfo()
     {
-        // @todo: Remove hardcoded values
-        //        return AddressBookCache::$usersInfo;
-        return array(
-            'user1@test.com' =>
-                array(
-                    'userId' => 11,
-                    'accountId' => 1,
-                ),
-            'user2@test.com' =>
-                array(
-                    'userId' => 12,
-                    'accountId' => 1,
-                ),
-            'user3@test.com' =>
-                array(
-                    'userId' => 13,
-                    'accountId' => 1,
-                ),
-            'user4@test.com' =>
-                array(
-                    'userId' => 14,
-                    'accountId' => 1,
-                ),
-        );
+        return AddressBookCache::$usersInfo;
     }
 }
