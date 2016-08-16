@@ -12,5 +12,5 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IndexInteger extends ORMIndexInteger
 {
-    const TABLE_NAME = 'oro_website_search_idx_integer';
+    const TABLE_NAME = 'oro_website_search_integer';
 }

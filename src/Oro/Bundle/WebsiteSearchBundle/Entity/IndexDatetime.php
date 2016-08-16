@@ -12,5 +12,5 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IndexDatetime extends ORMIndexDateTime
 {
-    const TABLE_NAME = 'oro_website_search_idx_datetime';
+    const TABLE_NAME = 'oro_website_search_datetime';
 }

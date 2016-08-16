@@ -12,5 +12,5 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IndexText extends ORMIndexText
 {
-    const TABLE_NAME = 'oro_website_search_idx_text';
+    const TABLE_NAME = 'oro_website_search_text';
 }
