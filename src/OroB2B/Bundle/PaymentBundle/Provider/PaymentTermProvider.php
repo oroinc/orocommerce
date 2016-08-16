@@ -85,7 +85,7 @@ class PaymentTermProvider
 
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            return $this->getAccountPaymentTerm($user->getAccount());
+            return $this->getPaymentTerm($user->getAccount());
         }
 
         return null;

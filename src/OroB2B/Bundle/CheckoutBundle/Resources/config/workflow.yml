@@ -514,6 +514,10 @@ workflows:
                           - [[keep], [propertyName, [organization]]]
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.result.shippingAddress
+                    - '@call_service_method':
+                        service: orob2b_payment.provider.payment_term
+                        method: getCurrentPaymentTerm
+                        attribute: $.result.paymentTerm
                     - '@create_entity':
                         attribute: $order
                         class: OroB2B\Bundle\OrderBundle\Entity\Order
@@ -533,6 +537,7 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            paymentTerm: $.result.paymentTerm
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout

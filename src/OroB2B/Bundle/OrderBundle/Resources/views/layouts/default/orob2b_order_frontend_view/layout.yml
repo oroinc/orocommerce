@@ -140,10 +140,10 @@ layout:
                 order_payment_term:
                     blockType: text
                     options:
-                        text: {'@value': $data.order.paymentTerm }
+                        visible: '=data["order"].getPaymentTerm()!=null'
+                        text: '=data["order"].getPaymentTerm()'
                         label: 'orob2b.order.payment_term.label'
                         block_prefixes: ['order_body_column_element']
-                        visible: { '@not_empty': $data.order.paymentTerm }
                 order_payment_status:
                     blockType: text
                     options:
