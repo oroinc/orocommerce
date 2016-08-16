@@ -439,12 +439,11 @@ workflows:
                             entity: $checkout
                             shipping_rule_config: $shipping_rule_config
                 post_actions:
-                    actions:
-                        '@call_service_method':
-                            service: orob2b_checkout.shipping_cost.calculator
-                            method: calculatePrice
-                            method_parameters: [$checkout, $shipping_rule_config]
-                            attribute: $checkout.shippingCost
+                    - '@call_service_method':
+                        service: orob2b_checkout.shipping_cost.calculator
+                        method: calculatePrice
+                        method_parameters: [$checkout, $shipping_rule_config]
+                        attribute: $checkout.shippingCost
 
             continue_to_order_review_definition:
                 pre_conditions:

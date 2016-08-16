@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
-use Oro\Component\Layout\ContextInterface;
-
 class OrderShippingMethodProvider
 {
     /**
@@ -25,10 +23,8 @@ class OrderShippingMethodProvider
     /**
      * {@inheritdoc}
      */
-    public function getData(ContextInterface $context)
+    public function getData(Order $order)
     {
-        /** @var Order $order */
-        $order = $context->data()->get('order');
         $methodLabel = $this->shippingMethodLabelFormatter->formatShippingMethodLabel($order->getShippingMethod());
         if (!$methodLabel) {
             return false;

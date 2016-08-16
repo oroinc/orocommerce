@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
@@ -38,7 +37,7 @@ class ShippingRuleConfigurationType extends AbstractType
             'validation_groups' => function (FormInterface $form) {
                 /** @var ShippingRuleConfiguration $data */
                 $data = $form->getData();
-                if ($data && $data->getEnabled()) {
+                if ($data && $data->isEnabled()) {
                     return [Constraint::DEFAULT_GROUP, static::ENABLED_VALIDATION_GROUP];
                 }
                 return [Constraint::DEFAULT_GROUP];

@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextDataCollection;
-use Oro\Component\Layout\ContextInterface;
-
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
 use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
@@ -41,22 +38,6 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->setShippingMethod($method)->setShippingMethodType($type);
 
-        /** @var ContextDataCollection|\PHPUnit_Framework_MockObject_MockObject $data */
-        $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $data->expects($this->once())
-            ->method('get')
-            ->with('order')
-            ->willReturn($order);
-
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
-        $context->expects($this->once())
-            ->method('data')
-            ->willReturn($data);
-
         $this->shippingMethodLabelFormatter->expects($this->once())
             ->method('formatShippingMethodLabel')
             ->willReturnMap(
@@ -75,7 +56,7 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $label = $this->orderShippingMethodProvider->getData($context);
+        $label = $this->orderShippingMethodProvider->getData($order);
         $this->assertEquals($expected, $label);
     }
 

@@ -29,16 +29,17 @@
 
     {{ UI.cancelButton(path('orob2b_shipping_rule_index')) }}
     {% if entity.id and resource_granted('orob2b_shipping_rule_update') or resource_granted('orob2b_shipping_rule_create') %}
-        {% set html = UI.saveAndStayButton({
-            'route': 'orob2b_shipping_rule_update',
-            'params': {'id': '$id'}
-        }) %}
+        {% set html = '' %}
         {% if resource_granted('orob2b_shipping_rule_view') %}
-            {% set html = html ~ UI.saveAndCloseButton({
+            {% set html = UI.saveAndCloseButton({
                 'route': 'orob2b_shipping_rule_view',
                 'params': {'id': '$id'}
             }) %}
         {% endif %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route': 'orob2b_shipping_rule_update',
+            'params': {'id': '$id'}
+        }) %}
 
         {{ UI.dropdownSaveButton({'html': html}) }}
     {% endif %}

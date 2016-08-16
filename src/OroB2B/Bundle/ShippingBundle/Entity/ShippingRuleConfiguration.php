@@ -163,7 +163,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     /**
      * @return string
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }

@@ -28,7 +28,7 @@ class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
                     'OroB2B\Bundle\ShippingBundle\Model\ShippingRuleConfiguration'
                 );
             }
-            if ($configuration->getEnabled()) {
+            if ($configuration->isEnabled()) {
                 $enabledRules[] = $configuration;
             }
         }
