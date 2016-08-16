@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
                     'value' => ''
                 ],
                 'password' => [
-                    'type' => 'text',
+                    'type' => 'password',
                     'value' => ''
                 ],
                 'auth_type' => [

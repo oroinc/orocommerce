@@ -37,7 +37,7 @@ oro_system_configuration:
 
         oro_search.engine_parameters.password:
             data_type: string
-            type: string
+            type: password
             options:
                 label: oro.website_search.engine_parameters.fields.password.label
 
