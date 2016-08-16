@@ -8,9 +8,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -135,6 +140,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
             'products'      => [],
+            'paymentTerm'   => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
     ];
 
@@ -156,10 +162,11 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            LoadUserData::class,
+            LoadAccountUserAddresses::class,
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadPaymentTermData::class,
         ];
     }
 
@@ -193,6 +200,10 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
 
             if (!empty($item['accountUser'])) {
                 $quote->setAccountUser($this->getReference($item['accountUser']));
+            }
+
+            if (!empty($item['paymentTerm'])) {
+                $quote->setPaymentTerm($this->getReference($item['paymentTerm']));
             }
 
             foreach ($item['products'] as $sku => $items) {
