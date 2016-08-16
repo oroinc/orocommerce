@@ -21,8 +21,9 @@ class PaymentTermSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_payment_term',
                 'create_form_route' => 'orob2b_payment_term_create',
                 'configs' => [
-                    'placeholder' => 'orob2b.payment.paymentterm.form.choose'
-                ]
+                    'placeholder' => 'orob2b.payment.paymentterm.form.choose',
+                    'allowClear' => true,
+                ],
             ]
         );
     }
