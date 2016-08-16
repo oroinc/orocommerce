@@ -108,7 +108,9 @@ define(function(require) {
                     var $element = $(element);
                     var type = $element.data('type');
                     var message = $element.data('message');
-                    mediator.execute('showFlashMessage', type, message);
+                    _.delay(function() {
+                        mediator.execute('showFlashMessage', type, message);
+                    }, 100);
                 });
 
                 mediator.trigger('checkout-content:updated');
