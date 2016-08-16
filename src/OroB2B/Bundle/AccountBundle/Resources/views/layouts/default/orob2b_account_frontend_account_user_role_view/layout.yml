@@ -30,7 +30,10 @@ layout:
                     options:
                         visible: '=data["entity"]!=null'
                         actions: '=data["actions"].getAll(data["entity"])'
-                        entity: '=data["entity"]'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
                 account_user_role_items:
                     blockType: container
                 account_user_role_items_view_privileges:
