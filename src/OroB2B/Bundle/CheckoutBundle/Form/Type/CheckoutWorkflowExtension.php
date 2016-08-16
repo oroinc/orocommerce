@@ -17,7 +17,7 @@ class CheckoutWorkflowExtension extends AbstractTypeExtension
     protected $flashBag;
 
     /**
-     * {@inheritdoc}
+     * @param FlashBagInterface $flashBag
      */
     public function __construct(FlashBagInterface $flashBag)
     {

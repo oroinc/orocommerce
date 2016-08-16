@@ -344,11 +344,6 @@ workflows:
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
 
-            # @todo not used anymore. Remove?
-            do_nothing:
-                pre_conditions:
-                    '@not_equal': [$payment_in_progress, true]
-
             back_to_billing_address_definition:
                 pre_conditions:
                     '@not_equal': [$payment_in_progress, true]
@@ -709,32 +704,34 @@ workflows:
                                 expected_value: ajax_checkout
 
             place_order_definition:
-                # @todo: condition for $.id was here. Check it
                 preactions:
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.tokenCheckoutState
-
                     - '@tree':
                         conditions:
-                            '@not':
-                                - '@check_checkout_states':
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.tokenCheckoutState
+                            '@not_empty': [$.id]
                         actions:
-                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
-                            - '@delete_checkout_state':
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.currentCheckoutState
+                            - '@get_checkout_state':
                                 entity: $checkout
                                 token: $state_token
-                            - '@save_checkout_state':
-                                entity: $checkout
-                                state: $.result.currentCheckoutState
-                                token: $state_token
+                                attribute: $.result.tokenCheckoutState
+                            - '@tree':
+                                conditions:
+                                    '@not':
+                                        - '@check_checkout_states':
+                                            entity: $checkout
+                                            state1: $.result.currentCheckoutState
+                                            state2: $.result.tokenCheckoutState
+                                actions:
+                                    - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
+                                    - '@delete_checkout_state':
+                                        entity: $checkout
+                                        token: $state_token
+                                    - '@save_checkout_state':
+                                        entity: $checkout
+                                        state: $.result.currentCheckoutState
+                                        token: $state_token
 
                 pre_conditions:
                     '@not_equal':
