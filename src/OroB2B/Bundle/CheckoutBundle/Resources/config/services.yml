@@ -313,3 +313,12 @@ services:
         parent: oro_workflow.abstract.workflow_aware_manager
         calls:
             - ['setWorkflowName', ['b2b_flow_checkout']]
+
+    orob2b_checkout.entity_listener.checkout:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\EntityCheckoutListener'
+        arguments:
+            - '@doctrine'
+            - '%orob2b_checkout.entity.checkout_workflow_state.class%'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%orob2b_checkout.entity.checkout.class%', event: preRemove }

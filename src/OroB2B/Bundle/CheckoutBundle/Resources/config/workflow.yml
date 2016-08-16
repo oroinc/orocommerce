@@ -981,8 +981,6 @@ workflows:
                         parameters: [$checkout.sourceEntity]
                     - '@remove_entity': $checkout.billingAddress
                     - '@remove_entity': $checkout.shippingAddress
-                    - '@delete_checkout_state':
-                        entity: $checkout
                     - '@remove_entity': $checkout
                     - '@redirect':
                         route: orob2b_order_frontend_success
