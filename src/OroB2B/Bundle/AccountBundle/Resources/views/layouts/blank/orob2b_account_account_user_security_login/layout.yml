@@ -13,9 +13,13 @@ layout:
                 login_form:
                     blockType: container
                 login_form_username_label:
-                    blockType: container
+                    blockType: text
+                    options:
+                        text: orob2b.account.accountuser.email.label
                 login_form_password_label:
-                    blockType: container
+                    blockType: text
+                    options:
+                        text: orob2b.account.accountuser.password.label
                 login_form_email_item:
                     blockType: container
                 login_form_passwors_item:
@@ -33,11 +37,12 @@ layout:
                     options:
                         text: orob2b.account.accountuser.profile.login
                 login_form_notifications:
-                    blockType: container
-                login_form_username_text:
                     blockType: text
                     options:
-                        text: orob2b.account.accountuser.email.label
+                        visible: '=data["orob2b_account_sign_in"].getError()!=null'
+                        text: '=data["orob2b_account_sign_in"].getError()'
+                login_form_username_text:
+
                 login_form_username:
                     blockType: input
                     options:
@@ -46,10 +51,6 @@ layout:
                         value: '=data["orob2b_account_sign_in"].getLastName()'
                         placeholder: orob2b.account.accountuser.email.label
                         label: orob2b.account.accountuser.email.label
-                login_form_password_text:
-                    blockType: text
-                    options:
-                        text: orob2b.account.accountuser.password.label
                 login_form_password:
                     blockType: input
                     options:
@@ -84,8 +85,6 @@ layout:
                         action: submit
                         text: orob2b.account.accountuser.profile.login
                         style: auto
-                        attr:
-                            class: 'button--action'
                 login_form_forgot:
                     blockType: link
                     options:
@@ -104,12 +103,10 @@ layout:
                             login_form_title: ~
                             login_form_notifications: ~
                             login_form_email_item:
-                                login_form_username_label:
-                                login_form_username_text: ~
+                                login_form_username_label: ~
                                 login_form_username: ~
                             login_form_passwors_item:
-                                login_form_password_label:
-                                login_form_password_text: ~
+                                login_form_password_label: ~
                                 login_form_password: ~
                             login_form_remenber_item:
                                 login_form_remember: ~

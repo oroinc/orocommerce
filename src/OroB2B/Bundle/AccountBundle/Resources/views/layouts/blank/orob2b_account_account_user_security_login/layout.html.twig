@@ -3,7 +3,10 @@
         '~class': ' login-form'
     }) %}
 
-    <form {{ block('block_attributes') }}>
+    <form {{ block('block_attributes') }}
+          action="{{ path('orob2b_account_account_user_security_check') }}"
+          method="post"
+    >
         <div class="grid">
             {{ block_widget(block) }}
         </div>
@@ -25,17 +28,14 @@
         '~class': ' notifications'
     }) %}
     <div class="grid__row">
-        <p  class="notifications">Info</p>
-        <p  class="notifications notifications--error">Error</p>
-        <p  class="notifications notifications--success">Success</p>
-        <p  class="notifications notifications--warring">Warring</p>
+        <p  class="notifications notifications--error">{{ block_widget(block) }}</p>
     </div>
 
 {% endblock %}
 
 {% block _login_form_username_label_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-label'
+        '~class': ' label'
     }) %}
 
     <label {{ block('block_attributes') }}>
@@ -45,7 +45,7 @@
 
 {% block _login_form_password_label_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form-label'
+        '~class': ' label'
     }) %}
 
     <label {{ block('block_attributes') }}>
