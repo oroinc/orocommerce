@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListListener
@@ -35,15 +36,23 @@ class PriceListListener
     protected $plDataBeforeUpdate = [];
 
     /**
+     * @var PriceRuleLexemeHandler
+     */
+    protected $priceRuleLexemeHandler;
+
+    /**
      * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
      * @param PriceListChangeTriggerHandler $triggerHandler
+     * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
      */
     public function __construct(
         CombinedPriceListActivationPlanBuilder $activationPlanBuilder,
-        PriceListChangeTriggerHandler $triggerHandler
+        PriceListChangeTriggerHandler $triggerHandler,
+        PriceRuleLexemeHandler $priceRuleLexemeHandler
     ) {
         $this->activationPlanBuilder = $activationPlanBuilder;
         $this->triggerHandler = $triggerHandler;
+        $this->priceRuleLexemeHandler = $priceRuleLexemeHandler;
     }
 
     /**
@@ -59,6 +68,16 @@ class PriceListListener
         foreach ($priceList->getSchedules() as $schedule) {
             $this->priceListSchedules[] = $schedule->getHash();
         }
+    }
+
+    /**
+     * @param AfterFormProcessEvent $event
+     */
+    public function onPostSubmit(AfterFormProcessEvent $event)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $event->getData();
+        $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }
 
     /**

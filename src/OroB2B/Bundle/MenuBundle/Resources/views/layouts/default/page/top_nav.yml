@@ -13,7 +13,7 @@ layout:
                 top_nav:
                     blockType: menu
                     options:
-                        menu: top-nav
+                        item: '=data["menu"].getMenu("top-nav")'
                         allow_safe_labels: true
                 top_nav_controls:
                     blockType: container

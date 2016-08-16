@@ -35,7 +35,8 @@
 {% block content_data %}
     {% set id = 'price-list-edit' %}
 
-    {% set dataBlocks = [{
+    {% set dataBlocks = [
+        {
             'title': 'orob2b.pricing.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
@@ -44,11 +45,31 @@
                     form_row(form.name),
                     form_row(form.currencies),
                     form_row(form.active),
-                    form_row(form.schedules)
+                    form_row(form.schedules),
                 ]
             }]
-        }]
-    %}
+        },
+        {
+            'title': 'orob2b.pricing.sections.product_assignment'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.productAssignmentRule)
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.pricing.sections.price_rules'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.priceRules, { 'attr': {'class': 'price-rules'} })
+                ]
+            }]
+        }
+    ]%}
 
     {% set data = {
         'formErrors': form_errors(form),
