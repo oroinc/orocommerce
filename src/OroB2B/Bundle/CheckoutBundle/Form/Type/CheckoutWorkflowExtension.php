@@ -35,7 +35,7 @@ class CheckoutWorkflowExtension extends AbstractTypeExtension
             if ($error instanceof FormError
                 && $error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message'
             ) {
-                $this->addUniqueErrorMessage($error->getMessage());
+                $this->addUniqueWarningMessage($error->getMessage());
 
                 continue;
             }
@@ -55,16 +55,16 @@ class CheckoutWorkflowExtension extends AbstractTypeExtension
     /**
      * @param string $message
      */
-    protected function addUniqueErrorMessage($message)
+    protected function addUniqueWarningMessage($message)
     {
-        $errorMessages = $this->flashBag->peek('error');
+        $messages = $this->flashBag->peek('warning');
 
-        $filteredMessages = array_filter($errorMessages, function ($value) use ($message) {
+        $filteredMessages = array_filter($messages, function ($value) use ($message) {
             return $value === $message;
         });
 
         if (count($filteredMessages) === 0) {
-            $this->flashBag->add('error', $message);
+            $this->flashBag->add('warning', $message);
         }
     }
 }
