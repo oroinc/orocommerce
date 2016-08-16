@@ -18,11 +18,13 @@ datagrid:
                     - order1.createdAt
                     - order1.updatedAt
                     - paymentTerm.label as paymentTermLabel
+                    - payment_status.paymentStatus
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.paymentTerm, alias: paymentTerm }
+                        - { join: '%orob2b_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%orob2b_order.entity.order.class%'" }
         columns:
             identifier:
                 label:         orob2b.order.identifier.label
@@ -101,26 +103,20 @@ datagrid:
     frontend-orders-grid:
         acl_resource: orob2b_order_frontend_view
         extends: base-orders-grid
-        source:
-            query:
-                select:
-                    - transaction.paymentMethod
-                join:
-                    left:
-                        - { join: '%orob2b_payment.entity.payment_transaction.class%', alias: transaction, conditionType: WITH, condition: "transaction.entityIdentifier = order1.id AND transaction.entityClass = '%orob2b_order.entity.order.class%'" }
         update: false
         delete: false
         columns:
-            paymentMethod:
-                label:         orob2b.order.payment_method.label
-                type:          twig
-                frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/paymentMethod.html.twig'
             paymentStatus:
                 label:         orob2b.order.payment_status.label
                 type:          twig
                 frontend_type: html
                 template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+            paymentMethods:
+                label: orob2b.order.payment_method.label
+                renderable: true
+                type: twig
+                template: 'OroB2BOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+                frontend_type: html
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
             poNumber:
@@ -136,8 +132,6 @@ datagrid:
                 frontend_type: datetime
         sorters:
             columns:
-                paymentMethod:
-                    data_name: transaction.paymentMethod
                 paymentTermLabel:
                     data_name: paymentTermLabel
                 poNumber:
@@ -165,6 +159,12 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: order1.updatedAt
+                paymentStatus:
+                    type:      choice
+                    data_name: payment_status.paymentStatus
+                    options:
+                        field_options:
+                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
         properties:
             id: ~
             view_link:
@@ -186,13 +186,11 @@ datagrid:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
-                    - transaction.paymentMethod
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.accountUser, alias: accountUser }
                         - { join: order1.account, alias: account }
-                        - { join: '%orob2b_payment.entity.payment_transaction.class%', alias: transaction, conditionType: WITH, condition: "transaction.entityIdentifier = order1.id AND transaction.entityClass = '%orob2b_order.entity.order.class%'" }
         columns:
             accountName:
                 label:         orob2b.order.account.label
@@ -200,16 +198,17 @@ datagrid:
                 label:         orob2b.order.account_user.label
             owner:
                 label:         orob2b.order.owner.label
-            paymentMethod:
-                label:         orob2b.order.payment_method.label
-                type:          twig
-                frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/paymentMethodFull.html.twig'
             paymentStatus:
                 label:         orob2b.order.payment_status.label
                 type:          twig
                 frontend_type: html
                 template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+            paymentMethods:
+                label: orob2b.order.payment_method.label
+                renderable: true
+                type: twig
+                template: 'OroB2BOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                frontend_type: html
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
             poNumber:
@@ -242,8 +241,6 @@ datagrid:
                     data_name: accountUserName
                 owner:
                     data_name: owner
-                paymentMethod:
-                    data_name: transaction.paymentMethod
                 paymentTermLabel:
                     data_name: paymentTermLabel
                 poNumber:
@@ -276,6 +273,12 @@ datagrid:
                             class:    %orob2b_payment.entity.payment_term.class%
                             property: label
                             multiple: true
+                paymentStatus:
+                    type:      choice
+                    data_name: payment_status.paymentStatus
+                    options:
+                        field_options:
+                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
 
                 poNumber:
                     type:      string

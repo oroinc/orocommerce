@@ -32,14 +32,16 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new PaymentStatusProvider($this->paymentTransactionProvider, $this->totalProcessorProvider);
+        $this->provider = new PaymentStatusProvider(
+            $this->paymentTransactionProvider,
+            $this->totalProcessorProvider
+        );
     }
 
     /**
      * @param array $transactions
      * @param float $amount
      * @param string $expectedStatus
-     *
      * @dataProvider statusDataProvider
      */
     public function testStatus(array $transactions, $amount, $expectedStatus)
@@ -66,7 +68,6 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function statusDataProvider()
