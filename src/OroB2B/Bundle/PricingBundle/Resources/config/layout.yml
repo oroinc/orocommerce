@@ -23,9 +23,4 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_pricing_currency }
 
-    orob2b_pricing.layout.block_type.currency_switcher:
-        class: 'OroB2B\Bundle\PricingBundle\Layout\Block\Type\CurrencySwitcherType'
-        public: true
-        tags:
-             - { name: layout.block_type, alias: currency_switcher }
 

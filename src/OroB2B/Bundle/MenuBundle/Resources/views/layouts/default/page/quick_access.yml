@@ -10,7 +10,7 @@ layout:
                 quick_access_menu:
                     blockType: menu
                     options:
-                        menu: quick-access
+                        item: '=data["menu"].getMenu("quick-access")'
             tree:
                 middle_bar:
                     quick_access_container:
