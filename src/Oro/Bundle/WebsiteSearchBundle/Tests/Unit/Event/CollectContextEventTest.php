@@ -24,4 +24,31 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
             'some_array_name' => $array
         ], $event->getContext());
     }
+
+    /**
+     * @return array
+     */
+    public function notStringValueDataProvider()
+    {
+        return [
+            [0],
+            [1.5],
+            [null],
+            [[1, 2]],
+            [new \stdClass()],
+        ];
+    }
+
+    /**
+     * @param mixed $name
+     * @dataProvider notStringValueDataProvider
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Context value name must be a string
+     * @throws \InvalidArgumentException
+     */
+    public function testAddContextValueWhenNameIsNotString($name)
+    {
+        $event = new CollectContextEvent();
+        $event->addContextValue($name, 'some value');
+    }
 }
