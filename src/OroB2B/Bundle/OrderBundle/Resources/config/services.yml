@@ -3,7 +3,6 @@ parameters:
     orob2b_order.entity.order_address.class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
     orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
     orob2b_order.entity.order_discount_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderDiscount
-    orob2b_order.provider.privilege_category_provider.class: OroB2B\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider
     orob2b_payment.entity.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction
     orob2b_payment.entity.payment_status.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus
 
@@ -235,6 +234,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
 
     orob2b_order.provider.privilege_category_provider:
-        class: %orob2b_order.provider.privilege_category_provider.class%
+        class: 'OroB2B\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
