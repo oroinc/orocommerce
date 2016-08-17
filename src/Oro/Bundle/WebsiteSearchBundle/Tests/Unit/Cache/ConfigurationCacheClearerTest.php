@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Cache;
 
-use Oro\Bundle\WebsiteSearchBundle\Cache\ResourcesDependentProviderCacheClearer;
+use Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheClearer;
 use Doctrine\Common\Cache\CacheProvider;
 
-class ResourcesDependentProviderCacheClearerTest extends \PHPUnit_Framework_TestCase
+class ConfigurationCacheClearerTest extends \PHPUnit_Framework_TestCase
 {
     public function testClear()
     {
@@ -18,7 +18,7 @@ class ResourcesDependentProviderCacheClearerTest extends \PHPUnit_Framework_Test
             ->expects($this->once())
             ->method('deleteAll');
 
-        $cacheClearer = new ResourcesDependentProviderCacheClearer($cacheProvider);
+        $cacheClearer = new ConfigurationCacheClearer($cacheProvider);
         $cacheClearer->clear('');
     }
 }

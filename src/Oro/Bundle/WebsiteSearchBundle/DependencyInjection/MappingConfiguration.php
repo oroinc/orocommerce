@@ -32,21 +32,24 @@ class MappingConfiguration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('mappings')
+                    ->useAttributeAsKey('name')
                     ->prototype('array')
                     ->children()
                         ->scalarNode('alias')
                     ->end()
                     ->arrayNode('fields')
+                        ->defaultValue([])
                         ->prototype('array')
-                        ->children()
-                        ->scalarNode('name')->end()
-                        ->enumNode('type')
-                            ->values($this->fieldTypes)
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->enumNode('type')
+                                    ->values($this->fieldTypes)
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
 
         return $treeBuilder;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit;
 
 trait ConfigResourcePathTrait
 {
@@ -12,7 +12,6 @@ trait ConfigResourcePathTrait
     protected function getBundleConfigResourcePath($bundleName, $resourceFileName)
     {
         $ds = DIRECTORY_SEPARATOR;
-        $dirName = dirname(__DIR__);
-        return $dirName.$ds.'Fixture'.$ds.'Bundle'.$ds.$bundleName.$ds.'Resources'.$ds.'config'.$ds.$resourceFileName;
+        return __DIR__.$ds.'Fixture'.$ds.'Bundle'.$ds.$bundleName.$ds.'Resources'.$ds.'config'.$ds.$resourceFileName;
     }
 }

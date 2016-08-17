@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 
-class ResourcesDependentProviderCacheClearer implements CacheClearerInterface
+class ConfigurationCacheClearer implements CacheClearerInterface
 {
     /**
      * @var CacheProvider

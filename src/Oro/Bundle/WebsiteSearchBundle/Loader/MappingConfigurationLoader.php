@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Loader;
 
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
@@ -9,7 +9,7 @@ use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
 
-class ResourcesBasedMappingConfigurationProvider implements ResourcesBasedConfigurationProviderInterface
+class MappingConfigurationLoader implements ConfigurationLoaderInterface
 {
     /**
      * {@inheritdoc}
@@ -27,23 +27,12 @@ class ResourcesBasedMappingConfigurationProvider implements ResourcesBasedConfig
      */
     public function getConfiguration()
     {
-        $mappingConfigs = [];
+        $configs = [];
         foreach ($this->getResources() as $resource) {
-            foreach ($resource->data as $key => $value) {
-                if (!isset($value['fields'])) {
-                    $value['fields'] = [];
-                }
-
-                if (!isset($mappingConfigs[$key])) {
-                    $mappingConfigs[$key] = $value;
-                } else {
-                    $value['fields'] = array_merge($mappingConfigs[$key]['fields'], $value['fields']);
-                    $mappingConfigs[$key] = array_merge($mappingConfigs[$key], $value);
-                }
-            }
+            $configs[] = ['mappings' => $resource->data];
         }
 
-        $mappings = $this->processConfiguration(new MappingConfiguration(), [['mappings' => $mappingConfigs]]);
+        $mappings = $this->processConfiguration(new MappingConfiguration(), $configs);
 
         return $mappings['mappings'];
     }
