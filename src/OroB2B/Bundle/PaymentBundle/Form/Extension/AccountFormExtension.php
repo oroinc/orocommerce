@@ -34,6 +34,7 @@ class AccountFormExtension extends AbstractPaymentTermExtension
             }
 
             $options['paymentTermOptions']['configs']['placeholder'] = $placeholder;
+            $options['paymentTermOptions']['configs']['allowClear'] = true;
         }
 
         parent::buildForm($builder, $options);
