@@ -65,9 +65,11 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->listener = new ShoppingListListener($this->registry);
-        $this->listener->setCheckoutClassName(self::CHECKOUT_CLASS_NAME);
-        $this->listener->setCheckoutSourceClassName(self::CHECKOUT_SOURCE_CLASS_NAME);
+        $this->listener = new ShoppingListListener(
+            $this->registry,
+            self::CHECKOUT_CLASS_NAME,
+            self::CHECKOUT_SOURCE_CLASS_NAME
+        );
     }
 
     public function testPreRemoveWithCheckoutSourceAndCheckout()
