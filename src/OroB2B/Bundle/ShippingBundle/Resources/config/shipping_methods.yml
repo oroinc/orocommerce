@@ -33,6 +33,3 @@ services:
             - "@orob2b_shipping.formatter.shipping_method_label"
         tags:
             - { name: twig.extension }
-
-    orob2b_shipping.factory.shipping_context_provider_factory:
-        class: 'OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory'

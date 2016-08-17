@@ -11,12 +11,12 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\Address;
 
 class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -321,7 +321,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'currency' => $currency,
-            'shippingAddress' => $this->getEntity(OrderAddress::class, [
+            'shippingAddress' => $this->getEntity(Address::class, [
                 'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
                 'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
                 'postalCode' => $postalCode,

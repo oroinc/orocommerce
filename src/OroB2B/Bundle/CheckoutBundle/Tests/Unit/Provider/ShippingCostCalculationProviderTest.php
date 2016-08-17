@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
+use OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
@@ -33,7 +33,7 @@ class ShippingCostCalculationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
         $this->shippingContextProviderFactory = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory')
+            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

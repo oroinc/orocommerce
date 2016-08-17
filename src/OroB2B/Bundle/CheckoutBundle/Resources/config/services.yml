@@ -69,7 +69,7 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
-            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
         tags:
             - { name: layout.data_provider, alias: shipping_methods_data_provider }
 
@@ -194,14 +194,14 @@ services:
         class: 'OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
         arguments:
           - '@orob2b_shipping.shipping_method.registry'
-          - '@orob2b_shipping.factory.shipping_context_provider_factory'
+          - '@orob2b_checkout.factory.shipping_context_provider_factory'
 
     orob2b_checkout.condition.has_applicable_shipping_methods:
         class: 'OroB2B\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
-            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
@@ -211,7 +211,7 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
             - '@orob2b_shipping.provider.shipping_rules'
-            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
         tags:
             - { name: oro_workflow.condition, alias: 'shipping_method_supports' }
             - { name: oro_action.condition, alias: 'shipping_method_supports' }
@@ -225,6 +225,9 @@ services:
     orob2b_checkout.action.default_shipping_method_setter:
         class: 'OroB2B\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
         arguments:
-            - '@orob2b_shipping.factory.shipping_context_provider_factory'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
             - '@orob2b_shipping.provider.shipping_rules'
             - '@orob2b_checkout.shipping_cost.calculator'
+
+    orob2b_checkout.factory.shipping_context_provider_factory:
+        class: 'OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'

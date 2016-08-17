@@ -19,6 +19,7 @@ use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
@@ -296,7 +297,7 @@ class Checkout implements
     }
 
     /**
-     * @return object|null
+     * @return CheckoutSourceEntityInterface|null
      */
     public function getSourceEntity()
     {

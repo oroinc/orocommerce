@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
+namespace OroB2B\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingContextProviderFactory;
+use OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var  Checkout|\PHPUnit_Framework_MockObject_MockObject */
     protected $checkout;
 
