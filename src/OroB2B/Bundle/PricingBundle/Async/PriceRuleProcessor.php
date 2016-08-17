@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Async;
 
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -12,7 +13,7 @@ use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Psr\Log\LoggerInterface;
 
-class PriceRuleProcessor implements MessageProcessorInterface
+class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
      * @var PriceRuleTriggerFactory
@@ -76,5 +77,13 @@ class PriceRuleProcessor implements MessageProcessorInterface
         $this->priceBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProduct());
 
         return self::ACK;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedTopics()
+    {
+        return [Topics::CALCULATE_RULE];
     }
 }

@@ -7,6 +7,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\PricingBundle\Async\PriceRuleProcessor;
+use OroB2B\Bundle\PricingBundle\Async\Topics;
 use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -131,5 +132,10 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($priceList, $product);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals([Topics::CALCULATE_RULE], $this->priceRuleProcessor->getSubscribedTopics());
     }
 }
