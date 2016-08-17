@@ -93,7 +93,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             ->getRepository('OroWorkflowBundle:WorkflowDefinition')
             ->findOneBy(['name' => $this->getWorkflowName()]);
         $config = $workflowDefinition->getConfiguration();
-        $config['transition_definitions']['__start___definition']['pre_conditions'] = [];
+        $config['transition_definitions']['__start___definition']['preconditions'] = [];
         $workflowDefinition->setConfiguration($config);
     }
 

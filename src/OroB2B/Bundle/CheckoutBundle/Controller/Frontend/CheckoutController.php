@@ -132,7 +132,7 @@ class CheckoutController extends Controller
         if ($request->isXmlHttpRequest()) {
             return;
         }
-        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
+        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
             ->getContinueTransition($workflowItem);
         if (!$continueTransition) {
             return;
@@ -167,7 +167,7 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
+            $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
                 ->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
@@ -176,8 +176,6 @@ class CheckoutController extends Controller
                     $transitionForm->submit($request);
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
-                    } else {
-                        $this->handleCheckoutErrors($transitionForm);
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -214,7 +212,7 @@ class CheckoutController extends Controller
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
         return $this->get('orob2b_checkout.layout.data_provider.transition_form')
-            ->getForm($transitionData, $workflowItem);
+            ->getTransitionForm($workflowItem, $transitionData);
     }
 
     /**
@@ -244,21 +242,5 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
-    }
-
-    /**
-     * @param FormInterface $form
-     */
-    protected function handleCheckoutErrors(FormInterface $form)
-    {
-        foreach ($form->getErrors(true) as $error) {
-            // @todo: Fix this hardcode
-            if ($error->getMessage() === 'orob2b.checkout.workflow.condition.content_of_order_was_changed.message') {
-                $this->get('session')->getFlashBag()->add(
-                    'error',
-                    $error->getMessage()
-                );
-            }
-        }
     }
 }

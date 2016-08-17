@@ -106,9 +106,12 @@ define(function(require) {
 
                 _.each($flashNotifications, function(element) {
                     var $element = $(element);
-                    var type = $(element).data('type');
+                    var type = $element.data('type');
                     var message = $element.data('message');
-                    mediator.execute('showFlashMessage', type, message);
+                    message = message.replace(/\n/g,"<br>");
+                    _.delay(function() {
+                        mediator.execute('showFlashMessage', type, message);
+                    }, 100);
                 });
 
                 mediator.trigger('checkout-content:updated');

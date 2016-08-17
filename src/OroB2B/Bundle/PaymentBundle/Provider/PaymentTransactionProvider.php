@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,13 +13,17 @@ use Psr\Log\LoggerAwareTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use OroB2B\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
+
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -32,15 +37,18 @@ class PaymentTransactionProvider
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param TokenStorageInterface $tokenStorage
+     * @param EventDispatcherInterface $dispatcher
      * @param string $paymentTransactionClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         TokenStorageInterface $tokenStorage,
+        EventDispatcherInterface $dispatcher,
         $paymentTransactionClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->paymentTransactionClass = $paymentTransactionClass;
+        $this->dispatcher = $dispatcher;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -110,6 +118,21 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
+     * @return array
+     */
+    public function getPaymentMethods($object)
+    {
+        $className = $this->doctrineHelper->getEntityClass($object);
+        $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
+        /** @var PaymentTransactionRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
+        $methods = $repository->getPaymentMethods($className, [$identifier]);
+        
+        return isset($methods[$identifier]) ? $methods[$identifier] : [];
+    }
+
+    /**
+     * @param object $object
      * @param float $amount
      * @param string $currency
      * @param string|null $paymentMethod
@@ -140,7 +163,7 @@ class PaymentTransactionProvider
     {
         $accountUser = $this->getLoggedAccountUser();
         if (!$accountUser) {
-            return [];
+            return null;
         }
 
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
@@ -192,6 +215,9 @@ class PaymentTransactionProvider
                     }
                 }
             );
+
+            $event = new TransactionCompleteEvent($paymentTransaction);
+            $this->dispatcher->dispatch(TransactionCompleteEvent::NAME, $event);
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->error($e->getMessage(), $e->getTrace());
