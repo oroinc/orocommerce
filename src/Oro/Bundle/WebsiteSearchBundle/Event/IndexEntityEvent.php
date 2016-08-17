@@ -19,11 +19,6 @@ class IndexEntityEvent extends Event
     ];
 
     /**
-     * @var array
-     */
-    private static $fieldTypesHash;
-
-    /**
      * @var string
      */
     private $entityName;
@@ -53,10 +48,6 @@ class IndexEntityEvent extends Event
         $this->context = $context;
         $this->entityIds = array_combine($entityIds, $entityIds);
         $this->entityName = $entityName;
-
-        if (null === self::$fieldTypesHash) {
-            self::$fieldTypesHash = array_flip(self::$fieldTypes);
-        }
     }
 
     /**
@@ -113,7 +104,7 @@ class IndexEntityEvent extends Event
      */
     private function assertFieldType($fieldType)
     {
-        if (!isset(self::$fieldTypesHash[$fieldType])) {
+        if (!in_array($fieldType, self::$fieldTypes, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Field type must be one of %s',
