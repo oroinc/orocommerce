@@ -23,6 +23,10 @@ class CollectContextEvent extends Event
             throw new \InvalidArgumentException('Context value name must be a string');
         }
 
+        if (empty($name)) {
+            throw new \InvalidArgumentException('Context value name cannot be empty');
+        }
+
         $this->context[$name] = $value;
 
         return $this;

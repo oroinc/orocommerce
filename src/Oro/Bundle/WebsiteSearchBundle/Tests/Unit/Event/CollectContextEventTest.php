@@ -51,4 +51,15 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
         $event = new CollectContextEvent();
         $event->addContextValue($name, 'some value');
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Context value name cannot be empty
+     * @throws \InvalidArgumentException
+     */
+    public function testAddContextValueWhenNameIsEmptyString()
+    {
+        $event = new CollectContextEvent();
+        $event->addContextValue('', 'some_value');
+    }
 }

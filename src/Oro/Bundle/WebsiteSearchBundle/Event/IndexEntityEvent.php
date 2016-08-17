@@ -12,11 +12,16 @@ class IndexEntityEvent extends Event
      * @var array
      */
     private static $fieldTypes = [
-        Query::TYPE_DATETIME => Query::TYPE_DATETIME,
-        Query::TYPE_DECIMAL => Query::TYPE_DECIMAL,
-        Query::TYPE_INTEGER => Query::TYPE_INTEGER,
-        Query::TYPE_TEXT => Query::TYPE_TEXT
+        Query::TYPE_DATETIME,
+        Query::TYPE_DECIMAL,
+        Query::TYPE_INTEGER,
+        Query::TYPE_TEXT
     ];
+
+    /**
+     * @var array
+     */
+    private static $fieldTypesHash;
 
     /**
      * @var string
@@ -48,6 +53,10 @@ class IndexEntityEvent extends Event
         $this->context = $context;
         $this->entityIds = array_combine($entityIds, $entityIds);
         $this->entityName = $entityName;
+
+        if (null === self::$fieldTypesHash) {
+            self::$fieldTypesHash = array_flip(self::$fieldTypes);
+        }
     }
 
     /**
@@ -104,7 +113,7 @@ class IndexEntityEvent extends Event
      */
     private function assertFieldType($fieldType)
     {
-        if (!isset(self::$fieldTypes[$fieldType])) {
+        if (!isset(self::$fieldTypesHash[$fieldType])) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Field type must be one of %s',
@@ -121,5 +130,13 @@ class IndexEntityEvent extends Event
     public function getEntityData($entityId)
     {
         return isset($this->entitiesData[$entityId]) ? $this->entitiesData[$entityId] : [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntitiesData()
+    {
+        return $this->entitiesData;
     }
 }
