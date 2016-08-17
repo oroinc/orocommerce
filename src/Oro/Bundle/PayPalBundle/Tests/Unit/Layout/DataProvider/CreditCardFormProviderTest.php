@@ -4,7 +4,6 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 use Oro\Bundle\PayPalBundle\Layout\DataProvider\CreditCardFormProvider;
 
@@ -26,25 +25,16 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new CreditCardFormProvider($this->formFactory);
     }
 
-    public function testGetIdentifier()
+    public function testGetCreditCardForm()
     {
-        $this->assertEquals('oro_paypal_credit_card_form_provider', $this->provider->getIdentifier());
-    }
-
-    public function testGetData()
-    {
-        /**
-         * @var ContextInterface| \PHPUnit_Framework_MockObject_MockObject $context
-         */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(CreditCardType::NAME, [], [])
+            ->with(CreditCardType::NAME, null, [])
             ->willReturn($form);
 
-        $data = $this->provider->getData($context);
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
-        $this->assertInstanceOf('Symfony\Component\Form\FormInterface', $data->getForm());
+        $creditCardForm = $this->provider->getCreditCardForm();
+        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $creditCardForm);
+        $this->assertInstanceOf('Symfony\Component\Form\FormInterface', $creditCardForm->getForm());
     }
 }

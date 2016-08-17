@@ -220,7 +220,7 @@ workflows:
                     is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@assign_value': [$payment_validate, true]
                         - '@call_service_method':
                             service: orob2b_payment.provider.payment_transaction
@@ -328,12 +328,12 @@ workflows:
 
         transition_definitions:
             __start___definition:
-                pre_conditions:
+                preconditions:
                     '@not':
                         - '@and':
                             - '@assert_account': 4
                             - '@payment_method_enabled': 'payment_term'
-                post_actions:
+                actions:
                     - '@assign_value': [$payment_save_for_later, true]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -345,9 +345,9 @@ workflows:
                     - '@assign_value': [$internal_state_token, $state_token]
 
             back_to_billing_address_definition:
-                pre_conditions:
+                preconditions:
                     '@not_equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
                     - '@generate_checkout_state_snapshot':
@@ -384,7 +384,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -403,7 +403,7 @@ workflows:
                                     entity: $checkout
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
-                post_actions:
+                actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
                         conditions:
@@ -487,7 +487,7 @@ workflows:
                                  entity: $checkout
                                  state: $.result.currentCheckoutState
                                  token: $state_token
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -511,7 +511,7 @@ workflows:
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
-                post_actions:
+                actions:
                     - '@tree':
                         conditions:
                             '@and':
@@ -569,7 +569,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                pre_conditions:
+                preconditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
@@ -583,7 +583,7 @@ workflows:
                                 entity: $checkout
                                 state1: $.result.initCheckoutState
                                 state2: $.result.savedCheckoutState
-                post_actions:
+                actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -619,7 +619,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -647,7 +647,7 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-                post_actions:
+                actions:
                     - '@tree':
                         conditions:
                             '@equal': [$payment_validate, true]
@@ -686,7 +686,7 @@ workflows:
                     - '@assign_value': [$internal_state_token, $state_token]
 
             verify_payment_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -733,7 +733,7 @@ workflows:
                                         state: $.result.currentCheckoutState
                                         token: $state_token
 
-                pre_conditions:
+                preconditions:
                     '@not_equal':
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
@@ -746,7 +746,7 @@ workflows:
                                 entity: $checkout
                                 state1: $.result.initCheckoutState
                                 state2: $.result.savedCheckoutState
-                post_actions:
+                actions:
                     - '@assign_value':
                         conditions:
                             '@equal': [$checkout.shipToBillingAddress, false]
@@ -893,7 +893,7 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
                     - '@tree':
@@ -1022,9 +1022,9 @@ workflows:
                             id: $order.id
 
             recalculate_state_definition:
-                pre_conditions:
+                preconditions:
                     '@not_equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -1035,7 +1035,7 @@ workflows:
                     - '@assign_value': [$internal_state_token, $state_token]
 
             unblock_and_recalculate_definition:
-                post_actions:
+                actions:
                     - '@assign_value': [$payment_in_progress, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
