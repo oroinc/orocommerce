@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodsProvider
 {
@@ -22,19 +23,25 @@ class PaymentMethodsProvider
     /** @var PaymentMethodRegistry */
     protected $paymentMethodRegistry;
 
+    /** @var PaymentTransactionProvider */
+    protected $paymentTransactionProvider;
+
     /**
      * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
      * @param PaymentContextProvider $paymentContextProvider
      * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentTransactionProvider $transactionProvider
      */
     public function __construct(
         PaymentMethodViewRegistry $paymentMethodViewRegistry,
         PaymentContextProvider $paymentContextProvider,
-        PaymentMethodRegistry $paymentMethodRegistry
+        PaymentMethodRegistry $paymentMethodRegistry,
+        PaymentTransactionProvider $transactionProvider
     ) {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
         $this->paymentContextProvider = $paymentContextProvider;
         $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentTransactionProvider = $transactionProvider;
     }
 
     /**
@@ -76,7 +83,6 @@ class PaymentMethodsProvider
             return $this->paymentMethodViews[$paymentMethod];
         }
         return null;
-
     }
 
     /**
@@ -136,5 +142,14 @@ class PaymentMethodsProvider
         }
 
         return false;
+    }
+
+    /**
+     * @param object $entity
+     * @return array
+     */
+    public function getPaymentMethods($entity)
+    {
+        return $this->paymentTransactionProvider->getPaymentMethods($entity);
     }
 }

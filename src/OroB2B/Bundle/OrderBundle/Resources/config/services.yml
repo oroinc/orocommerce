@@ -4,6 +4,8 @@ parameters:
     orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
     orob2b_order.entity.order_discount_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderDiscount
     orob2b_order.provider.privilege_category_provider.class: OroB2B\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider
+    orob2b_payment.entity.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction
+    orob2b_payment.entity.payment_status.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus
 
 services:
     orob2b_order.order.manager.api:
@@ -164,9 +166,7 @@ services:
         class: 'OroB2B\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
         arguments:
-            - '@doctrine'
             - '@orob2b_order.formatter.source_document'
-            - '@orob2b_payment.provider.payment_status'
         tags:
             - { name: twig.extension }
 
@@ -218,12 +218,21 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_payment_status_provider }
 
-    orob2b_order.layout.provider.order_payment_method:
-        class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider'
+    orob2b_order.event_listener.order_datagrid:
+        class: 'OroB2B\Bundle\OrderBundle\EventListener\OrderDatagridListener'
         arguments:
-            - '@orob2b_payment.provider.payment_transaction'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_payment.formatter.payment_method_label'
         tags:
-            - { name: layout.data_provider, alias: orob2b_order_frontend_payment_method_provider }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orders-grid, method: onResultAfter }
+
+    orob2b_order.event_listener.frontend_order_datagrid:
+        class: 'OroB2B\Bundle\OrderBundle\EventListener\OrderDatagridListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_payment.formatter.payment_method_label'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
 
     orob2b_order.provider.privilege_category_provider:
         class: %orob2b_order.provider.privilege_category_provider.class%

@@ -1,4 +1,8 @@
 {% block address_book_widget %}
+    {% set componentOptions = componentOptions|merge({
+        useFormDialog: useFormDialog
+    }) %}
+
     <div>
         {# JS template for address view #}
         <script type="text/html" id="template-addressbook-item">

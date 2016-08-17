@@ -2,8 +2,10 @@
     <label class="control-label">{{ 'orob2b.payment.methods.label'|trans }}</label>
     <div class="controls">
         <div class="control-label">
-            {%- if data is not empty -%}
-                {{ get_payment_method_admin_label(data.paymentMethod) }}
+            {%- if data is not empty and data is iterable -%}
+                {% for paymentMethod in data %}
+                    {{ get_payment_method_admin_label(paymentMethod) }}{% if not loop.last %},{% endif %}
+                {% endfor %}
             {%- else -%}
                 {{ 'oro.ui.empty'|trans }}
             {%- endif -%}
