@@ -1,7 +1,7 @@
 parameters:
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
-
+    orob2b_checkout.provider.privilege_category_provider.class: OroB2B\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider
 services:
     # Data Providers
     orob2b_checkout.data_provider.converter.checkout_line_items:
@@ -57,6 +57,12 @@ services:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
+
+    orob2b_checkout.provider.privilege_category_provider:
+        class: %orob2b_checkout.provider.privilege_category_provider.class%
+        tags:
+            - { name: oro_user.privilege_category}
+
 
     orob2b_checkout.model.action.start_checkout:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout'

@@ -85,6 +85,9 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
 
+        privilege:
+            category.quotes.label: 'Quotes'
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'

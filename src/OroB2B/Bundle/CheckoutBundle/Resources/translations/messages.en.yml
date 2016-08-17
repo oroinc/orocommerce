@@ -164,3 +164,6 @@ orob2b:
                 frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
             groups:
                 open_orders.title: 'Open Orders'
+
+        privilege:
+            category.checkout.label: 'Checkout'

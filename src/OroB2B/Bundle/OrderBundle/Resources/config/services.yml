@@ -3,6 +3,7 @@ parameters:
     orob2b_order.entity.order_address.class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
     orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
     orob2b_order.entity.order_discount_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderDiscount
+    orob2b_order.provider.privilege_category_provider.class: OroB2B\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -223,3 +224,8 @@ services:
             - '@orob2b_payment.provider.payment_transaction'
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_payment_method_provider }
+
+    orob2b_order.provider.privilege_category_provider:
+        class: %orob2b_order.provider.privilege_category_provider.class%
+        tags:
+            - { name: oro_user.privilege_category}

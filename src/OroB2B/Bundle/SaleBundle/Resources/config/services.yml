@@ -4,6 +4,7 @@ parameters:
     orob2b_sale.entity.quote_product.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProduct
     orob2b_sale.entity.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
+    orob2b_sale.provider.privilege_category_provider.class: OroB2B\Bundle\SaleBundle\Provider\PrivilegeCategoryProvider
 
 services:
     orob2b_sale.provider.quote_product_price:
@@ -148,3 +149,8 @@ services:
             - "@translator"
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    orob2b_sale.provider.privilege_category_provider:
+        class: %orob2b_sale.provider.privilege_category_provider.class%
+        tags:
+            - { name: oro_user.privilege_category}

@@ -194,6 +194,9 @@ orob2b:
             receive_email: 'You will receive a confirmation email with your order details.'
             done: 'Done'
 
+        privilege:
+            category.orders.label: 'Orders'
+
     frontend:
         order:
             entity_plural_label: Orders
