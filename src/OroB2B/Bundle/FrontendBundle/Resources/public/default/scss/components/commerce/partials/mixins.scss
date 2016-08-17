@@ -100,3 +100,9 @@ $breakpoint-mobile: 640px;
     @include success-state;
   }
 }
+
+@mixin breakpoint($device-width) {
+  @media (max-width: #{$device-width}) {
+    @content;
+  }
+}

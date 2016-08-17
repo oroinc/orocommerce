@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
@@ -25,7 +28,10 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData'
+        ]);
     }
 
     /**
@@ -95,5 +101,109 @@ class ProductControllerTest extends WebTestCase
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
+    }
+
+    /**
+     * @dataProvider defaultUnitPrecisionDataProvider
+     *
+     * @param string $category
+     * @param string $expected
+     */
+    public function testDefaultProductUnitPrecision($category, $expected)
+    {
+        $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $systemDefaultUnit = $configManager->get('orob2b_product.default_unit');
+        $systemDefaultPrecision = $configManager->get('orob2b_product.default_unit_precision');
+
+        $categoryReference = $category ? $this->getReference($category) : null;
+
+        $systemPrecision = [
+            'unit' => $systemDefaultUnit,
+            'precision' => $systemDefaultPrecision
+        ];
+        
+        /** @var CategoryUnitPrecision $unitPrecision */
+        $unitPrecision = $this->getReference(LoadCategoryData::SECOND_LEVEL1)
+            ->getDefaultProductOptions()
+            ->getUnitPrecision();
+        $categoryPrecision = [
+            'unit' => $unitPrecision->getUnit()->getCode(),
+            'precision' => $unitPrecision->getPrecision()
+        ];
+        
+        $expectedUnitPrecisions = [
+            'systemPrecision' => $systemPrecision,
+            'categoryPrecision' => $categoryPrecision,
+        ];
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'orob2b_product_create';
+        if ($categoryReference) {
+            $formValues['orob2b_product_step_one']['category'] = $categoryReference->getId();
+        }
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_product_create'),
+            $formValues
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $form = $crawler->selectButton('Save and Close')->form();
+        $this->assertDefaultProductUnit(
+            $form,
+            $expectedUnitPrecisions[$expected]['unit'],
+            $expectedUnitPrecisions[$expected]['precision']
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function defaultUnitPrecisionDataProvider()
+    {
+        return [
+            'noCategory' => [
+                'category' => null,
+                'expectedData'  => 'systemPrecision'
+            ],
+            'CategoryWithPrecision' => [
+                'category' => LoadCategoryData::SECOND_LEVEL1,
+                'expectedData'  => 'categoryPrecision'
+            ],
+            'CategoryWithParentPrecision' => [
+                'category' => LoadCategoryData::THIRD_LEVEL1,
+                'expectedData'  => 'categoryPrecision'
+            ],
+            'CategoryWithNoPrecision' => [
+                'category' => LoadCategoryData::FIRST_LEVEL,
+                'expectedData'  => 'systemPrecision'
+            ],
+        ];
+    }
+
+    /**
+     * checking if default product unit field is added and filled
+     *
+     * @param Form $form
+     * @param string $unit
+     * @param integer $precision
+     */
+    protected function assertDefaultProductUnit($form, $unit, $precision)
+    {
+        $formValues = $form->getValues();
+
+        $this->assertEquals(
+            $unit,
+            $formValues['orob2b_product[primaryUnitPrecision][unit]']
+        );
+        $this->assertEquals(
+            $precision,
+            $formValues['orob2b_product[primaryUnitPrecision][precision]']
+        );
     }
 }

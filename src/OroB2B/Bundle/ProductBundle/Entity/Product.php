@@ -608,9 +608,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
+        /** @var ProductUnit $productUnit */
         $productUnit = $unitPrecision->getUnit();
         if ($productUnit && $existingUnitPrecision = $this->getUnitPrecision($productUnit->getCode())) {
-            $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
+            $existingUnitPrecision
+                ->setPrecision($unitPrecision->getPrecision())
+                ->setConversionRate($unitPrecision->getConversionRate())
+                ->setSell($unitPrecision->isSell());
         } else {
             $unitPrecision->setProduct($this);
             $this->unitPrecisions->add($unitPrecision);
@@ -648,16 +652,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Get unitPrecisions by unit code
      *
      * @param string $unitCode
-     * @return ProductUnitPrecision
+     * @return ProductUnitPrecision|null
      */
     public function getUnitPrecision($unitCode)
     {
         $result = null;
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            if ($unitPrecision->getUnit()->getCode() == $unitCode) {
-                $result = $unitPrecision;
-                break;
+            if ($unit = $unitPrecision->getUnit()) {
+                if ($unit->getCode() == $unitCode) {
+                    $result = $unitPrecision;
+                    break;
+                }
             }
         }
 
@@ -733,25 +739,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
-     * @return null|LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultName()
-    {
-        $names = $this->names->filter(function (LocalizedFallbackValue $name) {
-            return null === $name->getLocalization();
-        });
-
-        if ($names->count() > 1) {
-            throw new \LogicException('There must be only one default name');
-        } elseif ($names->count() === 1) {
-            return $names->first();
-        }
-
-        return null;
-    }
-
-    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getDescriptions()
@@ -785,23 +772,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         }
 
         return $this;
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultDescription()
-    {
-        $descriptions = $this->descriptions->filter(function (LocalizedFallbackValue $description) {
-            return null === $description->getLocalization();
-        });
-
-        if ($descriptions->count() > 1) {
-            throw new \LogicException('There must be only one default description');
-        }
-
-        return $descriptions->first();
     }
 
     /**
@@ -924,23 +894,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
-     * @return LocalizedFallbackValue
-     * @throws \LogicException
-     */
-    public function getDefaultShortDescription()
-    {
-        $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocalization();
-        });
-
-        if ($shortDescriptions->count() > 1) {
-            throw new \LogicException('There must be only one default short description');
-        }
-
-        return $shortDescriptions->first();
-    }
-
-    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -988,6 +941,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         return [
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
+            'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }
 
@@ -997,11 +951,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
     {
-        $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
-        $this->primaryUnitPrecision = $primaryUnitPrecision;
         if ($primaryUnitPrecision) {
+            $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
             $this->addUnitPrecision($primaryUnitPrecision);
+            $this->primaryUnitPrecision = $this->getUnitPrecision($primaryUnitPrecision->getProductUnitCode());
+        } else {
+            $this->primaryUnitPrecision = $primaryUnitPrecision;
         }
+
         return $this;
     }
 

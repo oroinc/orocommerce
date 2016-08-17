@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -12,18 +10,16 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
     const PRODUCT_IMAGE_FILTER = 'product_large';
-    const PRODUCT_IMAGE_TYPE = 'listing';
 
     /**
      * @var DataGridThemeHelper
@@ -41,26 +37,18 @@ class FrontendProductDatagridListener
     protected $attachmentManager;
 
     /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $unitFormatter;
-
-    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
-     * @param ProductUnitLabelFormatter $unitFormatter
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
-        AttachmentManager $attachmentManager,
-        ProductUnitLabelFormatter $unitFormatter
+        AttachmentManager $attachmentManager
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
-        $this->unitFormatter = $unitFormatter;
     }
 
     /**
@@ -72,7 +60,10 @@ class FrontendProductDatagridListener
 
         $config->offsetAddToArrayByPath(
             '[properties]',
-            [self::COLUMN_PRODUCT_UNITS => ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]]
+            [self::COLUMN_PRODUCT_UNITS => [
+                'type' => 'field',
+                'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]
+            ]
         );
 
         // add theme processing
@@ -122,20 +113,15 @@ class FrontendProductDatagridListener
     protected function addShortDescriptionToConfig(DatagridConfiguration $config)
     {
         $updates = [
-            '[source][query][select]' => [
-                'productShortDescriptions.text as shortDescription'
-            ],
-            '[source][query][join][inner]' => [
-                [
-                    'join' => 'product.shortDescriptions',
-                    'alias' => 'productShortDescriptions',
-                    'conditionType' => 'WITH',
-                    'condition' => 'productShortDescriptions.localization IS NULL'
-                ]
-            ],
             '[columns]' => [
                 'shortDescription' => [
                     'label' => 'orob2b.product.short_descriptions.label',
+                ]
+            ],
+            '[properties]' => [
+                'shortDescription' => [
+                    'type' => LocalizedValueProperty::NAME,
+                    'data_name' => 'shortDescriptions',
                 ]
             ],
         ];
@@ -185,17 +171,15 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $products = $this->getProductRepository()->getProductsWithImage($productIds, self::PRODUCT_IMAGE_TYPE);
+        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
         foreach ($records as $record) {
             $imageUrl = null;
             $productId = $record->getValue('id');
-            if (isset($products[$productId])) {
-                $product = $products[$productId];
-                /** @var ProductImage $listingImage */
-                $listingImage = $product->getImages()->first();
+
+            if (isset($productImages[$productId])) {
                 $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                    $listingImage->getImage(),
+                    $productImages[$productId],
                     self::PRODUCT_IMAGE_FILTER
                 );
                 $record->addData(['image' => $imageUrl]);
@@ -216,7 +200,7 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $productUnits)) {
                 foreach ($productUnits[$productId] as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
+                    $units[] = $unitCode;
                 }
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);

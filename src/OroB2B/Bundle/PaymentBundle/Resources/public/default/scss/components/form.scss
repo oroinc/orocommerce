@@ -1,7 +1,3 @@
-.what-this-link {
-  margin-left: 12px;
-}
-
 .checkbox_custom {
   @include ellipsis();
 
@@ -25,15 +21,6 @@
     + .form-input_datepicker,
     + .form-input_textarea {
       display: block;
-    }
-  }
-}
-
-div.checkout__form__select--exp-month {
-
-  .select2-container {
-    &.input_block {
-      width: 100%;
     }
   }
 }

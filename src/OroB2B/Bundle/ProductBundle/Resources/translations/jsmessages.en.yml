@@ -17,6 +17,7 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} each|]1,Inf]{{ count }} each'
                 short: '{0} none|{1} {{ count }} ea|]1,Inf]{{ count }} ea'
+                label: '{0} none|{1} ea|]1,Inf] ea'
 
         product_unit.hour:
             label:
@@ -27,6 +28,7 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} hour|]1,Inf]{{ count }} hours'
                 short: '{0} none|{1} {{ count }} hr|]1,Inf]{{ count }} hrs'
+                label: '{0} none|{1} hr|]1,Inf] hrs'
 
         product_unit.item:
             label:
@@ -37,6 +39,7 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} item|]1,Inf]{{ count }} items'
                 short: '{0} none|{1} {{ count }} item|]1,Inf]{{ count }} items'
+                label: '{0} none|{1} item|]1,Inf] items'
 
         product_unit.kg:
             label:
@@ -47,6 +50,7 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} kilogram|]1,Inf]{{ count }} kilograms'
                 short: '{0} none|{1} {{ count }} kg|]1,Inf]{{ count }} kg'
+                label: '{0} none|{1} kg|]1,Inf] kg'
 
         product_unit.piece:
             label:
@@ -57,6 +61,7 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} piece|]1,Inf]{{ count }} pieces'
                 short: '{0} none|{1} {{ count }} pc|]1,Inf]{{ count }} pcs'
+                label: '{0} none|{1} pc|]1,Inf] pcs'
 
         product_unit.set:
             label:
@@ -67,6 +72,51 @@ orob2b:
             value:
                 full: '{0} none|{1} {{ count }} set|]1,Inf]{{ count }} sets'
                 short: '{0} none|{1} {{ count }} set|]1,Inf]{{ count }} sets'
+                label: '{0} none|{1} set|]1,Inf] sets'
+
+        product_unit.liter:
+            label:
+                full: liter
+                full_plural: liters
+                short: liter
+                short_plural: liters
+            value:
+                full: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+                short: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+                label: '{0} none|{1} liter|]1,Inf] liters'
+
+        product_unit.milliliter:
+            label:
+                full: milliliter
+                full_plural: milliliters
+                short: milliliter
+                short_plural: milliliters
+            value:
+                full: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+                short: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+                label: '{0} none|{1} milliliter|]1,Inf] milliliters'
+
+        product_unit.box:
+            label:
+                full: box
+                full_plural: boxes
+                short: box
+                short_plural: boxes
+            value:
+                full: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+                short: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+                label: '{0} none|{1} box|]1,Inf] boxes'
+
+        product_unit.bottle:
+            label:
+                full: bottle
+                full_plural: bottles
+                short: bottle
+                short_plural: bottles
+            value:
+                full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+                short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+                label: '{0} none|{1} bottle|]1,Inf] bottles'
 
         validation:
             unit:

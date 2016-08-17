@@ -87,8 +87,8 @@
          {{ UI.renderPageComponentAttributes({
              module: options.componentModule|default('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view'),
              options: {
-                 buttonTemplate: buttons.buttonTemplate(options.current),
-                 removeButtonTemplate: options.remove is defined ? buttons.buttonTemplate(options.remove),
+                 buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
+                 removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
              }|merge(options.componentOptions|default({}))
          }) }}
         >

@@ -13,7 +13,7 @@ use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase

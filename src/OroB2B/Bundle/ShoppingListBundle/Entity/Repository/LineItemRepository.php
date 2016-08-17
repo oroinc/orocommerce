@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class LineItemRepository extends EntityRepository
 {
@@ -37,6 +38,24 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
+     * @param array|Product $products
+     * @param AccountUser $accountUser
+     * @return array|LineItem[]
+     */
+    public function getProductItemsWithShoppingListNames($products, $accountUser)
+    {
+        $qb = $this->createQueryBuilder('li')
+            ->select('li, shoppingList')
+            ->join('li.shoppingList', 'shoppingList')
+            ->andWhere('li.accountUser = :accountUser')
+            ->andWhere('li.product IN (:products)')
+            ->setParameter('products', $products)
+            ->setParameter('accountUser', $accountUser);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @return array|LineItem[]
      */
@@ -54,16 +73,34 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product $product
+     * @param Product[] $product
      * @return array|LineItem[]
      */
-    public function getItemsByShoppingListAndProduct(ShoppingList $shoppingList, Product $product)
+    public function getItemsByShoppingListAndProducts(ShoppingList $shoppingList, $products)
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li')
+            ->where('li.shoppingList = :shoppingList', $qb->expr()->in('li.product', ':product'))
+            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('product', $products);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param AccountUser $accountUser
+     * @return array|LineItem[]
+     */
+    public function getOneProductLineItemsWithShoppingListNames(Product $product, AccountUser $accountUser)
     {
         $qb = $this->createQueryBuilder('li')
-            ->select('li')
-            ->where('li.shoppingList = :shoppingList', 'li.product = :product')
-            ->setParameter('shoppingList', $shoppingList)
-            ->setParameter('product', $product);
+            ->select('li, shoppingList')
+            ->join('li.shoppingList', 'shoppingList')
+            ->andWhere('li.product = :product')
+            ->andWhere('li.accountUser = :accountUser')
+            ->setParameter('product', $product)
+            ->setParameter('accountUser', $accountUser);
 
         return $qb->getQuery()->getResult();
     }

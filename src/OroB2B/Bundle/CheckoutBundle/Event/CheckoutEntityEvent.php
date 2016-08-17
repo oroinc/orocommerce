@@ -15,7 +15,7 @@ class CheckoutEntityEvent extends Event
     protected $checkoutEntity;
 
     /**
-     * @var object
+     * @var CheckoutSource
      */
     protected $source;
 
@@ -23,11 +23,6 @@ class CheckoutEntityEvent extends Event
      * @var int
      */
     protected $checkoutId;
-
-    /**
-     * @var string
-     */
-    protected $type;
 
     /**
      * @return CheckoutInterface
@@ -76,24 +71,6 @@ class CheckoutEntityEvent extends Event
     public function setCheckoutId($checkoutId)
     {
         $this->checkoutId = $checkoutId;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return $this
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
         return $this;
     }
 }

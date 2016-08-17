@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'price_mobile.html.twig'
+    conditions: 'context["user_agent"]["mobile"]==true'

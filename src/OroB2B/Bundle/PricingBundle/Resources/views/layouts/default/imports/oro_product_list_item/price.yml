@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'price.html.twig'
+        - '@addTree':
+            items:
+                __product_listed_price:
+                    parentId: __product_secondary_content_first_container
+                    blockType: block
+                    siblingId: __product_specification_delivery
+                __product_msrp:
+                    parentId: __product_secondary_content_first_container
+                    blockType: block
+                    options:
+                        visible: false
+                __product_price:
+                    parentId: __product_secondary_content_first_container
+                    blockType: block
+            tree:
+                __product_secondary_content_first_container:
+                    __product_listed_price: ~
+                    __product_msrp: ~
+                    __product_price: ~

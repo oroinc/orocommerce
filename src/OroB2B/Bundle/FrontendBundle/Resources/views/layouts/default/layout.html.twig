@@ -114,3 +114,36 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block embedded_list_widget %}
+    <div class="embedded-list">
+        {% set attr = layout_attr_defaults(attr, {
+            'class': 'embedded-list__container'
+        }) %}
+
+        {% if use_slider %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'orob2bfrontend/js/app/components/list-slider-component',
+                '~data-page-component-options': {
+                    slidesToShow: slides_count
+                },
+                '~class': ' embedded-list__container--slider'
+            }) %}
+        {% endif %}
+
+        {% if label is defined %}
+            <h2 class="embedded-list__label">{{ label }}</h2>
+        {% endif %}
+
+        <div {{ block('block_attributes') }}>
+            {% for item in items %}
+                <div class="embedded-list__item">
+                    {% do block|merge_context({
+                        (item_key): item
+                    }) %}
+                    {{ block('container_widget') }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

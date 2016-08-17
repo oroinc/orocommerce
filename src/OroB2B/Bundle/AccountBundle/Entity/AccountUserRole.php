@@ -52,7 +52,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
+class AccountUserRole extends AbstractRole implements OrganizationAwareInterface, \Serializable
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
 
@@ -138,6 +138,20 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
      */
     protected $accountUsers;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="self_managed", options={"default"=false})
+     */
+    protected $selfManaged = false;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", name="public", options={"default"=true})
+     */
+    protected $public = true;
 
     /**
      * @param string|null $role
@@ -314,5 +328,70 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     public function getAccountUsers()
     {
         return $this->accountUsers;
+    }
+
+    /**
+     * @return string
+     */
+    public function isSelfManaged()
+    {
+        return $this->selfManaged;
+    }
+
+    /**
+     * @param string $selfManaged
+     */
+    public function setSelfManaged($selfManaged)
+    {
+        $this->selfManaged = $selfManaged;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * @param boolean $public
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+    }
+
+    /**
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize(
+            [
+                $this->id,
+                $this->role,
+                $this->label,
+                $this->selfManaged,
+                $this->public
+            ]
+        );
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->role,
+            $this->label,
+            $this->selfManaged,
+            $this->public
+            ) = unserialize($serialized);
+
+        $this->websites     = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
     }
 }

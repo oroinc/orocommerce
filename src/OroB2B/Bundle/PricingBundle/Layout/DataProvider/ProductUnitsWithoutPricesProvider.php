@@ -37,7 +37,7 @@ class ProductUnitsWithoutPricesProvider extends AbstractServerRenderDataProvider
         /** @var Product $product */
         $product = $context->data()->get('product');
         if (!array_key_exists($product->getId(), $this->data)) {
-            $prices = $this->pricesProvider->getData($context);
+            $prices = $this->pricesProvider->getByProduct($product);
 
             $unitWithPrices = [];
             foreach ($prices as $price) {

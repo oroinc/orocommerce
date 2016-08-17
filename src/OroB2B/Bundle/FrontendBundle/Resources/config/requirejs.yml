@@ -1,4 +1,8 @@
 config:
+    shim:
+        'slick':
+            deps:
+                - 'jquery'
     paths:
         'orob2bfrontend/js/app/components/widget-form-component': 'bundles/orob2bfrontend/js/app/components/widget-form-component.js'
         'orob2bfrontend/js/app/components/switchable-editable-view-component': 'bundles/orob2bfrontend/js/app/components/switchable-editable-view-component.js'
@@ -20,8 +24,12 @@ config:
         'orob2bfrontend/js/app/components/delete-confirmation': 'bundles/orob2bfrontend/js/app/components/delete-confirmation.js'
         'orob2bfrontend/default/js/widgets/expand-text-widget': 'bundles/orob2bfrontend/default/js/widgets/expand-text-widget.js'
         'orob2bfrontend/default/js/widgets/collapse-widget': 'bundles/orob2bfrontend/default/js/widgets/collapse-widget.js'
+        'orob2bfrontend/default/js/app/views/footer-align-view': 'orob2bfrontend/default/js/app/views/footer-align-view.js'
         'orob2bfrontend/default/js/app/views/sticky-panel-view': 'orob2bfrontend/default/js/app/views/sticky-panel-view.js'
 
         'orob2bfrontend/js/app/elements-helper': 'bundles/orob2bfrontend/js/app/elements-helper.js'
+
+        'slick': 'bundles/orob2bfrontend/default/vendors/slick/slick.min.js'
+        'orob2bfrontend/js/app/components/list-slider-component': 'bundles/orob2bfrontend/js/app/components/list-slider-component.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module

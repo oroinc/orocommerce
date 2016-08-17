@@ -6,17 +6,18 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var  Category $category */
+    /** @var Category $category */
     protected $category;
 
     public function setup()
@@ -38,6 +39,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ['parentCategory', null],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
+            ['defaultProductOptions', new CategoryDefaultProductOptions()]
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);
@@ -84,10 +86,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->addTitle($secondTitle)
             ->addTitle($secondTitle);
 
-        $this->assertEquals(
-            2,
-            count($category->getTitles()->toArray())
-        );
+        $this->assertCount(2, $category->getTitles()->toArray());
 
         $this->assertEquals([$firstTitle, $secondTitle], array_values($category->getTitles()->toArray()));
 
@@ -115,10 +114,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             array_values($category->getShortDescriptions()->toArray())
         );
 
-        $this->assertEquals(
-            2,
-            count($category->getShortDescriptions()->toArray())
-        );
+        $this->assertCount(2, $category->getShortDescriptions()->toArray());
 
         $category->removeShortDescription($firstShortDescription)
             ->removeShortDescription($firstShortDescription);
@@ -144,10 +140,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             array_values($category->getLongDescriptions()->toArray())
         );
 
-        $this->assertEquals(
-            2,
-            count($category->getLongDescriptions()->toArray())
-        );
+        $this->assertCount(2, $category->getLongDescriptions()->toArray());
 
         $category->removeLongDescription($firstLongDescription)
             ->removeLongDescription($firstLongDescription);
@@ -238,60 +231,6 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ->addLongDescription($localizedLongDescription);
 
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription());
-    }
-
-    /**
-     * @param array $titles
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default title
-     */
-    public function testGetDefaultTitleException(array $titles)
-    {
-        $category = $this->category;
-
-        foreach ($titles as $title) {
-            $category->addTitle($title);
-        }
-
-        $category->getDefaultTitle();
-    }
-
-    /**
-     * @param array $shortDescriptions
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default short description
-     */
-    public function testGetDefaultShortDescriptionException(array $shortDescriptions)
-    {
-        $category = $this->category;
-
-        foreach ($shortDescriptions as $shortDescription) {
-            $category->addShortDescription($shortDescription);
-        }
-
-        $category->getDefaultShortDescription();
-    }
-
-    /**
-     * @param array $longDescriptions
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage There must be only one default long description
-     */
-    public function testGetDefaultLongDescriptionException(array $longDescriptions)
-    {
-        $category = $this->category;
-
-        foreach ($longDescriptions as $longDescription) {
-            $category->addShortDescription($longDescription);
-        }
-
-        $category->getDefaultLongDescription();
     }
 
     /**

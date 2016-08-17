@@ -6,64 +6,74 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 
 class FrontendShoppingListProductUnitsQuantityDataProvider extends AbstractServerRenderDataProvider
 {
     /**
-     * @var ShoppingListManager
+     * @var array
      */
-    protected $shoppingListManager;
+    protected $data = [];
 
     /**
-     * @var LineItemRepository
+     * @var ProductShoppingListsDataProvider
      */
-    protected $lineItemRepository;
+    protected $productShoppingListsDataProvider;
 
     /**
-     * @param ShoppingListManager $shoppingListManager
-     * @param LineItemRepository $lineItemRepository
+     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
      */
-    public function __construct(ShoppingListManager $shoppingListManager, LineItemRepository $lineItemRepository)
+    public function __construct(ProductShoppingListsDataProvider $productShoppingListsDataProvider)
     {
-        $this->shoppingListManager = $shoppingListManager;
-        $this->lineItemRepository = $lineItemRepository;
+        $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
+    public function getByProduct(Product $product = null)
     {
-        $product = $context->data()->get('product');
         if (!$product) {
             return null;
         }
 
-        $shoppingList = $this->shoppingListManager->getCurrent();
-        if (!$shoppingList) {
-            return null;
-        }
+        $this->setByProducts([$product]);
 
-        return $this->getProductUnitsQuantity($shoppingList, $product);
+        return $this->data[$product->getId()];
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
+     * @param Product[] $products
      * @return array
      */
-    protected function getProductUnitsQuantity(ShoppingList $shoppingList, Product $product)
+    public function getByProducts($products)
     {
-        $items = $this->lineItemRepository->getItemsByShoppingListAndProduct($shoppingList, $product);
-        $units = [];
+        $this->setByProducts($products);
 
-        foreach ($items as $item) {
-            $units[$item->getProductUnitCode()] = $item->getQuantity();
+        $shoppingLists = [];
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            if ($this->data[$productId]) {
+                $shoppingLists[$productId] = $this->data[$productId];
+            }
         }
 
-        return $units;
+        return $shoppingLists;
+    }
+
+    /**
+     * @param Product[] $products
+     */
+    protected function setByProducts($products)
+    {
+        $products = array_filter($products, function (Product $product) {
+            return !array_key_exists($product->getId(), $this->data);
+        });
+        if (!$products) {
+            return;
+        }
+
+        $shoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            $this->data[$productId] = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : null;
+        }
     }
 }

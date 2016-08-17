@@ -16,11 +16,17 @@ orob2b:
             child_categories.label:      'Child categories'
             parent_category.label:       'Parent category'
             products.label:              'Products'
+            categories.label:            'Product categories'
             include_subcategories.label: 'Include Sub-Categories'
+            unit.empty.value:            'Parent Category'
+            unit_precision.label:        'Unit Precision'
+            unit.label:                  'Unit of Quantity'
+            precision.label:             'Precision'
 
         sections:
             general: 'General'
             additional: 'Additional'
+            default_options: 'Default Product Options'
 
         subcategory:
             entity_label:   'Subcategory'
@@ -45,3 +51,7 @@ orob2b:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+
+        featured_categories:
+            view:
+                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'

@@ -7,6 +7,7 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -51,52 +52,84 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param ContextInterface $context
+     * @param Product $product
      * @return ProductPrice[]
      */
-    public function getData(ContextInterface $context)
+    public function getByProduct(Product $product)
     {
-        /** @var Product $product */
-        $product = $context->data()->get('product');
-        $productId = $product->getId();
-
-        if (!array_key_exists($productId, $this->data)) {
-            $priceList = $this->priceListRequestHandler->getPriceListByAccount();
-
-            /** @var ProductPriceRepository $priceRepository */
-            $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
-            $prices = $priceRepository->findByPriceListIdAndProductIds(
-                $priceList->getId(),
-                [$productId],
-                true,
-                $this->userCurrencyManager->getUserCurrency(),
-                null,
-                [
-                    'unit' => 'ASC',
-                    'currency' => 'DESC',
-                    'quantity' => 'ASC',
-                ]
-            );
-            if (count($prices)) {
-                $unitPrecisions = current($prices)->getProduct()->getUnitPrecisions();
-
-                $unitsToSell = [];
-                foreach ($unitPrecisions as $unitPrecision) {
-                    if ($unitPrecision->isSell()) {
-                        $unitsToSell[] = $unitPrecision->getUnit();
-                    }
-                }
-
-                foreach ($prices as $key => $combinedProductPrice) {
-                    if (!in_array($combinedProductPrice->getUnit(), $unitsToSell)) {
-                        unset($prices[$key]);
-                    }
-                }
-            }
-
-            $this->data[$productId] = $prices;
+        if (!$product) {
+            return null;
         }
 
-        return $this->data[$productId];
+        $this->setProductsPrices([$product]);
+
+        return $this->data[$product->getId()];
+    }
+
+    public function getByProducts($products)
+    {
+        $this->setProductsPrices($products);
+        $productsUnits = [];
+
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            if ($this->data[$productId]) {
+                $productsUnits[$productId] = $this->data[$productId];
+            }
+        }
+
+        return $productsUnits;
+    }
+
+    protected function setProductsPrices($products)
+    {
+        $products = array_filter($products, function ($product) {
+            return !array_key_exists($product->getId(), $this->data);
+        });
+        if (!$products) {
+            return;
+        }
+
+        $priceList = $this->priceListRequestHandler->getPriceListByAccount();
+        $productsIds = array_map(function ($product) {
+            return $product->getId();
+        }, $products);
+
+        /** @var ProductPriceRepository $priceRepository */
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
+        $prices = $priceRepository->findByPriceListIdAndProductIds(
+            $priceList->getId(),
+            $productsIds,
+            true,
+            $this->userCurrencyManager->getUserCurrency(),
+            null,
+            [
+                'unit' => 'ASC',
+                'currency' => 'DESC',
+                'quantity' => 'ASC',
+            ]
+        );
+
+        $productsPrices = [];
+
+        foreach ($prices as $price) {
+            $productsPrices[$price->getProduct()->getId()][] = $price;
+        }
+
+        foreach ($products as $product) {
+            $unitPrecisions = $product->getUnitPrecisions();
+
+            $unitsToSell = [];
+            foreach ($unitPrecisions as $unitPrecision) {
+                $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
+            }
+
+            $this->data[$product->getId()] = array_filter(
+                isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
+                function (CombinedProductPrice $price) use ($unitsToSell) {
+                    return !empty($unitsToSell[$price->getProductUnitCode()]);
+                }
+            );
+        }
     }
 }

@@ -13,8 +13,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Component\Tree\Entity\TreeTrait;
 use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
+use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -40,7 +40,7 @@ use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
  * )
  * @ORM\HasLifecycleCallbacks()
  *
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Category extends ExtendCategory
 {
@@ -219,6 +219,21 @@ class Category extends ExtendCategory
     protected $longDescriptions;
 
     /**
+     * @var CategoryDefaultProductOptions
+     *
+     * @ORM\OneToOne(targetEntity="CategoryDefaultProductOptions", cascade={"persist"})
+     * @ORM\JoinColumn(name="default_product_options_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $defaultProductOptions;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -276,22 +291,6 @@ class Category extends ExtendCategory
         }
 
         return $this;
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultTitle()
-    {
-        $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
-            return null === $title->getLocalization();
-        });
-
-        if ($titles->count() != 1) {
-            throw new \LogicException('There must be only one default title');
-        }
-
-        return $titles->first();
     }
 
     /**
@@ -440,7 +439,7 @@ class Category extends ExtendCategory
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle()->getString();
+        return (string) $this->getDefaultTitle();
     }
 
     /**
@@ -480,22 +479,6 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return LocalizedFallbackValue
-     */
-    public function getDefaultShortDescription()
-    {
-        $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
-            return null === $shortDescription->getLocalization();
-        });
-
-        if ($shortDescription->count() !== 1) {
-            throw new \LogicException('There must be only one default short description');
-        }
-
-        return $shortDescription->first();
-    }
-
-    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getLongDescriptions()
@@ -532,18 +515,24 @@ class Category extends ExtendCategory
     }
 
     /**
-     * @return LocalizedFallbackValue
+     * @return CategoryDefaultProductOptions
      */
-    public function getDefaultLongDescription()
+    public function getDefaultProductOptions()
     {
-        $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
-            return null === $longDescription->getLocalization();
-        });
+        return $this->defaultProductOptions;
+    }
 
-        if ($longDescription->count() != 1) {
-            throw new \LogicException('There must be only one default long description');
-        }
+    /**
+     * Set unitPrecision
+     *
+     * @param CategoryDefaultProductOptions $defaultProductOptions
+     *
+     * @return Category
+     */
+    public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
+    {
+        $this->defaultProductOptions = $defaultProductOptions;
 
-        return $longDescription->first();
+        return $this;
     }
 }

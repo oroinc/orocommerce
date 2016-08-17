@@ -14,7 +14,10 @@ define(function(require) {
             unit: '[data-name="field__unit"]'
         },
 
-        modelElements: ['quantity', 'unit'],
+        modelElements: {
+            quantity: 'quantity',
+            unit: 'unit'
+        },
 
         modelAttr: {
             id: 0,

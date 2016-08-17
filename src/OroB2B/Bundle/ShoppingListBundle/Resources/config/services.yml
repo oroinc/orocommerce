@@ -163,22 +163,6 @@ services:
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
 
-    orob2b_shopping_list.layout.block.type.shopping_list_selector:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_list_selector']]
-        tags:
-             - { name: layout.block_type, alias: shopping_list_selector }
-
-    orob2b_shopping_list.layout.block.type.shopping_lists_sidebar_list:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
-            - [setName, ['shopping_lists_sidebar_list']]
-        tags:
-             - { name: layout.block_type, alias: shopping_lists_sidebar_list }
-
     orob2b_shopping_list.data_provider.checkout_line_item:
         class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
         public: false
@@ -196,11 +180,17 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
 
-    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider'
+    orob2b_shopping_list.data_provider.product_shopping_lists:
+        class: 'OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'
         arguments:
             - '@orob2b_shopping_list.shopping_list.manager'
             - '@orob2b_shopping_list.repository.line_item'
+            - '@oro_security.security_facade'
+
+    orob2b_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
+        class: 'OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityDataProvider'
+        arguments:
+            - '@orob2b_shopping_list.data_provider.product_shopping_lists'
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
 
@@ -223,3 +213,10 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@orob2b_pricing.user_currency_manager'
+            - '@oro_config.global'
+
+    orob2b_shopping_list.provider.shopping_list_entity_name:
+        class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }

@@ -1,0 +1,110 @@
+{% block __oro_product_list_item__product_price_widget %}
+    {% set prices = products_prices[product.id]|default(null) %}
+    {% if prices %}
+    {% set attr = layout_attr_defaults(attr, {
+        "data-page-component-module": "oroui/js/app/components/view-component",
+        "~data-page-component-options": {
+            view: 'orob2bpricing/js/app/views/base-product-prices-view',
+            modelAttr: {
+                prices: prices
+            }
+        },
+        "~class": " product-item__price product-item__price_{{ class_prefix }} mb1-md mb1-sm"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div data-name="price">
+            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
+            <div class="product-item__price_block"
+                 data-name="prices-hint"
+                 data-placement="bottom"
+                 data-close="false"
+                 data-trigger="hover"
+                 data-container="body"
+                 data-class="prices-hint-content">
+                {% set firstPrice = prices[0]|default(null) %}
+                <div>
+                    <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.price|oro_format_price }}</span>
+                    / <span data-name="unit">{{ firstPrice ? firstPrice.unit.code|orob2b_format_product_unit_label }}</span>
+                </div>
+            </div>
+        </div>
+        <div data-name="prices-hint-content" class="hidden">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-uppercase">qty</th>
+                    <th >Unit Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% set shownUnit = '' %}
+                    {% for price in prices %}
+                        {% if shownUnit != price.unit.code %}
+                            {% set shownUnit = price.unit.code %}
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    {% if loop.index > 1 %}<br/>{% endif %}
+                                    <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td>
+                                {{ price.quantity }}
+                            </td>
+                            <td>
+                                {{ price.price|oro_format_price }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div data-name="price-not-found">
+            {% if prices %}
+                {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
+            {% else %}
+                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_list_item__product_listed_price_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item__listed-price product-item__listed-price_{{ class_prefix }}"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% set prices = products_prices[product.id]|default(null) %}
+        {% if prices %}
+            {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }}
+            <div class="product-item__price_block">
+                {% set pricesPerUnits = [] %}
+                {% for price in prices %}
+                    {% set unit = price.unit.code %}
+                    {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
+                        {% set pricesPerUnits = pricesPerUnits|merge({
+                            (unit): price
+                        }) %}
+                    {% endif %}
+                {% endfor %}
+                {% for price in pricesPerUnits %}
+                    <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                        <span>{{ price.price|oro_format_price }}</span> /
+                        {{ price.unit.code|orob2b_format_product_unit_label }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_msrp_widget %}
+    {% set attr = layout_attr_defaults({
+        '~class': " product-item__mspr product-item__mspr_{{ class_prefix }}"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ 'orob2b.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
+    </div>
+{% endblock %}

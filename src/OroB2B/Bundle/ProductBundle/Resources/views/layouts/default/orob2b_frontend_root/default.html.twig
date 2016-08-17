@@ -1,0 +1,18 @@
+{% block _featured_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products-item'
+    }) %}
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
+{% endblock %}

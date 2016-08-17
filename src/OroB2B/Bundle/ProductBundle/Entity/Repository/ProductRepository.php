@@ -6,7 +6,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductRepository extends EntityRepository
 {
@@ -127,9 +130,16 @@ class ProductRepository extends EntityRepository
      */
     public function getProductWithNamesQueryBuilder()
     {
-        return $this->createQueryBuilder('product')
-            ->select('product, product_names')
-            ->innerJoin('product.names', 'product_names');
+        $queryBuilder = $this->createQueryBuilder('product')
+            ->select('product');
+        $this->selectNames($queryBuilder);
+        return $queryBuilder;
+    }
+
+    public function selectNames(QueryBuilder $queryBuilder)
+    {
+        $queryBuilder->addSelect('product_names')->innerJoin('product.names', 'product_names');
+        return $this;
     }
 
     /**
@@ -172,27 +182,63 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param array $products
-     * @param string|null $imageType
-     * @return Product[]
+     * @param array $productIds
+     * @return File[]
      */
-    public function getProductsWithImage(array $products, $imageType = null)
+    public function getListingImagesFilesByProductIds(array $productIds)
     {
-        $qb = $this->createQueryBuilder('p');
-        $qb->select('p, images, imageFile')
-            ->join('p.images', 'images')
-            ->join('images.image', 'imageFile')
-            ->where($qb->expr()->in('p', ':products'))
-            ->setParameter('products', $products)
-            ->indexBy('p', 'p.id');
+        $qb = $this->_em->createQueryBuilder()
+            ->select('imageFile as image, IDENTITY(pi.product) as product_id')
+            ->from('OroAttachmentBundle:File', 'imageFile')
+            ->join(
+                'OroB2BProductBundle:ProductImage',
+                'pi',
+                Expr\Join::WITH,
+                'imageFile.id = pi.image'
+            );
 
-        if ($imageType) {
-            $qb->addSelect('imageTypes')
-                ->join('images.types', 'imageTypes')
-                ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
-                ->setParameter('imageType', $imageType);
+        $qb->where($qb->expr()->in('pi.product', ':products'))
+            ->setParameter('products', $productIds);
+
+        $qb->join('pi.types', 'imageTypes')
+            ->andWhere($qb->expr()->eq('imageTypes.type', ':imageType'))
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
+
+        $productImages = $qb->getQuery()->execute();
+        $images = [];
+
+        foreach ($productImages as $productImage) {
+            $images[$productImage['product_id']] = $productImage['image'];
         }
+        
+        return $images;
+    }
 
-        return $qb->getQuery()->execute();
+    /**
+     * @param string $sku
+     * @return string
+     */
+    public function getPrimaryUnitPrecisionCode($sku)
+    {
+        $qb = $this->createQueryBuilder('product');
+
+        return $qb
+            ->select('IDENTITY(productPrecision.unit)')
+            ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
+            ->where($qb->expr()->eq('product.sku', ':sku'))
+            ->setParameter('sku', $sku)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function selectImages(QueryBuilder $queryBuilder)
+    {
+        $queryBuilder->addSelect('product_images,product_images_types,product_images_file')
+            ->join('product.images', 'product_images')
+            ->join('product_images.types', 'product_images_types')
+            ->join('product_images.image', 'product_images_file')
+            ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
+            ->setParameter('imageType', ProductImageType::TYPE_MAIN);
+        return $this;
     }
 }

@@ -1,7 +1,9 @@
 layout:
+    imports:
+        - datagrid_row_product
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
+            themes: 'product_index.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -11,7 +13,7 @@ layout:
             parentId: datagrid_toolbar
             blockType: product_datagrid_options
             options:
-                current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
+                current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"]'
         - '@setOption':
             id: datagrid_toolbar
             optionName: attr.class
@@ -40,7 +42,7 @@ layout:
                     blockType: product_datagrid
                     options:
                         grid_name: frontend-products-grid
-                        current_row_view: {'@value': $data.orob2b_product_frontend_datagrid_row_view}
+                        current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"]'
             tree:
                 content:
                     product_index_page:
