@@ -41,4 +41,4 @@ layout:
                             check_email_message: ~
                             check_email_return_to_login: ~
     imports:
-        - 'orob2b_account_frontend_account_user_security'
+        - 'only_content'
