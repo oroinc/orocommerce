@@ -21,10 +21,10 @@
                  data-trigger="hover"
                  data-container="body"
                  data-class="prices-hint-content">
-                {% set firstPrice = prices[0]|default(null) %}
+                {% set firstPrice = prices|first %}
                 <div>
-                    <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.price|oro_format_price }}</span>
-                    / <span data-name="unit">{{ firstPrice ? firstPrice.unit.code|orob2b_format_product_unit_label }}</span>
+                    <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                    / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
                 </div>
             </div>
         </div>
@@ -39,8 +39,8 @@
                 <tbody>
                     {% set shownUnit = '' %}
                     {% for price in prices %}
-                        {% if shownUnit != price.unit.code %}
-                            {% set shownUnit = price.unit.code %}
+                        {% if shownUnit != price.unit %}
+                            {% set shownUnit = price.unit %}
                             <tr>
                                 <td colspan="2" class="text-center">
                                     {% if loop.index > 1 %}<br/>{% endif %}
@@ -53,7 +53,7 @@
                                 {{ price.quantity }}
                             </td>
                             <td>
-                                {{ price.price|oro_format_price }}
+                                {{ price.formatted_price }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -82,7 +82,7 @@
             <div class="product-item__price_block">
                 {% set pricesPerUnits = [] %}
                 {% for price in prices %}
-                    {% set unit = price.unit.code %}
+                    {% set unit = price.unit %}
                     {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
                         {% set pricesPerUnits = pricesPerUnits|merge({
                             (unit): price
@@ -91,8 +91,8 @@
                 {% endfor %}
                 {% for price in pricesPerUnits %}
                     <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
-                        <span>{{ price.price|oro_format_price }}</span> /
-                        {{ price.unit.code|orob2b_format_product_unit_label }}
+                        <span>{{ price.formatted_price }}</span> /
+                        {{ price.formatted_unit}}
                     </div>
                 {% endfor %}
             </div>
