@@ -35,3 +35,21 @@ AccountUser
 -----------
 - Added field `localization` to Entity `AccountUserSettings` - for storing selected `Localization` for websites.
 - Field `currency` in Entity `AccountUserSettings` is nullable.
+
+PaymentBundle
+-------------
+- Added `EventDispatcherInterface` argument to `OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider` constructor.
+- Added `getPaymentMethods` method to `OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider`.
+- Added `PaymentTransactionProvider` argument to `OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider` constructor.
+- Added `OroB2B\Bundle\PaymentBundle\Manager\PaymentStatusManager` for saving payment status for certain entity.
+- Added `OroB2B\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter` for translating payment status labels and getting all available payment statuses.
+- Added `OroB2B\Bundle\PaymentBundle\Twig\PaymentStatusExtension` with twig function `get_payment_status_label` which returns translated payment
+label.
+
+OrderBundle:
+------------
+- Moved `get_payment_status_label` twig function to `PaymentBundle` to `OroB2B\Bundle\PaymentBundle\Twig\PaymentStatusExtension`.
+- Removed `PaymentStatusProvider` constructor argument from `OroB2B/Bundle/OrderBundle/Twig/OrderExtension`.
+- Removed `OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
+- Removed method `OroB2B\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
+- Removed `OroB2B\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`

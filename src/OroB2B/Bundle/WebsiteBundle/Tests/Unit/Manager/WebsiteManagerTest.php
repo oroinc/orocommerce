@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -40,9 +39,10 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $website = new Website();
         $repository->expects($this->once())
             ->method('getDefaultWebsite')
-            ->willReturn(new Website());
+            ->willReturn($website);
 
         $objectManager = $this->getMock(ObjectManager::class);
         $objectManager->expects($this->once())
@@ -55,6 +55,6 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Website::class)
             ->willReturn($objectManager);
 
-        $this->assertEquals(new Website(), $this->manager->getCurrentWebsite());
+        $this->assertSame($website, $this->manager->getCurrentWebsite());
     }
 }

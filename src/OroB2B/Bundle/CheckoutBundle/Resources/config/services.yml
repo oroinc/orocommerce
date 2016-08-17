@@ -110,9 +110,8 @@ services:
         public: false
         arguments:
             - '@doctrine'
-        calls:
-            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
-            - [setCheckoutSourceClassName, ['%orob2b_checkout.entity.checkout_source.class%']]
+            - '%orob2b_checkout.entity.checkout.class%'
+            - '%orob2b_checkout.entity.checkout_source.class%'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_shopping_list.entity.shopping_list.class%', event: preRemove }
 
