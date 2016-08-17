@@ -29,20 +29,20 @@ abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit_Framework_TestCas
 
     public function testIsEntitySupported()
     {
-        $this->assertEquals(true, $this->mapper->isEntitySupported($this->checkout));
+        $this->assertTrue($this->mapper->isEntitySupported($this->checkout));
     }
 
     public function testIsEntitySupportedNotObject()
     {
         $entity = 'string';
 
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        $this->assertFalse($this->mapper->isEntitySupported($entity));
     }
 
     public function testIsEntitySupportedUnsupportedEntity()
     {
         $entity = new \stdClass();
 
-        $this->assertEquals(false, $this->mapper->isEntitySupported($entity));
+        $this->assertFalse($this->mapper->isEntitySupported($entity));
     }
 }

@@ -64,7 +64,7 @@ class PaymentMethodEnabledMapper implements CheckoutStateDiffMapperInterface
             return false;
         }
 
-        $paymentContext = $this->paymentContextProvider->processContext([true], $entity);
+        $paymentContext = $this->paymentContextProvider->processContext(['entity' => $entity], $entity);
 
         return $paymentMethod->isEnabled() && $paymentMethod->isApplicable($paymentContext);
     }
