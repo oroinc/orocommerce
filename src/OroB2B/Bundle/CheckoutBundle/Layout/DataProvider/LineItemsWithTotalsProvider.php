@@ -9,12 +9,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class SummaryProvider
+class LineItemsWithTotalsProvider
 {
     /**
      * @var CheckoutLineItemsManager
@@ -27,27 +25,19 @@ class SummaryProvider
     protected $lineItemSubtotalProvider;
 
     /**
-     * @var TotalProcessorProvider
-     */
-    protected $totalsProvider;
-
-    /**
      * @var array
      */
-    protected $summary = [];
+    protected $lineItems = [];
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
-     * @param TotalProcessorProvider $totalsProvider
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
-        LineItemSubtotalProvider $lineItemsSubtotalProvider,
-        TotalProcessorProvider $totalsProvider
+        LineItemSubtotalProvider $lineItemsSubtotalProvider
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
-        $this->totalsProvider = $totalsProvider;
         $this->lineItemSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
@@ -55,23 +45,14 @@ class SummaryProvider
      * @param Checkout $checkout
      * @return ArrayCollection
      */
-    public function getSummary(Checkout $checkout)
+    public function getData(Checkout $checkout)
     {
-        if (!array_key_exists($checkout->getId(), $this->summary)) {
-            $order = new Order();
-            $order->setShippingCost($checkout->getShippingCost());
-            $order->setLineItems($this->checkoutLineItemsManager->getData($checkout));
-            $lineItemsWithTotals = $this->getOrderLineItemsTotals($order->getLineItems());
-
-            $this->totalsProvider->enableRecalculation();
-            $this->summary[$checkout->getId()] = [
-                'lineItemsWithTotals' => $lineItemsWithTotals,
-                'subtotals' => $this->totalsProvider->getSubtotals($order),
-                'generalTotal' => $this->totalsProvider->getTotal($order)
-            ];
+        if (!array_key_exists($checkout->getId(), $this->lineItems)) {
+            $lineItems = $this->checkoutLineItemsManager->getData($checkout);
+            $this->lineItems[$checkout->getId()] = $this->getOrderLineItemsTotals($lineItems);
         }
 
-        return $this->summary[$checkout->getId()];
+        return $this->lineItems[$checkout->getId()];
     }
 
     /**

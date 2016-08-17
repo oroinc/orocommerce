@@ -49,7 +49,7 @@ class ProductFormExtension extends AbstractTypeExtension
                 'required' => false,
                 'mapped' => false,
                 'constraints' => [new UniqueProductUnitShippingOptions()],
-                'options' => [
+                'entry_options' => [
                     'product' => $product,
                 ],
             ]
