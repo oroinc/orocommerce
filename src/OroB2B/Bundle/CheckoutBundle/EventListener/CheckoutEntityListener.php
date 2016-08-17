@@ -7,17 +7,14 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-/**
- * While implementing custom checkout, alternative checkout entity can be set
- * This Event Listener can be used as base for replacement
- */
 class CheckoutEntityListener
 {
     const START_TRANSITION_DEFINITION = '__start__';
@@ -48,14 +45,14 @@ class CheckoutEntityListener
     protected $repository;
 
     /**
-     * @var string
-     */
-    protected $checkoutType = '';
-
-    /**
      * @var UserCurrencyManager
      */
     protected $userCurrencyManager;
+
+    /**
+     * @var array
+     */
+    protected $workflows = [];
 
     /**
      * @param WorkflowManager $workflowManager
@@ -84,14 +81,6 @@ class CheckoutEntityListener
         }
 
         $this->checkoutClassName = $checkoutClassName;
-    }
-
-    /**
-     * @param string $checkoutType
-     */
-    public function setCheckoutType($checkoutType)
-    {
-        $this->checkoutType = $checkoutType;
     }
 
     /**
@@ -129,11 +118,11 @@ class CheckoutEntityListener
      */
     protected function findExistingCheckout(CheckoutEntityEvent $event)
     {
-        if ($event->getCheckoutId() && $this->isAcceptableCheckoutType($event, $this->getCheckoutType())) {
-            /** @var BaseCheckout $checkout */
+        if ($event->getCheckoutId()) {
+            /** @var Checkout $checkout */
             $checkout = $this->getRepository()->find($event->getCheckoutId());
         } elseif ($event->getSource() && $event->getSource()->getId()) {
-            /** @var BaseCheckout $checkout */
+            /** @var Checkout $checkout */
             $checkout = $this->getRepository()->findOneBy(['source' => $event->getSource()]);
         }
 
@@ -141,13 +130,13 @@ class CheckoutEntityListener
     }
 
     /**
-     * @param BaseCheckout $checkout
-     * @return BaseCheckout
+     * @param Checkout $checkout
+     * @return Checkout
      */
-    protected function actualizeCheckoutCurrency(BaseCheckout $checkout)
+    protected function actualizeCheckoutCurrency(Checkout $checkout)
     {
         /** @var EntityManager $em */
-        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:BaseCheckout');
+        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:Checkout');
         $checkout->setCurrency($this->userCurrencyManager->getUserCurrency());
         $em->persist($checkout);
         $em->flush($checkout);
@@ -181,29 +170,7 @@ class CheckoutEntityListener
      */
     protected function isStartWorkflowAllowed($checkout)
     {
-        return $this->workflowManager->isStartTransitionAvailable(
-            $this->getWorkflowName(),
-            static::START_TRANSITION_DEFINITION,
-            $checkout
-        );
-    }
-
-    /**
-     * @param CheckoutEntityEvent $event
-     * @param string $checkoutType
-     * @return bool
-     */
-    protected function isAcceptableCheckoutType(CheckoutEntityEvent $event, $checkoutType)
-    {
-        return null === $event->getType() || $checkoutType === $event->getType();
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCheckoutType()
-    {
-        return $this->checkoutType;
+        return null !== $this->getWorkflowName($checkout);
     }
 
     /**
@@ -215,11 +182,39 @@ class CheckoutEntityListener
     }
 
     /**
-     * @return string
+     * @param CheckoutInterface $checkout
+     * @return null|string
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(CheckoutInterface $checkout)
     {
-        return $this->workflowManager->getApplicableWorkflowByEntityClass($this->getCheckoutClassName());
+        $cacheKey = $checkout->getId();
+        
+        if (!array_key_exists($cacheKey, $this->workflows)) {
+            $workflows = $this->workflowManager->getApplicableWorkflows($this->getCheckoutClassName());
+            $workflows = array_filter(
+                $workflows,
+                function (Workflow $workflow) use ($checkout) {
+                    return $this->workflowManager->isStartTransitionAvailable(
+                        $workflow,
+                        static::START_TRANSITION_DEFINITION,
+                        $checkout
+                    );
+                }
+            );
+
+            if (count($workflows) > 1) {
+                throw new \LogicException(
+                    sprintf('More than one active workflow found for entity "%s".', $this->getCheckoutClassName())
+                );
+            }
+
+            /** @var Workflow $workflow */
+            $workflow = array_shift($workflows);
+            
+            $this->workflows[$cacheKey] = $workflow ? $workflow->getName() : null;
+        }
+
+        return $this->workflows[$cacheKey];
     }
 
     /**
@@ -229,7 +224,7 @@ class CheckoutEntityListener
     {
         $checkoutClassName = $this->getCheckoutClassName();
 
-        return new $checkoutClassName;
+        return new $checkoutClassName();
     }
 
     /**

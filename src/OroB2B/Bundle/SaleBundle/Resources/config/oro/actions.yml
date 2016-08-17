@@ -11,7 +11,9 @@ operations:
         button_options:
             icon: icon-time
         frontend_options:
-            confirmation: orob2b.sale.quote.actions.quote_expire_confirm
+            confirmation:
+                message: orob2b.sale.quote.actions.quote_expire_confirm
+                okText: orob2b.sale.quote.actions.mark_as_expired
         preconditions:
             '@equal': [$expired, false]
         actions:
@@ -96,15 +98,21 @@ operations:
                 attribute: $.quoteDemand
                 where:
                     quote: $.data
-            - '@create_entity':
+            - '@tree':
                 conditions:
                     '@empty': $.quoteDemand
-                parameters:
-                    attribute: $.quoteDemand
-                    class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
-                    flush: true
-                    data:
-                        quote: $.data
+                actions:
+                    - '@create_entity':
+                        parameters:
+                            attribute: $.quoteDemand
+                            class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
+                            data:
+                                quote: $.data
+                    - '@call_service_method':
+                        service: orob2b_sale.manager.quote_demand_manager
+                        method: recalculateSubtotals
+                        method_parameters: [$.quoteDemand]
+                    - '@flush_entity': $.quoteDemand
             - '@redirect':
                  route: 'orob2b_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}

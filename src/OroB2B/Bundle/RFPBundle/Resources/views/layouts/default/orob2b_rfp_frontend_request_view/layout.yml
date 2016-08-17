@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_view/layout.html.twig'
@@ -11,9 +13,9 @@ layout:
                 -
                     label: 'orob2b.frontend.rfp.request.page_title.label'
                     parameters:
-                        '%id%': { '@value': $data.entity.id }
-                        '%firstName%': { '@value': $data.entity.firstName }
-                        '%lastName%': { '@value': $data.entity.lastName }
+                        '%id%': '=data["entity"].getId()'
+                        '%firstName%': '=data["entity"].getFirstName()'
+                        '%lastName%': '=data["entity"].getLastName()'
         - '@setOption':
             id: page_title
             optionName: class_prefix
@@ -24,11 +26,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.rfp.request.title.label'
                 parameters:
-                    '%id%': { '@value': $data.entity.id }
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
+                    '%id%': '=data["entity"].getId()'
         - '@addTree':
             items:
                 rfp_request_view_page:
@@ -38,9 +36,12 @@ layout:
                 rfp_request_view_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions: { '@value': $data.actions.all }
-                        entity: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
                 rfp_request_view_controls_list:
                     blockType: block
                     options:
@@ -48,24 +49,24 @@ layout:
                 rfp_request_view_information:
                     blockType: rfp_request_information
                     options:
-                        request: { '@value': $data.entity }
+                        request: '=data["entity"]'
                 rfp_request_view_line_items:
                     blockType: rfp_request_line_items
                     options:
-                        requestProducts: { '@value': $data.entity.requestProducts }
+                        requestProducts: '=data["entity"].getRequestProducts()'
                 rfp_request_view_line_items_mobile:
                     blockType: rfp_request_line_items
                     options:
-                        requestProducts: { '@value': $data.entity.requestProducts }
+                        requestProducts: '=data["entity"].getRequestProducts()'
                 rfp_request_view_notes_container:
                     blockType: container
                     options:
-                        visible: { '@not_empty': $data.entity.note }
+                        visible: '=data["entity"].getNote()!=null'
                 rfp_request_view_notes:
                     blockType: text
                     options:
-                        text: { '@value': $data.entity.note }
-                        visible: { '@not_empty': $data.entity.note }
+                        visible: '=data["entity"].getNote()!=null'
+                        text: '=data["entity"].getNote()'
                 rfp_request_view_bottom:
                     blockType: container
                 rfp_request_view_back_btn:

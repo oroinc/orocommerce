@@ -33,9 +33,9 @@ class PriceListProductPriceType extends AbstractType
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
 
-        $additionalCurrencies = [];
+        $currencies = [];
         if ($data->getPriceList()) {
-            $additionalCurrencies = $data->getPriceList()->getCurrencies();
+            $currencies = $data->getPriceList()->getCurrencies();
         }
 
         $builder
@@ -76,13 +76,14 @@ class PriceListProductPriceType extends AbstractType
                     'required' => true,
                     'compact' => true,
                     'label' => 'orob2b.pricing.productprice.price.label',
-                    'additional_currencies' => $additionalCurrencies,
+                    'currencies_list' => $currencies,
                     'currency_empty_value' => false,
                     'by_reference' => false,
                 ]
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
     /**
@@ -105,6 +106,25 @@ class PriceListProductPriceType extends AbstractType
                 );
         }
     }
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $submittedData = $event->getData();
+        $productPrice = $event->getForm()->getData();
+        if (!$productPrice instanceof ProductPrice) {
+            return;
+        }
+        $oldPrice = $productPrice->getPrice();
+        if ($submittedData['quantity'] != $productPrice->getQuantity()
+            || ($productPrice->getUnit() && $submittedData['unit'] != $productPrice->getUnit()->getCode())
+            || $submittedData['price']['value'] != $oldPrice->getValue()
+            || $submittedData['price']['currency'] != $oldPrice->getCurrency()
+        ) {
+            $productPrice->setPriceRule(null);
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -122,6 +142,14 @@ class PriceListProductPriceType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

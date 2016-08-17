@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_view/view.html.twig'
+            themes: 'view.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -13,43 +13,40 @@ layout:
                 no_shopping_lists:
                     blockType: block
                     options:
-                        visible: { '@empty': $data.entity }
+                        visible: '=!data["entity"]'
                 shopping_list_title:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions:
-                            '@value': $data.actions.all
-                        entity:
-                            '@value': $data.entity
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_line_items:
                     blockType: container
                 shopping_list_line_items_list:
                     blockType: shopping_list_line_items_list
                     options:
-                        visible:
-                          '@and':
-                            - '@not_empty': $data.entity
-                            - '@has_elements': $data.entity.lineItems
-                        shoppingList: { '@value': $data.entity }
-                        productsMatchedPrice: { '@value': $data.orob2b_shopping_list_products_matched_price }
-                        productsAllPrices: { '@value': $data.orob2b_shopping_list_products_all_prices }
-                        productsUnits: { '@value': $data.orob2b_shopping_list_products_units }
+                        visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
+                        shoppingList: '=data["entity"]'
+                        productsMatchedPrice: '=data["orob2b_shopping_list_products"].getMatchedPrice(data["entity"])'
+                        productsAllPrices: '=data["orob2b_shopping_list_products"].getAllPrices(data["entity"])'
+                        productsUnits: '=data["orob2b_shopping_list_products_units"].getProductsUnits(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        hidden: { '@has_elements': $data.entity.lineItems }
+                        visible: '=data["entity"]!=null && data["entity"].getLineItems()==null'
                 shopping_list_checkout_container:
                     blockType: container
                 shopping_list_button_container:
@@ -57,54 +54,38 @@ layout:
                 shopping_list_delete_button:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity}
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
                 shopping_list_totals:
                     blockType: shopping_list_totals
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        shoppingList: { '@value': $data.entity }
-                        totals: { '@value': $data.totals }
+                        visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
+                        totals: '=data["totals"]'
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:
-                        visible: { '@not_empty': $data.entity }
-                        actions:
-                            '@value': $data.actions.all
-                        entity:
-                            '@value': $data.entity
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                shopping_list_view_container_content:
+                    blockType: container
             tree:
                 content:
                     shopping_list_view_container:
-                        no_shopping_lists: ~
-                        shopping_list_title: ~
-                        shopping_list_top_actions: ~
-                        shopping_list_line_items:
-                            shopping_list_options: ~
-                            shopping_list_line_items_list: ~
-                            shopping_list_line_items_empty: ~
-                        shopping_list_checkout_container:
-                            shopping_list_button_container:
-                                shopping_list_delete_button: ~
-                            shopping_list_totals: ~
-                            shopping_list_combined_button: ~
-        - '@add':
-            id: shopping_list_selector
-            parentId: sidebar_left
-            blockType: shopping_list_selector
-            options:
-                visible: { '@has_elements': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                shoppingLists:
-                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
-                selectedShoppingList:
-                    '@value': $data.entity
-        - '@add':
-            id: shopping_lists_sidebar_list
-            parentId: sidebar_left
-            blockType: shopping_lists_sidebar_list
-            options:
-                visible: { '@has_elements': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
-                shoppingLists:
-                    '@value': $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
-                selectedShoppingList:
-                    '@value': $data.entity
+                        shopping_list_view_container_content:
+                            no_shopping_lists: ~
+                            shopping_list_title: ~
+                            shopping_list_top_actions: ~
+                            shopping_list_line_items:
+                                shopping_list_options: ~
+                                shopping_list_line_items_list: ~
+                                shopping_list_line_items_empty: ~
+                            shopping_list_checkout_container:
+                                shopping_list_button_container:
+                                    shopping_list_delete_button: ~
+                                shopping_list_totals: ~
+                                shopping_list_combined_button: ~

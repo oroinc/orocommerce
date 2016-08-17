@@ -39,6 +39,11 @@ class PriceAttributePriceListType extends AbstractType
         $builder
             ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
             ->add(
+                'fieldName',
+                'text',
+                ['required' => true, 'label' => 'orob2b.pricing.priceattributepricelist.field_name.label']
+            )
+            ->add(
                 'currencies',
                 CurrencySelectionType::NAME,
                 [
@@ -67,6 +72,14 @@ class PriceAttributePriceListType extends AbstractType
      * @return string
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

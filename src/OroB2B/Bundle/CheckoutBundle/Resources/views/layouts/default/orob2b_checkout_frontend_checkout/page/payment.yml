@@ -4,9 +4,6 @@ layout:
             themes:
                 - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
                 - 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
-        - '@setFormTheme':
-            themes:
-                - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
@@ -18,8 +15,7 @@ layout:
             prepend: true
             options:
                 class_prefix: 'checkout'
-                views: { '@value': $data.orob2b_payment_methods_provider }
-                currentPaymentMethod: { '@value': $data.checkout.paymentMethod }
+                views: '=data["orob2b_payment_methods_provider"].getViews(data["checkout"])'
+                currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
 
-    conditions:
-        '@eq': [$context.workflowStepName, 'enter_payment']
+    conditions: 'context["workflowStepName"]=="enter_payment"'

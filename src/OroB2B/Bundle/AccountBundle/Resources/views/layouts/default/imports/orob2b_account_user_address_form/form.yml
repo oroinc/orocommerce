@@ -11,19 +11,19 @@ layout:
                 __account_user_address_edit_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
+                        form: '=data["orob2b_account_frontend_account_user_address_form"].getAddressForm(data["entity"], data["accountUser"])'
                 __account_user_address_edit_form_errors:
                     blockType: form_errors
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form.view }
+                        form: '=data["orob2b_account_frontend_account_user_address_form"].getAddressForm(data["entity"], data["accountUser"]).getView()'
                 __account_user_address_edit_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
+                        form: '=data["orob2b_account_frontend_account_user_address_form"].getAddressForm(data["entity"], data["accountUser"])'
                 __account_user_address_edit_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_address_form }
+                        form: '=data["orob2b_account_frontend_account_user_address_form"].getAddressForm(data["entity"], data["accountUser"])'
                 __account_user_address_edit_form_actions:
                     blockType: container
                 __account_user_address_edit_form_actions_update:
@@ -37,7 +37,7 @@ layout:
                 __account_user_address_edit_form_actions_cancel:
                     blockType: link
                     options:
-                        path: { '@value': $data.backToUrl }
+                        path: '=data["backToUrl"]'
                         text: orob2b.account.frontend.address.buttons.cancel
                         attr:
                             'class': btn theme-btn btn-gray

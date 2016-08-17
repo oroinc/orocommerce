@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - orob2b_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/layout.html.twig'
@@ -22,11 +24,6 @@ layout:
             optionName: class_prefix
             optionValue: 'user'
 
-        - '@add':
-            id: account_sidebar
-            parentId: sidebar_left
-            blockType: container
-
         - '@addTree':
             items:
                 account_profile_edit_page:
@@ -36,15 +33,15 @@ layout:
                 account_profile_edit_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_profile_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"].getProfileForm(data["entity"])'
                 account_profile_edit_form_fields:
                     blockType: form_fields
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_profile_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"].getProfileForm(data["entity"])'
                 account_profile_edit_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_account_frontend_account_user_profile_form }
+                        form: '=data["orob2b_account_frontend_account_user_form"].getProfileForm(data["entity"])'
                 account_profile_edit_form_actions:
                     blockType: container
                 account_profile_edit_form_actions_cancel:

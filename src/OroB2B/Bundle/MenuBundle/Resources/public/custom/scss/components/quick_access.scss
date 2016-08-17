@@ -1,0 +1,44 @@
+.sidebar__quick-access {
+  margin-top: 3px;
+
+  background: $theme-slight-lightest-gray-color;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .quick-access__list {
+    padding: 30px 15px 10px 30px; //override default theme styles
+
+    text-align: left; //override default theme styles
+  }
+
+  .quick-access__item {
+    display: block; //override default theme styles
+    margin: 0 0 17px; //override default theme styles
+
+    text-transform: uppercase;
+
+    @media (max-width: $screen-md) {
+      margin: 0 0 17px; //override default theme styles
+    }
+  }
+
+  .quick-access__link {
+    font-weight: 700; //override default theme styles
+  }
+
+  .quick-access__badge {
+    width: $badge-sm; //override default theme styles
+    height: $badge-sm; //override default theme styles
+    margin-right: 15px; //override default theme styles
+
+    font-size: 14px; //override default theme styles
+    line-height: $badge-sm; //override default theme styles
+
+    i {
+      font-size: 16px; //override default theme styles
+    }
+  }
+}
+

@@ -1,5 +1,7 @@
 {% block _line_item_form_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " product__buy line_item_form_product_view"}) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product__buy line_item_form_product_view"
+    }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -8,7 +10,9 @@
 {% block _line_item_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
-        {% set attr = attr|merge({class: attr.class|default('') ~ " form__col "}) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col no-padding"
+        }) %}
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
@@ -24,4 +28,13 @@
             }) }}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form__col"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

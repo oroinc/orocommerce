@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Cache;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\MenuBundle\Cache\CacheWarmer;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 class CacheWarmerTest extends \PHPUnit_Framework_TestCase
 {

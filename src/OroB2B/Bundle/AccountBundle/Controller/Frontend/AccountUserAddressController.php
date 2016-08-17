@@ -109,7 +109,9 @@ class AccountUserAddressController extends Controller
     {
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
-        $form = $this->get('orob2b_account.provider.fronted_account_user_address_form')->getForm($accountAddress);
+        $form = $this->get('orob2b_account.provider.fronted_account_user_address_form')
+            ->getAddressForm($accountAddress, $accountUser)
+            ->getForm();
 
         $currentUser = $this->getUser();
 

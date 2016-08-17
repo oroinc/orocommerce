@@ -1,11 +1,6 @@
 services:
     orob2b_pricing.form.type.price_list:
         class: 'OroB2B\Bundle\PricingBundle\Form\Type\PriceListType'
-        calls:
-            - [setDataClass, ['%orob2b_pricing.entity.price_list.class%']]
-            - [setAccountClass, ['%orob2b_account.entity.account.class%']]
-            - [setAccountGroupClass, ['%orob2b_account.entity.account_group.class%']]
-            - [setWebsiteClass, ['%orob2b_website.entity.website.class%']]
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
@@ -96,7 +91,7 @@ services:
     orob2b_pricing.form.extension.product_type.price_attributes:
         class: OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
         arguments:
-            - @doctrine
+            - '@doctrine'
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
@@ -166,3 +161,9 @@ services:
            - "@orob2b_pricing.rounding.price_rounding_service"
        tags:
            - { name: form.type, alias: orob2b_pricing_product_attribute_price }
+
+    orob2b_pricing.form.type.orob2b_pricing_price_rule:
+       class: OroB2B\Bundle\PricingBundle\Form\Type\PriceRuleType
+       public: true
+       tags:
+           - { name: form.type, alias: orob2b_pricing_price_rule }

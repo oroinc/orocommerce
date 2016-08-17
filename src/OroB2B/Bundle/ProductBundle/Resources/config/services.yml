@@ -87,7 +87,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@event_dispatcher"
-            - "@oro_attachment.manager"
+            - "@oro_attachment.file_manager"
             - "@oro_attachment.provider.attachment"
         calls:
             - [setSkuIncrementor,  ["@orob2b_product.service.sku_incrementor"]]
@@ -167,6 +167,7 @@ services:
             - "@oro_security.security_facade"
             - "@session"
             - "@translator"
+            - "@service_container"
         calls:
             - [setComponentProcessorFilter,  ["@orob2b_product.component_processor.filter"]]
         abstract: true
@@ -174,9 +175,7 @@ services:
     orob2b_product.form_handler.quick_add:
         class: 'OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
         arguments:
-            - "@orob2b_product.provider.quick_add_form_provider"
-            - "@orob2b_product.provider.quick_add_import_form_provider"
-            - "@orob2b_product.provider.quick_add_copy_paste_form_provider"
+            - "@orob2b_product.layout.data_provider.product_form"
             - "@orob2b_product.model.builder.quick_add_row_collection"
             - "@orob2b_product.component_processor.registry"
             - "@router"
@@ -225,27 +224,6 @@ services:
             - "@doctrine"
         tags:
             - {name: orob2b_product.default_product_unit_provider, priority: 0}
-
-    orob2b_product.provider.quick_add_form_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
-        arguments:
-            - "@form.factory"
-        tags:
-            - { name: layout.data_provider, alias: orob2b_product_quick_add_form_provider }
-
-    orob2b_product.provider.quick_add_import_form_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider'
-        arguments:
-            - "@form.factory"
-        tags:
-            - { name: layout.data_provider, alias: orob2b_product_quick_add_import_form_provider }
-
-    orob2b_product.provider.quick_add_copy_paste_form_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider'
-        arguments:
-            - "@form.factory"
-        tags:
-            - { name: layout.data_provider, alias: orob2b_product_quick_add_copy_paste_form_provider }
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
@@ -371,9 +349,27 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
 
-    orob2b_product.layout.data_provider.product_line_item_form:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductLineItemFormProvider'
+    orob2b_product.layout.data_provider.product_form:
+        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
         tags:
-            - { name: layout.data_provider, alias: orob2b_product_line_item_form }
+            - { name: layout.data_provider, alias: orob2b_product_form }
+
+    orob2b_product.api.processor.update_product.build_query:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+        tags:
+            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%orob2b_product.entity.product.class%'}
+
+    orob2b_product.api.processor.product_id.normalize_input:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        tags:
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_product.entity.product.class%'}
+
+    orob2b_product.api.processor.entity_id.load_data:
+        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}

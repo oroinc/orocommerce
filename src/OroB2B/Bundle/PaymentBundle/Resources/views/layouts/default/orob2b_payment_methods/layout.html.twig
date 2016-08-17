@@ -29,15 +29,8 @@
 
 {% block _payment_methods_payment_term_widget %}
     <div class="{{ class_prefix }}__form__payment-methods"
-         data-page-component-module="orob2bpayment/js/app/components/payment-term-component"
+         data-page-component-module="orob2bpayment/js/app/components/payment-method-component"
          data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
         {{ view.options.value }}
     </div>
-{% endblock %}
-
-{% block _payment_methods_credit_card_widget %}
-    {{ form_widget(
-        view.options.formView,
-        {class_prefix: class_prefix, paymentMethod: name, options: view.options})
-    }}
 {% endblock %}

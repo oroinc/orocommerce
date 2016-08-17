@@ -11,8 +11,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'orob2b_pricing_product_price_collection';
@@ -92,6 +90,14 @@ class ProductPriceCollectionType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

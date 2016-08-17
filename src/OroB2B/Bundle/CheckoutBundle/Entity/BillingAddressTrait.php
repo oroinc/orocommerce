@@ -17,7 +17,7 @@ trait BillingAddressTrait
     /**
      * @var bool
      *
-     * @ORM\Column(name="save_billing_address", type="boolean")
+     * @ORM\Column(name="save_billing_address", type="boolean", options={"default"=true})
      */
     protected $saveBillingAddress = true;
 

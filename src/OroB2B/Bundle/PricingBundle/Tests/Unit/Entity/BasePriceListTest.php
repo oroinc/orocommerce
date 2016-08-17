@@ -59,31 +59,6 @@ class BasePriceListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('EUR', $priceListCurrency->getCurrency());
     }
 
-    public function testPricesCollection()
-    {
-        $priceList = $this->createPriceList();
-
-        $this->assertInstanceOf(
-            'Doctrine\Common\Collections\ArrayCollection',
-            $priceList->getPrices()
-        );
-        $this->assertCount(0, $priceList->getPrices());
-
-        $price = $this->createProductPrice();
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\BasePriceList',
-            $priceList->addPrice($price)
-        );
-        $this->assertEquals([$price], $priceList->getPrices()->toArray());
-
-        $priceList->addPrice($price);
-        $this->assertEquals([$price], $priceList->getPrices()->toArray());
-
-        $priceList->removePrice($price);
-        $this->assertCount(0, $priceList->getPrices());
-    }
-
     /**
      * @return BasePriceList
      */

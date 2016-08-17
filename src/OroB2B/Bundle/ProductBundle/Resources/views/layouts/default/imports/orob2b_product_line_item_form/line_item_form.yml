@@ -7,17 +7,17 @@ layout:
                 __line_item_form_start:
                     blockType: form_start
                     options:
-                        form: { '@value': $data.orob2b_product_line_item_form }
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                 __line_item_form_fields:
                     blockType: form_fields
                     options:
                         preferred_fields: [quantity]
-                        form: { '@value': $data.orob2b_product_line_item_form }
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                         class_prefix: 'line_item_form_fields'
                 __line_item_form_end:
                     blockType: form_end
                     options:
-                        form: { '@value': $data.orob2b_product_line_item_form }
+                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
                 __line_item_form_buttons:
                     blockType: container
             tree:

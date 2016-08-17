@@ -2,14 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -56,25 +59,15 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: product.
-     */
-    public function testGetDataWithEmptyContext()
+    public function testGetProductPrices()
     {
-        $context = new LayoutContext();
-        $this->provider->getData($context);
-    }
-
-    public function testGetData()
-    {
-        $prices = [1 => 'test', 2 => 'test2'];
         $priceListId = 23;
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
         $productId = 24;
-        $product =  $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
-                          ->disableOriginalConstructor()
-                          ->getMock();
+        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
+        $product = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $product->expects($this->once())
             ->method('getId')
@@ -84,16 +77,14 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $unitPrecisions[] = $this->createUnitPrecision('set', false);
 
         $product->expects($this->once())
-                 ->method('getUnitPrecisions')
-                 ->willReturn($unitPrecisions);
+            ->method('getUnitPrecisions')
+            ->willReturn($unitPrecisions);
 
         $productPrice1 = $this->createProductPrice('each', $product);
         $productPrice2 = $this->createProductPrice('set', $product);
         $prices = [$productPrice1, $productPrice2];
-        
+
         $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
-        $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
 
         $repo = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
@@ -116,30 +107,21 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getUserCurrency')
             ->willReturn('EUR');
 
-        $actual = $this->provider->getData($context);
-        $this->assertEquals(1, count($actual));
+        $actual = $this->provider->getProductPrices($product);
+        $this->assertCount(1, $actual);
         $this->assertEquals('each', current($actual)->getUnit());
     }
 
     /**
      * @param string $unitCode
-     * @param boolen $sell
-     * @return productUnitPresion
+     * @param boolean $sell
+     * @return ProductUnitPrecision
      */
     private function createUnitPrecision($unitCode, $sell)
     {
-        $p = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\ProductUnionPrecision')
-            ->setMethods(array('isSell', 'getUnit'))
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $p->expects($this->once())
-            ->method('isSell')
-            ->willReturn($sell);
-
-        $p->expects($this->any())
-           ->method('getUnit')
-           ->willReturn($unitCode);
+        $p = new ProductUnitPrecision();
+        $p->setSell($sell);
+        $p->setUnit($this->getUnit($unitCode));
 
         return $p;
     }
@@ -151,21 +133,22 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createProductPrice($unit, $product)
     {
-        $p = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice',
-            array('getUnit', 'getProduct')
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $p->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-
-        $p->expects($this->any())
-            ->method('getUnit')
-            ->willReturn($unit);
+        $p = new CombinedProductPrice();
+        $p->setProduct($product);
+        $p->setUnit($this->getUnit($unit));
 
         return $p;
+    }
+
+    /**
+     * @param string $unitCode
+     * @return ProductUnit
+     */
+    private function getUnit($unitCode)
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        return $unit;
     }
 }
