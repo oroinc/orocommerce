@@ -189,7 +189,7 @@ workflows:
                     is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@assign_value': [$payment_validate, true]
                         - '@call_service_method':
                             service: orob2b_payment.provider.payment_transaction
@@ -276,26 +276,26 @@ workflows:
 
         transition_definitions:
             __start___definition:
-                pre_conditions:
+                preconditions:
                     '@not':
                         - '@and':
                             - '@assert_account': 4
                             - '@payment_method_enabled': 'payment_term'
-                post_actions:
+                actions:
                     - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
-                pre_conditions:
+                preconditions:
                     '@not_equal': [$payment_in_progress, true]
 
             back_to_billing_address_definition:
-                pre_conditions:
+                preconditions:
                     '@not_equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
 
             continue_to_shipping_address_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -304,7 +304,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@not_empty': $checkout.billingAddress
-                post_actions:
+                actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
                         conditions:
@@ -355,7 +355,7 @@ workflows:
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -370,7 +370,7 @@ workflows:
                         - '@and':
                             - '@equal': [$checkout.shipToBillingAddress, false]
                             - '@not_empty': $checkout.shippingAddress
-                post_actions:
+                actions:
                     - '@tree':
                         conditions:
                             '@and':
@@ -396,14 +396,14 @@ workflows:
                             - '@flush_entity': $checkout.shippingAddress
 
             continue_to_payment_definition:
-                pre_conditions:
+                preconditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
 
             continue_to_order_review_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -423,7 +423,7 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-                post_actions:
+                actions:
                     - '@tree':
                         conditions:
                             '@equal': [$payment_validate, true]
@@ -454,7 +454,7 @@ workflows:
                                     failureUrl: $.result.failureUrl
 
             verify_payment_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
@@ -472,11 +472,11 @@ workflows:
                                 expected_value: ajax_checkout
 
             place_order_definition:
-                pre_conditions:
+                preconditions:
                     '@not_equal':
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
-                post_actions:
+                actions:
                     - '@assign_value':
                         conditions:
                             '@equal': [$checkout.shipToBillingAddress, false]
@@ -617,7 +617,7 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
                     - '@tree':
@@ -744,11 +744,11 @@ workflows:
                             id: $order.id
 
             payment_error_definition:
-#                pre_conditions:
+#                preconditions:
 #                    '@equal': [$payment_in_progress, true]
-                post_actions:
+                actions:
                     - '@assign_value': [$payment_in_progress, false]
 
             back_to_shipping_address_definition:
-                post_actions:
+                actions:
                     - '@assign_value': [$payment_in_progress, false]

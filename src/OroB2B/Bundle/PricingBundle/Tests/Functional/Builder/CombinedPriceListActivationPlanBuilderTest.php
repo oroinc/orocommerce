@@ -212,6 +212,6 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 $name[] = $this->getReference($priceList)->getId() . 'f';
             }
         }
-        return md5(implode("_", $name));
+        return md5(implode('_', $name));
     }
 }

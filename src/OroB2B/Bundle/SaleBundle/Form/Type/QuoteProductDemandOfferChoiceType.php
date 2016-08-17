@@ -41,7 +41,6 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
         $resolver->setDefaults(
             [
                 'expanded' => true,
-                'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
                 'multiple' => false,
                 'choices_as_values' => true,
                 'choice_label' => function ($value) {
