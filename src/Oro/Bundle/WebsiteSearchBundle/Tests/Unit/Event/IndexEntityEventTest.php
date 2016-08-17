@@ -33,11 +33,11 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($context, $event->getContext());
     }
 
-    public function testGetEntityDataWhenNothingWasAdded()
+    public function testGetEntitiesDataWhenNothingWasAdded()
     {
         $event = new IndexEntityEvent('', [], []);
 
-        $this->assertEquals([], $event->getEntityData(1));
+        $this->assertEquals([], $event->getEntitiesData());
     }
 
     public function testGetEntityDataWhenFieldsAreAdded()
@@ -50,27 +50,27 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $event->addField(1, Query::TYPE_INTEGER, 'categoryId', 3);
         $event->addField(2, Query::TYPE_TEXT, 'title', 'Another product title');
 
-        $expectedDataForFirstEntity = [
-            Query::TYPE_TEXT => [
-                'title' => 'Product title',
-                'description' => 'Product description'
+        $expectedData = [
+            1 => [
+                Query::TYPE_TEXT => [
+                    'title' => 'Product title',
+                    'description' => 'Product description'
+                ],
+                Query::TYPE_DECIMAL => [
+                    'price' => 100.00
+                ],
+                Query::TYPE_INTEGER => [
+                    'categoryId' => 3
+                ]
             ],
-            Query::TYPE_DECIMAL => [
-                'price' => 100.00
-            ],
-            Query::TYPE_INTEGER => [
-                'categoryId' => 3
+            2 => [
+                Query::TYPE_TEXT => [
+                    'title' => 'Another product title'
+                ]
             ]
         ];
 
-        $expectedDataForSecondEntity = [
-            Query::TYPE_TEXT => [
-                'title' => 'Another product title'
-            ]
-        ];
-
-        $this->assertEquals($expectedDataForFirstEntity, $event->getEntityData(1));
-        $this->assertEquals($expectedDataForSecondEntity, $event->getEntityData(2));
+        $this->assertEquals($expectedData, $event->getEntitiesData());
     }
 
     /**
@@ -93,28 +93,5 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $event = new IndexEntityEvent('', [1], []);
 
         $event->addField(999, 'wrongType', 'title', 'Product title');
-    }
-
-    public function testGetEntitiesData()
-    {
-        $event = new IndexEntityEvent('', [1, 2], []);
-
-        $event->addField(1, Query::TYPE_TEXT, 'title', 'Product title');
-        $event->addField(2, Query::TYPE_TEXT, 'title', 'Another product title');
-
-        $expectedEntitiesData = [
-            1 => [
-                Query::TYPE_TEXT => [
-                    'title' => 'Product title',
-                ]
-            ],
-            2 => [
-                Query::TYPE_TEXT => [
-                    'title' => 'Another product title',
-                ]
-            ],
-        ];
-
-        $this->assertEquals($expectedEntitiesData, $event->getEntitiesData());
     }
 }

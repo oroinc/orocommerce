@@ -41,7 +41,7 @@ class IndexEntityEvent extends Event
     /**
      * @var array
      */
-    private $entitiesData;
+    private $entitiesData = [];
 
     /**
      * @param string $entityName
@@ -121,15 +121,6 @@ class IndexEntityEvent extends Event
                 )
             );
         }
-    }
-
-    /**
-     * @param int $entityId
-     * @return array
-     */
-    public function getEntityData($entityId)
-    {
-        return isset($this->entitiesData[$entityId]) ? $this->entitiesData[$entityId] : [];
     }
 
     /**
