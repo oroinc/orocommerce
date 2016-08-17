@@ -25,8 +25,8 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
+     * {@inheritdoc}
      * @param Checkout $checkout
-     * @return string
      */
     public function getCurrentState($checkout)
     {

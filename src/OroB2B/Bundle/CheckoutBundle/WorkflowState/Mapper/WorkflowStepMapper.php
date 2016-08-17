@@ -50,6 +50,6 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
     /** {@inheritdoc} */
     public function isStatesEqual($entity, $state1, $state2)
     {
-        return $state1 === $state2 || $state1 === null || $state2 === null;
+        return $state1 === $state2;
     }
 }
