@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var PaymentTermComponent;
+    var PaymentMethodComponent;
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var routing = require('routing');
 
-    PaymentTermComponent = BaseComponent.extend({
+    PaymentMethodComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -78,9 +78,9 @@ define(function(require) {
             mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
             mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
 
-            PaymentTermComponent.__super__.dispose.call(this);
+            PaymentMethodComponent.__super__.dispose.call(this);
         }
     });
 
-    return PaymentTermComponent;
+    return PaymentMethodComponent;
 });
