@@ -277,13 +277,17 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
+    orob2b_pricing.price_list_change_trigger_factory:
+        class: 'OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory'
+        arguments:
+            - '@doctrine'
+
     orob2b_pricing.price_list_change_trigger_handler:
         class: 'OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler'
         arguments:
             - '@doctrine'
-            - '@event_dispatcher'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
+            - '@orob2b_pricing.price_list_change_trigger_factory'
+            - '@oro_message_queue.client.message_producer'
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'

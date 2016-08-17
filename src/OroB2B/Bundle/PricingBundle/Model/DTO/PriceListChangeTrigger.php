@@ -12,6 +12,7 @@ class PriceListChangeTrigger
     const ACCOUNT = 'account';
     const ACCOUNT_GROUP = 'accountGroup';
     const FORCE = 'force';
+
     /**
      * @var Account
      */

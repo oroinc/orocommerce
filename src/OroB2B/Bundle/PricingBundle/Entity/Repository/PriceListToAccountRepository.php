@@ -15,6 +15,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -83,7 +84,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('priceListFallBack.account', 'account')
             )
         )
-        ->setParameter('website', $website);
+            ->setParameter('website', $website);
 
         $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
             ->setParameter('accountGroup', $accountGroup);
@@ -95,7 +96,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                     $qb->expr()->isNull('priceListFallBack.fallback')
                 )
             )
-            ->setParameter('fallbackToGroup', $fallback);
+                ->setParameter('fallbackToGroup', $fallback);
         }
 
         return new BufferedQueryResultIterator($qb->getQuery());
@@ -104,48 +105,36 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     /**
      * @param AccountGroup $accountGroup
      * @param integer[] $websiteIds
-     * @return AccountWebsiteDTO[]|ArrayCollection
+     * @return BufferedQueryResultIterator
      */
-    public function getAccountWebsitePairsByAccountGroup(AccountGroup $accountGroup, $websiteIds)
-    {
-        $pairs = $this->getAccountWebsitePairsByAccountGroupQueryBuilder($accountGroup, $websiteIds)
-            ->getQuery()
-            ->getResult();
-        $em = $this->getEntityManager();
-        $entityPair = new ArrayCollection();
-        foreach ($pairs as $pair) {
-            /** @var Account $account */
-            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
-            /** @var Website $website */
-            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
-            $entityPair->add(new AccountWebsiteDTO($account, $website));
-        }
-
-        return $entityPair;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param integer[] $websiteIds
-     * @return QueryBuilder
-     */
-    public function getAccountWebsitePairsByAccountGroupQueryBuilder(AccountGroup $accountGroup, $websiteIds)
+    public function getAccountWebsitePairsByAccountGroupIterator(AccountGroup $accountGroup, $websiteIds)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
-        return $qb->select(
-            'IDENTITY(PriceListToAccount.account) as account_id',
-            'IDENTITY(PriceListToAccount.website) as website_id'
+        $qb->select(
+            sprintf('IDENTITY(PriceListToAccount.account) as %s', PriceListChangeTrigger::ACCOUNT),
+            sprintf('IDENTITY(PriceListToAccount.website) as %s', PriceListChangeTrigger::WEBSITE)
         )
             ->innerJoin('PriceListToAccount.account', 'account')
-            ->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
-            ->andWhere($qb->expr()->in('PriceListToAccount.website', ':websiteIds'))
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToAccountGroup',
+                'PriceListToAccountGroup',
+                Join::WITH,
+                $qb->expr()->andX(
+                    'PriceListToAccountGroup.accountGroup = account.group',
+                    'PriceListToAccountGroup.website = PriceListToAccount.website'
+                )
+            )
+            ->where($qb->expr()->eq('account.group', ':accountGroup'))
             ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
             ->setParameter('accountGroup', $accountGroup)
             ->setParameter('websiteIds', $websiteIds);
+
+        return new BufferedQueryResultIterator($qb);
     }
 
     /**
+     * todo refactor
      * @param Account $account
      * @return AccountWebsiteDTO[]|ArrayCollection
      */
@@ -229,7 +218,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
                 $subQueryBuilder->expr()->eq('relation.account', $parentAlias),
-                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
+                $subQueryBuilder->expr()->eq('relation.priceList', ':'.$parameterName)
             )
         );
 
