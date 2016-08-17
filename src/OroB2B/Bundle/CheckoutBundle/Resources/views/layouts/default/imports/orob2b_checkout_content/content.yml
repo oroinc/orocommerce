@@ -42,7 +42,7 @@ layout:
                 __checkout_order_summary_totals:
                     blockType: price_totals
                     options:
-                        data: '=data["orob2b_checkout_totals"].getData(data["checkout"])'
+                        totals: '=data["orob2b_checkout_totals"].getData(data["checkout"])'
                         entityClassName: 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout'
                         entityId: '=data["checkout"].getId()'
                         events:

@@ -34,7 +34,7 @@ services:
                         entityClassName: {required: true}
                         entityId: {required: true}
                         skipMaskView: ~
-                        data: {required: true}
+                        totals: {required: true}
             - [setName, ['price_totals']]
         tags:
              - { name: layout.block_type, alias: price_totals }

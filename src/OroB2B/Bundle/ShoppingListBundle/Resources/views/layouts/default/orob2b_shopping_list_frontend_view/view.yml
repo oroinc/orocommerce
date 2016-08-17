@@ -60,7 +60,7 @@ layout:
                     blockType: price_totals
                     options:
                         visible: '=data["entity"]!=null'
-                        data: '=data["totals"]'
+                        totals: '=data["totals"]'
                         events:
                             - 'frontend:item:delete'
                             - 'frontend:shopping-list-item-quantity:update'
