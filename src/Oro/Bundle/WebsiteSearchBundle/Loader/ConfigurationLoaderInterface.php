@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Loader;
 
 use Oro\Component\Config\CumulativeResourceInfo;
 
-interface ResourcesBasedConfigurationProviderInterface
+interface ConfigurationLoaderInterface
 {
     /**
      * Returns yml file resources which define configuration.

@@ -1,20 +1,21 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
 use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Component\Config\CumulativeResourceManager;
-use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesBasedMappingConfigurationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestCustomBundle\TestCustomBundle;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestPageBundle\TestPageBundle;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestProductBundle\TestProductBundle;
 
-class ResourcesBasedMappingConfigurationProviderTest extends \PHPUnit_Framework_TestCase
+class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigResourcePathTrait;
 
     /**
-     * @var ResourcesBasedMappingConfigurationProvider
+     * @var MappingConfigurationLoader
      */
     protected $provider;
 
@@ -32,7 +33,7 @@ class ResourcesBasedMappingConfigurationProviderTest extends \PHPUnit_Framework_
                 $customBundle->getName() => get_class($customBundle)
             ]);
 
-        $this->provider = new ResourcesBasedMappingConfigurationProvider();
+        $this->provider = new MappingConfigurationLoader();
     }
 
     public function testGetResources()
