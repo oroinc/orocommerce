@@ -67,7 +67,10 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
     private function initProvider($debug)
     {
         $this->provider = new ConfigurationCacheProvider(
-            $this->cacheProvider, $this->configurationProvider, $this->hashProvider, $debug
+            $this->cacheProvider,
+            $this->configurationProvider,
+            $this->hashProvider,
+            $debug
         );
     }
 
