@@ -5,6 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension;
+
 class WebsiteSearchProviderPass implements CompilerPassInterface
 {
     const ENGINE_PARAMETERS_KEY   = 'oro_search.engine_parameters';
@@ -21,39 +25,18 @@ class WebsiteSearchProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $engineParameters = $container->getParameter(self::ENGINE_PARAMETERS_KEY);
-        $engineParameters = $this->processElasticSearchConnection($container, $engineParameters);
-        $container->setParameter(self::ENGINE_PARAMETERS_KEY, $engineParameters);
+        $container->setParameter(self::SEARCH_ENGINE_HOST, $this->getConfigItem('host'));
+        $container->setParameter(self::SEARCH_ENGINE_PORT, $this->getConfigItem('port'));
+        $container->setParameter(self::SEARCH_ENGINE_USERNAME, $this->getConfigItem('username'));
+        $container->setParameter(self::SEARCH_ENGINE_PASSWORD, $this->getConfigItem('password'));
+        $container->setParameter(self::SEARCH_ENGINE_AUTH_TYPE, $this->getConfigItem('auth_type'));
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $engineParameters
-     * @return array
-     */
-    protected function processElasticSearchConnection(ContainerBuilder $container, array $engineParameters)
+
+    protected function getConfigItem($key)
     {
-        // connection parameters
-        $host = $container->getParameter(self::SEARCH_ENGINE_HOST);
-        $port = $container->getParameter(self::SEARCH_ENGINE_PORT);
+        $fullKey = OroWebsiteSearchExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . $key;
 
-        if ($host && $port) {
-            $host .= ':' . $port;
-        }
-
-        if ($host) {
-            $engineParameters['client']['hosts'] = [$host];
-        }
-
-        // authentication parameters
-        $username = $container->getParameter(self::SEARCH_ENGINE_USERNAME);
-        $password = $container->getParameter(self::SEARCH_ENGINE_PASSWORD);
-        $authType = $container->getParameter(self::SEARCH_ENGINE_AUTH_TYPE);
-
-        if ($username || $password || $authType) {
-            $engineParameters['client']['connectionParams']['auth'] = [$username, $password, $authType];
-        }
-
-        return $engineParameters;
+        return ''; // TODO get config item
     }
 }
