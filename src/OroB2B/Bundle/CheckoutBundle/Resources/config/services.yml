@@ -296,10 +296,10 @@ services:
         calls:
             - ['setWorkflowName', ['b2b_flow_checkout']]
 
-    orob2b_checkout.entity_listener.checkout:
-        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\EntityCheckoutListener'
+    orob2b_checkout.entity_listener.remove_checkout_workflow_states:
+        class: 'OroB2B\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener'
         arguments:
-            - '@doctrine'
+            - '@oro_entity.doctrine_helper'
             - '%orob2b_checkout.entity.checkout_workflow_state.class%'
         public: false
         tags:
