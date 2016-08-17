@@ -57,3 +57,5 @@ layout:
                             registration_form_submit: ~
                             registration_back_btn: ~
                             registration_form_end: ~
+    imports:
+        - 'orob2b_account_frontend_account_user_security'
