@@ -1,21 +1,22 @@
-{% block _login_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
-    }) %}
+{% block _login_page_widget %}
     <div{{ block('block_attributes') }}>
-        <form id="form-login"
-              action="{{ path('orob2b_account_account_user_security_check') }}"
-              class="{{ class_prefix }}__form {{ class_prefix }}__form_signin"
-              method="post">
-            {{ block_widget(block) }}
-        </form>
-        <script type="text/javascript">
-            require(['jquery', 'jquery.validate'],
-            function ($) {
-                $('#form-login').validate({});
-            });
-        </script>
+        {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _login_form_widget %}
+    <form id="form-login"
+          action="{{ path('orob2b_account_account_user_security_check') }}"
+          class="{{ class_prefix }}__form {{ class_prefix }}__form_signin"
+          method="post">
+        {{ block_widget(block) }}
+    </form>
+    <script type="text/javascript">
+        require(['jquery', 'jquery.validate'],
+        function ($) {
+            $('#form-login').validate({});
+        });
+    </script>
 {% endblock %}
 
 {% block _login_form_username_widget %}
@@ -24,8 +25,9 @@
         autofocus: true,
         'data-validation': {"NotBlank":{"payload":null}}|json_encode
     }|merge(attr)|merge({
-        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+        class: attr.class|default('') ~ " input"
     }) %}
+
     {% set label_attr = label_attr|merge({
         class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
     }) %}
@@ -44,7 +46,7 @@
         required: 'required',
         'data-validation': {"NotBlank":{"payload":null}}|json_encode
     }|merge(attr)|merge({
-        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+        class: attr.class|default('') ~ " input"
     }) %}
     {% set label_attr = label_attr|merge({
         class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
@@ -55,24 +57,6 @@
                 attr: attr,
                 label_attr: label_attr
             }) }}
-        </div>
-    </fieldset>
-{% endblock %}
-
-{% block _login_form_remember_widget %}
-    {% set label_attr = {
-        'data-checkbox': null
-    }|merge(label_attr)|merge({
-        class: label_attr.class|default('') ~ " checkbox_custom checkbox_custom_blue",
-    }) %}
-    <fieldset class="{{ class_prefix }}__form__row">
-        <div class="{{ class_prefix }}__form__col">
-            <label{{ block('block_label_attributes') }}>
-                {{ block_widget(block) }}
-                <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
-            </label>
         </div>
     </fieldset>
 {% endblock %}

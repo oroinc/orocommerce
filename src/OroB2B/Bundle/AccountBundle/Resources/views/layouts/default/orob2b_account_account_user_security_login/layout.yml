@@ -6,6 +6,11 @@ layout:
             id: title
             optionName: value
             optionValue: 'orob2b.account.menu.account_user_login.label'
+        - '@remove':
+            id: wrapper
+        - '@move':
+            id: login_page_wrapper
+            parentId: body
 #        - '@addTree':
 #            items:
 #                login_page:

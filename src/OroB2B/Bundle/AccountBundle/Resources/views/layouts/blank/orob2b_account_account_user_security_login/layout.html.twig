@@ -1,3 +1,9 @@
+{% block _login_page_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _login_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' login-form'

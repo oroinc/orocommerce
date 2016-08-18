@@ -8,8 +8,12 @@ layout:
             optionValue: 'orob2b.account.menu.account_user_login.label'
         - '@addTree':
             items:
-                login_page:
+                login_page_wrapper:
                     blockType: centered_container
+                login_page:
+                    blockType: login_page
+                    options:
+                        class_prefix: 'create-account-container'
                 login_form:
                     blockType: container
                 login_form_username_label:
@@ -98,23 +102,24 @@ layout:
                         text: orob2b.account.accountuser.profile.create_an_account
             tree:
                 body:
-                    login_page:
-                        login_form:
-                            login_form_title: ~
-                            login_form_notifications: ~
-                            login_form_email_item:
-                                login_form_username_label: ~
-                                login_form_username: ~
-                            login_form_passwors_item:
-                                login_form_password_label: ~
-                                login_form_password: ~
-                            login_form_remenber_item:
-                                login_form_remember: ~
-                            login_form_submit_item:
-                                login_form_submit: ~
-                            login_form_forgot_item:
-                                login_form_forgot: ~
-                            login_form_register_item:
-                                login_form_register: ~
-                            login_form_target: ~
-                            login_form_csrf: ~
+                    login_page_wrapper:
+                        login_page:
+                            login_form:
+                                login_form_title: ~
+                                login_form_notifications: ~
+                                login_form_email_item:
+                                    login_form_username_label: ~
+                                    login_form_username: ~
+                                login_form_passwors_item:
+                                    login_form_password_label: ~
+                                    login_form_password: ~
+                                login_form_remenber_item:
+                                    login_form_remember: ~
+                                login_form_submit_item:
+                                    login_form_submit: ~
+                                login_form_forgot_item:
+                                    login_form_forgot: ~
+                                login_form_register_item:
+                                    login_form_register: ~
+                                login_form_target: ~
+                                login_form_csrf: ~
