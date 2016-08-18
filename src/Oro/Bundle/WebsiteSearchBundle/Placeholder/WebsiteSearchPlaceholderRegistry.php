@@ -25,7 +25,7 @@ class WebsiteSearchPlaceholderRegistry
     public function getPlaceholderValue($placeholderName)
     {
         if (!isset($this->placeholders[$placeholderName])) {
-            throw new \InvalidArgumentException('Placeholder ' . $placeholderName . ' does not exist.');
+            throw new \InvalidArgumentException('Placeholder "' . $placeholderName . '" does not exist.');
         }
 
         return $this->placeholders[$placeholderName];

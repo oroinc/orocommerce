@@ -50,7 +50,7 @@ class WebsiteSearchPlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder TEST_ERROR_PLACEHOLDER does not exist.
+     * @expectedExceptionMessage Placeholder "TEST_ERROR_PLACEHOLDER" does not exist.
      */
     public function testGetPlaceholderValueWithException()
     {

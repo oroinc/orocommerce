@@ -47,7 +47,7 @@ abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
 
         $query = $event->getQuery();
-        $query = $this->placeholderResolver->replace($query);
+        $query = $this->placeholderResolver->replace($query, $context);
 
         return $this->doSearch($query, $context);
     }

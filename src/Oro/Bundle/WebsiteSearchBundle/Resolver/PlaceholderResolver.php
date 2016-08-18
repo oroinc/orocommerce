@@ -22,9 +22,10 @@ class PlaceholderResolver
 
     /**
      * @param Query $query
+     * @param array $context
      * @return Query
      */
-    public function replace(Query $query)
+    public function replace(Query $query, array $context)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder => $placeholderValue) {
             $this->replaceInFrom($query, $placeholder, $placeholderValue);

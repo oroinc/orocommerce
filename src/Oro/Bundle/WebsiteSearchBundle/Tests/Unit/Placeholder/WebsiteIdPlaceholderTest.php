@@ -54,15 +54,16 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1', $value);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Current website is not defined.
+     */
     public function testGetValueWithoutWebsiteId()
     {
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $value = $this->placeholder->getValue();
-
-        $this->assertInternalType('string', $value);
-        $this->assertEquals('', $value);
+        $this->placeholder->getValue();
     }
 }

@@ -1,6 +1,7 @@
 services:
     oro_website_search.placeholder.resolver:
         class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\PlaceholderResolver'
+        public: false
         arguments:
             - '@oro_website_search.placeholder.registry'
 

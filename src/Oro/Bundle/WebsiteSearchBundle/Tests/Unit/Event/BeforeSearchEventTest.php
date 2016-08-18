@@ -30,7 +30,7 @@ class BeforeSearchEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuery()
     {
-        $this->assertInstanceOf('Oro\Bundle\SearchBundle\Query\Query', $this->event->getQuery());
+        $this->assertInstanceOf(Query::class, $this->event->getQuery());
         $this->assertSame($this->query, $this->event->getQuery());
     }
 

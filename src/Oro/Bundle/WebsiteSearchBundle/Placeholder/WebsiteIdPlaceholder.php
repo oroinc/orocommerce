@@ -35,10 +35,11 @@ class WebsiteIdPlaceholder implements WebsiteSearchPlaceholderInterface
     public function getValue()
     {
         $website = $this->websiteManager->getCurrentWebsite();
-        if ($website) {
-            return (string) $website->getId();
+
+        if (!$website) {
+            throw new \RuntimeException('Current website is not defined.');
         }
 
-        return '';
+        return (string) $website->getId();
     }
 }

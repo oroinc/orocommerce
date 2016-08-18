@@ -25,7 +25,7 @@ class PlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->placeholderResolver = new PlaceholderResolver($this->registry);
+        $this->placeholderResolver = new PlaceholderResolver($this->registry, []);
     }
 
     public function testReplaceInFrom()
@@ -44,7 +44,7 @@ class PlaceholderResolverTest extends \PHPUnit_Framework_TestCase
                 'NAME_ID' => '2'
             ]);
 
-        $result = $this->placeholderResolver->replace($query);
+        $result = $this->placeholderResolver->replace($query, []);
 
         $this->assertInstanceOf('Oro\Bundle\SearchBundle\Query\Query', $result);
         $this->assertEquals(
@@ -72,7 +72,7 @@ class PlaceholderResolverTest extends \PHPUnit_Framework_TestCase
                 'TEST_ID' => '1'
             ]);
 
-        $result = $this->placeholderResolver->replace($query);
+        $result = $this->placeholderResolver->replace($query, []);
 
         $this->assertInstanceOf('Oro\Bundle\SearchBundle\Query\Query', $result);
         $this->assertEquals(

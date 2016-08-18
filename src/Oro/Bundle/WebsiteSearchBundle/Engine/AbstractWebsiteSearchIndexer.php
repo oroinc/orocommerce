@@ -6,5 +6,4 @@ use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 
 abstract class AbstractWebsiteSearchIndexer implements IndexerInterface
 {
-
 }

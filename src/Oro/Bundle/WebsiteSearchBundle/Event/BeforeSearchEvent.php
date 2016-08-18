@@ -8,7 +8,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 
 class BeforeSearchEvent extends Event
 {
-    const EVENT_NAME = "oro_website_search.before_search";
+    const EVENT_NAME = 'oro_website_search.before_search';
 
     /**
      * @var Query
