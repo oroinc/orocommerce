@@ -32,3 +32,11 @@ services:
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
+
+    oro_search.event_listener.orm.fulltext_index_listener:
+        class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
+        arguments:
+            - '%database_driver%'
+            - 'oro_website_search_index_text'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
