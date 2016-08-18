@@ -304,13 +304,11 @@ services:
         arguments:
             - '@orob2b_pricing.builder.queue_consumer'
             - '@orob2b_pricing.builder.combined_product_price_queue_consumer'
-            - '@orob2b_pricing.builder.price_rule_queue_consumer'
             - '@oro_config.global'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
             - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
-            - { name: kernel.event_listener, event: orob2b_pricing.price_rule.change, method: onPriceRuleChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener'
@@ -836,13 +834,6 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@orob2b_pricing.expression.parser'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
-
-    orob2b_pricing.builder.price_rule_queue_consumer:
-        class: 'OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer'
-        arguments:
-            - '@doctrine'
-            - '@orob2b_pricing.builder.price_list_product_assignment_builder'
-            - '@orob2b_pricing.builder.product_price_builder'
 
     orob2b_pricing.cache.rule_cache.storage:
         public: false

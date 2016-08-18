@@ -6,7 +6,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 
-use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
@@ -23,11 +22,6 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceQueueConsumer
      */
     protected $productPriceQueueConsumer;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleQueueConsumer
-     */
-    protected $priceRuleQueueConsumer;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
@@ -51,11 +45,6 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceRuleQueueConsumer = $this
-            ->getMockBuilder(PriceRuleQueueConsumer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,7 +52,6 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new CombinedPriceListQueueListener(
             $this->priceListQueueConsumer,
             $this->productPriceQueueConsumer,
-            $this->priceRuleQueueConsumer,
             $this->configManager
         );
     }
@@ -87,21 +75,6 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
             $this->listener->onQueueChanged();
             $this->listener->onProductPriceChanged();
         }
-        $this->listener->onTerminate();
-    }
-
-    public function testPriceRuleChange()
-    {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with(OroB2BPricingExtension::ALIAS
-                . ConfigManager::SECTION_MODEL_SEPARATOR
-                . Configuration::PRICE_LISTS_UPDATE_MODE)
-            ->willReturn(CombinedPriceListQueueConsumer::MODE_REAL_TIME);
-
-        $this->listener->onPriceRuleChanged();
-        $this->priceRuleQueueConsumer->expects($this->once())->method('process');
-        $this->priceListQueueConsumer->expects($this->once())->method('process');
         $this->listener->onTerminate();
     }
 
