@@ -19,23 +19,6 @@
   display: block;
 }
 
-// Media breakpoints
-$breakpoint-desktop: 1100px;
-$breakpoint-tablet: $breakpoint-desktop - 1px;
-$breakpoint-mobile: 640px;
-
-@mixin breakpoint($type) {
-  $breakpoints: (
-    'desktop': '(min-width: ' + $breakpoint-desktop + ')',
-    'tablet': '(max-width: ' +  $breakpoint-tablet + ')',
-    'mobile': '(max-width: ' + $breakpoint-mobile + ')'
-  );
-
-  @media #{map-get($breakpoints, $type)} {
-    @content;
-  }
-}
-
 @mixin appearance() {
   appearance: none;
   -webkit-appearance: none;
@@ -101,7 +84,19 @@ $breakpoint-mobile: 640px;
   }
 }
 
-@mixin breakpoint($device-width) {
+@mixin breakpoint($type) {
+  $breakpoints: (
+    'desktop': '(min-width: ' + $breakpoint-desktop + ')',
+    'tablet': '(max-width: ' +  $breakpoint-tablet + ')',
+    'mobile': '(max-width: ' + $breakpoint-mobile + ')'
+  );
+
+  @media #{map-get($breakpoints, $type)} {
+    @content;
+  }
+}
+
+@mixin breakpoint-old($device-width) {
   @media (max-width: #{$device-width}) {
     @content;
   }

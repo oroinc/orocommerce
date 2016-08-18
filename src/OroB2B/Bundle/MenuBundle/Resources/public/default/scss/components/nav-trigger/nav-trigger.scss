@@ -19,11 +19,12 @@
 
         font-size: 18px;
         line-height: 1.8;
+
         text-align: center;
 
+        color: $base-white-color;
         border-radius: 50%;
         background-color: $base-font-color-lighter;
-        color: $base-white-color;
 
         &--transparent {
             background-color: transparent;
@@ -61,11 +62,12 @@
 
             font-size: 10px;
             line-height: 1;
+
             text-align: center;
 
-            background-color: $base-font-color-lighter;
+            color: $base-white-color;
             border-radius: 50%;
-            color:  $base-white-color;
+            background-color: $base-font-color-lighter;
         }
 
         &__text {

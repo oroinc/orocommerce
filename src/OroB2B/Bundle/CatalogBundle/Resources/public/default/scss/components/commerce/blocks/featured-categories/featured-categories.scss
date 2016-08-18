@@ -29,7 +29,7 @@
         }
     }
 
-    @include breakpoint($phone-width) {
+    @include breakpoint-old($phone-width) {
         .embedded-list__item {
             width: 50%;
 

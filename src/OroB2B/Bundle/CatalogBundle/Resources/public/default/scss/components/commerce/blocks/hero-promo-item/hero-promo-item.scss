@@ -82,7 +82,7 @@
         text-align: center;
     }
 
-    @include breakpoint($phone-width) {
+    @include breakpoint-old($phone-width) {
         &__pretitle {
             font-size: 10px;
         }

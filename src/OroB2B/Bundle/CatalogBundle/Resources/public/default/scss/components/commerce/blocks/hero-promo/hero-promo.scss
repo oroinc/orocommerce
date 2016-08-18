@@ -46,7 +46,7 @@
         background: $base-white-color;
     }
 
-    @include breakpoint($phone-width) {
+    @include breakpoint-old($phone-width) {
         margin-top: 5px;
     }
 }

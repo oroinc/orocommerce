@@ -1,5 +1,6 @@
 @import 'orob2bfrontend/default/scss/shared/_vars';
 @import 'orob2bfrontend/default/scss/shared/_mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/variables';
 @import 'orob2bfrontend/default/scss/components/commerce/partials/mixins';
 
 @import './components/top_nav';
@@ -7,8 +8,8 @@
 @import './components/main_menu';
 @import './components/footer_menu';
 
-@import "components/header-row";
-@import './components/main-nav';
-@import './components/nav-trigger';
-
-
+@import './components/header-row/header-row';
+@import './components/header-row-helper/header-row-helper';
+@import './components/header-row-overlay/header-row-overlay';
+@import './components/main-nav/main-nav';
+@import './components/nav-trigger/nav-trigger';

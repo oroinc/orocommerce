@@ -45,7 +45,7 @@
         }
     }
 
-    @include breakpoint($phone-width) {
+    @include breakpoint-old($phone-width) {
         margin-top: 20px;
 
         &__name {
