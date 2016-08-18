@@ -110,7 +110,9 @@
 
 {% block _order_payment_method_widget %}
     {% if text is not empty %}
-        {{ get_payment_method_label(text) }}
+        {% for paymentMethod in text %}
+            {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %},{% endif %}
+        {% endfor %}
     {% else %}
         {{ 'oro.ui.empty'|trans }}
     {% endif %}
@@ -118,7 +120,7 @@
 
 {% block _order_payment_status_widget %}
     {% if text is not empty %}
-        {{ 'orob2b.payment.status.%s'|format(text)|trans }}
+        {{ get_payment_status_label(text) }}
     {% else %}
         {{ 'oro.ui.empty'|trans }}
     {% endif %}

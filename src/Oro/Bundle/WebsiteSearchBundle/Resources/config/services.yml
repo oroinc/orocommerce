@@ -1,4 +1,12 @@
 services:
+    oro_search.event_listener.orm.fulltext_index_listener:
+        class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
+        arguments:
+            - '%database_driver%'
+            - 'oro_website_search_index_text'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
+
     oro_website_search.provider.search_engines_provider:
         class: Oro\Bundle\WebsiteSearchBundle\Provider\SearchEnginesProvider
         public: true

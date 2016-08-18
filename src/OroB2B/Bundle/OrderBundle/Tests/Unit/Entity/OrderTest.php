@@ -56,6 +56,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['sourceEntityId', 1],
             ['shippingCost', new Price()],
             ['totalDiscounts', new Price()],
+            ['shippingMethod', 'shipping_method'],
+            ['shippingMethodType', 'shipping_method_type'],
         ];
 
         $order = new Order();

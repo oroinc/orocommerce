@@ -9,6 +9,7 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,6 +29,8 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
+    /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentTransactionProvider;
     /**
      * @var PaymentMethodsProvider
      */
@@ -38,9 +41,8 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodViewRegistry = $this->getMockBuilder(
-            'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
-        )
+        $this->paymentMethodViewRegistry = $this
+            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,10 +53,14 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
+        $this->paymentTransactionProvider = $this->getMockBuilder(PaymentTransactionProvider::class)
+            ->disableOriginalConstructor()->getMock();
+
         $this->provider = new PaymentMethodsProvider(
             $this->paymentMethodViewRegistry,
             $this->paymentContextProvider,
-            $this->paymentMethodRegistry
+            $this->paymentMethodRegistry,
+            $this->paymentTransactionProvider
         );
     }
 
@@ -121,6 +127,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isPaymentMethodEnabledDataProvider
+     * @param bool $expected
      */
     public function testIsPaymentMethodEnabled($expected)
     {
@@ -276,5 +283,12 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
                 '$expected' => true,
             ],
         ];
+    }
+
+    public function testGetPaymentMethods()
+    {
+        $entity = new \stdClass();
+        $this->paymentTransactionProvider->expects($this->once())->method('getPaymentMethods')->with($entity);
+        $this->provider->getPaymentMethods($entity);
     }
 }
