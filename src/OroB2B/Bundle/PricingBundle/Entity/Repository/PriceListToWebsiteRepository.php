@@ -9,7 +9,9 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -84,6 +86,23 @@ class PriceListToWebsiteRepository extends EntityRepository
         }
 
         return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
+     */
+    public function getIteratorByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('priceListToWebsite');
+
+        $qb->select(
+            sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListChangeTrigger::WEBSITE)
+        )
+            ->where('priceListToWebsite.priceList = :priceList')
+            ->setParameter('priceList', $priceList);
+
+        return new BufferedQueryResultIterator($qb);
     }
 
     /**

@@ -7,6 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
@@ -231,23 +232,57 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     }
 
 
-//    public function testGetAccountWebsitePairsByAccountGroup()
-//    {
-//        /** @var AccountGroup $accountGroup */
-//        $accountGroup = $this->getReference('account_group.group1');
-//        /** @var Account $account */
-//        $account = $this->getReference('account.level_1.3');
-//        /** @var Website $website */
-//        $website = $this->getReference('US');
-//        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup(
-//            $accountGroup,
-//            [$website->getId()]
+    public function testGetAccountWebsitePairsByAccountGroupIterator()
+    {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.3');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+
+        $iterator = $this->getRepository()->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+        $this->assertEquals(
+            [
+                [
+                    'account' => $account->getId(),
+                    'website' => $website->getId()
+                ]
+            ],
+            $result
+        );
+    }
+
+    public function testGetIteratorByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+//
+//        $priceListsToAccounts = $this->getContainer()->get('doctrine')
+//            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
+//            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+//            ->findBy(['priceList' => $priceList]);
+//
+//        $priceListAccountsIds = array_map(
+//            function (PriceListToAccount $priceListToAccounts) {
+//                return $priceListToAccounts->getAccount()->getId();
+//            },
+//            $priceListsToAccounts
 //        );
-//        $this->assertCount(1, $result);
-//        $result = $result[0];
-//        $this->assertEquals($result->getAccount()->getId(), $account->getId());
-//        $this->assertEquals($result->getWebsite()->getId(), $website->getId());
-//    }
+//
+//        foreach ($triggers as $trigger) {
+//            $this->assertContains($trigger->getAccount()->getId(), $priceListAccountsIds);
+//        }
+    }
 
     public function testGetAccountWebsitePairsByAccount()
     {

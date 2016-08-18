@@ -3,11 +3,14 @@
 namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -35,18 +38,26 @@ class PriceListChangeTriggerHandler
     protected $producer;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * @param ManagerRegistry $registry
      * @param PriceListChangeTriggerFactory $triggerFactory
      * @param MessageProducerInterface $producer
+     * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $registry,
         PriceListChangeTriggerFactory $triggerFactory,
-        MessageProducerInterface $producer
+        MessageProducerInterface $producer,
+        ConfigManager $configManager
     ) {
         $this->registry = $registry;
         $this->triggerFactory = $triggerFactory;
         $this->producer = $producer;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -95,7 +106,31 @@ class PriceListChangeTriggerHandler
      */
     public function handlePriceListStatusChange(PriceList $priceList)
     {
-        $this->triggersFiller->fillTriggersByPriceList($priceList);
+        $configPriceListIds = array_map(
+            function ($priceList) {
+                return $priceList['priceList'];
+            },
+            $this->configManager->get('oro_b2b_pricing.default_price_lists')
+        );
+
+        if (in_array($priceList->getId(), $configPriceListIds)) {
+            $this->handleFullRebuild();
+        }
+
+        $priceListToAccountRepository = $this->registry->getRepository(PriceListToAccount::class);
+        foreach ($priceListToAccountRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(self::TOPIC, $item);
+        }
+
+        $priceListToAccountGroupRepository = $this->registry->getRepository(PriceListToAccountGroup::class);
+        foreach ($priceListToAccountGroupRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(self::TOPIC, $item);
+        }
+
+        $priceListToWebsiteRepository = $this->registry->getRepository(PriceListToWebsite::class);
+        foreach ($priceListToWebsiteRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(self::TOPIC, $item);
+        }
     }
 
     /**
@@ -103,27 +138,14 @@ class PriceListChangeTriggerHandler
      */
     public function handleAccountGroupRemove(AccountGroup $accountGroup)
     {
-//
-//        $websiteIds = $this->registry
-//            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
-//            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
-//            ->getWebsiteIdsByAccountGroup($accountGroup);
-//
-//        if ($websiteIds) {
-//            $this->getManager()
-//                ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
-//                ->insertAccountWebsitePairsByAccountGroup(
-//                    $accountGroup,
-//                    $websiteIds,
-//                    $this->insertFromSelectQueryExecutor
-//                );
-//        }
+        $iterator = $this->registry->getRepository(PriceListToAccount::class)
+            ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        foreach ($iterator as $item) {
+            $this->producer->send(self::TOPIC, $item);
+        }
     }
 
-    /**
-     * @param bool|true $andFlush
-     */
-    public function handleFullRebuild($andFlush = true)
+    public function handleFullRebuild()
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setForce(true);

@@ -25,25 +25,6 @@ class PriceListChangeTriggerRepository extends EntityRepository
         return new BufferedQueryResultIterator($qb->getQuery());
     }
 
-//    @todo: delete
-//    public function insertAccountWebsitePairsByAccountGroup(
-//        AccountGroup $accountGroup,
-//        array $websiteIds,
-//        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
-//    ) {
-//        $queryBuilder = $this->getEntityManager()
-//            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
-//            ->getAccountWebsitePairsByAccountGroupQueryBuilder($accountGroup, $websiteIds);
-//        $insertFromSelectQueryExecutor->execute(
-//            $this->getClassName(),
-//            [
-//                'account',
-//                'website'
-//            ],
-//            $queryBuilder
-//        );
-//    }
-
     public function deleteAll()
     {
         $this->createQueryBuilder('priceListChangeTrigger')

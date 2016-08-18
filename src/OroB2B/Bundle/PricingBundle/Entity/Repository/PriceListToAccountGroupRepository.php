@@ -11,7 +11,9 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -93,6 +95,24 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
         }
 
         return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
+     */
+    public function getIteratorByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('PriceListToAccountGroup');
+
+        $qb->select(
+            sprintf('IDENTITY(PriceListToAccountGroup.accountGroup) as %s', PriceListChangeTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(PriceListToAccountGroup.website) as %s', PriceListChangeTrigger::WEBSITE)
+        )
+            ->where('PriceListToAccountGroup.priceList = :priceList')
+            ->setParameter('priceList', $priceList);
+
+        return new BufferedQueryResultIterator($qb);
     }
 
     /**

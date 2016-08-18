@@ -13,6 +13,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
@@ -104,10 +105,9 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
 
     /**
      * @param AccountGroup $accountGroup
-     * @param integer[] $websiteIds
      * @return BufferedQueryResultIterator
      */
-    public function getAccountWebsitePairsByAccountGroupIterator(AccountGroup $accountGroup, $websiteIds)
+    public function getAccountWebsitePairsByAccountGroupIterator(AccountGroup $accountGroup)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
@@ -115,26 +115,46 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             sprintf('IDENTITY(PriceListToAccount.account) as %s', PriceListChangeTrigger::ACCOUNT),
             sprintf('IDENTITY(PriceListToAccount.website) as %s', PriceListChangeTrigger::WEBSITE)
         )
-            ->innerJoin('PriceListToAccount.account', 'account')
+            ->innerJoin('PriceListToAccount.account', 'acc')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccountGroup',
                 'PriceListToAccountGroup',
                 Join::WITH,
                 $qb->expr()->andX(
-                    'PriceListToAccountGroup.accountGroup = account.group',
+                    'PriceListToAccountGroup.accountGroup = acc.group',
                     'PriceListToAccountGroup.website = PriceListToAccount.website'
                 )
             )
-            ->where($qb->expr()->eq('account.group', ':accountGroup'))
+            ->where($qb->expr()->eq('acc.group', ':accountGroup'))
             ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
-            ->setParameter('accountGroup', $accountGroup)
-            ->setParameter('websiteIds', $websiteIds);
+            ->setParameter('accountGroup', $accountGroup);
 
         return new BufferedQueryResultIterator($qb);
     }
 
     /**
-     * todo refactor
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
+     */
+    public function getIteratorByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('priceListToAccount');
+
+        $qb->select(
+            sprintf('IDENTITY(priceListToAccount.account) as %s', PriceListChangeTrigger::ACCOUNT),
+            sprintf('IDENTITY(acc.group) as %s', PriceListChangeTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(priceListToAccount.website) as %s', PriceListChangeTrigger::WEBSITE)
+        )
+            ->leftJoin('priceListToAccount.account', 'acc')
+            ->where('priceListToAccount.priceList = :priceList')
+            ->groupBy('priceListToAccount.account', 'acc.group', 'priceListToAccount.website')
+            ->setParameter('priceList', $priceList);
+
+
+        return new BufferedQueryResultIterator($qb);
+    }
+
+    /**
      * @param Account $account
      * @return AccountWebsiteDTO[]|ArrayCollection
      */
