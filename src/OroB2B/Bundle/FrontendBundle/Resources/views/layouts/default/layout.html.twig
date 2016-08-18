@@ -57,7 +57,7 @@
             {% set additionalCss = additionalCss ~ " theme-btn btn-orange" %}
         {% endif %}
         {% if hasVariants %}
-            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
+            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_md" %}
         {% endif %}
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
         <div{{ block('block_attributes') }}>
