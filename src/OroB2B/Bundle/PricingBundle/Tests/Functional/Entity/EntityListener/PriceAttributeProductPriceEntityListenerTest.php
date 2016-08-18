@@ -21,7 +21,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
 {
     use MessageQueueTrait;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -35,7 +35,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $this->topic = Topics::CALCULATE_RULE;
         $this->cleanQueueMessageTraces();
     }
-    
+
     public function testPostPersist()
     {
         /** @var EntityManagerInterface $em */
@@ -68,7 +68,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
-    
+
     public function testPreUpdate()
     {
         /** @var EntityManagerInterface $em */
@@ -96,7 +96,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
-    
+
     public function testPreRemove()
     {
         /** @var EntityManagerInterface $em */
