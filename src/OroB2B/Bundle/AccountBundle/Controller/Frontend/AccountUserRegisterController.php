@@ -20,7 +20,7 @@ class AccountUserRegisterController extends Controller
      * Create account user form
      *
      * @Route("/register", name="orob2b_account_frontend_account_user_register")
-     * @Layout(action="orob2b_account_frontend_account_user_security")
+     * @Layout()
      * @param Request $request
      * @return array|RedirectResponse
      */

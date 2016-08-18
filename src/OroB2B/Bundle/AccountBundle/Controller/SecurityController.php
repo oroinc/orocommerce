@@ -12,7 +12,7 @@ class SecurityController extends Controller
 {
     /**
      * @Route("/login", name="orob2b_account_account_user_security_login")
-     * @Layout(action="orob2b_account_frontend_account_user_security")
+     * @Layout()
      */
     public function loginAction()
     {
