@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Command;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -29,12 +30,18 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         $container = $this->getContainer();
         $container->get('orob2b_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+        $this->combinePricesForScheduledCPL();
+    }
+
+    protected function combinePricesForScheduledCPL()
+    {
+        $container = $this->getContainer();
         $offsetHours = $this->getContainer()->get('oro_config.manager')
             ->get('oro_b2b_pricing.offset_of_processing_cpl_prices');
 
         $combinedPriceLists = $container->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceList')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceList')
+            ->getManagerForClass(CombinedPriceList::class)
+            ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
         $combinedProductPriceResolver = $container->get('orob2b_pricing.resolver.combined_product_price_resolver');
@@ -51,4 +58,5 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         return '*/5 * * * *';
     }
+
 }

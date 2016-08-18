@@ -293,7 +293,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb->select('cpl')
             ->innerJoin(
-                'OroB2BPricingBundle:CombinedPriceListToPriceList',
+                CombinedPriceListToPriceList::class,
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
