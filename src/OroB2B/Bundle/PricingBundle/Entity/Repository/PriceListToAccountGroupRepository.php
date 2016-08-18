@@ -110,6 +110,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             sprintf('IDENTITY(PriceListToAccountGroup.website) as %s', PriceListChangeTrigger::WEBSITE)
         )
             ->where('PriceListToAccountGroup.priceList = :priceList')
+            ->groupBy('PriceListToAccountGroup.accountGroup', 'PriceListToAccountGroup.website')
             ->setParameter('priceList', $priceList);
 
         return new BufferedQueryResultIterator($qb);

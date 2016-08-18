@@ -2,19 +2,26 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Tests\Common\DataFixtures\LoaderTest;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @dbIsolation
  */
 class PriceListToAccountRepositoryTest extends WebTestCase
@@ -25,8 +32,8 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                LoadPriceListRelations::class,
+                LoadPriceListFallbackSettings::class,
             ]
         );
     }
@@ -260,28 +267,23 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function testGetIteratorByPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
+        $priceList = $this->getReference('price_list_6');
         $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
         $result = [];
         foreach ($iterator as $item) {
             $result[] = $item;
         }
-//
-//        $priceListsToAccounts = $this->getContainer()->get('doctrine')
-//            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
-//            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
-//            ->findBy(['priceList' => $priceList]);
-//
-//        $priceListAccountsIds = array_map(
-//            function (PriceListToAccount $priceListToAccounts) {
-//                return $priceListToAccounts->getAccount()->getId();
-//            },
-//            $priceListsToAccounts
-//        );
-//
-//        foreach ($triggers as $trigger) {
-//            $this->assertContains($trigger->getAccount()->getId(), $priceListAccountsIds);
-//        }
+
+        $this->assertEquals(
+            [
+                [
+                    'account'  => $this->getReference('account.level_1.3')->getId(),
+                    'accountGroup'  => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                ]
+            ],
+            $result
+        );
     }
 
     public function testGetAccountWebsitePairsByAccount()

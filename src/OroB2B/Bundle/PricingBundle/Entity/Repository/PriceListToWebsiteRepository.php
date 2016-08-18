@@ -100,6 +100,7 @@ class PriceListToWebsiteRepository extends EntityRepository
             sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListChangeTrigger::WEBSITE)
         )
             ->where('priceListToWebsite.priceList = :priceList')
+            ->groupBy('priceListToWebsite.website')
             ->setParameter('priceList', $priceList);
 
         return new BufferedQueryResultIterator($qb);

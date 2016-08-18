@@ -12,6 +12,7 @@ use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 class PriceListEntityListener
 {
     const FIELD_PRODUCT_ASSIGNMENT_RULES = 'productAssignmentRule';
+
     /**
      * @var PriceListChangeTriggerHandler
      */

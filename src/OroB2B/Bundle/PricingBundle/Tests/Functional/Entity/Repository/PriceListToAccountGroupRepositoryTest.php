@@ -5,11 +5,14 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -55,6 +58,9 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function restrictByPriceListDataProvider()
     {
         return [
@@ -202,15 +208,29 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         ];
     }
 
-    public function testGetWebsiteIdsByAccountGroup()
+    public function testGetIteratorByPriceList()
     {
-        /** @var AccountGroup $group */
-        $group = $this->getReference('account_group.group1');
-        /** @var Website $website */
-        $website = $this->getReference('US');
-        $ids = $this->getRepository()->getWebsiteIdsByAccountGroup($group);
-        $this->assertCount(1, $ids);
-        $this->assertEquals($website->getId(), $ids[0]);
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_5');
+        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+
+        $this->assertEquals(
+            [
+                [
+                    'accountGroup'  => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                ],
+                [
+                    'accountGroup'  => $this->getReference(LoadGroups::GROUP3)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE2)->getId()
+                ]
+            ],
+            $result
+        );
     }
 
     /**
