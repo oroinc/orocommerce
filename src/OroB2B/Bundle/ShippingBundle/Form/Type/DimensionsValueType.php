@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,7 +30,7 @@ class DimensionsValueType extends AbstractType
         $builder
             ->add(
                 'length',
-                'number',
+                NumberType::class,
                 [
                     'attr' => ['class' => 'length'],
                     'required' => false,
@@ -37,7 +38,7 @@ class DimensionsValueType extends AbstractType
             )
             ->add(
                 'width',
-                'number',
+                NumberType::class,
                 [
                     'attr' => ['class' => 'width'],
                     'required' => false,
@@ -45,7 +46,7 @@ class DimensionsValueType extends AbstractType
             )
             ->add(
                 'height',
-                'number',
+                NumberType::class,
                 [
                     'attr' => ['class' => 'height'],
                     'required' => false,

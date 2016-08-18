@@ -19,26 +19,13 @@ class ShoppingListListener
 
     /**
      * @param ManagerRegistry $registry
+     * @param string $checkoutClassName
+     * @param string $checkoutSourceClassName
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, $checkoutClassName, $checkoutSourceClassName)
     {
         $this->registry = $registry;
-    }
-
-    /**
-     * @param string $checkoutClassName
-     */
-    public function setCheckoutClassName($checkoutClassName)
-    {
         $this->checkoutClassName = $checkoutClassName;
-    }
-
-    /**
-     * @param string $checkoutSourceClassName
-     * @return $this
-     */
-    public function setCheckoutSourceClassName($checkoutSourceClassName)
-    {
         $this->checkoutSourceClassName = $checkoutSourceClassName;
     }
 

@@ -29,9 +29,9 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
         $this->formType = new FreightClassSelectType($this->provider, $this->formatter);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(FreightClassSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(FreightClassSelectType::NAME, $this->formType->getBlockPrefix());
     }
     
     /**

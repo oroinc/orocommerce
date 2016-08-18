@@ -33,9 +33,9 @@ class PriceListProductPriceType extends AbstractType
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
 
-        $additionalCurrencies = [];
+        $currencies = [];
         if ($data->getPriceList()) {
-            $additionalCurrencies = $data->getPriceList()->getCurrencies();
+            $currencies = $data->getPriceList()->getCurrencies();
         }
 
         $builder
@@ -76,7 +76,7 @@ class PriceListProductPriceType extends AbstractType
                     'required' => true,
                     'compact' => true,
                     'label' => 'orob2b.pricing.productprice.price.label',
-                    'additional_currencies' => $additionalCurrencies,
+                    'currencies_list' => $currencies,
                     'currency_empty_value' => false,
                     'by_reference' => false,
                 ]

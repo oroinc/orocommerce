@@ -10,6 +10,9 @@
 {% endblock %}
 
 {% block _footer_menu_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " footer-nav__list",
+    }) %}
     {% spaceless %}
         {% for child in item.children %}
             {% if child.extras.isAllowed %}
