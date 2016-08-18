@@ -9,10 +9,8 @@ layout:
                 footer_menu:
                     blockType: menu
                     options:
-                        menu: footer-links
+                        item: '=data["menu"].getMenu("footer-links")'
                         depth: 2
-                        attr:
-                            class: footer-nav__list
             tree:
                 footer:
                     footer_menu_container:

@@ -8,6 +8,7 @@ use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
@@ -44,7 +45,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),
             $container->get('translator'),
-            $container->get('oro_importexport.strategy.new_entities_helper')
+            $container->get('oro_importexport.strategy.new_entities_helper'),
+            $container->get('oro_entity.doctrine_helper')
         );
         $this->strategy->setLocalizedFallbackValueClass(
             $container->getParameter('oro_locale.entity.localized_fallback_value.class')
@@ -108,13 +110,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function processDataProvider()
     {
-        $localizationEnUs = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'name' => 'English (United States)'
-        ]);
-        $localizationEnCa = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'name' => 'English (Canada)'
-        ]);
-
         return [
             [
                 [
@@ -141,14 +136,24 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                             'testProperties' => [
                                 'string' => 'product.1 en_US Title',
                                 'fallback' => 'parent_localization',
-                                'localization' => $localizationEnUs,
+                                'localization' => [
+                                    'testEntity' => Localization::class,
+                                    'testProperties' => [
+                                        'name' => 'English (United States)',
+                                    ],
+                                ],
                             ]
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
                                 'string' => 'product.1 en_CA Title',
-                                'localization' => $localizationEnCa
+                                'localization' => [
+                                    'testEntity' => Localization::class,
+                                    'testProperties' => [
+                                        'name' => 'English (Canada)',
+                                    ],
+                                ],
                             ]
                         ],
                     ],
@@ -223,10 +228,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function skippedDataProvider()
     {
-        $localizationEnUs = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization', [
-            'name' => 'English (United States)'
-        ]);
-
         return [
             'new product, no fallback from another entity' => [
                 [
@@ -272,7 +273,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
                                 'string' => 'product.4 en_US Title',
-                                'localization' => $localizationEnUs],
+                                'localization' => [
+                                    'testEntity' => Localization::class,
+                                    'testProperties' => [
+                                        'name' => 'English (United States)',
+                                    ],
+                                ],
+                            ],
                         ],
                     ]
                 ],

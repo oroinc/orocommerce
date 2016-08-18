@@ -79,7 +79,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'required' => false,
                     'mapped' => false,
                     'constraints' => [new UniqueProductUnitShippingOptions()],
-                    'options' => [
+                    'entry_options' => [
                         'product' => $product,
                     ],
                 ]

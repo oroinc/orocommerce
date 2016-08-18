@@ -1,7 +1,7 @@
 workflows:
     b2b_flow_alternative_checkout:
         label: Alternative Checkout
-        entity: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
+        entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
         start_step: enter_billing_address
         steps_display_ordered: true
@@ -25,8 +25,17 @@ workflows:
                 property_path: checkout.customerNotes
             payment_method:
                 property_path: checkout.paymentMethod
+            shipping_method:
+                property_path: checkout.shippingMethod
+            shipping_method_type:
+                property_path: checkout.shippingMethodType
+            shipping_rule_config:
+                type: entity
+                label: Shipping Rule Configuration
+                options:
+                    class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             request_approval_notes:
-                property_path: checkout.requestApprovalNotes
+                type: string
                 label: Notes
             billing_address_has_shipping:
                 type: boolean
@@ -55,6 +64,17 @@ workflows:
             edit_order_link:
                 type: string
                 label: Edit Order Link
+            allowed:
+                type: bool
+                label: Is checkout approved
+            allow_request_date:
+                type: object
+                label: Data of approving
+                options:
+                    class: DateTime
+            requested_for_approve:
+                type: bool
+                label: Is requested for approve
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -187,6 +207,26 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
+                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
+                form_options:
+                    init_actions:
+                        - '@call_service_method':
+                            service: orob2b_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
+                    attribute_fields:
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type: ~
+                        shipping_rule_config:
+                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                            options:
+                                class: 'OroB2BShippingBundle:ShippingRuleConfiguration'
+                                multiple: false
+                                constraints:
+                                    - NotBlank: ~
 
             continue_to_order_review:
                 label: Continue
@@ -198,7 +238,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         payment_method: ~
-                    init_actions:
+                    form_init:
                         - '@assign_constant_value': [$payment_method, 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm::TYPE']
 
             continue_to_request_approval:
@@ -230,7 +270,7 @@ workflows:
                         request_approval_notes:
                             form_type: textarea
                             options:
-                                data: $checkout.requestApprovalNotes
+                                data: $request_approval_notes
 
             back_to_billing_address:
                 label: Edit Billing Information
@@ -315,29 +355,29 @@ workflows:
 
         transition_definitions:
             __start___definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@assert_account': 4
                         - '@payment_method_enabled': 'payment_term'
             do_nothing: ~
             go_back_definition:
-                post_actions:
+                actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.allowed, true]
-                        parameters: [$checkout.allowed, false]
+                            '@equal': [$allowed, true]
+                        parameters: [$allowed, false]
             back_to_billing_address_definition:
-                post_actions:
+                actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
             continue_to_shipping_address_definition:
-                pre_conditions:
+                preconditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
                             entity: $checkout
                 conditions:
                     '@not_empty': $checkout.billingAddress
-                post_actions:
+                actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@call_method':
                         conditions:
@@ -388,7 +428,7 @@ workflows:
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_shipping_method_definition:
-                pre_conditions:
+                preconditions:
                     '@order_line_item_has_count':
                         message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                         parameters:
@@ -401,7 +441,7 @@ workflows:
                         - '@and':
                             - '@equal': [$checkout.shipToBillingAddress, false]
                             - '@not_empty': $checkout.shippingAddress
-                post_actions:
+                actions:
                     - '@tree':
                         conditions:
                             '@and':
@@ -426,20 +466,37 @@ workflows:
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_payment_definition:
-                pre_conditions:
-                    '@order_line_item_has_count':
-                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                preconditions:
+                    '@and':
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
+                        - '@has_applicable_shipping_methods':
+                            parameters:
+                                entity: $checkout
+                conditions:
+                    '@shipping_method_supports':
+                        message: orob2b.checkout.workflow.condition.shipping_method_supports.message
                         parameters:
                             entity: $checkout
+                            shipping_rule_config: $shipping_rule_config
+                post_actions:
+                    - '@call_service_method':
+                        service: orob2b_checkout.shipping_cost.calculator
+                        method: calculatePrice
+                        method_parameters: [$checkout, $shipping_rule_config]
+                        attribute: $checkout.shippingCost
+
             place_order_definition:
-                pre_conditions:
+                preconditions:
                     '@or':
                         message: "Pending approval"
                         parameters:
                             - '@less_order_total_limit': [$checkout, 5000]
-                            - '@equal': [$checkout.allowed, true]
+                            - '@equal': [$allowed, true]
                             - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
-                post_actions:
+                actions:
                     - '@assign_value':
                         conditions:
                             '@equal': [$checkout.shipToBillingAddress, false]
@@ -472,11 +529,13 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            shippingMethod: $checkout.shippingMethod
+                            shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
                     - '@call_method':
-                        object:  $.result.order
+                        object: $.result.order
                         method: setLineItems
                         method_parameters:
                             - $.result.lineItems
@@ -484,8 +543,8 @@ workflows:
                         service: orob2b_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
-                            -  $.result.order
-                    - '@flush_entity':  $.result.order
+                            - $.result.order
+                    - '@flush_entity': $.result.order
 
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -624,36 +683,36 @@ workflows:
                                     id: $.result.order.id
 
             continue_to_request_approval_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@not':
                             - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
                         - '@not':
                             - '@less_order_total_limit': [$checkout, 5000]
-                        - '@equal': [$checkout.allowed, false]
+                        - '@equal': [$allowed, false]
 
             request_for_approve_order_definition:
-                post_actions:
+                actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.requestedForApprove, false]
-                        parameters: [$checkout.requestedForApprove, true]
+                            '@equal': [$requested_for_approve, false]
+                        parameters: [$requested_for_approve, true]
 
             approve_order_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
-                        - '@equal': [$checkout.allowed, false]
-                post_actions:
+                        - '@equal': [$allowed, false]
+                actions:
                     - '@assign_value':
                         conditions:
-                            '@equal': [$checkout.allowed, false]
-                        parameters: [$checkout.allowed, true]
+                            '@equal': [$allowed, false]
+                        parameters: [$allowed, true]
                     - '@create_datetime':
-                        attribute: $checkout.allowRequestDate
+                        attribute: $allow_request_date
 
             continue_to_order_review_definition:
-                pre_conditions:
+                preconditions:
                     '@and':
                         - '@payment_method_applicable':
                             payment_method: 'payment_term'

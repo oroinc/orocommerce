@@ -22,19 +22,6 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_line_items_list }
 
-    orob2b_shopping_list.layout.type.shopping_list_totals:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            -
-                - setOptionsConfig
-                -
-                    -
-                        shoppingList: {required: true}
-                        totals: {required: true}
-            - [setName, ['shopping_list_totals']]
-        tags:
-             - { name: layout.block_type, alias: shopping_list_totals }
-
     orob2b_shopping_list.layout.type.shopping_lists_awere_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
@@ -63,6 +50,14 @@ services:
             - [setExtendedType, ['widget_content']]
         tags:
             - { name: layout.block_type_extension, alias: widget_content }
+
+    orob2b_shopping_list.layout.type.product_shopping_lists:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{shoppingLists: {required: true}}]]
+            - [setName, ['product_shopping_lists']]
+        tags:
+             - { name: layout.block_type, alias: product_shopping_lists }
 
     orob2b_shopping_list.layout.block.type.shopping_lists_menu:
         parent: oro_layout.block_type.abstract_configurable_container

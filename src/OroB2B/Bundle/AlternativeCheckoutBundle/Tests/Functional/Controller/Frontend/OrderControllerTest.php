@@ -2,14 +2,11 @@
 
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -23,7 +20,7 @@ class OrderControllerTest extends WebTestCase
     const TOTAL_VALUE = 400;
     const SUBTOTAL_VALUE = 20;
 
-    /** @var BaseCheckout[] */
+    /** @var Checkout[] */
     protected $allCheckouts;
 
     /**
@@ -40,7 +37,7 @@ class OrderControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
                 'OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadAlternativeCheckouts',
-                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckouts',
+                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
@@ -53,9 +50,6 @@ class OrderControllerTest extends WebTestCase
 
         $checkouts = $this->getDatagridData();
         $this->assertCount(5, $checkouts);
-        $groupedCheckouts = $this->groupCheckoutsByType($checkouts);
-        $this->assertCount(2, $groupedCheckouts['alternative']);
-        $this->assertCount(3, $groupedCheckouts['base']);
     }
 
     /**
@@ -76,37 +70,34 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertCount(count($expectedCheckouts), $checkouts);
 
-        $expectedGroupedCheckouts = $this->getCheckoutsByReferences($expectedCheckouts);
-        $actualGroupedCheckouts = $this->groupCheckoutsByType($checkouts);
+        $expectedCheckouts = $this->getCheckoutsByReferences($expectedCheckouts);
+        $actualCheckouts = $this->prepareCheckouts($checkouts);
         $container = $this->getContainer();
-        foreach ($expectedGroupedCheckouts as $checkoutType => $expectedCheckouts) {
-            $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType]));
-            /** @var  BaseCheckout $expectedCheckout */
-            foreach ($expectedCheckouts as $id => $expectedCheckout) {
-                $this->assertTrue(isset($actualGroupedCheckouts[$checkoutType][$id]));
-                if ($columnName === 'subtotal') {
-                    $sourceEntity = $expectedCheckout->getSourceEntity();
-                    $propertyAccessor = $container->get('property_accessor');
+        /** @var  Checkout $expectedCheckout */
+        foreach ($expectedCheckouts as $id => $expectedCheckout) {
+            $this->assertTrue(isset($actualCheckouts[$id]));
+            if ($columnName === 'subtotal') {
+                $sourceEntity = $expectedCheckout->getSourceEntity();
+                $propertyAccessor = $container->get('property_accessor');
 
-                    if ($sourceEntity instanceof ShoppingList) {
-                        /** @var Subtotal $subtotal */
-                        $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
+                if ($sourceEntity instanceof ShoppingList) {
+                    /** @var Subtotal $subtotal */
+                    $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
 
-                        $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
-                            $subtotal->getAmount(),
-                            ['currency' => $subtotal->getCurrency()]
-                        );
-                    } else {
-                        $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
-                        $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
-                            $propertyAccessor->getValue($sourceEntity, $columnName),
-                            ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
-                        );
-                    }
-
-                    $actualCheckout = $actualGroupedCheckouts[$checkoutType][$id];
-                    $this->assertEquals($formattedPrice . "\n", $actualCheckout[$columnName]);
+                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                        $subtotal->getAmount(),
+                        ['currency' => $subtotal->getCurrency()]
+                    );
+                } else {
+                    $currencyField = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
+                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                        $propertyAccessor->getValue($sourceEntity, $columnName),
+                        ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
+                    );
                 }
+
+                $actualCheckout = $actualCheckouts[$id];
+                $this->assertEquals($formattedPrice . "\n", $actualCheckout[$columnName]);
             }
         }
     }
@@ -134,15 +125,9 @@ class OrderControllerTest extends WebTestCase
     {
         $result = [];
         foreach ($checkoutReferences as $checkoutReference) {
-            /** @var BaseCheckout $checkout */
+            /** @var Checkout $checkout */
             $checkout = $this->getReference($checkoutReference);
-            if ($checkout instanceof Checkout) {
-                $result['base'][$checkout->getId()] = $checkout;
-            } else {
-                $classNamespace = explode('\\', ClassUtils::getClass($checkout));
-                $checkoutType = strtolower(str_replace('Checkout', '', end($classNamespace)));
-                $result[$checkoutType][$checkout->getId()] = $checkout;
-            }
+            $result[$checkout->getId()] = $checkout;
         }
 
         return $result;
@@ -207,13 +192,11 @@ class OrderControllerTest extends WebTestCase
      * @param array $checkouts
      * @return array
      */
-    protected function groupCheckoutsByType(array $checkouts)
+    protected function prepareCheckouts(array $checkouts)
     {
         $result = [];
         foreach ($checkouts as $checkout) {
-            $checkoutType = $checkout['checkoutType'];
-            $type = !$checkoutType ? 'base' : $checkoutType;
-            $result[$type][$checkout['id']] = $checkout;
+            $result[$checkout['id']] = $checkout;
         }
 
         return $result;
@@ -236,14 +219,14 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param int $checkoutId
-     * @return BaseCheckout
+     * @return Checkout
      */
     protected function getCheckoutById($checkoutId)
     {
         if (empty($this->allCheckouts)) {
             $checkouts = $this->getContainer()->get('doctrine')
-                ->getManagerForClass('OroB2BCheckoutBundle:BaseCheckout')
-                ->getRepository('OroB2BCheckoutBundle:BaseCheckout')
+                ->getManagerForClass('OroB2BCheckoutBundle:Checkout')
+                ->getRepository('OroB2BCheckoutBundle:Checkout')
                 ->findAll();
 
             foreach ($checkouts as $checkout) {

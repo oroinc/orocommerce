@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
@@ -16,7 +15,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var FrontendProductPricesProvider
+     * @var ProductUnitsWithoutPricesProvider
      */
     protected $provider;
 
@@ -40,18 +39,15 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $unitPrecisionsWithPrices
      * @param array $expectedData
      */
-    public function testGetData(array $product, array $unitPrecisionsWithPrices, array $expectedData)
+    public function testGetProductPrices(array $product, array $unitPrecisionsWithPrices, array $expectedData)
     {
         $product = $this->getProduct($product);
 
-        $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
-
         $this->frontendProductPricesProvider->expects($this->once())
-            ->method('getData')
+            ->method('getProductPrices')
             ->willReturn(array_map([$this, 'getUnitPrecision'], $unitPrecisionsWithPrices));
 
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getProductUnits($product);
 
         $this->assertUnitEquals($expectedData, $actual);
     }
