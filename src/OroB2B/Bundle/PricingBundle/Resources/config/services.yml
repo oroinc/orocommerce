@@ -871,6 +871,6 @@ services:
             - '@orob2b_pricing.price_rule_trigger_factory'
             - '@orob2b_pricing.builder.price_list_product_assignment_builder'
             - '@orob2b_pricing.builder.product_price_builder'
-            - '@monolog.logger'
+            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }

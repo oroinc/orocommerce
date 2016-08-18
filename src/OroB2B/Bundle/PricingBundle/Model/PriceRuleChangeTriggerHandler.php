@@ -96,6 +96,7 @@ class PriceRuleChangeTriggerHandler
                     $this->triggerFactory->triggerToArray($trigger)
                 );
             }
+            $this->scheduledTriggers = [];
         }
     }
 

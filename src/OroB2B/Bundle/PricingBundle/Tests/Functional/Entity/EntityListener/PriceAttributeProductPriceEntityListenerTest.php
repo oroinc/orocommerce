@@ -5,11 +5,10 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
+use OroB2B\Bundle\PricingBundle\Async\Topics;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
@@ -21,6 +20,8 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -31,7 +32,8 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             LoadPriceAttributeProductPrices::class,
             LoadPriceRuleLexemes::class
         ]);
-        $this->cleanTriggers();
+        $this->topic = Topics::CALCULATE_RULE;
+        $this->cleanQueueMessageTraces();
     }
 
     public function testPostPersist()
@@ -54,16 +56,17 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
 
-        $trigger = $triggers[0];
-        $this->assertNotEmpty($trigger->getProduct());
-        $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($product->getId(), $productId);
 
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($trigger->getPriceList()->getId(), $expectedPriceList->getId());
+        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
 
     public function testPreUpdate()
@@ -81,16 +84,17 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
 
-        $trigger = $triggers[0];
-        $this->assertNotEmpty($trigger->getProduct());
-        $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($product->getId(), $productId);
 
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($trigger->getPriceList()->getId(), $expectedPriceList->getId());
+        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
 
     public function testPreRemove()
@@ -106,36 +110,16 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->remove($price);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
 
-        $trigger = $triggers[0];
-        $this->assertNotEmpty($trigger->getProduct());
-        $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($product->getId(), $productId);
 
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($trigger->getPriceList()->getId(), $expectedPriceList->getId());
-    }
-
-    protected function cleanTriggers()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
-        $em->createQueryBuilder()
-            ->delete(PriceRuleChangeTrigger::class)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return PriceRuleChangeTrigger[]
-     */
-    protected function getTriggers()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceRuleChangeTrigger::class)
-            ->getRepository(PriceRuleChangeTrigger::class)
-            ->findAll();
+        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
 }
