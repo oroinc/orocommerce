@@ -80,6 +80,6 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMapper()
     {
-        return $this->getMock('OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
+        return $this->getMock(CheckoutStateDiffMapperInterface::class);
     }
 }

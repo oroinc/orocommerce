@@ -61,13 +61,19 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
     public function isStatesEqual($entity, $state1, $state2)
     {
         foreach (['amount', 'currency'] as $field) {
-            if ($this->getValue($state1, $field) === null || $this->getValue($state2, $field) === null) {
-                return true;
+            $state1Value = $this->getValue($state1, $field);
+            $state2Value = $this->getValue($state2, $field);
+
+            if ($state1Value === null || $state2Value === null) {
+                return false;
+            }
+
+            if ($state1Value !== $state2Value) {
+                return false;
             }
         }
 
-        return $state1['amount'] === $state2['amount'] &&
-            $state1['currency'] === $state2['currency'];
+        return true;
     }
 
     /**

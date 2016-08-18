@@ -44,12 +44,16 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
             return null;
         }
 
+        if (!$workflowItem->getCurrentStep()) {
+            return null;
+        }
+
         return $workflowItem->getCurrentStep()->getName();
     }
 
     /** {@inheritdoc} */
     public function isStatesEqual($entity, $state1, $state2)
     {
-        return $state1 === $state2 || $state1 === null || $state2 === null;
+        return $state1 === $state2;
     }
 }

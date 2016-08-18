@@ -6,13 +6,6 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PoNumberDiffMapper;
 
 class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->mapper = new PoNumberDiffMapper();
-    }
-
     public function testGetName()
     {
         $this->assertEquals('poNumber', $this->mapper->getName());
@@ -20,87 +13,27 @@ class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testGetCurrentState()
     {
-        $this->checkout
-            ->expects($this->once())
-            ->method('getPoNumber')
-            ->willReturn('testPoNumber');
+        $this->checkout->setPoNumber('testPoNumber');
 
         $result = $this->mapper->getCurrentState($this->checkout);
-
         $this->assertEquals('testPoNumber', $result);
     }
 
     public function testIsStatesEqualTrue()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'poNumber' => '100000001',
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'poNumber' => '100000001',
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertTrue($this->mapper->isStatesEqual($this->checkout, '111111111', '111111111'));
     }
 
     public function testIsStatesEqualFalse()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'poNumber' => '100000001',
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'poNumber' => '100000002',
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertFalse($this->mapper->isStatesEqual($this->checkout, '111111111', '22222222'));
     }
 
-    public function testIsStatesEqualParameterNotExistInState1()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMapper()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'poNumber' => '100000001',
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
-    }
-
-    public function testIsStatesEqualParameterNotExistInState2()
-    {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-            'poNumber' => '100000001',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        return new PoNumberDiffMapper();
     }
 }

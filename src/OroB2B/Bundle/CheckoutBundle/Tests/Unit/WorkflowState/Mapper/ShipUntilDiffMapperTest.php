@@ -6,13 +6,6 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper;
 
 class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->mapper = new ShipUntilDiffMapper();
-    }
-
     public function testGetName()
     {
         $this->assertEquals('shipUntil', $this->mapper->getName());
@@ -20,12 +13,9 @@ class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testGetCurrentState()
     {
-        $now = new \DateTimeImmutable();
+        $now = new \DateTime();
 
-        $this->checkout
-            ->expects($this->once())
-            ->method('getShipUntil')
-            ->willReturn($now);
+        $this->checkout->setShipUntil($now);
 
         $result = $this->mapper->getCurrentState($this->checkout);
 
@@ -34,75 +24,27 @@ class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testIsStatesEqualTrue()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'shipUntil' => new \DateTime('2016-01-01'),
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'shipUntil' => new \DateTime('2016-01-01'),
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertTrue($this->mapper->isStatesEqual(
+            $this->checkout,
+            new \DateTime('2016-01-01'),
+            new \DateTime('2016-01-01')
+        ));
     }
 
     public function testIsStatesEqualFalse()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'shipUntil' => new \DateTime(),
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'shipUntil' => new \DateTime('2016-01-01'),
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertFalse($this->mapper->isStatesEqual(
+            $this->checkout,
+            new \DateTime('2016-02-01'),
+            new \DateTime('2016-01-01')
+        ));
     }
 
-    public function testIsStatesEqualParameterNotExistInState1()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMapper()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'shipUntil' => new \DateTime(),
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
-    }
-
-    public function testIsStatesEqualParameterNotExistInState2()
-    {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-            'shipUntil' => new \DateTime(),
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        return new ShipUntilDiffMapper();
     }
 }
