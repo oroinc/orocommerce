@@ -3,13 +3,4 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroPayPalBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
-        - '@addTree':
-            items:
-                checkout_paypal_ec_component:
-                    blockType: container
-                    options:
-                        vars:
-                            checkout: '=data["checkout"]'
-            tree:
-                checkout_content:
-                    checkout_paypal_ec_component: ~
+    conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'

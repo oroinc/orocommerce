@@ -2,38 +2,50 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Condition;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Component\ConfigExpression\Exception;
 
+use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface;
 
 /**
  * Check payment method requires verification after checkout page refreshed
  * Usage:
- * @payment_method_requires_verification:
+ * @require_payment_redirect:
  *      payment_method: 'payment_term'
  */
-class PaymentMethodRequiresVerification extends AbstractCondition implements ContextAccessorAwareInterface
+class RequirePaymentRedirect extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_method_requires_verification';
+    const NAME = 'require_payment_redirect';
 
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
+    /**
+     * @var PaymentMethodRegistry
+     */
+    private $paymentMethodRegistry;
 
-    /** @var string */
-    protected $paymentMethod;
+    /**
+     * @var string
+     */
+    private $paymentMethod;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
+    public function __construct(PaymentMethodRegistry $paymentMethodRegistry, EventDispatcherInterface $eventDispatcher)
     {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -44,10 +56,12 @@ class PaymentMethodRequiresVerification extends AbstractCondition implements Con
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function initialize(array $options)
     {
-        if (empty($options['payment_method']) && empty($options['action'])) {
+        if (empty($options['payment_method'])) {
             throw new \InvalidArgumentException();
         }
 
@@ -62,11 +76,14 @@ class PaymentMethodRequiresVerification extends AbstractCondition implements Con
         $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
         $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
 
-        if ($paymentMethod instanceof PaymentMethodRequiresVerificationInterface) {
-            return $paymentMethod->requiresVerification();
-        }
+        $event = new RequirePaymentRedirectEvent($paymentMethod);
+        $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodName),
+            $event
+        );
 
-        return false;
+        return $event->isRedirectNeeded();
     }
 
     /** {@inheritdoc} */

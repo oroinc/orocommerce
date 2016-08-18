@@ -3,13 +3,4 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroB2BPaymentBundle:layouts:default/orob2b_checkout_frontend_checkout/layout.html.twig'
-        - '@addTree':
-            items:
-                checkout_payment_term_component:
-                    blockType: container
-                    options:
-                        vars:
-                            checkout: '=data["checkout"]'
-            tree:
-                checkout_content:
-                    checkout_payment_term_component: ~
+    conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'

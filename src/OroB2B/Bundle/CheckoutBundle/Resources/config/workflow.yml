@@ -459,12 +459,8 @@ workflows:
                             message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@payment_method_requires_verification':
+                        - '@require_payment_redirect':
                             payment_method: $payment_method
-                        - '@not':
-                            - '@payment_method_supports':
-                                payment_method: $payment_method
-                                action: 'validate'
                         - '@not':
                             - '@check_request':
                                 is_ajax: true

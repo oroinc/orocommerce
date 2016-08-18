@@ -16,6 +16,7 @@ use Oro\Component\Layout\ContextItemInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -54,7 +55,8 @@ class Checkout implements
     DatesAwareInterface,
     ContextItemInterface,
     ShippingAwareInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    PaymentMethodAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;

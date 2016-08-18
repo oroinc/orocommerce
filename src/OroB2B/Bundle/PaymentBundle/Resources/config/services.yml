@@ -94,6 +94,12 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
+    orob2b_payment.provider.method_widget_provider:
+        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
+
+
     orob2b_payment.event.callback_handler:
         class: 'OroB2B\Bundle\PaymentBundle\Event\CallbackHandler'
         lazy: true
@@ -203,10 +209,11 @@ services:
             - { name: oro_workflow.condition, alias: 'payment_method_supports' }
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
-    orob2b_payment.condition.payment_method_requires_verification:
-        class: 'OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodRequiresVerification'
+    orob2b_payment.condition.require_payment_redirect:
+        class: 'OroB2B\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
             - '@orob2b_payment.payment_method.registry'
+            - '@event_dispatcher'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_requires_verification' }
-            - { name: oro_action.condition, alias: 'payment_method_requires_verification' }
+            - { name: oro_workflow.condition, alias: 'require_payment_redirect' }
+            - { name: oro_action.condition, alias: 'require_payment_redirect' }

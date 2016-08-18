@@ -34,3 +34,7 @@
         {{ view.options.value }}
     </div>
 {% endblock %}
+
+{% block _payment_additional_data_widget %}
+    {{ block(block_name) }}
+{% endblock %}

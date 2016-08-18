@@ -19,7 +19,7 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterfac
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PayflowGateway implements PaymentMethodInterface, PaymentMethodRequiresVerificationInterface
+class PayflowGateway implements PaymentMethodInterface
 {
     const COMPLETE = 'complete';
 

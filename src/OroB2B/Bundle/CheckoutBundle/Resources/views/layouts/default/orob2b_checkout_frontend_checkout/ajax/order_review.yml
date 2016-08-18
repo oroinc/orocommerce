@@ -6,6 +6,8 @@ layout:
             themes: '../templates/order_review.html.twig'
         - '@setFormTheme':
             themes: '../templates/form_theme.html.twig'
+        - '@setBlockTheme':
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
@@ -21,6 +23,14 @@ layout:
             id: checkout_button_continue
         - '@remove':
             id: checkout_button_back
+        - '@add':
+            id: payment_additional_data
+            parentId: checkout_information
+            blockType: payment_additional_data
+            prepend: true
+            options:
+                block_name: '=data["orob2b_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
+                payment_method: '=data["checkout"].getPaymentMethod()'
         - '@addTree':
             items:
                 checkout_button_continue_right:

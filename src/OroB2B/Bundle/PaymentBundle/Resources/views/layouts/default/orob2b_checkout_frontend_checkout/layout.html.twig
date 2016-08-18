@@ -1,8 +1,6 @@
-{% block _checkout_payment_term_component_widget -%}
-    {% if checkout.paymentMethod == 'payment_term' %}
-        <div class="hidden"
-             data-page-component-module="orob2bpayment/js/app/components/payment-term-component"
-             data-page-component-options="{{ {paymentMethod: checkout.paymentMethod}|json_encode }}">
-        </div>
-    {% endif %}
+{% block _payment_term_order_review_widget -%}
+    <div class="hidden"
+         data-page-component-module="orob2bpayment/js/app/components/payment-term-component"
+         data-page-component-options="{{ {paymentMethod: payment_method}|json_encode }}">
+    </div>
 {%- endblock %}
