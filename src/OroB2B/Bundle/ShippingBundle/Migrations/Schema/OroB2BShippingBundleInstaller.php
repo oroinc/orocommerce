@@ -7,6 +7,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BShippingBundleInstaller implements Installation
 {
     /**
@@ -14,7 +17,7 @@ class OroB2BShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -28,12 +31,18 @@ class OroB2BShippingBundleInstaller implements Installation
         $this->createOrob2BShippingOrigWarehouseTable($schema);
         $this->createOrob2BShippingProductOptsTable($schema);
         $this->createOrob2BShippingWeightUnitTable($schema);
+        $this->createOrob2BShippingRuleTable($schema);
+        $this->createOrob2BShippingRuleDestinationTable($schema);
+        $this->createOrob2BShippingRuleConfigTable($schema);
+        $this->createOrob2BShipFlatRateRuleCnfTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOrob2BShippingRuleConfigForeignKeys($schema);
+        $this->addOrob2BShipFlatRateRuleCnfForeignKeys($schema);
         $this->addOrob2BShippingOrigWarehouseForeignKeys($schema);
         $this->addOrob2BShippingProductOptsForeignKeys($schema);
+        $this->addOrob2BShippingRuleDestinationForeignKeys($schema);
     }
-
     /**
      * Create orob2b_shipping_freight_class table
      *
@@ -115,6 +124,43 @@ class OroB2BShippingBundleInstaller implements Installation
     }
 
     /**
+     * Create orob2b_shipping_rule_config table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShippingRuleConfigTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shipping_rule_config');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addColumn('method', 'string', ['length' => 255]);
+        $table->addColumn('entity_name', 'string', ['length' => 255]);
+        $table->addColumn('enabled', 'boolean', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_ship_flat_rate_rule_cnf table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShipFlatRateRuleCnfTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_ship_flat_rate_rule_cnf');
+        $table->addColumn('id', 'integer', []);
+        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
+        $table->addColumn('handling_fee_value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('processing_type', 'string', ['length' => 255]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Create orob2b_shipping_weight_unit table
      *
      * @param Schema $schema
@@ -125,6 +171,42 @@ class OroB2BShippingBundleInstaller implements Installation
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['code']);
+    }
+
+    /**
+     * Create orob2b_shipping_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShippingRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shipping_rule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'text', ['notnull' => true]);
+        $table->addColumn('enabled', 'boolean', ['notnull' => true, 'default' => true]);
+        $table->addColumn('priority', 'integer', ['notnull' => true]);
+        $table->addColumn('conditions', 'text', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('stop_processing', 'boolean', ['default' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['enabled', 'currency'], 'orob2b_shipping_rl_en_cur_idx', []);
+    }
+
+    /**
+     * Create orob2b_shipping_rl_destination table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BShippingRuleDestinationTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shipping_rl_destination');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('country_code', 'string', ['length' => 2]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('rule_id', 'integer', []);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -192,6 +274,66 @@ class OroB2BShippingBundleInstaller implements Installation
             ['weight_unit_code'],
             ['code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_shipping_rl_destination foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShippingRuleDestinationForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shipping_rl_destination');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shipping_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_shipping_rule_config foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShippingRuleConfigForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shipping_rule_config');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shipping_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_ship_flat_rate_rule_cnf foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShipFlatRateRuleCnfForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_ship_flat_rate_rule_cnf');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shipping_rule_config'),
+            ['id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

@@ -7,15 +7,15 @@ layout:
                 __quick_add_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["orob2b_product_quick_add_form_provider"]'
+                        form: '=data["orob2b_product_form"].getQuickAddForm()'
                 __quick_add_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["orob2b_product_quick_add_form_provider"]'
+                        form: '=data["orob2b_product_form"].getQuickAddForm()'
                 __quick_add_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["orob2b_product_quick_add_form_provider"]'
+                        form: '=data["orob2b_product_form"].getQuickAddForm()'
                 __quick_add_form_buttons:
                     blockType: container
             tree:

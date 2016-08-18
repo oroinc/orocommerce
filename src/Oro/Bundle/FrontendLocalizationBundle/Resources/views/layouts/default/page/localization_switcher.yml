@@ -6,5 +6,5 @@ layout:
             siblingId: top_nav
             blockType: localization_switcher
             options:
-                localizations: '=data["frontend_enabled_localizations"]'
-                selected_localization: '=data["frontend_account_user_localization"]'
+                localizations: '=data["frontend_localization"].getEnabledLocalizations()'
+                selected_localization: '=data["frontend_localization"].getCurrentLocalization()'

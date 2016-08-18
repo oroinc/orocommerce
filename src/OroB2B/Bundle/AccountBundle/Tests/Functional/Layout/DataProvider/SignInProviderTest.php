@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider;
 
@@ -20,9 +19,6 @@ use OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider;
  */
 class SignInProviderTest extends WebTestCase
 {
-    /** @var LayoutContext */
-    protected $context;
-
     /** @var SignInProvider */
     protected $dataProvider;
 
@@ -36,16 +32,14 @@ class SignInProviderTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->context = new LayoutContext();
         $this->requestStack = $this->getContainer()->get('request_stack');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
         $this->dataProvider = $this->getContainer()->get('orob2b_account.provider.sign_in');
     }
 
-    public function testGetData()
+    public function testGetLastName()
     {
         $lastUsername = 'Last Username';
-        $errorMessage = 'Test Error';
 
         $request = new Request();
         $request->setDefaultLocale('test');
@@ -55,21 +49,39 @@ class SignInProviderTest extends WebTestCase
         $request->setSession($session);
 
         $session->set(Security::LAST_USERNAME, $lastUsername);
+
+        $this->requestStack->push($request);
+
+        $this->assertEquals($lastUsername, $this->dataProvider->getLastName());
+    }
+
+    public function testGetError()
+    {
+        $errorMessage = 'Test Error';
+
+        $request = new Request();
+        $request->setDefaultLocale('test');
+        $request->attributes->set('test', 'test_test');
+
+        $session = new Session(new MockArraySessionStorage());
+        $request->setSession($session);
+
         $session->set(Security::AUTHENTICATION_ERROR, new AuthenticationException($errorMessage));
 
         $this->requestStack->push($request);
 
-        $actual = $this->dataProvider->getData($this->context);
+        $this->assertEquals($errorMessage, $this->dataProvider->getError());
+    }
 
-        $this->assertInternalType('array', $actual);
+    public function testGetCSRFToken()
+    {
+        $request = new Request();
 
-        $this->assertArrayHasKey('csrf_token', $actual);
-        $this->assertNotEmpty($actual['csrf_token']);
+        $session = new Session(new MockArraySessionStorage());
+        $request->setSession($session);
 
-        $this->assertArrayHasKey('last_username', $actual);
-        $this->assertEquals($lastUsername, $actual['last_username']);
+        $this->requestStack->push($request);
 
-        $this->assertArrayHasKey('error', $actual);
-        $this->assertEquals($errorMessage, $actual['error']);
+        $this->assertNotEmpty($this->dataProvider->getCSRFToken());
     }
 }
