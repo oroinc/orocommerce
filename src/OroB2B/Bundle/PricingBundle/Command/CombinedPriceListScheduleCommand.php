@@ -19,7 +19,7 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         $this
             ->setName(self::NAME)
-            ->setDescription('Activate combined price list by schedule based on price lists');
+            ->setDescription('Prepare and activate combined price list by schedule');
     }
 
     /**
@@ -29,6 +29,19 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         $container = $this->getContainer();
         $container->get('orob2b_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+        $offsetHours = $this->getContainer()->get('oro_config.manager')
+            ->get('oro_b2b_pricing.offset_of_processing_cpl_prices');
+
+        $combinedPriceLists = $container->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceList')
+            ->getRepository('OroB2BPricingBundle:CombinedPriceList')
+            ->getCPLsForPriceCollectByTimeOffset($offsetHours);
+
+        $combinedProductPriceResolver = $container->get('orob2b_pricing.resolver.combined_product_price_resolver');
+
+        foreach ($combinedPriceLists as $combinedPriceList) {
+            $combinedProductPriceResolver->combinePrices($combinedPriceList);
+        }
     }
 
     /**

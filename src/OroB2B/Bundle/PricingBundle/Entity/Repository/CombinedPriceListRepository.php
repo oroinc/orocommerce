@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
@@ -14,7 +13,6 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -268,7 +266,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $qb = $this->createQueryBuilder('cpl');
 
-        $qb->select('cpl')
+        $qb->select('DISTINCT cpl')
             ->innerJoin(
                 'OroB2BPricingBundle:CombinedPriceListToPriceList',
                 'priceListRelations',
@@ -281,6 +279,27 @@ class CombinedPriceListRepository extends BasePriceListRepository
             $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':hasCalculatedPrices'))
                 ->setParameter('hasCalculatedPrices', $hasCalculatedPrices);
         }
+
+        return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param array|PriceList[]|int[] $priceLists
+     * @return BufferedQueryResultIterator
+     */
+    public function getCombinedPriceListsByPriceLists(array $priceLists)
+    {
+        $qb = $this->createQueryBuilder('cpl');
+
+        $qb->select('cpl')
+            ->innerJoin(
+                'OroB2BPricingBundle:CombinedPriceListToPriceList',
+                'priceListRelations',
+                Join::WITH,
+                $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
+            )
+            ->where($qb->expr()->in('priceListRelations.priceList', ':priceLists'))
+            ->setParameter('priceLists', $priceLists);
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
