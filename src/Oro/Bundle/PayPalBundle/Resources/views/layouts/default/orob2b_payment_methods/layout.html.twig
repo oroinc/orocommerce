@@ -12,12 +12,6 @@
     }}
 {% endblock %}
 
-{% block _checkout_paypal_ec_component_widget -%}
-    {% if checkout.paymentMethod in ['payflow_express_checkout', 'paypal_payments_pro_express_checkout'] %}
-
-    {% endif %}
-{%- endblock %}
-
 {% block _paypal_payments_pro_express_checkout_order_review_widget %}
     {{ block('_payflow_express_checkout_order_review_widget') }}
 {% endblock %}

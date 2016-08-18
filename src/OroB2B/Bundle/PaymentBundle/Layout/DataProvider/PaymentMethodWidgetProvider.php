@@ -19,13 +19,13 @@ class PaymentMethodWidgetProvider extends AbstractServerRenderDataProvider
 
     /**
      * @param object $entity
-     * @param string $prefix
+     * @param string $suffix
      * @return string
      */
-    public function getPaymentMethodWidgetName($entity, $prefix)
+    public function getPaymentMethodWidgetName($entity, $suffix)
     {
         if ($entity instanceof PaymentMethodAwareInterface) {
-            return '_' . $entity->getPaymentMethod() . '_' . $prefix . '_widget';
+            return sprintf('_%s_%s_widget', $entity->getPaymentMethod(), $suffix);
         }
 
         return '';

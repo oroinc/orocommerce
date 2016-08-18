@@ -357,15 +357,7 @@ class PayflowGateway implements PaymentMethodInterface
             true
         );
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresVerification()
-    {
-        return true;
-    }
-
+    
     /**
      * @param PaymentTransaction $paymentTransaction
      */

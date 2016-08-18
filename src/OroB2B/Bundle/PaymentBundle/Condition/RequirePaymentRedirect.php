@@ -70,7 +70,9 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     protected function isConditionAllowed($context)
     {
         $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
@@ -86,13 +88,17 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
         return $event->isRedirectNeeded();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->convertToArray([$this->paymentMethod]);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->paymentMethod], $factoryAccessor);

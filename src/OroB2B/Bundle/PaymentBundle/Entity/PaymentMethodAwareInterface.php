@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Entity;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-
 interface PaymentMethodAwareInterface
 {
     /**
@@ -13,7 +11,7 @@ interface PaymentMethodAwareInterface
 
     /**
      * @param string $paymentMethod
-     * @return Checkout
+     * @return $this
      */
     public function setPaymentMethod($paymentMethod);
 }

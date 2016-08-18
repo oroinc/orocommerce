@@ -45,6 +45,5 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
         $prefix = 'test_prefix';
 
         $this->assertSame('', $this->provider->getPaymentMethodWidgetName($entity, $prefix));
-
     }
 }

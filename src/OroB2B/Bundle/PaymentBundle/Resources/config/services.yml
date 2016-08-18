@@ -99,7 +99,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
 
-
     orob2b_payment.event.callback_handler:
         class: 'OroB2B\Bundle\PaymentBundle\Event\CallbackHandler'
         lazy: true

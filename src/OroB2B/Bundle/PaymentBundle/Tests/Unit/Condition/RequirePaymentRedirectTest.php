@@ -2,12 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Condition;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use OroB2B\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
 use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRequiresVerificationInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 {
