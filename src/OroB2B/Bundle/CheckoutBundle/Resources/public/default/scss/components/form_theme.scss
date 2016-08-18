@@ -124,6 +124,10 @@
     font-weight: 400;
     text-transform: uppercase;
 
+    &.notification {
+      text-transform: none;
+    }
+
     &--additional {
       text-transform: none;
     }

@@ -27,6 +27,15 @@ workflows:
                 property_path: checkout.customerNotes
             payment_method:
                 property_path: checkout.paymentMethod
+            shipping_method:
+                property_path: checkout.shippingMethod
+            shipping_method_type:
+                property_path: checkout.shippingMethodType
+            shipping_rule_config:
+                type: entity
+                label: Shipping Rule Configuration
+                options:
+                    class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             request_approval_notes:
                 type: string
                 label: Notes
@@ -200,6 +209,26 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
+                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
+                form_options:
+                    init_actions:
+                        - '@call_service_method':
+                            service: orob2b_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
+                    attribute_fields:
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type: ~
+                        shipping_rule_config:
+                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                            options:
+                                class: 'OroB2BShippingBundle:ShippingRuleConfiguration'
+                                multiple: false
+                                constraints:
+                                    - NotBlank: ~
 
             continue_to_order_review:
                 label: Continue
@@ -440,10 +469,27 @@ workflows:
                             - '@flush_entity': $checkout.shippingAddress
             continue_to_payment_definition:
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                    '@and':
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
+                        - '@has_applicable_shipping_methods':
+                            parameters:
+                                entity: $checkout
+                conditions:
+                    '@shipping_method_supports':
+                        message: orob2b.checkout.workflow.condition.shipping_method_supports.message
                         parameters:
                             entity: $checkout
+                            shipping_rule_config: $shipping_rule_config
+                post_actions:
+                    - '@call_service_method':
+                        service: orob2b_checkout.shipping_cost.calculator
+                        method: calculatePrice
+                        method_parameters: [$checkout, $shipping_rule_config]
+                        attribute: $checkout.shippingCost
+
             place_order_definition:
                 preconditions:
                     '@or':
@@ -485,6 +531,8 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            shippingMethod: $checkout.shippingMethod
+                            shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout

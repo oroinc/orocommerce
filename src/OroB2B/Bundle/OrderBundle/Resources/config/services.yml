@@ -232,3 +232,10 @@ services:
             - '@orob2b_payment.formatter.payment_method_label'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
+
+    orob2b_order.layout.provider.order_shipping_method:
+        class: 'OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider'
+        arguments:
+            - '@orob2b_shipping.formatter.shipping_method_label'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_order_frontend_shipping_method_provider }

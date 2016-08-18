@@ -52,7 +52,7 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'shipping_origin_warehouse',
-                ShippingOriginWarehouseType::NAME,
+                ShippingOriginWarehouseType::class,
                 [
                     'mapped' => false,
                     'label' => 'orob2b.shipping.warehouse.section.shipping_origin'
