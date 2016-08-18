@@ -47,9 +47,9 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         parent::tearDown();
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(AbstractShippingOptionSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(AbstractShippingOptionSelectType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testGetParent()

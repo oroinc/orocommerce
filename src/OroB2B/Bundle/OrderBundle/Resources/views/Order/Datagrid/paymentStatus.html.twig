@@ -1,6 +1,6 @@
-{% set data = get_payment_status_label(record.getValue('id')) %}
+{% set data = record.getValue('paymentStatus') %}
 {% if data is not empty %}
-    {{ 'orob2b.payment.status.%s'|format(data)|trans }}
+    {{ get_payment_status_label(data) }}
 {% else %}
     {{ 'oro.ui.empty'|trans }}
 {% endif %}

@@ -3,14 +3,12 @@
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-use Oro\Component\Layout\ContextInterface;
 
 /**
  * Provider for getting configuration value if open orders page should be displayed
  * separately.
  */
-class OpenOrdersSeparatePageConfigProvider extends AbstractServerRenderDataProvider
+class OpenOrdersSeparatePageConfigProvider
 {
     /**
      * @var ConfigManager
@@ -27,9 +25,9 @@ class OpenOrdersSeparatePageConfigProvider extends AbstractServerRenderDataProvi
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    public function getData(ContextInterface $context)
+    public function getOpenOrdersSeparatePageConfig()
     {
         return $this
             ->configManager

@@ -2,73 +2,38 @@
 
 namespace OroB2B\Bundle\RFPBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
+
+use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
-class RFPFormProvider extends AbstractServerRenderDataProvider
+class RFPFormProvider extends AbstractFormProvider
 {
-    /** @var FormAccessor[] */
-    protected $data = [];
-
-    /** @var FormInterface[] */
-    protected $form = [];
-
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /**
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(FormFactoryInterface $formFactory)
-    {
-        $this->formFactory = $formFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
-    {
-        $request = $context->data()->get('entity');
-        $requestId = $request->getId();
-
-        if (!isset($this->data[$requestId])) {
-            if ($requestId) {
-                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_update', ['id' => $requestId]);
-            } else {
-                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_create');
-            }
-            $this->data[$requestId] = new FormAccessor(
-                $this->getForm($request),
-                $action
-            );
-        }
-
-        return $this->data[$requestId];
-    }
+    const RFP_REQUEST_CREATE_ROUTE_NAME = 'orob2b_rfp_frontend_request_create';
+    const RFP_REQUEST_UPDATE_ROUTE_NAME = 'orob2b_rfp_frontend_request_update';
 
     /**
      * @param Request $request
      *
-     * @return FormInterface
+     * @return FormAccessor
      */
-    public function getForm(Request $request)
+    public function getRequestForm(Request $request)
     {
-        $requestId = $request->getId();
-
-        if (!isset($this->form[$requestId])) {
-            $this->form[$requestId] = $this->formFactory
-                ->create(RequestType::NAME, $request);
+        if ($request->getId()) {
+            return $this->getFormAccessor(
+                RequestType::NAME,
+                self::RFP_REQUEST_UPDATE_ROUTE_NAME,
+                $request,
+                ['id' => $request->getId()]
+            );
         }
 
-        return $this->form[$requestId];
+        return $this->getFormAccessor(
+            RequestType::NAME,
+            self::RFP_REQUEST_CREATE_ROUTE_NAME,
+            $request
+        );
     }
 }

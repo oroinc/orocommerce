@@ -376,6 +376,7 @@ datagrid:
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
+                    - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -402,6 +403,11 @@ datagrid:
                 label:         orob2b.pricing.productprice.value.label
             currency:
                 label:         orob2b.pricing.productprice.currency.label
+            ruleId:
+                label:         orob2b.pricing.productprice.type.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BPricingBundle:Datagrid:Column/manual.html.twig
         sorters:
             columns:
                 productSku:
@@ -443,6 +449,16 @@ datagrid:
                     options:
                         field_options:
                             choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                filter:
+                    type:       single_choice
+                    data_name:  ruleId
+                    label:      orob2b.pricing.productprice.type.label
+                    options:
+                        field_options:
+                            choices:
+                                generated: orob2b.pricing.productprice.generated.label
+                                manual: orob2b.pricing.productprice.manual.label
+
         properties:
             id: ~
             productId: ~
@@ -586,6 +602,8 @@ datagrid:
         columns:
             name:
                 label:         orob2b.pricing.priceattributepricelist.name.label
+            fieldName:
+                label:         orob2b.pricing.priceattributepricelist.field_name.label
             currencies:
                 label:         orob2b.pricing.priceattributepricelist.currencies.label
                 type:          twig
@@ -612,6 +630,8 @@ datagrid:
             columns:
                 name:
                     data_name: priceAttributepriceList.name
+                fieldName:
+                    data_name: priceAttributepriceList.fieldName
                 createdAt:
                     data_name: priceAttributepriceList.createdAt
                 updatedAt:
@@ -623,6 +643,9 @@ datagrid:
                 name:
                     type:      string
                     data_name: priceAttributepriceList.name
+                fieldName:
+                    type:      string
+                    data_name: priceAttributepriceList.fieldName
                 createdAt:
                     type:      datetime
                     data_name: priceAttributepriceList.createdAt
