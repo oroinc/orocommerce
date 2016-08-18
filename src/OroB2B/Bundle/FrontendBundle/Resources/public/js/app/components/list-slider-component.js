@@ -18,7 +18,8 @@ define(function(require) {
             autoplay: false,
             autoplaySpeed: 2000,
             arrows: true,
-            dots: false
+            dots: false,
+            infinite: false
         },
 
         /**
