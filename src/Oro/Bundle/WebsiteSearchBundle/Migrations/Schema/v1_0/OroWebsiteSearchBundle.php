@@ -119,7 +119,7 @@ class OroWebsiteSearchBundle implements Migration, ContainerAwareInterface
      * Create oro_website_search_text table
      * @param Schema $schema
      * @param QueryBag $queries
-     * @throws \RuntimeException
+     * @throws ServiceNotFoundException
      */
     protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
@@ -132,12 +132,8 @@ class OroWebsiteSearchBundle implements Migration, ContainerAwareInterface
         $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
 
-        try {
-            $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
-            $queries->addQuery($query);
-        } catch(ServiceNotFoundException $e) {
-            throw new \RuntimeException('Service oro_website_search.fulltext_index_manager is not found');
-        }
+        $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
+        $queries->addQuery($query);
     }
 
     /**
