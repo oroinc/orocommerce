@@ -4,9 +4,15 @@ layout:
             themes: 'OroB2BMenuBundle:layouts:default/page/main_menu.html.twig'
         - '@addTree':
             items:
+                header_row:
+                    blockType: container
+                header_row_links:
+                    blockType: container
+                header_row_shopping:
+                    blockType: container
                 main_menu_container:
                     blockType: container
-                    siblingId: middle_bar
+                    # siblingId: middle_bar
                 main_menu:
                     blockType: menu
                     options:
@@ -18,7 +24,10 @@ layout:
                     blockType: block
             tree:
                 header:
-                    main_menu_container:
-                        main_menu: ~
-                        main_menu_widgets:
-                            #main_menu_messages_widget: ~
+                    header_row:
+                        header_row_links:
+                            main_menu_container:
+                                main_menu: ~
+                        header_row_shopping:
+                            main_menu_widgets: ~
+                                # main_menu_messages_widget: ~
