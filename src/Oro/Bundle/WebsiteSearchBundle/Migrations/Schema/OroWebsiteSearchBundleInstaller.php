@@ -8,7 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
@@ -17,10 +17,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
  */
 class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -28,14 +25,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     public function getMigrationVersion()
     {
         return 'v1_0';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     /**
