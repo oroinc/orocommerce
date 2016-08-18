@@ -1,12 +1,3 @@
-{% block _login_page_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
-    }) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _login_form_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
@@ -24,27 +15,6 @@
                 $('#form-login').validate({});
             });
         </script>
-    </div>
-{% endblock %}
-
-{% block _login_form_label_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__title"
-    }) %}
-    <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
-{% endblock %}
-
-{% block _login_form_error_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " notification notification_xmd notification_error notification-radiused mb1-md"
-    }) %}
-    <div{{ block('block_attributes') }}>
-        <div>
-            <span class="notification__sign notification__sign_error">
-              <i class="cf-attention fs20"></i>
-            </span>
-            <span>{{ block_widget(block) }}</span>
-        </div>
     </div>
 {% endblock %}
 
