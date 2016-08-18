@@ -41,6 +41,6 @@ layout:
                 visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create") && data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
                 route_name: orob2b_account_frontend_account_user_address_create
                 route_parameters:
-                    entityId: '=data["entity"].getId()'
+                    entityId: '=data["entity"].getAccount().getId()'
                 text: 'orob2b.account.address.add'
     conditions: 'context["account_user_address_count"]>=8'

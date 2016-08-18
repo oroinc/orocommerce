@@ -8,8 +8,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Cache\AddressBookCache;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAddressPages;
+use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAddress;
+use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AdminAccountAddressPages;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAdminPages;
+use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddAddressPage;
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddressBookTestPage;
 
 /**
@@ -36,6 +38,7 @@ class AddressBookTest extends Selenium2TestCase
 
     public function testInit()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $page = $this->getAddressBookPage();
         $page->loginAdmin();
 
@@ -67,6 +70,7 @@ class AddressBookTest extends Selenium2TestCase
      * @param int $nrOfAccAddrToCreate      Number of account addresses that should be created
      * @param int $nrOfUsrAddrToDelete      Number of account user addresses that should be deleted
      * @param int $nrOfAccAddrToDelete      Number of account addresses that should be deleted
+     *
      * @throws \Throwable
      * @dataProvider getAddressBookTestProvider
      * @depends      testInit
@@ -92,6 +96,7 @@ class AddressBookTest extends Selenium2TestCase
         $nrOfUsrAddrToDelete = 0,
         $nrOfAccAddrToDelete = 0
     ) {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $frontendUserInfo = $this->getUsersInfo()[$frontendUser->email];
         $usrAddrGridClass = $usrAddrIsGrid ? 'oro-grid__row' : 'address-list';
         $accAddrGridClass = $accAddrIsGrid ? 'oro-grid__row' : 'address-list';
@@ -172,7 +177,7 @@ class AddressBookTest extends Selenium2TestCase
                 8,
                 0,
                 8,
-                8
+                8,
             ],
         ];
     }
@@ -182,10 +187,13 @@ class AddressBookTest extends Selenium2TestCase
      */
     public function testNoAddresses()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $page = $this->getAddressBookPage();
         $user = $this->getAccountUsers(self::USER1);
         $page->login($user->email, $user->password);
 
+        $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
+        $page->waitPageToLoad();
         $page->deleteAccountAddresses(false);
         $page->deleteUserAddresses(false);
         $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
@@ -206,12 +214,110 @@ class AddressBookTest extends Selenium2TestCase
     /**
      * @depends testNoAddresses
      */
+    public function testAddAccountAddress()
+    {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
+        $user = $this->getAccountUsers(self::USER1);
+        $addressPage = $this->getAddressBookPage();
+        $addressPage->login($user->email, $user->password);
+
+        $addAddressPage = $this->getAddAddressPage();
+        $userInfo = $this->getUsersInfo()[$user->email];
+
+        foreach ($this->getAddressesWithTypes() as $addressInfo) {
+            $addAddressPage->openAddAccountAddressPage($userInfo['accountId']);
+            $addAddressPage->addNewAddress($addressInfo['address']);
+
+            $types = $addressPage->getElement(
+                AddressBookTestPage::ACCOUNT_ADDRESS_BLOCK_SELECTOR
+                . "//li[1]/div[contains(@class, 'address-list__type')]"
+            )->text();
+            $types = explode("\n", $types);
+            $this->assertEquals(sort($addressInfo['expectedTypes']), sort($types));
+
+            if (!isset($addressInfo['deleteOnFinish']) || $addressInfo['deleteOnFinish']) {
+                $addressPage->deleteAccountAddresses(false);
+            }
+        }
+    }
+
+    /**
+     * @depends testNoAddresses
+     */
     public function testFinish()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->getAddressBookPage()->loginAdmin();
         $this->getAccountAdminPage()
             ->deleteRoles($this->getRoles())
             ->deleteAccountUsers($this->getAccountUsers());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAddressesWithTypes()
+    {
+        return [
+            [
+                'address' => new SeleniumAddress('Wall', 'New York', 'United States', 'New York', 123),
+                'expectedTypes' => [''],
+            ],
+            [
+                'address' => new SeleniumAddress('Wall', 'New York', 'United States', 'New York', 123, true),
+                'expectedTypes' => ['Billing'],
+            ],
+            [
+                'address' => new SeleniumAddress('Wall', 'New York', 'United States', 'New York', 123, false, true),
+                'expectedTypes' => ['Shipping'],
+            ],
+            [
+                'address' => new SeleniumAddress('Wall', 'New York', 'United States', 'New York', 123, true, true),
+                'expectedTypes' => ['Billing', 'Shipping'],
+            ],
+            [
+                'address' => new SeleniumAddress(
+                    'Wall',
+                    'New York',
+                    'United States',
+                    'New York',
+                    123,
+                    true,
+                    false,
+                    true
+                ),
+                'expectedTypes' => ['Billing', 'Default Shipping'],
+            ],
+            [
+                'address' => new SeleniumAddress(
+                    'Wall',
+                    'New York',
+                    'United States',
+                    'New York',
+                    123,
+                    false,
+                    true,
+                    true,
+                    false
+                ),
+                'expectedTypes' => ['Shipping', 'Default Billing'],
+            ],
+            [
+                'address' => new SeleniumAddress(
+                    'Wall',
+                    'New York',
+                    'United States',
+                    'New York',
+                    123,
+                    false,
+                    false,
+                    true,
+                    true
+                ),
+                'expectedTypes' => ['Default Billing', 'Default Shipping'],
+                'deleteOnFinish' => false,
+            ],
+        ];
     }
 
     /**
@@ -252,7 +358,7 @@ class AddressBookTest extends Selenium2TestCase
     }
 
     /**
-     * @param AccountAddressPages $addressPage
+     * @param AdminAccountAddressPages $addressPage
      * @param array $userInfo
      * @param int $nrOfUserAddresses
      * @param int $nrOfAccountAddresses
@@ -266,7 +372,7 @@ class AddressBookTest extends Selenium2TestCase
     }
 
     /**
-     * @param AccountAddressPages $addressPage
+     * @param AdminAccountAddressPages $addressPage
      * @param array $userInfo
      * @param int $nrOfUserAddresses
      * @param int $nrOfAccountAddresses
@@ -287,12 +393,17 @@ class AddressBookTest extends Selenium2TestCase
         return new AddressBookTestPage($this);
     }
 
+    protected function getAddAddressPage()
+    {
+        return new AddAddressPage($this);
+    }
+
     /**
-     * @return AccountAddressPages
+     * @return AdminAccountAddressPages
      */
     protected function getAccountAddressPage()
     {
-        return new AccountAddressPages($this);
+        return new AdminAccountAddressPages($this);
     }
 
     /**
@@ -305,6 +416,7 @@ class AddressBookTest extends Selenium2TestCase
 
     /**
      * @param string|null $userAlias
+     *
      * @return SeleniumAccountUser[]|SeleniumAccountUser
      */
     protected function getAccountUsers($userAlias = null)
@@ -333,13 +445,13 @@ class AddressBookTest extends Selenium2TestCase
                         'View' => 'Account User',
                         'Create' => 'Account User',
                         'Edit' => 'Account User',
-                        'Delete' => 'Account User'
+                        'Delete' => 'Account User',
                     ],
                     'Address' => [
                         'View' => 'Account',
                         'Create' => 'Account',
                         'Edit' => 'Account',
-                        'Delete' => 'Account'
+                        'Delete' => 'Account',
                     ],
                 ]
             ),
@@ -350,7 +462,7 @@ class AddressBookTest extends Selenium2TestCase
                     'Account User Address' => [
                         'View' => 'Account User',
                         'Edit' => 'Account User',
-                        'Delete' => 'Account User'
+                        'Delete' => 'Account User',
                     ],
                     'Address' => ['View' => 'Account', 'Edit' => 'Account', 'Delete' => 'Account'],
                 ]

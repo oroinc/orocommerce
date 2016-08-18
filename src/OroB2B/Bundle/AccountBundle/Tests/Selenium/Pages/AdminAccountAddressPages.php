@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
 use OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
 
-class AccountAddressPages extends AbstractPage
+class AdminAccountAddressPages extends AbstractPage
 {
     use SeleniumTestHelper;
 

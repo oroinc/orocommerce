@@ -22,6 +22,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAddressBookMenuItemHidden()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER4,
             LoadAddressBookUserData::ACCOUNT1_USER4
@@ -42,6 +43,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountAddressView()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER1,
             LoadAddressBookUserData::ACCOUNT1_USER1
@@ -62,6 +64,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountAndAccountUserAddressView()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER3,
             LoadAddressBookUserData::ACCOUNT1_USER3
@@ -81,6 +84,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountUserAddressView()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER2,
             LoadAddressBookUserData::ACCOUNT1_USER2
@@ -101,6 +105,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountAddressCreateButton()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER6,
             LoadAddressBookUserData::ACCOUNT1_USER6
@@ -121,6 +126,7 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountUserAddressCreateButton()
     {
+        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER7,
             LoadAddressBookUserData::ACCOUNT1_USER7

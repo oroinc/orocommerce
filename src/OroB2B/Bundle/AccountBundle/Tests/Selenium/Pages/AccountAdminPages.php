@@ -134,8 +134,8 @@ class AccountAdminPages extends AbstractPage
      */
     protected function getPermissionElement($entityLabel, $permissionName)
     {
-        $xpath = "//div[starts-with(@id,'grid-account-user-role-permission-grid')]//td[text()='%s']"
-            . "/following-sibling::*[1]/self::td//span[contains(text(), '%s')]";
+        $xpath = "//div[starts-with(@id,'grid-account-user-role-permission-grid')]//div[text()='%s']"
+            . "/following-sibling::ul[@data-name='action-permissions-items']//span[text()='%s']";
         $selector = sprintf($xpath, $entityLabel, $permissionName);
 
         return $this->getElement($selector);
@@ -154,5 +154,4 @@ class AccountAdminPages extends AbstractPage
 
         return $this->getElement($selector);
     }
-
 }

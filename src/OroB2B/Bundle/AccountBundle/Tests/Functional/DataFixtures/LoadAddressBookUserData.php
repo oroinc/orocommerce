@@ -220,7 +220,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             $account
                 ->setName($item['name'])
                 ->setOrganization($organization)
-                ->setOwner($defaultUser);;
+                ->setOwner($defaultUser);
             $manager->persist($account);
 
             $this->addReference($item['name'], $account);

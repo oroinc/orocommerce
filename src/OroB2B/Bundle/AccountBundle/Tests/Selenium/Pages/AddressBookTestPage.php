@@ -97,8 +97,6 @@ class AddressBookTestPage extends AbstractPage
      */
     public function deleteAccountAddresses($isGrid)
     {
-        $this->getTest()->url(self::ADDRESS_BOOK_URL);
-        $this->waitPageToLoad();
         foreach ($this->getAccountAddressDeleteButtons($isGrid) as $button) {
             $button->click();
             $this->confirmModalDelete();
