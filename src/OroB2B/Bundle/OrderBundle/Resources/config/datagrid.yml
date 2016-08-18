@@ -19,6 +19,8 @@ datagrid:
                     - order1.updatedAt
                     - paymentTerm.label as paymentTermLabel
                     - payment_status.paymentStatus
+                    - order1.shippingMethod
+                    - order1.shippingMethodType
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
                 join:
@@ -119,6 +121,11 @@ datagrid:
                 frontend_type: html
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
+            shippingMethod:
+                label:         orob2b.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
                 label:         orob2b.order.po_number.label
             shipUntil:
@@ -211,6 +218,11 @@ datagrid:
                 frontend_type: html
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
+            shippingMethod:
+                label:         orob2b.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
                 label:         orob2b.order.po_number.label
             shipUntil:

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Manager;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -34,10 +33,9 @@ class WebsiteManager
     public function getCurrentWebsite()
     {
         if (!$this->currentWebsite) {
-            $this->currentWebsite = $this->getEntityManager()->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(
-                [],
-                ['id' => Criteria::ASC]
-            );
+            $this->currentWebsite = $this->getEntityManager()
+                ->getRepository(Website::class)
+                ->getDefaultWebsite();
         }
 
         return $this->currentWebsite;
@@ -48,6 +46,6 @@ class WebsiteManager
      */
     protected function getEntityManager()
     {
-        return $this->managerRegistry->getManagerForClass('OroB2BWebsiteBundle:Website');
+        return $this->managerRegistry->getManagerForClass(Website::class);
     }
 }
