@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 
@@ -28,13 +29,11 @@ class AjaxEntityTotalsController extends Controller
      */
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
-        $totals = [];
-
         try {
             $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
-            $this->createNotFoundException();
+            return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
 
         return new JsonResponse(
@@ -59,13 +58,11 @@ class AjaxEntityTotalsController extends Controller
      */
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
-        $totals = [];
-
         try {
             $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
-            $this->createNotFoundException();
+            return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
 
         return new JsonResponse(

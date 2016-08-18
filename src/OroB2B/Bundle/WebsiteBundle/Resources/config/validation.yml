@@ -1,15 +1,12 @@
 OroB2B\Bundle\WebsiteBundle\Entity\Website:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: url
     properties:
         name:
             - NotBlank: ~
             - Length:
                 min: 2
                 max: 255
-        url:
-            - Url: ~
         owner:
             - NotBlank: ~
         organization:

@@ -13,8 +13,8 @@ class WeightUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
         $this->formType = new WeightUnitSelectType($this->provider, $this->formatter);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(WeightUnitSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(WeightUnitSelectType::NAME, $this->formType->getBlockPrefix());
     }
 }

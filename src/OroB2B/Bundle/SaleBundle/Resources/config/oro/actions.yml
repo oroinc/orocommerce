@@ -71,7 +71,7 @@ operations:
                 method_parameters: [$.data]
             - '@call_service_method':
                 attribute: $.appendSignature
-                service: oro_config.user
+                service: oro_config.manager
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
