@@ -42,6 +42,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
@@ -56,7 +57,20 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('frontend-orders-grid', $crawler->html());
         $this->assertContains('Orders', $crawler->filter('h1.page-title')->html());
+    }
+
+    public function testOrdersGrid()
+    {
+        $response = $this->client->requestGrid('frontend-orders-grid');
+
+        $result = static::getJsonResponseContent($response, 200);
+
+        $first = reset($result['data']);
+
+        $this->assertArrayHasKey('shippingMethod', $first);
+        $this->assertEquals('N/A', $first['shippingMethod']);
     }
 
     /**

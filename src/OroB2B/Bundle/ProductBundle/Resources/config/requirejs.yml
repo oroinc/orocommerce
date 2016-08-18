@@ -9,7 +9,7 @@ config:
         'orob2bproduct/js/app/components/product-autocomplete-component': 'bundles/orob2bproduct/js/app/components/product-autocomplete-component.js'
         'orob2bproduct/js/app/components/quick-add-form-button-component': 'bundles/orob2bproduct/js/app/components/quick-add-form-button-component.js'
         'tinymce/plugins/fullscreen/plugin.min': 'empty:'
-        'orob2bproduct/js/app/widget/quick-add-import-widget': 'bundles/orob2bproduct/js/app/widget/quick-add-import-widget.js'
+        'oro/quick-add-import-widget': 'bundles/orob2bproduct/js/app/widget/quick-add-import-widget.js'
         'orob2bproduct/js/app/components/quick-add-copy-paste-form-component': 'bundles/orob2bproduct/js/app/components/quick-add-copy-paste-form-component.js'
         'orob2bproduct/js/app/components/quick-add-import-validation-component': 'bundles/orob2bproduct/js/app/components/quick-add-import-validation-component.js'
         'orob2bproduct/js/app/components/redirect-component': 'bundles/orob2bproduct/js/app/components/redirect-component.js'

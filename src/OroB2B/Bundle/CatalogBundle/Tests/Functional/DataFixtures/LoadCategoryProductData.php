@@ -27,8 +27,8 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
     public function getDependencies()
     {
         return [
-            __NAMESPACE__ . '\LoadCategoryData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            LoadCategoryData::class,
+            LoadProductData::class,
         ];
     }
 

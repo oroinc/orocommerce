@@ -151,8 +151,19 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
-        $form = $this->getFakeForm($crawler);
-        $crawler = $this->client->submit($form);
+        $form = $this->getTransitionForm($crawler);
+
+        $values = $this->explodeArrayPaths($form->getValues());
+        $values = $this->setShippingRuleFormData($values);
+
+        $crawler = $this->client->request(
+            'POST',
+            $form->getUri(),
+            $values,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+        
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
     }
 
@@ -253,6 +264,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function setCurrentAccountOnAddresses(Account $account)
     {
         $addresses = $this->registry->getRepository('OroB2BAccountBundle:AccountAddress')->findAll();
+        /** @var AccountAddress $address */
         foreach ($addresses as $address) {
             $address->setFrontendOwner($account);
         }
@@ -308,7 +320,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @return ShoppingList
+     * @return ShoppingList|object
      */
     protected function getSourceEntity()
     {
