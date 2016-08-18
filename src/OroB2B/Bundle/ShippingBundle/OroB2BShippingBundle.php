@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
+use OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass;
 use OroB2B\Bundle\ShippingBundle\DependencyInjection\OroB2BShippingExtension;
 
 class OroB2BShippingBundle extends Bundle
@@ -30,6 +31,8 @@ class OroB2BShippingBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new FreightClassExtensionPass(), PassConfig::TYPE_AFTER_REMOVING);
+        $container
+            ->addCompilerPass(new FreightClassExtensionPass(), PassConfig::TYPE_AFTER_REMOVING)
+            ->addCompilerPass(new ShippingMethodsCompilerPass());
     }
 }

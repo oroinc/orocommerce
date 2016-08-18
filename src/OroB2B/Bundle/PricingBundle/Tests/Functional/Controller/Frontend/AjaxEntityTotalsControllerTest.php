@@ -73,6 +73,20 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertEquals('EUR', $data['subtotals'][0]['currency']);
     }
 
+    public function testGetEntityTotalsAction()
+    {
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_entity_totals'));
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
+    }
+
+    public function testRecalculateTotalsAction()
+    {
+        $this->client->request('POST', $this->getUrl('orob2b_pricing_frontend_recalculate_entity_totals'));
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
+    }
+
     /**
      * @return AccountUser
      */

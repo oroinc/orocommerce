@@ -27,14 +27,14 @@ class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
         $this->formType = new ShippingOriginWarehouseType();
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingOriginWarehouseType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingOriginWarehouseType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(ShippingOriginType::NAME, $this->formType->getParent());
+        $this->assertEquals(ShippingOriginType::class, $this->formType->getParent());
     }
 
     /**

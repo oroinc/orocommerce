@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\BaseCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -47,7 +47,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     abstract protected function getWorkflowName();
 
     /**
-     * @return BaseCheckout
+     * @return Checkout
      */
     abstract protected function createCheckout();
 

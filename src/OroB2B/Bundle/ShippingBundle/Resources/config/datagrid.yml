@@ -1,0 +1,154 @@
+datagrid:
+    shipping-rule-grid:
+        acl_resource: orob2b_shipping_rule_view
+        extended_entity_name: %orob2b_shipping.entity.shipping_rule.class%
+        options:
+            entityHint:        shipping rule
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - shipping_rule
+                    - shipping_rule.id
+                    - shipping_rule.name
+                    - shipping_rule.enabled
+                    - shipping_rule.priority
+                    - shipping_rule.currency
+                    - shipping_rule.conditions
+                from:
+                    - { table: %orob2b_shipping.entity.shipping_rule.class%, alias: shipping_rule }
+
+        columns:
+            id:
+                label:         orob2b.shipping.shippingrule.id.label
+            name:
+                label:         orob2b.shipping.shippingrule.name.label
+            enabled:
+                label:         orob2b.shipping.shippingrule.enabled.label
+                frontend_type: boolean
+            priority:
+                label:         orob2b.shipping.shippingrule.priority.label
+            currency:
+                label:         orob2b.shipping.shippingrule.currency.label
+            conditions:
+                label:         orob2b.shipping.shippingrule.conditions.label
+            configurations:
+                label:         orob2b.shipping.shippingrule.configurations.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BShippingBundle:ShippingRule:Datagrid/configurations.html.twig
+            destinations:
+                label:         orob2b.shipping.shippingrule.destinations.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BShippingBundle:ShippingRule:Datagrid/destinations.html.twig
+        properties:
+            id: ~
+            view_link:
+                type:    url
+                route:   orob2b_shipping_rule_view
+                params:  [ id ]
+            update_link:
+                type:    url
+                route:   orob2b_shipping_rule_update
+                params:  [ id ]
+            enable_link:
+                type:       url
+                route:      orob2b_api_enable_shippingrules
+                params:     [ id ]
+            disable_link:
+                type:       url
+                route:      orob2b_api_disable_shippingrules
+                params:     [ id ]
+            delete_link:
+                type:    url
+                route:   orob2b_api_delete_shippingrules
+                params:  [ id ]
+        sorters:
+            columns:
+                id:
+                    data_name: shipping_rule.id
+                name:
+                    data_name: shipping_rule.name
+                enabled:
+                    data_name: shipping_rule.enabled
+                priority:
+                    data_name: shipping_rule.priority
+                currency:
+                    data_name: shipping_rule.currency
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: shipping_rule.id
+                name:
+                    type:      string
+                    data_name: shipping_rule.name
+                enabled:
+                    type:      boolean
+                    data_name: shipping_rule.enabled
+                priority:
+                    type:      number
+                    data_name: shipping_rule.priority
+                currency:
+                    type:      string
+                    data_name: shipping_rule.currency
+                conditions:
+                    type:      string
+                    data_name: shipping_rule.conditions
+        actions:
+            view:
+                type:          navigate
+                link:          view_link
+                acl_resource:  orob2b_shipping_rule_view
+                icon:          eye-open
+                label:         oro.grid.action.view
+                rowAction:     true
+            update:
+                type:         navigate
+                link:         update_link
+                acl_resource: orob2b_shipping_rule_update
+                icon:         edit
+                label:        oro.grid.action.update
+                rowAction:    true
+            enable:
+                type:         ajax
+                acl_resource: orob2b_shipping_rule_update
+                label:        orob2b.shipping.datagrid.action.enable
+                icon:         ok
+                link:         enable_link
+            disable:
+                type:         ajax
+                acl_resource: orob2b_shipping_rule_update
+                label:        orob2b.shipping.datagrid.action.disable
+                icon:         remove
+                link:         disable_link
+            delete:
+                type:         delete
+                link:         delete_link
+                acl_resource: orob2b_shipping_rule_delete
+                icon:         trash
+                label:        oro.grid.action.delete
+                defaultMessages:
+                    confirm_content: orob2b.shipping.delete_shipping_rule_window.content
+                    confirm_ok:      orob2b.shipping.delete_shipping_rule_window.button_ok
+                    confirm_title:   orob2b.shipping.delete_shipping_rule_window.title
+                    success:         orob2b.shipping.delete_shipping_rule_window.success
+        mass_actions:
+            enable:
+                type:         shippingruleenable
+                acl_resource: orob2b_shipping_rule_update
+                label:        orob2b.shipping.datagrid.action.enable
+                icon:         ok
+                entity_name:  %orob2b_shipping.entity.shipping_rule.class%
+                data_identifier: shipping_rule.id
+            disable:
+                type:         shippingruledisable
+                acl_resource: orob2b_shipping_rule_update
+                label:        orob2b.shipping.datagrid.action.disable
+                icon:         remove
+                entity_name:  %orob2b_shipping.entity.shipping_rule.class%
+                data_identifier: shipping_rule.id
