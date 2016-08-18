@@ -20,9 +20,19 @@ class WebsiteSearchBundle extends Bundle
         $container->addCompilerPass(new WebsiteSearchProviderPass());
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getContainerExtension()
     {
         return new OroWebsiteSearchExtension();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
+        return $this->getName();
     }
 }

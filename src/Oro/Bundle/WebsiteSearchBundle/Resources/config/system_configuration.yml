@@ -13,6 +13,7 @@ oro_system_configuration:
         oro_search.engine_parameters.name:
             data_type: string
             type: oro_search_engine_provider_type
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.name.label
                 required: true
@@ -20,30 +21,35 @@ oro_system_configuration:
         oro_search.engine_parameters.host:
             data_type: string
             type: string
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.host.label
 
         oro_search.engine_parameters.port:
             data_type: string
             type: string
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.port.label
 
         oro_search.engine_parameters.username:
             data_type: string
             type: string
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.username.label
 
         oro_search.engine_parameters.password:
             data_type: string
             type: password
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.password.label
 
         oro_search.engine_parameters.auth_type:
             data_type: string
             type: choice
+            ui_only: true
             options:
                 label: oro.website_search.engine_parameters.fields.auth_type.label
                 choice_translation_domain: messages
