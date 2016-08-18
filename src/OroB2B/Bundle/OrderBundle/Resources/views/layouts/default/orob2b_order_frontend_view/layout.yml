@@ -128,13 +128,13 @@ layout:
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: 'orob2b.checkout.preferred_shipping_method.label'
+                        text: '=data["orob2b_order_frontend_shipping_method_provider"].getData(data["order"])'
                         label: 'orob2b.order.shipping_method.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_method:
                     blockType: text
                     options:
-                        text: '=data["orob2b_order_frontend_payment_method_provider"].getPaymentMethod(data["order"])'
+                        text: '=data["orob2b_payment_methods_provider"].getPaymentMethods(data["order"])'
                         label: 'orob2b.payment.methods.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_status:

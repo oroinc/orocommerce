@@ -36,13 +36,24 @@ class PaymentStatusProvider
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return string
      */
     public function getPaymentStatus($object)
     {
-        $total = $this->totalProcessorProvider->getTotal($object);
         $paymentTransactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($object));
+        
+        return $this->computeStatus($object, $paymentTransactions);
+    }
+
+    /**
+     * @param object $object
+     * @param ArrayCollection $paymentTransactions
+     * @return string
+     */
+    public function computeStatus($object, ArrayCollection $paymentTransactions)
+    {
+        $total = $this->totalProcessorProvider->getTotal($object);
 
         if ($this->hasSuccessfulTransactions($paymentTransactions, $total)) {
             return self::FULL;
@@ -62,7 +73,7 @@ class PaymentStatusProvider
 
         return self::PENDING;
     }
-
+    
     /**
      * @param ArrayCollection $paymentTransactions
      * @return ArrayCollection

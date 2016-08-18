@@ -29,9 +29,9 @@ class ProductShippingOptionsCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductShippingOptionsType::NAME,
+                'entry_type' => ProductShippingOptionsType::NAME,
                 'show_form_when_empty' => false,
-                'options' => [
+                'entry_options' => [
                     'data_class' => $this->dataClass
                 ]
             ]

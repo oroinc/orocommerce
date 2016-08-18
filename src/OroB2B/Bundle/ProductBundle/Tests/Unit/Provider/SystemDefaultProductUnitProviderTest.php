@@ -26,8 +26,8 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         
         $map = array(
-            array('orob2b_product.default_unit', false, false, 'kg'),
-            array('orob2b_product.default_unit_precision', false, false, '3')
+            array('orob2b_product.default_unit', false, false, null, 'kg'),
+            array('orob2b_product.default_unit_precision', false, false, null, '3')
         );
 
         $configManager->expects($this->any())

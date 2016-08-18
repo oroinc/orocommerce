@@ -409,23 +409,7 @@
 {% endblock %}
 
 {% block _shopping_list_totals_widget %}
-    <div class="order-checkout-widget__container-wrapper">
-        {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
-            options: {
-                route: 'orob2b_pricing_frontend_entity_totals',
-                events: [
-                    'frontend:item:delete',
-                    'frontend:shopping-list-item-quantity:update'
-                ],
-                selectors: {
-                    subtotalTemplate: '#frontend-subtotals-template',
-                    template: '#frontend-totals-template'
-                },
-                entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
-                entityId: shoppingList.id,
-                skipMaskView: true,
-                data: totals
-            }
-        } only %}
-    </div>
+<div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
+    {{ block_widget(block) }}
+</div>
 {% endblock %}

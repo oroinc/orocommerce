@@ -853,3 +853,29 @@ services:
             - '@orob2b_account.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-role-permission-provider }
+
+    orob2b_account.layout.data_provider.address_provider_abstract:
+        class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\AddressProvider
+        arguments:
+            - '@router'
+            - '@fragment.handler'
+
+    orob2b_account.layout.data_provider.account_address_provider:
+        parent: orob2b_account.layout.data_provider.address_provider_abstract
+        calls:
+            - [setEntityClass, ['OroB2B\Bundle\AccountBundle\Entity\Account']]
+            - [setListRouteName, ['orob2b_api_account_frontend_get_account_addresses']]
+            - [setCreateRouteName, ['orob2b_account_frontend_account_address_create']]
+            - [setUpdateRouteName, ['orob2b_account_frontend_account_address_update']]
+        tags:
+             - { name: layout.data_provider, alias: account_address_provider }
+
+    orob2b_account.layout.data_provider.account_user_address_provider:
+        parent: orob2b_account.layout.data_provider.address_provider_abstract
+        calls:
+            - [setEntityClass, ['OroB2B\Bundle\AccountBundle\Entity\AccountUser']]
+            - [setListRouteName, ['orob2b_api_account_frontend_get_accountuser_addresses']]
+            - [setCreateRouteName, ['orob2b_account_frontend_account_user_address_create']]
+            - [setUpdateRouteName, ['orob2b_account_frontend_account_user_address_update']]
+        tags:
+             - { name: layout.data_provider, alias: account_user_address_provider }

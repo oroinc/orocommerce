@@ -27,9 +27,9 @@ class WeightTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(WeightType::NAME, $this->formType->getName());
+        $this->assertEquals(WeightType::NAME, $this->formType->getBlockPrefix());
     }
 
     /**

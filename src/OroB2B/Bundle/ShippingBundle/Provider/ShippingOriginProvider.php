@@ -54,7 +54,7 @@ class ShippingOriginProvider
         /** @var ShippingOriginWarehouse $shippingOriginWarehouse */
         $shippingOriginWarehouse = $repo->findOneBy(['warehouse' => $warehouse]);
 
-        if ($shippingOriginWarehouse) {
+        if (!empty($shippingOriginWarehouse)) {
             return $shippingOriginWarehouse;
         }
 
