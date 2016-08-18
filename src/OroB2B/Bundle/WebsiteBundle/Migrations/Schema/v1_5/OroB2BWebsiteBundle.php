@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
@@ -65,13 +66,25 @@ class OroB2BWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                 ['is_default' => Type::BOOLEAN]
             )
         );
-        $queries->addQuery(
-            new ParametrizedSqlMigrationQuery(
-                'UPDATE orob2b_website SET is_default = :is_default WHERE id = (SELECT MIN(id) FROM orob2b_website)',
-                ['is_default' => true],
-                ['is_default' => Type::BOOLEAN]
-            )
-        );
+
+        if ($this->platform instanceof MySqlPlatform) {
+            $queries->addQuery(
+                new ParametrizedSqlMigrationQuery(
+                    'UPDATE orob2b_website SET is_default = :is_default ORDER BY id ASC LIMIT 1',
+                    ['is_default' => true],
+                    ['is_default' => Type::BOOLEAN]
+                )
+            );
+        } else {
+            $queries->addQuery(
+                new ParametrizedSqlMigrationQuery(
+                    'UPDATE orob2b_website SET is_default = :is_default WHERE id =(SELECT MIN(id) FROM orob2b_website)',
+                    ['is_default' => true],
+                    ['is_default' => Type::BOOLEAN]
+                )
+            );
+        }
+
 
         $this->doPostUpdateChanges($schema, $queries);
     }
