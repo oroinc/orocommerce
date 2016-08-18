@@ -57,4 +57,3 @@ class ProductImageRepositoryTest extends WebTestCase
             ->findOneBySku($sku);
     }
 }
-

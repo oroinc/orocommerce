@@ -91,7 +91,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher
             ->dispatch(ProductImageResizeEvent::NAME, Argument::type(ProductImageResizeEvent::class))
             ->shouldBeCalledTimes(3)
-            ->will(function($args) use ($asserter, $productImage1) {
+            ->will(function ($args) use ($asserter, $productImage1) {
                 /** @var ProductImageResizeEvent $event */
                 $event = $args[1];
                 $asserter->assertEquals($productImage1, $event->getProductImage());
