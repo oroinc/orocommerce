@@ -19,8 +19,8 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
             'priceList' => 'price_list_1',
             'schedules' => [
                 ['name' => 'schedule.1', 'activateAt' => '-1 day', 'deactivateAt' => '+1 day'],
-                ['name' => 'schedule.2', 'activateAt' => '+1 day', 'deactivateAt' => null],
-                ['name' => 'schedule.3', 'activateAt' => '-2 day', 'deactivateAt' => '-1 day'],
+                ['name' => 'schedule.2', 'activateAt' => '+2 day', 'deactivateAt' => null],
+                ['name' => 'schedule.3', 'activateAt' => '-3 day', 'deactivateAt' => '-2 day'],
             ]
         ],
         [

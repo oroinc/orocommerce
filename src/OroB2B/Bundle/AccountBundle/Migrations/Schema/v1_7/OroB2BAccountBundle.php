@@ -15,6 +15,7 @@ class OroB2BAccountBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->alterAccountUserSettingsTable($schema);
+        $this->addAccountUserWebsiteField($schema);
     }
 
     /**
@@ -33,6 +34,23 @@ class OroB2BAccountBundle implements Migration
             ['id'],
             ['onDelete' => 'SET NULL'],
             'fk_localization_id'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAccountUserWebsiteField(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_account_user');
+
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

@@ -174,8 +174,8 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_b2b_account.confirmation_required', false, false, false],
-                    ['oro_b2b_account.send_password_in_welcome_email', false, false, true]
+                    ['oro_b2b_account.confirmation_required', false, false, null, false],
+                    ['oro_b2b_account.send_password_in_welcome_email', false, false, null, true]
                 ]
             );
 

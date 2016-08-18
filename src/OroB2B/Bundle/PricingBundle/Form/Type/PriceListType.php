@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -15,58 +15,6 @@ class PriceListType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list';
     const SCHEDULES_FIELD = 'schedules';
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @var string
-     */
-    protected $accountClass;
-
-    /**
-     * @var string
-     */
-    protected $accountGroupClass;
-
-    /**
-     * @var string
-     */
-    protected $websiteClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $accountClass
-     */
-    public function setAccountClass($accountClass)
-    {
-        $this->accountClass = $accountClass;
-    }
-
-    /**
-     * @param string $accountGroupClass
-     */
-    public function setAccountGroupClass($accountGroupClass)
-    {
-        $this->accountGroupClass = $accountGroupClass;
-    }
-
-    /**
-     * @param string $websiteClass
-     */
-    public function setWebsiteClass($websiteClass)
-    {
-        $this->websiteClass = $websiteClass;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -98,17 +46,44 @@ class PriceListType extends AbstractType
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
-            ->add('active', 'checkbox', ['label' => 'orob2b.pricing.pricelist.active.label']);
+            ->add(
+                'active',
+                'checkbox',
+                [
+                    'label' => 'orob2b.pricing.pricelist.active.label'
+                ]
+            )
+            ->add(
+                'productAssignmentRule',
+                'textarea',
+                [
+                    'label' => 'orob2b.pricing.pricelist.product_assignment_rule.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'priceRules',
+                CollectionType::NAME,
+                [
+                    'type' => PriceRuleType::NAME,
+                    'label' => false,
+                    'required' => false,
+                    'by_reference' => false,
+                    'delete_empty' => true
+                ]
+            );
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => $this->dataClass
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => PriceList::class
+            ]
+        );
     }
 
     /**

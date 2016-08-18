@@ -144,8 +144,8 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_b2b_pricing.enabled_currencies', [], false, ['EUR', 'USD']],
-                    ['oro_b2b_pricing.default_currency', false, false, 'EUR']
+                    ['oro_b2b_pricing.enabled_currencies', [], false, null, ['EUR', 'USD']],
+                    ['oro_b2b_pricing.default_currency', false, false, null, 'EUR']
                 ]
             );
 
@@ -185,8 +185,8 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_b2b_pricing.enabled_currencies', [], false, ['EUR', 'USD']],
-                    ['oro_b2b_pricing.default_currency', false, false, 'EUR']
+                    ['oro_b2b_pricing.enabled_currencies', [], false, null, ['EUR', 'USD']],
+                    ['oro_b2b_pricing.default_currency', false, false, null, 'EUR']
                 ]
             );
         $this->session->expects($this->once())
@@ -209,8 +209,8 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_b2b_pricing.enabled_currencies', [], false, ['EUR', 'USD']],
-                    ['oro_b2b_pricing.default_currency', false, false, 'EUR']
+                    ['oro_b2b_pricing.enabled_currencies', [], false, null, ['EUR', 'USD']],
+                    ['oro_b2b_pricing.default_currency', false, false, null, 'EUR']
                 ]
             );
         $this->session->expects($this->once())

@@ -2,15 +2,30 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
+use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 
 /**
  * @dbIsolation
@@ -28,8 +43,12 @@ class PriceListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadPriceListSchedules::class,
+                LoadProductPrices::class,
+                LoadCategoryProductData::class,
+                LoadWebsiteData::class,
+                LoadAccounts::class,
+                LoadPriceListRelations::class,
             ]
         );
     }
@@ -160,6 +179,95 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
 
         return $id;
+    }
+
+    public function testPriceGeneration()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+
+        //Create rules for product prices
+        $container = $this->getContainer();
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_list_update', ['id' => $priceList->getId()])
+        );
+
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+        $filesData = $form->getFiles();
+        $submittedData = $form->getPhpValues();
+
+        $productAssignmentRule = 'product.category == ' . $category->getId()
+            . ' or product.category == ' . $category2->getId();
+        $submittedData['orob2b_pricing_price_list']['productAssignmentRule'] = $productAssignmentRule;
+        $rules = [
+            [
+                'quantity' => 99,
+                'productUnit' => 'liter',
+                'currency' => 'USD',
+                'rule' => 1,
+                'ruleCondition' => 'product.category.id == ' . $category->getId(),
+                'priority' => 1,
+            ],
+            [
+                'quantity' => 99,
+                'productUnit' => 'liter',
+                'currency' => 'USD',
+                'rule' => 2,
+                'ruleCondition' => '',
+                'priority' => 2,
+            ]
+        ];
+        $submittedData['orob2b_pricing_price_list']['priceRules'] = $rules;
+
+        $this->client->followRedirects(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        //Create relation price list to account for CPL's check
+
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.2.1');
+
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+
+        //Generate product prices by rules
+        $container->get('orob2b_pricing.builder.price_list_product_assignment_builder')
+            ->buildByPriceList($priceList);
+        $container->get('orob2b_pricing.builder.product_price_builder')
+            ->buildByPriceList($priceList);
+
+        //Combine prices
+        /** @var CombinedPriceListQueueConsumer $consumer */
+        $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
+        $priceListCollectionConsumer->process();
+
+        //Get combined price list which would be used at frontend
+        $cpl = $container->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
+
+        /** @var EntityManager $manager */
+        $prices = $container->get('doctrine')
+            ->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class)
+            ->findBy(
+                [
+                    'priceList' => $cpl, 'quantity' => 99, 'currency' => 'USD'
+                ],
+                ['product' => 'ASC', 'value' => 'ASC']
+            );
+
+        $productPrice = $prices[0];
+        $this->assertEquals(Price::create(1, 'USD'), $productPrice->getPrice());
+        $productPrice = $prices[1];
+        $this->assertEquals(Price::create(2, 'USD'), $productPrice->getPrice());
     }
 
     /**

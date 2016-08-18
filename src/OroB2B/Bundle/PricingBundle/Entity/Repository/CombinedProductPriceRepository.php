@@ -12,7 +12,7 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class CombinedProductPriceRepository extends ProductPriceRepository
+class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
@@ -165,5 +165,46 @@ class CombinedProductPriceRepository extends ProductPriceRepository
 
         $qb->andWhere($qb->expr()->isNull('cpp.id'))
             ->setParameter('combinedPriceList', $combinedPriceList->getId());
+    }
+
+    /**
+     * Return product prices for specified price list and product IDs
+     *
+     * @param int $priceListId
+     * @param array $productIds
+     * @param bool $getTierPrices
+     * @param string|null $currency
+     * @param string|null $productUnitCode
+     * @param array $orderBy
+     *
+     * @return CombinedProductPrice[]
+     */
+    public function findByPriceListIdAndProductIds(
+        $priceListId,
+        array $productIds,
+        $getTierPrices = true,
+        $currency = null,
+        $productUnitCode = null,
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
+    ) {
+        if (!$productIds) {
+            return [];
+        }
+
+        $qb = $this->getFindByPriceListIdAndProductIdsQueryBuilder(
+            $priceListId,
+            $productIds,
+            $getTierPrices,
+            $currency,
+            $productUnitCode,
+            $orderBy
+        );
+        $qb
+            ->addSelect('product', 'unitPrecisions', 'unit')
+            ->leftJoin('price.product', 'product')
+            ->leftJoin('product.unitPrecisions', 'unitPrecisions')
+            ->leftJoin('unitPrecisions.unit', 'unit');
+
+        return $qb->getQuery()->getResult();
     }
 }

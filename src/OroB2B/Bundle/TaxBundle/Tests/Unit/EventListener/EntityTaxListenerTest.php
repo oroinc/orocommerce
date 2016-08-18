@@ -49,7 +49,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->listener, $this->taxManager);
+        unset($this->listener, $this->taxManager, $this->entityManager, $this->metadata);
     }
 
     public function testPrePersist()
@@ -121,20 +121,32 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
+
         // Prepare listener state
         $order = new Order();
         $taxValue = new TaxValue();
         $taxValue
             ->setEntityClass(ClassUtils::getRealClass($order));
 
-        $event = new LifecycleEventArgs($order, $this->entityManager);
+        $event = new LifecycleEventArgs($order, $entityManager);
 
         $this->taxManager->expects($this->once())
             ->method('createTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
-        $this->entityManager
+        $entityManager
             ->expects($this->once())
             ->method('persist')
             ->with($taxValue);
@@ -157,11 +169,15 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
             ->method('scheduleExtraUpdate')
             ->with($taxValue, ['entityId' => [null, $orderId]]);
 
-        $this->entityManager->expects($this->once())
+        $uow->expects($this->once())
+            ->method('recomputeSingleEntityChangeSet')
+            ->with($metadata, $taxValue);
+
+        $entityManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
+        $metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
 
         $this->listener->postPersist($order, $event);
 
