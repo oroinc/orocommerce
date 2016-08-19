@@ -1,6 +1,9 @@
 Upgrade from beta.3
 ===================
 
+FrontendBundle
+- Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
+
 CheckoutBundle:
 ---------------
 - Second argument `$checkoutType = null` of method `OroB2B\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController::checkoutAction` was removed.
