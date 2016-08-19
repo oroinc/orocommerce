@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'paymentMethod';
+    const DATA_NAME = 'payment_method';
 
     /**
      * {@inheritdoc}

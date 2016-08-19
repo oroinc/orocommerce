@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PoNumberDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'poNumber';
+    const DATA_NAME = 'po_number';
 
     /**
      * {@inheritdoc}

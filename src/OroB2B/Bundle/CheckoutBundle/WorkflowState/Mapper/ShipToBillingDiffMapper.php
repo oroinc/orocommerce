@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShipToBillingDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'shipToBillingAddress';
+    const DATA_NAME = 'ship_to_billing_address';
 
     /**
      * {@inheritdoc}

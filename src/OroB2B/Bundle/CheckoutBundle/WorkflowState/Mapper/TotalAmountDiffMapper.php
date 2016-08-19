@@ -7,7 +7,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'totalAmount';
+    const DATA_NAME = 'total_amount';
 
     /**
      * @var TotalProcessorProvider

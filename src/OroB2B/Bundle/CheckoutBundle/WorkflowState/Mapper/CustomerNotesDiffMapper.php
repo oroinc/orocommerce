@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'customerNotes';
+    const DATA_NAME = 'customer_notes';
 
     /**
      * {@inheritdoc}

@@ -6,7 +6,7 @@ use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShippingAddressDiffMapper extends AbstractAddressDiffMapper
 {
-    const DATA_NAME = 'shippingAddress';
+    const DATA_NAME = 'shipping_address';
 
     /**
      * {@inheritdoc}
