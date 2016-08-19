@@ -41,9 +41,6 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
- *          },
- *          "workflow"={
- *              "active_workflows"={"b2b_flow_checkout","b2b_flow_alternative_checkout"}
  *          }
  *      }
  * )

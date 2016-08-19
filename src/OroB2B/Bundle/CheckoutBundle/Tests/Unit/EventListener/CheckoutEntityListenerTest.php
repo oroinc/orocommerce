@@ -219,13 +219,11 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onGetCheckoutEntityDataProviderNew
      *
-     * @param bool $isStartWorkflowAllowed
      * @param array $workflows
      * @param CheckoutSource $source
      * @param CheckoutInterface $expected
      */
     public function testOnGetCheckoutEntityNew(
-        $isStartWorkflowAllowed,
         array $workflows = [],
         CheckoutSource $source = null,
         CheckoutInterface $expected = null
@@ -234,9 +232,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->workflowManager->expects($this->any())
             ->method('getApplicableWorkflows')
             ->willReturn($workflows);
-        $this->workflowManager->expects($this->any())
-            ->method('isStartTransitionAvailable')
-            ->willReturn($isStartWorkflowAllowed);
 
         $event = new CheckoutEntityEvent();
         $event->setSource($source);
@@ -253,25 +248,21 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $checkoutSource = (new CheckoutSource())->setId(1);
         return [
             'new instance with available workflows' => [
-                'isStartWorkflowAllowed' => true,
-                'workflows' => [$this->getWorkflowMock('test')],
+                'workflows' => [$this->getWorkflowMock('test', true)],
                 'source' => $checkoutSource,
                 'expected' => (new Checkout())->setSource($checkoutSource),
             ],
             'new instance without available workflows' => [
-                'isStartWorkflowAllowed' => true,
                 'workflows' => [],
                 'source' => $checkoutSource,
                 'expected' => null,
             ],
             'new instance start disallowed with available workflows' => [
-                'isStartWorkflowAllowed' => false,
-                'workflows' => [$this->getWorkflowMock('test')],
+                'workflows' => [$this->getWorkflowMock('test', false)],
                 'source' => $checkoutSource,
                 'expected' => null
             ],
             'new instance start disallowed without available workflows' => [
-                'isStartWorkflowAllowed' => false,
                 'workflows' => [],
                 'source' => $checkoutSource,
                 'expected' => null
@@ -289,10 +280,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
         $this->workflowManager->expects($this->any())
             ->method('getApplicableWorkflows')
-            ->willReturn([$this->getWorkflowMock('test1'), $this->getWorkflowMock('test2')]);
-        $this->workflowManager->expects($this->any())
-            ->method('isStartTransitionAvailable')
-            ->willReturn(true);
+            ->willReturn([$this->getWorkflowMock('test1', true), $this->getWorkflowMock('test2', true)]);
 
         $event = new CheckoutEntityEvent();
         $event->setSource(new CheckoutSource());
@@ -302,14 +290,17 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
+     * @param bool $isStartTransitionAvailable
      * @return Workflow|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getWorkflowMock($name)
+    protected function getWorkflowMock($name, $isStartTransitionAvailable)
     {
         $workflow = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Workflow')
             ->disableOriginalConstructor()
             ->getMock();
         $workflow->expects($this->any())->method('getName')->willReturn($name);
+        $workflow->expects($this->any())
+            ->method('isStartTransitionAvailable')->with($this->anything())->willReturn($isStartTransitionAvailable);
 
         return $workflow;
     }
