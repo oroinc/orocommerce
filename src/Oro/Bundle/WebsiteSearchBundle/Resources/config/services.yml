@@ -1,14 +1,14 @@
 parameters:
-    oro_website_search.loopack.class: Oro\Bundle\WebsiteSearchBundle\Engine\LoopbackEngine
+    oro_website_search.mock.class: Oro\Bundle\WebsiteSearchBundle\Engine\MockEngine
     oro_website_search.query_factory.class: Oro\Bundle\WebsiteSearchBundle\Factory\QueryFactory
 
 services:
-    oro_website_search.loopback.engine:
-        class: %oro_website_search.loopack.class%
+    oro_website_search.mock.engine:
+        class: %oro_website_search.mock.class%
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
         class: %oro_website_search.query_factory.class%
         arguments:
             - '@oro_website_search.query_factory.inner'
-            - '@oro_website_search.loopback.engine'
+            - '@oro_website_search.mock.engine'

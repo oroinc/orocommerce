@@ -9,7 +9,7 @@ use Oro\Bundle\SearchBundle\Query\Result;
 /**
  * Mock data engine.
  */
-class LoopbackEngine implements EngineV2Interface
+class MockEngine implements EngineV2Interface
 {
     /**
      * @param Query $query
