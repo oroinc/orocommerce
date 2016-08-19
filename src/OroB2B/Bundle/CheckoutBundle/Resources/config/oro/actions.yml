@@ -4,7 +4,7 @@ operations:
             - frontend-checkouts-grid
     orob2b_checkout_delete_order:
         extends: DELETE
-        applications: [frontend]
+        applications: [commerce]
         for_all_datagrids: false
         for_all_entities: false
         label: orob2b.checkout.grid.delete.label

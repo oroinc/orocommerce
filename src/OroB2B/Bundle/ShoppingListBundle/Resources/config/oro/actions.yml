@@ -1,7 +1,7 @@
 operations:
     orob2b_shoppinglist_createorder:
         label: orob2b.shoppinglist.btn.create_order
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_shopping_list_view
         acl_resource: orob2b_order_create
@@ -20,7 +20,7 @@ operations:
 
     orob2b_shoppinglist_frontend_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_order_frontend_create
@@ -48,7 +48,7 @@ operations:
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
-        applications: [frontend]
+        applications: [commerce]
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         order: 30
         button_options:
@@ -81,7 +81,7 @@ operations:
 
     orob2b_shoppinglist_frontend_products_quick_add_to_checkout:
         label: orob2b.order.btn.create_order
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_product_frontend_quick_add
             - orob2b_product_frontend_quick_add_copy_paste
@@ -105,7 +105,7 @@ operations:
     orob2b_shoppinglist_frontend_addlineitem:
         extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
-        applications: [frontend]
+        applications: [commerce]
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids: [frontend-products-grid]
         datagrid_options:
@@ -223,7 +223,7 @@ operations:
 
     orob2b_shoppinglist_frontend_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_rfp_frontend_request_create

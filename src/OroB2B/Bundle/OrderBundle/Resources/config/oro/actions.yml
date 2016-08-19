@@ -3,7 +3,7 @@ operations:
         label: orob2b.payment.capture
         button_options:
             icon: icon-credit-card
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_order_view
         acl_resource: orob2b_payment_transaction

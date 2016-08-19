@@ -1,7 +1,7 @@
 operations:
     orob2b_product_duplicate:
         label: orob2b.product.ui.duplicate
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_product_view
         datagrids:

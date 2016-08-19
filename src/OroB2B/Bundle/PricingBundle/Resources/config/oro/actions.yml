@@ -1,7 +1,7 @@
 operations:
     orob2b_pricing_add_product_price:
         label: orob2b.pricing.add_product_price
-        applications: [backend]
+        applications: [default]
         routes: [orob2b_pricing_price_list_view]
         order: 10
         acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
