@@ -8,6 +8,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 class IndexEntityEvent extends Event
 {
+    const NAME = 'oro_website_search.event.index_entity';
+    
     /**
      * @var array
      */
