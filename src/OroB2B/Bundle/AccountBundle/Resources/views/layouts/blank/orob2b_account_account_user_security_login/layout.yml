@@ -16,18 +16,6 @@ layout:
                         class_prefix: 'create-account-container'
                 login_form:
                     blockType: container
-                login_form_username_label:
-                    blockType: text
-                    options:
-                        text: orob2b.account.accountuser.email.label
-                login_form_password_label:
-                    blockType: text
-                    options:
-                        text: orob2b.account.accountuser.password.label
-                login_form_email_item:
-                    blockType: container
-                login_form_passwors_item:
-                    blockType: container
                 login_form_remenber_item:
                     blockType: container
                 login_form_submit_item:
@@ -46,7 +34,6 @@ layout:
                         visible: '=data["orob2b_account_sign_in"].getError()!=null'
                         text: '=data["orob2b_account_sign_in"].getError()'
                 login_form_username_text:
-
                 login_form_username:
                     blockType: input
                     options:
@@ -107,12 +94,8 @@ layout:
                             login_form:
                                 login_form_title: ~
                                 login_form_notifications: ~
-                                login_form_email_item:
-                                    login_form_username_label: ~
-                                    login_form_username: ~
-                                login_form_passwors_item:
-                                    login_form_password_label: ~
-                                    login_form_password: ~
+                                login_form_username: ~
+                                login_form_password: ~
                                 login_form_remenber_item:
                                     login_form_remember: ~
                                 login_form_submit_item:

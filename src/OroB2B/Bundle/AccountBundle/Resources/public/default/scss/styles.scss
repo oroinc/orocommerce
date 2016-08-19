@@ -1,6 +1,8 @@
-@import 'orob2bfrontend/default/scss/shared/_vars.scss';
-@import 'orob2bfrontend/default/scss/shared/_mixins.scss';
-@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins.scss';
+@import 'orob2bfrontend/default/scss/shared/_vars';
+@import 'orob2bfrontend/default/scss/shared/_mixins';
+@import 'orob2bfrontend/default/scss/components/commerce/partials/mixins';
+
+@import 'oroui/blank/scss/_global-settings';
 
 @import './components/account-user-role-edit';
 @import './components/capabilities';
@@ -11,7 +13,9 @@
 @import './components/permissions-grid';
 @import './components/reset-password';
 @import './components/menu';
-@import './style';
+@import './_user-page';
 
-@import 'components/map-wrapper.scss';
-@import 'components/list-with-map.scss';
+@import 'components/map-wrapper';
+@import 'components/list-with-map';
+
+@import 'redefined-components/redefined-components';

@@ -39,46 +39,6 @@
 
 {% endblock %}
 
-{% block _login_form_username_label_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' label'
-    }) %}
-
-    <label {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </label>
-{% endblock %}
-
-{% block _login_form_password_label_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' label'
-    }) %}
-
-    <label {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </label>
-{% endblock %}
-
-{% block _login_form_email_item_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' grid__row grid__row--offset-m'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _login_form_passwors_item_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' grid__row grid__row--offset-m'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _login_form_remenber_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' grid__row grid__row--offset-m'
@@ -99,6 +59,7 @@
     </div>
 {% endblock %}
 
+
 {% block _login_form_forgot_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' grid__row grid__row--offset-m'
@@ -116,5 +77,45 @@
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_username_widget %}
+    {% set attr = {
+        required: 'required',
+        autofocus: true
+        }|merge(attr)|merge({
+        class: attr.class|default('') ~ " input"
+    }) %}
+
+    {% set label_attr = label_attr|merge({
+        class: label_attr.class|default('') ~ " label"
+    }) %}
+
+    <div class="grid__row grid__row--offset-m">
+        {{ block_row(block, {
+            attr: attr,
+            label_attr: label_attr
+        }) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_password_widget %}
+    {% set attr = {
+        required: 'required',
+        autofocus: true
+    }|merge(attr)|merge({
+        class: attr.class|default('') ~ " input"
+    }) %}
+
+    {% set label_attr = label_attr|merge({
+        class: label_attr.class|default('') ~ " label"
+    }) %}
+
+    <div class="grid__row grid__row--offset-m">
+        {{ block_row(block, {
+            attr: attr,
+            label_attr: label_attr
+        }) }}
     </div>
 {% endblock %}

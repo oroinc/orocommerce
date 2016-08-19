@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'orob2b.account.menu.account_user_login.label'
         - '@remove':
             id: wrapper
         - '@move':
