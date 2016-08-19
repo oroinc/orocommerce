@@ -136,10 +136,12 @@
 {% endblock %}
 
 {% block _product_grid_row_secondary_content_second_container_widget %}
+    {% if blocks.line_item_buttons.children is defined and blocks.line_item_buttons.children is not empty %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_grid_row_more_info_widget %}
