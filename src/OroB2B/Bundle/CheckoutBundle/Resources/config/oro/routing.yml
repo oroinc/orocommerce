@@ -5,6 +5,13 @@ orob2b_checkout:
     options:
         frontend: true
 
+orob2b_checkout_ajax:
+    resource:     "@OroB2BCheckoutBundle/Controller/Frontend/AjaxCheckoutController.php"
+    type:         annotation
+    prefix:       account/checkout
+    options:
+        frontend: true
+
 orob2b_open_orders:
     resource:     "@OroB2BCheckoutBundle/Controller/Frontend/OpenOrdersController.php"
     type:         annotation

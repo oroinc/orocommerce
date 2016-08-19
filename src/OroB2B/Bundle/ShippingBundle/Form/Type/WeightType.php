@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,7 +32,7 @@ class WeightType extends AbstractType
         $builder
             ->add(
                 'value',
-                'number',
+                NumberType::class,
                 [
                     'attr' => ['class' => 'value'],
                     'required' => false,

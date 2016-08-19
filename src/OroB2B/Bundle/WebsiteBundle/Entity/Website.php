@@ -5,13 +5,11 @@ namespace OroB2B\Bundle\WebsiteBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
-
 use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
 /**
@@ -99,18 +97,11 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     protected $name;
 
     /**
-     * @var string
+     * @ORM\Column(name="is_default", type="boolean")
      *
-     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var bool
      */
-    protected $url;
+    protected $default = false;
 
     /**
      * Website constructor.
@@ -146,25 +137,6 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
-     * @param string $url
-     * @return $this
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
 
         return $this;
     }
@@ -241,5 +213,24 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     public function __toString()
     {
         return (string)$this->name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param boolean $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (bool)$default;
+
+        return $this;
     }
 }
