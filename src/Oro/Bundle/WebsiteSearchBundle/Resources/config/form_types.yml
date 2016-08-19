@@ -5,4 +5,4 @@ services:
         arguments:
             - '@oro_website_search.provider.search_engines_provider'
         tags:
-            - { name: form.type, alias: oro_search_engines_type }
+            - { name: form.type, alias: oro_website_search_engines_type }

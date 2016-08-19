@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\SearchEnginesProvider;
 
 class SearchEnginesType extends AbstractType
 {
-    const NAME = 'oro_search_engines_type';
+    const NAME = 'oro_website_search_engines_type';
 
     /**
      * @var SearchEnginesProvider

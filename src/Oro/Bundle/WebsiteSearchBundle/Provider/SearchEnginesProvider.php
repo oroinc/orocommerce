@@ -6,8 +6,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class SearchEnginesProvider
 {
-    const SEARCH_ENGINE_ORM = 'orm';
-    const SEARCH_ENGINE_ES = 'elastic search';
+    const SEARCH_ENGINE_ORM = 'ORM';
+    const SEARCH_ENGINE_ES = 'Elastic Search';
 
     /**
      * @var ContainerInterface
@@ -35,5 +35,4 @@ class SearchEnginesProvider
 
         return $engines;
     }
-
 }

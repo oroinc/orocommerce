@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
             [
                 'name' => [
                     'type' => 'text',
-                    'value' => 'orm'
+                    'value' => 'ORM'
                 ],
                 'host' => [
                     'type' => 'text',

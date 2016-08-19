@@ -3,9 +3,9 @@ oro:
         engine_parameters:
             groups:
                 search.title: Search
-                search_engine: Search engine
-                search_engine_name: Search engine name
-                search_engine_connection: Connection
+                search_engine.title: Search engine
+                search_engine_name.title: Search engine name
+                search_engine_connection.title: Connection
             fields:
                 name.label: Name
                 host.label: Host
