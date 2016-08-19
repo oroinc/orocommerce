@@ -113,6 +113,40 @@ datagrid:
                 acl_resource:  orob2b_product_view
                 rowAction:     true
 
+    frontend-search-products-grid:
+        source:
+            type: search
+            search_index: website
+        columns:
+            sku:
+                label:         orob2b.product.sku.label
+            productName:
+                label:         orob2b.product.names.label
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            status:
+                label:         orob2b.product.status.label
+                frontend_type: select
+                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            name:
+                type: localized_value
+                data_name: names
+            view_link:
+                type:  url
+                route: orob2b_product_frontend_product_view
+                params: [ id ]
+
     frontend-products-grid:
         extended_entity_name: %orob2b_product.entity.product.class%
         options:
@@ -123,7 +157,7 @@ datagrid:
             requireJSModules:
                 - orob2bproduct/js/app/datagrid/frontend-product-display-options-builder
         source:
-            type:         orm
+            type: orm
             query:
                 select:
                     - product.id

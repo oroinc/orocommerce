@@ -39,7 +39,7 @@ layout:
                 product_grid:
                     blockType: product_datagrid
                     options:
-                        grid_name: frontend-products-grid
+                        grid_name: frontend-search-products-grid
                         current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"].getDataGridTheme()'
             tree:
                 content:
