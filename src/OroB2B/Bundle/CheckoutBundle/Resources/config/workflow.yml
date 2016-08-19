@@ -6,6 +6,8 @@ workflows:
         start_step: enter_billing_address
         steps_display_ordered: true
 
+        defaults:
+            active: true
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -25,6 +27,15 @@ workflows:
                 property_path: checkout.customerNotes
             payment_method:
                 property_path: checkout.paymentMethod
+            shipping_method:
+                property_path: checkout.shippingMethod
+            shipping_method_type:
+                property_path: checkout.shippingMethodType
+            shipping_rule_config:
+                type: entity
+                label: Shipping Rule Configuration
+                options:
+                    class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -124,7 +135,7 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -163,7 +174,7 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -200,12 +211,29 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
+                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@call_service_method':
+                            service: orob2b_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
                     attribute_fields:
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type: ~
+                        shipping_rule_config:
+                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                            options:
+                                class: 'OroB2BShippingBundle:ShippingRuleConfiguration'
+                                multiple: false
+                                constraints:
+                                    - NotBlank: ~
                         state_token:
                             form_type: hidden
                             options:
@@ -299,7 +327,7 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -570,10 +598,20 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                    '@and':
+                        - '@order_line_item_has_count':
+                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
+                        - '@has_applicable_shipping_methods':
+                            parameters:
+                                entity: $checkout
+                conditions:
+                    '@shipping_method_supports':
+                        message: orob2b.checkout.workflow.condition.shipping_method_supports.message
                         parameters:
                             entity: $checkout
+                            shipping_rule_config: $shipping_rule_config
                 conditions:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
@@ -584,6 +622,11 @@ workflows:
                                 state1: $.result.initCheckoutState
                                 state2: $.result.savedCheckoutState
                 actions:
+                    - '@call_service_method':
+                        service: orob2b_checkout.shipping_cost.calculator
+                        method: calculatePrice
+                        method_parameters: [$checkout, $shipping_rule_config]
+                        attribute: $checkout.shippingCost
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -805,6 +848,8 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            shippingMethod: $checkout.shippingMethod
+                            shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
@@ -881,12 +926,6 @@ workflows:
                         entity: $checkout
                         state: $.result.actualCheckoutState
                         attribute: $state_token
-                    - '@send_email_template':
-                        parameters:
-                            from: $order.owner.email
-                            to: $order.accountUser.email
-                            template: 'order_confirmation_email'
-                            entity: $order
 
             finish_checkout_definition:
                 conditions:

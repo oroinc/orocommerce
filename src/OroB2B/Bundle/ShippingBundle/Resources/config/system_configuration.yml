@@ -13,10 +13,10 @@ oro_system_configuration:
     fields:
         orob2b_shipping.shipping_origin:
             data_type: array
-            type: orob2b_shipping_origin_config
+            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType'
         orob2b_shipping.length_units:
             data_type: array
-            type: orob2b_shipping_length_unit_select
+            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType'
             options:
                 label: orob2b.shipping.system_configuration.fields.length_units.label
                 multiple: true
@@ -26,7 +26,7 @@ oro_system_configuration:
                     - NotBlank: ~
         orob2b_shipping.weight_units:
             data_type: array
-            type: orob2b_shipping_weight_unit_select
+            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType'
             options:
                 label: orob2b.shipping.system_configuration.fields.weight_units.label
                 multiple: true
@@ -36,7 +36,7 @@ oro_system_configuration:
                     - NotBlank: ~
         orob2b_shipping.freight_classes:
             data_type: array
-            type: orob2b_shipping_freight_class_select
+            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType'
             options:
                 label: orob2b.shipping.system_configuration.fields.freight_classes.label
                 multiple: true

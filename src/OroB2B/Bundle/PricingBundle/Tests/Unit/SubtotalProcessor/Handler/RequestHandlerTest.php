@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
@@ -11,7 +9,6 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 
 use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
@@ -150,27 +147,9 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareTotal()
     {
-        $total = new Subtotal();
-        $total->setType('Total');
-        $total->setAmount(100);
-        $total->setCurrency('USD');
-        $total->setLabel('Total');
-        $total->setVisible(true);
-
-        $subtotals = new ArrayCollection();
-
-        $subtotal = new Subtotal();
-        $subtotal->setType('Shipping Cost');
-        $subtotal->setAmount(100);
-        $subtotal->setCurrency('USD');
-        $subtotal->setLabel('Shipping Cost');
-        $subtotal->setVisible(true);
-
-        $subtotals->add($subtotal);
-
         $this->totalProvider->expects($this->once())->method('enableRecalculation')->willReturn($this->totalProvider);
-        $this->totalProvider->expects($this->once())->method('getTotal')->willReturn($total);
-        $this->totalProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
+        $this->totalProvider->expects($this->once())->method('getTotalWithSubtotalsAsArray')
+            ->willReturn($this->getExpectedTotal());
     }
 
     /**

@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -33,7 +34,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     /** @return array */
     public function getDependencies()
     {
-        return [__NAMESPACE__ . '\LoadAccountDemoData'];
+        return [LoadAccountDemoData::class];
     }
 
     /**
@@ -41,6 +42,9 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
      */
     public function load(ObjectManager $manager)
     {
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
 
@@ -78,6 +82,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
             /** @var AccountUser $accountUser */
             $accountUser = $userManager->createUser();
             $accountUser
+                ->setWebsite($website)
                 ->setUsername($row['email'])
                 ->setEmail($row['email'])
                 ->setFirstName($row['firstName'])

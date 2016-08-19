@@ -250,6 +250,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('login_count', 'integer', ['default' => '0', 'unsigned' => true]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 
@@ -768,6 +769,12 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
             ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
