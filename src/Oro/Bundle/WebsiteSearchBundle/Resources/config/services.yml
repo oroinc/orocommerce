@@ -1,4 +1,5 @@
 parameters:
+    oro_website_search.provider.search_mapping.class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
 
 services:
     oro_search.event_listener.orm.fulltext_index_listener:
@@ -8,3 +9,11 @@ services:
             - 'oro_website_search_index_text'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
+
+    oro_website_search.provider.search_mapping:
+        class: '%oro_website_search.provider.search_mapping.class%'
+        arguments:
+            - '@event_dispatcher'
+            - '@doctrine.orm.default_metadata_cache'
+        calls:
+            - [setMappingConfigurationLoader, ['@oro_website_search.loader.mapping_configuration_loader']]
