@@ -2,18 +2,15 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 
-class FeaturedCategoriesProvider extends AbstractServerRenderDataProvider
+class FeaturedCategoriesProvider
 {
     /**
-     * @var array
+     * @var Category[]
      */
-    protected $data;
+    protected $categories;
 
     /**
      * @var CategoriesProvider
@@ -29,22 +26,22 @@ class FeaturedCategoriesProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param ContextInterface $context
      * @return Category[]
      */
-    public function getData(ContextInterface $context)
+    public function getAll()
     {
-        if (!$this->data) {
-            $this->data = $this->getFeaturedCategories();
-        }
-
-        return $this->data;
+        $this->setCategories();
+        return $this->categories;
     }
 
-    public function getFeaturedCategories()
+    protected function setCategories()
     {
+        if ($this->categories !== null) {
+            return;
+        }
+
         $categories = $this->categoryTreeProvider->getCategories(null);
-        return array_filter($categories, function(Category $category) {
+        $this->categories = array_filter($categories, function (Category $category) {
             return $category->getLevel() !== 0;
         });
     }

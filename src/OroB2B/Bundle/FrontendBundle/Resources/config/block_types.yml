@@ -31,8 +31,9 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        items: {required: true}
                         label: ~
+                        items: {required: true}
+                        items_data: {default: []}
                         item_key: {default: item}
                         use_slider: {default: false}
                         slides_count: {default: 4}

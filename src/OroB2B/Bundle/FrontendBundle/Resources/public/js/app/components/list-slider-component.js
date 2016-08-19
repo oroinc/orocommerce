@@ -29,7 +29,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             if (this.options.mobileEnabled) {
-                $(this.options._sourceElement).slick(this.options);
+                //$(this.options._sourceElement).slick(this.options);
             }
         }
     });

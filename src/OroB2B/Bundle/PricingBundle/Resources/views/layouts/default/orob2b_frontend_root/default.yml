@@ -3,8 +3,8 @@ layout:
         - '@setOption':
             id: featured_product_price
             optionName: vars.products_prices
-            optionValue: '=data["frontend_product_prices"].getByProducts(data["featured_products"])'
+            optionValue: '=data["frontend_product_prices"].getByProducts(data["featured_products"].getAll())'
         - '@setOption':
             id: featured_product_listed_price
             optionName: vars.products_prices
-            optionValue: '=data["frontend_product_prices"].getByProducts(data["featured_products"])'
+            optionValue: '=data["frontend_product_prices"].getByProducts(data["featured_products"].getAll())'

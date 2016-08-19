@@ -1,0 +1,102 @@
+shipping_rule.1:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+            value: 10
+    destinations:
+        -
+            postalCode: '12345'
+            country: 'US'
+            region: 'NY'
+shipping_rule.2:
+    enabled: true
+    priority: 1
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+            value: 10
+    destinations:
+        -
+            country: 'US'
+        -
+            country: 'FR'
+            region: 'FR-75'
+shipping_rule.3:
+    enabled: false
+    priority: 2
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+            value: 10
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'
+        -
+            country: 'FR'
+shipping_rule.4:
+    enabled: true
+    priority: 2
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+            value: 10
+    destinations:
+        -
+            postalCode: '12345, 12346'
+            country: 'US'
+            region: 'NY'
+shipping_rule.5:
+    enabled: true
+    priority: 2
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+            value: 10
+shipping_rule.6:
+    enabled: true
+    priority: 2
+    conditions: 'true'
+    currency: 'EUR'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+            value: 10
+    destinations:
+        -
+            country: 'FR'
+shipping_rule.7:
+    enabled: true
+    priority: 3
+    conditions: 'true'
+    currency: 'USD'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+            value: 10
+    destinations:
+        -
+            postalCode: '12346'
+            country: 'US'
+            region: 'NY'
+shipping_rule.8:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'USD'
+    configurations:
+         -
+            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+            value: 10

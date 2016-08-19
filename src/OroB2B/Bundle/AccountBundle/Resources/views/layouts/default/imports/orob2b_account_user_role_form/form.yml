@@ -11,15 +11,15 @@ layout:
                 __account_user_role_form_errors:
                     blockType: form_errors
                     options:
-                        form: '=data["orob2b_account_frontend_account_user_role_form"].getView()'
+                        form: '=data["orob2b_account_frontend_account_user_role_form"].getRoleForm(data["entity"]).getView()'
                 __account_user_role_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["orob2b_account_frontend_account_user_role_form"]'
+                        form: '=data["orob2b_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
                 __account_user_role_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["orob2b_account_frontend_account_user_role_form"]'
+                        form: '=data["orob2b_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
                 __account_user_role_form_users:
                     blockType: account_user_role_users_datagrid
                     options:
@@ -27,11 +27,11 @@ layout:
                         grid_parameters:
                             role: '=data["entity"].getId()'
                             account: '=data["entity"].getAccount()'
-                        form: '=data["orob2b_account_frontend_account_user_role_form"]'
+                        form: '=data["orob2b_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
                 __account_user_role_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["orob2b_account_frontend_account_user_role_form"]'
+                        form: '=data["orob2b_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
                 __account_user_role_form_actions_top:
                     blockType: container
                 __account_user_role_form_actions_update_top:

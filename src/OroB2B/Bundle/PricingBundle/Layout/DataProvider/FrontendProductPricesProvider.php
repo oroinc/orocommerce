@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -14,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
+class FrontendProductPricesProvider
 {
     /**
      * @var array
