@@ -75,6 +75,15 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->flush();
 
         $queries = $queryTracker->getExecutedQueries();
+
+        // clear queries from Workflow exclusivity check queries (select from 'oro_workflow_item' table)
+        $queries = array_filter(
+            $queries,
+            function ($query) {
+                return strpos($query, 'FROM oro_workflow_item') === false;
+            }
+        );
+
         $this->assertCount(4, $queries);
 
         foreach ($queries as $query) {

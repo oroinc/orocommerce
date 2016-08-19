@@ -6,6 +6,8 @@ workflows:
         start_step: enter_billing_address
         steps_display_ordered: true
 
+        defaults:
+            active: true
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -649,13 +651,6 @@ workflows:
                         route_parameters:
                             id: $.id
                             transition: payment_error
-
-                    - '@send_email_template':
-                        parameters:
-                            from: $order.owner.email
-                            to: $order.accountUser.email
-                            template: 'order_confirmation_email'
-                            entity: $order
 
             finish_checkout_definition:
                 conditions:
