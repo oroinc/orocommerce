@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
-class PriceAttributePriceListRepository extends EntityRepository
+class PriceAttributePriceListRepository extends BasePriceListRepository
 {
     /**
      * @param array $currencies
@@ -32,5 +30,21 @@ class PriceAttributePriceListRepository extends EntityRepository
 
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldNames()
+    {
+        $qb = $this->createQueryBuilder('price_attribute_price_list')
+            ->select('
+                price_attribute_price_list.id,
+                price_attribute_price_list.name,
+                price_attribute_price_list.fieldName
+            ')
+            ->orderBy('price_attribute_price_list.id');
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

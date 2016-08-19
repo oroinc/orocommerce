@@ -7,15 +7,13 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
-class SignInProvider extends AbstractServerRenderDataProvider
+class SignInProvider
 {
     /**
      * @var array
      */
-    protected $data;
+    protected $options = [];
 
     /**
      * @var RequestStack
@@ -48,46 +46,68 @@ class SignInProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @return string|null
      */
-    public function getData(ContextInterface $context)
+    public function getLastName()
     {
-        if ($this->data !== null) {
-            return $this->data;
+        if (!array_key_exists('last_username', $this->options)) {
+            $request = $this->requestStack->getCurrentRequest();
+            $session = $request->getSession();
+            
+            // last username entered by the user
+            $this->options['last_username'] = (null === $session) ? '' : $session->get(Security::LAST_USERNAME);
         }
 
-        if ($this->securityFacade->getLoggedUser()) {
-            return null;
+        return $this->options['last_username'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        if (!array_key_exists('error', $this->options)) {
+            $request = $this->requestStack->getCurrentRequest();
+            $session = $request->getSession();
+
+            // get the error if any (works with forward and redirect -- see below)
+            if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
+                $error = $request->attributes->get(Security::AUTHENTICATION_ERROR);
+            } elseif (null !== $session && $session->has(Security::AUTHENTICATION_ERROR)) {
+                $error = $session->get(Security::AUTHENTICATION_ERROR);
+                $session->remove(Security::AUTHENTICATION_ERROR);
+            } else {
+                $error = '';
+            }
+
+            if ($error) {
+                // TODO: this is a potential security risk (see http://trac.symfony-project.org/ticket/9523)
+                $error = $error->getMessage();
+            }
+
+            $this->options['error'] = $error;
         }
 
-        $request = $this->requestStack->getCurrentRequest();
-        $session = $request->getSession();
+        return $this->options['error'];
+    }
 
-        // get the error if any (works with forward and redirect -- see below)
-        if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(Security::AUTHENTICATION_ERROR);
-        } elseif (null !== $session && $session->has(Security::AUTHENTICATION_ERROR)) {
-            $error = $session->get(Security::AUTHENTICATION_ERROR);
-            $session->remove(Security::AUTHENTICATION_ERROR);
-        } else {
-            $error = '';
+    /**
+     * @return string
+     */
+    public function getCSRFToken()
+    {
+        if (!array_key_exists('csrf_token', $this->options)) {
+            $this->options['csrf_token'] = $this->csrfTokenManager->getToken('authenticate')->getValue();
         }
 
-        if ($error) {
-            // TODO: this is a potential security risk (see http://trac.symfony-project.org/ticket/9523)
-            $error = $error->getMessage();
-        }
+        return $this->options['csrf_token'];
+    }
 
-        // last username entered by the user
-        $lastUsername = (null === $session) ? '' : $session->get(Security::LAST_USERNAME);
-        $csrfToken = $this->csrfTokenManager->getToken('authenticate')->getValue();
-
-        $this->data = [
-            'last_username' => $lastUsername,
-            'csrf_token' => $csrfToken,
-            'error'=> $error,
-        ];
-
-        return $this->data;
+    /**
+     * @return mixed|null
+     */
+    public function getLoggedUser()
+    {
+        return $this->securityFacade->getLoggedUser();
     }
 }

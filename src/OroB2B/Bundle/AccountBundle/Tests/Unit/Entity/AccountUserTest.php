@@ -135,6 +135,7 @@ class AccountUserTest extends AbstractUserTest
             ['loginCount', 11],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
+            ['website', new Website()],
             ['salt', md5('user')],
         ];
     }

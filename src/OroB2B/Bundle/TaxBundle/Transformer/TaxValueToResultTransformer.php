@@ -32,8 +32,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
         $taxValue->setAddress((string)$taxable->getTaxationAddress());
 
-        $taxValueResult = new Result($result->getArrayCopy());
-        $taxValue->setResult($taxValueResult);
+        $taxValue->setResult($result);
 
         return $taxValue;
     }

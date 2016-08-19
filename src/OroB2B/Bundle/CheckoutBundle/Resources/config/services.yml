@@ -5,11 +5,6 @@ parameters:
 
 services:
     # Data Providers
-    orob2b_checkout.layout.data_provider.abstract_transition:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\AbstractTransitionDataProvider'
-        arguments:
-            - '@oro_workflow.manager'
-
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
         public: false
@@ -24,49 +19,43 @@ services:
             - '@orob2b_pricing.user_currency_manager'
             - '@oro_config.manager'
 
-    orob2b_checkout.layout.data_provider.summary:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider'
+    orob2b_checkout.layout.data_provider.line_items_totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider'
         arguments:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
             - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_summary }
+            - { name: layout.data_provider, alias: orob2b_checkout_line_items_totals }
+
+    orob2b_checkout.layout.data_provider.totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider'
+        arguments:
+            - '@orob2b_checkout.provider.checkout_totals'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_totals }
 
     orob2b_checkout.layout.data_provider.transition_form:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider'
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
         arguments:
             - '@form.factory'
         calls:
-            - [setContinueTransitionDataProvider, ['@orob2b_checkout.layout.data_provider.continue_transition']]
+            - [setTransitionProvider, ['@orob2b_checkout.layout.data_provider.transition']]
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_transition_form }
 
-    orob2b_checkout.layout.data_provider.continue_transition:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider'
-        parent: orob2b_checkout.layout.data_provider.abstract_transition
-        tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_continue_transition }
-
     orob2b_checkout.layout.data_provider.checkout_steps:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider'
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider'
         arguments:
             - '@oro_workflow.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_steps }
 
-    orob2b_checkout.layout.data_provider.back_transitions:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider'
-        parent: orob2b_checkout.layout.data_provider.abstract_transition
+    orob2b_checkout.layout.data_provider.transition:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider'
+        arguments:
+            - '@oro_workflow.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_back_transitions }
-
-    orob2b_checkout.layout.data_provider.back_transition:
-        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider'
-        calls:
-            - [setBackTransitionsDataProvider, ['@orob2b_checkout.layout.data_provider.back_transitions']]
-        tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_back_transition }
+            - { name: layout.data_provider, alias: orob2b_checkout_transition }
 
     orob2b_checkout.model.action.get_order_line_items:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
@@ -75,6 +64,15 @@ services:
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
+
+    orob2b_checkout.layout.data_provider.shipping_methods:
+        class: 'OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
+        tags:
+            - { name: layout.data_provider, alias: shipping_methods_data_provider }
 
     orob2b_checkout.model.action.start_checkout:
         class: 'OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout'
@@ -128,9 +126,8 @@ services:
         public: false
         arguments:
             - '@doctrine'
-        calls:
-            - [setCheckoutClassName, ['%orob2b_checkout.entity.checkout.class%']]
-            - [setCheckoutSourceClassName, ['%orob2b_checkout.entity.checkout_source.class%']]
+            - '%orob2b_checkout.entity.checkout.class%'
+            - '%orob2b_checkout.entity.checkout_source.class%'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_shopping_list.entity.shopping_list.class%', event: preRemove }
 
@@ -322,3 +319,45 @@ services:
         parent: oro_workflow.abstract.workflow_aware_manager
         calls:
             - ['setWorkflowName', ['b2b_flow_checkout']]
+
+    orob2b_checkout.shipping_cost.calculator:
+        class: 'OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
+        arguments:
+          - '@orob2b_shipping.shipping_method.registry'
+          - '@orob2b_checkout.factory.shipping_context_provider_factory'
+
+    orob2b_checkout.condition.has_applicable_shipping_methods:
+        class: 'OroB2B\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
+
+    orob2b_checkout.condition.shipping_method_supports:
+        class: 'OroB2B\Bundle\CheckoutBundle\Condition\ShippingMethodSupports'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
+        tags:
+            - { name: oro_workflow.condition, alias: 'shipping_method_supports' }
+            - { name: oro_action.condition, alias: 'shipping_method_supports' }
+
+    orob2b_checkout.provider.checkout_totals:
+        class: 'OroB2B\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
+        arguments:
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+
+    orob2b_checkout.action.default_shipping_method_setter:
+        class: 'OroB2B\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
+        arguments:
+            - '@orob2b_checkout.factory.shipping_context_provider_factory'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_checkout.shipping_cost.calculator'
+
+    orob2b_checkout.factory.shipping_context_provider_factory:
+        class: 'OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'

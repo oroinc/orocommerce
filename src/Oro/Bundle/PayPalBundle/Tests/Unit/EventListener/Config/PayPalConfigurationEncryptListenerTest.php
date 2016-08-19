@@ -92,7 +92,7 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $event = new ConfigGetEvent($this->configManager, $key, $value, $full);
+        $event = new ConfigGetEvent($this->configManager, $key, $value, $full, null);
 
         $this->listener->loadConfig($event);
         $this->assertEquals($expectedValue, $event->getValue());
