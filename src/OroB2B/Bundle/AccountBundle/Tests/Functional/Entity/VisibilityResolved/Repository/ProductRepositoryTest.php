@@ -62,11 +62,13 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testClearTableByWebsite()
     {
+        $defaultWebsiteProductVisibilitiesCount = count($this->repository->findBy(['website' => $this->website]));
+
         $deleted = $this->repository->clearTable($this->website);
         $actual = $this->repository->findBy(['website' => $this->website]);
 
         $this->assertEmpty($actual);
-        $this->assertSame(6, $deleted);
+        $this->assertSame($defaultWebsiteProductVisibilitiesCount, $deleted);
     }
 
     public function testFindByPrimaryKey()
