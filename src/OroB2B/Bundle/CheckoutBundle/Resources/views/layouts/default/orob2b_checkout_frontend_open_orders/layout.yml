@@ -1,6 +1,11 @@
 layout:
     imports:
         - orob2b_account_menu
+        -
+            id: orob2b_checkout_grid
+            root: content
+            namespace: checkouts
+
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
@@ -13,14 +18,6 @@ layout:
             prepend: true
             options:
                 text: 'orob2b.checkout.entity_plural_label'
-
-        - '@add':
-            id: checkouts
-            parentId: content
-            siblingId: checkouts_title
-            blockType: datagrid
-            options:
-                grid_name: frontend-checkouts-grid
 
         - '@appendOption':
             id: title

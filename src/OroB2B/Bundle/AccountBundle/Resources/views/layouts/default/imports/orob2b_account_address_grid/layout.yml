@@ -1,0 +1,55 @@
+layout:
+    imports:
+        -
+            id: datagrid_toolbar
+            root: __root
+            namespace: addresses
+
+        -
+            id: datagrid
+            root: __root
+            namespace: addresses
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __addresses_head:
+                    blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
+                __addresses_head_title:
+                    blockType: text
+                    options:
+                        text: 'orob2b.account.frontend.account_user_address_book.account_addresses'
+            tree:
+                __root:
+                    __addresses_head:
+                        __addresses_head_title: ~
+
+        - '@move':
+            id: __addresses_datagrid
+            siblingId: __addresses_head
+
+        - '@setOption':
+            id: __addresses_datagrid
+            optionName: grid_name
+            optionValue: frontend-account-account-address-grid
+
+        - '@setOption':
+              id: __addresses_datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+
+        - '@add':
+            id: __addresses_create_button
+            parentId: __addresses_datagrid_toolbar_button_container
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
+                route_name: orob2b_account_frontend_account_address_create
+                route_parameters:
+                    entityId: '=data["entity"].getId()'
+                text: 'orob2b.account.frontend.account_user_address_book.create.label'

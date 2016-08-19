@@ -1,4 +1,10 @@
 layout:
+    imports:
+        -
+            id: orob2b_checkout_grid
+            root: content
+            namespace: checkouts
+
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_order_frontend_index/layout.html.twig'
@@ -13,11 +19,7 @@ layout:
                 text: 'orob2b.checkout.entity_plural_label'
                 visible: '=data["orob2b_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
 
-        - '@add':
-            id: checkouts
-            parentId: content
-            siblingId: checkouts_title
-            blockType: datagrid
-            options:
-                grid_name: frontend-checkouts-grid
-                visible: '=data["orob2b_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
+        - '@setOption':
+            id: checkouts_datagrid
+            optionName: visible
+            optionValue: '=data["orob2b_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'

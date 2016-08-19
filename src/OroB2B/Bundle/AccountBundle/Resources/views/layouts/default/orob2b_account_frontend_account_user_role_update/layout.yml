@@ -4,9 +4,12 @@ layout:
             id: orob2b_account_user_role_form
             root: content
         - orob2b_account_menu
+        -
+            id: orob2b_account_user_role_permission_grid
+            root: account_user_role_container
+            namespace: account_user_role_form_privileges
+
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -24,18 +27,6 @@ layout:
             optionName: vars
             optionValue:
                 entity: '=data["entity"]'
-        - '@add':
-            id: account_user_role_form_privileges
-            blockType: datagrid
-            parentId: account_user_role_container
+        - '@move':
+            id: account_user_role_form_privileges_datagrid
             siblingId: account_user_role_form_fields
-            options:
-                grid_name: frontend-account-user-role-permission-grid
-                grid_parameters:
-                    role: '=data["entity"]'
-                grid_render_parameters:
-                    cssClass: 'inner-permissions-grid'
-                vars:
-                    options:
-                        tabsOptions: '=data["orob2b_account_fronted_account_user_role_options"].getTabsOptions()'
-                        capabilitySetOptions: '=data["orob2b_account_fronted_account_user_role_options"].getCapabilitySetOptions(data["entity"])'

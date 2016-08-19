@@ -1,0 +1,15 @@
+layout:
+    imports:
+        -
+            id: datagrid_toolbar
+            root: __root
+
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-requests-grid

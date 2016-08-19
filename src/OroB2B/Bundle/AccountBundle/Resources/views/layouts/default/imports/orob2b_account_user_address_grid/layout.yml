@@ -1,0 +1,42 @@
+layout:
+    imports:
+        -
+            id: orob2b_account_address_grid
+            root: __root
+            namespace: user
+
+    actions:
+        - '@setOption':
+            id: __user__head
+            optionName: visible
+            optionValue: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
+
+        - '@setOption':
+            id: __user__head_title
+            optionName: text
+            optionValue: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
+
+        - '@setOption':
+            id: __user__datagrid
+            optionName: grid_name
+            optionValue: frontend-account-account-user-address-grid
+
+        - '@setOption':
+              id: __user__datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+
+        - '@setOption':
+              id: __user__create_button
+              optionName: visible
+              optionValue: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create") && data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
+
+        - '@setOption':
+              id: __user__create_button
+              optionName: route_name
+              optionValue: orob2b_account_frontend_account_user_address_create
+
+        - '@setOption':
+              id: __user__create_button
+              optionName: text
+              optionValue: 'orob2b.account.address.add'

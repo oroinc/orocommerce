@@ -1,46 +1,12 @@
 layout:
+    imports:
+#        -
+#            id: orob2b_account_user_address_grid
+#            root: account_address_book_user_addresses
+#            namespace: account_address_book
+
     actions:
         - '@setBlockTheme':
             themes: 'address_book_grid.html.twig'
-        - '@setOption':
-              id: datagrid_toolbar_button_container
-              optionName: visible
-              optionValue: true
 
-        - '@addTree':
-            items:
-                account_address_book_user_addresses_grid_head:
-                    blockType: container
-                    options:
-                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
-                account_address_book_user_addresses_grid_title:
-                    blockType: text
-                    options:
-                        text: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
-                account_address_book_user_addresses_grid:
-                    blockType: datagrid
-                    options:
-                        visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
-                        grid_name: frontend-account-account-user-address-grid
-                        grid_parameters:
-                            frontend_owner_id: '=data["entity"].getId()'
-                        grid_render_parameters:
-                            themeOptions:
-                                cellActionsHideCount: 4
-            tree:
-                account_address_book_user_addresses:
-                    account_address_book_user_addresses_grid_head:
-                        account_address_book_user_addresses_grid_title: ~
-                    account_address_book_user_addresses_grid: ~
-
-        - '@add':
-            id: account_address_book_user_addresses_grid_create_button
-            parentId: datagrid_toolbar_button_container
-            blockType: link
-            options:
-                visible: '=data["acl"].isGranted("orob2b_account_frontend_account_user_address_create") && data["acl"].isGranted("orob2b_account_frontend_account_user_address_view")'
-                route_name: orob2b_account_frontend_account_user_address_create
-                route_parameters:
-                    entityId: '=data["entity"].getId()'
-                text: 'orob2b.account.address.add'
-    conditions: 'context["account_user_address_count"]>=8'
+#    conditions: 'context["account_user_address_count"]>=8'

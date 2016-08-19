@@ -1,0 +1,19 @@
+layout:
+    imports:
+        -
+            id: datagrid_toolbar
+            root: __root
+
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-checkouts-grid
+
+        - '@move':
+            id: __datagrid
+            siblingId: checkouts_title

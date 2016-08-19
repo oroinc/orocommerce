@@ -1,6 +1,11 @@
 layout:
     imports:
         - orob2b_account_menu
+        -
+            id: orob2b_account_user_role_permission_grid
+            root: account_user_role_items
+            namespace: account_user_role_items_view_privileges
+
     actions:
         - '@setBlockTheme':
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
@@ -36,21 +41,6 @@ layout:
                         executionRoute: '=data["action_buttons"].getExecutionRoute()'
                 account_user_role_items:
                     blockType: container
-                account_user_role_items_view_privileges:
-                    blockType: datagrid
-                    options:
-                        visible: '=data["entity"]!=null'
-                        grid_name: frontend-account-user-role-permission-grid
-                        grid_parameters:
-                            role: '=data["entity"]'
-                        grid_render_parameters:
-                            cssClass: 'inner-permissions-grid'
-                            themeOptions:
-                                readonly: true
-                        vars:
-                            options:
-                                tabsOptions: '=data["orob2b_account_fronted_account_user_role_options"].getTabsOptions()'
-                                capabilitySetOptions: '=data["orob2b_account_fronted_account_user_role_options"].getCapabilitySetOptions(data["entity"])'
                 account_user_role_items_view_users:
                     blockType: datagrid
                     options:
@@ -64,5 +54,20 @@ layout:
                         account_user_role_back_link: ~
                         account_user_role_items:
                             account_user_role_top_actions: ~
-                            account_user_role_items_view_privileges: ~
                             account_user_role_items_view_users: ~
+
+        - '@setOption':
+            id: account_user_role_items_view_privileges_datagrid
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+        - '@appendOption':
+
+            id: account_user_role_items_view_privileges_datagrid
+            optionName: grid_render_parameters
+            optionValue:
+                themeOptions:
+                    readonly: true
+
+        - '@move':
+            id: account_user_role_items_view_privileges_datagrid
+            siblingId: account_user_role_top_actions

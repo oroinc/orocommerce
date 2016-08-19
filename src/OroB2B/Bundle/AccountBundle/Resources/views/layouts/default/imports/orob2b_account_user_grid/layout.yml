@@ -1,0 +1,34 @@
+layout:
+    imports:
+        -
+            id: datagrid_toolbar
+            root: __root
+
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-account-account-user-grid
+
+        - '@setOption':
+            id: __datagrid_toolbar_button_container
+            optionName: visible
+            optionValue: true
+
+        - '@add':
+            id: __datagrid_toolbar_button_container_create_account_user
+            parentId: __datagrid_toolbar_button_container
+            blockType: action_combined_buttons
+            options:
+                actions: '=data["actions"].getAll()'
+                entityClass: '=data["action_buttons"].getEntityClass("OroB2B\Bundle\AccountBundle\Entity\AccountUser")'
+                dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                class_prefix: 'datagrid_toolbar_button_container'

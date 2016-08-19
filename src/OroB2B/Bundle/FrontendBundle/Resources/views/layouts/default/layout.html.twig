@@ -65,7 +65,7 @@
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
         {% set hasVariants = actionsCount > 1 %}
         {% set additionalCss = "btn" %}
-        {% if block.parent.vars.id == 'datagrid_toolbar_button_container' %}
+        {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
             {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
         {% else %}
             {% set additionalCss = additionalCss ~ " theme-btn btn-orange" %}

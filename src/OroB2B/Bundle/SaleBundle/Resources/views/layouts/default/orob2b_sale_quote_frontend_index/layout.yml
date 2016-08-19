@@ -1,6 +1,11 @@
 layout:
     imports:
         - orob2b_account_menu
+        -
+            id: orob2b_sale_quote_grid
+            root: content
+            namespace: quotes
+
     actions:
         - '@appendOption':
             id: title
@@ -16,9 +21,3 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'account'
-        - '@add':
-            id: quotes
-            parentId: content
-            blockType: datagrid
-            options:
-                grid_name: frontend-quotes-grid

@@ -48,3 +48,4 @@ layout:
             blockType: container
             options:
                 visible: false
+                class_prefix: datagrid_toolbar_button_container
