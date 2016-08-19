@@ -4,6 +4,8 @@ oro_system_configuration:
             title: orob2b.product.system_configuration.groups.product.title
         product_inventory:
             title: orob2b.product.system_configuration.groups.product_inventory.title
+        allowed_statuses:
+            title: orob2b.product.system_configuration.groups.allowed_statuses.title
             icon: 'icon-list'
         product_unit:
             title: orob2b.product.system_configuration.groups.product_unit.title
@@ -62,12 +64,6 @@ oro_system_configuration:
                     product:
                         priority: 700
                         children:
-                            product_inventory:
-                                priority: 200
-                                children:
-                                    frontend_inventory_statuses_visibility:
-                                        children:
-                                            - orob2b_product.general_frontend_product_visibility
                             product_unit:
                                 priority: 100
                                 children:
@@ -78,3 +74,12 @@ oro_system_configuration:
                                         children:
                                             - orob2b_product.default_unit
                                             - orob2b_product.default_unit_precision
+                    product_inventory:
+                        priority: 650
+                        children:
+                            allowed_statuses:
+                                priority: 100
+                                children:
+                                    frontend_inventory_statuses_visibility:
+                                        children:
+                                            - orob2b_product.general_frontend_product_visibility

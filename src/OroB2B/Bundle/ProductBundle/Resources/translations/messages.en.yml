@@ -133,9 +133,10 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_rounding.title: 'Product Unit Rounding'
-                frontend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Store Frontend)'
-                backend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Management Console)'
+                frontend_inventory_statuses_visibility.title: 'Store Frontend'
+                backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
+                allowed_statuses.title: 'Allowed Statuses'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
             fields:

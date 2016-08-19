@@ -10,9 +10,9 @@ oro_system_configuration:
         system_configuration:
             commerce:
                 children:
-                    product:
+                    product_inventory:
                         children:
-                            product_inventory:
+                            allowed_statuses:
                                 children:
                                     backend_inventory_statuses_visibility:
                                         children:
