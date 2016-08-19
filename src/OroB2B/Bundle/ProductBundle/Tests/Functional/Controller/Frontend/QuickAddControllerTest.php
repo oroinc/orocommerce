@@ -79,9 +79,8 @@ abstract class QuickAddControllerTest extends WebTestCase
         $resultForm['orob2b_product_quick_add[component]'] = $processorName;
         $this->client->submit($resultForm);
         $response = $this->client->getResponse();
-        $targetUrl = $this->parseTargetUrl($response->getContent());
-
-        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        $result = static::getJsonResponseContent($response, 200);
+        $targetUrl = $result['redirectUrl'];
 
         $expectedTargetUrl = $this->getUrl($routerName, $routerParams);
         $this->assertEquals($expectedTargetUrl, $targetUrl);
@@ -217,22 +216,6 @@ abstract class QuickAddControllerTest extends WebTestCase
         );
 
         return $result;
-    }
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    private function parseTargetUrl($content)
-    {
-        $pattern = '/data-page-component-options\s*=\s*"([^"]+)"/';
-        $this->assertRegExp($pattern, $content);
-        preg_match($pattern, $content, $matches);
-
-        $parsedOptions = json_decode(html_entity_decode($matches[1]), true);
-        $this->assertArrayHasKey('targetUrl', $parsedOptions);
-
-        return stripslashes($parsedOptions['targetUrl']);
     }
 
     /**

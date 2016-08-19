@@ -47,3 +47,35 @@ OroB2B\Bundle\ShippingBundle\Model\Weight:
         value:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
+OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
+    properties:
+        name:
+            - NotBlank: ~
+        priority:
+            - NotBlank: ~
+        destinations:
+            - Valid: ~
+        configurations:
+            - Valid: ~
+            - OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
+        currency:
+            - Currency: ~
+            - NotBlank: ~
+
+OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - Valid: ~
+
+OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+    properties:
+        value:
+            - NotBlank:
+                groups: ['Enabled']
+        type:
+            - NotBlank: ~
+        method:
+            - NotBlank: ~

@@ -144,9 +144,15 @@
         <div {{ block('block_attributes') }}>
             {% for item in items %}
                 <div class="embedded-list__item">
-                    {% do block|merge_context({
+                    {% set context = {
                         (item_key): item
-                    }) %}
+                    } %}
+                    {% for dataKey, dataValue in items_data %}
+                        {% set context = context|merge({
+                            (dataKey): dataValue[item.id]|default(null)
+                        }) %}
+                    {% endfor %}
+                    {% do block|merge_context(context) %}
                     {{ block('container_widget') }}
                 </div>
             {% endfor %}

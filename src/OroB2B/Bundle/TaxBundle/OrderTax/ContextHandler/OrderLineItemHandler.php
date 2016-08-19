@@ -162,7 +162,7 @@ class OrderLineItemHandler
     /**
      * @param string $type
      * @param object $object
-     * @return TaxCodeInterface
+     * @return string|null
      */
     protected function getTaxCode($type, $object)
     {

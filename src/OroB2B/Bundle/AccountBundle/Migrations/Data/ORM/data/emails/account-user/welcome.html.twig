@@ -9,5 +9,5 @@
     {% if password is not empty%}
         <p>Your password is <b>{{ password }}</b></p>
     {% endif %}
-    <p>Please follow this link to login: <a href="{{ oro_config_value('oro_ui.application_url')|trim('/') ~ path('orob2b_account_account_user_security_login') }}">Profile Login</a></p>
+    <p>Please follow this link to login: <a href="{{ website_secure_path('orob2b_account_account_user_security_login', {}, entity.website) }}">Profile Login</a></p>
 </div>

@@ -19,13 +19,28 @@ layout:
                     blockType: embedded_list
                     siblingId: hero_promo_container
                     options:
-                        items: '=data["featured_categories"]'
+                        item_key: 'category'
+                        items: '=data["featured_categories"].getAll()'
+                        items_data:
+                            categoryProductsCount: '=data["categories_products"].getCountByCategories(items)'
                 featured_category:
                     blockType: container
+                featured_category_image:
+                    blockType: block
+                featured_category_desc:
+                    blockType: container
+                featured_category_label:
+                    blockType: block
+                featured_category_products:
+                    blockType: block
             tree:
                 content:
                     hero_promo_container:
                         hero_promo:
                             hero_promo_item: ~
                     featured_categories:
-                        featured_category: ~
+                        featured_category:
+                            featured_category_image: ~
+                            featured_category_desc:
+                                featured_category_label: ~
+                                featured_category_products: ~

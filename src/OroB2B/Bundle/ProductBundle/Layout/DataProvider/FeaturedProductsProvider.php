@@ -2,14 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
-class FeaturedProductsProvider extends AbstractServerRenderDataProvider
+class FeaturedProductsProvider
 {
     /**
      * @var array
@@ -36,20 +33,7 @@ class FeaturedProductsProvider extends AbstractServerRenderDataProvider
         $this->productManager = $productManager;
     }
 
-    /**
-     * @param ContextInterface $context
-     * @return Product[]
-     */
-    public function getData(ContextInterface $context)
-    {
-        if (!$this->data) {
-            $this->data = $this->getFeaturedProducts();
-        }
-
-        return $this->data;
-    }
-
-    protected function getFeaturedProducts()
+    public function getAll()
     {
         $queryBuilder = $this->productRepository->getProductWithNamesQueryBuilder()
             ->setMaxResults(10)

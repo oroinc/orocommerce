@@ -10,7 +10,7 @@ layout:
         - '@setOption':
             id: product_shopping_lists
             optionName: shoppingLists
-            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data["product"])'
+            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
         - '@add':
             id: line_item_form_shopping_lists
             parentId: line_item_form
@@ -25,5 +25,5 @@ layout:
             prepend: true
             options:
                 visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"]["shoppingLists"]'
-                unitsQuantity: '=data["orob2b_shopping_list_product_units_quantity"]'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                unitsQuantity: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
