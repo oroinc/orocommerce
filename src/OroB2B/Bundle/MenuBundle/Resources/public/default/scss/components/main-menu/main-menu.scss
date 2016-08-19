@@ -32,6 +32,10 @@
         max-height: none;
         padding: 10px 15px;
 
+        &__item {
+            min-height: 0;
+        }
+
         &__link {
             padding: 5px 0;
 

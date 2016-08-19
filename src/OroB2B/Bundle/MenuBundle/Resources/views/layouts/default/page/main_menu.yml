@@ -12,22 +12,14 @@ layout:
                     blockType: container
                 main_menu_container:
                     blockType: container
-                    # siblingId: middle_bar
                 main_menu:
                     blockType: menu
                     options:
                         menu: main-menu
                         depth: 1
-                main_menu_widgets:
-                    blockType: container
-                main_menu_messages_widget:
-                    blockType: block
             tree:
                 header:
                     header_row:
                         header_row_links:
                             main_menu_container:
                                 main_menu: ~
-                        header_row_shopping:
-                            main_menu_widgets: ~
-                                # main_menu_messages_widget: ~

@@ -71,6 +71,8 @@
 
         &__trigger {
             @extend %hidden-on-desktop;
+
+            padding: 0;
         }
 
         &__toggle {
