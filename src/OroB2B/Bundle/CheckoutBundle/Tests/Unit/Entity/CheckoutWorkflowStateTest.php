@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
-
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 
 class CheckoutWorkflowStateTest extends \PHPUnit_Framework_TestCase
 {
