@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -14,7 +15,7 @@ class WebsiteRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData']);
+        $this->loadFixtures([LoadWebsiteData::class]);
     }
 
     /**
@@ -72,6 +73,24 @@ class WebsiteRepositoryTest extends WebTestCase
         }
 
         $this->assertEquals($expectedWebsiteNames, $websiteNames);
+    }
+
+    /**
+     * @dataProvider getAllWebsitesProvider
+     */
+    public function testGetWebsiteIdentifiers(array $websites)
+    {
+        $websites = array_map(
+            function ($websiteReference) {
+                if ($websiteReference === 'Default') {
+                    return $this->getRepository()->getDefaultWebsite()->getId();
+                } else {
+                    return $this->getReference($websiteReference)->getId();
+                }
+            },
+            $websites
+        );
+        $this->assertEquals($websites, $this->getRepository()->getWebsiteIdentifiers());
     }
 
     /**

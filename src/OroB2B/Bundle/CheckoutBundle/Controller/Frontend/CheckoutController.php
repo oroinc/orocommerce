@@ -99,10 +99,9 @@ class CheckoutController extends Controller
      */
     protected function validateStep(WorkflowItem $workflowItem)
     {
-        $currentStep = $workflowItem->getCurrentStep();
         $workflowManager = $this->getWorkflowManager();
         $verifyTransition = null;
-        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        $transitions = $workflowManager->getTransitionsByWorkflowItem($workflowItem);
         foreach ($transitions as $transition) {
             $frontendOptions = $transition->getFrontendOptions();
             if (!empty($frontendOptions['is_checkout_verify'])) {
@@ -112,14 +111,10 @@ class CheckoutController extends Controller
         }
 
         if ($verifyTransition) {
-            $workflow = $workflowManager->getWorkflow($workflowItem);
-            if ($workflow->isTransitionAllowed($workflowItem, $verifyTransition)) {
-                $workflowManager->transit($workflowItem, $verifyTransition);
-                $currentStep = $workflowItem->getCurrentStep();
-            }
+            $workflowManager->transitIfAllowed($workflowItem, $verifyTransition);
         }
 
-        return $currentStep;
+        return $workflowItem->getCurrentStep();
     }
 
     /**
@@ -132,7 +127,7 @@ class CheckoutController extends Controller
         if ($request->isXmlHttpRequest()) {
             return;
         }
-        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
+        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
             ->getContinueTransition($workflowItem);
         if (!$continueTransition) {
             return;
@@ -167,7 +162,7 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('orob2b_checkout.layout.data_provider.continue_transition')
+            $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
                 ->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
@@ -183,10 +178,7 @@ class CheckoutController extends Controller
             }
         } elseif ($request->query->has('transition') && $request->isMethod(Request::METHOD_GET)) {
             $transition = $request->get('transition');
-            $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem);
-            if ($workflow->isTransitionAllowed($workflowItem, $transition)) {
-                $this->getWorkflowManager()->transit($workflowItem, $transition);
-            }
+            $this->getWorkflowManager()->transitIfAllowed($workflowItem, $transition);
         }
 
         return $workflowItem;
@@ -212,7 +204,7 @@ class CheckoutController extends Controller
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
         return $this->get('orob2b_checkout.layout.data_provider.transition_form')
-            ->getForm($transitionData, $workflowItem);
+            ->getTransitionForm($workflowItem, $transitionData);
     }
 
     /**

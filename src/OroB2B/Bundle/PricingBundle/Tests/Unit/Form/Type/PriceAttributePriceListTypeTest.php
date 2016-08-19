@@ -82,12 +82,14 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
     {
         $submittedData = [
             'name' => 'Test Price Attribute 01',
+            'fieldName' => 'pa01',
             'currencies' => ['EUR', 'USD'],
         ];
 
         $expectedData = $submittedData;
         $defaultData = [
             'name' => 'Test Price Attribute',
+            'fieldName' => 'pa02',
             'currencies' => ['USD', 'UAH'],
         ];
         $existingPriceAttributePriceList = new PriceAttributePriceList();

@@ -6,14 +6,19 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql;
+
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroWebsiteSearchBundleInstaller implements Installation
+class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -28,24 +33,24 @@ class OroWebsiteSearchBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroWebsiteSearchIndexDecimalTable($schema);
-        $this->createOroWebsiteSearchIndexIntegerTable($schema);
-        $this->createOroWebsiteSearchIndexDatetimeTable($schema);
+        $this->createOroWebsiteSearchDecimalTable($schema);
+        $this->createOroWebsiteSearchIntegerTable($schema);
+        $this->createOroWebsiteSearchDatetimeTable($schema);
         $this->createOroWebsiteSearchItemTable($schema);
-        $this->createOroWebsiteSearchIndexTextTable($schema);
+        $this->createOroWebsiteSearchTextTable($schema, $queries);
 
         /** Foreign keys generation **/
-        $this->addOroWebsiteSearchIndexDecimalForeignKeys($schema);
-        $this->addOroWebsiteSearchIndexIntegerForeignKeys($schema);
-        $this->addOroWebsiteSearchIndexDatetimeForeignKeys($schema);
-        $this->addOroWebsiteSearchIndexTextForeignKeys($schema);
+        $this->addOroWebsiteSearchDecimalForeignKeys($schema);
+        $this->addOroWebsiteSearchIntegerForeignKeys($schema);
+        $this->addOroWebsiteSearchDatetimeForeignKeys($schema);
+        $this->addOroWebsiteSearchTextForeignKeys($schema);
     }
 
     /**
      * Create oro_website_search_decimal table
      * @param Schema $schema
      */
-    protected function createOroWebsiteSearchIndexDecimalTable(Schema $schema)
+    protected function createOroWebsiteSearchDecimalTable(Schema $schema)
     {
         $table = $schema->createTable('oro_website_search_decimal');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -60,7 +65,7 @@ class OroWebsiteSearchBundleInstaller implements Installation
      * Create oro_website_search_integer table
      * @param Schema $schema
      */
-    protected function createOroWebsiteSearchIndexIntegerTable(Schema $schema)
+    protected function createOroWebsiteSearchIntegerTable(Schema $schema)
     {
         $table = $schema->createTable('oro_website_search_integer');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -75,7 +80,7 @@ class OroWebsiteSearchBundleInstaller implements Installation
      * Create oro_website_search_datetime table
      * @param Schema $schema
      */
-    protected function createOroWebsiteSearchIndexDatetimeTable(Schema $schema)
+    protected function createOroWebsiteSearchDatetimeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_website_search_datetime');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -110,23 +115,29 @@ class OroWebsiteSearchBundleInstaller implements Installation
     /**
      * Create oro_website_search_text table
      * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws ServiceNotFoundException
      */
-    protected function createOroWebsiteSearchIndexTextTable(Schema $schema)
+    protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_website_search_text');
+        $table->addOption('engine', 'MyISAM');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'text', []);
         $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
+
+        $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
+        $queries->addQuery($query);
     }
 
     /**
      * Add oro_website_search_decimal foreign keys.
      * @param Schema $schema
      */
-    protected function addOroWebsiteSearchIndexDecimalForeignKeys(Schema $schema)
+    protected function addOroWebsiteSearchDecimalForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_website_search_decimal');
         $table->addForeignKeyConstraint(
@@ -141,7 +152,7 @@ class OroWebsiteSearchBundleInstaller implements Installation
      * Add oro_website_search_integer foreign keys.
      * @param Schema $schema
      */
-    protected function addOroWebsiteSearchIndexIntegerForeignKeys(Schema $schema)
+    protected function addOroWebsiteSearchIntegerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_website_search_integer');
         $table->addForeignKeyConstraint(
@@ -156,7 +167,7 @@ class OroWebsiteSearchBundleInstaller implements Installation
      * Add oro_website_search_datetime foreign keys.
      * @param Schema $schema
      */
-    protected function addOroWebsiteSearchIndexDatetimeForeignKeys(Schema $schema)
+    protected function addOroWebsiteSearchDatetimeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_website_search_datetime');
         $table->addForeignKeyConstraint(
@@ -171,7 +182,7 @@ class OroWebsiteSearchBundleInstaller implements Installation
      * Add oro_website_search_text foreign keys.
      * @param Schema $schema
      */
-    protected function addOroWebsiteSearchIndexTextForeignKeys(Schema $schema)
+    protected function addOroWebsiteSearchTextForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_website_search_text');
         $table->addForeignKeyConstraint(

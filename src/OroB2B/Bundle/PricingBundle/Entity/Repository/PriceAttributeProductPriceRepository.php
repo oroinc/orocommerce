@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
-class PriceAttributeProductPriceRepository extends EntityRepository
+class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
     /**
      * Return product prices for specified price list and product IDs
