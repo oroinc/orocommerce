@@ -25,6 +25,10 @@ class FrontendShoppingListProductUnitsQuantityProvider
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
     }
 
+    /**
+     * @param Product|null $product
+     * @return mixed|null
+     */
     public function getByProduct(Product $product = null)
     {
         if (!$product) {

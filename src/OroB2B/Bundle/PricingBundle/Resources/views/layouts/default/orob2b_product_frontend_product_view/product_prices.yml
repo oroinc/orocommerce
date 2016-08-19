@@ -9,4 +9,4 @@ layout:
             blockType: product_prices
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'
-                prices: '=data["frontend_product_prices"].getByProduct(data["product"])'
+                productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'

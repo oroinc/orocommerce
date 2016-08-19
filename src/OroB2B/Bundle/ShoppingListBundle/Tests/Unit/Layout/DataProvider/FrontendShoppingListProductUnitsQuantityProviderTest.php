@@ -8,7 +8,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
 
-class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 

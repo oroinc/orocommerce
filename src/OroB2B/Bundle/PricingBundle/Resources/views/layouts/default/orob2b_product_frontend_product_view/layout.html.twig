@@ -1,8 +1,6 @@
 {% block _product_prices_widget %}
-
-
     {% set minimumQuantities = {} %}
-    {% for price in prices %}
+    {% for price in productPrices %}
         {% if minimumQuantities[price.unit.code] is not defined or price.quantity < minimumQuantities[price.unit.code] %}
             {% set minimumQuantities = minimumQuantities|merge({ (price.unit.code): price.quantity }) %}
         {% endif %}
@@ -27,7 +25,7 @@
             </thead>
             <tbody>
             {% set shownUnit = '' %}
-            {% for price in prices %}
+            {% for price in productPrices %}
                 {% if shownUnit != price.unit.code %}
                     {% set shownUnit = price.unit.code %}
                     <tr>

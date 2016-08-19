@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -59,7 +58,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetProductPrices()
+    public function testGetByProduct()
     {
         $priceListId = 23;
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
@@ -107,7 +106,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getUserCurrency')
             ->willReturn('EUR');
 
-        $actual = $this->provider->getProductPrices($product);
+        $actual = $this->provider->getByProduct($product);
         $this->assertCount(1, $actual);
         $this->assertEquals('each', current($actual)->getUnit());
     }

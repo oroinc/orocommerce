@@ -1,12 +1,11 @@
 {% block __oro_product_list_item__product_price_widget %}
-    {% set prices = products_prices[product.id]|default(null) %}
-    {% if prices %}
+    {% if productPrices %}
     {% set attr = layout_attr_defaults(attr, {
         "data-page-component-module": "oroui/js/app/components/view-component",
         "~data-page-component-options": {
             view: 'orob2bpricing/js/app/views/base-product-prices-view',
             modelAttr: {
-                prices: prices
+                prices: productPrices
             }
         },
         "~class": " product-item__price product-item__price_{{ class_prefix }} mb1-md mb1-sm"
@@ -21,7 +20,7 @@
                  data-trigger="hover"
                  data-container="body"
                  data-class="prices-hint-content">
-                {% set firstPrice = prices[0]|default(null) %}
+                {% set firstPrice = productPrices[0]|default(null) %}
                 <div>
                     <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.price|oro_format_price }}</span>
                     / <span data-name="unit">{{ firstPrice ? firstPrice.unit.code|orob2b_format_product_unit_label }}</span>
@@ -38,7 +37,7 @@
                 </thead>
                 <tbody>
                     {% set shownUnit = '' %}
-                    {% for price in prices %}
+                    {% for price in productPrices %}
                         {% if shownUnit != price.unit.code %}
                             {% set shownUnit = price.unit.code %}
                             <tr>
@@ -61,7 +60,7 @@
             </table>
         </div>
         <div data-name="price-not-found">
-            {% if prices %}
+            {% if productPrices %}
                 {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
             {% else %}
                 {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
@@ -76,12 +75,11 @@
         '~class': " product-item__listed-price product-item__listed-price_{{ class_prefix }}"
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set prices = products_prices[product.id]|default(null) %}
-        {% if prices %}
+        {% if productPrices %}
             {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }}
             <div class="product-item__price_block">
                 {% set pricesPerUnits = [] %}
-                {% for price in prices %}
+                {% for price in productPrices %}
                     {% set unit = price.unit.code %}
                     {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
                         {% set pricesPerUnits = pricesPerUnits|merge({
