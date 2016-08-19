@@ -20,7 +20,7 @@ class ResetController extends Controller
     const SESSION_EMAIL = 'orob2b_account_user_reset_email';
 
     /**
-     * @Layout(action="orob2b_account_frontend_account_user_security")
+     * @Layout()
      * @Route("/reset-request", name="orob2b_account_frontend_account_user_reset_request")
      * @Method({"GET", "POST"})
      */
@@ -32,7 +32,9 @@ class ResetController extends Controller
 
         /** @var AccountUserPasswordRequestHandler $handler */
         $handler = $this->get('orob2b_account.account_user.password_request.handler');
-        $form = $this->get('orob2b_account.provider.frontend_account_user_forgot_password_form')->getForm();
+        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+            ->getForgotPasswordForm()
+            ->getForm();
 
         $request = $this->get('request_stack')->getCurrentRequest();
         $user = $handler->process($form, $request);
@@ -47,7 +49,7 @@ class ResetController extends Controller
     /**
      * Tell the user to check his email
      *
-     * @Layout(action="orob2b_account_frontend_account_user_security")
+     * @Layout()
      * @Route("/check-email", name="orob2b_account_frontend_account_user_reset_check_email")
      * @Method({"GET"})
      */
@@ -105,7 +107,9 @@ class ResetController extends Controller
 
         /** @var AccountUserPasswordResetHandler $handler */
         $handler = $this->get('orob2b_account.account_user.password_reset.handler');
-        $form = $this->get('orob2b_account.provider.frontend_account_user_reset_password_form')->getForm($user);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+            ->getResetPasswordForm($user)
+            ->getForm();
 
         if ($handler->process($form, $this->getRequest())) {
             // force user logout

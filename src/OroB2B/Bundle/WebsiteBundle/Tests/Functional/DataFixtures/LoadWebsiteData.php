@@ -54,8 +54,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
             $site = new Website();
             $site->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->setName($webSite['name'])
-                ->setUrl($webSite['url']);
+                ->setName($webSite['name']);
 
             $this->setReference($site->getName(), $site);
 

@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Mailer;
 
-use Oro\Bundle\UserBundle\Mailer\BaseProcessor;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class Processor extends BaseProcessor
+class Processor extends AccountUserProcessor
 {
     const WELCOME_EMAIL_TEMPLATE_NAME = 'account_user_welcome_email';
     const CONFIRMATION_EMAIL_TEMPLATE_NAME = 'account_user_confirmation_email';

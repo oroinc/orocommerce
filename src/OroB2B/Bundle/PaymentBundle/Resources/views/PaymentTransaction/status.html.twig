@@ -3,7 +3,7 @@
     <div class="controls">
         <div class="control-label">
             {% if data is not empty %}
-                {{ 'orob2b.payment.status.%s'|format(data)|trans }}
+                {{ get_payment_status_label(data) }}
             {% else %}
                 {{ 'oro.ui.empty'|trans }}
             {% endif %}

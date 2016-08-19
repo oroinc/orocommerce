@@ -1,0 +1,8 @@
+services:
+    oro_frontend_localization.layout.block_type.localization_switcher:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['localization_switcher']]
+            - [setOptionsConfig, [{localizations: {required: true}, selected_localization: {required: true}}]]
+        tags:
+            - { name: layout.block_type, alias: localization_switcher }

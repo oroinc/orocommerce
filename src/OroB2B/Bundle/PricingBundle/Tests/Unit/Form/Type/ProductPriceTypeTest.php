@@ -16,6 +16,7 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
@@ -142,12 +143,14 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         /** @var PriceList $existingProductPriceList */
         $existingProductPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1);
         $existingProductPrice = new ProductPrice();
+        $rule = new PriceRule();
         $existingProductPrice
             ->setProduct($product)
             ->setPriceList($existingProductPriceList)
             ->setQuantity(123)
             ->setUnit($existingUnit)
-            ->setPrice($existingPrice);
+            ->setPrice($existingPrice)
+            ->setPriceRule($rule);
 
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
@@ -160,9 +163,10 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setQuantity(124)
             ->setUnit($expectedUnit)
             ->setPrice($expectedPrice)
-            ->setProduct($product);
+            ->setProduct($product)
+            ->setPriceRule(null);
 
-        $updatedExpectedProductPrice = clone($expectedProductPrice);
+        $updatedExpectedProductPrice = clone $expectedProductPrice;
         $updatedExpectedProductPrice->setProduct($product);
 
         return [
@@ -191,7 +195,20 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => $updatedExpectedProductPrice,
-            ]
+            ],
+            'product price without changes' => [
+                'defaultData' => $existingProductPrice,
+                'submittedData' => [
+                    'priceList' => $existingProductPrice->getPriceList()->getId(),
+                    'quantity' => $existingProductPrice->getQuantity(),
+                    'unit' => $existingProductPrice->getUnit()->getCode(),
+                    'price' => [
+                        'value' => $existingProductPrice->getPrice()->getValue(),
+                        'currency' => $existingProductPrice->getPrice()->getCurrency(),
+                    ],
+                ],
+                'expectedData' => $existingProductPrice,
+            ],
         ];
     }
 

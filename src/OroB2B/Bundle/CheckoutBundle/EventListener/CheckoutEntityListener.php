@@ -190,12 +190,11 @@ class CheckoutEntityListener
         $cacheKey = $checkout->getId();
         
         if (!array_key_exists($cacheKey, $this->workflows)) {
-            $workflows = $this->workflowManager->getApplicableWorkflows($this->getCheckoutClassName());
+            $workflows = $this->workflowManager->getApplicableWorkflows($checkout);
             $workflows = array_filter(
                 $workflows,
                 function (Workflow $workflow) use ($checkout) {
-                    return $this->workflowManager->isStartTransitionAvailable(
-                        $workflow,
+                    return $workflow->isStartTransitionAvailable(
                         static::START_TRANSITION_DEFINITION,
                         $checkout
                     );

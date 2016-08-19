@@ -1,4 +1,16 @@
 orob2b.pricing:
+    priceattributeproductprice:
+        entity_label: Price Attribute Product Price
+        entity_plural_label: Price Attribute Product Prices
+        id.label: Id
+        currency.label: Currency
+        product_sku.label: Product SKU
+        quantity.label: Quantity
+        value.label: Value
+        price_list.label: Price List
+        product.label: Product
+        unit.label: Unit
+
     priceAttribute:
         unit.label: Unit
         withoutPrice: N/A
@@ -14,6 +26,7 @@ orob2b.pricing:
         currencies.label: Currencies
         schedule.label: Schedule
         has_price_list.label: Has Price List
+        product_assignment_rule.label: Rule
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
@@ -39,6 +52,9 @@ orob2b.pricing:
             message:
               enabled: Price List was enabled successfully
               disabled: Price List was disabled successfully
+        recalculate:
+            label: Recalculate
+            message: Price List Rules were Recalculates successfull
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
@@ -46,8 +62,21 @@ orob2b.pricing:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
         name.label: Price Attribute
+        field_name.label: Field Name
         id.label: Id
         currencies.label: Currencies
+        prices.label: Price Attribute Product Prices
+
+    pricerule:
+        entity_label: Price Calculation Rule
+        entity_plural_label: Price Calculation Rules
+        currency.label: Currency
+        quantity.label: Quantity
+        product_unit.label: ProductUnit
+        rule_condition.label: Condition
+        rule.label: Rule
+        priority.label: Priority
+        calculate_as.label: Calculate As
 
     quantity.label: Quantity
     fallback:
@@ -72,7 +101,7 @@ orob2b.pricing:
         product.label: Product
         product_sku.label: Product SKU
         product_name.label: Product name
-        price_list.label: Proce List
+        price_list.label: Price List
         currency.label: Currency
         quantity.label: Quantity
         value.label: Value
@@ -90,6 +119,9 @@ orob2b.pricing:
             cancel: Cancel
         save.success: Product Price has been added
         applicable_from: 'Price is applicable starting from %amount%'
+        manual.label: Manual
+        generated.label: Generated
+        type.label: Type
 
     priceattributeprice:
         entity_label: Product Attribute Price
@@ -105,7 +137,7 @@ orob2b.pricing:
         active_at.label: 'Active At'
         deactivate_at.label: 'Deactivate At'
         was_activated: Was activated on %date%.
-        was_deactivated: Was deactived on %date%.
+        was_deactivated: Was deactivated on %date%.
         will_be_acitivated: Will become active on %date%.
         will_be_deacitivated: Will be deactivated on %date%.
         active_now: Is active now.
@@ -127,6 +159,8 @@ orob2b.pricing:
 
     sections:
         general: General
+        price_rules: Price Calculation Rules
+        product_assignment: Product Assignment
 
     widgets:
         pricing_information: Price List Information

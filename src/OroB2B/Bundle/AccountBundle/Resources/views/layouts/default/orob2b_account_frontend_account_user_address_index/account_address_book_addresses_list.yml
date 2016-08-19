@@ -26,9 +26,7 @@ layout:
                     options:
                         visible: '=data["acl"].isGranted("orob2b_account_frontend_account_address_view")'
                         entity: '=data["entity"].getAccount()'
-                        addressListRouteName: 'orob2b_api_account_frontend_get_account_addresses'
-                        addressCreateRouteName: 'orob2b_account_frontend_account_address_create'
-                        addressUpdateRouteName: 'orob2b_account_frontend_account_address_update'
+                        componentOptions: '=data["account_address_provider"].getComponentOptions(data["entity"].getAccount())'
                 account_address_book_addresses_list_template:
                     blockType: container
                     options:

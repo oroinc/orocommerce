@@ -5,8 +5,7 @@
     }|json_encode() %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
-
-    {% set selectedOffer = form.quoteProductOffer.vars.value %}
+    {% set selectedOffer = form.quoteProductOffer.vars.data %}
     {% set defaultUnitCode = selectedOffer.productUnit.code|orob2b_format_product_unit_label(true) %}
     {% if isQuantityValid %}
         {% set defaultPriceValue = selectedOffer.price|oro_format_price %}

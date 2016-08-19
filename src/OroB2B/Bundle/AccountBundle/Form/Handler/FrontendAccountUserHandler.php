@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class FrontendAccountUserHandler
 {
@@ -46,6 +47,10 @@ class FrontendAccountUserHandler
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 if (!$accountUser->getId()) {
+                    $website = $this->request->attributes->get('current_website');
+                    if ($website instanceof Website) {
+                        $accountUser->setWebsite($website);
+                    }
                     $this->userManager->register($accountUser);
                 }
 
