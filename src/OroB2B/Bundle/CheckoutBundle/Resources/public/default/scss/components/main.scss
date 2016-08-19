@@ -212,3 +212,16 @@
     display: none;
   }
 }
+
+.checkout-total-container {
+  .order-checkout-widget__container {
+    width: 240px;
+    padding-right: 0;
+    background: none;
+
+    @media (max-width: $screen-md) {
+      width: 100%;
+      padding: 15px 30px;
+    }
+  }
+}

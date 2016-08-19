@@ -75,9 +75,9 @@ oro_system_configuration:
                                             - oro_b2b_rfp.notify_assigned_sales_reps_of_the_account
                                             - oro_b2b_rfp.notify_owner_of_account_user_record
                                             - oro_b2b_rfp.notify_owner_of_account
-                    product:
+                    product_inventory:
                         children:
-                            product_inventory:
+                            allowed_statuses:
                                 children:
                                     frontend_inventory_statuses_visibility:
                                         children:

@@ -99,6 +99,8 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
         $table->addColumn('ship_until', 'date', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
             'subtotal',
             'money',

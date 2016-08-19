@@ -41,6 +41,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['website', new Website()],
             ['source', new CheckoutSource()],
             ['shippingCost', Price::create(2, 'USD')],
+            ['shippingMethod', 'shipping_method'],
+            ['shippingMethodType', 'shipping_method_type']
         ];
 
         $entity = new Checkout();

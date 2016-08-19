@@ -597,4 +597,11 @@
         </exec>
     </target>
 
+    <!-- Check build on errors and warnings -->
+    <target name="check_php_errors_and_warnings">
+        <exec dir="${confdir}" executable="./check_errors_on_build.sh" failonerror="true">
+            <arg line="-p ${appdir}/logs/prod.log"/>
+        </exec>
+    </target>
+    <!-- End Check build on errors and warnings -->
 </project>
