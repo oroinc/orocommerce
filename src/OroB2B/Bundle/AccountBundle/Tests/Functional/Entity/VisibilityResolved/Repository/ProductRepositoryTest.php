@@ -57,6 +57,15 @@ class ProductRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
     }
 
+    public function testClearTableByWebsite()
+    {
+        $deleted = $this->repository->clearTable($this->website);
+        $actual = $this->repository->findBy(['website' => $this->website]);
+
+        $this->assertEmpty($actual);
+        $this->assertSame(6, $deleted);
+    }
+
     public function testFindByPrimaryKey()
     {
         /** @var ProductVisibilityResolved $actualEntity */
@@ -81,11 +90,10 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEmpty($actual);
     }
 
-    /**
-     * @depends testClearTable
-     */
     public function testInsertFromBaseTable()
     {
+        $this->repository->clearTable();
+
         $this->repository->insertStatic($this->getInsertFromSelectExecutor());
         $actual = $this->getActualArray();
 
@@ -93,31 +101,18 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertInsertedFromBaseTable($actual);
     }
 
-    /**
-     * @depends testInsertFromBaseTable
-     */
     public function testInsertByCategory()
     {
+        $this->repository->clearTable();
+
         $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(27, $actual);
+        $this->assertCount(24, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
-    public function testClearTableByWebsite()
-    {
-        $deleted = $this->repository->clearTable($this->website);
-        $actual = $this->repository->findBy(['website' => $this->website]);
-
-        $this->assertEmpty($actual);
-        $this->assertSame(6, $deleted);
-    }
-
-    /**
-     * @depends testClearTableByWebsite
-     */
     public function testInsertFromBaseTableByWebsite()
     {
         $this->repository->clearTable();
@@ -129,9 +124,6 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertInsertedFromBaseTable($actual);
     }
 
-    /**
-     * @depends testInsertFromBaseTableByWebsite
-     */
     public function testInsertByCategoryForWebsite()
     {
         $this->repository->clearTable();
