@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Condition;
+namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Condition;
 
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -51,11 +51,11 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
     /** {@inheritdoc} */
     protected function isConditionAllowed($context)
     {
-        $checkout = $this->resolveValue($context, $this->entity);
+        $entity = $this->resolveValue($context, $this->entity);
         $state1 = $this->resolveValue($context, $this->state1);
         $state2 = $this->resolveValue($context, $this->state2);
 
-        return $this->diffManager->isStatesEqual($checkout, $state1, $state2);
+        return $this->diffManager->isStatesEqual($entity, $state1, $state2);
     }
 
     /** {@inheritdoc} */

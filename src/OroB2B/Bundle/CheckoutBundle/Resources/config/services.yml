@@ -251,40 +251,40 @@ services:
         tags:
              - { name: checkout.workflow_state.mapper, priority: 80 }
 
-    orob2b_checkout.action.get_checkout_state:
-        class: 'OroB2B\Bundle\CheckoutBundle\Action\GetCheckoutStateAction'
+    orob2b_checkout.workflow_state.action.get_checkout_state:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction'
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_workflow.action, alias: get_checkout_state }
 
-    orob2b_checkout.action.save_checkout_state:
-        class: 'OroB2B\Bundle\CheckoutBundle\Action\SaveCheckoutStateAction'
+    orob2b_checkout.workflow_state.action.save_checkout_state:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Action\SaveCheckoutStateAction'
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_workflow.action, alias: save_checkout_state }
 
-    orob2b_checkout.action.delete_checkout_state:
-        class: 'OroB2B\Bundle\CheckoutBundle\Action\DeleteCheckoutStateAction'
+    orob2b_checkout.workflow_state.action.delete_checkout_state:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction'
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_workflow.action, alias: delete_checkout_state }
 
-    orob2b_checkout.action.generate_checkout_state_snapshot:
-        class: 'OroB2B\Bundle\CheckoutBundle\Action\GenerateCheckoutStateSnapshotAction'
+    orob2b_checkout.workflow_state.action.generate_checkout_state_snapshot:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction'
         arguments:
             - '@oro_action.context_accessor'
             - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
         tags:
             - { name: oro_workflow.action, alias: generate_checkout_state_snapshot }
 
-    orob2b_checkout.condition.check_checkout_states:
-        class: 'OroB2B\Bundle\CheckoutBundle\Condition\CheckCheckoutStates'
+    orob2b_checkout.workflow_state.condition.check_checkout_states:
+        class: 'OroB2B\Bundle\CheckoutBundle\WorkflowState\Condition\CheckCheckoutStates'
         arguments:
             - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
         tags:

@@ -11,7 +11,7 @@ services:
             - { name: form.type, alias: orob2b_ship_to_billing_address }
 
     orob2b_checkout.form.extension.checkout_workflow:
-        class: 'OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutWorkflowExtension'
+        class: 'OroB2B\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowExtension'
         arguments:
             - '@session.flash_bag'
         tags:
