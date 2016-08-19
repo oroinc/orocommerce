@@ -13,12 +13,14 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepo
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -49,12 +51,13 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->website = $this->getWebsites()[0];
+        $this->website = $this->getWebsiteRepository()->getDefaultWebsite();
+
         $this->entityManager = $this->getResolvedVisibilityManager();
         $this->repository = $this->entityManager
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getRepository(ProductVisibilityResolved::class);
 
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
     }
 
     public function testClearTableByWebsite()
@@ -192,7 +195,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $pv = $this->getProductVisibilities();
         $products = $this->getProducts();
-        $websites = $website ? [$website] : $this->getWebsites();
+        $websites = $website ? [$website] : $this->getWebsiteRepository()->getAllWebsites();
 
         foreach ($products as $product) {
             foreach ($websites as $website) {
@@ -325,16 +328,13 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return Website[]
+     * @return WebsiteRepository
      */
-    protected function getWebsites()
+    protected function getWebsiteRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_website.entity.website.class');
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository('OroB2BWebsiteBundle:Website');
-
-        return $repository->findAll();
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(Website::class)
+            ->getRepository(Website::class);
     }
 
     /**
@@ -380,7 +380,7 @@ class ProductRepositoryTest extends WebTestCase
         $resolvedVisibility = $this->repository->findOneBy(
             [
                 'product' => $product,
-                'website' => $this->getDefaultWebsite()
+                'website' => $this->getWebsiteRepository()->getDefaultWebsite()
             ]
         );
         /** @var $resolvedVisibility ProductVisibility  */
@@ -397,19 +397,6 @@ class ProductRepositoryTest extends WebTestCase
         );
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertCount(4, $visibilities, 'Not expected count of resolved visibilities');
-    }
-
-    /**
-     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
-     */
-    protected function getDefaultWebsite()
-    {
-        $className = $this->getContainer()->getParameter('orob2b_website.entity.website.class');
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository('OroB2BWebsiteBundle:Website');
-
-        return $repository->getDefaultWebsite();
     }
 
     /**
