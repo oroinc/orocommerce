@@ -31,10 +31,7 @@ class CreateCheckoutWorkflowState implements Migration
         $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(
-            ['entity_id', 'entity_class', 'token'],
-            'orob2b_checkout_workflow_state_unique_id_class_token_idx'
-        );
+        $table->addUniqueIndex(['entity_id', 'entity_class', 'token'], 'orob2b_checkout_wf_state_uidx');
         $table->setPrimaryKey(['id']);
     }
 }
