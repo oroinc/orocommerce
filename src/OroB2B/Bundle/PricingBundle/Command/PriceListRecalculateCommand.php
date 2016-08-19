@@ -2,19 +2,22 @@
 
 namespace OroB2B\Bundle\PricingBundle\Command;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
@@ -23,7 +26,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const ACCOUNT = 'account';
     const ACCOUNT_GROUP = 'account-group';
     const WEBSITE = 'website';
-    const PRICE_LIST = 'pricelist';
+    const PRICE_LIST = 'price-list';
 
     /**
      * {@inheritdoc}
@@ -72,9 +75,18 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $optionAll = (bool)$input->getOption(self::ALL);
         if ($optionAll) {
             $this->processAllPriceLists($output);
-        } else {
-            $this->processPriceRules($input, $output);
+        } elseif ($input->getOption(self::PRICE_LIST)) {
+            $this->processPriceLists($input, $output);
+        } elseif ($input->getOption(self::WEBSITE)
+            || $input->getOption(self::ACCOUNT)
+            || $input->getOption(self::ACCOUNT_GROUP)
+        ) {
             $this->processCombinedPriceLists($input, $output);
+        } else {
+            $output->writeln(
+                '<comment>ATTENTION</comment>: To update all price lists run command with <info>--all</info> option:'
+            );
+            $output->writeln(sprintf('    <info>%s --all</info>', $this->getName()));
         }
     }
 
@@ -83,53 +95,48 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function processAllPriceLists(OutputInterface $output)
     {
-        $output->writeln('<info>Start the process Price rules</info>');
-        $container = $this->getContainer();
-        $registry = $container->get('doctrine');
-        /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $registry
-            ->getManagerForClass(PriceList::class)
-            ->getRepository(PriceList::class);
-        $priceLists = $priceListRepository->getPriceListsWithRules();
+        $output->writeln('<info>Start processing of all Price rules</info>');
+        $this->buildPriceRulesForAllPriceLists();
 
-        /** @var ProductPriceBuilder $builer */
-        $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
-        /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
-        $assignmentBuilder = $this->getContainer()
-            ->get('orob2b_pricing.builder.price_list_product_assignment_builder');
-
-        foreach ($priceLists as $priceList) {
-            $assignmentBuilder->buildByPriceList($priceList);
-            $priceBuilder->buildByPriceList($priceList);
-        }
-        $output->writeln('<info>Start combining Price Lists</info>');
-        $container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+        $output->writeln('<info>Start combining all Price Lists</info>');
+        $this->getContainer()->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+        $output->writeln('<info>The cache is updated successfully</info>');
     }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    protected function processPriceLists(InputInterface $input, OutputInterface $output)
+    {
+        $priceLists = $this->getPriceLists($input);
+
+        $output->writeln('<info>Start the process Price rules</info>');
+        $this->buildPriceRulesByPriceLists($priceLists);
+
+        $output->writeln('<info>Start combining Price Lists</info>');
+        $this->buildCombinedPriceListsByPriceLists($priceLists);
+        $output->writeln('<info>The cache is updated successfully</info>');
+    }
+
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
      */
     protected function processCombinedPriceLists(InputInterface $input, OutputInterface $output)
     {
-        $websiteIds = $input->getOption(self::WEBSITE);
-        $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
-        $accountIds = $input->getOption(self::ACCOUNT);
+        // Price list chains for given parameters may contain any set of price lists with duplication
+        // To get actual prices all price rules should be actualized
+        $output->writeln('<info>Start processing of all Price rules</info>');
+        $this->buildPriceRulesForAllPriceLists();
+
         $output->writeln('<info>Start combining Price Lists</info>');
 
-        $runWithParameters = !empty($websiteIds) || !empty($accountGroupIds) || !empty($accountIds);
-        if (!$runWithParameters) {
-            $output->writeln(
-                '<comment>ATTENTION</comment>: To update all CPL\'s run command with <info>--all</info> option:'
-            );
-            $output->writeln(sprintf('    <info>%s --all</info>', $this->getName()));
-
-            return;
-        }
-        $container = $this->getContainer();
         $websites = $this->getWebsites($input);
         $accountGroups = $this->getAccountGroups($input);
         $accounts = $this->getAccounts($input);
 
+        $container = $this->getContainer();
         $websiteCPLBuilder = $container->get('orob2b_pricing.builder.website_combined_price_list_builder');
         $accountGroupCPLBuilder = $container->get('orob2b_pricing.builder.account_group_combined_price_list_builder');
         $accountCPLBuilder = $container->get('orob2b_pricing.builder.account_combined_price_list_builder');
@@ -146,28 +153,17 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 }
             }
         }
+
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
     /**
      * @param InputInterface $input
-     * @param OutputInterface $output
+     * @return PriceList[]
      */
-    protected function processPriceRules(InputInterface $input, OutputInterface $output)
+    protected function getPriceLists(InputInterface $input)
     {
-        $output->writeln('<info>Start the process Price rules</info>');
-
         $priceListIds = $input->getOption(self::PRICE_LIST);
-        if (!$priceListIds) {
-            $output->writeln(
-                '<comment>ATTENTION</comment>: '
-                . 'To process all price lists rules execution run command with <info>--all</info> option:'
-            );
-            $output->writeln(sprintf('    <info>%s --all</info>', $this->getName()));
-
-            return;
-        }
-
         $registry = $this->getContainer()->get('doctrine');
         /** @var PriceListRepository $priceListRepository */
         $priceListRepository = $registry
@@ -175,9 +171,15 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             ->getRepository(PriceList::class);
 
         /** @var PriceList[] $priceLists */
-        $priceLists = $priceListRepository->findBy(['id' => $priceListIds]);
+        return $priceListRepository->findBy(['id' => $priceListIds]);
+    }
 
-        /** @var ProductPriceBuilder $builer */
+    /**
+     * @param PriceList[]|int[] $priceLists
+     */
+    protected function buildPriceRulesByPriceLists($priceLists)
+    {
+        /** @var ProductPriceBuilder $priceBuilder */
         $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
         /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
         $assignmentBuilder = $this->getContainer()
@@ -187,16 +189,35 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
             $assignmentBuilder->buildByPriceList($priceList);
             $priceBuilder->buildByPriceList($priceList);
         }
+    }
 
+    /**
+     * @param PriceList[]|int[] $priceLists
+     */
+    protected function buildCombinedPriceListsByPriceLists($priceLists)
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        /** @var CombinedPriceListRepository $cplRepository */
         $cplRepository = $registry->getManagerForClass(CombinedPriceList::class)
             ->getRepository(CombinedPriceList::class);
 
-        $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceListIds);
+        $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceLists);
 
         $priceResolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_price_resolver');
         foreach ($cplIterator as $cpl) {
             $priceResolver->combinePrices($cpl);
         }
+    }
+
+    protected function buildPriceRulesForAllPriceLists()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        /** @var PriceListRepository $priceListRepository */
+        $priceListRepository = $registry
+            ->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class);
+        $priceLists = $priceListRepository->getPriceListsWithRules();
+        $this->buildPriceRulesByPriceLists($priceLists);
     }
 
     /**
@@ -206,6 +227,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function getWebsites(InputInterface $input)
     {
         $websiteIds = $input->getOption(self::WEBSITE);
+        /** @var WebsiteRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Website::class)
             ->getRepository(Website::class);
@@ -225,6 +247,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function getAccountGroups(InputInterface $input)
     {
         $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
+        /** @var AccountGroupRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(AccountGroup::class)
             ->getRepository(AccountGroup::class);
@@ -243,6 +266,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function getAccounts(InputInterface $input)
     {
         $accountIds = $input->getOption(self::ACCOUNT);
+        /** @var AccountRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Account::class)
             ->getRepository(Account::class);

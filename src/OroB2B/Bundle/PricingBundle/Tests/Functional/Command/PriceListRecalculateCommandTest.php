@@ -77,7 +77,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
     {
         return [
             'all' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => ['--all'],
                 'expectedCount' => 40 // 2 + 38 = config + website1
             ],
@@ -87,7 +87,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'expectedCount' => 0
             ],
             'website 1' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 38,
                 'website' => [LoadWebsiteData::WEBSITE1],
@@ -95,7 +95,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'account' => []
             ],
             'account.level_1_1' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 6,
                 'website' => [],
@@ -103,7 +103,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'account' => ['account.level_1_1']
             ],
             'account.level_1.2' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 4,
                 'website' => [],
@@ -111,7 +111,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'account' => ['account.level_1.2']
             ],
             'account.level_1.3' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 14,
                 'website' => [],
@@ -119,7 +119,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'account' => ['account.level_1.3']
             ],
             'account_group' => [
-                'expected_message' => 'Start the process',
+                'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 24, // 6 + 4 + 14 = account.level_1_1 + account.level_1.2 + account.level_1.3
                 'website' => [],

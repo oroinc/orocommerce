@@ -58,5 +58,4 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         return '*/5 * * * *';
     }
-
 }
