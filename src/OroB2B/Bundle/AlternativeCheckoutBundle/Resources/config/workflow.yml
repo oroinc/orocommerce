@@ -211,7 +211,7 @@ workflows:
                     is_checkout_show_errors: true
                     page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
                 form_options:
-                    init_actions:
+                    form_init:
                         - '@call_service_method':
                             service: orob2b_checkout.action.default_shipping_method_setter
                             method: setDefaultShippingMethod
@@ -483,7 +483,7 @@ workflows:
                         parameters:
                             entity: $checkout
                             shipping_rule_config: $shipping_rule_config
-                post_actions:
+                actions:
                     - '@call_service_method':
                         service: orob2b_checkout.shipping_cost.calculator
                         method: calculatePrice
