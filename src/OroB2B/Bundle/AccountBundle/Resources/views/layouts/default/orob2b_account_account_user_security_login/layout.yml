@@ -94,3 +94,5 @@ layout:
                             login_form_register: ~
                             login_form_target: ~
                             login_form_csrf: ~
+    imports:
+        - 'only_content'

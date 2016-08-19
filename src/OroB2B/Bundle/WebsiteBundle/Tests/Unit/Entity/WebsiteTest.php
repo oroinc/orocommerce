@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteTest extends \PHPUnit_Framework_TestCase
@@ -18,7 +17,7 @@ class WebsiteTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', 1],
             ['name', 'test'],
-            ['url', 'www.test.com'],
+            ['default', true],
             ['owner', new BusinessUnit()],
             ['organization', new Organization()],
             ['createdAt', $now, false],
@@ -33,15 +32,12 @@ class WebsiteTest extends \PHPUnit_Framework_TestCase
         // Create websites
         $firstWebsite = new Website();
         $firstWebsite->setName('First Website');
-        $firstWebsite->setUrl('www.first-website.com');
 
         $secondWebsite = new Website();
         $secondWebsite->setName('Second Website');
-        $secondWebsite->setUrl('www.second-website.com');
 
         $thirdWebsite = new Website();
         $thirdWebsite->setName('Third Website');
-        $thirdWebsite->setUrl('www.third-website.com');
 
         $this->assertEmpty($firstWebsite->getRelatedWebsites()->toArray());
         $this->assertEmpty($secondWebsite->getRelatedWebsites()->toArray());

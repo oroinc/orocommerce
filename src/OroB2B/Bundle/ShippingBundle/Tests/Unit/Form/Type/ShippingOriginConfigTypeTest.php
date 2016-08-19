@@ -18,14 +18,14 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new ShippingOriginConfigType();
     }
 
-    public function testGetName()
+    public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingOriginConfigType::NAME, $this->formType->getName());
+        $this->assertEquals(ShippingOriginConfigType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(ShippingOriginType::NAME, $this->formType->getParent());
+        $this->assertEquals(ShippingOriginType::class, $this->formType->getParent());
     }
 
     public function testFinishViewWithoutParentForm()

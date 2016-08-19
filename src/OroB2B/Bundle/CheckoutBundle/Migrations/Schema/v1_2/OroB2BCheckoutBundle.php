@@ -68,6 +68,8 @@ class OroB2BCheckoutBundle implements Migration, DatabasePlatformAwareInterface
         $table->addColumn('save_billing_address', 'boolean', ['default' => true]);
         $table->addColumn('ship_to_billing_address', 'boolean', ['default' => false]);
         $table->addColumn('save_shipping_address', 'boolean', ['default' => true]);
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
     }

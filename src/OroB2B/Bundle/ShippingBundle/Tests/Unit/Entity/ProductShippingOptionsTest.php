@@ -11,7 +11,6 @@ use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
 use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
 use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
 use OroB2B\Bundle\ShippingBundle\Model\Weight;
 
 class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase

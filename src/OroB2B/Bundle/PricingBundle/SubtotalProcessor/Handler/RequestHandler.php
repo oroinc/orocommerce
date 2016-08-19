@@ -11,7 +11,6 @@ use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
@@ -80,31 +79,7 @@ class RequestHandler
 
         $this->totalProvider->enableRecalculation();
 
-        $total = $this->totalProvider->getTotal($entity)->toArray();
-        $subtotals = $this->totalProvider->getSubtotals($entity)->getValues();
-
-        return $this->prepareResponse($total, $subtotals);
-    }
-
-    /**
-     * @param array $total
-     * @param Subtotal[] $subtotals
-     *
-     * @return array
-     */
-    protected function prepareResponse($total, $subtotals)
-    {
-        $callbackFunction = function ($value) {
-            /** @var Subtotal $value */
-            return $value->toArray();
-        };
-
-        $totals = [
-            'total' => $total,
-            'subtotals' => array_map($callbackFunction, $subtotals)
-        ];
-
-        return $totals;
+        return $this->totalProvider->getTotalWithSubtotalsAsArray($entity);
     }
 
     /**
