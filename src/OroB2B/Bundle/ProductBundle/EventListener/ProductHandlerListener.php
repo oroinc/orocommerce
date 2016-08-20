@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductHandlerListener
 {

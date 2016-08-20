@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
+use Oro\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
 {
@@ -17,7 +17,7 @@ abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
      */
     protected function getMatcher()
     {
-        $matcher = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher')
+        $matcher = $this->getMockBuilder('Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher')
             ->disableOriginalConstructor()
             ->getMock();
         $matcher->expects($this->any())
@@ -41,7 +41,7 @@ abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
      */
     protected function getRoundingService()
     {
-        $roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $roundingService->expects($this->any())
             ->method('round')
             ->willReturnCallback(

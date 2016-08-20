@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Entity;
+namespace Oro\Bundle\CheckoutBundle\Entity;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 trait ShippingAddressTrait
 {
     /**
      * @var OrderAddress
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderAddress", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderAddress", cascade={"persist"})
      * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $shippingAddress;

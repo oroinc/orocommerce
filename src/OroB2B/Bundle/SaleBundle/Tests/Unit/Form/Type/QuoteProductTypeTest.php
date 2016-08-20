@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,22 +14,21 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
 class QuoteProductTypeTest extends AbstractTest
 {
@@ -70,7 +69,7 @@ class QuoteProductTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+        $this->repository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -89,7 +88,7 @@ class QuoteProductTypeTest extends AbstractTest
 
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -117,7 +116,7 @@ class QuoteProductTypeTest extends AbstractTest
             $this->quoteProductFormatter,
             $this->registry
         );
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
+        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
     }
 
     public function testConfigureOptions()
@@ -375,7 +374,7 @@ class QuoteProductTypeTest extends AbstractTest
     protected function createProduct($id, array $units = [])
     {
         $product = $this->getMockEntity(
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'Oro\Bundle\ProductBundle\Entity\Product',
             [
                 'getId' => $id,
                 'getAvailableUnitCodes' => $units,
@@ -555,7 +554,7 @@ class QuoteProductTypeTest extends AbstractTest
         $type = QuoteProduct::TYPE_OFFER
     ) {
         /* @var $quoteProduct \PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
-        $quoteProduct = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProduct = $this->getMock('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
         $quoteProduct
             ->expects($this->any())
             ->method('getId')

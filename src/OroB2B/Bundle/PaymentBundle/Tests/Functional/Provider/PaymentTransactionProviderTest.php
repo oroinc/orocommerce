@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\Provider;
 
 use Psr\Log\LoggerInterface;
 
@@ -8,10 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 /**
  * @dbIsolation
@@ -26,7 +25,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'
+                'Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'
             ]
         );
 
@@ -37,7 +36,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
+                $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
                 '1000',
                 'USD',
                 'payment_term'
@@ -55,7 +54,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
@@ -69,7 +68,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
+                $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
                 '1000',
                 'USD',
                 'payment_term'
@@ -87,7 +86,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             )
         );
 
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
@@ -111,7 +110,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
         );
 
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
@@ -131,7 +130,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     public function testGetActiveValidatePaymentTransactionEmptyForUser()
     {
         $this->initClient();
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
@@ -149,7 +148,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
         );
 
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
         $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
 
@@ -165,7 +164,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
             'authorize',
-            $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1])
+            $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1])
         );
 
         $paymentTransaction

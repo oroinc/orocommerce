@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Handler;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -11,15 +11,14 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,8 +51,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->shoppingListManager,
             $this->securityFacade
         );
-        $this->handler->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
-        $this->handler->setShoppingListClass('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->handler->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
+        $this->handler->setShoppingListClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
     }
 
     /**
@@ -161,7 +160,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
@@ -192,9 +191,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
                         $this->assertEquals($accountUser, $lineItem->getAccountUser());
                         $this->assertEquals($organization, $lineItem->getOrganization());
-                        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
+                        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
                         $this->assertInstanceOf(
-                            'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                             $lineItem->getUnit()
                         );
                     }
@@ -256,12 +255,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['iterate'])
             ->getMockForAbstractClass();
 
-        $product1 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1)
+        $product1 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1)
             ->addUnitPrecision(
                 (new ProductUnitPrecision())->setUnit(new ProductUnit())
             );
 
-        $product2 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+        $product2 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 2)
             ->addUnitPrecision(
                 (new ProductUnitPrecision())->setUnit(new ProductUnit())
             );
@@ -300,8 +299,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValueMap(
                     [
-                        ['OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListRepository],
-                        ['OroB2B\Bundle\ProductBundle\Entity\Product', $productRepository],
+                        ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListRepository],
+                        ['Oro\Bundle\ProductBundle\Entity\Product', $productRepository],
                     ]
                 )
             );

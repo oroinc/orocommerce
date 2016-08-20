@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +40,7 @@ class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
             'street2' => ['street2', 'street2'],
             'created' => ['created', $now],
             'updated' => ['updated', $now],
-            'warehouse' => ['warehouse', $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse')]
+            'warehouse' => ['warehouse', $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse')]
         ];
 
         $this->assertPropertyAccessors($this->shippingOriginWarehouse, $properties);

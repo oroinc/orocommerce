@@ -1,24 +1,24 @@
 orob2b_tax_product_tax_code:
-    resource:     "@OroB2BTaxBundle/Controller/ProductTaxCodeController.php"
+    resource:     "@OroTaxBundle/Controller/ProductTaxCodeController.php"
     type:         annotation
     prefix:       /tax/product
 
 orob2b_tax_account_tax_code:
-    resource:     "@OroB2BTaxBundle/Controller/AccountTaxCodeController.php"
+    resource:     "@OroTaxBundle/Controller/AccountTaxCodeController.php"
     type:         annotation
     prefix:       /tax/account
 
 orob2b_tax:
-    resource:     "@OroB2BTaxBundle/Controller/TaxController.php"
+    resource:     "@OroTaxBundle/Controller/TaxController.php"
     type:         annotation
     prefix:       /tax
 
 orob2b_tax_rule:
-    resource:     "@OroB2BTaxBundle/Controller/TaxRuleController.php"
+    resource:     "@OroTaxBundle/Controller/TaxRuleController.php"
     type:         annotation
     prefix:       /tax/rule
 
 orob2b_tax_jurisdiction:
-    resource:     "@OroB2BTaxBundle/Controller/TaxJurisdictionController.php"
+    resource:     "@OroTaxBundle/Controller/TaxJurisdictionController.php"
     type:         annotation
     prefix:       /tax/jurisdiction

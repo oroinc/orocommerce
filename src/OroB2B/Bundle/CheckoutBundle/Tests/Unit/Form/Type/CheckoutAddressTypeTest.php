@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 
-use OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\FrontendBundle\Form\Type\CountryType;
-use OroB2B\Bundle\FrontendBundle\Form\Type\RegionType;
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
+use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
+use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
 
 class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
 {
@@ -23,7 +22,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             $this->orderAddressSecurityProvider,
             $this->serializer
         );
-        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
+        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
     public function testGetName()

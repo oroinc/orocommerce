@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * Composite primary key fields order:
@@ -36,9 +35,9 @@ class AccountCategoryRepository extends EntityRepository
 
         $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb->select('COALESCE(acvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) . ')')
-            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->from('OroCatalogBundle:Category', 'category')
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
@@ -49,7 +48,7 @@ class AccountCategoryRepository extends EntityRepository
                 'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
             ')')
                 ->leftJoin(
-                    'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                    'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                     'agcvr',
                     Join::WITH,
                     $qb->expr()->andX(
@@ -62,7 +61,7 @@ class AccountCategoryRepository extends EntityRepository
 
         $qb
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
                 'acvr',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -94,9 +93,9 @@ class AccountCategoryRepository extends EntityRepository
             'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
             ') as visibility'
         )
-        ->from('OroB2BAccountBundle:Account', 'account')
+        ->from('OroAccountBundle:Account', 'account')
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -105,13 +104,13 @@ class AccountCategoryRepository extends EntityRepository
             )
         )
         ->leftJoin(
-            'OroB2BAccountBundle:AccountGroup',
+            'OroAccountBundle:AccountGroup',
             'accountGroup',
             Join::WITH,
             $qb->expr()->eq('account.group', 'accountGroup')
         )
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -120,7 +119,7 @@ class AccountCategoryRepository extends EntityRepository
             )
         )
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
@@ -163,7 +162,7 @@ class AccountCategoryRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->from('OroCatalogBundle:Category', 'category')
             ->orderBy('category.id');
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
@@ -195,7 +194,7 @@ class AccountCategoryRepository extends EntityRepository
         }
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
             ->set('acvr.visibility', $visibility)
             ->where($qb->expr()->eq('acvr.account', ':account'))
             ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
@@ -243,7 +242,7 @@ class AccountCategoryRepository extends EntityRepository
                 $visibilityCondition,
                 (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
             )
-            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->from('OroAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
             ->where('acv.visibility IN (:staticVisibilities)')
             ->setParameter(
                 'staticVisibilities',
@@ -275,9 +274,9 @@ class AccountCategoryRepository extends EntityRepository
                 $visibilityCondition,
                 (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
             )
-            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->from('OroAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 'WITH',
                 'acv.category = cvr.category'
@@ -321,7 +320,7 @@ class AccountCategoryRepository extends EntityRepository
             'agcvr_parent.visibility as parent_group_resolved_visibility',
             'cvr_parent.visibility as parent_category_resolved_visibility'
         )
-        ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+        ->from('OroAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
         // join to category that includes only parent category entities
         ->innerJoin(
             'acv.category',
@@ -330,24 +329,24 @@ class AccountCategoryRepository extends EntityRepository
             'acv.visibility = ' . $qb->expr()->literal(AccountCategoryVisibility::PARENT_CATEGORY)
         )
         // join to related account
-        ->innerJoin('OroB2BAccountBundle:Account', 'a', 'WITH', 'acv.account = a')
+        ->innerJoin('OroAccountBundle:Account', 'a', 'WITH', 'acv.account = a')
         // join to parent category visibility
         ->leftJoin(
-            'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+            'OroAccountBundle:Visibility\AccountCategoryVisibility',
             'acv_parent',
             'WITH',
             'acv_parent.account = acv.account AND acv_parent.category = c.parentCategory'
         )
         // join to resolved group visibility for parent category
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr_parent',
             'WITH',
             'agcvr_parent.accountGroup = a.group AND agcvr_parent.category = c.parentCategory'
         )
         // join to resolved category visibility for parent category
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr_parent',
             'WITH',
             'cvr_parent.category = c.parentCategory'
@@ -381,7 +380,7 @@ class AccountCategoryRepository extends EntityRepository
                 (string)$visibility,
                 (string)AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
             )
-            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->from('OroAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
             ->andWhere('acv.visibility = :parentCategory')  // parent category fallback
             ->andWhere('acv.id IN (:visibilityIds)')        // specific visibility entity IDs
             ->setParameter('parentCategory', AccountCategoryVisibility::PARENT_CATEGORY);

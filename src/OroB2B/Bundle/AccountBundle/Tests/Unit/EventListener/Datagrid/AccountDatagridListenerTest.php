@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountDatagridListener;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\EventListener\Datagrid\AccountDatagridListener;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 /**
  * @dbIsolation
@@ -46,7 +45,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->securityProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
+        $this->securityProvider = $this->getMockBuilder('Oro\Bundle\AccountBundle\Security\AccountUserProvider')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -189,14 +188,14 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function getAccountUser($id = null, $accountId = null)
     {
         /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
-        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
         $account->expects($this->any())
             ->method('getId')
             ->willReturn($accountId)
         ;
 
         /* @var $user AccountUser|\PHPUnit_Framework_MockObject_MockObject */
-        $user = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $user = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
         $user->expects($this->any())
             ->method('getAccount')
             ->willReturn($account)

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -9,8 +9,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -33,7 +33,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData',
         ];
     }
 
@@ -42,7 +42,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
      */
     public function load(ObjectManager $manager)
     {
-        $class = 'OroB2BPricingBundle:PriceList';
+        $class = 'OroPricingBundle:PriceList';
         /** @var PriceListRepository $repository */
         $repository = $this->container->get('doctrine')->getManagerForClass($class)
             ->getRepository($class);

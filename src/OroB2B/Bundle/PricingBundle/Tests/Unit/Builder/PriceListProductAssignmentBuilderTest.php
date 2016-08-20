@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 {

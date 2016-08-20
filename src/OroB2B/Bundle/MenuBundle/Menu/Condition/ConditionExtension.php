@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Menu\Condition;
+namespace Oro\Bundle\MenuBundle\Menu\Condition;
 
 use Knp\Menu\Factory\ExtensionInterface;
 use Knp\Menu\ItemInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
+use Oro\Bundle\MenuBundle\Menu\BuilderInterface;
 
 class ConditionExtension implements ExtensionInterface
 {

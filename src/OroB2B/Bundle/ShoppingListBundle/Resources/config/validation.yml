@@ -1,15 +1,15 @@
-OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
-        - OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
             groups: [update]
     properties:
         product:
             - NotBlank:
                 groups: [create, update, add_product]
         quantity:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
                 groups: [create, update, add_product]
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
                 groups: [create, update, add_product]
             - NotBlank:
@@ -21,7 +21,7 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
             - NotBlank:
                 groups: [create, update]
 
-OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
         label:
             - NotBlank: ~

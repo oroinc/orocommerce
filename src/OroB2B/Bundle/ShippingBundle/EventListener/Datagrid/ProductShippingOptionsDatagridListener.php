@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\EventListener\Datagrid;
+namespace Oro\Bundle\ShippingBundle\EventListener\Datagrid;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\Query\Expr;
@@ -10,8 +10,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 
 class ProductShippingOptionsDatagridListener
 {
@@ -46,9 +45,9 @@ class ProductShippingOptionsDatagridListener
     {
         $config = $event->getConfig();
         $column = [
-            'label' => 'orob2b.shipping.datagrid.shipping_options.column.label',
+            'label' => 'oro.shipping.datagrid.shipping_options.column.label',
             'type' => 'twig',
-            'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+            'template' => 'OroShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
             'frontend_type' => 'html',
             'renderable' => false,
         ];

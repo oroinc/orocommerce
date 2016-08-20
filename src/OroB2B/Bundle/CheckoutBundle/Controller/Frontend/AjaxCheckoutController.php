@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -11,8 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class AjaxCheckoutController extends Controller
 {
@@ -54,8 +53,8 @@ class AjaxCheckoutController extends Controller
             return $checkout->getShippingCost();
         }
         $shippingRuleConfigId = $workflowTransitionData['shipping_rule_config'];
-        $shippingRuleConfig = $this->getDoctrine()->getManagerForClass('OroB2BShippingBundle:ShippingRuleConfiguration')
-            ->getRepository('OroB2BShippingBundle:ShippingRuleConfiguration')->find($shippingRuleConfigId);
+        $shippingRuleConfig = $this->getDoctrine()->getManagerForClass('OroShippingBundle:ShippingRuleConfiguration')
+            ->getRepository('OroShippingBundle:ShippingRuleConfiguration')->find($shippingRuleConfigId);
         if (!$shippingRuleConfig) {
             return $checkout->getShippingCost();
         }

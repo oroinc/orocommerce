@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Controller;
+namespace Oro\Bundle\ProductBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {

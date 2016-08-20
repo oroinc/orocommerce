@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Api\Processor;
+namespace Oro\Bundle\WarehouseBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
 {

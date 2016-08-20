@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -15,24 +15,23 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
-    const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
+    const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\LineItem';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
+    const SHOPPING_LIST_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -118,7 +117,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
-        $repo = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())
@@ -192,7 +191,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected function getShoppingList($id, $label)
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
+        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
         $shoppingList->setLabel($label);
 
         return $shoppingList;
@@ -207,7 +206,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $accountUser = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 

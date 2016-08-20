@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Entity\Manager;
+namespace Oro\Bundle\MenuBundle\Entity\Manager;
 
 use Knp\Menu\ItemInterface;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 class MenuItemManager
 {

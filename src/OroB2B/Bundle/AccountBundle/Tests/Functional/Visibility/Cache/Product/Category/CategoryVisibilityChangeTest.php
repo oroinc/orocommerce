@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Symfony\Component\Yaml\Yaml;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\VisibilityTrait;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\VisibilityTrait;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -40,7 +40,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
     /**
      * @param $categoryReference
      * @param array $visibility
-     * @return \OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface
+     * @return \Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface
      */
     protected function getVisibilityEntity($categoryReference, array $visibility)
     {

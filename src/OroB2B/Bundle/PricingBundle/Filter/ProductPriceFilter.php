@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Filter;
+namespace Oro\Bundle\PricingBundle\Filter;
 
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -10,10 +10,9 @@ use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\NumberRangeFilter;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductPriceFilter extends NumberRangeFilter
 {
@@ -127,7 +126,7 @@ class ProductPriceFilter extends NumberRangeFilter
     }
 
     /**
-     * @return null|object|\OroB2B\Bundle\PricingBundle\Entity\PriceList
+     * @return null|object|\Oro\Bundle\PricingBundle\Entity\PriceList
      */
     protected function getPriceList()
     {

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -33,7 +32,7 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
         parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -89,7 +88,7 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entity->setCurrency('USD');
 
         $subtotal = $this->provider->getSubtotal($entity);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
@@ -105,7 +104,7 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn('test');
 
         $entityMock = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub'
+            'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub'
         )
             ->getMock();
 
@@ -122,7 +121,7 @@ class LineItemSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $subtotal = $this->provider->getCachedSubtotal($entityMock);
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entityMock->getCurrency(), $subtotal->getCurrency());

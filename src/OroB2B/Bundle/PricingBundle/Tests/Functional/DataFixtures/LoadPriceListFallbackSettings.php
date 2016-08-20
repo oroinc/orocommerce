@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
@@ -50,9 +50,9 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
 

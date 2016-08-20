@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
  * @ORM\Table(
  *      name="orob2b_category_visibility",
  *      uniqueConstraints={
@@ -38,7 +37,7 @@ class CategoryVisibility implements VisibilityInterface
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;

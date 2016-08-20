@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Event;
+namespace Oro\Bundle\PricingBundle\Event;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListQueueChangeEvent extends AbstractPriceListQueueChangeEvent
 {

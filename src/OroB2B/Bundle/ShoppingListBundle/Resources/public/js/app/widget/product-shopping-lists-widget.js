@@ -3,7 +3,7 @@ define(function(require) {
 
     var ProductShoppingListsWidget;
     var DialogWidget = require('oro/dialog-widget');
-    var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var __ = require('orotranslation/js/translator');

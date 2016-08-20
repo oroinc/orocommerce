@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Schema\v1_1;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -32,7 +32,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        if (class_exists('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
+        if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 'orob2b_checkout_source',
@@ -41,7 +41,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
-                    'entity' => ['label' => 'orob2b.shoppinglist.entity_label'],
+                    'entity' => ['label' => 'oro.shoppinglist.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM

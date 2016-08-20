@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -8,15 +8,14 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\Address;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\Address;
 
 class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,12 +46,12 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $entityManager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BShippingBundle:ShippingRule')
+            ->with('OroShippingBundle:ShippingRule')
             ->willReturn($this->repository);
 
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
-            ->with('OroB2BShippingBundle:ShippingRule')
+            ->with('OroShippingBundle:ShippingRule')
             ->willReturn($entityManager);
     }
 

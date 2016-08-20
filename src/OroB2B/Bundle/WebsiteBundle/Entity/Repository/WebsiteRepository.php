@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity\Repository;
+namespace Oro\Bundle\WebsiteBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Component\PhpUtils\ArrayUtil;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteRepository extends EntityRepository implements BatchIteratorInterface
 {

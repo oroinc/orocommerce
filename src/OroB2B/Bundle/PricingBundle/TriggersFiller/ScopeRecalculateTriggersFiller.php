@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
+namespace Oro\Bundle\PricingBundle\TriggersFiller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ScopeRecalculateTriggersFiller
 {
@@ -62,7 +61,7 @@ class ScopeRecalculateTriggersFiller
         );
 
         if (in_array($priceList->getId(), $configPriceListIds)) {
-            $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
+            $em = $this->registry->getManagerForClass('OroPricingBundle:PriceListChangeTrigger');
             $configTrigger = new PriceListChangeTrigger();
 
             $em->persist($configTrigger);
@@ -90,7 +89,7 @@ class ScopeRecalculateTriggersFiller
         $accounts = $this->getRecalculatedAccounts($accountIds);
 
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
+        $em = $this->registry->getManagerForClass('OroPricingBundle:PriceListChangeTrigger');
 
         $this->createTriggers($em, $websites, $accountGroups, $accounts);
 
@@ -153,12 +152,12 @@ class ScopeRecalculateTriggersFiller
 
     protected function clearAllExistingTriggers()
     {
-        $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+        $this->registry->getManagerForClass('OroPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroPricingBundle:PriceListChangeTrigger')
             ->deleteAll();
 
-        $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPriceChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')
+        $this->registry->getManagerForClass('OroPricingBundle:ProductPriceChangeTrigger')
+            ->getRepository('OroPricingBundle:ProductPriceChangeTrigger')
             ->deleteAll();
     }
 
@@ -175,7 +174,7 @@ class ScopeRecalculateTriggersFiller
         $accounts
     ) {
         if (empty($websites) && (!empty($accountGroups) || !empty($accounts))) {
-            $websites = $this->registry->getRepository('OroB2BWebsiteBundle:Website')->getBatchIterator();
+            $websites = $this->registry->getRepository('OroWebsiteBundle:Website')->getBatchIterator();
         }
 
         foreach ($websites as $website) {
@@ -253,7 +252,7 @@ class ScopeRecalculateTriggersFiller
 
         if (!empty($websiteIds)) {
             $websites = $this->registry
-                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')
                 ->findBy(['id' => $websiteIds]);
         }
 
@@ -270,7 +269,7 @@ class ScopeRecalculateTriggersFiller
 
         if (!empty($accountGroupIds)) {
             $accountGroups = $this->registry
-                ->getRepository('OroB2BAccountBundle:AccountGroup')
+                ->getRepository('OroAccountBundle:AccountGroup')
                 ->findBy(['id' => $accountGroupIds]);
         }
 
@@ -287,7 +286,7 @@ class ScopeRecalculateTriggersFiller
 
         if (!empty($accountIds)) {
             $accounts = $this->registry
-                ->getRepository('OroB2BAccountBundle:Account')
+                ->getRepository('OroAccountBundle:Account')
                 ->findBy(['id' => $accountIds]);
         }
 
@@ -299,7 +298,7 @@ class ScopeRecalculateTriggersFiller
      */
     protected function getRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
+        return $this->registry->getManagerForClass('OroPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroPricingBundle:PriceListChangeTrigger');
     }
 }

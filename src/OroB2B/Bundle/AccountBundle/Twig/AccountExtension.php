@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Twig;
+namespace Oro\Bundle\AccountBundle\Twig;
 
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountExtension extends \Twig_Extension
 {

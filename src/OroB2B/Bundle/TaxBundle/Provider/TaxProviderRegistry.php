@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace Oro\Bundle\TaxBundle\Provider;
 
 class TaxProviderRegistry
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Form\Type\Configuration;
+namespace Oro\Bundle\FrontendBundle\Form\Type\Configuration;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

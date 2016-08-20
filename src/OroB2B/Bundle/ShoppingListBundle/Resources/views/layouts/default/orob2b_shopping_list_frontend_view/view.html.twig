@@ -3,7 +3,7 @@
 
     {% set attr = attr|merge({class: attr.class|default('') ~ " container-fluid"}) %}
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orob2bshoppinglist/js/app/components/shoppinglist-view-component'
+        module: 'oroshoppinglist/js/app/components/shoppinglist-view-component'
     }) }}>
         {{ block_widget(block) }}
     </div>
@@ -19,7 +19,7 @@
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
         <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
-        <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.not_have_available'|trans }}</span>
+        <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
 
@@ -27,7 +27,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set attr = attr|merge({id: "title-inline-editable"}) %}
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orob2bshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
+        module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
         options: {
             frontend_type: 'title',
             value: shoppingList.label,
@@ -50,7 +50,7 @@
                     }
                 },
                 view_options: {
-                    tooltip: 'orob2b.shoppinglist.label.edit.tooltip'|trans,
+                    tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
                     additionalClass: 'cart__order-title'
                 }
             }
@@ -81,17 +81,17 @@
     <div{{ block('block_attributes') }}
             data-page-component-module="oroui/js/app/components/jquery-widget-component"
             data-page-component-options="{{ {
-                widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget'
+                widgetModule: 'orofrontend/default/js/widgets/collapse-widget'
             }|json_encode() }}"
     >
         <span class="collapse-view__trigger" data-collapse-trigger>
             <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
         </span>
-        <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
         <div class="collapse-view__container" data-collapse-container>
             <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
-                module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                module: 'orofrontend/js/app/components/switchable-editable-view-component',
                 options: {
                     frontend_type: 'multilineText',
                     value: shoppingList.notes,
@@ -118,10 +118,10 @@
                            {% if notes is not empty %}checked="checked"{% endif %}>
                     <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
                     <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                    <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                    <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
                 <div class="form-input" data-role="editor">
-                <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                           rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
                           class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
@@ -131,29 +131,29 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_widget %}
-    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# TODO: Pass default currency from provider. BB-2218 #}
     {% set defaultCurrency = 'USD' %}
 
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-            module: 'orob2bfrontend/js/app/components/empty-items-component',
+            module: 'orofrontend/js/app/components/empty-items-component',
             options: {eventName: 'frontend:item:delete'}
         }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
                 module: 'oroui/js/app/components/view-component',
                 layout: 'separate',
                 options: {
-                    view: 'orob2bshoppinglist/js/app/views/line-items-view'
+                    view: 'oroshoppinglist/js/app/views/line-items-view'
                 }
             }) }}>
                 <thead>
                 <tr>
-                    <th colspan="2"><small>{{ 'orob2b.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
-                    <th><small>{{ 'orob2b.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
-                    <th><small>{{ 'orob2b.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
-                    <th class="text-right"><small>{{ 'orob2b.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
+                    <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
+                    <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
                     <th class="w70"><small>&nbsp;</small></th>
                 </tr>
                 </thead>
@@ -165,11 +165,11 @@
                     <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
                         options: {
-                            view: 'orob2bshoppinglist/js/app/views/line-item-view',
+                            view: 'oroshoppinglist/js/app/views/line-item-view',
                             modelAttr: lineItem.product,
                             lineItemId: lineItem.id,
                             quantityComponentOptions: {
-                                dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                                 enable: resource_granted('orob2b_shopping_list_frontend_update'),
                                 elements: {
                                     quantity: '[name="product_qty"]',
@@ -186,7 +186,7 @@
                                     quantity: lineItem.quantity
                                 },
                                 validation: {
-                                    showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                    showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
                                 }
                             }
                         },
@@ -202,7 +202,7 @@
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                         <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product.names|localized_value }}</a>
                                     </h3>
-                                    <div>{{ 'orob2b.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ lineItem.product.sku }}</span></div>
+                                    <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ lineItem.product.sku }}</span></div>
                                 </div>
                             </div>
                         </td>
@@ -214,7 +214,7 @@
                                 <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
-                                            placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
+                                            placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
                                             class="input input_md input_block text-center" disabled="disabled" required />
                                     </div>
                                 </div>
@@ -235,7 +235,7 @@
                         <td class="va-t_md line-item-price" {{ UI.renderPageComponentAttributes({
                             module: 'oroui/js/app/components/view-component',
                             options: {
-                                view: 'orob2bpricing/js/app/views/base-product-prices-view',
+                                view: 'oropricing/js/app/views/base-product-prices-view',
                                 modelAttr: {
                                     prices: productAllPrices,
                                     quantityWasChanged: true
@@ -245,7 +245,7 @@
                             <table class="table borderless paddingless mb0-md {{ productMatchedPrice is null ? 'hidden' }}" data-name="price">
                                 <tbody>
                                 <tr>
-                                    <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
+                                    <td>{{ 'oro.frontend.shoppinglist.view.your_price.label'|trans }}</td>
                                     <td class="text-right"
                                         data-name="prices-hint"
                                         data-placement="bottom"
@@ -300,20 +300,20 @@
                                           data-trigger="hover"
                                           data-container="body"
                                           data-class="prices-hint-content"
-                                          >{{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}</span>
+                                          >{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
                                 {% else %}
-                                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+                                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
                                 {% endif %}
                             </div>
                         </td>
                         <td class="va-t_md text-right">
                             <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({
-                                    module: 'orob2bfrontend/js/app/components/delete-item-component',
+                                    module: 'orofrontend/js/app/components/delete-item-component',
                                     options: {
                                         url: path('orob2b_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
                                         removeClass: 'line_item',
-                                        confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                        sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                        confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                        sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
                                         okButtonClass: 'btn ok theme-btn_sm btn-orange',
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
@@ -326,7 +326,7 @@
                         {% set notes = lineItem.notes %}
                         <td colspan="6">
                             <div class="checkbox_custom-wrapper" {{ UI.renderPageComponentAttributes({
-                                module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                                module: 'orofrontend/js/app/components/switchable-editable-view-component',
                                 options: {
                                     frontend_type: 'multilineText',
                                     value: lineItem.notes,
@@ -352,12 +352,12 @@
                                         data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
                                     <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
                                     <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                                    <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                                    <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                 </label>
 
                             <div class="form-input form-input_textarea" data-role="editor">
                                 <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
-                                    placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
+                                    placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
                         </div>
                     </td>
@@ -375,7 +375,7 @@
           <span class="badge badge_orange badge_xlg badge_circle">
             <i class="cf-basket"></i>
           </span>
-        <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
+        <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
 {% endblock %}
 
@@ -396,17 +396,17 @@
 {% block _shopping_list_delete_button_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
         <button class="btn btn_default theme-btn_sm btn-dark fs15 mr1-md" {{ UI.renderPageComponentAttributes({
-            module: 'orob2bfrontend/js/app/components/delete-item-component',
+            module: 'orofrontend/js/app/components/delete-item-component',
             options: {
                 url: path('orob2b_api_delete_shoppinglist', {'id': shoppingList.id}),
                 redirect: path('orob2b_shopping_list_frontend_view'),
-                confirmMessage: 'orob2b.frontend.shoppinglist.messages.delete_confirm'|trans,
-                sucsessMessage: 'orob2b.frontend.shoppinglist.messages.deleted'|trans,
+                confirmMessage: 'oro.frontend.shoppinglist.messages.delete_confirm'|trans,
+                sucsessMessage: 'oro.frontend.shoppinglist.messages.deleted'|trans,
                 okButtonClass: 'btn ok theme-btn_sm btn-orange',
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
-            <i class="fa cf-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
+            <i class="fa cf-trash mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
 

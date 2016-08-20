@@ -11,7 +11,7 @@
         <div class="account-oq__item__head">
             <div class="account-oq__item account-oq__item_full mb0-sm">
                 <h2 class="account-oq__item__title">
-                    {{ 'orob2b.frontend.sale.quote.sections.general'|trans }}
+                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
                 </h2>
             </div>
         </div>
@@ -22,7 +22,7 @@
                         <tbody>
                         {% if quote.assignedUsers | length %}
                             <tr>
-                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
                                 <td>
                                     {% set assigned_users = [] %}
                                     {% for entity in quote.assignedUsers %}
@@ -33,11 +33,11 @@
                             </tr>
                         {% endif %}
                         <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
                             <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
                         </tr>
                         <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
                         </tr>
                         </tbody>
@@ -49,12 +49,12 @@
                     <table class="table borderless  mobile-table">
                         <tbody>
                             <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
                             {% if quote.shippingEstimate is not empty %}
                             <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
                                 <td>{{ quote.shippingEstimate|oro_format_price }}</td>
                             </tr>
                             {% endif %}
@@ -71,7 +71,7 @@
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set expandTextOptions = {
-        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
         maxLength: 80
     }|json_encode() %}
     <!-- START ITEMS ORDERED DESKTOP -->
@@ -79,7 +79,7 @@
         <div class="account-oq__item account-oq__item_full">
             <div class="account-oq__item__head">
                 <h2 class="account-oq__item__title">
-                    {{ 'orob2b.frontend.sale.quote.sections.quote_products.label'|trans }}
+                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
                 </h2>
             </div>
             <div class="account-oq__item__body">
@@ -87,9 +87,9 @@
                 <table class="oro-grid-table oro-grid-table__orders">
                     <thead>
                     <tr>
-                        <th colspan="2">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
-                        <th class="text-right">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
+                        <th colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
+                        <th>{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
+                        <th class="text-right">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -108,13 +108,13 @@
                                                 {{ quoteProduct.productName }}
                                             {% endif %}
                                         </h3>
-                                        <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
+                                        <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
                                     </td>
                                 {% endif %}
                                 <td>
                                     {{ productOffer.quantity|orob2b_format_short_product_unit_value(productOffer.productUnit) }}
                                     {% if productOffer.allowIncrements %}
-                                        {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                                        {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
                                     {% endif %}
                                 </td>
                                 <td class="text-right">{{ productOffer.price|oro_format_price }}</td>
@@ -129,7 +129,7 @@
                                               data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                               data-page-component-options="{{ expandTextOptions }}"
                                          >
-                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                                            {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                                         </div>
                                     </div>
                                 </td>
@@ -144,7 +144,7 @@
                                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                              data-page-component-options="{{ expandTextOptions }}"
                                         >
-                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                         </div>
                                     </div>
                                 </td>
@@ -162,7 +162,7 @@
 
                 <div class="order-checkout-widget order-checkout-widget_block text-right">
                     <div class="order-builder-clear-btn">
-                        <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                        <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
                     </div>
                 </div>
             </div>
@@ -174,7 +174,7 @@
 {% block _quote_view_line_items_mobile_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set expandTextOptions = {
-        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
         maxLength: 100
     }|json_encode() %}
     <!-- START ITEMS ORDERED MOBILE -->
@@ -182,7 +182,7 @@
         <div class="account-oq__item account-oq__item_full">
             <div class="account-oq__item__head">
                 <h2 class="account-oq__item__title styled">
-                    {{ 'orob2b.frontend.sale.quote.sections.quote_products.label'|trans }}
+                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
                 </h2>
             </div>
             <div class="account-oq__item__body">
@@ -201,13 +201,13 @@
                                         {{ quoteProduct.productName }}
                                     {% endif %}
                                 </h3>
-                                <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
+                                <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
 
                                 <table class="oro-grid-table oro-grid-table-properties">
                                     <tbody>
                                         <tr>
-                                            <td class="text-lef titlet">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</td>
-                                            <td class="text-left title">{{ 'orob2b.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</td>
+                                            <td class="text-lef titlet">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</td>
+                                            <td class="text-left title">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</td>
                                         </tr>
                                         {% for productOffer in quoteProduct.quoteProductOffers %}
                                             <tr>
@@ -223,7 +223,7 @@
                                                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                                              data-page-component-options="{{ expandTextOptions }}"
                                                         >
-                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                                                            {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -238,7 +238,7 @@
                                                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                                              data-page-component-options="{{ expandTextOptions }}"
                                                         >
-                                                            {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -257,7 +257,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>
     </div>

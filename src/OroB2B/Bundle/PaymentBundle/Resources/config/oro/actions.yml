@@ -8,7 +8,7 @@ operations:
             - payment-terms-select-grid
     DELETE:
         exclude_entities:
-            - OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
+            - Oro\Bundle\PaymentBundle\Entity\PaymentTerm
         exclude_datagrids:
             - payment-term-accounts-grid
             - payment-term-account-groups-grid

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider;
+use Oro\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider;
 
 class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +43,7 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
         $loggedUser = null;
         if ($isLoggedUser) {
-            $loggedUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+            $loggedUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
         }
 
         $this->securityFacade->expects($this->once())

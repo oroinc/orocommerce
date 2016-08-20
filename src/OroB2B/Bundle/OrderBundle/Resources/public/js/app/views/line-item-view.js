@@ -4,13 +4,13 @@ define(function(require) {
     var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
-    var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
+    var ProductPricesComponent = require('oropricing/js/app/components/product-prices-component');
+    var LineItemAbstractView = require('oroorder/js/app/views/line-item-abstract-view');
 
     /**
-     * @export orob2border/js/app/views/line-item-view
+     * @export oroorder/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.LineItemView
+     * @class oroorder.app.views.LineItemView
      */
     LineItemView = LineItemAbstractView.extend({
         /**

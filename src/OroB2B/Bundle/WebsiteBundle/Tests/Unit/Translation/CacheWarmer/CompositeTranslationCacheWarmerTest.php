@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Translation\CacheWarmer;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Translation\CacheWarmer;
 
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TranslationsCacheWarmer;
 
 use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface;
 use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyProvider;
-
-use OroB2B\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer;
+use Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer;
 
 class CompositeTranslationCacheWarmerTest extends \PHPUnit_Framework_TestCase
 {

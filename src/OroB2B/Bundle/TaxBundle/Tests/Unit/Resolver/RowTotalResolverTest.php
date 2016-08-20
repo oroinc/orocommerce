@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Calculator\Calculator;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
+use Oro\Bundle\TaxBundle\Calculator\Calculator;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 
 class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,11 +32,11 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->calculator = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Calculator\Calculator')
+        $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

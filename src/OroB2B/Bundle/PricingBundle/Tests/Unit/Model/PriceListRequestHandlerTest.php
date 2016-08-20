@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -12,13 +12,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -82,7 +81,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -91,7 +90,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
-        $this->repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
+        $this->repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()->getMock();
         $this->registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
             ->disableOriginalConstructor()
@@ -99,11 +98,11 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\PricingBundle\Entity\PriceList')
+            ->with('Oro\Bundle\PricingBundle\Entity\PriceList')
             ->willReturn($this->em);
         $this->em->expects($this->any())->method('getRepository')->willReturn($this->repository);
         $this->relationsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -204,7 +203,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         Account $expectedAccount = null
     ) {
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
+        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($user);
@@ -218,7 +217,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         if ($accountId) {
-            $expectedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
+            $expectedAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $accountId);
             $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
                 ->disableOriginalConstructor()->getMock();
             $repository->expects($this->once())
@@ -234,7 +233,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
             $this->registry->expects($this->once())
                 ->method('getManagerForClass')
-                ->with('OroB2B\Bundle\AccountBundle\Entity\Account')
+                ->with('Oro\Bundle\AccountBundle\Entity\Account')
                 ->willReturn($em);
         }
 
@@ -273,7 +272,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetPriceListByAccountForAccountUser($user, $expectedAccount)
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
+        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
         $websiteId = 1;
 
         $this->request->expects($this->any())
@@ -283,7 +282,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
                     [PriceListRequestHandler::WEBSITE_KEY, null, false, $websiteId]
                 ]
             );
-        $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId);
+        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $websiteId);
 
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()->getMock();
@@ -300,7 +299,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->willReturn($em);
 
         $this->securityFacade->expects($this->once())

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PaymentBundle\Action\PurchaseAction;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,8 +25,8 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData'
+            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData'
         ];
     }
 
@@ -45,7 +45,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     {
         $doctrine = $this->container->get('doctrine');
         /** @var Order[] $ordersAll */
-        $ordersAll = $doctrine->getRepository('OroB2BOrderBundle:Order')->findAll();
+        $ordersAll = $doctrine->getRepository('OroOrderBundle:Order')->findAll();
 
         /** @var PurchaseAction $purchaseAction */
         $purchaseAction = $this->container->get('orob2b_payment.action.purchase');

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
+namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,11 +15,10 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 
 class QuoteController extends Controller
 {
@@ -29,7 +28,7 @@ class QuoteController extends Controller
      * @Acl(
      *      id="orob2b_sale_quote_frontend_view",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
+     *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
@@ -41,7 +40,7 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         if (!$quote->isAcceptable()) {
-            $this->addFlash('notice', $this->get('translator')->trans('orob2b.sale.controller.quote.expired.message'));
+            $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
         }
 
         return [
@@ -55,7 +54,7 @@ class QuoteController extends Controller
      * @Acl(
      *      id="orob2b_sale_quote_frontend_index",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
+     *      class="OroSaleBundle:Quote",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -71,7 +70,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_sale_quote_frontend_info", requirements={"id"="\d+"})
-     * @Template("OroB2BSaleBundle:Quote/Frontend/widget:info.html.twig")
+     * @Template("OroSaleBundle:Quote/Frontend/widget:info.html.twig")
      * @AclAncestor("orob2b_sale_quote_frontend_view")
      *
      * @param Quote $quote
@@ -90,7 +89,7 @@ class QuoteController extends Controller
      * @Acl(
      *      id="orob2b_sale_quote_frontend_choice",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
+     *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
@@ -143,7 +142,7 @@ class QuoteController extends Controller
      * @Acl(
      *      id="orob2b_sale_quote_frontend_subtotals",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
+     *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )

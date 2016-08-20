@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -8,9 +8,8 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -27,9 +26,9 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListChangeTrigger',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListChangeTrigger',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
         ]);
         $this->insertFromSelectQueryExecutor = $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
@@ -153,8 +152,8 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         $this->assertNotEmpty($triggers);
 
         $priceListsToAccounts = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->getManagerForClass('OroPricingBundle:PriceListToAccount')
+            ->getRepository('OroPricingBundle:PriceListToAccount')
             ->findBy(['priceList' => $priceList]);
 
         $priceListAccountsIds = array_map(
@@ -184,8 +183,8 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         $this->assertNotEmpty($triggers);
 
         $priceListsToAccountGroups = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getManagerForClass('OroPricingBundle:PriceListToAccountGroup')
+            ->getRepository('OroPricingBundle:PriceListToAccountGroup')
             ->findBy(['priceList' => $priceList]);
 
         $priceListAccountGroupsIds = array_map(
@@ -214,8 +213,8 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         $this->assertNotEmpty($triggers);
 
         $priceListsToWebsites = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceListToWebsite')
-            ->getRepository('OroB2BPricingBundle:PriceListToWebsite')
+            ->getManagerForClass('OroPricingBundle:PriceListToWebsite')
+            ->getRepository('OroPricingBundle:PriceListToWebsite')
             ->findBy(['priceList' => $priceList]);
 
         $priceListWebsitesIds = array_map(
@@ -235,6 +234,6 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceListChangeTrigger');
     }
 }

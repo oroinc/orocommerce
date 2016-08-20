@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
 class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
 {
@@ -16,7 +16,7 @@ class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_website.csv');
+        $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_website.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);

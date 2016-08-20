@@ -1,13 +1,13 @@
 services:
     orob2b_alternativecheckout.workflow_expression.user_in_group:
-        class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount'
+        class: 'Oro\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount'
         arguments:
             - '@oro_security.security_facade'
         tags:
             - { name: oro_workflow.condition, alias: assert_account }
 
     orob2b_alternativecheckout.conditions.less_order_total_limit:
-        class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit'
+        class: 'Oro\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit'
         arguments:
             - '@orob2b_pricing.subtotal_processor.total_processor_provider'
             - '@orob2b_checkout.data_provider.manager.checkout_line_items'
@@ -15,7 +15,7 @@ services:
             - { name: oro_workflow.condition, alias: less_order_total_limit }
 
     orob2b_alternativecheckout.model.action.checkout_to_quote:
-        class: 'OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
+        class: 'Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
         arguments:
             - '@oro_action.context_accessor'
             - '@doctrine'

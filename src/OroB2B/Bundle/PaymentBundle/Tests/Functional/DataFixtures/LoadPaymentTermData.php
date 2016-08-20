@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -48,8 +48,8 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
         ];
     }
 

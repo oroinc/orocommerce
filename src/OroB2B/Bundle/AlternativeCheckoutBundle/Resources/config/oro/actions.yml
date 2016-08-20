@@ -1,6 +1,6 @@
 operations:
     orob2b_accept_quote:
-        label: orob2b.alternativecheckout.actions.accept_quote
+        label: oro.alternativecheckout.actions.accept_quote
         enabled: true
         applications: [frontend]
         routes:

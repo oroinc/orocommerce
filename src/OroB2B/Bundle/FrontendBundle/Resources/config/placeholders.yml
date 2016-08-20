@@ -35,16 +35,16 @@ placeholders:
 
 items:
     logo:
-        template: OroB2BFrontendBundle:Organization:logo.html.twig
+        template: OroFrontendBundle:Organization:logo.html.twig
         applicable: "@orob2b_frontend.placeholder.filter->isBackendRoute()"
     frontend_logo:
-        template: OroB2BFrontendBundle:Organization:logo_frontend.html.twig
+        template: OroFrontendBundle:Organization:logo_frontend.html.twig
         applicable: "@orob2b_frontend.placeholder.filter->isFrontendRoute()"
     assets_css:
         template: OroAsseticBundle:Assets:oro_css.html.twig
         applicable: "@orob2b_frontend.placeholder.theme_filter->isDefaultTheme()"
     frontend_assets_css:
-        template: OroB2BFrontendBundle:Assets:demo_css.html.twig
+        template: OroFrontendBundle:Assets:demo_css.html.twig
         applicable: "@orob2b_frontend.placeholder.theme_filter->isDemoTheme()"
     window_bundle_js:
         template: OroWindowsBundle:Include:javascript.html.twig
@@ -56,17 +56,17 @@ items:
         applicable: '@orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE)'
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
-        template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
+        template: OroFrontendBundle:InstallConfiguration:web.html.twig
     frontend_requirejs_config:
         applicable: "@orob2b_frontend.placeholder.filter->isFrontendRoute()"
-        template: OroB2BFrontendBundle::requirejs.config.js.twig
+        template: OroFrontendBundle::requirejs.config.js.twig
 
     # frontend grid
     template_datagrid_toolbar_pagination_input_frontend:
-        template: OroB2BFrontendBundle:js:pagination-input.html.twig
+        template: OroFrontendBundle:js:pagination-input.html.twig
         applicable: "@oro_layout.helper->isLayoutRequest()"
     template_datagrid_toolbar_page_size_frontend:
-        template: OroB2BFrontendBundle:js:page-size.html.twig
+        template: OroFrontendBundle:js:page-size.html.twig
         applicable: "@oro_layout.helper->isLayoutRequest()"
 
     # backend grid only

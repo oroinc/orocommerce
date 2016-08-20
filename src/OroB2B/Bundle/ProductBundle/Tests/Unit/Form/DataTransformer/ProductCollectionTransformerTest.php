@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
 
 class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
 {

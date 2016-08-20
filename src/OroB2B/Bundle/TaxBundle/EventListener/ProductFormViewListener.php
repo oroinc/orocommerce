@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener;
+namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 
 class ProductFormViewListener extends AbstractFormViewListener
 {
@@ -25,7 +24,7 @@ class ProductFormViewListener extends AbstractFormViewListener
         $entity = $repository->findOneByProduct($product);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:Product:tax_code_view.html.twig',
+            'OroTaxBundle:Product:tax_code_view.html.twig',
             ['entity' => $entity]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -37,7 +36,7 @@ class ProductFormViewListener extends AbstractFormViewListener
     public function onEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:Product:tax_code_update.html.twig',
+            'OroTaxBundle:Product:tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

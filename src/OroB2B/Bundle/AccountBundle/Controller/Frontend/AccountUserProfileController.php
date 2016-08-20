@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,8 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-
-use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 
 class AccountUserProfileController extends Controller
 {
@@ -57,7 +56,7 @@ class AccountUserProfileController extends Controller
             $form,
             ['route' => 'orob2b_account_frontend_account_user_profile_update'],
             ['route' => 'orob2b_account_frontend_account_user_profile'],
-            $this->get('translator')->trans('orob2b.account.controller.accountuser.profile_updated.message'),
+            $this->get('translator')->trans('oro.account.controller.accountuser.profile_updated.message'),
             $handler
         );
 

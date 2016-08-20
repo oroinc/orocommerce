@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
 class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'OroB2BProductBundle:Product';
+    const PRODUCT_CLASS = 'OroProductBundle:Product';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
@@ -42,7 +42,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->constraint = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku')
+        $this->constraint = $this->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -119,7 +119,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
         if (!$useOptions) {
             /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
             $repository = $this
-                ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 

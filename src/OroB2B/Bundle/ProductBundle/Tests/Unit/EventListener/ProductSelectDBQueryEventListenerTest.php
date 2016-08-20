@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,15 +53,15 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->modifier = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier');
+        $this->modifier = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier');
 
-        $this->event = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
             ->disableOriginalConstructor()->getMock();
 
         $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
             ->getMock();
 
-        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
 

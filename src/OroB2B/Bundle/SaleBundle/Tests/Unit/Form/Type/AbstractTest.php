@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
@@ -14,24 +13,24 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
+use Oro\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -59,7 +58,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->quoteProductFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
+            'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock()
@@ -73,7 +72,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ;
 
         $this->quoteProductOfferFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
+            'Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock()
@@ -138,7 +137,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function prepareQuoteProductOfferType()
     {
         $quoteProductOfferType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $quoteProductOfferType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $quoteProductOfferType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
 
         return $quoteProductOfferType;
     }
@@ -149,7 +148,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function prepareQuoteProductRequestType()
     {
         $quoteProductRequestType = new QuoteProductRequestType();
-        $quoteProductRequestType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest');
+        $quoteProductRequestType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
 
         return $quoteProductRequestType;
     }
@@ -315,10 +314,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
         $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-        $account = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')->getMock();
+        $account = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Account')->getMock();
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
+        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $id);
         $accountUser->setEmail('test@test.test')
             ->setFirstName('First Name')
             ->setLastName('Last Name')

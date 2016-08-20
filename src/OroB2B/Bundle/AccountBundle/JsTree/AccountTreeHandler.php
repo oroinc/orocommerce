@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\JsTree;
+namespace Oro\Bundle\AccountBundle\JsTree;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class AccountTreeHandler extends AbstractTreeHandler
 {

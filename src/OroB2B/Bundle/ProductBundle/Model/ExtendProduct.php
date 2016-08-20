@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model;
+namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @method AbstractEnumValue getInventoryStatus()

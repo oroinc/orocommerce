@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EUVatResolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
 
 class DigitalResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $itemResolverClass =
-            'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver';
+            'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver';
 
         $this->itemResolver = $this->getMockBuilder($itemResolverClass)
             ->disableOriginalConstructor()

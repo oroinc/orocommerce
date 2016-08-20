@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Controller\Api\Rest;
+namespace Oro\Bundle\RFPBundle\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,8 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 /**
  * @NamePrefix("orob2b_api_rfp_")
@@ -35,7 +34,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      *      id="orob2b_rfp_request_status_delete",
      *      type="entity",
      *      permission="DELETE",
-     *      class="OroB2BRFPBundle:RequestStatus"
+     *      class="OroRFPBundle:RequestStatus"
      * )
      * @return Response
      */
@@ -68,7 +67,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
             $this->view(
                 [
                     'successful' => true,
-                    'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_deleted')
+                    'message' => $this->get('translator')->trans('oro.rfp.message.request_status_deleted')
                 ],
                 Response::HTTP_OK
             )
@@ -94,7 +93,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
 
         if (null === $requestStatus) {
             return new JsonResponse(
-                $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
+                $this->get('translator')->trans('oro.rfp.message.request_status_not_found'),
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -106,7 +105,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
             $this->view(
                 [
                     'successful' => true,
-                    'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_restored')
+                    'message' => $this->get('translator')->trans('oro.rfp.message.request_status_restored')
                 ],
                 Response::HTTP_OK
             )

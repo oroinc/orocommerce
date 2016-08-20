@@ -2,41 +2,41 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination, digital_products_eu: ['TAX1'] }
 databaseBefore:
-    'OroB2B\Bundle\OrderBundle\Entity\Order':
+    'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             currency: 'USD'
             billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
             shippingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
-    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
-            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 6 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
-            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
         order_line_item_3:
             productSku: { property_value: order_line_item_3 }
             order: { reference: simple_order }
             quantity: { property_value: 7 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '12.22', currency: USD } }
-            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.3' } }
-    'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction':
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.3' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         europe_germany_jurisdiction:
             code: { property_value: europe_germany_jurisdiction_code }
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
@@ -44,22 +44,22 @@ databaseBefore:
             code: { property_value: europe_germany_non_digital_jurisdiction_code }
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
-    'OroB2B\Bundle\TaxBundle\Entity\TaxRule':
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.TAX3:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX4:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX5:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: europe_germany_non_digital_jurisdiction_code }
             productTaxCode: { reference: product_tax_code.TAX2 }
-            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '238.49' #101.93625 + 42.4575 + 94.094 - round

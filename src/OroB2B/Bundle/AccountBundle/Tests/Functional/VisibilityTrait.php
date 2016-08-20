@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional;
+namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 trait VisibilityTrait
 {
@@ -36,8 +36,8 @@ trait VisibilityTrait
      */
     public function getCategoryVisibility(ManagerRegistry $registry, Category $category)
     {
-        $entity = $registry->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility')
+        $entity = $registry->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\CategoryVisibility')
             ->findOneBy(['category' => $category]);
 
         if (!$entity) {
@@ -59,8 +59,8 @@ trait VisibilityTrait
         Category $category,
         AccountGroup $accountGroup
     ) {
-        $entity = $registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+        $entity = $registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
                 'accountGroup' => $accountGroup,
@@ -83,8 +83,8 @@ trait VisibilityTrait
      */
     public function getCategoryVisibilityForAccount(ManagerRegistry $registry, Category $category, Account $account)
     {
-        $entity = $registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+        $entity = $registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
                 'account' => $account,

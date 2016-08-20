@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginProvider
 {
@@ -77,8 +76,8 @@ class ShippingOriginProvider
     protected function getWarehouseShippingOriginRepository()
     {
         $repo = $this->doctrineHelper
-            ->getEntityManagerForClass('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
-            ->getRepository('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
+            ->getEntityManagerForClass('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
+            ->getRepository('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
 
         return $repo;
     }

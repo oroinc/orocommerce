@@ -2,8 +2,8 @@ define(function(require) {
     'use strict';
 
     var LineItemView;
-    var BaseProductView = require('orob2bproduct/js/app/views/base-product-view');
-    var ProductQuantityView = require('orob2bproduct/js/app/views/product-quantity-editable-view');
+    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
+    var ProductQuantityView = require('oroproduct/js/app/views/product-quantity-editable-view');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
 

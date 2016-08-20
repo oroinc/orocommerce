@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -10,9 +10,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\EventListener\ThemeListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->helper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
 

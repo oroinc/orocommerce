@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -22,8 +21,8 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
@@ -145,7 +144,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $this->assertExecuteOperation(
             $operationName,
             $shoppingList->getId(),
-            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['route' => 'orob2b_shopping_list_view']
         );
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass\ExceptionControllerCompilerPass;
+use Oro\Bundle\FrontendBundle\DependencyInjection\CompilerPass\ExceptionControllerCompilerPass;
 
 class ExceptionControllerCompilerPassTest extends \PHPUnit_Framework_TestCase
 {

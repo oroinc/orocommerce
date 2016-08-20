@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -9,9 +9,8 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 
 class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
 {
@@ -44,7 +43,7 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
                     'configs' => [
                         'multiple' => true,
                         'component' => 'autocomplete-accountuser',
-                        'placeholder' => 'orob2b.account.accountuser.form.choose',
+                        'placeholder' => 'oro.account.accountuser.form.choose',
                     ],
                     'attr' => [
                         'class' => 'account-accountuser-multiselect',
@@ -143,6 +142,6 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $id, 'salt' => $id]);
+        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => $id, 'salt' => $id]);
     }
 }

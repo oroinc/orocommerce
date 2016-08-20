@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Pricing;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceMatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,11 +31,11 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider')
+        $this->provider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -53,7 +53,7 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
         $website = new Website();
 
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
 
         $lineItem = new OrderLineItem();
         $lineItem->setProduct($product);
@@ -131,7 +131,7 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
         );
 
         /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
             ->willReturn($priceList);
@@ -186,10 +186,10 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function orderEventAddMatchedPricesDataProvider()
     {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
-        $invalidProduct = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product');
-        $productUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'set']);
-        $invalidProductUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $invalidProduct = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product');
+        $productUnit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'set']);
+        $invalidProductUnit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit');
 
         return [
             'empty prices' => [],

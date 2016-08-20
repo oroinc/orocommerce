@@ -6,7 +6,7 @@
             </div>
         </fieldset>
     {% else %}
-        {% import 'OroB2BCheckoutBundle:layouts/default/orob2b_checkout_frontend_checkout/templates:address.html.twig' as address %}
+        {% import 'OroCheckoutBundle:layouts/default/orob2b_checkout_frontend_checkout/templates:address.html.twig' as address %}
         {% set hasCustomAddress = false %}
         {% if form.shipping_address.id.vars.value %}
             {% set hasCustomAddress = not form.shipping_address.vars.value.accountUserAddress and not form.shipping_address.vars.value.accountAddress %}
@@ -14,7 +14,7 @@
 
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orob2bcheckout/js/app/views/address-view',
+                 view: 'orocheckout/js/app/views/address-view',
                  selectors: {
                      address: '#' ~ form.shipping_address.accountAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,

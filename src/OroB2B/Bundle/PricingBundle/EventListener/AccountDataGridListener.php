@@ -1,21 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class AccountDataGridListener extends AbstractPriceListRelationDataGridListener
 {
-    const RELATION_CLASS_NAME = 'OroB2BPricingBundle:PriceListToAccount';
+    const RELATION_CLASS_NAME = 'OroPricingBundle:PriceListToAccount';
 
     /**
      * {@inheritdoc}
      */
     protected function getRelations(array $priceListHolderIds)
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+        return $this->registry->getManagerForClass('OroPricingBundle:PriceListToAccount')
+            ->getRepository('OroPricingBundle:PriceListToAccount')
             ->getRelationsByHolders($priceListHolderIds);
     }
 

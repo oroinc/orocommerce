@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -11,16 +11,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 class AccountAddressController extends Controller
 {
     /**
      * @Route("/address-book/{id}", name="orob2b_account_address_book", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:Address/widget:addressBook.html.twig")
+     * @Template("OroAccountBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("orob2b_account_view")
      *
      * @param Account $account
@@ -41,7 +40,7 @@ class AccountAddressController extends Controller
      *      name="orob2b_account_address_create",
      *      requirements={"entityId"="\d+"}
      * )
-     * @Template("OroB2BAccountBundle:Address/widget:update.html.twig")
+     * @Template("OroAccountBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_account_create")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
@@ -59,7 +58,7 @@ class AccountAddressController extends Controller
      *      name="orob2b_account_address_update",
      *      requirements={"entityId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
-     * @Template("OroB2BAccountBundle:Address/widget:update.html.twig")
+     * @Template("OroAccountBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_account_update")
      * @ParamConverter("account", options={"id" = "entityId"})
      *

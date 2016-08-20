@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
-use OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
+use Oro\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +19,7 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->taxBaseExclusionFactory = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

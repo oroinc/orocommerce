@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
  * @dbIsolation
@@ -31,7 +30,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
             ]
         );
     }
@@ -156,8 +155,8 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product')
+            ->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product')
             ->findOneBy(['sku' => $sku]);
         $this->assertNotEmpty($product);
 

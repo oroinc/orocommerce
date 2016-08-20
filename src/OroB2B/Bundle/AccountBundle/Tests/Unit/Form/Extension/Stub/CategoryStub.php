@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryStub extends Category
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -8,10 +8,9 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CategoryListener
 {
@@ -75,8 +74,8 @@ class CategoryListener
 
     public function postFlush()
     {
-        $repository = $this->registry->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product');
+        $repository = $this->registry->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product');
 
         while ($productId = array_shift($this->productIdsToUpdate)) {
             $product = $repository->find($productId);
@@ -102,22 +101,22 @@ class CategoryListener
 
     protected function setToDefaultProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+        $this->registry->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor);
     }
 
     protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+        $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
             ->setToDefaultWithoutCategory();
     }
 
     protected function setToDefaultAccountProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+        $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
             ->setToDefaultWithoutCategory();
     }
 }

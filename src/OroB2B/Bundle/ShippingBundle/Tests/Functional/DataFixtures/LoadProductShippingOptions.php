@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class LoadProductShippingOptions extends AbstractFixture implements DependentFixtureInterface
 {
@@ -27,8 +26,8 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingOptionUnitsAndClasses'
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingOptionUnitsAndClasses'
         ];
     }
 

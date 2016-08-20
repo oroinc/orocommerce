@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class AccountDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
             ]
         );
     }

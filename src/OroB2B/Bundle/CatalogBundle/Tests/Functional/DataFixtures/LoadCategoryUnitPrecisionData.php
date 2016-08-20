@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 class LoadCategoryUnitPrecisionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -25,7 +25,7 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
     {
         return [
             __NAMESPACE__ . '\LoadCategoryData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
         ];
     }
 

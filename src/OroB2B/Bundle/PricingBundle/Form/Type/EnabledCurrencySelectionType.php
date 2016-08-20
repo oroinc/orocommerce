@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\AbstractCurrencySelectionType;
 

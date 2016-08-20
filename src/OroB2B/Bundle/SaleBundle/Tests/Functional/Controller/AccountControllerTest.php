@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -21,7 +20,7 @@ class AccountControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ]);
     }
 

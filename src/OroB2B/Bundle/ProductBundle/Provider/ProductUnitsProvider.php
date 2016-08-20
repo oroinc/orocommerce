@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Provider;
+namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitsProvider
 {
@@ -51,7 +51,7 @@ class ProductUnitsProvider
     protected function getRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
-            ->getRepository('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+            ->getManagerForClass('Oro\Bundle\ProductBundle\Entity\ProductUnit')
+            ->getRepository('Oro\Bundle\ProductBundle\Entity\ProductUnit');
     }
 }

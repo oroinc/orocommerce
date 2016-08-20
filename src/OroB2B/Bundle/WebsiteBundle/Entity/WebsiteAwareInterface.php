@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace Oro\Bundle\WebsiteBundle\Entity;
 
 interface WebsiteAwareInterface
 {

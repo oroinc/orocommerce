@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -17,33 +17,32 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
-use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
-use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
      * @var ProductType
@@ -76,9 +75,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->defaultProductUnitProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -115,10 +114,10 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
-        $productPrimaryUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
+        $productPrimaryUnitPrecision->setDataClass('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
         $productUnitPrecision = new ProductUnitPrecisionType();
-        $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
+        $productUnitPrecision->setDataClass('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
         $stubEnumSelectType = new EnumSelectTypeStub();
 

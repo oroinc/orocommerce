@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,9 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
 class QuoteProductDemandType extends AbstractType
 {
@@ -31,7 +31,7 @@ class QuoteProductDemandType extends AbstractType
         $resolver->setRequired(['data']);
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand'
+                'data_class' => 'Oro\Bundle\SaleBundle\Entity\QuoteProductDemand'
             ]
         );
     }

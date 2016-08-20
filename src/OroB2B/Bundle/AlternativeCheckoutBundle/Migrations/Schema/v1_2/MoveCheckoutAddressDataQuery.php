@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
 
-use OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_2\MoveCheckoutAddressDataQuery as BaseQuery;
+use Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2\MoveCheckoutAddressDataQuery as BaseQuery;
 
 class MoveCheckoutAddressDataQuery extends BaseQuery
 {

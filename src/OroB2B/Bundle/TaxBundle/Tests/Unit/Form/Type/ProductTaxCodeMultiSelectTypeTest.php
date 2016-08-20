@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType;
+use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType;
 
 class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 abstract class AbstractAddressesFixture extends AbstractFixture
 {

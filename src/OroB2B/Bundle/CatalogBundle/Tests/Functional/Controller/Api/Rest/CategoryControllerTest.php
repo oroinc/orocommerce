@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
             ]
         );
     }
@@ -41,7 +40,7 @@ class CategoryControllerTest extends WebTestCase
         ];
 
         /** @var CategoryRepository $repo */
-        $repo = $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category');
+        $repo = $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category');
 
         foreach ($removedChildCategories as $removedChildCategory) {
             $this->assertEmpty($repo->findOneByDefaultTitle($removedChildCategory));

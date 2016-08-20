@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -18,8 +17,8 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
         ]);
     }
 
@@ -88,6 +87,6 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
+            ->getRepository('OroPricingBundle:CombinedPriceListToPriceList');
     }
 }

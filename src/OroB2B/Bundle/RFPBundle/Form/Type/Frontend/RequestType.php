@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
+namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,11 +12,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestType extends AbstractType
 {
@@ -75,36 +74,36 @@ class RequestType extends AbstractType
     {
         $builder
             ->add('firstName', 'text', [
-                'label' => 'orob2b.rfp.request.first_name.label'
+                'label' => 'oro.rfp.request.first_name.label'
             ])
             ->add('lastName', 'text', [
-                'label' => 'orob2b.rfp.request.last_name.label'
+                'label' => 'oro.rfp.request.last_name.label'
             ])
             ->add('email', 'text', [
-                'label' => 'orob2b.rfp.request.email.label'
+                'label' => 'oro.rfp.request.email.label'
             ])
             ->add('phone', 'text', [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.phone.label'
+                'label' => 'oro.rfp.request.phone.label'
             ])
             ->add('company', 'text', [
-                'label' => 'orob2b.rfp.request.company.label'
+                'label' => 'oro.rfp.request.company.label'
             ])
             ->add('role', 'text', [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.role.label'
+                'label' => 'oro.rfp.request.role.label'
             ])
             ->add('note', 'textarea', [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.note.label'
+                'label' => 'oro.rfp.request.note.label'
             ])
             ->add('poNumber', 'text', [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.po_number.label'
+                'label' => 'oro.rfp.request.po_number.label'
             ])
             ->add('shipUntil', OroDateType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.ship_until.label'
+                'label' => 'oro.rfp.request.ship_until.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
                 'options' => [
@@ -112,7 +111,7 @@ class RequestType extends AbstractType
                 ],
             ])
             ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'orob2b.frontend.rfp.request.assigned_account_users.label',
+                'label' => 'oro.frontend.rfp.request.assigned_account_users.label',
             ])
         ;
 

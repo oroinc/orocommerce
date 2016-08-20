@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
+namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -22,13 +22,13 @@ class ShoppingListTotalRepository extends EntityRepository
         $qb = $this->createQueryBuilder('total');
         $qb->select('DISTINCT total.id')
             ->join(
-                'OroB2BShoppingListBundle:LineItem',
+                'OroShoppingListBundle:LineItem',
                 'lineItem',
                 Join::WITH,
                 $qb->expr()->eq('total.shoppingList', 'lineItem.shoppingList')
             )
             ->join(
-                'OroB2BPricingBundle:CombinedProductPrice',
+                'OroPricingBundle:CombinedProductPrice',
                 'productPrice',
                 Join::WITH,
                 $qb->expr()->eq('lineItem.product', 'productPrice.product')

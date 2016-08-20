@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class PageControllerTest extends WebTestCase
     public function testViewBySlug()
     {
         $registry = $this->getContainer()->get('doctrine');
-        $pageEntityManager = $registry->getManagerForClass('OroB2BCMSBundle:Page');
+        $pageEntityManager = $registry->getManagerForClass('OroCMSBundle:Page');
 
         $organization = $registry->getManagerForClass('OroOrganizationBundle:Organization')
             ->getRepository('OroOrganizationBundle:Organization')

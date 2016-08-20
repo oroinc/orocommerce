@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Entity\Repository;
+namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
@@ -17,7 +17,7 @@ class MenuItemControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
+        $this->loadFixtures(['Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
     }
 
     public function testRoots()

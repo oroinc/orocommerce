@@ -1,6 +1,6 @@
 ROLE_SALES_MANAGER:
     permissions:
-        entity|OroB2B\Bundle\RFPBundle\Entity\RequestStatus: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
-        entity|OroB2B\Bundle\RFPBundle\Entity\Request: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
-        entity|OroB2B\Bundle\RFPBundle\Entity\RequestProduct: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
-        entity|OroB2B\Bundle\RFPBundle\Entity\RequestProductItem: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\RFPBundle\Entity\RequestStatus: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\RFPBundle\Entity\RequestProduct: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\RFPBundle\Entity\RequestProductItem: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

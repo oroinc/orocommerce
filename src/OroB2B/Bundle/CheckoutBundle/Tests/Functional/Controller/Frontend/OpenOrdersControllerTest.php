@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;

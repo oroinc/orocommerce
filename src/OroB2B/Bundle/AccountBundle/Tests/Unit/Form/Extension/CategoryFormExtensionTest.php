@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -19,28 +19,27 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
-
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
-use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
+use Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
+use Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
 
     /** @var CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
@@ -62,22 +61,22 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
         /** @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject $postSetDataListener */
         $postSetDataListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
+            'Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
         $visibilityChoicesProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $defaultProductOptions = new CategoryDefaultProductOptionsType();
-        $defaultProductOptions->setDataClass('OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions->setDataClass('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
 
         $categoryUnitPrecision = new CategoryUnitPrecisionType();
-        $categoryUnitPrecision->setDataClass('OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
+        $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
 
         return [
             new PreloadedExtension(
@@ -118,7 +117,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $form = $this->factory->create(
             CategoryType::NAME,
             new CategoryStub(),
-            ['data_class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category']
+            ['data_class' => 'Oro\Bundle\CatalogBundle\Entity\Category']
         );
         $this->assertTrue($form->has('visibility'));
     }

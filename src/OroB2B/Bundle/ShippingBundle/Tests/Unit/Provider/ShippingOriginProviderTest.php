@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -84,13 +83,13 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
         ;
         $entityManager->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
+            ->with('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
             ->willReturn($repository)
         ;
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
-            ->with('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
+            ->with('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse')
             ->willReturn($entityManager)
         ;
 

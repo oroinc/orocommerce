@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\EventListener;
+namespace Oro\Bundle\WarehouseBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class OrderWarehouseGridListener
 {
     const WAREHOUSE_COLUMN_NAME = 'warehouse';
-    const WAREHOUSE_COLUMN_LABEL = 'orob2b.warehouse.datagrid.order.label';
+    const WAREHOUSE_COLUMN_LABEL = 'oro.warehouse.datagrid.order.label';
 
     /**
      * @var WarehouseCounter

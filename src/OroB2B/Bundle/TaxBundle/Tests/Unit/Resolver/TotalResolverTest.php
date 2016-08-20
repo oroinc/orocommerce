@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\TotalResolver;
-use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
+use Oro\Bundle\TaxBundle\Resolver\TotalResolver;
+use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 class TotalResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()->getMock();
 
         $this->resolver = new TotalResolver($this->settingsProvider, new RoundingResolver());
@@ -37,8 +37,8 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
         $this->compareResult([], $taxable->getResult());
     }
 
@@ -85,8 +85,8 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
         $this->assertEquals($expectedTotalResult, $taxable->getResult()->getTotal());
         $this->assertEquals($expectedTaxes, $taxable->getResult()->getTaxes());
     }

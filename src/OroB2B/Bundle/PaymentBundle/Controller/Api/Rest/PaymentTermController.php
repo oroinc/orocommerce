@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Controller\Api\Rest;
+namespace Oro\Bundle\PaymentBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -27,7 +27,7 @@ class PaymentTermController extends RestController implements ClassResourceInter
      * @Acl(
      *      id="orob2b_payment_term_delete",
      *      type="entity",
-     *      class="OroB2BPaymentBundle:PaymentTerm",
+     *      class="OroPaymentBundle:PaymentTerm",
      *      permission="DELETE"
      * )
      *

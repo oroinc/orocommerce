@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Handler;
+namespace Oro\Bundle\CatalogBundle\Handler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

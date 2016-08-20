@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(name="orob2b_price_list")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
  *      routeView="orob2b_pricing_price_list_view",
@@ -53,7 +53,7 @@ class PriceList extends BasePriceList
      * @var Collection|ProductPrice[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\ProductPrice",
      *      mappedBy="priceList",
      *      fetch="EXTRA_LAZY"
      * )
@@ -64,7 +64,7 @@ class PriceList extends BasePriceList
      * @var PriceListCurrency[]|Collection
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceListCurrency",
      *      mappedBy="priceList",
      *      cascade={"all"},
      *      orphanRemoval=true
@@ -76,7 +76,7 @@ class PriceList extends BasePriceList
      * @var PriceListSchedule[]|ArrayCollection
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceListSchedule",
      *      mappedBy="priceList",
      *      cascade={"persist"},
      *      orphanRemoval=true
@@ -101,7 +101,7 @@ class PriceList extends BasePriceList
      * @var Collection|PriceRule[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRule",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRule",
      *      mappedBy="priceList",
      *      cascade={"ALL"},
      *      orphanRemoval=true

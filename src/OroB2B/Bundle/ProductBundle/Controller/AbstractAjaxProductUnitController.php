@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Controller;
+namespace Oro\Bundle\ProductBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 abstract class AbstractAjaxProductUnitController extends Controller
 {

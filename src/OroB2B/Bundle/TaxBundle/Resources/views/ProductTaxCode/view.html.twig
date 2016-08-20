@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_tax_product_tax_code_index'),
-        'indexLabel': 'orob2b.tax.producttaxcode.entity_plural_label'|trans,
+        'indexLabel': 'oro.tax.producttaxcode.entity_plural_label'|trans,
         'entityTitle': entity.code|default('N/A'|trans)
     } %}
 
@@ -16,12 +16,12 @@
 
 {% block content_data %}
     {% set productTaxCodeInfo %}
-        {{ UI.renderProperty('orob2b.tax.producttaxcode.code.label'|trans, entity.code) }}
-        {{ UI.renderProperty('orob2b.tax.producttaxcode.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('oro.tax.producttaxcode.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.producttaxcode.description.label'|trans, entity.description) }}
     {% endset %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.tax.sections.general'|trans,
+        'title': 'oro.tax.sections.general'|trans,
         'class': 'active',
         'subblocks': [
             {'data' : [productTaxCodeInfo]},
@@ -33,7 +33,7 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.tax.producttaxcode.products.label'|trans,
+            'title': 'oro.tax.producttaxcode.products.label'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,24 +8,24 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
-use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     const COMPONENT_NAME = 'component';
 
@@ -76,20 +76,20 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->productFormProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
+            'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->quickAddRowCollectionBuilder = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
+            'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->componentRegistry = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -109,7 +109,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     {
         if (!$this->productRepository) {
             $this->productRepository = $this
-                ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
         }
@@ -241,7 +241,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([], ['validation_required' => true, 'products' => ['SKU1' => $product]])
             ->willReturn($formAccessor);
 
-        $collection = $this->getMock('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection');
+        $collection = $this->getMock('Oro\Bundle\ProductBundle\Model\QuickAddRowCollection');
         $collection->expects($this->once())
             ->method('getProducts')
             ->willReturn(['SKU1' => $product]);
@@ -551,7 +551,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBag');
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('error', 'orob2b.product.frontend.quick_add.messages.component_not_accessible.trans');
+            ->with('error', 'oro.product.frontend.quick_add.messages.component_not_accessible.trans');
 
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
@@ -570,7 +570,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProcessor($isValidationRequired = true, $isAllowed = true)
     {
-        $processor = $this->getMock('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
+        $processor = $this->getMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
         $processor->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn($isValidationRequired);

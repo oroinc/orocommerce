@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\ConstraintViolation;

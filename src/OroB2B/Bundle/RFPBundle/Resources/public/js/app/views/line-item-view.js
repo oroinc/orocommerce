@@ -13,9 +13,9 @@ define(function(require) {
     var messenger = require('oroui/js/messenger');
 
     /**
-     * @export orob2brfp/js/app/views/line-item-view
+     * @export ororfp/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
-     * @class orob2brfp.app.views.LineItemView
+     * @class ororfp.app.views.LineItemView
      */
     LineItemView = BaseView.extend({
         /**

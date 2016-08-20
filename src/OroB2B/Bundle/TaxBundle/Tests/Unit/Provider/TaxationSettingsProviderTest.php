@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\TaxBundle\Model\Address;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
-use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
+use Oro\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -43,12 +42,12 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->taxBaseExclusionFactory = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->addressModelFactory = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\AddressModelFactory')
             ->disableOriginalConstructor()
             ->getMock();
 

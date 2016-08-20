@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent;
+use Oro\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent;
 
 class AbstractProductPricesRemoveEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class AbstractProductPricesRemoveEventTest extends \PHPUnit_Framework_TestCase
             'product' => new \stdClass()
         ];
         /** @var AbstractProductPricesRemoveEvent $event */
-        $event = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent')
+        $event = $this->getMockBuilder('Oro\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent')
             ->setConstructorArgs([$args])
             ->getMockForAbstractClass();
         $this->assertEquals($args, $event->getArgs());

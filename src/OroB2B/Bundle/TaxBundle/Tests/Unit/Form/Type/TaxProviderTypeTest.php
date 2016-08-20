@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType;
-use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Oro\Bundle\TaxBundle\Form\Type\TaxProviderType;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry')
+        $this->registry = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -38,7 +38,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProviderMock($name, $label)
     {
-        $mock = $this->getMock('OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock = $this->getMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
         $mock->expects($this->once())->method('getName')->willReturn($name);
         $mock->expects($this->once())->method('getLabel')->willReturn($label);
 

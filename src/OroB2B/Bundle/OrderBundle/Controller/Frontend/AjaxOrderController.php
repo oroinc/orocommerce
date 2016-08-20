@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
+namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -9,11 +9,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\OrderBundle\Controller\AjaxOrderController as BaseAjaxOrderController;
-use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Controller\AjaxOrderController as BaseAjaxOrderController;
+use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
+use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 class AjaxOrderController extends BaseAjaxOrderController
 {

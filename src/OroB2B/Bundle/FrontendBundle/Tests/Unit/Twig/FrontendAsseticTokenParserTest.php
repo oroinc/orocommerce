@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Twig;
 
 use Symfony\Bundle\AsseticBundle\Factory\AssetFactory;
 
@@ -9,9 +9,8 @@ use Assetic\Asset\AssetCollection;
 use Oro\Bundle\AsseticBundle\AssetsConfiguration;
 use Oro\Bundle\AsseticBundle\Twig\AsseticTokenParser;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
-use OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
+use Oro\Bundle\FrontendBundle\EventListener\ThemeListener;
+use Oro\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
 
 class FrontendAsseticTokenParserTest extends \PHPUnit_Framework_TestCase
 {

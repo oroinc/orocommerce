@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Manager;
+namespace Oro\Bundle\PricingBundle\Manager;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class UserCurrencyManager
 {

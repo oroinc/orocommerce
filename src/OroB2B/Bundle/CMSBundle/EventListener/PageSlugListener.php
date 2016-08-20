@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\EventListener;
+namespace Oro\Bundle\CMSBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 class PageSlugListener
 {

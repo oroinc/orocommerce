@@ -7,4 +7,4 @@ layout:
             options:
                 visible: '=data["acl"].isGranted("orob2b_rfp_frontend_request_view")'
                 route_name: orob2b_rfp_frontend_request_index
-                text: orob2b.frontend.rfp.request.entity_plural_label
+                text: oro.frontend.rfp.request.entity_plural_label

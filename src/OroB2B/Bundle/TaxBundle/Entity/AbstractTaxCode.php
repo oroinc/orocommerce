@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
  * @ORM\MappedSuperclass

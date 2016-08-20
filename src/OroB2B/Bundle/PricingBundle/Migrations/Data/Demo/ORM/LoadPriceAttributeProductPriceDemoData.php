@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
@@ -19,7 +18,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -79,7 +78,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
     protected function getPriceAttribute(EntityManager $manager, $name)
     {
         if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
+            $this->priceLists[$name] = $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
                 ->findOneBy(['name' => $name]);
         }
 

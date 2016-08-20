@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
+namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,13 +11,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListController extends Controller
 {
@@ -27,7 +26,7 @@ class ShoppingListController extends Controller
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      class="OroShoppingListBundle:ShoppingList",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
@@ -39,7 +38,7 @@ class ShoppingListController extends Controller
     public function viewAction($id = null)
     {
         /** @var ShoppingListRepository $repo */
-        $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repo = $this->getDoctrine()->getRepository('OroShoppingListBundle:ShoppingList');
         $shoppingList = $repo->findOneByIdWithRelations($id);
 
         if (!$shoppingList) {
@@ -93,7 +92,7 @@ class ShoppingListController extends Controller
      * @Acl(
      *      id="orob2b_shopping_list_frontend_create",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      class="OroShoppingListBundle:ShoppingList",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -152,7 +151,7 @@ class ShoppingListController extends Controller
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
+            $this->get('translator')->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
     }

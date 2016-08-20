@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
 /**
  * @dbIsolation
@@ -27,7 +26,7 @@ class ProductStepOneTypeTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');

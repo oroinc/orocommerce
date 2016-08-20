@@ -1,11 +1,11 @@
 {% block __orob2b_checkout_content__checkout_content_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
-    <h1 class="page-title page-title--decreased">{{ 'orob2b.checkout.entity_label'|trans }}</h1>
+    <h1 class="page-title page-title--decreased">{{ 'oro.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
             data-role="checkout-content"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                view: 'orob2bcheckout/js/app/views/checkout-content-view',
+                view: 'orocheckout/js/app/views/checkout-content-view',
             }|json_encode }}">
         {{ block_widget(block) }}
     </div>
@@ -57,7 +57,7 @@
         <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
              data-page-component-module="oroui/js/app/components/jquery-widget-component"
              data-page-component-options="{{ {
-                 widgetModule: 'orob2bfrontend/default/js/widgets/collapse-widget',
+                 widgetModule: 'orofrontend/default/js/widgets/collapse-widget',
                  animationSpeed: 0
              }|json_encode() }}"
         >
@@ -71,17 +71,17 @@
                             <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
                         </span>
                     </div>
-                    <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
+                    <h3 class="checkout-order-summary__header__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
-                        <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'orob2b.checkout.order_summary.items'|trans }}</span>
-                        <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
+                        <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
+                        <span>{{ 'oro.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
                     </div>
                 </div>
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                     <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
                         <i class="cf-pencil"></i>
-                        {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
+                        {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 {% endif %}
             </div>
@@ -104,12 +104,12 @@
 {% block __orob2b_checkout_content__checkout_order_summary_line_items_widget %}
     <table class="oro-grid-table table-scrollable" 
            data-page-component-module="oroui/js/app/components/view-component" 
-           data-page-component-options="{{ {view: 'orob2bfrontend/js/app/views/scrollable-table'}|json_encode }}">
+           data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
         <thead class="hidden-xs">
         <tr data-scrollable-content-head>
-            <th>{{ 'orob2b.checkout.order_summary.item'|trans }}</th>
-            <th class="text-center">{{ 'orob2b.checkout.order_summary.quantity'|trans }}</th>
-            <th class="text-right" data-scrollable-item-has-offset>{{ 'orob2b.checkout.order_summary.price'|trans }}</th>
+            <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
+            <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+            <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
         </tr>
         </thead>
 
@@ -133,7 +133,7 @@
                                             {{ lineItem.freeFormProduct }}
                                         {% endif %}
                                     </h3>
-                                    <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span
+                                    <div>{{ 'oro.checkout.order_summary.item'|trans }} #: <span
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
@@ -143,12 +143,12 @@
                                         <table class="table">
                                             <tbody>
                                             <tr>
-                                                <td>{{ 'orob2b.checkout.order_summary.price_per_item'|trans }}:</td>
+                                                <td>{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
                                                 <td data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span>
+                                                    <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
                                                 </td>
                                                 <td data-scrollable-item-has-offset>
                                                     <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
@@ -172,7 +172,7 @@
                 <td class="va-t_md hidden-xs">
                     <a href="{{ editLink }}">
                         <i class="cf-pencil"></i>
-                        {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
+                        {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 </td>
             {% endif %}
@@ -195,7 +195,7 @@
         <fieldset class="checkout__form__row">
             <fieldset class="checkout__form__row">
                 <div class="create-account__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
-                    {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
                 </div>
             </fieldset>
             <div class="create-account__form__col form__col_x12">

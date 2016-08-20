@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Handler;
+namespace Oro\Bundle\WarehouseBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,12 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer as LevelTransformer;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer as LevelTransformer;
 
 class WarehouseInventoryLevelHandler
 {
@@ -136,7 +135,7 @@ class WarehouseInventoryLevelHandler
      */
     protected function findWarehouseInventoryLevel(Warehouse $warehouse, ProductUnitPrecision $precision)
     {
-        return $this->manager->getRepository('OroB2BWarehouseBundle:WarehouseInventoryLevel')
+        return $this->manager->getRepository('OroWarehouseBundle:WarehouseInventoryLevel')
             ->findOneBy(['warehouse' => $warehouse, 'productUnitPrecision' => $precision]);
     }
 }

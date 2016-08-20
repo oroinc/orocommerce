@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 
 class TransactionCompleteEventTest extends \PHPUnit_Framework_TestCase
 {

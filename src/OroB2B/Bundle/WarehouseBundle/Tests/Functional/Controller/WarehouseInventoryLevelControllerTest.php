@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 /**
  * @dbIsolation
@@ -21,7 +20,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+            'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
         ]);
     }
 
@@ -89,7 +88,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
      */
     protected function assertLevelsData(array $data)
     {
-        $repository = $this->getRepository('OroB2BWarehouseBundle:WarehouseInventoryLevel');
+        $repository = $this->getRepository('OroWarehouseBundle:WarehouseInventoryLevel');
 
         foreach ($data as $combinedId => $row) {
             list($warehouseId, $precisionId) = explode('_', $combinedId, 2);
@@ -135,7 +134,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     protected function assertLevelsGridData(Product $product, array $data)
     {
         /** @var Warehouse[] $warehouses */
-        $warehouses = $this->getRepository('OroB2BWarehouseBundle:Warehouse')->findAll();
+        $warehouses = $this->getRepository('OroWarehouseBundle:Warehouse')->findAll();
 
         $expectedCombinedIds = [];
         foreach ($warehouses as $warehouse) {

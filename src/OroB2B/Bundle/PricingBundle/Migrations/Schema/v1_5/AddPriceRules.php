@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_5;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,14 +15,14 @@ class AddPriceRules implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BPriceRuleTable($schema);
-        $this->createOroB2BPriceRuleChTriggerTable($schema);
-        $this->createOroB2BPriceRuleLexemeTable($schema);
+        $this->createOroPriceRuleTable($schema);
+        $this->createOroPriceRuleChTriggerTable($schema);
+        $this->createOroPriceRuleLexemeTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BPriceRuleForeignKeys($schema);
-        $this->addOroB2BPriceRuleChTriggerForeignKeys($schema);
-        $this->addOroB2BPriceRuleLexemeForeignKeys($schema);
+        $this->addOroPriceRuleForeignKeys($schema);
+        $this->addOroPriceRuleChTriggerForeignKeys($schema);
+        $this->addOroPriceRuleLexemeForeignKeys($schema);
 
         $this->updateProductPriceTable($schema);
         $this->updatePriceListTable($schema);
@@ -33,7 +33,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceRuleTable(Schema $schema)
+    protected function createOroPriceRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -52,7 +52,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceRuleChTriggerTable(Schema $schema)
+    protected function createOroPriceRuleChTriggerTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_rule_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -66,7 +66,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceRuleLexemeTable(Schema $schema)
+    protected function createOroPriceRuleLexemeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_rule_lexeme');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -83,7 +83,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceRuleForeignKeys(Schema $schema)
+    protected function addOroPriceRuleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_rule');
         $table->addForeignKeyConstraint(
@@ -105,7 +105,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceRuleChTriggerForeignKeys(Schema $schema)
+    protected function addOroPriceRuleChTriggerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_rule_ch_trigger');
         $table->addForeignKeyConstraint(
@@ -127,7 +127,7 @@ class AddPriceRules implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceRuleLexemeForeignKeys(Schema $schema)
+    protected function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_rule_lexeme');
         $table->addForeignKeyConstraint(

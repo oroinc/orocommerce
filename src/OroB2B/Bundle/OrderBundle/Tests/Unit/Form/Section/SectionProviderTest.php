@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Section;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 
 class SectionProviderTest extends \PHPUnit_Framework_TestCase
 {

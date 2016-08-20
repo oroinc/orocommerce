@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
-
-use OroB2B\Bundle\CMSBundle\Form\Type\LoginPageType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
+use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 
 class LoginPageTypeTest extends FormIntegrationTestCase
 {

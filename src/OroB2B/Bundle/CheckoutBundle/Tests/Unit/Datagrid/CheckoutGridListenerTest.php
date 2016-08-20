@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,16 +15,15 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -12,20 +12,19 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class ProductPriceTypeTest extends FormIntegrationTestCase
 {
@@ -58,7 +57,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new ProductPriceType();
-        $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
         parent::setUp();
     }
 
@@ -77,8 +76,8 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
+                1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2)
             ]
         );
 
@@ -141,7 +140,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $product->addUnitPrecision($productUnitPrecision);
 
         /** @var PriceList $existingProductPriceList */
-        $existingProductPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1);
+        $existingProductPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1);
         $existingProductPrice = new ProductPrice();
         $rule = new PriceRule();
         $existingProductPrice
@@ -153,7 +152,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setPriceRule($rule);
 
         /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
+        $expectedPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2);
         $expectedUnit = (new ProductUnit())->setCode('item');
         $expectedPrice = (new Price())->setValue(43)->setCurrency('EUR');
 

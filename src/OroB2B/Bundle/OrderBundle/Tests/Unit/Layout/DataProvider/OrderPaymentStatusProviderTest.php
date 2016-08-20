@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 class OrderPaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class OrderPaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider')
+        $this->paymentProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

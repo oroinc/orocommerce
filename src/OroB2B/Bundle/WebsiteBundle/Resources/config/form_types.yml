@@ -1,6 +1,6 @@
 services:
     orob2b_website.form.type.websiite_entity_visibility_type:
-        class: 'OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
+        class: 'Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
         arguments:
             - "@doctrine"
             - "@orob2b_website.website.provider"

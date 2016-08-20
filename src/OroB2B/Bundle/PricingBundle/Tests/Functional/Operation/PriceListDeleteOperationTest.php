@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 /**
  * @dbIsolation
@@ -16,7 +15,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testDelete()
@@ -64,6 +63,6 @@ class PriceListDeleteOperationTest extends ActionTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceList');
     }
 }

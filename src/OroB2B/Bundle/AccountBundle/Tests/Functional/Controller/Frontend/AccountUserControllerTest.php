@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 
 /**
  * @dbIsolation
@@ -40,8 +39,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
     }
@@ -61,7 +60,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         /** @var AccountUser $loggedUser */
         $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $loggedUser);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $loggedUser);
 
         /** @var AccountUserRole[] $roles */
         $roles = $this->getUserRoleRepository()

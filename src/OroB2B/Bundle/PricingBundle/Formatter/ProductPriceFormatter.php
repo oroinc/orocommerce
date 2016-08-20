@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Formatter;
+namespace Oro\Bundle\PricingBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class ProductPriceFormatter
 {

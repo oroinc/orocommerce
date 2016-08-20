@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

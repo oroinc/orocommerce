@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
 class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
 {
@@ -29,7 +29,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_account.csv');
+        $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_account.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -86,7 +86,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
     protected function getAccountRepository(EntityManager $manager)
     {
         if ($this->accountRepository === null) {
-            $this->accountRepository = $manager->getRepository('OroB2BAccountBundle:Account');
+            $this->accountRepository = $manager->getRepository('OroAccountBundle:Account');
         }
 
         return $this->accountRepository;

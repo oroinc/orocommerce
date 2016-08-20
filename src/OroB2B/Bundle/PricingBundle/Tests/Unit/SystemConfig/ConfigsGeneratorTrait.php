@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 
 trait ConfigsGeneratorTrait
 {
@@ -14,7 +14,7 @@ trait ConfigsGeneratorTrait
     public function createConfigs($count)
     {
         $result = [];
-        $reflectionClass = new \ReflectionClass('OroB2B\Bundle\PricingBundle\Entity\PriceList');
+        $reflectionClass = new \ReflectionClass('Oro\Bundle\PricingBundle\Entity\PriceList');
 
         for ($i = 1; $i <= $count; $i++) {
             $priceList = new PriceList();

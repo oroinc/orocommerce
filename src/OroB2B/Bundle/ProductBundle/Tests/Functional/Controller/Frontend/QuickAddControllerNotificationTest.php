@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
@@ -47,7 +46,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
             ]
         );
 
@@ -86,10 +85,10 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->expectedMessageGroup = [
             'no_products_be_added_to_rfq' => $this->translator->trans(
-                'orob2b.frontend.rfp.data_storage.no_products_be_added_to_rfq'
+                'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq'
             ),
             'cannot_be_added_to_rfq' => $this->translator->trans(
-                'orob2b.frontend.rfp.data_storage.cannot_be_added_to_rfq'
+                'oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'
             )
         ];
     }

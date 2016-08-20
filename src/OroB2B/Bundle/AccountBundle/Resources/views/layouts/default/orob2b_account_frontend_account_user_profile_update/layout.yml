@@ -3,21 +3,21 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/layout.html.twig'
+            themes: 'OroAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/form_theme.html.twig'
+            themes: 'OroAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/form_theme.html.twig'
 
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.accountuser.profile.edit'
+                - 'oro.account.accountuser.profile.edit'
 
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.accountuser.profile.edit'
+                label: 'oro.account.accountuser.profile.edit'
 
         - '@setOption':
             id: content
@@ -48,14 +48,14 @@ layout:
                     blockType: link
                     options:
                         route_name: orob2b_account_frontend_account_user_profile
-                        text: orob2b.account.action.account_user_role.cancel_label
+                        text: oro.account.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray
                 account_profile_edit_form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: orob2b.account.action.account_user_role.save_label
+                        text: oro.account.action.account_user_role.save_label
                         style: auto
                         attr:
                             'class': role-submit

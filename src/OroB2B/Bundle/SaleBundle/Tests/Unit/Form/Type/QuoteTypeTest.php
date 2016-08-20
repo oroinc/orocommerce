@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -13,30 +13,29 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
-use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -60,12 +59,12 @@ class QuoteTypeTest extends AbstractTest
         parent::setUp();
 
         $this->quoteAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
+            ->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->formType = new QuoteType($this->quoteAddressSecurityProvider);
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
+        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\Quote');
     }
 
     public function testConfigureOptions()
@@ -76,7 +75,7 @@ class QuoteTypeTest extends AbstractTest
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
+                    'data_class'    => 'Oro\Bundle\SaleBundle\Entity\Quote',
                     'intention'     => 'sale_quote',
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
@@ -124,11 +123,11 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($owner);
 
         if (null !== $accountUserId) {
-            $account = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')->getMock();
+            $account = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Account')->getMock();
             $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
             /** @var AccountUser $accountUser */
-            $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId);
+            $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $accountUserId);
             $accountUser->setEmail('test@test.test')
                 ->setFirstName('First Name')
                 ->setLastName('Last Name')
@@ -141,7 +140,7 @@ class QuoteTypeTest extends AbstractTest
 
         if (null !== $accountId) {
             /** @var Account $account */
-            $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
+            $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $accountId);
             $account->setName('Name');
             $quote->setAccount($account);
         }
@@ -325,7 +324,7 @@ class QuoteTypeTest extends AbstractTest
 
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -340,24 +339,24 @@ class QuoteTypeTest extends AbstractTest
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2),
             ],
             AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
 
         $priceListSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2),
+                1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2),
             ],
             PriceListSelectType::NAME
         );
@@ -378,7 +377,7 @@ class QuoteTypeTest extends AbstractTest
             $this->quoteProductFormatter,
             $registry
         );
-        $quoteProductType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProductType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
 
         return [
             new PreloadedExtension(

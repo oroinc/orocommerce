@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 class ChangeCategoryVisibility extends AbstractVisibilityRegistryAwareAction
 {
@@ -15,7 +15,7 @@ class ChangeCategoryVisibility extends AbstractVisibilityRegistryAwareAction
     {
         $categoryVisibility = $this->getEntity($context);
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
         $em->beginTransaction();
         try {
             $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);

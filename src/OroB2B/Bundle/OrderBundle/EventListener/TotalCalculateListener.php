@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener;
+namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Form;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class TotalCalculateListener
 {

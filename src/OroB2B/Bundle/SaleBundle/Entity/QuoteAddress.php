@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\SaleBundle\Model\ExtendQuoteAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
 
 /**
  * @ORM\Table("orob2b_quote_address")
@@ -37,7 +36,7 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * @var AccountAddress
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountAddress")
      * @ORM\JoinColumn(name="account_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountAddress;
@@ -45,7 +44,7 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * @var AccountUserAddress
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserAddress")
      * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUserAddress;

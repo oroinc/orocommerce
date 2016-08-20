@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
@@ -56,7 +55,7 @@ class QuoteProductOfferType extends AbstractType
                     'currency_empty_value' => null,
                     'error_bubbling' => false,
                     'required' => true,
-                    'label' => 'orob2b.sale.quoteproductoffer.price.label',
+                    'label' => 'oro.sale.quoteproductoffer.price.label',
                 ]
             )
             ->add(
@@ -72,7 +71,7 @@ class QuoteProductOfferType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label',
+                    'label' => 'oro.sale.quoteproductoffer.allow_increments.label',
                     'attr' => [
                         'default' => true,
                     ],
@@ -82,7 +81,7 @@ class QuoteProductOfferType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.product.productunit.entity_label',
+                    'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
                     'compact' => $options['compact_units'],
                 ]
@@ -92,7 +91,7 @@ class QuoteProductOfferType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
+                    'label' => 'oro.sale.quoteproductoffer.quantity.label',
                     'default_data' => 1,
                 ]
             );

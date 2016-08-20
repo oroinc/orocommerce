@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
 
 class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
 {
@@ -14,7 +14,7 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
      */
     protected function getExtension()
     {
-        return new AccountTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountTaxCode');
+        return new AccountTaxExtension($this->doctrineHelper, 'OroTaxBundle:AccountTaxCode');
     }
 
     public function testGetExtendedType()
@@ -69,7 +69,7 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
     }
 
     /**

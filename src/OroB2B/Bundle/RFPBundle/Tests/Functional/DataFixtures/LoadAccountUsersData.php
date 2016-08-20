@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,11 +8,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -42,7 +41,7 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 
@@ -103,8 +102,8 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
         /* @var $accountUserRoleRepository AccountUserRoleRepository */
         $accountUserRoleRepository =  $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole');
+            ->getManagerForClass('OroAccountBundle:AccountUserRole')
+            ->getRepository('OroAccountBundle:AccountUserRole');
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {

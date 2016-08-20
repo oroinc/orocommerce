@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Security;
+namespace Oro\Bundle\AccountBundle\Security;
 
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\PermissionGrantingStrategy;
@@ -12,8 +12,7 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserProvider
 {

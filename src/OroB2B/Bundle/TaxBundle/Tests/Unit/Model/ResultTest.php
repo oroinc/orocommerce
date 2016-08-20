@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
 
 class ResultTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,8 +11,8 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->createResultModel();
 
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $result->getTotal());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $result->getShipping());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $result->getTotal());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $result->getShipping());
         $this->assertInternalType('array', $result->getTaxes());
         $this->assertInternalType('array', $result->getItems());
 

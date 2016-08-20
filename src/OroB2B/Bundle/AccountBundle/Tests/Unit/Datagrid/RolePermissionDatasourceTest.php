@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -20,9 +20,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use OroB2B\Bundle\AccountBundle\Datagrid\RolePermissionDatasource;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Datagrid\RolePermissionDatasource;
 
 class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
 {
@@ -84,7 +83,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->roleTranslationPrefixResolver = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
             ->disableOriginalConstructor()
             ->getMock();
         $this->roleTranslationPrefixResolver->expects($this->any())->method('getPrefix')->willReturn('prefix.key.');
@@ -93,7 +92,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
     public function testGetResults()
     {
         $datasource = $this->getDatasource();
-        $identity = 'entity:OroB2B\Bundle\AccountBundle\Entity\Account';
+        $identity = 'entity:Oro\Bundle\AccountBundle\Entity\Account';
 
         $results = $this->retrieveResultsFromPermissionsDatasource($datasource, $identity);
 

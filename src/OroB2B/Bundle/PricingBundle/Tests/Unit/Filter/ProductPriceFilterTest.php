@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -8,10 +8,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormInterface;
 
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-
-use OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -60,11 +59,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
             ->method('getExcludeParams')
             ->willReturn([]);
 
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+        $this->requestHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

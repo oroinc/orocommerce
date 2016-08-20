@@ -4,16 +4,16 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('orob2b.invoice.invoice_number.label'|trans, entity.invoiceNumber) }}
-            {{ UI.renderProperty('orob2b.invoice.po_number.label'|trans, entity.poNumber) }}
-            {{ UI.renderProperty('orob2b.invoice.currency.label'|trans, entity.currency) }}
+            {{ UI.renderProperty('oro.invoice.invoice_number.label'|trans, entity.invoiceNumber) }}
+            {{ UI.renderProperty('oro.invoice.po_number.label'|trans, entity.poNumber) }}
+            {{ UI.renderProperty('oro.invoice.currency.label'|trans, entity.currency) }}
 
             {% if resource_granted('VIEW', entity.account) %}
                 {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
                 {% set accountView = entity.account|oro_format_name|trim %}
             {% endif %}
-            {{ UI.renderHtmlProperty('orob2b.invoice.account.label'|trans, accountView) }}
+            {{ UI.renderHtmlProperty('oro.invoice.account.label'|trans, accountView) }}
 
             {% set accountUserView = '' %}
             {% if entity.accountUser is not empty %}
@@ -23,11 +23,11 @@
                     {% set accountUserView = entity.accountUser|oro_format_name|trim %}
                 {% endif %}
             {% endif %}
-            {{ UI.renderHtmlProperty('orob2b.invoice.account_user.label'|trans, accountUserView) }}
+            {{ UI.renderHtmlProperty('oro.invoice.account_user.label'|trans, accountUserView) }}
 
-            {{ UI.renderProperty('orob2b.invoice.invoice_date.label'|trans, entity.invoiceDate|oro_format_date) }}
-            {{ UI.renderProperty('orob2b.invoice.payment_due_date.label'|trans, entity.paymentDueDate|oro_format_date) }}
-            {{ UI.renderProperty('orob2b.invoice.subtotal.label'|trans, entity.subtotal|oro_format_currency({'currency': entity.currency})) }}
+            {{ UI.renderProperty('oro.invoice.invoice_date.label'|trans, entity.invoiceDate|oro_format_date) }}
+            {{ UI.renderProperty('oro.invoice.payment_due_date.label'|trans, entity.paymentDueDate|oro_format_date) }}
+            {{ UI.renderProperty('oro.invoice.subtotal.label'|trans, entity.subtotal|oro_format_currency({'currency': entity.currency})) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

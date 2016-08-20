@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
@@ -81,7 +81,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
 
         $sections = [];
         $sectionNames = [
-            'taxes' => 'orob2b.tax.order_line_item.taxes.label',
+            'taxes' => 'oro.tax.order_line_item.taxes.label',
         ];
 
         $order = self::BASE_ORDER;

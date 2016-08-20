@@ -34,16 +34,16 @@ define(function(require) {
                 rules: {
                     quantity: {
                         NotBlank: {
-                            message: 'orob2b.product.validation.quantity.required'
+                            message: 'oro.product.validation.quantity.required'
                         },
                         OpenRange: {
                             min: 0,
-                            minMessage: 'orob2b.product.validation.quantity.greaterThanZero'
+                            minMessage: 'oro.product.validation.quantity.greaterThanZero'
                         }
                     },
                     unit: {
                         NotBlank: {
-                            message: 'orob2b.product.validation.unit.required'
+                            message: 'oro.product.validation.unit.required'
                         }
                     }
                 }

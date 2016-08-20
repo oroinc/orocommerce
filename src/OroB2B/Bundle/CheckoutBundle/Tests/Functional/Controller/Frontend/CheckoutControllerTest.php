@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -203,7 +203,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $sourceEntity = $this->getSourceEntity();
         $sourceEntityId = $sourceEntity->getId();
         $checkoutSources = $this->registry
-            ->getRepository('OroB2BCheckoutBundle:CheckoutSource')
+            ->getRepository('OroCheckoutBundle:CheckoutSource')
             ->findBy(['shoppingList' => $sourceEntity]);
 
         $this->assertCount(1, $checkoutSources);
@@ -221,9 +221,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll());
+        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
         $this->assertNull(
-            $this->registry->getRepository('OroB2BShoppingListBundle:ShoppingList')->find($sourceEntityId)
+            $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
         );
     }
 
@@ -263,7 +263,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function setCurrentAccountOnAddresses(Account $account)
     {
-        $addresses = $this->registry->getRepository('OroB2BAccountBundle:AccountAddress')->findAll();
+        $addresses = $this->registry->getRepository('OroAccountBundle:AccountAddress')->findAll();
         /** @var AccountAddress $address */
         foreach ($addresses as $address) {
             $address->setFrontendOwner($account);

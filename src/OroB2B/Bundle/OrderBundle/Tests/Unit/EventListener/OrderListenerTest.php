@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\UnitOfWork;
 
-use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\EventListener\ORM\OrderListener;
+use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\EventListener\ORM\OrderListener;
 
 class OrderListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +27,7 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->generator = $this->getMock('OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface');
+        $this->generator = $this->getMock('Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface');
 
         $this->listener = new OrderListener($this->generator);
     }
@@ -48,7 +48,7 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($newId);
 
         /** @var Order|\PHPUnit_Framework_MockObject_MockObject $orderMock */
-        $orderMock = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $orderMock = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
         $lifecycleEventArgs = $this->getLifecycleEventArgs();
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -77,7 +77,7 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('generate');
 
         /** @var Order|\PHPUnit_Framework_MockObject_MockObject $orderMock */
-        $orderMock = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $orderMock = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
         $orderMock->expects($this->once())->method('getIdentifier')->willReturn(125);
 
         $lifecycleEventArgs = $this->getLifecycleEventArgs();

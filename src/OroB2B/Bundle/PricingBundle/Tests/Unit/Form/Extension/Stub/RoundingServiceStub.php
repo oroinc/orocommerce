@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class RoundingServiceStub implements RoundingServiceInterface
 {

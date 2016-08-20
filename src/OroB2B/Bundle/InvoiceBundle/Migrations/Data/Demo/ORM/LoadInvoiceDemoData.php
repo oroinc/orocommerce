@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
-use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
+use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -12,9 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -26,8 +25,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
         ];
     }
 
@@ -38,7 +37,7 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BInvoiceBundle/Migrations/Data/Demo/ORM/data/invoices.csv');
+        $filePath = $locator->locate('@OroInvoiceBundle/Migrations/Data/Demo/ORM/data/invoices.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -50,9 +49,9 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         /** @var Account $account */
-        $account = $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
+        $account = $manager->getRepository('OroAccountBundle:Account')->findOneBy([]);
 
-        $website = $manager->getRepository('OroB2BWebsiteBundle:Website')
+        $website = $manager->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
 
         while (($data = fgetcsv($handler)) !== false) {

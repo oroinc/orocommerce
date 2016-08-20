@@ -1,6 +1,6 @@
 operations:
     orob2b_account_accountuser_disable:
-        label: orob2b.account.action.account_user.disable
+        label: oro.account.action.account_user.disable
         applications: [backend]
         routes:
             - orob2b_account_account_user_view
@@ -19,11 +19,11 @@ operations:
                     data: $.data
                     value: false
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.disabled.message
+                message: oro.account.controller.accountuser.disabled.message
                 type: 'success'
 
     orob2b_account_accountuser_enable:
-        label: orob2b.account.action.account_user.enable
+        label: oro.account.action.account_user.enable
         applications: [backend]
         routes:
             - orob2b_account_account_user_view
@@ -42,11 +42,11 @@ operations:
                     data: $.data
                     value: true
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.enabled.message
+                message: oro.account.controller.accountuser.enabled.message
                 type: 'success'
 
     orob2b_account_frontend_accountuser_disable:
-        label: orob2b.account.action.account_user.disable
+        label: oro.account.action.account_user.disable
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
@@ -73,7 +73,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.disabled.message
+                message: oro.account.controller.accountuser.disabled.message
                 type: 'success'
 
     orob2b_account_frontend_accountuser_disable_datagrid:
@@ -85,7 +85,7 @@ operations:
             - '@refresh_grid': frontend-account-account-user-grid
 
     orob2b_account_frontend_accountuser_enable:
-        label: orob2b.account.action.account_user.enable
+        label: oro.account.action.account_user.enable
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
@@ -112,7 +112,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.enabled.message
+                message: oro.account.controller.accountuser.enabled.message
                 type: 'success'
 
     orob2b_account_frontend_accountuser_enable_datagrid:
@@ -124,7 +124,7 @@ operations:
             - '@refresh_grid': frontend-account-account-user-grid
 
     orob2b_account_accountuser_confirm:
-        label: orob2b.account.action.account_user.confirm
+        label: oro.account.action.account_user.confirm
         routes:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
@@ -141,11 +141,11 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.confirmed.message
+                message: oro.account.controller.accountuser.confirmed.message
                 type: 'success'
 
     orob2b_account_accountuser_sendconfirmation:
-        label: orob2b.account.action.account_user.send_confirmation
+        label: oro.account.action.account_user.send_confirmation
         routes:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
@@ -162,15 +162,15 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: orob2b.account.controller.accountuser.confirmation_sent.message
+                message: oro.account.controller.accountuser.confirmation_sent.message
                 type: 'success'
 
     orob2b_account_frontend_create:
-        label: orob2b.account.action.account_user.create
+        label: oro.account.action.account_user.create
         applications: [frontend]
         routes:
            - orob2b_account_frontend_account_user_index
-        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUser]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUser]
         order: 10
         actions:
            - '@redirect':
@@ -178,11 +178,11 @@ operations:
                    route: orob2b_account_frontend_account_user_create
 
     orob2b_account_frontend_create_role:
-        label: orob2b.account.action.account_user_role.create
+        label: oro.account.action.account_user_role.create
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_index
-        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
         order: 10
         actions:
             - '@redirect':
@@ -190,7 +190,7 @@ operations:
                     route: orob2b_account_frontend_account_user_role_create
 
     orob2b_account_frontend_delete_user:
-        label: orob2b.account.action.account_user.delete
+        label: oro.account.action.account_user.delete
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
@@ -204,14 +204,14 @@ operations:
         preconditions:
             '@not_equal': [$id, $.currentUser.id]
         frontend_options:
-            confirmation: orob2b.account.account_user.delete_confirm
+            confirmation: oro.account.account_user.delete_confirm
         actions:
             - '@run_action_group':
                 action_group: DELETE
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: orob2b.account.accountuser.entity_label
+                id: oro.account.accountuser.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
@@ -221,7 +221,7 @@ operations:
             - '@redirect': {route: orob2b_account_frontend_account_user_index}
 
     orob2b_account_frontend_edit_user:
-        label: orob2b.account.action.account_user.edit
+        label: oro.account.action.account_user.edit
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
@@ -237,7 +237,7 @@ operations:
                         id: $id
 
     orob2b_account_frontend_profile_user:
-        label: orob2b.account.action.account_user.edit
+        label: oro.account.action.account_user.edit
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_profile
@@ -251,11 +251,11 @@ operations:
                     route: orob2b_account_frontend_account_user_profile_update
 
     orob2b_account_frontend_edit_role:
-        label: orob2b.account.frontend.action.account_user_role.edit
+        label: oro.account.frontend.action.account_user_role.edit
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_view
-        acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
+        acl_resource: [EDIT, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
         order: 10
         button_options:
             icon: icon-pencil
@@ -267,7 +267,7 @@ operations:
                         id: $id
 
     orob2b_account_frontend_delete_role:
-        label: orob2b.account.action.account_user_role.delete
+        label: oro.account.action.account_user_role.delete
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_view
@@ -289,7 +289,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: orob2b.account.accountuserrole.entity_label
+                id: oro.account.accountuserrole.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
@@ -310,7 +310,7 @@ operations:
             - account-user-by-account-grid
     DELETE:
         exclude_entities:
-            - OroB2B\Bundle\AccountBundle\Entity\AccountGroup
+            - Oro\Bundle\AccountBundle\Entity\AccountGroup
         exclude_datagrids:
             - account-account-user-select-grid
             - account-account-users-grid-view
@@ -330,7 +330,7 @@ action_groups:
     orob2b_account_accountuser_set_enabled:
         parameters:
             data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
             value:
                 type: boolean
         acl_resource: [EDIT, $.data]
@@ -346,7 +346,7 @@ action_groups:
     orob2b_account_frontend_accountuser_set_enabled:
         parameters:
             data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
             value:
                 type: boolean
             current_user:
@@ -366,7 +366,7 @@ action_groups:
     orob2b_account_accountuser_confirm:
         parameters:
             data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]
@@ -383,7 +383,7 @@ action_groups:
     orob2b_account_accountuser_sendconfirmation:
         parameters:
             data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]

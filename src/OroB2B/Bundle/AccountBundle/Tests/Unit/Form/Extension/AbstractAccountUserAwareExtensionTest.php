@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_TestCase
 {

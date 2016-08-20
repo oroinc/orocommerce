@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -10,14 +10,13 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
@@ -36,8 +35,8 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         $productSelectType = new EntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                1 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]),
+                2 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
             ],
             ProductSelectType::NAME,
             [
@@ -60,7 +59,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->getMock();
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -73,7 +72,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
-        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderLineItem');
     }
 
     /** {@inheritdoc} */
@@ -126,7 +125,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
                 'comment' => [
                     'data' => [
-                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
+                        'comment' => ['page_component' => 'oroorder/js/app/components/notes-component'],
                     ],
                     'order' => 40,
                 ],
@@ -170,7 +169,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $priceRepository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -202,7 +201,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function submitDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
         $currency = 'USD';
         $order = new Order();
@@ -224,7 +223,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(10)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
@@ -248,7 +247,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(5)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
@@ -259,7 +258,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(5)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
@@ -283,7 +282,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(5)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
@@ -294,13 +293,13 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(5)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
                 'choices' => [
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                    $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
                 ],
             ],
             'free form' => [
@@ -320,7 +319,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFreeFormProduct('Service')
                     ->setQuantity(10)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setComment('Comment Updated'),
@@ -331,12 +330,12 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFreeFormProduct('Service')
                     ->setQuantity(5)
                     ->setProductUnit(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
                     )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setComment('Comment'),
                 'choices' => [
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                    $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
                 ],
             ],
         ];
@@ -349,11 +348,11 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         return [
             'currency' => null,
-            'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
             'intention' => 'order_line_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
-                'view' => 'orob2border/js/app/views/frontend-line-item-view',
+                'view' => 'oroorder/js/app/views/frontend-line-item-view',
             ],
         ];
     }

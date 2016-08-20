@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model\Builder;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,7 +63,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->productRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -152,7 +152,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertValidCollection(QuickAddRowCollection $collection)
     {
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection', $collection);
+        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Model\QuickAddRowCollection', $collection);
         $this->assertCount($this->expectedCountAll, $collection);
         $this->assertCount($this->expectedCountValid, $collection->getValidRows());
 
@@ -171,7 +171,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareProduct($sku)
     {
-        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->once())
             ->method('getSku')
             ->willReturn($sku);

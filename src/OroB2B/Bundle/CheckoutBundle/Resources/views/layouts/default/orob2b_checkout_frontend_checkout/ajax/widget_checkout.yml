@@ -10,9 +10,9 @@ layout:
                         separator: ' - '
                         reverse: true
                         value:
-                            - 'orob2b.checkout.entity_label'
+                            - 'oro.checkout.entity_label'
                             -
-                                label: 'orob2b.checkout.title.step.label'
+                                label: 'oro.checkout.title.step.label'
                                 parameters:
                                     '%step_label%': '=data["workflowStep"].getLabel()'
                 body:

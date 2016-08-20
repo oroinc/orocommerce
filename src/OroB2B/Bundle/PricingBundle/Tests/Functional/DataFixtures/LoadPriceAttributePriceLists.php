@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class LoadPriceAttributePriceLists extends AbstractFixture
 {

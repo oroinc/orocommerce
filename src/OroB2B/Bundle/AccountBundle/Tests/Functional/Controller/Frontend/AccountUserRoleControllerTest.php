@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
@@ -29,7 +28,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             0 => [
                 'identity' => [
                     'id' => 'action:orob2b_order_address_billing_allow_manual',
-                    'name' => 'orob2b.order.security.permission.address_billing_allow_manual',
+                    'name' => 'oro.order.security.permission.address_billing_allow_manual',
                 ],
                 'permissions' => [],
             ],
@@ -37,8 +36,8 @@ class AccountUserRoleControllerTest extends WebTestCase
         'entity' => [
             0 => [
                 'identity' => [
-                    'id' => 'entity:OroB2B\Bundle\AccountBundle\Entity\Account',
-                    'name' => 'orob2b.account.entity_label',
+                    'id' => 'entity:Oro\Bundle\AccountBundle\Entity\Account',
+                    'name' => 'oro.account.entity_label',
                 ],
                 'permissions' => [],
             ],
@@ -64,8 +63,8 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
 
@@ -176,14 +175,14 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->getObjectManager()->clear();
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->find($id);
 
         $this->assertNotNull($role);
         $this->assertEquals(self::ACCOUNT_UPDATED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getCurrentUser();
 
         $this->assertEquals($role, $user->getRole($role->getRole()));
@@ -272,14 +271,14 @@ class AccountUserRoleControllerTest extends WebTestCase
         $newRoleId = $result['id'];
         $this->assertNotEquals($newRoleId, $oldRoleId);
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->find($newRoleId);
 
         $this->assertNotNull($role);
         $this->assertEquals(self::CUSTOMIZED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getCurrentUser();
 
         // Add new role
@@ -303,7 +302,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = reset($result['data']);
         $id = $result['id'];
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->find($id);
         $this->assertFalse($role->isPredefined());
     }
@@ -395,15 +394,15 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**
-     * @return \OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository
+     * @return \Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:Account');
     }
 
     /**
@@ -411,7 +410,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUserRole');
     }
 
     /**

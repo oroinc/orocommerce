@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BCMSBundle:layouts:default/orob2b_cms_frontend_page_view/page.html.twig'
+            themes: 'OroCMSBundle:layouts:default/orob2b_cms_frontend_page_view/page.html.twig'
         - '@appendOption':
             id: title
             optionName: value

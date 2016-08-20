@@ -1,30 +1,29 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -68,7 +67,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function prepareRequestProductItemType()
     {
         $requestProductItemType = new RequestProductItemType();
-        $requestProductItemType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
+        $requestProductItemType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
 
         return $requestProductItemType;
     }
@@ -88,13 +87,13 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $products = [];
 
-        $products[2] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2);
+        $products[2] = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 2);
 
         foreach ($this->getProductUnitPrecisions() as $precision) {
             $products[2]->addUnitPrecision($precision);
         }
 
-        $products[3] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3);
+        $products[3] = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 3);
 
         return new EntityType(
             $products,
@@ -145,8 +144,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         return new ProductUnitSelectionTypeStub(
             [
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
             ]
         );
     }
@@ -204,7 +203,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function createRequestProduct($id, $product, $productSku)
     {
         /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct = $this->getMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects(static::any())
             ->method('getId')
@@ -286,7 +285,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
+        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $id);
     }
 
     /**
@@ -301,7 +300,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $product = null;
 
         if ($productId) {
-            $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+            $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
 
             foreach ($this->getProductUnitPrecisions() as $precision) {
                 $product->addUnitPrecision($precision);
@@ -310,7 +309,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $requestProduct = new RequestProduct();
         $requestProduct
-            ->setRequest($this->getEntity('OroB2B\Bundle\RFPBundle\Entity\Request', $productId))
+            ->setRequest($this->getEntity('Oro\Bundle\RFPBundle\Entity\Request', $productId))
             ->setProduct($product)
             ->setComment($comment)
         ;
@@ -344,7 +343,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         if (null !== $unitCode) {
             $requestProductItem->setProductUnit(
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
+                $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
             );
         }
 

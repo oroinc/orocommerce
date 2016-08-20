@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-              themes: 'OroB2BFrontendBundle:layouts:default/orob2b_frontend_exception/exception.html.twig'
+              themes: 'OroFrontendBundle:layouts:default/orob2b_frontend_exception/exception.html.twig'
         - '@appendOption':
             id: title
             optionName: value

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Manager;
+namespace Oro\Bundle\WebsiteBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteManager
 {

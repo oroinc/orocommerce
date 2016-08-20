@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -29,8 +28,8 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData'
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData'
         ]);
     }
 

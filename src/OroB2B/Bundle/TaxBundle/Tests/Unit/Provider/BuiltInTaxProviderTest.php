@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 
 class BuiltInTaxProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class BuiltInTaxProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        $this->assertEquals('orob2b.tax.providers.built_in.label', $this->provider->getLabel());
+        $this->assertEquals('oro.tax.providers.built_in.label', $this->provider->getLabel());
     }
 
     public function testIsApplicable()

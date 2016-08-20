@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Doctrine;
+namespace Oro\Bundle\AccountBundle\Doctrine;
 
 trait SoftDeleteableTrait
 {

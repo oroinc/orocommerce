@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\AccountBundle\Twig\AccountExtension;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Twig\AccountExtension;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class AccountExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->securityProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Security\AccountUserProvider'
+            'Oro\Bundle\AccountBundle\Security\AccountUserProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();

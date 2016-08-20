@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Duplicator;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator;
 
 class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {

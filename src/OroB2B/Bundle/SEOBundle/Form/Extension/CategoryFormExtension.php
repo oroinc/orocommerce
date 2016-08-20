@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Form\Extension;
+namespace Oro\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -23,6 +22,6 @@ class CategoryFormExtension extends BaseMetaFormExtension
      */
     public function getMetaFieldLabelPrefix()
     {
-        return 'orob2b.catalog.category';
+        return 'oro.catalog.category';
     }
 }

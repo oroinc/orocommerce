@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductShippingOptionsType extends AbstractType
 {
@@ -33,7 +33,7 @@ class ProductShippingOptionsType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.shipping.product_shipping_options.product_unit.label',
+                    'label' => 'oro.shipping.product_shipping_options.product_unit.label',
                     'required' => false,
                 ]
             )
@@ -41,7 +41,7 @@ class ProductShippingOptionsType extends AbstractType
                 'weight',
                 WeightType::NAME,
                 [
-                    'label' => 'orob2b.shipping.product_shipping_options.weight.label',
+                    'label' => 'oro.shipping.product_shipping_options.weight.label',
                     'required' => false,
                 ]
             )
@@ -49,7 +49,7 @@ class ProductShippingOptionsType extends AbstractType
                 'dimensions',
                 DimensionsType::NAME,
                 [
-                    'label' => 'orob2b.shipping.product_shipping_options.dimensions.label',
+                    'label' => 'oro.shipping.product_shipping_options.dimensions.label',
                     'required' => false,
                 ]
             )
@@ -57,8 +57,8 @@ class ProductShippingOptionsType extends AbstractType
                 'freightClass',
                 FreightClassSelectType::NAME,
                 [
-                    'label' => 'orob2b.shipping.product_shipping_options.freight_class.label',
-                    'placeholder' => 'orob2b.shipping.form.placeholder.freight_class.label',
+                    'label' => 'oro.shipping.product_shipping_options.freight_class.label',
+                    'placeholder' => 'oro.shipping.form.placeholder.freight_class.label',
                     'attr' => [
                         'class' => 'freight-class-select',
                     ],

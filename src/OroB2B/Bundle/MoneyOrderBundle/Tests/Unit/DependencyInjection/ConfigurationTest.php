@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $builder = $configuration->getConfigTreeBuilder();
         $root = $builder->buildTree();
         $this->assertInstanceOf('Symfony\Component\Config\Definition\ArrayNode', $root);
-        $this->assertEquals(OroB2BMoneyOrderExtension::ALIAS, $root->getName());
+        $this->assertEquals(OroMoneyOrderExtension::ALIAS, $root->getName());
     }
 
     /**

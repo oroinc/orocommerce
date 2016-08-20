@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
 class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->categoryRepository = $this->getMockBuilder(
-            'OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
+            'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         )
             ->disableOriginalConstructor()
             ->getMock();

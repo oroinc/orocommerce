@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -17,7 +17,7 @@ class OpenOrdersController extends Controller
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
-     *      class="OroB2BCheckoutBundle:Checkout",
+     *      class="OroCheckoutBundle:Checkout",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )

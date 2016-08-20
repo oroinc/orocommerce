@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 
 class ChangeCategoryPosition extends AbstractVisibilityRegistryAwareAction
 {
@@ -36,7 +36,7 @@ class ChangeCategoryPosition extends AbstractVisibilityRegistryAwareAction
         $category = $this->getEntity($context);
 
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
         $em->beginTransaction();
         try {
             $this->cacheBuilder->categoryPositionChanged($category);

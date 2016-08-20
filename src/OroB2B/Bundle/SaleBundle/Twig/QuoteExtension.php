@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Twig;
+namespace Oro\Bundle\SaleBundle\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtension extends \Twig_Extension
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -9,12 +9,11 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Add to frontend products grid information about how much qty of some unit were added to current shopping list
@@ -90,7 +89,7 @@ class FrontendProductDatagridListener
     protected function getCurrentShoppingList(EntityManagerInterface $em, AccountUser $accountUser)
     {
         /** @var ShoppingListRepository $repository */
-        $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
 
         return $repository->findAvailableForAccountUser($accountUser);
     }
@@ -122,7 +121,7 @@ class FrontendProductDatagridListener
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
+        $lineItemRepository = $em->getRepository('OroShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
             array_map(

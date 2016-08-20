@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
@@ -12,15 +12,14 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-
-use OroB2B\Bundle\CMSBundle\Form\Type\PageType;
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Form\Type\SlugType;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Type\SlugType;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CMSBundle\Entity\Page';
+    const DATA_CLASS = 'Oro\Bundle\CMSBundle\Entity\Page';
 
     /**
      * @var PageType
@@ -125,7 +124,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'title',
                 'text',
                 [
-                    'label' => 'orob2b.cms.page.title.label',
+                    'label' => 'oro.cms.page.title.label',
                     'required' => true,
                     'constraints' => [new NotBlank()],
                 ]
@@ -137,7 +136,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'content',
                 OroRichTextType::NAME,
                 [
-                    'label' => 'orob2b.cms.page.content.label',
+                    'label' => 'oro.cms.page.content.label',
                     'required' => false,
                     'wysiwyg_options' => [
                         'statusbar' => true,

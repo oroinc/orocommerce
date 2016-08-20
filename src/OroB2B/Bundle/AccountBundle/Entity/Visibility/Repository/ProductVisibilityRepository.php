@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductVisibilityRepository extends EntityRepository
 {
@@ -29,21 +28,21 @@ class ProductVisibilityRepository extends EntityRepository
                     (string)$qb->expr()->literal(ProductVisibility::CONFIG)
                 ]
             )
-            ->from('OroB2BProductBundle:Product', 'product')
+            ->from('OroProductBundle:Product', 'product')
             ->innerJoin(
-                'OroB2BWebsiteBundle:Website',
+                'OroWebsiteBundle:Website',
                 'website',
                 Join::WITH,
                 $qb->expr()->eq(1, 1)
             )
             ->leftJoin(
-                'OroB2BCatalogBundle:Category',
+                'OroCatalogBundle:Category',
                 'category',
                 Join::WITH,
                 $qb->expr()->isMemberOf('product', 'category.products')
             )
             ->leftJoin(
-                'OroB2BAccountBundle:Visibility\ProductVisibility',
+                'OroAccountBundle:Visibility\ProductVisibility',
                 'productVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -60,7 +59,7 @@ class ProductVisibilityRepository extends EntityRepository
         }
 
         $executor->execute(
-            'OroB2BAccountBundle:Visibility\ProductVisibility',
+            'OroAccountBundle:Visibility\ProductVisibility',
             ['product', 'website', 'visibility'],
             $qb
         );

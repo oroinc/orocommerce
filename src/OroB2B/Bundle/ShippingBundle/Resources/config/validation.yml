@@ -1,4 +1,4 @@
-OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
+Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
     properties:
         country:
             - NotBlank: ~
@@ -15,11 +15,11 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
         warehouse:
             - NotBlank: ~
 
-OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:  [ product, productUnit ]
-            message: orob2b.shipping.validators.product_unit_shipping_options.unique_entity.message
+            message: oro.shipping.validators.product_unit_shipping_options.unique_entity.message
     properties:
         product:
             - NotBlank: ~
@@ -33,21 +33,21 @@ OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions:
         freightClass:
             - Valid: ~
 
-OroB2B\Bundle\ShippingBundle\Model\DimensionsValue:
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
     properties:
         length:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         width:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         height:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
-OroB2B\Bundle\ShippingBundle\Model\Weight:
+Oro\Bundle\ShippingBundle\Model\Weight:
     properties:
         value:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
-OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
+Oro\Bundle\ShippingBundle\Entity\ShippingRule:
     properties:
         name:
             - NotBlank: ~
@@ -57,12 +57,12 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
             - Valid: ~
         configurations:
             - Valid: ~
-            - OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
+            - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
         currency:
             - Currency: ~
             - NotBlank: ~
 
-OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
     properties:
         country:
             - NotBlank: ~
@@ -70,7 +70,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
         region:
             - Valid: ~
 
-OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
     properties:
         value:
             - NotBlank:

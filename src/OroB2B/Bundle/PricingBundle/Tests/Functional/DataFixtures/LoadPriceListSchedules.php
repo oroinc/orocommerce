@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class LoadPriceListSchedules extends AbstractFixture implements DependentFixtureInterface
 {
@@ -80,6 +80,6 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'];
+        return ['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'];
     }
 }

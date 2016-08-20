@@ -34,7 +34,7 @@ define(function(require) {
 
                 var widget = new QuickAddImportWidget({
                     'dialogOptions': {
-                        'title': __('orob2b.product.frontend.quick_add.import_validation.title'),
+                        'title': __('oro.product.frontend.quick_add.import_validation.title'),
                         'modal': true,
                         'resizable': false,
                         'width': 820,

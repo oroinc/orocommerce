@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryVisibilityPostSubmitListener;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\AccountBundle\Form\EventListener\CategoryVisibilityPostSubmitListener;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -51,7 +50,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
         $event = $this->getEventMock();
 
         /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
         $event->expects($this->any())->method('getForm')->willReturn($this->form);
 
@@ -105,7 +104,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     public function onPostSubmitRemoveDefaultDataProvider()
     {
         /** @var Category $rootCategory */
-        $rootCategory = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $rootCategory = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $subCategory = clone($rootCategory);
         $subCategory->setParentCategory($rootCategory);
 
@@ -142,15 +141,15 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $visibilityForAccountFormMock */
         $visibilityForAccountFormMock = $this
             ->getCommonVisibilityFormMock(
-                'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility',
-                'OroB2B\Bundle\AccountBundle\Entity\Account'
+                'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility',
+                'Oro\Bundle\AccountBundle\Entity\Account'
             );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $visibilityForAccountGroupFormMock */
         $visibilityForAccountGroupFormMock = $this
             ->getCommonVisibilityFormMock(
-                'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility',
-                'OroB2B\Bundle\AccountBundle\Entity\AccountGroup'
+                'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility',
+                'Oro\Bundle\AccountBundle\Entity\AccountGroup'
             );
 
         $this->form->expects($this->once())->method('isValid')->willReturn(true);
@@ -193,7 +192,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     ) {
         /** @var CategoryVisibility|\PHPUnit_Framework_MockObject_MockObject $categoryVisibility */
         $categoryVisibility = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
             ->setMethods(['setVisibility', 'getVisibility'])
             ->getMock();
         $categoryVisibility->expects($this->any())->method('setVisibility')->with($visibility);
@@ -250,15 +249,15 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
             [
                 $this->getAccountCategoryVisibilityMock(
                     AccountCategoryVisibility::PARENT_CATEGORY,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1)
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     AccountCategoryVisibility::PARENT_CATEGORY,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2)
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     AccountCategoryVisibility::VISIBLE,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 3)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 3)
                 ),
             ]
         );
@@ -274,15 +273,15 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
             [
                 $this->getAccountGroupCategoryVisibilityMock(
                     AccountGroupCategoryVisibility::PARENT_CATEGORY,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 1)
                 ),
                 $this->getAccountGroupCategoryVisibilityMock(
                     AccountGroupCategoryVisibility::PARENT_CATEGORY,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 2)
                 ),
                 $this->getAccountGroupCategoryVisibilityMock(
                     AccountGroupCategoryVisibility::VISIBLE,
-                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 3)
+                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 3)
                 ),
             ]
         );
@@ -294,7 +293,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
 
     public function testSaveFormAllDataWithEmptyCategoryVisibility()
     {
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $visibility = CategoryVisibility::VISIBLE;
         $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
@@ -330,8 +329,8 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
 
     public function testProcessAccountVisibilityWithEmptyAccountCategoryVisibility()
     {
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1);
         $data = [
             [
                 'entity' => $account,
@@ -375,8 +374,8 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
 
     public function testProcessAccountGroupVisibilityWithEmptyAccountGroupCategoryVisibility()
     {
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
-        $accountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 1);
         $data = [
             [
                 'entity' => $accountGroup,
@@ -427,7 +426,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     protected function getAccountCategoryVisibilityMock($visibility, $account)
     {
         $visibilityEntity = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility')
             ->setMethods(['getAccount', 'setVisibility', 'getVisibility'])
             ->getMock();
 
@@ -453,7 +452,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     protected function getAccountGroupCategoryVisibilityMock($visibility, $account)
     {
         $visibilityEntity = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility')
             ->setMethods(['getAccountGroup', 'setVisibility', 'getVisibility'])
             ->getMock();
 

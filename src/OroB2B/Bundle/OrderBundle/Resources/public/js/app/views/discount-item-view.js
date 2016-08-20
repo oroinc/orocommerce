@@ -5,14 +5,14 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
+    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2border/js/app/views/discount-item-view
+     * @export oroorder/js/app/views/discount-item-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.DiscountItemView
+     * @class oroorder.app.views.DiscountItemView
      */
     DiscountItemView = BaseView.extend({
         /**

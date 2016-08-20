@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
 class ProductRowType extends AbstractProductAwareType
 {
@@ -21,7 +21,7 @@ class ProductRowType extends AbstractProductAwareType
     {
         $productSkuOptions = [
             'required' => false,
-            'label' => 'orob2b.product.sku.label',
+            'label' => 'oro.product.sku.label',
         ];
         if ($options['validation_required']) {
             $productSkuOptions['constraints'][] = new ProductBySku();
@@ -34,7 +34,7 @@ class ProductRowType extends AbstractProductAwareType
                 'number',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.quantity.label',
+                    'label' => 'oro.product.quantity.label',
                 ]
             )
         ;
@@ -48,7 +48,7 @@ class ProductRowType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'validation_required' => false,
-                'data_class'=> 'OroB2B\Bundle\ProductBundle\Model\ProductRow'
+                'data_class'=> 'Oro\Bundle\ProductBundle\Model\ProductRow'
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');

@@ -1,3 +1,3 @@
 css:
-    'orob2baccount':
-        - 'bundles/orob2baccount/css/less/style.less'
+    'oroaccount':
+        - 'bundles/oroaccount/css/less/style.less'

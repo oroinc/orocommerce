@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class OrderAddressEventListener
 {
@@ -64,6 +63,6 @@ class OrderAddressEventListener
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->engine->render('OroB2BOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
+        return $this->engine->render('OroOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
     }
 }

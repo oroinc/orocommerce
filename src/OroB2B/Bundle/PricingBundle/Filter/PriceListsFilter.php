@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Filter;
+namespace Oro\Bundle\PricingBundle\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -8,9 +8,8 @@ use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\EntityFilter;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 
 class PriceListsFilter extends EntityFilter
 {

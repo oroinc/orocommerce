@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener;
+namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class AccountGroupFormViewListener extends AbstractFormViewListener
 {
@@ -25,7 +24,7 @@ class AccountGroupFormViewListener extends AbstractFormViewListener
         $entity = $repository->findOneByAccountGroup($accountGroup);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:AccountGroup:tax_code_view.html.twig',
+            'OroTaxBundle:AccountGroup:tax_code_view.html.twig',
             ['entity' => $entity]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -37,7 +36,7 @@ class AccountGroupFormViewListener extends AbstractFormViewListener
     public function onEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:AccountGroup:tax_code_update.html.twig',
+            'OroTaxBundle:AccountGroup:tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

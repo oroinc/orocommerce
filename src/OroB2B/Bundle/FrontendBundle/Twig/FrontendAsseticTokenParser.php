@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Twig;
+namespace Oro\Bundle\FrontendBundle\Twig;
 
 use Assetic\Factory\AssetFactory;
 
 use Oro\Bundle\AsseticBundle\AssetsConfiguration;
 use Oro\Bundle\AsseticBundle\Twig\AsseticTokenParser;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
+use Oro\Bundle\FrontendBundle\EventListener\ThemeListener;
 
 class FrontendAsseticTokenParser extends AsseticTokenParser
 {

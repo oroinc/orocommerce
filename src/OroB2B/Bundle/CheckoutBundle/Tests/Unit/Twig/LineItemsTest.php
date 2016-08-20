@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\CheckoutBundle\Twig\LineItemsExtension;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 /**
  * @dbIsolation
@@ -35,11 +34,11 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extension = new LineItemsExtension($this->totalsProvider, $this->lineItemSubtotalProvider);

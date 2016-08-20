@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Entity;
+namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,15 +10,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(
@@ -27,7 +26,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(name="accountUser",
  *          joinColumns=@ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -117,7 +116,7 @@ class ShoppingList extends ExtendShoppingList implements
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -133,7 +132,7 @@ class ShoppingList extends ExtendShoppingList implements
      * @var ArrayCollection|LineItem[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\LineItem",
+     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\LineItem",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
      *      orphanRemoval=true
@@ -152,7 +151,7 @@ class ShoppingList extends ExtendShoppingList implements
      * @var ArrayCollection|ShoppingListTotal[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
+     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
      *      orphanRemoval=true

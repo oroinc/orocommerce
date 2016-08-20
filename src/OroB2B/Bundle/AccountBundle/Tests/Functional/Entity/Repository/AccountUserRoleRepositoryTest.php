@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -32,7 +31,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole');
+            ->getRepository('OroAccountBundle:AccountUserRole');
 
         if (null === self::$defaultRolesCount) {
             self::$defaultRolesCount = (int)$this->repository->createQueryBuilder('r')
@@ -40,7 +39,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                 ->getQuery()
                 ->getSingleScalarResult();
         }
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData']);
+        $this->loadFixtures(['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData']);
     }
 
     public function testGetDefaultAccountUserRoleByWebsite()

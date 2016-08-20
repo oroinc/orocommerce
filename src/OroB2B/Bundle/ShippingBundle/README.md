@@ -1,4 +1,4 @@
-OroB2BShippingBundle
+OroShippingBundle
 ====================
 
 Table of Contents
@@ -10,4 +10,4 @@ Table of Contents
 Description:
 ------------
 
-The ***OroB2BShippingBundle*** provides functionality to manage shipping attributes for product.
+The ***OroShippingBundle*** provides functionality to manage shipping attributes for product.

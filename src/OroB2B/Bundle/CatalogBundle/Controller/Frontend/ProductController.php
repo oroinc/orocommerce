@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Controller\Frontend;
+namespace Oro\Bundle\CatalogBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use OroB2B\Bundle\CatalogBundle\Controller\BaseProductController;
+use Oro\Bundle\CatalogBundle\Controller\BaseProductController;
 
 class ProductController extends BaseProductController
 {

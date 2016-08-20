@@ -3,16 +3,16 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
+            themes: 'OroSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
 
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.sale.quote.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.sale.quote.entity_plural_label'
                 -
-                    label: 'orob2b.frontend.sale.quote.title.label'
+                    label: 'oro.frontend.sale.quote.title.label'
                     parameters:
                         '%id%': '=data["entity"].getQid()'
 
@@ -25,7 +25,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.sale.quote.title.label'
+                label: 'oro.frontend.sale.quote.title.label'
                 parameters:
                     '%id%': '=data["entity"].getQid()'
 
@@ -64,7 +64,7 @@ layout:
                     blockType: address
                     options:
                         address: '=data["entity"].getShippingAddress()'
-                        label: 'orob2b.sale.quote.shipping_address.label'
+                        label: 'oro.sale.quote.shipping_address.label'
                         block_prefixes: ['quote_body_column_element']
             tree:
                 content:

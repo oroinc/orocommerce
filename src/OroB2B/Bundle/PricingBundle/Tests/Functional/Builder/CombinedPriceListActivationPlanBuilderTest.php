@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Builder;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 
 /**
  * @dbIsolation
@@ -45,12 +44,12 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         $this->now = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
             ]
         );
         $this->manager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule');
+            ->getManagerForClass('Oro\Bundle\PricingBundle\Entity\PriceListSchedule');
     }
 
     /**
@@ -192,7 +191,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     {
         if (!$this->activationRulesRepository) {
             $this->activationRulesRepository = $this->manager
-                ->getRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
+                ->getRepository('OroPricingBundle:CombinedPriceListActivationRule');
         }
 
         return $this->activationRulesRepository;

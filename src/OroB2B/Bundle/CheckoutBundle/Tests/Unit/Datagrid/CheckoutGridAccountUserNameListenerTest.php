@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener;
 
 class CheckoutGridAccountUserNameListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class CheckoutGridAccountUserNameListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnBuildBefore()
     {
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
+        $this->provider = $this->getMockBuilder('Oro\Bundle\AccountBundle\Security\AccountUserProvider')
                                ->disableOriginalConstructor()
                                ->getMock();
 

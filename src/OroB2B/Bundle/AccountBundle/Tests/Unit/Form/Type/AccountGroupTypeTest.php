@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountGroupTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const DATA_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
 
     /**
      * @var AccountGroupType

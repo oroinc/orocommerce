@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\OrderBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -79,7 +78,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
 
             $subtotal->setType(self::TYPE);
             $description = $discount->getDescription();
-            $title = $this->translator->trans('orob2b.order.subtotals.' . self::TYPE);
+            $title = $this->translator->trans('oro.order.subtotals.' . self::TYPE);
             if ($description) {
                 if ($this->isFrontendUser()) {
                     $title = $description;

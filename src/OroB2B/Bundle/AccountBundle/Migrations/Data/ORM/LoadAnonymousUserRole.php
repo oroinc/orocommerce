@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class LoadAnonymousUserRole extends LoadAccountUserRoles
 {

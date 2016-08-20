@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-
-use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 
 class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -80,7 +79,7 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
         $this->productPriceQueueConsumer->expects($this->exactly($expects['process']))->method('process');
         $this->configManager->expects($this->exactly($expects['config.get']))
             ->method('get')
-            ->with(OroB2BPricingExtension::ALIAS . '.price_lists_update_mode')
+            ->with(OroPricingExtension::ALIAS . '.price_lists_update_mode')
             ->willReturn($queueConsumerMode);
 
         if ($changes) {
@@ -94,7 +93,7 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with(OroB2BPricingExtension::ALIAS
+            ->with(OroPricingExtension::ALIAS
                 . ConfigManager::SECTION_MODEL_SEPARATOR
                 . Configuration::PRICE_LISTS_UPDATE_MODE)
             ->willReturn(CombinedPriceListQueueConsumer::MODE_REAL_TIME);

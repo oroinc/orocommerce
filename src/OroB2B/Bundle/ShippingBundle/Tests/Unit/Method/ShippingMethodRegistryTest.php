@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Method;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = new ShippingMethodRegistry();
 
-        $this->method = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface')
+        $this->method = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface')
             ->disableOriginalConstructor()
             ->getMock();
     }

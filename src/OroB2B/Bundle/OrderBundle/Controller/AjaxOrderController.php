@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller;
+namespace Oro\Bundle\OrderBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
@@ -10,10 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class AjaxOrderController extends Controller
 {

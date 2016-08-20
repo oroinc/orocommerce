@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -12,17 +12,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -40,7 +39,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
     }
 
     /**
@@ -50,8 +49,8 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     {
         $unitSelectType = new EntityType(
             [
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
-                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
+                'item' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
             ],
             ProductUnitSelectionType::NAME
         );

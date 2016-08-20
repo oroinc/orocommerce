@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,8 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListType extends AbstractType
 {
@@ -26,7 +25,7 @@ class PriceListType extends AbstractType
         $priceList = $builder->getData();
 
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
+            ->add('name', 'text', ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 self::SCHEDULES_FIELD,
                 CollectionType::NAME,
@@ -42,7 +41,7 @@ class PriceListType extends AbstractType
                 [
                     'multiple' => true,
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.currencies.label',
+                    'label' => 'oro.pricing.pricelist.currencies.label',
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
@@ -50,14 +49,14 @@ class PriceListType extends AbstractType
                 'active',
                 'checkbox',
                 [
-                    'label' => 'orob2b.pricing.pricelist.active.label'
+                    'label' => 'oro.pricing.pricelist.active.label'
                 ]
             )
             ->add(
                 'productAssignmentRule',
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricelist.product_assignment_rule.label',
+                    'label' => 'oro.pricing.pricelist.product_assignment_rule.label',
                     'required' => false
                 ]
             )

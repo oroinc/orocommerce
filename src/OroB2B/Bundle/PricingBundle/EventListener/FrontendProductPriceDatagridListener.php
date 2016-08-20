@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -12,14 +12,13 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 class FrontendProductPriceDatagridListener
 {
@@ -113,7 +112,7 @@ class FrontendProductPriceDatagridListener
 
         $em = $event->getQuery()->getEntityManager();
         /** @var CombinedProductPriceRepository $repository */
-        $repository = $em->getRepository('OroB2BPricingBundle:CombinedProductPrice');
+        $repository = $em->getRepository('OroPricingBundle:CombinedProductPrice');
         $combinedPrices = $repository->getPricesForProductsByPriceList($priceList, $productIds, $currency);
 
         $resultProductPrices = [];
@@ -170,7 +169,7 @@ class FrontendProductPriceDatagridListener
             [
                 self::COLUMN_MINIMUM_PRICE=> [
                     'label' => $this->translator->trans(
-                        'orob2b.pricing.productprice.price_in_%currency%',
+                        'oro.pricing.productprice.price_in_%currency%',
                         ['%currency%' => $currency]
                     )
                 ]
@@ -215,7 +214,7 @@ class FrontendProductPriceDatagridListener
             '[source][query][join][left]',
             [
                 [
-                    'join' => 'OroB2BPricingBundle:MinimalProductPrice',
+                    'join' => 'OroPricingBundle:MinimalProductPrice',
                     'alias' => $joinAlias,
                     'conditionType' => Expr\Join::WITH,
                     'condition' => (string)$joinExpr,

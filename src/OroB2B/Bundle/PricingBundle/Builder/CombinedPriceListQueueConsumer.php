@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,13 +8,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 
 class CombinedPriceListQueueConsumer
 {
@@ -154,7 +153,7 @@ class CombinedPriceListQueueConsumer
     {
         if (!$this->manager) {
             $this->manager = $this->registry
-                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
+                ->getManagerForClass('Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
         }
 
         return $this->manager;
@@ -167,7 +166,7 @@ class CombinedPriceListQueueConsumer
     {
         if (!$this->queueRepository) {
             $this->queueRepository = $this->getManager()
-                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
+                ->getRepository('Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
         }
 
         return $this->queueRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository")
  */
 class PriceListWebsiteFallback extends PriceListFallback
 {

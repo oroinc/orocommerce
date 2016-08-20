@@ -1,11 +1,11 @@
-OroB2B\Bundle\RFPBundle\Entity\Request:
+Oro\Bundle\RFPBundle\Entity\Request:
     alias:                          orob2b_rfp_request
     title_fields:                   [firstName, lastName, email]
     route:
         name:                       orob2b_rfp_request_view
         parameters:
             id:                     id
-    search_template:                OroB2BRFPBundle:Request:searchResult.html.twig
+    search_template:                OroRFPBundle:Request:searchResult.html.twig
     fields:
         -
             name:                   firstName

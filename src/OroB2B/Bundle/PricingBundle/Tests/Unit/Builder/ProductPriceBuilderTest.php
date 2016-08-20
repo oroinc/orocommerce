@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -8,15 +8,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 
 class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 {

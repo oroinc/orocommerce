@@ -1,15 +1,15 @@
 orob2b_warehouse:
-    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseController.php"
+    resource:     "@OroWarehouseBundle/Controller/WarehouseController.php"
     type:         annotation
     prefix:       /warehouse
 
 orob2b_warehouse_inventory_product:
-    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseInventoryLevelController.php"
+    resource:     "@OroWarehouseBundle/Controller/WarehouseInventoryLevelController.php"
     type:         annotation
     prefix:       /warehouse/inventory-level
 
 orob2b_warehouse_bundle_api:
-    resource:     "@OroB2BWarehouseBundle/Resources/config/oro/routing_api.yml"
+    resource:     "@OroWarehouseBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1

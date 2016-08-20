@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +45,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $account = $this->createAccountEntity();
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\AccountBundle\Entity\Account',
+            'Oro\Bundle\AccountBundle\Entity\Account',
             $parentAccount->addChild($account)
         );
 

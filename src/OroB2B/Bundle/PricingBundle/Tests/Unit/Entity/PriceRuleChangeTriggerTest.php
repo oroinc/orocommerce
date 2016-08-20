@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 
 class PriceRuleChangeTriggerTest extends \PHPUnit_Framework_TestCase
 {

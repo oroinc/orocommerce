@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceBuilder
 {

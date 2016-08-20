@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider;
 
 /**
  * @dbIsolation

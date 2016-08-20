@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Component\Duplicator\Filter;
+namespace Oro\Component\Duplicator\Filter;
 
 use DeepCopy\Filter\Filter as BaseFilter;
 
-use OroB2B\Component\Duplicator\AbstractFactory;
-use OroB2B\Component\Duplicator\ObjectType;
+use Oro\Component\Duplicator\AbstractFactory;
+use Oro\Component\Duplicator\ObjectType;
 
 /**
  * @method BaseFilter create(ObjectType $objectType)

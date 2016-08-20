@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener\Config;
+namespace Oro\Bundle\TaxBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
-use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
-use OroB2B\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Model\Address;
 
 class AddressEventListener
 {
@@ -28,7 +27,7 @@ class AddressEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
+        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
         if (!array_key_exists($key, $settings)) {
             return;
         }
@@ -44,7 +43,7 @@ class AddressEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
+        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
         if (empty($settings[$key]['value'])) {
             return;
         }

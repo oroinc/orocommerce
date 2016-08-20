@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider;
 
 /**
  * @dbIsolation
@@ -25,7 +24,7 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
             ]
         );
 

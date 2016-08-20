@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use OroB2B\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutCompilerPass;
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutCompilerPass;
 
 class CheckoutCompilerPassTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Type;
+namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,30 +47,30 @@ class TaxJurisdictionType extends AbstractType
 
         $builder
             ->add('code', 'text', [
-                'label' => 'orob2b.tax.taxjurisdiction.code.label',
+                'label' => 'oro.tax.taxjurisdiction.code.label',
                 'required' => true
             ])
             ->add('description', 'textarea', [
-                'label' => 'orob2b.tax.taxjurisdiction.description.label',
+                'label' => 'oro.tax.taxjurisdiction.description.label',
                 'required' => false
             ])
             ->add('country', 'oro_country', [
                 'required' => true,
-                'label' => 'orob2b.tax.taxjurisdiction.country.label'
+                'label' => 'oro.tax.taxjurisdiction.country.label'
             ])
             ->add('region', 'oro_region', [
                 'required' => false,
-                'label' => 'orob2b.tax.taxjurisdiction.region.label'
+                'label' => 'oro.tax.taxjurisdiction.region.label'
             ])
             ->add('region_text', 'hidden', [
                 'required' => false,
                 'random_id' => true,
-                'label' => 'orob2b.tax.taxjurisdiction.region_text.label'
+                'label' => 'oro.tax.taxjurisdiction.region_text.label'
             ])
             ->add('zipCodes', ZipCodeCollectionType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.tax.taxjurisdiction.zip_codes.label',
-                'tooltip'  => 'orob2b.tax.form.tooltip.zip_codes'
+                'label' => 'oro.tax.taxjurisdiction.zip_codes.label',
+                'tooltip'  => 'oro.tax.form.tooltip.zip_codes'
             ]);
     }
 

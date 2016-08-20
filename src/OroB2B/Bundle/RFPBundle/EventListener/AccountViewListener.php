@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\EventListener;
+namespace Oro\Bundle\RFPBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -8,9 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountViewListener
 {
@@ -50,17 +49,17 @@ class AccountViewListener
     public function onAccountView(BeforeListRenderEvent $event)
     {
         /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroB2BAccountBundle:Account');
+        $account = $this->getEntityFromRequestId('OroAccountBundle:Account');
         if ($account) {
             $template = $event->getEnvironment()->render(
-                'OroB2BRFPBundle:Account:rfp_view.html.twig',
+                'OroRFPBundle:Account:rfp_view.html.twig',
                 ['entity' => $account]
             );
 
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('orob2b.rfp.datagrid.account.label')
+                $this->translator->trans('oro.rfp.datagrid.account.label')
             );
         }
     }
@@ -71,16 +70,16 @@ class AccountViewListener
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntityFromRequestId('OroB2BAccountBundle:AccountUser');
+        $accountUser = $this->getEntityFromRequestId('OroAccountBundle:AccountUser');
         if ($accountUser) {
             $template = $event->getEnvironment()->render(
-                'OroB2BRFPBundle:AccountUser:rfp_view.html.twig',
+                'OroRFPBundle:AccountUser:rfp_view.html.twig',
                 ['entity' => $accountUser]
             );
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('orob2b.rfp.datagrid.account_user.label')
+                $this->translator->trans('oro.rfp.datagrid.account_user.label')
             );
         }
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
 {
@@ -25,7 +25,7 @@ class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
             if (!$configuration instanceof ShippingRuleConfiguration) {
                 throw new UnexpectedTypeException(
                     $configuration,
-                    'OroB2B\Bundle\ShippingBundle\Model\ShippingRuleConfiguration'
+                    'Oro\Bundle\ShippingBundle\Model\ShippingRuleConfiguration'
                 );
             }
             if ($configuration->isEnabled()) {

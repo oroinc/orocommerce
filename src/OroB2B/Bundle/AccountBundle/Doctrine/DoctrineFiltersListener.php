@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Doctrine;
+namespace Oro\Bundle\AccountBundle\Doctrine;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class DoctrineFiltersListener
 {

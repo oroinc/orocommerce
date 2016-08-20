@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @ORM\Entity()
@@ -41,7 +40,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;
@@ -49,7 +48,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
  * @ORM\Entity

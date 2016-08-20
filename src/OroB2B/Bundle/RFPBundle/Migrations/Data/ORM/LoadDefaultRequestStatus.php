@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\RFPBundle\Migrations\Data\ORM;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadDefaultRequestStatus extends AbstractLoadRequestStatus
 {

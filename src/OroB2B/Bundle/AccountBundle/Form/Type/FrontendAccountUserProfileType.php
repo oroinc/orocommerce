@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,7 +36,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_prefix.label'
+                    'label' => 'oro.account.accountuser.name_prefix.label'
                 ]
             )
             ->add(
@@ -44,7 +44,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.first_name.label'
+                    'label' => 'oro.account.accountuser.first_name.label'
                 ]
             )
             ->add(
@@ -52,7 +52,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.middle_name.label'
+                    'label' => 'oro.account.accountuser.middle_name.label'
                 ]
             )
             ->add(
@@ -60,7 +60,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.last_name.label'
+                    'label' => 'oro.account.accountuser.last_name.label'
                 ]
             )
             ->add(
@@ -68,7 +68,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_suffix.label'
+                    'label' => 'oro.account.accountuser.name_suffix.label'
                 ]
             )
             ->add(
@@ -76,7 +76,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'oro_date',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.birthday.label'
+                    'label' => 'oro.account.accountuser.birthday.label'
                 ]
             )
             ->add(
@@ -84,17 +84,17 @@ class FrontendAccountUserProfileType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.email.label'
+                    'label' => 'oro.account.accountuser.email.label'
                 ]
             )
             ->add(
                 'changePassword',
                 ChangePasswordType::NAME,
                 [
-                    'current_password_label' => 'orob2b.account.accountuser.current_password.label',
-                    'plain_password_invalid_message' => 'orob2b.account.message.password_mismatch',
-                    'first_options_label' => 'orob2b.account.accountuser.new_password.label',
-                    'second_options_label' => 'orob2b.account.accountuser.password_confirmation.label'
+                    'current_password_label' => 'oro.account.accountuser.current_password.label',
+                    'plain_password_invalid_message' => 'oro.account.message.password_mismatch',
+                    'first_options_label' => 'oro.account.accountuser.new_password.label',
+                    'second_options_label' => 'oro.account.accountuser.password_confirmation.label'
                 ]
             );
     }

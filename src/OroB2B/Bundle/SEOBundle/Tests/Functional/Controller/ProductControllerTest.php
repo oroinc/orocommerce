@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\PhpUtils\ArrayUtil;
-
-use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
+        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
     }
 
     public function testViewProduct()

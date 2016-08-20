@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Duplicator;
+namespace Oro\Bundle\ProductBundle\Duplicator;
 
 interface SkuIncrementorInterface
 {

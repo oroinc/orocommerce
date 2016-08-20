@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Entity;
+namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 
 /**
  * Entity for caching shopping list subtotals data by currency
@@ -20,7 +20,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubt
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository")
  **/
 class ShoppingListTotal
 {
@@ -36,7 +36,7 @@ class ShoppingListTotal
     /**
      * @var ShoppingList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="totals")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="totals")
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $shoppingList;

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
 
 /**
  * @dbIsolation
@@ -14,7 +13,7 @@ class CategoryControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
+        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
     public function testEditCategory()

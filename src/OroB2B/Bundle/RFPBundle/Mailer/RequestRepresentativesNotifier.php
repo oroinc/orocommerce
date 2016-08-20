@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Mailer;
+namespace Oro\Bundle\RFPBundle\Mailer;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\Request;
 
 class RequestRepresentativesNotifier
 {

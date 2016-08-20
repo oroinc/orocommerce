@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Compiler;
+namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
-use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
+use Oro\Bundle\PricingBundle\Expression\RelationNode;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceListRuleCompiler extends AbstractRuleCompiler
 {

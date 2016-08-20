@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form;
+namespace Oro\Bundle\PricingBundle\Form;
 
 use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListWithPriorityCollectionHandler
 {

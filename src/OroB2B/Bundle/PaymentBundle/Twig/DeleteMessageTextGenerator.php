@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Twig;
+namespace Oro\Bundle\PaymentBundle\Twig;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextGenerator
 {
@@ -46,7 +45,7 @@ class DeleteMessageTextGenerator
         $accountGroupFilterUrlHtml = $this->generateAccountGroupFilterUrl($paymentTerm);
         $accountFilterUrlHtml = $this->generateAccountFilterUrl($paymentTerm);
 
-        $message = $this->twig->render('@OroB2BPayment/PaymentTerm/deleteMessage.html.twig', [
+        $message = $this->twig->render('@OroPayment/PaymentTerm/deleteMessage.html.twig', [
             'accountFilterUrl' => $accountFilterUrlHtml,
             'accountGroupFilterUrl' => $accountGroupFilterUrlHtml
         ]);
@@ -61,8 +60,8 @@ class DeleteMessageTextGenerator
     public function getDeleteMessageTextForDataGrid($paymentTermId)
     {
         $paymentRepository = $this->managerRegistry
-            ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
-            ->getRepository('OroB2BPaymentBundle:PaymentTerm');
+            ->getManagerForClass('OroPaymentBundle:PaymentTerm')
+            ->getRepository('OroPaymentBundle:PaymentTerm');
         $paymentTerm = $paymentRepository->find($paymentTermId);
 
         return $this->getDeleteMessageText($paymentTerm);
@@ -82,7 +81,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GROUP_GRID_NAME,
             static::ACCOUNT_GROUP_GRID_ROUTE,
-            'orob2b.account.accountgroup.entity_label'
+            'oro.account.accountgroup.entity_label'
         );
     }
 
@@ -100,7 +99,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GRID_NAME,
             static::ACCOUNT_GRID_ROUTE,
-            'orob2b.account.entity_label'
+            'oro.account.entity_label'
         );
     }
 
@@ -135,7 +134,7 @@ class DeleteMessageTextGenerator
     {
         $urlParameters = $this->getParameters($gridName, $paymentTermId);
         $url = $this->router->generate($gridRoute, $urlParameters, true);
-        $htmlFilterUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
+        $htmlFilterUrl = $this->twig->render('@OroPayment/PaymentTerm/linkWithTarget.html.twig', [
             'urlPath' => $url,
             'label' => $label
         ]);

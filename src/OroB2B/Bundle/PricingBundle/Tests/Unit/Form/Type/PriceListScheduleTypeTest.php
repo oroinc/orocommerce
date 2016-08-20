@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 
 class PriceListScheduleTypeTest extends FormIntegrationTestCase
 {

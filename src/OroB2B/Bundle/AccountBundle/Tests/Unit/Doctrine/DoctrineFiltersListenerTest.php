@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Doctrine;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Doctrine;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\FilterCollection;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\Bundle\AccountBundle\Doctrine\DoctrineFiltersListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter;
+use Oro\Bundle\AccountBundle\Doctrine\DoctrineFiltersListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter;
 
 class DoctrineFiltersListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -87,7 +87,7 @@ class DoctrineFiltersListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getFrontendHelperMock()
     {
-        return $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        return $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
     }

@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -32,7 +32,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             $this->doctrineHelper,
             $this->productClass
         );
-        $this->extension->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $this->extension->setDataClass('Oro\Bundle\OrderBundle\Entity\Order');
     }
 
     public function testBuild()

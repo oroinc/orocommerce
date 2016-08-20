@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @ORM\Table(name="orob2b_price_rule")
@@ -40,7 +40,7 @@ class PriceRule
     /**
      * @var ProductUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
      */
     protected $productUnit;
@@ -63,7 +63,7 @@ class PriceRule
      * @var Collection|PriceRuleLexeme[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme",
      *      mappedBy="priceRule",
      *      cascade={"ALL"},
      *      orphanRemoval=true
@@ -74,7 +74,7 @@ class PriceRule
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;

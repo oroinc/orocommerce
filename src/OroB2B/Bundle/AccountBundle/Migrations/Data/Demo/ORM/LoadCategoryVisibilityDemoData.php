@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -9,12 +9,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -37,7 +37,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
+            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
             __NAMESPACE__ . '\LoadAccountDemoData'
         ];
     }
@@ -48,7 +48,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BAccountBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
+        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
@@ -93,7 +93,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
      */
     protected function getCategory(ObjectManager $manager, $title)
     {
-        return $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
+        return $manager->getRepository('OroCatalogBundle:Category')->findOneByDefaultTitle($title);
     }
 
     /**
@@ -103,7 +103,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
      */
     protected function getAccount(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroAccountBundle:Account')->findOneBy(['name' => $name]);
     }
 
     /**
@@ -113,7 +113,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
      */
     protected function getAccountGroup(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
     }
 
     /**

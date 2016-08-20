@@ -6,7 +6,7 @@ define([
 
     var constraint = _.clone(urlConstraint);
 
-    constraint[0] = 'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\Url';
+    constraint[0] = 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Url';
 
     return constraint;
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,12 +9,12 @@ class LineItemProduct extends Constraint
     /**
      * @var string
      */
-    public $emptyProductMessage = 'orob2b.order.orderlineitem.product.blank';
+    public $emptyProductMessage = 'oro.order.orderlineitem.product.blank';
 
     /**
      * @var string
      */
-    public $priceNotFoundMessage = 'orob2b.order.orderlineitem.product_price.blank';
+    public $priceNotFoundMessage = 'oro.order.orderlineitem.product_price.blank';
 
     /**
      * {@inheritdoc}

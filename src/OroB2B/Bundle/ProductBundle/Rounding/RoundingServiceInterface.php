@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Rounding;
+namespace Oro\Bundle\ProductBundle\Rounding;
 
-use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
+use Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
 interface RoundingServiceInterface
 {

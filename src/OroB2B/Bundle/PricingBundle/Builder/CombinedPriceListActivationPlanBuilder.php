@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListSequenceMember;
-use OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
 class CombinedPriceListActivationPlanBuilder
 {
@@ -179,7 +178,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->combinedPriceListRepository) {
             $this->combinedPriceListRepository = $this->doctrineHelper
-                ->getEntityRepository('OroB2BPricingBundle:CombinedPriceList');
+                ->getEntityRepository('OroPricingBundle:CombinedPriceList');
         }
 
         return $this->combinedPriceListRepository;
@@ -192,7 +191,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->priceListScheduleRepository) {
             $this->priceListScheduleRepository = $this->doctrineHelper
-                ->getEntityRepository('OroB2BPricingBundle:PriceListSchedule');
+                ->getEntityRepository('OroPricingBundle:PriceListSchedule');
         }
 
         return $this->priceListScheduleRepository;
@@ -205,7 +204,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->CPLToPriceListRepository) {
             $this->CPLToPriceListRepository = $this->doctrineHelper
-                ->getEntityRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
+                ->getEntityRepository('OroPricingBundle:CombinedPriceListToPriceList');
         }
 
         return $this->CPLToPriceListRepository;
@@ -218,7 +217,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->CPLActivationRuleRepository) {
             $this->CPLActivationRuleRepository = $this->doctrineHelper
-                ->getEntityRepository('OroB2BPricingBundle:CombinedPriceListActivationRule');
+                ->getEntityRepository('OroPricingBundle:CombinedPriceListActivationRule');
         }
         return $this->CPLActivationRuleRepository;
     }
@@ -230,7 +229,7 @@ class CombinedPriceListActivationPlanBuilder
     {
         if (!$this->manager) {
             $this->manager = $this->doctrineHelper
-                ->getEntityManagerForClass('OroB2BPricingBundle:CombinedPriceListActivationRule');
+                ->getEntityManagerForClass('OroPricingBundle:CombinedPriceListActivationRule');
         }
 
         return $this->manager;

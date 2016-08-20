@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Method;
+namespace Oro\Bundle\ShippingBundle\Method;
 
 class ShippingMethodRegistry
 {

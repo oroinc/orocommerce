@@ -1,24 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -42,7 +41,7 @@ class RequestProductTypeTest extends AbstractTest
         $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType     = new RequestProductType($this->translator);
-        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
     }
@@ -146,7 +145,7 @@ class RequestProductTypeTest extends AbstractTest
     {
         /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -158,7 +157,7 @@ class RequestProductTypeTest extends AbstractTest
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         $requestProductType = new BaseRequestProductType($productUnitLabelFormatter);
-        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
             new PreloadedExtension(

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\DataTransformer;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 {

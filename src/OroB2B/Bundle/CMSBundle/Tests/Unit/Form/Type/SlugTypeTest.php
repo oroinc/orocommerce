@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CMSBundle\Form\Type\SlugType;
+use Oro\Bundle\CMSBundle\Form\Type\SlugType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;

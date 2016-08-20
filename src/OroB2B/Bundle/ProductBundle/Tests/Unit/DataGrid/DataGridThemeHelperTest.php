@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\DataGrid;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
 class DataGridThemeHelperTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStub extends Product
 {

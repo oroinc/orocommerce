@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension;
 
 class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensionTest
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Rounding;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Rounding\AbstractRoundingService;
+use Oro\Bundle\ProductBundle\Rounding\AbstractRoundingService;
 
 abstract class AbstractRoundingServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -163,7 +162,7 @@ abstract class AbstractRoundingServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
+     * @throws \Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
      */
     public function testInvalidRoundingTypeException()
     {
@@ -172,7 +171,7 @@ abstract class AbstractRoundingServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(10);
 
         $this->setExpectedException(
-            '\OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException',
+            '\Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException',
             'The type of the rounding is not valid "intl" rounding mode.'
         );
 

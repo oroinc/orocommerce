@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Condition;
+namespace Oro\Bundle\PaymentBundle\Condition;
 
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 /**
  * Check payment method enabled and applicable

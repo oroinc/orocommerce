@@ -15,17 +15,17 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('orob2b.cms.page.title.label'|trans, entity.title) }}
+            {{ UI.renderProperty('oro.cms.page.title.label'|trans, entity.title) }}
 
             {% set slugUrl %}
                 <a href="{{ app.request.getUriForPath(entity.currentSlug.getUrl) }}" target="_blank">
                     {{ entity.currentSlug.getUrl }}
                 </a>
             {% endset %}
-            {{ UI.renderHtmlProperty('orob2b.cms.page.current_slug.label'|trans, slugUrl) }}
+            {{ UI.renderHtmlProperty('oro.cms.page.current_slug.label'|trans, slugUrl) }}
 
             {% if entity.relatedSlugs %}
-                {{ UI.renderHtmlProperty('orob2b.cms.page.related_slugs.label'|trans, pageRelatedSlugs) }}
+                {{ UI.renderHtmlProperty('oro.cms.page.related_slugs.label'|trans, pageRelatedSlugs) }}
             {% endif %}
         </div>
     </div>

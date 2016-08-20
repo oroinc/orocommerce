@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\Strategy;
+namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class ProductPriceResetStrategy extends ProductPriceImportStrategy
 {

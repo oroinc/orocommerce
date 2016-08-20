@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {

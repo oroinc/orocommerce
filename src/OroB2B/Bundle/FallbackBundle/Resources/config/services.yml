@@ -1,6 +1,6 @@
 services:
     orob2b_fallback.form.type.website_collection:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType'
+        class: 'Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType'
         arguments:
             - "@doctrine"
         calls:
@@ -9,6 +9,6 @@ services:
             - { name: form.type, alias: orob2b_fallback_website_collection }
 
     orob2b_fallback.form.type.website_property:
-        class: 'OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType'
+        class: 'Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType'
         tags:
             - { name: form.type, alias: orob2b_fallback_website_property }

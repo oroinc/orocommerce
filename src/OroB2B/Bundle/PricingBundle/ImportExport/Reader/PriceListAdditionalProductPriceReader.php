@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\Reader;
+namespace Oro\Bundle\PricingBundle\ImportExport\Reader;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -8,10 +8,9 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
-use OroB2B\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
 
 class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 {
@@ -60,13 +59,13 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
     {
         if ($this->priceListId) {
             /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
+            $em = $this->registry->getManagerForClass('OroPricingBundle:PriceListToProduct');
 
             /** @var PriceListToProductRepository $repository */
-            $repository = $em->getRepository('OroB2BPricingBundle:PriceListToProduct');
+            $repository = $em->getRepository('OroPricingBundle:PriceListToProduct');
             
             /** @var PriceList $priceList */
-            $priceList = $em->getReference('OroB2BPricingBundle:PriceList', $this->priceListId);
+            $priceList = $em->getReference('OroPricingBundle:PriceList', $this->priceListId);
 
             return new AdditionalProductPricesIterator(
                 $repository->getProductsWithoutPrices($priceList),

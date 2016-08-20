@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
 use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
 
-use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
-use OroB2B\Bundle\CatalogBundle\Twig\CategoryExtension;
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
 
 class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->categoryTreeHandler = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
+        $this->categoryTreeHandler = $this->getMockBuilder('Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -82,7 +82,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 1,
                 'parent' => '#',
-                'text' => '[trans]orob2b.catalog.frontend.category.master_category.label[/trans]',
+                'text' => '[trans]oro.catalog.frontend.category.master_category.label[/trans]',
                 'state' => [
                     'opened' => true,
                 ],
@@ -93,7 +93,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createTree')
             ->will($this->returnValue($tree));
 
-        $result = $this->extension->getCategoryList('orob2b.catalog.frontend.category.master_category.label');
+        $result = $this->extension->getCategoryList('oro.catalog.frontend.category.master_category.label');
         $this->assertEquals($tree, $result);
     }
 }

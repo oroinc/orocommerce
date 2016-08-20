@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {

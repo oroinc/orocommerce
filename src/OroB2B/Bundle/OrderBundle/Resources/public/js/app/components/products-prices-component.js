@@ -3,12 +3,12 @@ define(function(require) {
 
     var ProductsPricesComponent;
     var mediator = require('oroui/js/mediator');
-    var BaseProductsPricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
+    var BaseProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
 
     /**
-     * @export orob2border/js/app/components/entry-point-component
-     * @extends orob2bpricing.app.components.ProductsPricesComponent
-     * @class orob2border.app.components.ProductsPricesComponent
+     * @export oroorder/js/app/components/entry-point-component
+     * @extends oropricing.app.components.ProductsPricesComponent
+     * @class oroorder.app.components.ProductsPricesComponent
      */
     ProductsPricesComponent = BaseProductsPricesComponent.extend({
         initFieldsListeners: function() {

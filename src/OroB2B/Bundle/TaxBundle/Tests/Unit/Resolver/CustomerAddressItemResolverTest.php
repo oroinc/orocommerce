@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\Address;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
+use Oro\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 
 class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
 {

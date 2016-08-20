@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @ORM\Entity(
- *    repositoryClass="OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository"
+ *    repositoryClass="Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository"
  * )
  * @ORM\Table(name="orob2b_acc_grp_ctgr_vsb_resolv")
  */
@@ -20,7 +20,7 @@ class AccountGroupCategoryVisibilityResolved extends BaseCategoryVisibilityResol
      * @var AccountGroup
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountGroup;
@@ -28,7 +28,7 @@ class AccountGroupCategoryVisibilityResolved extends BaseCategoryVisibilityResol
     /**
      * @var AccountGroupCategoryVisibility
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility")
      * @ORM\JoinColumn(name="source_category_visibility", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $sourceCategoryVisibility;

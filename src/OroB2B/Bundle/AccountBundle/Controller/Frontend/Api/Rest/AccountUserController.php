@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,7 +26,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      * @Acl(
      *      id="orob2b_account_frontend_account_user_delete",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="DELETE",
      *      group_name="commerce"
      * )

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 
 class FreightClassTest extends \PHPUnit_Framework_TestCase
 {

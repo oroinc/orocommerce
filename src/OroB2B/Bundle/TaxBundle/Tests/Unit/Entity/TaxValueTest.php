@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 class TaxValueTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +14,7 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['result', new Result(['test' => 'value']), false],
-            ['entityClass', 'OroB2B\Bundle\SomeBundle\Entity\EntityClass'],
+            ['entityClass', 'Oro\Bundle\SomeBundle\Entity\EntityClass'],
             ['entityId', 5],
             ['id', 5],
             ['address', 'Kiev, SomeStreet str., 55'],

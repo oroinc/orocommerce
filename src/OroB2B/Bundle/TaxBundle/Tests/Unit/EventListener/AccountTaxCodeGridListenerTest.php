@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener;
+use Oro\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener;
 
 class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 {
@@ -23,7 +22,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
             ->getMock();
 
         $this->doctrineHelper->expects($this->once())->method('getEntityMetadataForClass')
-            ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
+            ->with('Oro\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
 
         $metadata->expects($this->once())->method('getAssociationsByTargetClass')->with('\stdClass')
             ->willReturn(['stdClass' => ['fieldName' => 'accountGroups']]);
@@ -40,7 +39,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                         'join' => [
                             'left' => [
                                 [
-                                    'join' => 'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
+                                    'join' => 'Oro\Bundle\TaxBundle\Entity\AbstractTaxCode',
                                     'alias' => 'accountGroupTaxCodes',
                                     'conditionType' => 'WITH',
                                     'condition' => 'account_group MEMBER OF accountGroupTaxCodes.accountGroups'
@@ -51,7 +50,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                     ],
                 ],
                 'columns' => [
-                    'accountGroupTaxCode' => ['label' => 'orob2b.tax.taxcode.accountgroup.label', 'renderable' => false]
+                    'accountGroupTaxCode' => ['label' => 'oro.tax.taxcode.accountgroup.label', 'renderable' => false]
                 ],
                 'sorters' => [
                     'columns' => [
@@ -77,7 +76,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
     {
         return new AccountTaxCodeGridListener(
             $this->doctrineHelper,
-            'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
+            'Oro\Bundle\TaxBundle\Entity\AbstractTaxCode',
             '\stdClass'
         );
     }

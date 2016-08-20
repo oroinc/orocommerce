@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 abstract class AbstractSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ abstract class AbstractSubtotalProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->currencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->currencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
     }

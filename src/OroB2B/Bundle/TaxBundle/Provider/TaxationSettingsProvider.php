@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
+use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
+namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CurrencyProvider
 {

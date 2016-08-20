@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Autocomplete;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
@@ -14,8 +14,7 @@ use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-
-use OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler;
+use Oro\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler;
 
 class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {

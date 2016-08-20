@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_1;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 

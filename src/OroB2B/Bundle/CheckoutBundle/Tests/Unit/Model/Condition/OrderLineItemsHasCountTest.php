@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Condition;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Condition;
 
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount;
 
 class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->manager = $this
-            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
+            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
             ->disableOriginalConstructor()->getMock();
 
         $this->condition = new OrderLineItemsHasCount($this->manager);
@@ -68,7 +68,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'Oro\Component\ConfigExpression\Exception\InvalidArgumentException',
-            'Entity must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface'
+            'Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface'
         );
         $context = [];
         $this->condition->initialize(['entity' => []]);
@@ -83,7 +83,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
     public function testEvaluate(array $lineItems, $expectedResult)
     {
         /** @var CheckoutInterface|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface');
+        $checkout = $this->getMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface');
         $context = [];
         $this->condition->initialize(['entity' => $checkout]);
         $this->manager->expects($this->once())
@@ -100,7 +100,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'lineItems' => [
-                    $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem'),
+                    $this->getMock('Oro\Bundle\OrderBundle\Entity\OrderLineItem'),
                 ],
                 'expectedResult' => true,
             ],

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
 class ProductVariantField extends Constraint
 {
     /** @var string */
-    public $message = 'orob2b.product.product_variant_field.message';
+    public $message = 'oro.product.product_variant_field.message';
 
     /**
      * {@inheritdoc}

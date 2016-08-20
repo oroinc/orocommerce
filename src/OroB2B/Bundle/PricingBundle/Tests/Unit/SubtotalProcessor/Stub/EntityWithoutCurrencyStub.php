@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
 class EntityWithoutCurrencyStub implements LineItemsAwareInterface
 {

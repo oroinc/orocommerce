@@ -1,4 +1,4 @@
-OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm:
+Oro\Bundle\PaymentBundle\Entity\PaymentTerm:
     properties:
         label:
             - NotBlank: ~

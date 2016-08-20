@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class OrderLineItemFormExtension extends AbstractTypeExtension
 {
@@ -52,7 +52,7 @@ class OrderLineItemFormExtension extends AbstractTypeExtension
         if ($this->warehouseCounter->areMoreWarehouses()) {
             $builder->add('warehouse', 'entity', [
                 'class' => Warehouse::class,
-                'label' => 'orob2b.warehouse.form.order.label',
+                'label' => 'oro.warehouse.form.order.label',
                 'required' => false
             ]);
         }
@@ -70,7 +70,7 @@ class OrderLineItemFormExtension extends AbstractTypeExtension
                     'warehouse' => [
                         'data' => ['warehouse' => []],
                         'order' => 11,
-                        'label' => 'orob2b.warehouse.form.order.label'
+                        'label' => 'oro.warehouse.form.order.label'
                     ],
                 ]
             );

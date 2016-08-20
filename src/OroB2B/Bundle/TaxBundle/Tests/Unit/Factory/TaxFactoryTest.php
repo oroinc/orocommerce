@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Factory;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Factory;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
-use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
+use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class TaxFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,11 +27,11 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
     public function testAddMapperAndCreate()
     {
         /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
-        $mapper = $this->getMock('OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface');
+        $mapper = $this->getMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())
             ->method('getProcessingClassName')
-            ->willReturn('OroB2B\Bundle\OrderBundle\Entity\Order');
+            ->willReturn('Oro\Bundle\OrderBundle\Entity\Order');
 
         $mapper
             ->expects($this->exactly(2))
@@ -47,17 +47,17 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
 
         $object->setSubtotal(45.5);
         $taxable = $this->factory->create($object);
-        $this->assertInstanceOf('\OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertInstanceOf('\Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
 
         $object->setSubtotal(50);
         $anotherTaxable = $this->factory->create($object);
 
-        $this->assertInstanceOf('\OroB2B\Bundle\TaxBundle\Model\Taxable', $anotherTaxable);
+        $this->assertInstanceOf('\Oro\Bundle\TaxBundle\Model\Taxable', $anotherTaxable);
         $this->assertNotSame($taxable, $anotherTaxable);
     }
 
     /**
-     * @expectedException \OroB2B\Bundle\TaxBundle\Mapper\UnmappableArgumentException
+     * @expectedException \Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException
      * @expectedExceptionMessage Can't find Tax Mapper for object "stdClass"
      */
     public function testCreateThrowExceptionWithoutMapper()
@@ -70,7 +70,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->factory->supports(new \stdClass()));
 
         /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
-        $mapper = $this->getMock('OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface');
+        $mapper = $this->getMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())
             ->method('getProcessingClassName')

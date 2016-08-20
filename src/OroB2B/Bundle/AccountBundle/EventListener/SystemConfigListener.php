@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\AccountBundle\DependencyInjection\OroB2BAccountExtension;
+use Oro\Bundle\AccountBundle\DependencyInjection\OroAccountExtension;
 
 class SystemConfigListener
 {
@@ -68,7 +67,7 @@ class SystemConfigListener
      */
     protected function getSettingsKey()
     {
-        $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroB2BAccountExtension::ALIAS, self::SETTING]);
+        $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroAccountExtension::ALIAS, self::SETTING]);
 
         return $settingsKey;
     }

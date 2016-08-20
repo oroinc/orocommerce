@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListenerTest extends AbstractProductImportEventListenerTest
 {
-    const CATEGORY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
 
     /**
      * @var ProductNormalizerEventListener

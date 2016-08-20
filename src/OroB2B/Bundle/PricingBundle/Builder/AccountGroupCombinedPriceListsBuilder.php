@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @method PriceListToAccountGroupRepository getPriceListToEntityRepository()

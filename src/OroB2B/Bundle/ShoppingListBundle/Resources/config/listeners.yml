@@ -1,12 +1,12 @@
 services:
     orob2b_shopping_list.event_listener.shopping_list_listener:
-        class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
         public: false
         tags:
             - { name: doctrine.event_listener, event: postRemove }
 
     orob2b_shopping_list.event_listener.shopping_list_total_listener:
-        class: 'OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
         public: true
         arguments:
             - '@doctrine'

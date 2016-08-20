@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -43,7 +43,7 @@ class ProductBySkuValidator extends ConstraintValidator
             if ($products !== null) {
                 $valid = isset($products[strtoupper($value)]);
             } else {
-                $product = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
+                $product = $this->registry->getRepository('OroProductBundle:Product')->findOneBySku($value);
                 $valid = !empty($product);
             }
 

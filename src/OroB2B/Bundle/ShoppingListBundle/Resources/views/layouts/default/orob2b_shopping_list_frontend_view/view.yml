@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'orob2b.shoppinglist.entity_plural_label'
+            optionValue: 'oro.shoppinglist.entity_plural_label'
         - '@addTree':
             items:
                 shopping_list_view_container:
@@ -64,7 +64,7 @@ layout:
                         events:
                             - 'frontend:item:delete'
                             - 'frontend:shopping-list-item-quantity:update'
-                        entityClassName: 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                        entityClassName: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
                         entityId: '=data["entity"].getId()'
                         skipMaskView: true
                 shopping_list_combined_button:

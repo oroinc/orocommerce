@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Psr\Log\LoggerInterface;
@@ -8,15 +8,14 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\OroB2B\Bundle\AccountBundle\Entity\AccountUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\AccountBundle\Entity\AccountUserManager
      */
     protected $userManager;
 
@@ -59,7 +58,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
 
         $this->entity = new AccountUser();
 
-        $this->userManager = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

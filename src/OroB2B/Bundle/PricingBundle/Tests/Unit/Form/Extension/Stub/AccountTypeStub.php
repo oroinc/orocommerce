@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
 
 class AccountTypeStub extends AbstractType
 {
@@ -22,6 +22,6 @@ class AccountTypeStub extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', 'text', ['label' => 'orob2b.account.name.label']);
+        $builder->add('name', 'text', ['label' => 'oro.account.name.label']);
     }
 }

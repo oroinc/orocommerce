@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Form\Type;
+namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class SlugType extends AbstractType
 {
@@ -29,7 +29,7 @@ class SlugType extends AbstractType
                 'slug',
                 'text',
                 [
-                    'label' => 'orob2b.redirect.slug.entity_label',
+                    'label' => 'oro.redirect.slug.entity_label',
                     'constraints' => [new UrlSafe()]
                 ]
             );
@@ -38,8 +38,8 @@ class SlugType extends AbstractType
             $builder
                 ->add('mode', 'choice', [
                     'choices' => [
-                        self::MODE_OLD => 'orob2b.cms.slug.leave_as_is',
-                        self::MODE_NEW => 'orob2b.cms.slug.update_to'
+                        self::MODE_OLD => 'oro.cms.slug.leave_as_is',
+                        self::MODE_NEW => 'oro.cms.slug.update_to'
                     ],
                     'data' => self::MODE_OLD,
                     'required' => true,
@@ -47,7 +47,7 @@ class SlugType extends AbstractType
                     'multiple' => false
                 ])
                 ->add('redirect', 'checkbox', [
-                    'required' => false, 'label' => 'orob2b.cms.slug.redirect'
+                    'required' => false, 'label' => 'oro.cms.slug.redirect'
                 ]);
         } else {
             $builder
@@ -66,7 +66,7 @@ class SlugType extends AbstractType
                         'slug',
                         'text',
                         [
-                            'label' => 'orob2b.redirect.slug.entity_label',
+                            'label' => 'oro.redirect.slug.entity_label',
                             'constraints' => [new UrlSafe()]
                         ]
                     );

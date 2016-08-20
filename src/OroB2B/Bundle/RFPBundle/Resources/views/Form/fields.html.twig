@@ -18,7 +18,7 @@
 {% endmacro %}
 
 {% block orob2b_rfp_request_widget %}
-    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+    <div class="rfp-request-widget" data-page-component-module="oroaccount/js/app/components/account-selection-component">
         {{ form(form) }}
     </div>
 {% endblock %}
@@ -40,8 +40,8 @@
             {% endif %}>
                 <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.product'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.rfp.frontend.request.lineitem.product'|trans }}</span></th>
+                        <th><span>{{ 'oro.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -55,7 +55,7 @@
                 {% endif %}
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection table" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.rfp.frontend.request.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection table" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -103,7 +103,7 @@
                                data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
                         <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
                         <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                        <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                     </label>
 
                     <div class="form-input form-input_textarea" data-role="editor">
@@ -120,7 +120,7 @@
     <div class="rfp-lineitems"
          data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
-             view: 'orob2brfp/js/app/views/line-items-view'
+             view: 'ororfp/js/app/views/line-items-view'
          }|json_encode }}"
          data-layout="separate">
         {{ block('orob2b_rfp_lineitem_collection_widget') }}
@@ -139,9 +139,9 @@
             <table class="grid table-hover table table-bordered table-condensed">
                 <thead>
                 <tr>
-                    <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.product'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.notes'|trans }}</span></th>
+                    <th><span>{{ 'oro.rfp.frontend.request.lineitem.product'|trans }}</span></th>
+                    <th><span>{{ 'oro.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.rfp.frontend.request.lineitem.notes'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -156,7 +156,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.rfp.frontend.request.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -203,7 +203,7 @@
         {{ form_errors(form.requestProductItems) }}
     </td>
     <td class="rfp-lineitem-notes">
-        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
+        <div data-page-component-module="oroorder/js/app/components/notes-component" style="display: none;">
             {{ form_widget(form.comment) }}
             {{ form_errors(form.comment) }}
         </div>
@@ -222,8 +222,8 @@
             <table class="table-hover table table-bordered rfp-lineitem-requested">
                 <thead>
                 <tr>
-                    <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
-                    <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
+                    <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
+                    <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -238,7 +238,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -255,8 +255,8 @@
             <table class="table-hover table table-bordered rfp-lineitem-requested">
                 <thead>
                     <tr>
-                        <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
-                        <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
+                        <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
+                        <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
                     <th></th>
                     </tr>
                 </thead>
@@ -277,7 +277,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -294,8 +294,8 @@
             <table class="table-hover table table-bordered rfp-lineitem-requested">
                 <thead>
                 <tr>
-                    <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
-                    <th colspan="2"><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
+                    <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
+                    <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -310,7 +310,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -362,7 +362,7 @@
         } %}
 
         <table class="grid table table-hover table-bordered order-line-item-offers"
-               data-page-component-module="orob2brfp/js/app/components/order-line-item-offers"
+               data-page-component-module="ororfp/js/app/components/order-line-item-offers"
                data-page-component-options="{{ page_component_options|json_encode }}">
             <tbody>
             {% for child in form.children %}

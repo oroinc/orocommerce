@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes;
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypesValidator;
+use Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes;
+use Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypesValidator;
 
 class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +27,7 @@ class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'Symfony\Component\Validator\Exception\ValidatorException',
-            'Expected argument of type "OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress", "array" given'
+            'Expected argument of type "Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress", "array" given'
         );
 
         /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint */
@@ -49,7 +48,7 @@ class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('addViolation');
 
         /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint */
-        $constraint = $this->getMock('OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes');
+        $constraint = $this->getMock('Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes');
         $validator = new UniqueAddressDefaultTypesValidator();
         $validator->initialize($context);
 
@@ -105,7 +104,7 @@ class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
             ->with('Several addresses have the same default type {{ types }}.', ['{{ types }}' => $types]);
 
         /** @var UniqueAddressDefaultTypes|\PHPUnit_Framework_MockObject_MockObject $constraint */
-        $constraint = $this->getMock('OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes');
+        $constraint = $this->getMock('Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes');
         $validator = new UniqueAddressDefaultTypesValidator();
         $validator->initialize($context);
 
@@ -145,7 +144,7 @@ class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getDefaultTypedAddressMock(array $addressTypes, $isEmpty = false)
     {
-        $address = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress')
+        $address = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress')
             ->disableOriginalConstructor()
             ->setMethods(['getDefaults', 'isEmpty'])
             ->getMockForAbstractClass();

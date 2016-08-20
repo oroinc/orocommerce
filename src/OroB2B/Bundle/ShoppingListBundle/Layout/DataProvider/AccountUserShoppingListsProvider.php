@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -8,10 +8,9 @@ use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 
 class AccountUserShoppingListsProvider
 {

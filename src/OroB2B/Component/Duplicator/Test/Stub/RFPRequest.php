@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Duplicator\Test\Stub;
+namespace Oro\Component\Duplicator\Test\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
 

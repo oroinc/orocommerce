@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -9,9 +9,8 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 
 class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -84,7 +83,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToAccount'
             ]
         );
 
@@ -114,7 +113,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($queryBuilder);
 
         $repository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -127,18 +126,18 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->with('OroPricingBundle:PriceListToAccount')
             ->willReturn($repository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->with('OroPricingBundle:PriceListToAccount')
             ->willReturn($em);
 
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroB2BPricingBundle:PriceListToAccount'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToAccount'
             ]
         );
 

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 
 class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, QuantityAwareInterface
 {

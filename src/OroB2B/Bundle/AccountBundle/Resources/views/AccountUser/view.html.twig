@@ -6,7 +6,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_account_account_user_index'),
-        'indexLabel': 'orob2b.account.accountuser.entity_plural_label'|trans,
+        'indexLabel': 'oro.account.accountuser.entity_plural_label'|trans,
         'entityTitle': entity.username|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -16,14 +16,14 @@
     {{ parent() }}
     <div class="pull-left">
         {% if entity.enabled %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.account.accountuser.profile.enabled.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.account.accountuser.profile.enabled.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.account.accountuser.profile.disabled.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.account.accountuser.profile.disabled.label'|trans }}</div>
         {% endif %}
         {% if entity.confirmed %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.account.accountuser.profile.confirmed.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.account.accountuser.profile.confirmed.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.account.accountuser.profile.unconfirmed.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.account.accountuser.profile.unconfirmed.label'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -31,8 +31,8 @@
 {% block stats %}
     <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
     <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
-    <li>{{ 'orob2b.account.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
-    <li>{{ 'orob2b.account.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+    <li>{{ 'oro.account.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.account.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
 {% endblock stats %}
 
 {% block content_data %}
@@ -48,13 +48,13 @@
             'widgetType': 'block',
             'contentClasses': [],
             'url': path('orob2b_account_account_user_address_book', {id: entity.id}),
-            'title': 'orob2b.account.accountuser.address_book.label'|trans
+            'title': 'oro.account.accountuser.address_book.label'|trans
         }) }}
     {% endset %}
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.account.sections.general'|trans,
+            'title': 'oro.account.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [accountUserInformationWidget]},

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceCriteria
 {

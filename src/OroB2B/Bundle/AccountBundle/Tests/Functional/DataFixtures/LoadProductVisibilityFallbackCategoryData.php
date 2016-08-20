@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,14 +10,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -80,7 +80,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     {
         return [
             __NAMESPACE__ . '\LoadCategoryVisibilityData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
         ];
     }
 
@@ -171,8 +171,8 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
      */
     protected function getWebsite()
     {
-        return $this->container->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+        return $this->container->get('doctrine')->getManagerForClass('OroWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => 'Default']);
     }
 }

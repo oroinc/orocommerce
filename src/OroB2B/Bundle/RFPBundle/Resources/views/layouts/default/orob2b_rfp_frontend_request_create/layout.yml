@@ -9,9 +9,9 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.rfp.request.entity_plural_label'
-                - 'orob2b.frontend.rfp.request.create_title.label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.rfp.request.entity_plural_label'
+                - 'oro.frontend.rfp.request.create_title.label'
 
         - '@setOption':
             id: page_title
@@ -22,4 +22,4 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.rfp.request.create_title.label'
+                label: 'oro.frontend.rfp.request.create_title.label'

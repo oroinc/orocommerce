@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture as DoctrineAbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;

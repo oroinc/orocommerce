@@ -1,12 +1,12 @@
-OroB2B\Bundle\ProductBundle\Entity\Product:
+Oro\Bundle\ProductBundle\Entity\Product:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
         sku:
             - NotBlank:
-                message: 'orob2b.product.sku.blank'
+                message: 'oro.product.sku.blank'
             - Length:
                 min: 3
                 max: 255
@@ -17,7 +17,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         unitPrecisions:
             - Count:
                 min: 1
-                minMessage: 'orob2b.product.unit_precisions_items.blank'
+                minMessage: 'oro.product.unit_precisions_items.blank'
         primaryUnitPrecision:
             - NotBlank: ~
         status:
@@ -37,9 +37,9 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Valid: ~
         images:
             - Valid: ~
-            - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
 
-OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
         code:
             - NotBlank: ~
@@ -50,9 +50,9 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
             - Range:
                 min: 0
                 max: 10
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
-OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     properties:
         visible:
             - Type:
@@ -62,48 +62,48 @@ OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
         product:
             - NotBlank: ~
 
-OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [ product, unit ]
     properties:
         unit:
             - NotBlank:
-                message: 'orob2b.product.productunit.unit.blank'
+                message: 'oro.product.productunit.unit.blank'
         precision:
             - NotBlank:
-                message: 'orob2b.product.productunit.precision.blank'
+                message: 'oro.product.productunit.precision.blank'
             - Range:
                 min: 0
                 max: 10
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
         conversionRate:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
-OroB2B\Bundle\ProductBundle\Entity\ProductImage:
+Oro\Bundle\ProductBundle\Entity\ProductImage:
     constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
     properties:
         product:
             - NotBlank: ~
 
-OroB2B\Bundle\ProductBundle\Model\ProductRow:
+Oro\Bundle\ProductBundle\Model\ProductRow:
     properties:
         productSku:
             - NotBlank: ~
         productQuantity:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
-OroB2B\Bundle\ProductBundle\Model\ProductLineItem:
+Oro\Bundle\ProductBundle\Model\ProductLineItem:
     properties:
         product:
             - NotBlank:
                 groups: [create, update, add_product]
         quantity:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
                 groups: [create, update, add_product]
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
                 groups: [create, update, add_product]
             - NotBlank:

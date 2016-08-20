@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,13 +9,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountFormViewListener;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\EventListener\AccountFormViewListener;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 class AccountFormViewListenerTest extends FormViewListenerTestCase
 {
@@ -92,13 +91,13 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
+                'OroPricingBundle:Account:price_list_view.html.twig',
                 [
                     'priceLists' => [
                         $priceListToAccount1,
                         $priceListToAccount2,
                     ],
-                    'fallback' => 'orob2b.pricing.fallback.current_account_only.label'
+                    'fallback' => 'oro.pricing.fallback.current_account_only.label'
                 ]
             )
             ->willReturn($templateHtml);
@@ -127,7 +126,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
+            ->with('OroPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
         $event = $this->createEvent($environment, $formView);
         $listener->onEntityEdit($event);
@@ -146,7 +145,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     protected function assertScrollDataPriceBlock(array $scrollData, $html)
     {
         $this->assertEquals(
-            'orob2b.pricing.productprice.entity_plural_label.trans',
+            'oro.pricing.productprice.entity_plural_label.trans',
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
         );
 
@@ -204,7 +203,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         array $websites
     ) {
         $priceToAccountRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -232,8 +231,8 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
             ->will(
                 $this->returnValueMap(
                     [
-                        ['OroB2BPricingBundle:PriceListToAccount', $priceToAccountRepository],
-                        ['OroB2BPricingBundle:PriceListAccountFallback', $fallbackRepository],
+                        ['OroPricingBundle:PriceListToAccount', $priceToAccountRepository],
+                        ['OroPricingBundle:PriceListAccountFallback', $fallbackRepository],
                     ]
                 )
             );

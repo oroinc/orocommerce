@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\Stub;
 
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 
 class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
 {

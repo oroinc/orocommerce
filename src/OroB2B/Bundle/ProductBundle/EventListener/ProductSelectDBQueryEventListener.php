@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductSelectDBQueryEventListener
 {

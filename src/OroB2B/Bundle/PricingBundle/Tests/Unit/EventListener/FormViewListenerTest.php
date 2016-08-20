@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -12,12 +12,11 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
@@ -55,7 +54,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BProductBundle:Product', $productId)
+            ->with('OroProductBundle:Product', $productId)
             ->willReturn($product);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
@@ -86,8 +85,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturnMap([
-                ['OroB2BPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
-                ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceAttributeProductPriceRepository]
+                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
+                ['OroPricingBundle:PriceAttributeProductPrice', $priceAttributeProductPriceRepository]
             ]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
@@ -95,7 +94,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPricingBundle:Product:prices_view.html.twig',
+                'OroPricingBundle:Product:prices_view.html.twig',
                 [
                     'entity' => $product,
                     'productUnits' => [],
@@ -121,7 +120,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
+            ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);
@@ -143,7 +142,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     protected function assertScrollDataPriceBlock(array $scrollData, $html)
     {
         $this->assertEquals(
-            'orob2b.pricing.productprice.entity_plural_label.trans',
+            'oro.pricing.productprice.entity_plural_label.trans',
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
         );
         $this->assertEquals(

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -13,20 +13,19 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceRuleType;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
-    const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
+    const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * @var PriceListType

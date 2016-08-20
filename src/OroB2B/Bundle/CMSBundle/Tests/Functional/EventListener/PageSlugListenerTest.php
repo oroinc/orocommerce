@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Functinal\EventListener;
+namespace Oro\Bundle\CMSBundle\Tests\Functinal\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class PageSlugListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page');
+        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page');
     }
 
     public function testPersistPageSlug()
@@ -47,7 +46,7 @@ class PageSlugListenerTest extends WebTestCase
         // make sure data persisted correctly
         $this->entityManager->clear();
 
-        $persistedPage = $this->entityManager->find('OroB2BCMSBundle:Page', $pageId);
+        $persistedPage = $this->entityManager->find('OroCMSBundle:Page', $pageId);
         $persistedPageSlug = $persistedPage->getCurrentSlug();
 
         $this->assertEquals($expectedRouteName, $persistedPageSlug->getRouteName());
@@ -62,7 +61,7 @@ class PageSlugListenerTest extends WebTestCase
      */
     public function testUpdatePageSlug($pageId)
     {
-        $page = $this->entityManager->find('OroB2BCMSBundle:Page', $pageId);
+        $page = $this->entityManager->find('OroCMSBundle:Page', $pageId);
 
         $currentSlug = $page->getCurrentSlug();
         $currentSlug->setRouteName('incorrect_route')
@@ -88,7 +87,7 @@ class PageSlugListenerTest extends WebTestCase
         // make sure data updated correctly
         $this->entityManager->clear();
 
-        $updatedPage = $this->entityManager->find('OroB2BCMSBundle:Page', $pageId);
+        $updatedPage = $this->entityManager->find('OroCMSBundle:Page', $pageId);
 
         foreach ($updatedPage->getSlugs() as $slug) {
             $this->assertEquals($expectedRouteName, $slug->getRouteName());
@@ -131,8 +130,8 @@ class PageSlugListenerTest extends WebTestCase
         // make sure data updated correctly
         $this->entityManager->clear();
 
-        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $pageSlugId));
-        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage1SlugId));
-        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage2SlugId));
+        $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $pageSlugId));
+        $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $childPage1SlugId));
+        $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $childPage2SlugId));
     }
 }

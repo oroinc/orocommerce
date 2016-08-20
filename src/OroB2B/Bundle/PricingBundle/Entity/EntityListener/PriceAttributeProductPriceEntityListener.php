@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceAttributeProductPriceEntityListener extends AbstractRuleEntityListener
 {

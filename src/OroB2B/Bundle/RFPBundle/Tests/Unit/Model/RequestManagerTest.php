@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Model;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Model;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Model\RequestManager;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Model\RequestManager;
 
 class RequestManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -71,10 +70,10 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
         ];
         $request = new Request();
         
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
-        $unit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $unit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $unitCode]);
 
-        $productReposiotry = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+        $productReposiotry = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()->getMock();
         $this->doctrineHelper->expects($this->at(0))
             ->method('getEntityRepositoryForClass')
@@ -84,7 +83,7 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
             ->with(['id' => [$productId]])
             ->willReturn([$product]);
 
-        $unitRepository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+        $unitRepository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()->getMock();
         $this->doctrineHelper->expects($this->at(1))
             ->method('getEntityRepositoryForClass')

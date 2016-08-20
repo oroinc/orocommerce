@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Controller;
+namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -9,20 +9,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 class CategoryController extends Controller
 {
     /**
      * @Route("/create/{id}", name="orob2b_catalog_category_create", requirements={"id"="\d+"})
-     * @Template("OroB2BCatalogBundle:Category:update.html.twig")
+     * @Template("OroCatalogBundle:Category:update.html.twig")
      * @Acl(
      *      id="orob2b_catalog_category_create",
      *      type="entity",
-     *      class="OroB2BCatalogBundle:Category",
+     *      class="OroCatalogBundle:Category",
      *      permission="CREATE"
      * )
      * @param Category $parentCategory
@@ -42,7 +41,7 @@ class CategoryController extends Controller
      * @Acl(
      *      id="orob2b_catalog_category_update",
      *      type="entity",
-     *      class="OroB2BCatalogBundle:Category",
+     *      class="OroCatalogBundle:Category",
      *      permission="EDIT"
      * )
      * @param Category $category
@@ -59,7 +58,7 @@ class CategoryController extends Controller
      * @Acl(
      *      id="orob2b_catalog_category_view",
      *      type="entity",
-     *      class="OroB2BCatalogBundle:Category",
+     *      class="OroCatalogBundle:Category",
      *      permission="VIEW"
      * )
      *
@@ -82,7 +81,7 @@ class CategoryController extends Controller
         $handler = new CategoryHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category'),
+            $this->getDoctrine()->getManagerForClass('OroCatalogBundle:Category'),
             $this->get('event_dispatcher')
         );
 
@@ -100,7 +99,7 @@ class CategoryController extends Controller
                     'route' => 'orob2b_catalog_category_index',
                 );
             },
-            $this->get('translator')->trans('orob2b.catalog.controller.category.saved.message'),
+            $this->get('translator')->trans('oro.catalog.controller.category.saved.message'),
             $handler
         );
 
@@ -116,6 +115,6 @@ class CategoryController extends Controller
      */
     protected function getMasterRootCategory()
     {
-        return $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
+        return $this->getDoctrine()->getRepository('OroCatalogBundle:Category')->getMasterCatalogRoot();
     }
 }

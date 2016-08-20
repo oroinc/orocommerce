@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

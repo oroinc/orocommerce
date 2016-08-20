@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class AclPermissionController extends Controller
 {

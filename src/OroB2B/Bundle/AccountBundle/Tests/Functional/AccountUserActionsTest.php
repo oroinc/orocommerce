@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional;
+namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
  * @dbIsolation
@@ -17,7 +17,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
     }
@@ -51,7 +51,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
                     'operationName' => $operationName,
                     'route' => 'orob2b_account_account_user_view',
                     'entityId' => $accountUser->getId(),
-                    'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+                    'entityClass' => 'Oro\Bundle\AccountBundle\Entity\AccountUser'
                 ]
             )
         );

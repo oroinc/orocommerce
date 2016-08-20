@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Controller;
+namespace Oro\Bundle\WarehouseBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
 
 class WarehouseController extends Controller
 {
@@ -22,7 +21,7 @@ class WarehouseController extends Controller
      * @Acl(
      *      id="orob2b_warehouse_view",
      *      type="entity",
-     *      class="OroB2BWarehouseBundle:Warehouse",
+     *      class="OroWarehouseBundle:Warehouse",
      *      permission="VIEW"
      * )
      *
@@ -71,11 +70,11 @@ class WarehouseController extends Controller
      * Create warehouse
      *
      * @Route("/create", name="orob2b_warehouse_create")
-     * @Template("OroB2BWarehouseBundle:Warehouse:update.html.twig")
+     * @Template("OroWarehouseBundle:Warehouse:update.html.twig")
      * @Acl(
      *      id="orob2b_warehouse_create",
      *      type="entity",
-     *      class="OroB2BWarehouseBundle:Warehouse",
+     *      class="OroWarehouseBundle:Warehouse",
      *      permission="CREATE"
      * )
      *
@@ -94,7 +93,7 @@ class WarehouseController extends Controller
      * @Acl(
      *      id="orob2b_warehouse_update",
      *      type="entity",
-     *      class="OroB2BWarehouseBundle:Warehouse",
+     *      class="OroWarehouseBundle:Warehouse",
      *      permission="EDIT"
      * )
      *
@@ -131,7 +130,7 @@ class WarehouseController extends Controller
                     'parameters' => ['id' => $warehouse->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.warehouse.controller.warehouse.saved.message')
+            $this->get('translator')->trans('oro.warehouse.controller.warehouse.saved.message')
         );
     }
 }

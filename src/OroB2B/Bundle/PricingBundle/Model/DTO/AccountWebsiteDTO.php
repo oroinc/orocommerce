@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Model\DTO;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountWebsiteDTO
 {

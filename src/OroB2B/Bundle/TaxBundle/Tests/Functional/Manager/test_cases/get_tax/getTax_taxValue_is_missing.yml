@@ -2,9 +2,9 @@ method: getTax
 reference: empty_order
 configuration: {}
 databaseBefore:
-    'OroB2B\Bundle\OrderBundle\Entity\Order':
+    'Oro\Bundle\OrderBundle\Entity\Order':
         empty_order:
             poNumber: { property_value: empty_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
             currency: 'USD'
 expectedResult: []

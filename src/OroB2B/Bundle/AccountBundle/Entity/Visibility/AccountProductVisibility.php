@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity(
- *      repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
+ *      repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
  * )
  * @ORM\Table(
  *      name="orob2b_acc_product_visibility",
@@ -45,7 +44,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
@@ -53,7 +52,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $website;
@@ -61,7 +60,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;

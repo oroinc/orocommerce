@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Controller;
+namespace Oro\Bundle\FrontendBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

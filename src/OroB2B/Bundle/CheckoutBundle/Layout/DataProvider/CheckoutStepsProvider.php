@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
 

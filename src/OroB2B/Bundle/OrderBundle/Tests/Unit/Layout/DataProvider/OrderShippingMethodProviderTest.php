@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
-use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
+use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodLabelFormatter);

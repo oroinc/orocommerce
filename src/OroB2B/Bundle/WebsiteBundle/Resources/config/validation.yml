@@ -1,4 +1,4 @@
-OroB2B\Bundle\WebsiteBundle\Entity\Website:
+Oro\Bundle\WebsiteBundle\Entity\Website:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
     properties:

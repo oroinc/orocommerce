@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method\View;
+namespace Oro\Bundle\PaymentBundle\Method\View;
 
 interface PaymentMethodViewInterface
 {

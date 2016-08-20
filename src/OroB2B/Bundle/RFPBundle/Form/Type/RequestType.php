@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,10 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 class RequestType extends AbstractType
 {
@@ -37,60 +36,60 @@ class RequestType extends AbstractType
     {
         $builder
             ->add('firstName', 'text', [
-                'label' => 'orob2b.rfp.request.first_name.label',
+                'label' => 'oro.rfp.request.first_name.label',
             ])
             ->add('lastName', 'text', [
-                'label' => 'orob2b.rfp.request.last_name.label',
+                'label' => 'oro.rfp.request.last_name.label',
             ])
             ->add('email', 'text', [
-                'label' => 'orob2b.rfp.request.email.label',
+                'label' => 'oro.rfp.request.email.label',
             ])
             ->add('phone', 'text', [
-                'label' => 'orob2b.rfp.request.phone.label',
+                'label' => 'oro.rfp.request.phone.label',
                 'required' => false,
             ])
             ->add('company', 'text', [
-                'label' => 'orob2b.rfp.request.company.label',
+                'label' => 'oro.rfp.request.company.label',
             ])
             ->add('role', 'text', [
-                'label' => 'orob2b.rfp.request.role.label',
+                'label' => 'oro.rfp.request.role.label',
                 'required' => false,
             ])
             ->add('accountUser', AccountUserSelectType::NAME, [
-                'label' => 'orob2b.rfp.request.account_user.label',
+                'label' => 'oro.rfp.request.account_user.label',
                 'required' => false,
             ])
             ->add('account', AccountSelectType::NAME, [
-                'label' => 'orob2b.rfp.request.account.label',
+                'label' => 'oro.rfp.request.account.label',
                 'required' => false,
             ])
             ->add('status', RequestStatusSelectType::NAME, [
-                'label' => 'orob2b.rfp.request.status.label',
+                'label' => 'oro.rfp.request.status.label',
             ])
             ->add('note', 'textarea', [
-                'label' => 'orob2b.rfp.request.note.label',
+                'label' => 'oro.rfp.request.note.label',
                 'required' => false,
             ])
             ->add('poNumber', 'text', [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.po_number.label'
+                'label' => 'oro.rfp.request.po_number.label'
             ])
             ->add('shipUntil', OroDateType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.rfp.request.ship_until.label'
+                'label' => 'oro.rfp.request.ship_until.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
-                'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',
-                'add_label' => 'orob2b.rfp.requestproduct.add_label',
+                'label'     => 'oro.rfp.requestproduct.entity_plural_label',
+                'add_label' => 'oro.rfp.requestproduct.add_label',
                 'options' => [
                     'compact_units' => true,
                 ],
             ])
             ->add('assignedUsers', UserMultiSelectType::NAME, [
-                'label' => 'orob2b.rfp.request.assigned_users.label',
+                'label' => 'oro.rfp.request.assigned_users.label',
             ])
             ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'orob2b.rfp.request.assigned_account_users.label',
+                'label' => 'oro.rfp.request.assigned_account_users.label',
             ])
         ;
     }

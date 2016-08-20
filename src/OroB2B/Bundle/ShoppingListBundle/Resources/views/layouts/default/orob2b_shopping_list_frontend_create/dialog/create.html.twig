@@ -7,10 +7,10 @@
 
     {% set pageComponentOptions = {
         savedId: savedId|default(null),
-        message: 'orob2b.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)})
+        message: 'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)})
     } %}
     {% set attr = {
-        'data-page-component-module': 'orob2bfrontend/js/app/components/widget-form-component',
+        'data-page-component-module': 'orofrontend/js/app/components/widget-form-component',
     }|merge(attr)|merge({
         'data-page-component-options': pageComponentOptions|merge(attr['data-page-component-options']|default({})),
     }) %}
@@ -19,8 +19,8 @@
 
 {% block _form_comment_widget %}
     <i>
-        {{ 'orob2b.shoppinglist.create_new_form.comment'|trans }}<br/>
-        {{ 'orob2b.shoppinglist.create_new_form.comment_cancel'|trans }}
+        {{ 'oro.shoppinglist.create_new_form.comment'|trans }}<br/>
+        {{ 'oro.shoppinglist.create_new_form.comment_cancel'|trans }}
     </i>
 {% endblock %}
 

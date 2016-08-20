@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
 
 abstract class AbstractAccountUserPasswordHandler
 {

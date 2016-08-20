@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -8,11 +8,10 @@ use Symfony\Component\Form\FormView;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 
 class PriceListCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -43,7 +42,7 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     {
         $options = [
             'options' => [
-                'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite'
+                'data_class' => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite'
             ]
         ];
 
@@ -60,13 +59,13 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         /** @var PriceList $pl1 */
-        $pl1 = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
+        $pl1 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
 
         /** @var PriceList $pl2 */
-        $pl2 = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
+        $pl2 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
 
         /** @var PriceList $pl3 */
-        $pl3 = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 3]);
+        $pl3 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 3]);
 
         return [
             'test' => [

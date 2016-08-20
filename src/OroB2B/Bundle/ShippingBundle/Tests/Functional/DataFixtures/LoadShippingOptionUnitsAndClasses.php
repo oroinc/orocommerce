@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 class LoadShippingOptionUnitsAndClasses extends AbstractFixture
 {

@@ -1,23 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
@@ -45,7 +44,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
 
         $this->repository = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:ProductPrice');
+            ->getRepository('OroPricingBundle:ProductPrice');
     }
 
     /**
@@ -560,11 +559,11 @@ class ProductPriceRepositoryTest extends WebTestCase
         $newPriceList = new PriceList();
         $newPriceList->setName('test');
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:ProductPrice');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:ProductPrice');
         $em->persist($newPriceList);
         $em->flush();
 
-        $priceRepository = $em->getRepository('OroB2BPricingBundle:ProductPrice');
+        $priceRepository = $em->getRepository('OroPricingBundle:ProductPrice');
         $priceRepository->copyPrices(
             $priceList,
             $newPriceList,
@@ -606,7 +605,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         /** @var ProductPriceRepository $repository */
-        $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+        $repository = $manager->getRepository('OroPricingBundle:ProductPrice');
         $manualPrices = $repository->findBy(['priceList' => $priceList, 'priceRule' => null]);
 
         $rule = $this->createPriceListRule($priceList);
@@ -630,7 +629,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         /** @var ProductPriceRepository $repository */
-        $repository = $manager->getRepository('OroB2BPricingBundle:ProductPrice');
+        $repository = $manager->getRepository('OroPricingBundle:ProductPrice');
 
         $pricesCount = $this->getPricesCount();
 
@@ -699,7 +698,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         $repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:ProductPrice');
+            ->getRepository('OroPricingBundle:ProductPrice');
         return (int)$repository->createQueryBuilder('pp')
             ->select('count(pp.id)')
             ->getQuery()

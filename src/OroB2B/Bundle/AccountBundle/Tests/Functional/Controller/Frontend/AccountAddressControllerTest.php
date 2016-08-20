@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
@@ -8,9 +8,8 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 /**
  * @dbIsolation
@@ -31,7 +30,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
             ]
         );
 
@@ -124,7 +123,7 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $address = $this->getAccountAddress();
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountAddress', $address);
 
         $addressId = $address->getId();
 
@@ -155,7 +154,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $address = $this->getAddressById($addressId);
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountAddress', $address);
 
         $this->assertEquals('Changed Label', $address->getLabel());
     }
@@ -166,10 +165,10 @@ class AccountAddressControllerTest extends WebTestCase
      */
     protected function getAddressById($addressId)
     {
-        $this->getObjectManager()->clear('OroB2BAccountBundle:AccountAddress');
+        $this->getObjectManager()->clear('OroAccountBundle:AccountAddress');
 
         return $this->getObjectManager()
-            ->getRepository('OroB2BAccountBundle:AccountAddress')
+            ->getRepository('OroAccountBundle:AccountAddress')
             ->find($addressId);
     }
 
@@ -194,7 +193,7 @@ class AccountAddressControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**

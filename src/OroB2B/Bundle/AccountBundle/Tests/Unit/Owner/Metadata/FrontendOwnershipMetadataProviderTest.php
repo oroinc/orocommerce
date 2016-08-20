@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner\Metadata;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Owner\Metadata;
 
 use Doctrine\Common\Cache\CacheProvider;
 
@@ -12,18 +12,17 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const BASIC_LEVEL = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    const LOCAL_LEVEL = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const BASIC_LEVEL = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
@@ -81,8 +80,8 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityClass')
             ->willReturnMap(
                 [
-                    ['OroB2BAccountBundle:Account', self::LOCAL_LEVEL],
-                    ['OroB2BAccountBundle:AccountUser', self::BASIC_LEVEL],
+                    ['OroAccountBundle:Account', self::LOCAL_LEVEL],
+                    ['OroAccountBundle:AccountUser', self::BASIC_LEVEL],
                     [self::LOCAL_LEVEL, self::LOCAL_LEVEL],
                     [self::BASIC_LEVEL, self::BASIC_LEVEL],
                 ]
@@ -152,8 +151,8 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = new FrontendOwnershipMetadataProvider(
             [
-                'local_level' => 'OroB2BAccountBundle:Account',
-                'basic_level' => 'OroB2BAccountBundle:AccountUser',
+                'local_level' => 'OroAccountBundle:Account',
+                'basic_level' => 'OroAccountBundle:AccountUser',
             ]
         );
         $provider->setContainer($this->container);

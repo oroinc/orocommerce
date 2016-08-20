@@ -3,22 +3,22 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
+            themes: 'OroOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.order.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.order.entity_plural_label'
                 -
-                    label: 'orob2b.order.navigation.view'
+                    label: 'oro.order.navigation.view'
                     parameters:
                         '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.order.navigation.view'
+                label: 'oro.order.navigation.view'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
@@ -68,47 +68,47 @@ layout:
                 order_information_head:
                     blockType: text
                     options:
-                        text: 'orob2b.order.frontend.order_information.title'
+                        text: 'oro.order.frontend.order_information.title'
                 order_line_items_grid_title:
                     blockType: text
                     options:
-                        text: 'orob2b.order.frontend.ordered_items.title'
+                        text: 'oro.order.frontend.ordered_items.title'
                 order_list_link:
                     blockType: link
                     options:
                         route_name: orob2b_order_frontend_index
-                        text: 'orob2b.order.frontend.order_list_link.text'
+                        text: 'oro.order.frontend.order_list_link.text'
                 order_identifier:
                     blockType: text
                     options:
                         text: '=data["order"].getIdentifier()'
-                        label: 'orob2b.order.identifier.label'
+                        label: 'oro.order.identifier.label'
                         block_prefixes: ['order_body_column_element']
                 order_date:
                     blockType: date
                     options:
                         date: '=data["order"].getCreatedAt()'
                         dateType: 3
-                        label: 'orob2b.order.order_date.label'
+                        label: 'oro.order.order_date.label'
                         block_prefixes: ['order_body_column_element']
                 order_subtotal:
                     blockType: currency
                     options:
                         value: '=data["order"].getSubtotal()'
                         currency: '=data["order"].getCurrency()'
-                        label: 'orob2b.order.subtotal.label'
+                        label: 'oro.order.subtotal.label'
                         block_prefixes: ['order_body_column_element']
                 order_billing_address:
                     blockType: address
                     options:
                         address: '=data["order"].getBillingAddress()'
-                        label: 'orob2b.order.billing_address.label'
+                        label: 'oro.order.billing_address.label'
                         block_prefixes: ['order_body_column_element']
                 order_shipping_address:
                     blockType: address
                     options:
                         address: '=data["order"].getShippingAddress()'
-                        label: 'orob2b.order.shipping_address.label'
+                        label: 'oro.order.shipping_address.label'
                         block_prefixes: ['order_body_column_element']
                 order_line_items_grid:
                     id: order-line-items
@@ -122,33 +122,33 @@ layout:
                     blockType: text
                     options:
                         visible: '=data["order"].getPoNumber()!=null'
-                        label: 'orob2b.order.po_number.label'
+                        label: 'oro.order.po_number.label'
                         text: '=data["order"].getPoNumber()'
                         block_prefixes: ['order_body_column_element']
                 order_shipping_method:
                     blockType: text
                     options:
                         text: '=data["orob2b_order_frontend_shipping_method_provider"].getData(data["order"])'
-                        label: 'orob2b.order.shipping_method.label'
+                        label: 'oro.order.shipping_method.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_method:
                     blockType: text
                     options:
                         text: '=data["orob2b_payment_methods_provider"].getPaymentMethods(data["order"])'
-                        label: 'orob2b.payment.methods.label'
+                        label: 'oro.payment.methods.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text
                     options:
                         text: '=data["orob2b_order_frontend_payment_status_provider"].getPaymentStatus(data["order"])'
-                        label: 'orob2b.payment.status.label'
+                        label: 'oro.payment.status.label'
                         block_prefixes: ['order_body_column_element']
                 order_customer_notes:
                     blockType: text
                     options:
                         visible: '=data["order"].getCustomerNotes()!=null'
                         text: '=data["order"].getCustomerNotes()'
-                        label: 'orob2b.order.customer_notes.frontend.label'
+                        label: 'oro.order.customer_notes.frontend.label'
                         block_prefixes: ['order_body_column_element']
                 order_ship_until:
                     blockType: date
@@ -156,14 +156,14 @@ layout:
                         visible: '=data["order"].getShipUntil()!=null'
                         date: '=data["order"].getShipUntil()'
                         dateType: 3
-                        label: 'orob2b.order.ship_until.label'
+                        label: 'oro.order.ship_until.label'
                         block_prefixes: ['order_body_column_element']
                 order_po_number:
                     blockType: text
                     options:
                         visible: '=data["order"].getPoNumber()!=null'
                         text: '=data["order"].getPoNumber()'
-                        label: 'orob2b.order.po_number.label'
+                        label: 'oro.order.po_number.label'
                         block_prefixes: ['order_body_column_element']
                 order_total:
                     blockType: order_total

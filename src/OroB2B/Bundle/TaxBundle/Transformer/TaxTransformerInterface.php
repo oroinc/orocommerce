@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Transformer;
+namespace Oro\Bundle\TaxBundle\Transformer;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 interface TaxTransformerInterface
 {

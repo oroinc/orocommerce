@@ -1,26 +1,26 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -72,28 +72,28 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $cplBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder';
+        $cplBuilderClass = 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder';
         $this->cplBuilder = $this->getMockBuilder($cplBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $cplWebsiteBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder';
+        $cplWebsiteBuilderClass = 'Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder';
         $this->cplWebsiteBuilder = $this->getMockBuilder($cplWebsiteBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $cplAccountGroupBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder';
+        $cplAccountGroupBuilderClass = 'Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder';
         $this->cplAccountGroupBuilder = $this->getMockBuilder($cplAccountGroupBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $cplAccountBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder';
+        $cplAccountBuilderClass = 'Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder';
         $this->cplAccountBuilder = $this->getMockBuilder($cplAccountBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $collectionChangesClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger';
-        $plChangeRepositoryClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository';
+        $collectionChangesClass = 'Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger';
+        $plChangeRepositoryClass = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository';
 
         $this->priceListChangeTriggerRepository = $this->getMockBuilder($plChangeRepositoryClass)
             ->disableOriginalConstructor()
@@ -172,13 +172,13 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     public function processDataProvider()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $accountGroup = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountGroup');
+        $accountGroup = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
-        $website = $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website');
+        $website = $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website');
 
         return [
             'full queue' => [
@@ -472,7 +472,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     {
         $changes = [];
         foreach ($changesData as $changeData) {
-            $collectionChange = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
+            $collectionChange = $this->getMock('Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
             foreach ($changeData as $method => $data) {
                 $collectionChange->expects($data['expects'])
                     ->method($method)

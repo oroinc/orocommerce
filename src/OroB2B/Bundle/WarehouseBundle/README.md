@@ -1,4 +1,4 @@
-OroB2B\Bundle\WarehouseBundle\OroB2BWarehouseBundle
+Oro\Bundle\WarehouseBundle\OroWarehouseBundle
 ==========================================
 
 Table of Contents
@@ -9,4 +9,4 @@ Table of Contents
 Description:
 ------------
 
-The OroB2BWarehouseBundle introduces the notion of Warehouses and Warehouse Inventory Levels.
+The OroWarehouseBundle introduces the notion of Warehouses and Warehouse Inventory Levels.

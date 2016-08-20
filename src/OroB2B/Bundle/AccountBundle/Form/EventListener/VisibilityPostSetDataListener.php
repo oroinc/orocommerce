@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 class VisibilityPostSetDataListener extends AbstractVisibilityListener
 {

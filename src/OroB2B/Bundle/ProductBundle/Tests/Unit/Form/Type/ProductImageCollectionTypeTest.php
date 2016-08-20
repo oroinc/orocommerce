@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -10,12 +10,11 @@ use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 
 class ProductImageCollectionTypeTest extends FormIntegrationTestCase
 {

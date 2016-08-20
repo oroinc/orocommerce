@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -13,11 +13,10 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -40,7 +39,7 @@ class CategoryTypeTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
@@ -50,9 +49,9 @@ class CategoryTypeTest extends WebTestCase
     {
         $doctrine = $this->getContainer()->get('doctrine');
         $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
-        $categoryRepository = $doctrine->getRepository('OroB2BCatalogBundle:Category');
-        $productRepository = $doctrine->getRepository('OroB2BProductBundle:Product');
-        $productUnitRepository = $doctrine->getRepository('OroB2BProductBundle:ProductUnit');
+        $categoryRepository = $doctrine->getRepository('OroCatalogBundle:Category');
+        $productRepository = $doctrine->getRepository('OroProductBundle:Product');
+        $productUnitRepository = $doctrine->getRepository('OroProductBundle:ProductUnit');
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
@@ -72,11 +71,11 @@ class CategoryTypeTest extends WebTestCase
 
         $smallImageName = self::SMALL_IMAGE_NAME;
         $smallImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
         );
         $largeImageName = self::LARGE_IMAGE_NAME;
         $largeImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
         );
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
@@ -123,7 +122,7 @@ class CategoryTypeTest extends WebTestCase
         // assert category entity
         /** @var Category $category */
         $category = $form->getData();
-        $this->assertInstanceOf('OroB2B\Bundle\CatalogBundle\Entity\Category', $category);
+        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $category);
         $this->assertEquals($parentCategory->getId(), $category->getParentCategory()->getId());
         $this->assertEquals($defaultTitle, (string)$category->getDefaultTitle());
         $this->assertEquals($defaultShortDescription, (string)$category->getDefaultShortDescription());

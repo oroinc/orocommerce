@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
 
 class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +20,7 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     protected function setUp()
     {
         $this->productShoppingListsDataProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

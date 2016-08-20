@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Controller;
+namespace Oro\Bundle\TaxBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 
 class TaxJurisdictionController extends Controller
 {
@@ -36,7 +35,7 @@ class TaxJurisdictionController extends Controller
      * @Acl(
      *      id="orob2b_tax_jurisdiction_view",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxJurisdiction",
+     *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class TaxJurisdictionController extends Controller
 
     /**
      * @Route("/create", name="orob2b_tax_jurisdiction_create")
-     * @Template("OroB2BTaxBundle:TaxJurisdiction:update.html.twig")
+     * @Template("OroTaxBundle:TaxJurisdiction:update.html.twig")
      * @Acl(
      *      id="orob2b_tax_jurisdiction_create",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxJurisdiction",
+     *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class TaxJurisdictionController extends Controller
      * @Acl(
      *      id="orob2b_tax_jurisdiction_update",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxJurisdiction",
+     *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="EDIT"
      * )
      *
@@ -106,7 +105,7 @@ class TaxJurisdictionController extends Controller
                     'parameters' => ['id' => $taxJurisdiction->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.tax.controller.tax_jurisdiction.saved.message')
+            $this->get('translator')->trans('oro.tax.controller.tax_jurisdiction.saved.message')
         );
     }
 }

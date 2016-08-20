@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use OroB2B\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
 
 class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,11 +28,11 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->paymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->paymentMethodLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extension = new PaymentMethodExtension(

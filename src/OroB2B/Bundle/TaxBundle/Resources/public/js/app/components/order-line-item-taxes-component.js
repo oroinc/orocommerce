@@ -7,12 +7,12 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var TaxFormatter = require('orob2btax/js/formatter/tax');
+    var TaxFormatter = require('orotax/js/formatter/tax');
 
     /**
-     * @export orob2btax/js/app/components/order-line-item-taxes-component
+     * @export orotax/js/app/components/order-line-item-taxes-component
      * @extends oroui.app.components.base.Component
-     * @class orob2btax.app.components.OrderLineItemTaxesComponent
+     * @class orotax.app.components.OrderLineItemTaxesComponent
      */
     OrderLineItemTaxesComponent = BaseComponent.extend({
         /**

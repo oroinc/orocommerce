@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Condition;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Condition;
 
 use Oro\Component\ConfigExpression\Condition\AbstractComparison;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderTotalLimit extends AbstractComparison
 {

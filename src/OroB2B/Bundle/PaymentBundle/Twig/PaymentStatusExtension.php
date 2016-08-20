@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Twig;
+namespace Oro\Bundle\PaymentBundle\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 
 class PaymentStatusExtension extends \Twig_Extension
 {

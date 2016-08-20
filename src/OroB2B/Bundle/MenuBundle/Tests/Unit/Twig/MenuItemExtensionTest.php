@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Twig;
 
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Matcher\MatcherInterface;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
-use OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
+use Oro\Bundle\MenuBundle\Twig\MenuItemExtension;
 
 class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->menuItemTreeHandler = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler')
+        $this->menuItemTreeHandler = $this->getMockBuilder('Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -80,7 +80,7 @@ class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
         $root = 1;
 
         /** @var MenuItem|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->getMock('OroB2B\Bundle\MenuBundle\Entity\MenuItem');
+        $entity = $this->getMock('Oro\Bundle\MenuBundle\Entity\MenuItem');
         $entity->expects($this->once())
             ->method('getRoot')
             ->willReturn($root);

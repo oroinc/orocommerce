@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
 
-use OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
 class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->componentRegistry = $this
-            ->getMock('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
+            ->getMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
 
         $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }
@@ -47,12 +47,12 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
             $menu->expects($this->once())
                 ->method('addChild')
                 ->with(
-                    'orob2b.product.frontend.quick_add.title',
+                    'oro.product.frontend.quick_add.title',
                     [
                         'route' => 'orob2b_product_frontend_quick_add',
                         'extras' => [
                             'position' => 500,
-                            'description' => 'orob2b.product.frontend.quick_add.description',
+                            'description' => 'oro.product.frontend.quick_add.description',
                         ],
                     ]
                 );

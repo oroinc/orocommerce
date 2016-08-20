@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
-use OroB2B\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

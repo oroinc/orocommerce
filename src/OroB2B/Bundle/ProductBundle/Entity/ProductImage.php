@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -8,8 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\ProductBundle\Model\ExtendProductImage;
+use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
 
 /**
  * @ORM\Entity
@@ -35,7 +34,7 @@ class ProductImage extends ExtendProductImage
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product", inversedBy="images")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -51,7 +50,7 @@ class ProductImage extends ExtendProductImage
      * @var Collection|ProductImageType[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImageType",
+     *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImageType",
      *     mappedBy="productImage",
      *     indexBy="type",
      *     cascade={"ALL"},

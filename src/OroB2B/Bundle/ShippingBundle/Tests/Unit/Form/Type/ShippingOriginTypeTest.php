@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 
 class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin';
+    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\ShippingOrigin';
 
     /**
      * @var ShippingOriginType

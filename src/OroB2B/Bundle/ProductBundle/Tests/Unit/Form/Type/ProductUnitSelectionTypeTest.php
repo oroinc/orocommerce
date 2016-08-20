@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -15,16 +15,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -66,7 +65,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             );
         $productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
         $this->formType = new ProductUnitSelectionType($productUnitLabelFormatter, $this->translator);
-        $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+        $this->formType->setEntityClass('Oro\Bundle\ProductBundle\Entity\ProductUnit');
 
         parent::setUp();
     }
@@ -105,12 +104,12 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'product_field' => 'product',
                 ],
                 [
-                    'class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                    'class' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                     'property' => 'code',
                     'compact' => false,
                     'choices_updated' => false,
                     'required' => true,
-                    'empty_label' => 'orob2b.product.productunit.removed',
+                    'empty_label' => 'oro.product.productunit.removed',
                     'sell' => null,
                 ]
             );
@@ -138,7 +137,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             ->method('getConfig')
             ->willReturn($config);
 
-        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->any())
             ->method('getPrimaryUnitPrecision')
             ->willReturn($primaryUnitPrecision);
@@ -148,7 +147,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             ->willReturn($additionalUnitPrecisions);
 
         $method = new \ReflectionMethod(
-            'OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType',
+            'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType',
             'getProductUnits'
         );
         $method->setAccessible(true);
@@ -271,8 +270,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'compact' => false,
                 ],
                 'expectedLabels' => [
-                    'orob2b.product_unit.test01.label.full',
-                    'orob2b.product_unit.test02.label.full',
+                    'oro.product_unit.test01.label.full',
+                    'oro.product_unit.test02.label.full',
                 ],
                 'submittedData' => 'test01',
             ],
@@ -284,8 +283,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'compact' => true,
                 ],
                 'expectedLabels' => [
-                    'orob2b.product_unit.test01.label.short',
-                    'orob2b.product_unit.test02.label.short',
+                    'oro.product_unit.test01.label.short',
+                    'oro.product_unit.test02.label.short',
                 ],
                 'submittedData' => 'test02',
             ],
@@ -394,7 +393,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'empty_value' => null,
                     'choices' => array_combine(
                         $this->units,
-                        ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
+                        ['oro.product_unit.test01.label.full', 'oro.product_unit.test02.label.full']
                     ),
                 ],
             ],
@@ -412,7 +411,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'empty_value' => null,
                     'choices' => array_combine(
                         $this->units,
-                        ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
+                        ['oro.product_unit.test01.label.full', 'oro.product_unit.test02.label.full']
                     ),
                 ],
             ],
@@ -428,7 +427,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'orob2b.product_unit.code.label.full',
+                        'code' => 'oro.product_unit.code.label.full',
                     ],
                 ],
             ],
@@ -446,7 +445,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'orob2b.product_unit.code.label.short',
+                        'code' => 'oro.product_unit.code.label.short',
                     ],
                 ],
             ],
@@ -462,7 +461,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'orob2b.product_unit.code.label.full',
+                        'code' => 'oro.product_unit.code.label.full',
                     ],
                 ],
             ],
@@ -479,7 +478,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'choices' => array_combine(
                         $this->units,
-                        ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
+                        ['oro.product_unit.test01.label.full', 'oro.product_unit.test02.label.full']
                     ),
                 ],
             ],
@@ -495,8 +494,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'sku' => 'orob2b.product.productunit.removed:sku',
-                        'code' => 'orob2b.product_unit.code.label.full',
+                        'sku' => 'oro.product.productunit.removed:sku',
+                        'code' => 'oro.product_unit.code.label.full',
                     ],
                 ],
             ],
@@ -517,7 +516,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductHolderInterface $productHolder = null
     ) {
         /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
-        $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
+        $productUnitHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
             ->method('getEntityIdentifier')
@@ -546,7 +545,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function createProductHolder($productSku, Product $product = null)
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
 
         $productHolder
             ->expects(static::any())
@@ -699,19 +698,19 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit->setCode($code);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($productUnit);
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1);
         $product->addUnitPrecision($unitPrecision);
 
         return [
             'product not found' => [null, 'valid'],
             'product without units' => [
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
+                $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1),
                 'valid',
-                'ERROR: orob2b.product.productunit.invalid' . "\n",
+                'ERROR: oro.product.productunit.invalid' . "\n",
             ],
-            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . "\n"],
+            'submit invalid' => [$product, 'not_valid', 'ERROR: oro.product.productunit.invalid' . "\n"],
             'submit valid' => [$product, 'valid'],
-            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . "\n"],
+            'empty data' => [$product, null, 'ERROR: oro.product.productunit.invalid' . "\n"],
             'new product' => [new Product(), null],
         ];
     }

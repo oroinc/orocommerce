@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,29 +61,29 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->priceListCollectionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->combinedPriceListProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->garbageCollector = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector')
             ->disableOriginalConstructor()
             ->getMock();
         $this->websiteBuilder = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
+        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver';
         $this->cplScheduleResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
-        $className = 'OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
+        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
         $this->priceResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -109,12 +108,12 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuild($configCPLId, $actualCPLId, $force = false)
     {
         $callExpects = 1;
-        $combinedPriceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $combinedPriceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
         $combinedPriceList->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($actualCPLId));
         $priceListsCollection = [
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\PriceListSequenceMember')
+            $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember')
                 ->disableOriginalConstructor()
                 ->getMock()
         ];

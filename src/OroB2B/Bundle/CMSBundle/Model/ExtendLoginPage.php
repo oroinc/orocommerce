@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Model;
+namespace Oro\Bundle\CMSBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-
-use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 /**
  * @method File getLogoImage()

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -382,8 +382,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var AccountCategoryVisibility[] $visibilities */
         $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountCategoryVisibility')
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter(
@@ -432,8 +432,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var AccountCategoryVisibility[] $visibilities */
         $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountCategoryVisibility')
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility = :categoryVisibility')
             ->setParameter('categoryVisibility', AccountCategoryVisibility::CATEGORY)
@@ -547,8 +547,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
     }
 
     /**
@@ -556,8 +556,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getMasterCatalog()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getMasterCatalogRoot();
     }
 

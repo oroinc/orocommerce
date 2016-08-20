@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity\Repository;
+namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductUnitRepository extends EntityRepository
 {
@@ -57,13 +57,13 @@ class ProductUnitRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('unit');
         $qb->join(
-            'OroB2BProductBundle:ProductUnitPrecision',
+            'OroProductBundle:ProductUnitPrecision',
             'productUnitPrecision',
             Join::WITH,
             $qb->expr()->eq('productUnitPrecision.unit', 'unit')
         )
             ->leftJoin(
-                'OroB2BProductBundle:Product',
+                'OroProductBundle:Product',
                 'product',
                 Join::WITH,
                 'product.primaryUnitPrecision = productUnitPrecision'
@@ -114,7 +114,7 @@ class ProductUnitRepository extends EntityRepository
         $qb
             ->select('unit')
             ->join(
-                'OroB2BProductBundle:ProductUnitPrecision',
+                'OroProductBundle:ProductUnitPrecision',
                 'productUnitPrecision',
                 Join::WITH,
                 $qb->expr()->eq('productUnitPrecision.unit', 'unit')
@@ -139,7 +139,7 @@ class ProductUnitRepository extends EntityRepository
             throw new \InvalidArgumentException();
         }
 
-        $product = $this->_em->getReference('OroB2BProductBundle:Product', (int)$productId);
+        $product = $this->_em->getReference('OroProductBundle:Product', (int)$productId);
         if (!$product) {
             throw new EntityNotFoundException();
         }

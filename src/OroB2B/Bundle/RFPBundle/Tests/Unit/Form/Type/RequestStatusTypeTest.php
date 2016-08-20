@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestStatusType;
 
 class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->type = new RequestStatusType($configManager, $localeSettings);
-        $this->type->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestStatus');
+        $this->type->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestStatus');
     }
 
     /**

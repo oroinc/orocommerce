@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Component\Console\Event\ConsoleEvent;
 
@@ -37,7 +37,7 @@ class PlatformUpdateCommandListener
             return;
         }
 
-        $productClass = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+        $productClass = 'Oro\Bundle\ProductBundle\Entity\Product';
         $statusField = 'status';
         $statusClass = 'Extend\Entity\EV_Prod_Status';
 

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Block\Extension;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\Block\Extension;
 
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
-
-use OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension;
+use Oro\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension;
 
 class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
 {

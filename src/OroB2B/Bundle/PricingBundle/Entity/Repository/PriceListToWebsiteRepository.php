@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -54,10 +53,10 @@ class PriceListToWebsiteRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct website')
-            ->from('OroB2BWebsiteBundle:Website', 'website');
+            ->from('OroWebsiteBundle:Website', 'website');
 
         $qb->innerJoin(
-            'OroB2BPricingBundle:PriceListToWebsite',
+            'OroPricingBundle:PriceListToWebsite',
             'plToWebsite',
             Join::WITH,
             $qb->expr()->andX(
@@ -67,7 +66,7 @@ class PriceListToWebsiteRepository extends EntityRepository
 
         if ($fallback !== null) {
             $qb->leftJoin(
-                'OroB2BPricingBundle:PriceListWebsiteFallback',
+                'OroPricingBundle:PriceListWebsiteFallback',
                 'priceListFallBack',
                 Join::WITH,
                 $qb->expr()->andX(

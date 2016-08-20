@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Controller;
+namespace Oro\Bundle\CMSBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,10 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Form\Handler\PageHandler;
-use OroB2B\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Handler\PageHandler;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 class PageController extends Controller
 {
@@ -23,7 +22,7 @@ class PageController extends Controller
      * @Acl(
      *      id="orob2b_cms_page_view",
      *      type="entity",
-     *      class="OroB2BCMSBundle:Page",
+     *      class="OroCMSBundle:Page",
      *      permission="VIEW"
      * )
      *
@@ -68,11 +67,11 @@ class PageController extends Controller
 
     /**
      * @Route("/create/{id}", name="orob2b_cms_page_create", requirements={"id"="\d+"}, defaults={"id"=null})
-     * @Template("OroB2BCMSBundle:Page:update.html.twig")
+     * @Template("OroCMSBundle:Page:update.html.twig")
      * @Acl(
      *      id="orob2b_cms_page_create",
      *      type="entity",
-     *      class="OroB2BCMSBundle:Page",
+     *      class="OroCMSBundle:Page",
      *      permission="CREATE"
      * )
      *
@@ -83,7 +82,7 @@ class PageController extends Controller
     {
         $page = new Page();
         if ($id) {
-            $parentPage = $this->getDoctrine()->getRepository('OroB2BCMSBundle:Page')->find($id);
+            $parentPage = $this->getDoctrine()->getRepository('OroCMSBundle:Page')->find($id);
             if (!$parentPage) {
                 throw new \LogicException(sprintf('Page with identifier %s does not exist', $id));
             }
@@ -99,7 +98,7 @@ class PageController extends Controller
      * @Acl(
      *      id="orob2b_cms_page_update",
      *      type="entity",
-     *      class="OroB2BCMSBundle:Page",
+     *      class="OroCMSBundle:Page",
      *      permission="EDIT"
      * )
      * @param Page $page
@@ -120,7 +119,7 @@ class PageController extends Controller
         $handler = new PageHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCMSBundle:Page'),
+            $this->getDoctrine()->getManagerForClass('OroCMSBundle:Page'),
             $this->get('orob2b_redirect.slug.manager')
         );
 
@@ -139,7 +138,7 @@ class PageController extends Controller
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.cms.controller.page.saved.message'),
+            $this->get('translator')->trans('oro.cms.controller.page.saved.message'),
             $handler
         );
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
+use Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusWithDeletedSelectType extends RequestStatusSelectType
 {

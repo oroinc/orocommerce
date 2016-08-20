@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -12,11 +12,11 @@ use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
 {

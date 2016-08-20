@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType;
+use Oro\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType;
 
 class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
+    const REQUEST_STATUS_CLASS = 'Oro\Bundle\RFPBundle\Entity\RequestStatus';
 
     /**
      * @var DefaulRequestStatusType
@@ -18,7 +18,7 @@ class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
+     * @var \Oro\Bundle\RFPBundle\Entity\RequestStatus[]
      */
     protected $choices;
 
@@ -32,7 +32,7 @@ class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
             $this->getMock(self::REQUEST_STATUS_CLASS),
         ];
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

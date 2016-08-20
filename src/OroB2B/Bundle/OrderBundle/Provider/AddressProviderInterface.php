@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\OrderBundle\Provider;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 interface AddressProviderInterface
 {

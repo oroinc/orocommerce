@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListSystemConfigSubscriber
 {
@@ -97,7 +96,7 @@ class PriceListSystemConfigSubscriber
         $settingsKey = implode(
             $separator,
             [
-                OroB2BPricingExtension::ALIAS,
+                OroPricingExtension::ALIAS,
                 Configuration::DEFAULT_PRICE_LISTS,
             ]
         );

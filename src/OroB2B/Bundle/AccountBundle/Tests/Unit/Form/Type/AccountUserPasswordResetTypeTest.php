@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
 
 class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    const DATA_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     /** @var AccountUserPasswordResetType */
     protected $formType;

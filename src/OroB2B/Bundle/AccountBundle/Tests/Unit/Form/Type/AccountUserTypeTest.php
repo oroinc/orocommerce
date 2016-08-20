@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -13,22 +13,21 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserType;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
-    const ROLE_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
-    const ADDRESS_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress';
+    const DATA_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
+    const ROLE_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUserRole';
+    const ADDRESS_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUserAddress';
 
     /**
      * @var AccountUserType
@@ -244,7 +243,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     {
         $this->assertInternalType('callable', $callable);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())->method('getAvailableRolesByAccountUserQueryBuilder');
@@ -267,8 +266,8 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     {
         if (!self::$addresses) {
             self::$addresses = [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 2)
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 2)
             ];
         }
 

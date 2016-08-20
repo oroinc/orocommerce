@@ -9,7 +9,7 @@ define([
     var AccountRoleView;
 
     /**
-     * @export orob2baccount/js/app/views/account-role-view
+     * @export oroaccount/js/app/views/account-role-view
      */
     AccountRoleView = RoleView.extend({
         options: {

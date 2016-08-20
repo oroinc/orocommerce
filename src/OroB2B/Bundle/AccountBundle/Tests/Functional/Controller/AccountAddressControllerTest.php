@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @dbIsolation
@@ -27,7 +26,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             ]
         );
 

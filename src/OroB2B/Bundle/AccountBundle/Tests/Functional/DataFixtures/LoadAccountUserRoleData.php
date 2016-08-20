@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -29,9 +28,9 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 

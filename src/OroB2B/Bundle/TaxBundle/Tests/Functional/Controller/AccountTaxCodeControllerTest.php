@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 

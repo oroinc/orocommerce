@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Validator\Constraint;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 
 class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -88,7 +87,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface", "stdClass" given'
+            'Expected argument of type "Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface", "stdClass" given'
         );
         $data = new ArrayCollection([ new \stdClass()]);
         $this->validator->validate($data, $this->constraint);
@@ -101,13 +100,13 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
     protected function createProductShippingOptions($code)
     {
         /** @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+        $unit = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->disableOriginalConstructor()
             ->getMock();
         $unit->expects($this->atLeastOnce())->method('getCode')->willReturn($code);
 
         /** @var ProductShippingOptions|\PHPUnit_Framework_MockObject_MockObject $option */
-        $option = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions')
+        $option = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions')
             ->disableOriginalConstructor()
             ->getMock();
         $option->expects($this->atLeastOnce())->method('getProductUnit')->willReturn($unit);

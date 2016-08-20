@@ -1,6 +1,6 @@
 services:
     orob2b_rfp.action.duplicate:
-        class: 'OroB2B\Bundle\RFPBundle\Action\Duplicate'
+        class: 'Oro\Bundle\RFPBundle\Action\Duplicate'
         arguments:
             - '@oro_action.context_accessor'
         calls:

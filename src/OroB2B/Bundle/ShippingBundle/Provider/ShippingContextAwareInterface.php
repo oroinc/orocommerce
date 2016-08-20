@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Provider;
 
 interface ShippingContextAwareInterface
 {

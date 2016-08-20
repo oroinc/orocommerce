@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -11,13 +11,12 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -113,7 +112,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         ];
 
         $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
@@ -123,7 +122,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BShoppingListBundle:ShoppingList')
+            ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
@@ -153,7 +152,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $records = [];
 
         $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
@@ -163,7 +162,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BShoppingListBundle:ShoppingList')
+            ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
@@ -195,7 +194,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $records = [$recordOne, $recordTwo];
 
         /** @var Product $productOne */
-        $productOne = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $productOne = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $lineItemRepository = $this->getMockBuilder('LineItemRepository')
                                     ->setMethods(['getProductItemsWithShoppingListNames'])
                                     ->getMock();
@@ -203,7 +202,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $shoppingList2 = $this->createShoppingList(2, 'Shopping List2');
 
         $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
@@ -227,8 +226,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
-                    ['OroB2BShoppingListBundle:LineItem', $lineItemRepository],
+                    ['OroShoppingListBundle:ShoppingList', $shoppingListRepository],
+                    ['OroShoppingListBundle:LineItem', $lineItemRepository],
                 ]
             );
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
@@ -279,7 +278,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private function createShoppingList($id, $label)
     {
         $shoppingList = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->setMethods(['getId', 'getLabel'])
             ->getMock();
         $shoppingList ->expects($this->any())
@@ -302,7 +301,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
     {
         $lineItem = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\LineItem')
             ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList', 'getProduct'])
             ->getMock();
         $lineItem ->expects($this->any())

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\EventListener\TaxValueListener;
-use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\EventListener\TaxValueListener;
+use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 
 class TaxValueListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class TaxValueListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
+        $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
             ->getMock();
 

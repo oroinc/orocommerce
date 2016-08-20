@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Manager\PaymentStatusManager;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +45,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->transaction = new PaymentTransaction();
-        $this->transaction->setEntityClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $this->transaction->setEntityClass('Oro\Bundle\OrderBundle\Entity\Order');
         $this->transaction->setEntityIdentifier(1);
         $this->transaction->setPaymentMethod('payment_term');
 
@@ -59,13 +58,13 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateStatusNewEntity()
     {
-        $entity = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order');
         $repositoryMock = $this->commonExpectations($entity);
 
         $repositoryMock->expects($this->once())->method('findOneBy')
             ->with(
                 [
-                    'entityClass' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
+                    'entityClass' => 'Oro\Bundle\OrderBundle\Entity\Order',
                     'entityIdentifier' => 1,
                 ]
             )
@@ -82,13 +81,13 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
     {
         $existingPaymentStatus = new PaymentStatus();
         $existingTransaction = new PaymentTransaction();
-        $entity = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order');
         $repositoryMock = $this->commonExpectations($entity);
 
         $repositoryMock->expects($this->once())->method('findOneBy')
             ->with(
                 [
-                    'entityClass' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
+                    'entityClass' => 'Oro\Bundle\OrderBundle\Entity\Order',
                     'entityIdentifier' => 1,
                 ]
             )
@@ -124,7 +123,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->doctrineHelperMock->expects($this->once())->method('getEntityReference')
-            ->with('OroB2B\Bundle\OrderBundle\Entity\Order', 1)
+            ->with('Oro\Bundle\OrderBundle\Entity\Order', 1)
             ->willReturn($entity);
 
         $this->doctrineHelperMock->expects($this->once())->method('getEntityRepository')

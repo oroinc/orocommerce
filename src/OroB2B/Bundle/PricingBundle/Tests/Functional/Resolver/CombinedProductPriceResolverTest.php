@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Resolver;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @dbIsolation
@@ -35,8 +34,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
             ]
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_price_resolver');
@@ -402,8 +401,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
     {
         /** @var CombinedProductPriceRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
-            ->getRepository('OroB2BPricingBundle:CombinedProductPrice');
+            ->getManagerForClass('OroPricingBundle:CombinedProductPrice')
+            ->getRepository('OroPricingBundle:CombinedProductPrice');
 
         /** @var CombinedProductPrice[] $prices */
         $prices = $repository->findBy(
@@ -422,8 +421,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
     {
         /** @var CombinedProductPriceRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:MinimalProductPrice')
-            ->getRepository('OroB2BPricingBundle:MinimalProductPrice');
+            ->getManagerForClass('OroPricingBundle:MinimalProductPrice')
+            ->getRepository('OroPricingBundle:MinimalProductPrice');
 
         /** @var CombinedProductPrice[] $prices */
         $prices = $repository->findBy(

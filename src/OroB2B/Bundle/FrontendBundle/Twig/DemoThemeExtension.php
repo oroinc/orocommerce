@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Twig;
+namespace Oro\Bundle\FrontendBundle\Twig;
 
 use Symfony\Bundle\AsseticBundle\Factory\AssetFactory;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,12 +10,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
-
-use OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -71,7 +70,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
+        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -80,7 +79,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->componentProcessorFilter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
             ->getMockForAbstractClass();
 
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
@@ -94,7 +93,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->storageExtension = $this
-            ->getMockBuilder('OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension')
+            ->getMockBuilder('Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -505,7 +504,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->any())
             ->method('transChoice')
             ->with(
-                'orob2b.product.frontend.quick_add.messages.not_added_products',
+                'oro.product.frontend.quick_add.messages.not_added_products',
                 count(explode(', ', $errorMessageSkus)),
                 ['%sku%' => $errorMessageSkus]
             );

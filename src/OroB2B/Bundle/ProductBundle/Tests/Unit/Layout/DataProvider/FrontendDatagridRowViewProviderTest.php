@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider;
 
 class FrontendDatagridRowViewProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class FrontendDatagridRowViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
+        $this->themeHelper = $this->getMockBuilder('Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
             ->disableOriginalConstructor()->getMock();
         $this->provider = new FrontendDatagridRowViewProvider($this->themeHelper);
     }

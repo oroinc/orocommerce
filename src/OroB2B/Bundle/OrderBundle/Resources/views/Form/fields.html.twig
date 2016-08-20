@@ -66,11 +66,11 @@
                 <table class="grid table-hover table table-bordered table-condensed order-line-items-table">
                     <thead>
                     <tr>
-                        <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
-                        <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                        <th class="order-line-item-sku"><span>{{ 'oro.product.sku.label'|trans }}</span></th>
+                        <th class="order-line-item-type"><span>{{ 'oro.product.entity_label'|trans }}</span></th>
                         {% if form.vars.prototype.vars.sections is defined and form.vars.prototype.vars.sections|length %}
                             {% for sectionName, section in form.vars.prototype.vars.sections %}
-                                {% set label = section.label|default('orob2b.order.orderlineitem.%s.label'|format(sectionName)) %}
+                                {% set label = section.label|default('oro.order.orderlineitem.%s.label'|format(sectionName)) %}
                                 <th class="{{ 'order-line-item-%s'|format(sectionName) }}">
                                     <span>{{ label|trans }}</span>
                                 </th>
@@ -115,11 +115,11 @@
         <div class="fields-row">
             <div class="order-line-item-type-product">
                 {{ form_widget(form.product) }}
-                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'oro.order.orderlineitem.select.free_form'|trans }}</a>
             </div>
             <div class="order-line-item-type-free-form" style="display: none;">
                 {{ form_widget(form.freeFormProduct) }}
-                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'oro.order.orderlineitem.select.product'|trans }}</a>
             </div>
         </div>
         {{ form_errors(form.product) }}
@@ -250,10 +250,10 @@
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th class="order-discount-item-title"><span>{{ 'orob2b.order.orderdiscountitem.columns.title'|trans }}</span></th>
+                        <th class="order-discount-item-title"><span>{{ 'oro.order.orderdiscountitem.columns.title'|trans }}</span></th>
                         <th></th>
                         <th></th>
-                        <th class="order-discount-item-description"><span>{{ 'orob2b.order.orderdiscountitem.columns.description'|trans }}</span></th>
+                        <th class="order-discount-item-description"><span>{{ 'oro.order.orderdiscountitem.columns.description'|trans }}</span></th>
                         {% if form.vars.allow_delete %}
                             <th class="order-discount-item-actions"></th>
                         {% endif %}

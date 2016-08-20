@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,14 +55,14 @@ class RequestStatusType extends AbstractType
             'name',
             'text',
             [
-                'label'    => 'orob2b.rfp.requeststatus.name.label',
+                'label'    => 'oro.rfp.requeststatus.name.label',
                 'required' => true
             ]
         )->add(
             'sortOrder',
             'integer',
             [
-                'label'    => 'orob2b.rfp.requeststatus.sort_order.label',
+                'label'    => 'oro.rfp.requeststatus.sort_order.label',
                 'required' => true
             ]
         );
@@ -76,7 +76,7 @@ class RequestStatusType extends AbstractType
             'translations',
             'orob2b_rfp_request_status_translation',
             [
-                'label'    => 'orob2b.rfp.requeststatus.label.label',
+                'label'    => 'oro.rfp.requeststatus.label.label',
                 'required' => false,
                 'locales'  => $notificationLangs,
                 'labels'   => $localeLabels,

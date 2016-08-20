@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -101,7 +101,7 @@ class ShippingRuleDestination
     /**
      * @var ShippingRule
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="destinations")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="destinations")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr;
 
@@ -9,13 +9,12 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 
 class PriceAttributeProductPriceDatagridListener
 {
@@ -62,7 +61,7 @@ class PriceAttributeProductPriceDatagridListener
         }
         /** @var PriceAttributePriceListRepository $priceAttributePriceList */
         $priceAttributePriceList = $this->doctrineHelper
-            ->getEntityRepository('OroB2BPricingBundle:PriceAttributePriceList');
+            ->getEntityRepository('OroPricingBundle:PriceAttributePriceList');
         $this->attributesWithCurrencies = $priceAttributePriceList->getAttributesWithCurrencies($currencies);
         $config = $event->getConfig();
         foreach ($this->attributesWithCurrencies as $attributeWithCurrency) {
@@ -172,7 +171,7 @@ class PriceAttributeProductPriceDatagridListener
         return [
             'label' => sprintf('%s (%s)', $priceAttributeName, $currency),
             'type' => 'twig',
-            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
             'frontend_type' => 'html',
             'renderable' => true,
         ];
@@ -185,7 +184,7 @@ class PriceAttributeProductPriceDatagridListener
     protected function getPrices(array $records)
     {
         /** @var PriceAttributeProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributeProductPrice');
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributeProductPrice');
 
         $productIds = array_map(
             function (ResultRecord $record) {
@@ -224,7 +223,7 @@ class PriceAttributeProductPriceDatagridListener
             '[source][query][join][left]',
             [
                 [
-                    'join' => 'OroB2BPricingBundle:PriceAttributeProductPrice',
+                    'join' => 'OroPricingBundle:PriceAttributeProductPrice',
                     'alias' => $joinAlias,
                     'conditionType' => Expr\Join::WITH,
                     'condition' => (string)$joinExpr,

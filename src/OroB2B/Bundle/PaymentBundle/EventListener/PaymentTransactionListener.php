@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\EventListener;
+namespace Oro\Bundle\PaymentBundle\EventListener;
 
-use OroB2B\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
-use OroB2B\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
 class PaymentTransactionListener
 {

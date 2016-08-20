@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class QuickAddControllerTest extends WebTestCase
 {
@@ -29,8 +28,8 @@ abstract class QuickAddControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
         ]);
     }
 

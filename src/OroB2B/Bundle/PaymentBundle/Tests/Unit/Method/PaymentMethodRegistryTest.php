@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentMethodRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class PaymentMethodRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = new PaymentMethodRegistry();
 
-        $this->method = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface')
+        $this->method = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface')
             ->disableOriginalConstructor()
             ->getMock();
     }

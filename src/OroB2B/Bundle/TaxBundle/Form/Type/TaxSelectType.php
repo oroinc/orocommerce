@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Type;
+namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,7 +22,7 @@ class TaxSelectType extends AbstractType
                 'create_form_route' => 'orob2b_tax_create',
                 'grid_name' => 'tax-taxes-select-grid',
                 'configs' => [
-                    'placeholder' => 'orob2b.tax.form.choose',
+                    'placeholder' => 'oro.tax.form.choose',
                 ],
             ]
         );

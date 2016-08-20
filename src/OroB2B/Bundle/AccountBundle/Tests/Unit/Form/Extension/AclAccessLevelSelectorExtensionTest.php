@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
 class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +26,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->roleTranslationPrefixResolver = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -156,7 +155,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
                 true,
                 true,
                 AccountUserRoleType::NAME,
-                'orob2b.account.security.access-level.'
+                'oro.account.security.access-level.'
             ],
             'supported form name (FrontendAccountUserRoleType)' => [
                 true,
@@ -165,7 +164,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
                 true,
                 true,
                 FrontendAccountUserRoleType::NAME,
-                'orob2b.account.security.frontend.access-level.'
+                'oro.account.security.frontend.access-level.'
             ],
         ];
     }

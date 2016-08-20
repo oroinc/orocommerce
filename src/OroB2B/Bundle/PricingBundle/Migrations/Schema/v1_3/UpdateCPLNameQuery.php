@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Connection;
 

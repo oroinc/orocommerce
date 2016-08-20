@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(

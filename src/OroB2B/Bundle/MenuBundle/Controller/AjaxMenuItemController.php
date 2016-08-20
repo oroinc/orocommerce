@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Controller;
+namespace Oro\Bundle\MenuBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

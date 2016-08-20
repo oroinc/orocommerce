@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountListener;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\EventListener\AccountListener;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class AccountFormExtension extends AbstractTypeExtension
 {
@@ -22,7 +22,7 @@ class AccountFormExtension extends AbstractTypeExtension
     /**
      * @var string
      */
-    protected $relationClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount';
+    protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToAccount';
 
     /**
      * @param AccountListener $listener
@@ -72,9 +72,9 @@ class AccountFormExtension extends AbstractTypeExtension
     {
         return [
             PriceListAccountFallback::ACCOUNT_GROUP =>
-                'orob2b.pricing.fallback.account_group.label',
+                'oro.pricing.fallback.account_group.label',
             PriceListAccountFallback::CURRENT_ACCOUNT_ONLY =>
-                'orob2b.pricing.fallback.current_account_only.label',
+                'oro.pricing.fallback.current_account_only.label',
         ];
     }
 

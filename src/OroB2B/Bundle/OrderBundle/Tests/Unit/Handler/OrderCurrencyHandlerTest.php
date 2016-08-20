@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Handler;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 
 class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
 {

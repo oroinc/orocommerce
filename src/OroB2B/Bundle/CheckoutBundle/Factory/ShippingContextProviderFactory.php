@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Factory;
+namespace Oro\Bundle\CheckoutBundle\Factory;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 class ShippingContextProviderFactory
 {

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler;
+namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Event\ContextEvent;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
 class OrderLineItemHandler
 {

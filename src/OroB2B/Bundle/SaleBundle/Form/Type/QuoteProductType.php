@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -11,12 +11,11 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
 class QuoteProductType extends AbstractType
 {
@@ -153,7 +152,7 @@ class QuoteProductType extends AbstractType
         $builder
             ->add('product', ProductSelectType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.product.entity_label',
+                'label' => 'oro.product.entity_label',
                 'create_enabled' => false,
                 'data_parameters' => [
                     'scope' => 'quote'
@@ -161,11 +160,11 @@ class QuoteProductType extends AbstractType
             ])
             ->add('productSku', 'text', [
                 'required' => false,
-                'label' => 'orob2b.product.sku.label',
+                'label' => 'oro.product.sku.label',
             ])
             ->add('productReplacement', ProductSelectType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
+                'label' => 'oro.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
                 'data_parameters' => [
                     'scope' => 'quote'
@@ -173,18 +172,18 @@ class QuoteProductType extends AbstractType
             ])
             ->add('productReplacementSku', 'text', [
                 'required' => false,
-                'label' => 'orob2b.product.sku.label',
+                'label' => 'oro.product.sku.label',
             ])
             ->add('freeFormProduct', 'text', [
                 'required' => false,
-                'label' => 'orob2b.product.entity_label',
+                'label' => 'oro.product.entity_label',
             ])
             ->add('freeFormProductReplacement', 'text', [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
+                'label' => 'oro.sale.quoteproduct.product_replacement.label',
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
-                'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
+                'add_label' => 'oro.sale.quoteproductoffer.add_label',
                 'options' => [
                     'compact_units' => $options['compact_units'],
                 ],
@@ -195,11 +194,11 @@ class QuoteProductType extends AbstractType
             ->add('commentAccount', 'textarea', [
                 'required' => false,
                 'read_only' => true,
-                'label' => 'orob2b.sale.quoteproduct.comment_account.label',
+                'label' => 'oro.sale.quoteproduct.comment_account.label',
             ])
             ->add('comment', 'textarea', [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.comment.label',
+                'label' => 'oro.sale.quoteproduct.comment.label',
             ])
         ;
     }
@@ -215,7 +214,7 @@ class QuoteProductType extends AbstractType
             'compact_units' => false,
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => ['view' => 'orob2bsale/js/app/views/line-item-view'],
+            'page_component_options' => ['view' => 'orosale/js/app/views/line-item-view'],
         ]);
     }
 

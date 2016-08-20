@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxBaseExclusionTest extends \PHPUnit_Framework_TestCase
 {

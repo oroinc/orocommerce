@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Duplicator\Filter;
+namespace Oro\Component\Duplicator\Filter;
 
 interface Filter extends \DeepCopy\Filter\Filter
 {

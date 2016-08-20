@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -80,7 +80,7 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
             if ($alreadyInUse) {
                 $form->addError(new FormError(
                     $this->translator->transChoice(
-                        'orob2b.pricing.validators.using_as_available',
+                        'oro.pricing.validators.using_as_available',
                         count($alreadyInUse),
                         ['%curr%' => implode(', ', $this->getCurrencyNames($alreadyInUse))],
                         'validators'

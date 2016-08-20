@@ -8,14 +8,14 @@
         <% if (clickable) { %>
         <tr>
             <td colspan="2">
-                <%= _.__('orob2b.pricing.click_to_select') %>
+                <%= _.__('oro.pricing.click_to_select') %>
             </td>
         </tr>
         <% } %>
         <% _.each(tierPrices, function(prices, unit) { %>
         <tr>
             <td colspan="2">
-                <b><%= _.__('orob2b.product.product_unit.' + unit + '.label.full') %></b>
+                <b><%= _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
             </td>
         </tr>
         <% _.each(prices, function(price) { %>
@@ -41,8 +41,8 @@
 </script>
 <script type="text/template" id="product-prices-price-overridden-template">
     {% set priceOverriddenTooltip %}{% spaceless %}
-        <p><%= _.__('orob2b.pricing.product_prices.price_is_overridden') %></p>
-        <p><a href='javascript: void(0);'><%= _.__('orob2b.pricing.product_prices.reset_price') %></a></p>
+        <p><%= _.__('oro.pricing.product_prices.price_is_overridden') %></p>
+        <p><a href='javascript: void(0);'><%= _.__('oro.pricing.product_prices.reset_price') %></a></p>
     {% endspaceless %}{% endset %}
 
     <div class="product-price-overridden" style="display: none;">

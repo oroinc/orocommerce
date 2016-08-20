@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;

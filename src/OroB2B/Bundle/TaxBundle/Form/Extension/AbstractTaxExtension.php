@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -10,8 +10,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 
 abstract class AbstractTaxExtension extends AbstractTypeExtension
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension;
 
 class OrderFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

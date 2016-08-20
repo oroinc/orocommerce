@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -8,13 +8,12 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class AccountTypedAddressTypeTest extends FormIntegrationTestCase
 {
@@ -69,7 +68,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
 
         $this->formType = new AccountTypedAddressType();
         $this->formType->setAddressTypeDataClass('Oro\Bundle\AddressBundle\Entity\AddressType');
-        $this->formType->setDataClass('OroB2B\Bundle\AccountBundle\Entity\AccountAddress');
+        $this->formType->setDataClass('Oro\Bundle\AccountBundle\Entity\AccountAddress');
     }
 
     /**

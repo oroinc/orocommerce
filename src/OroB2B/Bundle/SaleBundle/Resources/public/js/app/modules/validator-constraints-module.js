@@ -11,7 +11,7 @@ require([
         'jquery', 'jquery.validate'
     ], function($) {
         var constraints = [
-            'orob2bsale/js/validator/quote-product-offer-quantity'
+            'orosale/js/validator/quote-product-offer-quantity'
         ];
 
         $.validator.loadMethod(constraints);

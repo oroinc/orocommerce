@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -8,23 +8,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Form\Type\RequestType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -41,7 +40,7 @@ class RequestTypeTest extends AbstractTest
     protected function setUp()
     {
         $this->formType = new RequestType();
-        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
+        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\Request');
 
         parent::setUp();
     }
@@ -54,7 +53,7 @@ class RequestTypeTest extends AbstractTest
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
+                    'data_class' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     'intention'  => 'rfp_request',
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
                 ]
@@ -425,7 +424,7 @@ class RequestTypeTest extends AbstractTest
     {
         /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -440,29 +439,29 @@ class RequestTypeTest extends AbstractTest
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2),
             ],
             AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
 
         $requestStatusSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', 1),
+                1 => $this->getEntity('Oro\Bundle\RFPBundle\Entity\RequestStatus', 1),
             ],
             RequestStatusSelectType::NAME
         );
 
         $requestProductType = new RequestProductType($productUnitLabelFormatter);
-        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
             new PreloadedExtension(

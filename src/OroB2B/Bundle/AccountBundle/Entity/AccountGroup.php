@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository")
  * @ORM\Table(
  *      name="orob2b_account_group",
  *      indexes={
@@ -63,7 +63,7 @@ class AccountGroup
     /**
      * @var Collection|Account[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account", mappedBy="group")
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account", mappedBy="group")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

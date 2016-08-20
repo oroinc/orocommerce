@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Ownership;
+namespace Oro\Bundle\AccountBundle\Entity\Ownership;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 trait AuditableFrontendAccountAwareTrait
 {
@@ -11,7 +11,7 @@ trait AuditableFrontendAccountAwareTrait
      * @var Account
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\Account",
      *      cascade={"persist"}
      * )
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")

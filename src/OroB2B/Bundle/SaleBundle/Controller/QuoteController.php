@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Controller;
+namespace Oro\Bundle\SaleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -15,13 +15,12 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteController extends Controller
 {
@@ -31,7 +30,7 @@ class QuoteController extends Controller
      * @Acl(
      *      id="orob2b_sale_quote_view",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
+     *      class="OroSaleBundle:Quote",
      *      permission="VIEW"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
@@ -62,12 +61,12 @@ class QuoteController extends Controller
 
     /**
      * @Route("/create", name="orob2b_sale_quote_create")
-     * @Template("OroB2BSaleBundle:Quote:update.html.twig")
+     * @Template("OroSaleBundle:Quote:update.html.twig")
      * @Acl(
      *     id="orob2b_sale_quote_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroB2BSaleBundle:Quote"
+     *     class="OroSaleBundle:Quote"
      * )
      *
      * @param Request $request
@@ -100,7 +99,7 @@ class QuoteController extends Controller
      *     id="orob2b_sale_quote_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroB2BSaleBundle:Quote"
+     *     class="OroSaleBundle:Quote"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
@@ -158,7 +157,7 @@ class QuoteController extends Controller
                     'parameters'    => ['id' => $quote->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message'),
+            $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             null,
             function (Quote $quote, FormInterface $form, Request $request) {
                 return [
@@ -189,7 +188,7 @@ class QuoteController extends Controller
     }
 
     /**
-     * @return \OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler
+     * @return \Oro\Bundle\SaleBundle\Model\QuoteRequestHandler
      */
     protected function getQuoteHandler()
     {

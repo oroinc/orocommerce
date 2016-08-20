@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter;
+use Oro\Bundle\FrontendBundle\Placeholder\ThemeFilter;
 
 class ThemeFilterTest extends \PHPUnit_Framework_TestCase
 {

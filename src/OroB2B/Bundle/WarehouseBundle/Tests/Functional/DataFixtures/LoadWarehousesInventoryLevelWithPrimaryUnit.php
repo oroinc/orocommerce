@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class LoadWarehousesInventoryLevelWithPrimaryUnit extends AbstractFixture implements DependentFixtureInterface
 {

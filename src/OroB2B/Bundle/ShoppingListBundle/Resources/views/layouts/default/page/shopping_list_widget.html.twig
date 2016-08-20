@@ -1,6 +1,6 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
     {% set attr = {
-        'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-widget-view-component',
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
         'data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             rootId : block.vars.id,
@@ -23,7 +23,7 @@
             <i class="cf-clipboard"></i>
         </span>
         <span class="cart-widget__list-trigger">
-            <span class="cart-widget__text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
+            <span class="cart-widget__text">{{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
             <i class="cf-down-open-mini"></i>
         </span>
     </div>
@@ -68,7 +68,7 @@
         <table class="order-widget__table">
             <tbody>
             <tr>
-                <td>{{ 'orob2b.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
+                <td>{{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
                 <td class="text-right">
                     {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                 </td>
@@ -77,7 +77,7 @@
         </table>
 
         <a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
-            <span>{{ 'orob2b.frontend.shoppinglist.view.view_details.label'|trans }} </span><i class="cf-right-open-mini"></i>
+            <span>{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} </span><i class="cf-right-open-mini"></i>
         </a>
     </div>
 {% endblock %}
@@ -87,7 +87,7 @@
     {{ UI.clientLink({
         'aCss': 'order-widget__create-btn',
         'iCss': 'cf-add_circle nmmt3-md',
-        'label' : 'orob2b.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+        'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
         'widget' : {
             'type' : 'shopping-list-create',
             'options': {

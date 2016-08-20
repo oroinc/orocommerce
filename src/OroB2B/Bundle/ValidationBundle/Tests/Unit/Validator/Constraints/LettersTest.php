@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Letters;
 
 class LettersTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Twig;
+namespace Oro\Bundle\PaymentBundle\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodExtension extends \Twig_Extension
 {

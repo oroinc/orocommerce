@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller;
+namespace Oro\Bundle\OrderBundle\Controller;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,13 +12,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
-use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
+use Oro\Bundle\OrderBundle\Form\Handler\OrderHandler;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class OrderController extends AbstractOrderController
 {
@@ -28,7 +27,7 @@ class OrderController extends AbstractOrderController
      * @Acl(
      *      id="orob2b_order_view",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="VIEW"
      * )
      *
@@ -89,11 +88,11 @@ class OrderController extends AbstractOrderController
      * Create order form
      *
      * @Route("/create", name="orob2b_order_create")
-     * @Template("OroB2BOrderBundle:Order:update.html.twig")
+     * @Template("OroOrderBundle:Order:update.html.twig")
      * @Acl(
      *      id="orob2b_order_create",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="CREATE"
      * )
      *
@@ -115,7 +114,7 @@ class OrderController extends AbstractOrderController
      * @Acl(
      *      id="orob2b_order_update",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="EDIT"
      * )
      *
@@ -159,7 +158,7 @@ class OrderController extends AbstractOrderController
                     'parameters' => ['id' => $order->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
+            $this->get('translator')->trans('oro.order.controller.order.saved.message'),
             null,
             function (Order $order, FormInterface $form, Request $request) {
 

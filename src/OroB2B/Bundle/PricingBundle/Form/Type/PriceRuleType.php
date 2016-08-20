@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceRuleType extends AbstractType
 {
@@ -33,14 +32,14 @@ class PriceRuleType extends AbstractType
                 self::RULE,
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricerule.calculate_as.label'
+                    'label' => 'oro.pricing.pricerule.calculate_as.label'
                 ]
             )
             ->add(
                 self::RULE_CONDITION,
                 'textarea',
                 [
-                    'label' => 'orob2b.pricing.pricerule.rule_condition.label',
+                    'label' => 'oro.pricing.pricerule.rule_condition.label',
                     'required' => false
                 ]
             )
@@ -48,7 +47,7 @@ class PriceRuleType extends AbstractType
                 self::CURRENCY,
                 CurrencySelectionType::NAME,
                 [
-                    'label' => 'orob2b.pricing.pricerule.rule_condition.label'
+                    'label' => 'oro.pricing.pricerule.rule_condition.label'
                 ]
             )
             ->add(
@@ -56,21 +55,21 @@ class PriceRuleType extends AbstractType
                 'entity',
                 [
                     'class' => ProductUnit::class,
-                    'label' => 'orob2b.pricing.pricerule.product_unit.label'
+                    'label' => 'oro.pricing.pricerule.product_unit.label'
                 ]
             )
             ->add(
                 self::QUANTITY,
                 'text',
                 [
-                    'label' => 'orob2b.pricing.pricerule.quantity.label'
+                    'label' => 'oro.pricing.pricerule.quantity.label'
                 ]
             )
             ->add(
                 self::PRIORITY,
                 'integer',
                 [
-                    'label' => 'orob2b.pricing.pricerule.priority.label'
+                    'label' => 'oro.pricing.pricerule.priority.label'
                 ]
             );
     }

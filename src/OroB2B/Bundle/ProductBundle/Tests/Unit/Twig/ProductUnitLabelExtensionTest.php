@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension;
 
 class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 

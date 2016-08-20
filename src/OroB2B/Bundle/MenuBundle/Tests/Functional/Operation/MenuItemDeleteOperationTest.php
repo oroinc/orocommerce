@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class MenuItemDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData'
+                'Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData'
             ]
         );
     }

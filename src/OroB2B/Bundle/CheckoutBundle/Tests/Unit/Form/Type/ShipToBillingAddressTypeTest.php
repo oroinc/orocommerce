@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Form;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType;
+use Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType;
 
 class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
 {

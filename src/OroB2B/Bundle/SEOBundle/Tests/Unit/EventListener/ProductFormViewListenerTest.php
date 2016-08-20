@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\SEOBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {

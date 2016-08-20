@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BMenuBundle:layouts:custom/page/main_menu.html.twig'
+            themes: 'OroMenuBundle:layouts:custom/page/main_menu.html.twig'
         - '@setOption':
             id: quick_access_menu
             optionName: attr.class

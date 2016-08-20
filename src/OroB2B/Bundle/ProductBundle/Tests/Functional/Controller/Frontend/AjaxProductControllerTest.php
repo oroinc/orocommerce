@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -21,7 +20,7 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
             ]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -15,9 +15,8 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -39,7 +38,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     {
         return [
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
         ];
     }
 

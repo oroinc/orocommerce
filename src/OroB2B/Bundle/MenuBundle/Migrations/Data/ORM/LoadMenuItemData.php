@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\MenuBundle\Migrations\Data\ORM;
 
 use Knp\Menu\MenuFactory;
 
@@ -13,8 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
-
-use OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
+use Oro\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
 
 class LoadMenuItemData extends AbstractFixture implements
     ContainerAwareInterface,

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Extension;
+namespace Oro\Bundle\ShippingBundle\Extension;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClassInterface;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
+use Oro\Bundle\ShippingBundle\Entity\FreightClassInterface;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 
 class FreightClassesExtension implements FreightClassesExtensionInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class LoginListener
 {

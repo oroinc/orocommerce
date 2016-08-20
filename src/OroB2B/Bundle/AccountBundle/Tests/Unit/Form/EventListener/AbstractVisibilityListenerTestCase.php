@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
@@ -8,15 +8,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractVisibilityListenerTestCase extends \PHPUnit_Framework_TestCase
 {
-    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
-    const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+    const CATEGORY_VISIBILITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
+    const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS =
-        'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility';
+        'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility';
 
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;

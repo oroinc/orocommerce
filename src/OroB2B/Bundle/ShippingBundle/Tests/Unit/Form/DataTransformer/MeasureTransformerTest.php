@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
 
 class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -94,7 +94,7 @@ class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
     protected function createUnit($code = null)
     {
         /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->getMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

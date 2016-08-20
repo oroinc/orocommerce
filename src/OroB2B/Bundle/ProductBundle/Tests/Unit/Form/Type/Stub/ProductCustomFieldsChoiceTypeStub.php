@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
 
 class ProductCustomFieldsChoiceTypeStub extends ProductCustomFieldsChoiceType
 {

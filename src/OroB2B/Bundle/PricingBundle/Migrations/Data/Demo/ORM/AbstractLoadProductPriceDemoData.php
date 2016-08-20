@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,10 +10,10 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
-use OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 
 abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implements
     ContainerAwareInterface,
@@ -73,7 +73,7 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     protected function getProductBySku(EntityManager $manager, $sku)
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
@@ -87,7 +87,7 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     protected function getProductUnit(EntityManager $manager, $code)
     {
         if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroB2BProductBundle:ProductUnit')->find($code);
+            $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
         }
 
         return $this->productUnis[$code];

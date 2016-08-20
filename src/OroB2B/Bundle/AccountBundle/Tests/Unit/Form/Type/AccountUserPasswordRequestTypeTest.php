@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
 
 class AccountUserPasswordRequestTypeTest extends FormIntegrationTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -15,7 +15,7 @@ class ShippingOriginWarehouseType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('system', CheckboxType::class, ['label' => 'orob2b.shipping.warehouse.use_system_configuration']);
+        $builder->add('system', CheckboxType::class, ['label' => 'oro.shipping.warehouse.use_system_configuration']);
     }
 
     /**

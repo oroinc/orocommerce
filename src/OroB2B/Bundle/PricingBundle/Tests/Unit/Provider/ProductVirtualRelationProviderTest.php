@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -101,7 +100,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
                     'join' => [
                         'left' => [
                             [
-                                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                                 'alias' => 'msrpPrice',
                                 'conditionType' => 'WITH',
                                 'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
@@ -136,13 +135,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
                     'msrp' => [
                         'label' => 'MSRP',
                         'relation_type' => 'manyToOne',
-                        'related_entity_name' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        'related_entity_name' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                         'target_join_alias' => 'msrpPrice',
                         'query' => [
                             'join' => [
                                 'left' => [
                                     [
-                                        'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                        'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                                         'alias' => 'msrpPrice',
                                         'conditionType' => 'WITH',
                                         'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
@@ -154,13 +153,13 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
                     'map' => [
                         'label' => 'MAP',
                         'relation_type' => 'manyToOne',
-                        'related_entity_name' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        'related_entity_name' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                         'target_join_alias' => 'mapPrice',
                         'query' => [
                             'join' => [
                                 'left' => [
                                     [
-                                        'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                                        'join' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                                         'alias' => 'mapPrice',
                                         'conditionType' => 'WITH',
                                         'condition' => '(mapPrice.product = entity and mapPrice.priceList = 2)',

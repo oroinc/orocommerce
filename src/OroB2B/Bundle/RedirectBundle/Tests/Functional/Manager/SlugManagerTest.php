@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Tests\Functional\Manager;
+namespace Oro\Bundle\RedirectBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Manager\SlugManager;
 
 /**
  * @dbIsolation
@@ -33,7 +32,7 @@ class SlugManagerTest extends WebTestCase
 
     public function testMakeUrlUnique()
     {
-        $manager = $this->registry->getManagerForClass('OroB2BRedirectBundle:Slug');
+        $manager = $this->registry->getManagerForClass('OroRedirectBundle:Slug');
 
         $slug = new Slug();
         $slug->setUrl('domain.com/hvac-equipment/detection-kits');

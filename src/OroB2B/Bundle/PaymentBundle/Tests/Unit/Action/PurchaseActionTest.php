@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Action\PurchaseAction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PurchaseActionTest extends AbstractActionTest
 {
@@ -43,7 +43,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->setPaymentMethod($options['paymentMethod']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::PURCHASE, $paymentTransaction)
@@ -224,7 +224,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
 
         $this->paymentMethodRegistry->expects($this->once())->method('getPaymentMethod')
@@ -272,7 +272,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($sourcePaymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
         $paymentMethod
             ->expects($this->once())
@@ -378,7 +378,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('execute')->willThrowException(new \Exception());
 
         $this->paymentMethodRegistry

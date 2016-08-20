@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListChangeTrigger extends AbstractFixture implements DependentFixtureInterface
 {
@@ -91,8 +91,8 @@ class LoadPriceListChangeTrigger extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
         ];
     }
 }

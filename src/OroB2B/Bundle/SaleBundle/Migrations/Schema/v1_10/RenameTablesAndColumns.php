@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_10;
+namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -9,8 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
-use OroB2B\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 {
@@ -29,8 +28,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         // email to quote association
         $extension->renameTable($schema, $queries, 'oro_rel_26535370aab0e4f0a0472d', 'oro_rel_26535370aab0e4f0b5ec88');
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\EmailBundle\Entity\Email',
-            'OroB2B\Bundle\SaleBundle\Entity\Quote',
+            'Oro\Bundle\EmailBundle\Entity\Email',
+            'Oro\Bundle\SaleBundle\Entity\Quote',
             'quote_54b6ea15',
             'quote_54e154f7',
             RelationType::MANY_TO_MANY
@@ -39,8 +38,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         // calendar event to quote association
         $extension->renameTable($schema, $queries, 'oro_rel_46a29d19aab0e4f0a0472d', 'oro_rel_46a29d19aab0e4f0b5ec88');
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'OroB2B\Bundle\SaleBundle\Entity\Quote',
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\SaleBundle\Entity\Quote',
             'quote_54b6ea15',
             'quote_54e154f7',
             RelationType::MANY_TO_MANY
@@ -61,8 +60,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['onDelete' => 'SET NULL']
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\AttachmentBundle\Entity\Attachment',
-            'OroB2B\Bundle\SaleBundle\Entity\Quote',
+            'Oro\Bundle\AttachmentBundle\Entity\Attachment',
+            'Oro\Bundle\SaleBundle\Entity\Quote',
             'quote_ea269983',
             'quote_7de78df3',
             RelationType::MANY_TO_ONE
@@ -84,8 +83,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'fk_oro_note_quote_7de78df3_id'
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\NoteBundle\Entity\Note',
-            'OroB2B\Bundle\SaleBundle\Entity\Quote',
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            'Oro\Bundle\SaleBundle\Entity\Quote',
             'quote_ea269983',
             'quote_7de78df3',
             RelationType::MANY_TO_ONE

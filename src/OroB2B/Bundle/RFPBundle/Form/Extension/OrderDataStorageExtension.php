@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Extension;
+namespace Oro\Bundle\RFPBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,13 +8,13 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderDataStorageExtension extends AbstractTypeExtension
 {

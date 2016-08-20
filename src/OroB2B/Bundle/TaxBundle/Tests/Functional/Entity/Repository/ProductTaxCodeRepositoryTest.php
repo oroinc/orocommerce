@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes as TaxFixture;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes as TaxFixture;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes']);
+        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes']);
     }
 
     public function testFindOneByProduct()

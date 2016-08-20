@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
-
-use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
-use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
@@ -65,7 +64,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     {
         $transChoiceKey = $args->getMassAction()->getOptions()->offsetGetByPath(
             '[messages][success]',
-            'orob2b.shoppinglist.actions.add_success_message'
+            'oro.shoppinglist.actions.add_success_message'
         );
 
         return new MassActionResponse(

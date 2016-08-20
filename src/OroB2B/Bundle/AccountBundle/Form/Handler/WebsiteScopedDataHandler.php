@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class WebsiteScopedDataHandler
 {

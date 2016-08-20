@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Controller\Api\Rest;
+namespace Oro\Bundle\WarehouseBundle\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +27,7 @@ class WarehouseInventoryLevelController extends RestController implements ClassR
      * @Acl(
      *      id="orob2b_warehouse_inventory_level_delete",
      *      type="entity",
-     *      class="OroB2BWarehouseBundle:WarehouseInventoryLevel",
+     *      class="OroWarehouseBundle:WarehouseInventoryLevel",
      *      permission="DELETE"
      * )
      *

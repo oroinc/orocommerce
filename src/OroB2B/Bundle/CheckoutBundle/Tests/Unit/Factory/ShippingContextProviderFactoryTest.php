@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,11 +20,11 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->checkout = $this->getMockBuilder('OroB2B\Bundle\CheckoutBundle\Entity\Checkout')
+        $this->checkout = $this->getMockBuilder('Oro\Bundle\CheckoutBundle\Entity\Checkout')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shoppingList = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+        $this->shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->disableOriginalConstructor()
             ->getMock();
 

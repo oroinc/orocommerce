@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Resolver;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 /**
  * @dbIsolation
@@ -53,8 +52,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
             ]
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_schedule_resolver');
@@ -85,19 +84,19 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         /** @var CombinedPriceList $currentCPL */
         $currentCPL = $this->getReference($currentCPLName);
         $relations = $this->getInvalidRelations(
-            'OroB2BPricingBundle:CombinedPriceListToAccount',
+            'OroPricingBundle:CombinedPriceListToAccount',
             $fullCPL,
             $currentCPL
         );
         $this->assertEmpty($relations);
         $relations = $this->getInvalidRelations(
-            'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+            'OroPricingBundle:CombinedPriceListToAccountGroup',
             $fullCPL,
             $currentCPL
         );
         $this->assertEmpty($relations);
         $relations = $this->getInvalidRelations(
-            'OroB2BPricingBundle:CombinedPriceListToWebsite',
+            'OroPricingBundle:CombinedPriceListToWebsite',
             $fullCPL,
             $currentCPL
         );
@@ -172,7 +171,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     {
         if (!$this->manager) {
             $this->manager = $this->getContainer()->get('doctrine')
-                ->getManagerForClass('OroB2BPricingBundle:CombinedPriceListActivationRule');
+                ->getManagerForClass('OroPricingBundle:CombinedPriceListActivationRule');
         }
 
         return $this->manager;

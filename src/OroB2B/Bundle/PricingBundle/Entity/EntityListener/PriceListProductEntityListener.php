@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 
 class PriceListProductEntityListener
 {
@@ -34,8 +34,8 @@ class PriceListProductEntityListener
         $product = $priceListToProduct->getProduct();
 
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice');
-        $prices = $em->getRepository('OroB2BPricingBundle:ProductPrice')
+        $em = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
+        $prices = $em->getRepository('OroPricingBundle:ProductPrice')
             ->findBy([
                 'priceList' => $priceList,
                 'product' => $product

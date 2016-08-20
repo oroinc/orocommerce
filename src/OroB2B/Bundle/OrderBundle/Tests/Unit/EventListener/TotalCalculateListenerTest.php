@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormFactory;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +57,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
             ->setMethods(['submit'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,7 +66,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
-        $entity = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
 
         if ($expected['resetDiscounts']) {
             $entity->expects($this->once())->method('resetDiscounts');
@@ -107,7 +106,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
             ->setMethods(['submit'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -126,7 +125,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
             ->setMethods(['submit'])
             ->disableOriginalConstructor()
             ->getMock();

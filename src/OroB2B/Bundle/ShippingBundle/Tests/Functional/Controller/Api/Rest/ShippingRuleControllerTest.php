@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -17,8 +16,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->initClient([]);
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
-                'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
+                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }

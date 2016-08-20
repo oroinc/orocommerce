@@ -1,13 +1,13 @@
-OroB2B\Bundle\AccountBundle\Entity\Account:
+Oro\Bundle\AccountBundle\Entity\Account:
     properties:
         name:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
                 message: One of addresses must be set as primary.
-            - OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
+            - Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-OroB2B\Bundle\AccountBundle\Entity\AccountAddress:
+Oro\Bundle\AccountBundle\Entity\AccountAddress:
     properties:
         street:
             - NotBlank: ~
@@ -22,12 +22,12 @@ OroB2B\Bundle\AccountBundle\Entity\AccountAddress:
         - Callback:
             methods: [isRegionValid]
 
-OroB2B\Bundle\AccountBundle\Entity\AccountGroup:
+Oro\Bundle\AccountBundle\Entity\AccountGroup:
     properties:
         name:
             - NotBlank: ~
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUser:
+Oro\Bundle\AccountBundle\Entity\AccountUser:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
@@ -68,9 +68,9 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
                 message: One of addresses must be set as primary.
-            - OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
+            - Oro\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
+Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
     properties:
         street:
             - NotBlank: ~
@@ -85,7 +85,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
         - Callback:
             methods: [isRegionValid]
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserRole:
+Oro\Bundle\AccountBundle\Entity\AccountUserRole:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [label, account]

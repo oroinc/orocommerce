@@ -4,7 +4,7 @@
     } %}
     {% set attr = {
         id: 'import-validation',
-        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-import-validation-component',
+        'data-page-component-module': 'oroproduct/js/app/components/quick-add-import-validation-component',
         'data-page-component-options': widgetOptions|json_encode,
         'class': 'validation-info'
     }|merge(attr) %}
@@ -77,10 +77,10 @@
                 {% for invalidRow in collection.invalidRows %}
                     <li>
                         {% if invalidRow.isComplete and invalidRow.product is empty %}
-                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
+                            {{ 'oro.product.frontend.quick_add.import_validation.validator.not_found'
                             |trans({'%sku%' : invalidRow.sku}) }}
                         {% else %}
-                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
+                            {{ 'oro.product.frontend.quick_add.import_validation.validator.invalid_format'
                             |trans({'%index%' : invalidRow.index}) }}
                         {% endif %}
                     </li>

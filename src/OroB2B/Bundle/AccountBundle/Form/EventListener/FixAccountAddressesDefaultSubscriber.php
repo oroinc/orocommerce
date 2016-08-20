@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -11,9 +11,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 /**
  * When address is created/updated from single form, it will ensure the rules of one address has default mark per type

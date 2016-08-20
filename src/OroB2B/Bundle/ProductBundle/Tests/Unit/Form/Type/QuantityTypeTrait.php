@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 /**
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMock($className)
@@ -27,7 +27,7 @@ trait QuantityTypeTrait
     public function getRoundingService()
     {
         if (!$this->roundingService) {
-            $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+            $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         }
 
         return $this->roundingService;
@@ -38,7 +38,7 @@ trait QuantityTypeTrait
      */
     public function getQuantityType()
     {
-        return new QuantityType($this->getRoundingService(), 'OroB2B\Bundle\ProductBundle\Entity\Product');
+        return new QuantityType($this->getRoundingService(), 'Oro\Bundle\ProductBundle\Entity\Product');
     }
 
     public function addRoundingServiceExpect()

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,9 +10,8 @@ use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class RequestHandler
 {

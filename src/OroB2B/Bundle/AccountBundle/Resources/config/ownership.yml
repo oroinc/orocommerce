@@ -5,7 +5,7 @@ parameters:
 
 services:
     orob2b_account.owner.frontend_ownership_metadata_provider:
-        class: 'OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider'
+        class: 'Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider'
         public: false
         arguments:
             - '%orob2b_account.entity.owners%'
@@ -21,7 +21,7 @@ services:
 
     orob2b_account.owner.decision_maker:
         public: false
-        class: 'OroB2B\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker'
+        class: 'Oro\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker'
         parent: oro_security.owner.decision_maker.abstract
         tags:
            - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
@@ -29,7 +29,7 @@ services:
     orob2b_account.owner.tree_provider:
         public: false
         parent: oro_security.abstract_ownership_tree_provider
-        class: 'OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider'
+        class: 'Oro\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider'
         tags:
             - { name: oro_security.ownership.tree_provider }
 

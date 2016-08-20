@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Cache;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +11,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\PricingBundle\Cache\RuleCache;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 
 class RuleCacheTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestStatusData extends AbstractFixture
 {

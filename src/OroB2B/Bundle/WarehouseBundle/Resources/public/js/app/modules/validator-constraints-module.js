@@ -11,7 +11,7 @@ require([
         'jquery', 'jquery.validate'
     ], function ($) {
         var constraints = [
-            'orob2bwarehouse/js/validator/decimals-number'
+            'orowarehouse/js/validator/decimals-number'
         ];
 
         $.validator.loadMethod(constraints);

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserPasswordHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\AbstractAccountUserPasswordHandler;
 
 abstract class AbstractAccountUserPasswordHandlerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ abstract class AbstractAccountUserPasswordHandlerTestCase extends \PHPUnit_Frame
 
     protected function setUp()
     {
-        $this->userManager = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

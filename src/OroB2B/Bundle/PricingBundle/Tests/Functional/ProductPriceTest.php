@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional;
+namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 /**
  * @dbIsolation
@@ -20,7 +19,7 @@ class ProductPriceTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
     }
@@ -61,7 +60,7 @@ class ProductPriceTest extends WebTestCase
                     'operationName' => 'orob2b_pricing_add_product_price',
                     'route' => 'orob2b_pricing_price_list_view',
                     'entityId' => $priceList->getId(),
-                    'entityClass' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList'
+                    'entityClass' => 'Oro\Bundle\PricingBundle\Entity\PriceList'
                 ]
             ),
             ['_widgetContainer' => 'dialog']

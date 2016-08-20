@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional;
+namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
 /**
  * @dbIsolation
@@ -27,7 +26,7 @@ class RFPFrontendActionsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
             ]
         );
     }

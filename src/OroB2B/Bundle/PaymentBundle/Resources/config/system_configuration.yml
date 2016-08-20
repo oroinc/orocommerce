@@ -1,23 +1,23 @@
 oro_system_configuration:
     groups:
         payment:
-            title: orob2b.payment.system_configuration.groups.payment.title
+            title: oro.payment.system_configuration.groups.payment.title
         general:
-            title: orob2b.payment.system_configuration.groups.general.title
+            title: oro.payment.system_configuration.groups.general.title
         merchant_location:
-            title: orob2b.payment.system_configuration.groups.merchant_location.title
+            title: oro.payment.system_configuration.groups.merchant_location.title
 
         payment_term:
-            title: orob2b.payment.system_configuration.groups.payment_terms.title
+            title: oro.payment.system_configuration.groups.payment_terms.title
         payment_term_display:
-            title: orob2b.payment.system_configuration.groups.display_options.title
+            title: oro.payment.system_configuration.groups.display_options.title
 
     fields:
         orob2b_payment.merchant_country:
             data_type: string
             type: oro_locale_country
             options:
-                label: orob2b.payment.system_configuration.fields.merchant_country.label
+                label: oro.payment.system_configuration.fields.merchant_country.label
 
         # Payment Term
         orob2b_payment.payment_term_enabled:
@@ -25,48 +25,48 @@ oro_system_configuration:
             type: oro_config_checkbox
             priority: 100
             options:
-                label: orob2b.payment.system_configuration.fields.enabled.label
+                label: oro.payment.system_configuration.fields.enabled.label
 
         orob2b_payment.payment_term_label:
             data_type: string
             type: text
             priority: 90
             options:
-                label: orob2b.payment.system_configuration.fields.label.label
-                tooltip: orob2b.payment.system_configuration.fields.label.tooltip
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
 
         orob2b_payment.payment_term_short_label:
             data_type: string
             type: text
             priority: 80
             options:
-                label: orob2b.payment.system_configuration.fields.short_label.label
-                tooltip: orob2b.payment.system_configuration.fields.short_label.tooltip
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
 
         orob2b_payment.payment_term_sort_order:
             data_type: string
             type: text
             priority: 70
             options:
-                label: orob2b.payment.system_configuration.fields.sort_order.label
+                label: oro.payment.system_configuration.fields.sort_order.label
                 constraints:
-                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
         orob2b_payment.payment_term_allowed_countries:
             data_type: string
             type: choice
             priority: 60
             options:
-                label: orob2b.payment.system_configuration.fields.allowed_countries.label
+                label: oro.payment.system_configuration.fields.allowed_countries.label
                 required: true
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    all: orob2b.payment.system_configuration.fields.allowed_countries.all
-                    selected: orob2b.payment.system_configuration.fields.allowed_countries.selected
+                    all: oro.payment.system_configuration.fields.allowed_countries.all
+                    selected: oro.payment.system_configuration.fields.allowed_countries.selected
                 attr:
-                    'data-page-component-module': 'orob2bpayment/js/app/components/config-hide-fields-component'
+                    'data-page-component-module': 'oropayment/js/app/components/config-hide-fields-component'
                     'data-dependency-id': 'payment_term_allowed_countries'
 
         orob2b_payment.payment_term_selected_countries:
@@ -74,7 +74,7 @@ oro_system_configuration:
             type: oro_locale_country
             priority: 50
             options:
-                label: orob2b.payment.system_configuration.fields.selected_countries.label
+                label: oro.payment.system_configuration.fields.selected_countries.label
                 multiple: true
                 attr:
                     'data-depends-on-field': 'payment_term_allowed_countries'
@@ -85,7 +85,7 @@ oro_system_configuration:
             type: oro_currency_selection
             priority: 40
             options:
-                label: orob2b.pricing.system_configuration.fields.enabled_currencies.label
+                label: oro.pricing.system_configuration.fields.enabled_currencies.label
                 required: true
                 multiple: true
                 constraints:

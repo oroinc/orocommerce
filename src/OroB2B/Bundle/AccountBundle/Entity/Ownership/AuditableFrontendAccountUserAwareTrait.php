@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Ownership;
+namespace Oro\Bundle\AccountBundle\Entity\Ownership;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 trait AuditableFrontendAccountUserAwareTrait
 {
@@ -12,7 +12,7 @@ trait AuditableFrontendAccountUserAwareTrait
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={

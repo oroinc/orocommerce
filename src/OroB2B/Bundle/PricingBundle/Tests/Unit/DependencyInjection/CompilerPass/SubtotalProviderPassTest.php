@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use OroB2B\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
+use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
 
 class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
 {

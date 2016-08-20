@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
-use OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
+use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 
 class ComponentProcessorPassTest extends \PHPUnit_Framework_TestCase
 {

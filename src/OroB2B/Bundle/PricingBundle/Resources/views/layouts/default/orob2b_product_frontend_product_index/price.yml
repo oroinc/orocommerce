@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BPricingBundle:layouts:default/orob2b_product_frontend_product_index/price.html.twig'
+            themes: 'OroPricingBundle:layouts:default/orob2b_product_frontend_product_index/price.html.twig'
         - '@addTree':
             items:
                 product_grid_row_listed_price:

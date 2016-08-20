@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 interface ConstraintByValidationGroups
 {

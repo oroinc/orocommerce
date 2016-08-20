@@ -1,23 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\UnitOfWork;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\Model\Stub\CombinedPriceListQueueListenerStub;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\PricingBundle\Tests\Functional\Model\Stub\CombinedPriceListQueueListenerStub;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -58,7 +57,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
             ]
         );
 
@@ -70,7 +69,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $dispatcher->addListener(PriceListQueueChangeEvent::BEFORE_CHANGE, [$this->listener, 'onQueueChanged']);
 
         $this->triggersFiller = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -154,8 +153,8 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
     {
         /** @var PriceListChangeTriggerRepository $triggerRepository */
         $triggerRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
+            ->getManagerForClass('OroPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroPricingBundle:PriceListChangeTrigger');
         $existingTriggers = $triggerRepository->findAll();
 
         $this->handler->handleAccountGroupRemove($this->account->getGroup());

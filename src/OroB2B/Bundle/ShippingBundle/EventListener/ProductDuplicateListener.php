@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\EventListener;
+namespace Oro\Bundle\ShippingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 
 class ProductDuplicateListener
 {

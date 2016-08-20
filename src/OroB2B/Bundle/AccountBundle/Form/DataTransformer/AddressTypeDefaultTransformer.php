@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\DataTransformer;
+namespace Oro\Bundle\AccountBundle\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

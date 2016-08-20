@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver;
+namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 class UnitResolver extends AbstractUnitRowResolver
 {

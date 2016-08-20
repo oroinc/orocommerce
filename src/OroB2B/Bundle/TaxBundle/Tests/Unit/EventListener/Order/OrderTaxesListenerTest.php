@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,20 +35,20 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxManager')
+        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->event = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Event\OrderEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\OrderBundle\Event\OrderEvent')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->taxationSettingsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
+        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 

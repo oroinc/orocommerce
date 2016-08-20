@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Form\Type;
+namespace Oro\Bundle\MenuBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 class MenuItemType extends AbstractType
 {
@@ -37,7 +37,7 @@ class MenuItemType extends AbstractType
                         'defaultTitle',
                         'text',
                         [
-                            'label' => 'orob2b.menu.menuitem.titles.label',
+                            'label' => 'oro.menu.menuitem.titles.label',
                             'constraints' => [new NotBlank()],
                         ]
                     );
@@ -48,7 +48,7 @@ class MenuItemType extends AbstractType
                             LocalizedFallbackValueCollectionType::NAME,
                             [
                                 'required' => true,
-                                'label' => 'orob2b.menu.menuitem.titles.label',
+                                'label' => 'oro.menu.menuitem.titles.label',
                                 'options' => ['constraints' => [new NotBlank()]],
                             ]
                         )
@@ -57,7 +57,7 @@ class MenuItemType extends AbstractType
                             'text',
                             [
                                 'required' => false,
-                                'label' => 'orob2b.menu.menuitem.uri.label',
+                                'label' => 'oro.menu.menuitem.uri.label',
                             ]
                         )
                         ->add(
@@ -65,15 +65,15 @@ class MenuItemType extends AbstractType
                             'text',
                             [
                                 'required' => false,
-                                'label' => 'orob2b.menu.menuitem.condition.label',
-                                'tooltip'=> 'orob2b.menu.form.tooltip.menu_item_condition'
+                                'label' => 'oro.menu.menuitem.condition.label',
+                                'tooltip'=> 'oro.menu.form.tooltip.menu_item_condition'
                             ]
                         )
                         ->add(
                             'image',
                             'oro_image',
                             [
-                                'label' => 'orob2b.menu.menuitem.image.label',
+                                'label' => 'oro.menu.menuitem.image.label',
                                 'required' => false
                             ]
                         );

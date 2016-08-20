@@ -9,9 +9,9 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
-     * @export orob2border/js/app/components/entry-point-component
+     * @export oroorder/js/app/components/entry-point-component
      * @extends oroui.app.components.base.Component
-     * @class orob2border.app.components.EntryPointComponent
+     * @class oroorder.app.components.EntryPointComponent
      */
     EntryPointComponent = BaseComponent.extend({
         /**

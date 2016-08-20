@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -9,11 +9,10 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
-use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +38,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     protected $productRepository;
 
     /** @var string */
-    protected $productClass = 'OroB2BProductBundle:Product';
+    protected $productClass = 'OroProductBundle:Product';
 
     /** @var array|string[] */
     protected $parentProductCustomFields = [self::FIELD_SIZE];
@@ -62,7 +61,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customFieldProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->customFieldProvider->expects($this->once())
@@ -71,7 +70,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->willReturn($this->productEntityCustomFields);
 
         $this->productRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

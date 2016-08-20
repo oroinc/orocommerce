@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {'%entityName%' : 'orob2b.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
+{% oro_title_set({params : {'%entityName%' : 'oro.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
 
 {% set formAction = entity.id ? path('orob2b_sale_quote_update', { 'id': entity.id }) : path('orob2b_sale_quote_create')  %}
 
@@ -10,12 +10,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_sale_quote_index'),
-            'indexLabel': 'orob2b.sale.quote.entity_plural_label'|trans,
+            'indexLabel': 'oro.sale.quote.entity_plural_label'|trans,
             'entityTitle': entity.qid|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.sale.quote.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.sale.quote.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -35,9 +35,9 @@
     {% set id = 'quote-edit' %}
 
     {% set ownerSelectors %}
-        <div data-page-component-module="orob2bsale/js/app/components/related-data-component"
+        <div data-page-component-module="orosale/js/app/components/related-data-component"
              data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
-            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+            <div data-page-component-module="oroaccount/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>
@@ -48,7 +48,7 @@
         <div class="quote-lineitems"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orob2bsale/js/app/views/line-items-view',
+                 view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
                  tierPricesRoute: 'orob2b_pricing_price_by_account',
@@ -64,7 +64,7 @@
         <div
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                'view': 'orob2bfrontend/js/app/views/form-view',
+                'view': 'orofrontend/js/app/views/form-view',
                  selectors: {
                      account: 'input[name$="[account]"]'
                  }
@@ -82,7 +82,7 @@
     {% endset %}
     {% set dataBlocks = [
         {
-            'title': 'orob2b.sale.quote.sections.general'|trans,
+            'title': 'oro.sale.quote.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
@@ -91,7 +91,7 @@
             }]
         },
         {
-            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'title': 'oro.sale.quote.sections.quote_products'|trans,
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -100,7 +100,7 @@
             }]
         },
         {
-            'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+            'title': 'oro.sale.quote.sections.shipping_information'|trans,
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -116,7 +116,7 @@
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
-                    view: 'orob2bsale/js/app/views/address-view',
+                    view: 'orosale/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
                         address: '#' ~ form.shippingAddress.accountAddress.vars.id,
@@ -134,7 +134,7 @@
             </div>
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.shipping_address.label'|trans,
+            'title': 'oro.order.shipping_address.label'|trans,
             'subblocks': [{
                 'data': [shippingAddress]
             }]
@@ -147,7 +147,7 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.sale.quote.sections.additional'|trans,
+            'title': 'oro.sale.quote.sections.additional'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,

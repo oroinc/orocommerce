@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -29,12 +28,12 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
+        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier();
 
         $this->queryBuilder = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('p')->orderBy('p.id');
+            ->getRepository('OroProductBundle:Product')->createQueryBuilder('p')->orderBy('p.id');
     }
 
     /**

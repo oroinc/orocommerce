@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(name="orob2b_price_attribute_pl")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_attribute_price_list_index",
  *      routeView="orob2b_pricing_price_attribute_price_list_view",
@@ -23,7 +23,7 @@ class PriceAttributePriceList extends BasePriceList
      * @var Collection|PriceAttributeProductPrice[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
      *      mappedBy="priceList",
      *      fetch="EXTRA_LAZY"
      * )
@@ -34,7 +34,7 @@ class PriceAttributePriceList extends BasePriceList
      * @var PriceAttributeCurrency[]|Collection
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributeCurrency",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency",
      *      mappedBy="priceList",
      *      cascade={"all"},
      *      orphanRemoval=true

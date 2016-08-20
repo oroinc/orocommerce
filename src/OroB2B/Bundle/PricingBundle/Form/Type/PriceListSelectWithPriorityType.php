@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -29,7 +29,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 [
                     'empty_data' => null,
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.entity_label',
+                    'label' => 'oro.pricing.pricelist.entity_label',
                     'create_enabled' => false,
                     'constraints' => [new NotBlank()],
                 ]
@@ -40,7 +40,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 [
                     'empty_data' => null,
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.priority.label',
+                    'label' => 'oro.pricing.pricelist.priority.label',
                     'constraints' => [new NotBlank(), new Integer()],
                 ]
             )
@@ -48,7 +48,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 self::MERGE_ALLOWED_FIELD,
                 'checkbox',
                 [
-                    'label' => 'orob2b.pricing.pricelist.merge_allowed.label'
+                    'label' => 'oro.pricing.pricelist.merge_allowed.label'
                 ]
             );
     }

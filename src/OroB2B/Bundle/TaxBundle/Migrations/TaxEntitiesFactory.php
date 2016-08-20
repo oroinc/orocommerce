@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Migrations;
+namespace Oro\Bundle\TaxBundle\Migrations;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 
 class TaxEntitiesFactory
 {

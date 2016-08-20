@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type\EventListener;
+namespace Oro\Bundle\OrderBundle\Form\Type\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Validator\Constraints\Range;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
-use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
 
 class SubtotalSubscriber implements EventSubscriberInterface
 {
@@ -64,7 +64,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
                             [
                                 'min' => PHP_INT_MAX * (-1), //use some big negative number
                                 'max' => $data->getSubtotal(),
-                                'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                                'maxMessage' => 'oro.order.discounts.sum.error.label'
                             ]
                         )]
                     ]

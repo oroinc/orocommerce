@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Listener;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Entity\Listener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener;
+use Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +49,7 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->menuProvider = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
+        $this->menuProvider = $this->getMockBuilder('Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -109,7 +108,7 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->entity->setRoot(self::ROOT_ID);
         /** @var MenuItem $root */
-        $root = $this->getEntity('OroB2B\Bundle\MenuBundle\Entity\MenuItem', ['id' => self::ROOT_ID]);
+        $root = $this->getEntity('Oro\Bundle\MenuBundle\Entity\MenuItem', ['id' => self::ROOT_ID]);
         $root->addTitle((new LocalizedFallbackValue)->setString(self::ROOT_TITLE));
 
         $this->menuProvider->expects($this->once())

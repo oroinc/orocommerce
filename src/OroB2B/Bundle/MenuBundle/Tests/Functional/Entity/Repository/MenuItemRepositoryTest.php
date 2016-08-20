@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 
 /**
  * @dbIsolation
@@ -30,9 +29,9 @@ class MenuItemRepositoryTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(['OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
-        $this->repository = $this->em->getRepository('OroB2BMenuBundle:MenuItem');
+        $this->loadFixtures(['Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
+        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
+        $this->repository = $this->em->getRepository('OroMenuBundle:MenuItem');
     }
 
     /**

@@ -1,4 +1,4 @@
 css:
-    'orob2bcatalog':
-        - 'bundles/orob2bcatalog/css/less/categories.less'
-        - 'bundles/orob2bcatalog/css/less/product-grid-sidebar.less'
+    'orocatalog':
+        - 'bundles/orocatalog/css/less/categories.less'
+        - 'bundles/orocatalog/css/less/product-grid-sidebar.less'

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
@@ -31,7 +31,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
     /**
      * @var string
      */
-    protected $responseMessage = 'orob2b.shipping.datagrid.status.success_message';
+    protected $responseMessage = 'oro.shipping.datagrid.status.success_message';
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -92,7 +92,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
         if ($shippingRuleIds || $isAllSelected) {
             $queryBuilder = $this
                 ->entityManager
-                ->getRepository('OroB2BShippingBundle:ShippingRule')
+                ->getRepository('OroShippingBundle:ShippingRule')
                 ->createQueryBuilder('rule');
 
 

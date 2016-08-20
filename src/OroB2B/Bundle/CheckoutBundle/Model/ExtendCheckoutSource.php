@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Model;
+namespace Oro\Bundle\CheckoutBundle\Model;
 
 class ExtendCheckoutSource
 {

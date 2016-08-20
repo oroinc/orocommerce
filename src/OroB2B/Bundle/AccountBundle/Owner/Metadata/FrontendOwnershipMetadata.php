@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Owner\Metadata;
+namespace Oro\Bundle\AccountBundle\Owner\Metadata;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Storage;
+namespace Oro\Bundle\ShoppingListBundle\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ProductDataStorage
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -9,8 +9,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Migrations\PaymentTermDemoMigrationTrait;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Migrations\PaymentTermDemoMigrationTrait;
 
 class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -27,8 +27,8 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
         ];
     }
 
@@ -46,7 +46,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $doctrine = $this->container->get('doctrine');
-        $accountGroupRepository = $doctrine->getRepository('OroB2BAccountBundle:AccountGroup');
+        $accountGroupRepository = $doctrine->getRepository('OroAccountBundle:AccountGroup');
 
         $paymentTermsAll       = $this->getLoadedPaymentTerms();
         $accountGroupsIterator = $accountGroupRepository->getBatchIterator();

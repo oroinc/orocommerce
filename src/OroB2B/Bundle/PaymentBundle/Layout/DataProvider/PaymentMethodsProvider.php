@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
+namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodsProvider
 {

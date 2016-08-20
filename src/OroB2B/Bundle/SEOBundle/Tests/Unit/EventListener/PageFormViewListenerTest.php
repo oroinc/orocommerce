@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\SEOBundle\EventListener\PageFormViewListener;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\SEOBundle\EventListener\PageFormViewListener;
 
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {

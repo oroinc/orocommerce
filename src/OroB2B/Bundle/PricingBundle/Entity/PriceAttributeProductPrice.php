@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,7 +16,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          )
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -30,7 +30,7 @@ class PriceAttributeProductPrice extends BaseProductPrice
     /**
      * @var PriceAttributePriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList", inversedBy="prices")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList", inversedBy="prices")
      * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\FrontendBundle\Migrations\Data\ORM;
 
 use Oro\Bundle\UserBundle\Entity\Role;
 

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider;
 
 class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,15 +37,15 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
     public function setUp()
     {
         $this->frontendProductPricesDataProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->shoppingListLineItemsDataProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider')
             ->disableOriginalConstructor()->getMock();
 
         $this->productPriceFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
             ->disableOriginalConstructor()->getMock();
 
         $this->provider = new FrontendShoppingListProductsProvider(
@@ -59,11 +58,11 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
     public function testGetAllPrices()
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
+        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
 
         /** @var LineItem[] $lineItems */
         $lineItems = [
-            $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
+            $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
         ];
         $prices = ['price_1', 'price_2'];
         $expected = ['price_1', 'price_2'];

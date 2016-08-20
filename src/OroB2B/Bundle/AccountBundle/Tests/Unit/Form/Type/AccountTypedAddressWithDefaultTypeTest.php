@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -9,8 +9,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,9 +9,8 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
-use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 
 class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -9,11 +9,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
+use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {
@@ -27,7 +26,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new OrderDiscountItemType();
-        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderDiscount');
+        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderDiscount');
     }
 
     public function testGetName()
@@ -65,11 +64,11 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $expectedOptions = [
             'currency' => 'USD',
             'total' => 99,
-            'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderDiscount',
+            'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderDiscount',
             'intention' => 'order_discount_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
-                'view' => 'orob2border/js/app/views/discount-item-view',
+                'view' => 'oroorder/js/app/views/discount-item-view',
                 'percentTypeValue' => OrderDiscount::TYPE_PERCENT,
                 'totalType' => LineItemSubtotalProvider::TYPE,
                 'discountType' => DiscountSubtotalProvider::TYPE,

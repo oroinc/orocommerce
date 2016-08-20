@@ -1,11 +1,11 @@
-OroB2B\Bundle\AccountBundle\Entity\Account:
+Oro\Bundle\AccountBundle\Entity\Account:
     alias:                          orob2b_account
     title_fields:                   [name]
     route:
         name:                       orob2b_account_view
         parameters:
             id:                     id
-    search_template:                OroB2BAccountBundle:Account:searchResult.html.twig
+    search_template:                OroAccountBundle:Account:searchResult.html.twig
     fields:
         -
             name:                   name
@@ -20,29 +20,29 @@ OroB2B\Bundle\AccountBundle\Entity\Account:
                     target_type:    text
                     target_fields:  [group]
 
-OroB2B\Bundle\AccountBundle\Entity\AccountGroup:
+Oro\Bundle\AccountBundle\Entity\AccountGroup:
     alias:                          orob2b_account_group
     title_fields:                   [name]
     route:
         name:                       orob2b_account_group_view
         parameters:
             id:                     id
-    search_template:                OroB2BAccountBundle:AccountGroup:searchResult.html.twig
+    search_template:                OroAccountBundle:AccountGroup:searchResult.html.twig
     fields:
         -
             name:                   name
             target_type:            text
             target_fields:          [name]
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUser:
+Oro\Bundle\AccountBundle\Entity\AccountUser:
     alias: orob2b_account_account_user
-    label: orob2b.account.accountuser.entity_plural_label
+    label: oro.account.accountuser.entity_plural_label
     title_fields: [email]
     route:
         name: orob2b_account_account_user_view
         parameters:
             id: id
-    search_template: OroB2BAccountBundle:AccountUser:searchResult.html.twig
+    search_template: OroAccountBundle:AccountUser:searchResult.html.twig
     fields:
         -
             name: email
@@ -57,15 +57,15 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
             target_type: text
             target_fields: [lastName]
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserRole:
+Oro\Bundle\AccountBundle\Entity\AccountUserRole:
     alias: orob2b_account_account_user_role
-    label: orob2b.account.accountuserrole.entity_plural_label
+    label: oro.account.accountuserrole.entity_plural_label
     title_fields: [label]
     route:
         name: orob2b_account_account_user_role_update
         parameters:
             id: id
-    search_template: OroB2BAccountBundle:AccountUserRole:searchResult.html.twig
+    search_template: OroAccountBundle:AccountUserRole:searchResult.html.twig
     fields:
         -
             name: role

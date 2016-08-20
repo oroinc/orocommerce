@@ -3,15 +3,15 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_view/layout.html.twig'
+            themes: 'OroRFPBundle:layouts:default/orob2b_rfp_frontend_request_view/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.rfp.request.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.rfp.request.entity_plural_label'
                 -
-                    label: 'orob2b.frontend.rfp.request.page_title.label'
+                    label: 'oro.frontend.rfp.request.page_title.label'
                     parameters:
                         '%id%': '=data["entity"].getId()'
                         '%firstName%': '=data["entity"].getFirstName()'
@@ -24,7 +24,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.rfp.request.title.label'
+                label: 'oro.frontend.rfp.request.title.label'
                 parameters:
                     '%id%': '=data["entity"].getId()'
         - '@addTree':
@@ -73,7 +73,7 @@ layout:
                     blockType: link
                     options:
                         route_name: orob2b_rfp_frontend_request_index
-                        text: 'orob2b.frontend.rfp.request.sections.back.label'
+                        text: 'oro.frontend.rfp.request.sections.back.label'
             tree:
                 content:
                     rfp_request_view_page:

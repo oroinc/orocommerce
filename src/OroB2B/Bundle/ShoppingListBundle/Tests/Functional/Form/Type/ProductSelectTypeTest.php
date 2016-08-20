@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Autocomlete;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Autocomlete;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSelectTypeTest;
+use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSelectTypeTest;
 
 /**
  * @dbIsolation

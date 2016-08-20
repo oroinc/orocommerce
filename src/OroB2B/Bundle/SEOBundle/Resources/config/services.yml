@@ -1,7 +1,7 @@
 services:
     #EventListeners
     orob2b_seo.event_listener.product_form_view:
-        class: 'OroB2B\Bundle\SEOBundle\EventListener\ProductFormViewListener'
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
@@ -11,7 +11,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_seo.event_listener.category_form_view:
-        class: 'OroB2B\Bundle\SEOBundle\EventListener\CategoryFormViewListener'
+        class: 'Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
@@ -20,7 +20,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
     orob2b_seo.event_listener.page_form_view:
-        class: 'OroB2B\Bundle\SEOBundle\EventListener\PageFormViewListener'
+        class: 'Oro\Bundle\SEOBundle\EventListener\PageFormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
@@ -31,21 +31,21 @@ services:
 
     #Forms
     orob2b_seo.form.extension.page_type:
-        class: 'OroB2B\Bundle\SEOBundle\Form\Extension\PageFormExtension'
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
         arguments:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_cms_page }
 
     orob2b_seo.form.extension.product_type:
-        class: 'OroB2B\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
         arguments:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
     orob2b_seo.form.extension.category_type:
-        class: 'OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         arguments:
             - "@doctrine"
         tags:

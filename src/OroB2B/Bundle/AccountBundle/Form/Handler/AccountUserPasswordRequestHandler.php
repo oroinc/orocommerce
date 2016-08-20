@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandler
 {
@@ -53,7 +53,7 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
     protected function validateUser(FormInterface $form, $email, AccountUser $user = null)
     {
         if (!$user) {
-            $this->addFormError($form, 'orob2b.account.accountuser.profile.email_not_exists', ['%email%' => $email]);
+            $this->addFormError($form, 'oro.account.accountuser.profile.email_not_exists', ['%email%' => $email]);
 
             return false;
         }

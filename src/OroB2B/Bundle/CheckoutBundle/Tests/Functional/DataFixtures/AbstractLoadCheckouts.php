@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -64,7 +64,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         $this->manager = $manager;
         $this->clearPreconditions();
         /** @var AccountUser $accountUser */
-        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         foreach ($this->getData() as $name => $checkoutData) {
             $checkout = $this->createCheckout();
@@ -103,8 +103,8 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
+            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
+            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
         ];
     }
 }

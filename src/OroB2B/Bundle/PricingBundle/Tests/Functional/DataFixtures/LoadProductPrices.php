@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 
 class LoadProductPrices extends AbstractFixture implements DependentFixtureInterface
 {
@@ -197,7 +196,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository('OroB2BPricingBundle:PriceList')->getDefault();
+                $priceList = $manager->getRepository('OroPricingBundle:PriceList')->getDefault();
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);

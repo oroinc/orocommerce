@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 

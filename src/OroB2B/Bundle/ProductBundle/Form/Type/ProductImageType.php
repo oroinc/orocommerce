@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
+use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 
 class ProductImageType extends AbstractType
 {
@@ -41,7 +41,7 @@ class ProductImageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
+            'data_class' => 'Oro\Bundle\ProductBundle\Entity\ProductImage',
             'error_bubbling' => false,
             'allow_extra_fields' => true
         ]);

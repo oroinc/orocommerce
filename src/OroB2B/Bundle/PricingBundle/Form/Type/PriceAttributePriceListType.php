@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class PriceAttributePriceListType extends AbstractType
 {
@@ -37,11 +36,11 @@ class PriceAttributePriceListType extends AbstractType
         $priceAttributePriceList = $builder->getData();
 
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
+            ->add('name', 'text', ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 'fieldName',
                 'text',
-                ['required' => true, 'label' => 'orob2b.pricing.priceattributepricelist.field_name.label']
+                ['required' => true, 'label' => 'oro.pricing.priceattributepricelist.field_name.label']
             )
             ->add(
                 'currencies',
@@ -49,7 +48,7 @@ class PriceAttributePriceListType extends AbstractType
                 [
                     'multiple' => true,
                     'required' => true,
-                    'label' => 'orob2b.pricing.priceattributepricelist.currencies.label',
+                    'label' => 'oro.pricing.priceattributepricelist.currencies.label',
                     'additional_currencies' => $priceAttributePriceList ?
                         $priceAttributePriceList->getCurrencies() : [],
                 ]

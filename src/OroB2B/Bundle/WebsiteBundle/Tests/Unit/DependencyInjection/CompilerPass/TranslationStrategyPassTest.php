@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TranslationStrategyPass;
+use Oro\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TranslationStrategyPass;
 
 class TranslationStrategyPassTest extends \PHPUnit_Framework_TestCase
 {

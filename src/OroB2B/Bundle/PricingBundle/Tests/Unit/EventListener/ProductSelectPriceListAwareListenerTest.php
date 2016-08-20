@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
-use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,11 +46,11 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
      */
     protected function setUp()
     {
-        $this->modifier = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier')
+        $this->modifier = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->event = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -101,7 +101,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
 
                 $this->registry->expects($this->once())
                     ->method('getManagerForClass')
-                    ->with('OroB2BPricingBundle:PriceList')
+                    ->with('OroPricingBundle:PriceList')
                     ->willReturn($em);
             } else {
                 $this->modifier->expects($this->once())

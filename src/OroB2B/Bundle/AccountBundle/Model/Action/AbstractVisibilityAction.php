@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
 abstract class AbstractVisibilityAction extends AbstractEntityAwareAction
 {

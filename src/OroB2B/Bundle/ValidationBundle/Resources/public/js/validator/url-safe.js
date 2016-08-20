@@ -6,7 +6,7 @@ define([
 
     var constraint = _.clone(regexConstraint);
 
-    constraint[0] = 'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\UrlSafe';
+    constraint[0] = 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\UrlSafe';
 
     return constraint;
 });

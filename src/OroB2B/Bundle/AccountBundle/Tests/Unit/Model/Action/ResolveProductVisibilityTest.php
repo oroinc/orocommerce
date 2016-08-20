@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -9,10 +9,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Model\Action\ResolveProductVisibility;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
 class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +33,7 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
-        $this->cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface');
+        $this->cacheBuilder = $this->getMock('Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
@@ -82,7 +81,7 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($em);
 
         $this->cacheBuilder->expects($this->once())

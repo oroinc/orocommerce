@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes as TaxFixture;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes as TaxFixture;
 
 /**
  * @dbIsolation
@@ -21,7 +20,7 @@ class AccountTaxCodeRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes']);
+        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes']);
     }
 
     public function testFindOneByAccount()

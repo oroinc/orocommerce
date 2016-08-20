@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Compiler;
+namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 {
@@ -113,7 +113,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder();
-        $subQb->from('OroB2BPricingBundle:PriceListToProduct', 'PriceListToProductOld')
+        $subQb->from('OroPricingBundle:PriceListToProduct', 'PriceListToProductOld')
             ->select('PriceListToProductOld')
             ->where(
                 $subQb->expr()->andX(

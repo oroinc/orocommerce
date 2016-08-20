@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -95,7 +95,7 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
 
                 $form->addError(new FormError(
                     $this->translator->trans(
-                        'orob2b.pricing.validators.is_not_enabled',
+                        'oro.pricing.validators.is_not_enabled',
                         ['%currency%' => $currencyName],
                         'validators'
                     )

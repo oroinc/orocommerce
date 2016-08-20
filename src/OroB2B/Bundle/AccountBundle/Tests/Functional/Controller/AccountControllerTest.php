@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -25,10 +24,10 @@ class AccountControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
@@ -60,8 +59,8 @@ class AccountControllerTest extends WebTestCase
 
         /** @var Account $account */
         $account = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Account')
-            ->getRepository('OroB2BAccountBundle:Account')
+            ->getManagerForClass('OroAccountBundle:Account')
+            ->getRepository('OroAccountBundle:Account')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($account);
 

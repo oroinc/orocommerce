@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,10 +10,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 abstract class AbstractOrderLineItemType extends AbstractType
 {
@@ -65,7 +65,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.product.productunit.entity_label',
+                    'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
                 ]
             )
@@ -74,7 +74,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.order.orderlineitem.quantity.label',
+                    'label' => 'oro.order.orderlineitem.quantity.label',
                     'default_data' => 1,
                     'product_holder' => $builder->getData()
                 ]
@@ -84,7 +84,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'oro_date',
                 [
                     'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.ship_by.label',
+                    'label' => 'oro.order.orderlineitem.ship_by.label',
                 ]
             )
             ->add(
@@ -92,7 +92,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'textarea',
                 [
                     'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.comment.label',
+                    'label' => 'oro.order.orderlineitem.comment.label',
                 ]
             );
 
@@ -141,7 +141,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
                 'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
                 'comment' => [
-                    'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
+                    'data' => ['comment' => ['page_component' => 'oroorder/js/app/components/notes-component']],
                     'order' => 40,
                 ],
             ]

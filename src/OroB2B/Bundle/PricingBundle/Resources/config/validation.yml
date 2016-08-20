@@ -1,6 +1,6 @@
-OroB2B\Bundle\PricingBundle\Entity\PriceList:
+Oro\Bundle\PricingBundle\Entity\PriceList:
     constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
     properties:
         name:
             - NotBlank: ~
@@ -10,18 +10,18 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - NotBlank: ~
             - Valid: ~
         schedules:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
+            - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
         priceRules:
             - Valid: ~
         productAssignmentRule:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
 
-OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
     properties:
         name:
             - NotBlank: ~
@@ -31,7 +31,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             - Regex:
                 pattern: '/^[a-zA-Z0-9_]+$/'
                 htmlPattern: '/^[a-zA-Z0-9_]+$/'
-                message: 'orob2b.pricing.validators.price_attrirute_price_list.fieldName.message'
+                message: 'oro.pricing.validators.price_attrirute_price_list.fieldName.message'
             - NotBlank: ~
             - Length:
                 max: 255
@@ -39,33 +39,33 @@ OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             - NotBlank: ~
             - Valid: ~
 
-OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule:
+Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
             chain:
                 activeAt: 'Active At'
                 deactivateAt: 'Deactivate At'
 
-OroB2B\Bundle\PricingBundle\Entity\PriceRule:
+Oro\Bundle\PricingBundle\Entity\PriceRule:
     properties:
         currency:
             - NotBlank: ~
             - Currency: ~
         quantity:
             - NotBlank:
-                message: 'orob2b.pricing.validators.product_price.quantity.blank'
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+                message: 'oro.pricing.validators.product_price.quantity.blank'
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         ruleCondition:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
         rule:
             - NotBlank: ~
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 numericOnly: true
                 withRelations: true
         priority:
@@ -73,7 +73,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceRule:
             - Type:
                 type: integer
 
-OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
+Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
         priceList:
             - NotBlank: ~
@@ -81,13 +81,13 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
             - NotBlank: ~
             - Currency: ~
 
-OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:  [ product, priceList, quantity, unit, currency ]
-            message: orob2b.pricing.validators.product_price.unique_entity.message
+            message: oro.pricing.validators.product_price.unique_entity.message
     properties:
         product:
             - NotBlank: ~
@@ -97,7 +97,7 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - NotBlank: ~
         quantity:
             - NotBlank:
-                message: 'orob2b.pricing.validators.product_price.quantity.blank'
+                message: 'oro.pricing.validators.product_price.quantity.blank'
             - Range:
                 min: 0
         price:
@@ -105,9 +105,9 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - Valid: ~
         unit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
 
-OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
+Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
     properties:
         priority:
             - NotBlank: ~
@@ -116,7 +116,7 @@ OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
         priceList:
             - NotBlank: ~
 
-OroB2B\Bundle\ProductBundle\Entity\Product:
+Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         unitPrecisions:
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~

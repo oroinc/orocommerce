@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -26,7 +25,7 @@ class LineItemRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
             ]
         );
     }
@@ -42,7 +41,7 @@ class LineItemRepositoryTest extends WebTestCase
 
         $this->setProperty($lineItem, 'id', ($lineItem->getId() + 1));
         $duplicate = $repository->findDuplicate($lineItem);
-        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', $duplicate);
+        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\LineItem', $duplicate);
     }
 
     public function testGetItemsByProductAndShoppingList()
@@ -126,7 +125,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getLineItemRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BShoppingListBundle:LineItem');
+        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:LineItem');
     }
 
     /**
@@ -134,7 +133,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getAccountUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getContainer()->get('doctrine')->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**

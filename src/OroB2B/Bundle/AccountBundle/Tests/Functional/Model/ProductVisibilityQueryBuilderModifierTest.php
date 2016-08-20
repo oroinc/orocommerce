@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Model;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
 
 /**
  * @dbIsolation
@@ -45,10 +44,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -215,11 +214,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     }
 
     /**
-     * @return \OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository
+     * @return \Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository
      */
     protected function getProductRepository()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product');
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product');
     }
 }

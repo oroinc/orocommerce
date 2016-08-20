@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
+use Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 class MenuItemTest extends \PHPUnit_Framework_TestCase
 {

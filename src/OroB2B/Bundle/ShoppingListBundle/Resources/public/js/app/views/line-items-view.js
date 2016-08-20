@@ -4,7 +4,7 @@ define(function(require) {
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
-    var LineItemView = require('orob2bshoppinglist/js/app/views/line-item-view');
+    var LineItemView = require('oroshoppinglist/js/app/views/line-item-view');
 
     var LineItemsView;
 

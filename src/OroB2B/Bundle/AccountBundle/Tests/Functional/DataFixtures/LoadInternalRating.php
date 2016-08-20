@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class LoadInternalRating extends AbstractEnumFixture
 {

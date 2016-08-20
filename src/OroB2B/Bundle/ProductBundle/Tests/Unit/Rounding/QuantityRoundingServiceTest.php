@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Rounding;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
 {

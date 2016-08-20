@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_register/layout.html.twig'
+            themes: 'OroAccountBundle:layouts:default/orob2b_account_frontend_account_user_register/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'orob2b.account.accountuser.profile.register'
+            optionValue: 'oro.account.accountuser.profile.register'
         - '@addTree':
             items:
                 registration_page:
@@ -17,11 +17,11 @@ layout:
                 registration_form_label:
                     blockType: text
                     options:
-                        text: orob2b.account.accountuser.profile.register
+                        text: oro.account.accountuser.profile.register
                 registration_form_description:
                     blockType: text
                     options:
-                        text: 'orob2b.account.accountuser.profile.register.description'
+                        text: 'oro.account.accountuser.profile.register.description'
                 registration_form_start:
                     blockType: form_start
                     options:
@@ -35,7 +35,7 @@ layout:
                     options:
                         type: input
                         action: submit
-                        text: orob2b.account.accountuser.profile.create_an_account
+                        text: oro.account.accountuser.profile.create_an_account
                         style: auto
                 registration_form_end:
                     blockType: form_end
@@ -45,7 +45,7 @@ layout:
                     blockType: link
                     options:
                         route_name: orob2b_account_account_user_security_login
-                        text: orob2b.account.frontend.action.back_to_login.label
+                        text: oro.account.frontend.action.back_to_login.label
             tree:
                 content:
                     registration_page:

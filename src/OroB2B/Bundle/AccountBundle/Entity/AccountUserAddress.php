@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
+use Oro\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
 
 /**
  * @ORM\Table("orob2b_account_user_address")
@@ -43,13 +42,13 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
  *          }
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository")
  */
 class AccountUserAddress extends ExtendAccountUserAddress
 {
     /**
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser",
      *      inversedBy="addresses",
      *      cascade={"persist"}
      * )
@@ -68,7 +67,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
      * @var Collection|AccountUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true

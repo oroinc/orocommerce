@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Entity;
+namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -62,7 +62,7 @@ class OrderDiscount
     /**
      * @var Order
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\Order", inversedBy="discounts")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order", inversedBy="discounts")
      * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $order;

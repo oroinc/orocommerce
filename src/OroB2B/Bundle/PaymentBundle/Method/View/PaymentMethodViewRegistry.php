@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method\View;
+namespace Oro\Bundle\PaymentBundle\Method\View;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PaymentMethodViewRegistry
 {

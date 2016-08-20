@@ -1,6 +1,6 @@
 {% block orob2b_sale_quote_product_demand_widget %}
     {% set expandTextOptions = {
-        widgetModule: 'orob2bfrontend/default/js/widgets/expand-text-widget',
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
         maxLength: 60
     }|json_encode() %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
@@ -10,7 +10,7 @@
     {% if isQuantityValid %}
         {% set defaultPriceValue = selectedOffer.price|oro_format_price %}
     {% else %}
-        {% set defaultPriceValue = 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans %}
+        {% set defaultPriceValue = 'oro.frontend.sale.quoteproductoffer.not_available.message'|trans %}
     {% endif %}
 
     {% set componentOptions = {
@@ -20,20 +20,20 @@
         unitSelector: '[data-role="unit-view"]',
         unitPriceSelector: '[data-role="price-view"]',
         quoteProductId: quoteProduct.id,
-        calculatingMessage: 'orob2b.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
-        notAvailableMessage: 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans,
+        calculatingMessage: 'oro.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
+        notAvailableMessage: 'oro.frontend.sale.quoteproductoffer.not_available.message'|trans,
         currentLineItemSelector: '#' ~ id
     } %}
     <tr id="{{ id }}"
         class="borderless quote-line-items"
-        data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
+        data-page-component-module="orosale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="va-t_md">
             <h3 class="oro-grid-table__title">
                 {{ quoteProduct.productName }}
             </h3>
             <div>
-                {{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}
+                {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
                 <span class="red">
                     {% if quoteProduct.isTypeNotAvailable %}
                         {{ quoteProduct.productReplacementSku }}
@@ -72,7 +72,7 @@
                          data-page-component-module="oroui/js/app/components/jquery-widget-component"
                          data-page-component-options="{{ expandTextOptions }}"
                     >
-                         {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                         {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
                     </span>
                 </div>
             </td>
@@ -87,7 +87,7 @@
                                data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                data-page-component-options="{{ expandTextOptions }}"
                     >
-                        {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                        {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                     </span>
                 </>
             </td>
@@ -108,10 +108,10 @@
             <table class="oro-grid-table oro-grid-table__orders">
                 <thead>
                 <tr>
-                    <th>{{ 'orob2b.frontend.sale.quoteproduct.product_name.label'|trans }}</th>
-                    <th>{{ 'orob2b.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</th>
-                    <th>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity_to_order.label'|trans }}</th>
-                    <th class="text-right">{{ 'orob2b.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</th>
+                    <th>{{ 'oro.frontend.sale.quoteproduct.product_name.label'|trans }}</th>
+                    <th>{{ 'oro.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</th>
+                    <th>{{ 'oro.frontend.sale.quoteproductoffer.quantity_to_order.label'|trans }}</th>
+                    <th class="text-right">{{ 'oro.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>

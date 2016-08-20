@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Resolver;
+namespace Oro\Bundle\PricingBundle\Resolver;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListScheduleResolver
 {

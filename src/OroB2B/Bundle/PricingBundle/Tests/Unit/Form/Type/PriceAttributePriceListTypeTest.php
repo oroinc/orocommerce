@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 
 class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList';
+    const DATA_CLASS = 'Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList';
 
     /**
      * @var PriceAttributePriceListType

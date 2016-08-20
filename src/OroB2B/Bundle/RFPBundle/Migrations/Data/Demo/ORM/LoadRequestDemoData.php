@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,11 +10,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     DependentFixtureInterface,
@@ -42,9 +42,9 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
 
@@ -53,13 +53,13 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $statuses     = $this->getObjectReferences($manager, 'OroB2BRFPBundle:RequestStatus');
+        $statuses     = $this->getObjectReferences($manager, 'OroRFPBundle:RequestStatus');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
         $accountUsers = $this->getAccountUsers($manager);
 
         $locator  = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
+        $filePath = $locator->locate('@OroRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -108,7 +108,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
+        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, 10);
 
         if (0 === count($products)) {
             throw new \LogicException('There are no products in system');
@@ -141,7 +141,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroAccountBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

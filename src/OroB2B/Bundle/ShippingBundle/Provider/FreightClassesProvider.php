@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Provider;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
 
 class FreightClassesProvider extends MeasureUnitProvider
 {

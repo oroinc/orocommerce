@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 
 class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
 {

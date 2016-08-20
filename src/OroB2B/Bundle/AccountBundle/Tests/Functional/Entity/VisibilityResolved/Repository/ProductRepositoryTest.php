@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
@@ -8,21 +8,20 @@ use Doctrine\ORM\Query;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -259,7 +258,7 @@ class ProductRepositoryTest extends WebTestCase
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
-            ->getRepository('OroB2BProductBundle:Product');
+            ->getRepository('OroProductBundle:Product');
     }
 
     /**
@@ -308,7 +307,7 @@ class ProductRepositoryTest extends WebTestCase
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
-            ->getRepository('OroB2BCatalogBundle:Category');
+            ->getRepository('OroCatalogBundle:Category');
     }
 
     /**
@@ -325,7 +324,7 @@ class ProductRepositoryTest extends WebTestCase
     protected function getProductVisibilities()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->findAll();
     }
 
@@ -403,13 +402,13 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @return null|\OroB2B\Bundle\CatalogBundle\Entity\Category
+     * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
      */
     protected function getCategoryByProduct(Product $product)
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->findOneByProduct($product);
     }
 }

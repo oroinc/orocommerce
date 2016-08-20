@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Controller;
+namespace Oro\Bundle\CMSBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,15 +10,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
-use OroB2B\Bundle\CMSBundle\Form\Type\LoginPageType;
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 
 class LoginPageController extends Controller
 {
     /**
      * @Route("/", name="orob2b_cms_loginpage_index")
-     * @Template("OroB2BCMSBundle:LoginPage:index.html.twig")
+     * @Template("OroCMSBundle:LoginPage:index.html.twig")
      * @AclAncestor("orob2b_cms_loginpage_view")
      *
      * @return array
@@ -36,7 +35,7 @@ class LoginPageController extends Controller
      * @Acl(
      *      id="orob2b_cms_loginpage_view",
      *      type="entity",
-     *      class="OroB2BCMSBundle:LoginPage",
+     *      class="OroCMSBundle:LoginPage",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class LoginPageController extends Controller
 
     /**
      * @Route("/create", name="orob2b_cms_loginpage_create")
-     * @Template("OroB2BCMSBundle:LoginPage:update.html.twig")
+     * @Template("OroCMSBundle:LoginPage:update.html.twig")
      * @Acl(
      *      id="orob2b_cms_loginpage_create",
      *      type="entity",
-     *      class="OroB2BCMSBundle:LoginPage",
+     *      class="OroCMSBundle:LoginPage",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class LoginPageController extends Controller
      * @Acl(
      *      id="orob2b_cms_loginpage_update",
      *      type="entity",
-     *      class="OroB2BCMSBundle:LoginPage",
+     *      class="OroCMSBundle:LoginPage",
      *      permission="EDIT"
      * )
      *
@@ -106,7 +105,7 @@ class LoginPageController extends Controller
                     'parameters' => ['id' => $loginPage->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.cms.loginpage.save.message')
+            $this->get('translator')->trans('oro.cms.loginpage.save.message')
         );
     }
 }

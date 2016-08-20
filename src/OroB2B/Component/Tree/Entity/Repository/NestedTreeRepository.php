@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Tree\Entity\Repository;
+namespace Oro\Component\Tree\Entity\Repository;
 
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository as GedmoNestedTreeRepository;
 

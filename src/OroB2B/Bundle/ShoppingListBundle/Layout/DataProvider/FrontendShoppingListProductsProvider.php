@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendShoppingListProductsProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

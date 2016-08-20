@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -9,8 +9,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -32,9 +32,9 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData'
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData'
         ];
     }
 
@@ -43,9 +43,9 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
+        $filePath = $locator->locate('@OroShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -64,9 +64,9 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
             return;
         }
 
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(5, 15));
+        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, rand(5, 15));
         $chunkedProducts = array_chunk($products, ceil(count($products) / count($labels)));
-        $shoppingListRepository = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingListRepository = $manager->getRepository('OroShoppingListBundle:ShoppingList');
 
         foreach ($labels as $index => $shoppingListLabel) {
             $shoppingList = $shoppingListRepository->findOneBy(['label' => $shoppingListLabel]);

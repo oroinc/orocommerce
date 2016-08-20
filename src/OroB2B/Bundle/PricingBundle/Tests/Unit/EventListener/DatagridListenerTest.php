@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\PricingBundle\EventListener\DatagridListener;
+use Oro\Bundle\PricingBundle\EventListener\DatagridListener;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +28,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         ],
         'columns' => [
             DatagridListener::PRICE_COLUMN => [
-                'label' => 'orob2b.pricing.pricelist.entity_label'
+                'label' => 'oro.pricing.pricelist.entity_label'
             ],
         ],
         'sorters' => [
@@ -47,7 +46,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'options' => [
                         'field_type' => 'entity',
                         'field_options' => [
-                            'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+                            'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
                             'property' => 'name',
                         ]
                     ]
@@ -78,7 +77,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccount',
                 'alias' => 'priceListToAccount',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccount.account = account',
@@ -105,7 +104,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
                 'alias' => 'priceListToAccountGroup',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccountGroup.accountGroup = account_group',

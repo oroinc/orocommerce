@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class UnitValueFormatterTest extends UnitValueFormatterTestCase
 {
-    const TRANSLATION_PREFIX = 'orob2b.product_unit';
+    const TRANSLATION_PREFIX = 'oro.product_unit';
 
     /**
      * {@inheritdoc}

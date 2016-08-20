@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional;
+namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
     }
@@ -56,7 +55,7 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
                     'operationName' => $operationName,
                     'route' => 'orob2b_account_frontend_account_user_view',
                     'entityId' => $accountUser->getId(),
-                    'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+                    'entityClass' => 'Oro\Bundle\AccountBundle\Entity\AccountUser'
                 ]
             ),
             [],

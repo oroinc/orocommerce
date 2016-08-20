@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider;
 
 class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,11 +45,11 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
             ->getMock();
 
         $this->requestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -69,7 +68,7 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
     public function testGetData($shoppingList, $expected)
     {
         if ($shoppingList) {
-            $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            $repository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
             $repository->expects($this->once())
@@ -79,12 +78,12 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
             $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
             $em->expects($this->once())
                 ->method('getRepository')
-                ->with('OroB2BProductBundle:ProductUnit')
+                ->with('OroProductBundle:ProductUnit')
                 ->willReturn($repository);
 
             $this->registry->expects($this->once())
                 ->method('getManagerForClass')
-                ->with('OroB2BProductBundle:ProductUnit')
+                ->with('OroProductBundle:ProductUnit')
                 ->willReturn($em);
         }
 
@@ -99,9 +98,9 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
     public function getDataDataProvider()
     {
         /** @var Product $product1 */
-        $product1 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id'=> 123]);
+        $product1 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id'=> 123]);
         /** @var Product $product2 */
-        $product2 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id'=> 321]);
+        $product2 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id'=> 321]);
 
         $lineItem1 = new LineItem();
         $lineItem1->setProduct($product1);

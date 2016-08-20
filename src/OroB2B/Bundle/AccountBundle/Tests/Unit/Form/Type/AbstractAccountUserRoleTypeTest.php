@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormView;
@@ -11,16 +11,15 @@ use Symfony\Component\Validator\Validation;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
 
 abstract class AbstractAccountUserRoleTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
+    const DATA_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUserRole';
 
     /**
      * @var Account

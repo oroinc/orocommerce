@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout\DataProvider;
+namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class OrderShippingMethodProvider
 {

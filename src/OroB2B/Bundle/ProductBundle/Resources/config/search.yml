@@ -1,11 +1,11 @@
-OroB2B\Bundle\ProductBundle\Entity\Product:
+Oro\Bundle\ProductBundle\Entity\Product:
     alias:                          orob2b_product
     title_fields:                   [defaultName]
     route:
         name:                       orob2b_product_view
         parameters:
             id:                     id
-    search_template:                OroB2BProductBundle:Product:searchResult.html.twig
+    search_template:                OroProductBundle:Product:searchResult.html.twig
     fields:
         -
             name:                   sku

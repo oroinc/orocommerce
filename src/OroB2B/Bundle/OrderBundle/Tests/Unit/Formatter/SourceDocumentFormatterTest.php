@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
-
-use OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
+use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class SourceDocumentFormatterTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -12,13 +12,12 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 
 class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
@@ -55,7 +54,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var $repo AccountUserRoleRepository|\PHPUnit_Framework_MockObject_MockObject */
-        $repo = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->any())
@@ -66,11 +65,11 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole')
+            ->with('Oro\Bundle\AccountBundle\Entity\AccountUserRole')
             ->willReturn($repo);
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
         $this->formType = new FrontendAccountUserRoleSelectType($this->securityFacade, $this->registry);
-        $this->formType->setRoleClass('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole');
+        $this->formType->setRoleClass('Oro\Bundle\AccountBundle\Entity\AccountUserRole');
 
         parent::setUp();
     }
@@ -132,7 +131,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
      */
     protected function createAccount($id, $name)
     {
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
         $account->setName($name);
 
         return $account;

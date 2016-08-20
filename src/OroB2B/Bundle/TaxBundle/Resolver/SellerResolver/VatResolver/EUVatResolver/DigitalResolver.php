@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver;
+namespace Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
-use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
+use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
 class DigitalResolver implements ResolverInterface
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Action\CaptureAction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Action\CaptureAction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class CaptureActionTest extends AbstractActionTest
 {
@@ -79,7 +79,7 @@ class CaptureActionTest extends AbstractActionTest
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)

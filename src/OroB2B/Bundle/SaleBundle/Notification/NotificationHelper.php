@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Notification;
+namespace Oro\Bundle\SaleBundle\Notification;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -13,8 +13,7 @@ use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class NotificationHelper extends Controller
 {

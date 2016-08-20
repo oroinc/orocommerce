@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Security\Acl\Model\AclCacheInterface;
@@ -12,13 +12,12 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserRoleHandler;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Form\Handler\AbstractAccountUserRoleHandler;
 
 abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -112,7 +111,7 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
                 ->getMock();
 
         $this->roleRepository =
-            $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+            $this->getMockBuilder('\Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -149,7 +148,7 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
      * @param int $numberOfUsers
      * @param Account $account
      * @param int $offset
-     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser[]
+     * @return \Oro\Bundle\AccountBundle\Entity\AccountUser[]
      */
     protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null, $offset = 0)
     {

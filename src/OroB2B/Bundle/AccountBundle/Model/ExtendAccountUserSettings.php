@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model;
+namespace Oro\Bundle\AccountBundle\Model;
 
 class ExtendAccountUserSettings
 {

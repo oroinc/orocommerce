@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Group;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Acl\Group;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Acl\Group\AclGroupProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const BASIC_LEVEL = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    const LOCAL_LEVEL = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const BASIC_LEVEL = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade

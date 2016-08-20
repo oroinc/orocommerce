@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Matcher;
+namespace Oro\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
 abstract class AbstractMatcher implements MatcherInterface
 {

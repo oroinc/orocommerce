@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Request;
+namespace Oro\Bundle\FrontendBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 

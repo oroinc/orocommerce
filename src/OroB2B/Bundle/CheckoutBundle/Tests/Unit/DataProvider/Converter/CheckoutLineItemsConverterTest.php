@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Converter;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
 {

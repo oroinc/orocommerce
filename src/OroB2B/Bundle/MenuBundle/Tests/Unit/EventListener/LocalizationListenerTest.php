@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-
-use OroB2B\Bundle\MenuBundle\EventListener\LocalizationListener;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\EventListener\LocalizationListener;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class LocalizationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +28,7 @@ class LocalizationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->menuProvider = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
+        $this->menuProvider = $this->getMockBuilder('Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

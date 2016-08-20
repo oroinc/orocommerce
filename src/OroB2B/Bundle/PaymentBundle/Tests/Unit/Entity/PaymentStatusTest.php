@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 
 class PaymentStatusTest extends \PHPUnit_Framework_TestCase
 {

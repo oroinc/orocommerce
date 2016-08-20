@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\ORM\PersistentCollection;
 
@@ -8,8 +8,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class PriceForProductUnitExistsValidator extends ConstraintValidator
 {

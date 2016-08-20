@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\EventListener;
+namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategyEventListener extends AbstractProductImportEventListener
 {

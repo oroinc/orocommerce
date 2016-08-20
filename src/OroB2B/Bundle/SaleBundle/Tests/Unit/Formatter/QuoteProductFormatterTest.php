@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -59,13 +58,13 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->productUnitValueFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,7 +97,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.sale.quoteproduct.type.test_type')
+            ->with('oro.sale.quoteproduct.type.test_type')
         ;
 
         $this->formatter->formatTypeLabel('test_type');
@@ -238,7 +237,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
         foreach (QuoteProduct::getTypes() as $key => $value) {
             $res[$value] = [
                 'input'     => $key,
-                'expected'  => 'orob2b.sale.quoteproduct.type.' . $value,
+                'expected'  => 'oro.sale.quoteproduct.type.' . $value,
             ];
         }
 
@@ -257,8 +256,8 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     2 => 'type_2'
                 ],
                 'expected' => [
-                    1 => 'orob2b.sale.quoteproduct.type.type_1',
-                    2 => 'orob2b.sale.quoteproduct.type.type_2'
+                    1 => 'oro.sale.quoteproduct.type.type_1',
+                    2 => 'oro.sale.quoteproduct.type.type_2'
                 ],
             ]
         ];
@@ -285,7 +284,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '15 kilogram',
                     'formattedPrice'    => '10.00 USD',
                     'formattedUnit'     => 'kilogram',
-                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                    'formattedString'   => 'oro.sale.quoteproductrequest.item',
                 ],
             ],
             'empty price' => [
@@ -303,7 +302,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '15 kilogram',
                     'formattedPrice'    => 'N/A',
                     'formattedUnit'     => 'kilogram',
-                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                    'formattedString'   => 'oro.sale.quoteproductrequest.item',
                 ],
             ],
             'empty quantity' => [
@@ -321,7 +320,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => 'N/A',
                     'formattedPrice'    => '10.00 USD',
                     'formattedUnit'     => 'kilogram',
-                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                    'formattedString'   => 'oro.sale.quoteproductrequest.item',
                 ],
             ],
             'empty quantity and price' => [
@@ -357,7 +356,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '25 item',
                     'formattedPrice'    => '20.00 EUR',
                     'formattedUnit'     => 'item',
-                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                    'formattedString'   => 'oro.sale.quoteproductrequest.item',
                 ],
             ],
         ];
@@ -381,7 +380,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '15 kilogram',
                     'formattedPrice'    => '10.00 USD',
                     'formattedUnit'     => 'kilogram',
-                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item_bundled',
+                    'transConstant'     => 'oro.sale.quoteproductoffer.item_bundled',
                     'transIndex'        => 0,
                 ],
             ],
@@ -397,7 +396,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '15 kilogram',
                     'formattedPrice'    => '10.00 USD',
                     'formattedUnit'     => 'kilogram',
-                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transConstant'     => 'oro.sale.quoteproductoffer.item',
                     'transIndex'        => 0,
                 ],
             ],
@@ -413,7 +412,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '15 kilogram',
                     'formattedPrice'    => '10.00 USD',
                     'formattedUnit'     => 'kilogram',
-                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transConstant'     => 'oro.sale.quoteproductoffer.item',
                     'transIndex'        => 1,
                 ],
             ],
@@ -429,7 +428,7 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
                     'formattedUnits'    => '25 item',
                     'formattedPrice'    => '20.00 EUR',
                     'formattedUnit'     => 'item',
-                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transConstant'     => 'oro.sale.quoteproductoffer.item',
                     'transIndex'        => 0,
                 ],
             ],

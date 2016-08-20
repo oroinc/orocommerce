@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider;
+use Oro\Bundle\PricingBundle\Provider\CurrencyProvider;
 
 class CurrencyProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +34,7 @@ class CurrencyProviderTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['USD' => 'USD', 'EUR' => 'EUR'];
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

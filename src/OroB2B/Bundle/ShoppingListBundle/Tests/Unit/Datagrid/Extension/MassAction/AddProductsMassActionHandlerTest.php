@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
-use OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
-use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,7 +67,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn(['shoppingList' => 1]);
         $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
-            ->willReturn($this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 1));
+            ->willReturn($this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1));
         $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
 
         $response = $this->handler->handle($args);
@@ -97,7 +96,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMessageGenerator()
     {
-        $translator = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator')
+        $translator = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator')
             ->disableOriginalConstructor()
             ->getMock();
         $translator->expects($this->any())
@@ -113,7 +112,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     protected function getShoppingListItemHandler()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
@@ -123,7 +122,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new AccountUser());
 
         $shoppingListItemHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

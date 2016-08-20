@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
+namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
@@ -8,7 +8,7 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {

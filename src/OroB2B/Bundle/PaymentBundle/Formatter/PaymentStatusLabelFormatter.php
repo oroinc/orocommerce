@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Formatter;
+namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -27,7 +27,7 @@ class PaymentStatusLabelFormatter
      */
     public function formatPaymentStatusLabel($paymentStatus)
     {
-        return $this->translator->trans(sprintf('orob2b.payment.status.%s', $paymentStatus));
+        return $this->translator->trans(sprintf('oro.payment.status.%s', $paymentStatus));
     }
     
     /**

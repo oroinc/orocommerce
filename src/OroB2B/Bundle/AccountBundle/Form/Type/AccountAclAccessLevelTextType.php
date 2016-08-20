@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -8,8 +8,7 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 
 class AccountAclAccessLevelTextType extends AbstractType
 {

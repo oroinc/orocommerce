@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,11 +10,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
+use Oro\Bundle\AccountBundle\Model\ExtendAccount;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository")
  * @ORM\Table(
  *      name="orob2b_account",
  *      indexes={
@@ -84,7 +83,7 @@ class Account extends ExtendAccount
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -99,7 +98,7 @@ class Account extends ExtendAccount
     /**
      * @var Collection|Account[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account", mappedBy="parent")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -113,7 +112,7 @@ class Account extends ExtendAccount
     /**
      * @var Collection|AccountAddress[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountAddress",
      *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
@@ -130,7 +129,7 @@ class Account extends ExtendAccount
     /**
      * @var AccountGroup
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup", inversedBy="accounts")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup", inversedBy="accounts")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -146,7 +145,7 @@ class Account extends ExtendAccount
      * @var Collection|AccountUser[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser",
      *      mappedBy="account",
      *      cascade={"persist"}
      * )

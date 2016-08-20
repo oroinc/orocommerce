@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Owner;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -17,14 +17,13 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProviderTest extends OrmTestCase
 {
-    const ENTITY_NAMESPACE = 'OroB2B\Bundle\AccountBundle\Tests\Unit\Owner\Fixtures\Entity';
+    const ENTITY_NAMESPACE = 'Oro\Bundle\AccountBundle\Tests\Unit\Owner\Fixtures\Entity';
 
     const ORG_1 = 1;
     const ORG_2 = 2;
@@ -105,7 +104,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->method('save');
 
         $this->ownershipMetadataProvider =
-            $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider')
+            $this->getMockBuilder('Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider')
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->ownershipMetadataProvider->expects($this->any())

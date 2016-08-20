@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;

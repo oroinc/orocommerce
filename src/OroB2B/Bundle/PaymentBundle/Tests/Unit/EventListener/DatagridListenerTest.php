@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener;
+use Oro\Bundle\PaymentBundle\EventListener\DatagridListener;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const PAYMENT_TERM_CLASS = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm';
+    const PAYMENT_TERM_CLASS = 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm';
 
     /**
      * @var DatagridListener
@@ -48,9 +47,9 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         'columns' => [
             DatagridListener::PAYMENT_TERM_LABEL_ALIAS => [
                 'type' => 'twig',
-                'label' => 'orob2b.payment.paymentterm.entity_label',
+                'label' => 'oro.payment.paymentterm.entity_label',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
+                'template' => 'OroPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
             ],
         ],
         'sorters' => [
@@ -101,7 +100,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         ],
         'columns' => [
             DatagridListener::PAYMENT_TERM_LABEL_ALIAS => [
-                'label' => 'orob2b.payment.paymentterm.entity_label'
+                'label' => 'oro.payment.paymentterm.entity_label'
             ],
         ],
         'sorters' => [

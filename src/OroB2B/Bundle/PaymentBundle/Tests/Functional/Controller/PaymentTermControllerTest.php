@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 /**
  * @dbIsolation
@@ -23,7 +22,7 @@ class PaymentTermControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
     }
 
     public function testIndex()
@@ -163,8 +162,8 @@ class PaymentTermControllerTest extends WebTestCase
     {
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
-            ->getRepository('OroB2BPaymentBundle:PaymentTerm')
+            ->getManagerForClass('OroPaymentBundle:PaymentTerm')
+            ->getRepository('OroPaymentBundle:PaymentTerm')
             ->findOneBy(['label' => $label]);
 
         return $paymentTerm;

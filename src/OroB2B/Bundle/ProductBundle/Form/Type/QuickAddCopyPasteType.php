@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,12 +27,12 @@ class QuickAddCopyPasteType extends AbstractType
                     new NotBlank(),
                     new Regex([
                         'pattern' => self::FORMAT_REGEX,
-                        'message' => 'orob2b.product.frontend.quick_add.invalid_format'
+                        'message' => 'oro.product.frontend.quick_add.invalid_format'
                     ]),
                 ],
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'orob2b.product.frontend.quick_add.copy_paste.placeholder',
+                    'placeholder' => 'oro.product.frontend.quick_add.copy_paste.placeholder',
                     'spellcheck' => 'false',
                 ],
             ]

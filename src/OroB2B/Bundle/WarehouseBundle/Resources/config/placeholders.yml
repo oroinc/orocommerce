@@ -6,7 +6,7 @@ placeholders:
 
 items:
     inventory_levels_button:
-        template: OroB2BWarehouseBundle:Product:inventoryButton.html.twig
+        template: OroWarehouseBundle:Product:inventoryButton.html.twig
         applicable:
             - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.entity.product.class%)"
             - "@orob2b_frontend.placeholder.filter->isBackendRoute()"

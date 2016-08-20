@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
@@ -44,8 +43,8 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
@@ -128,7 +127,7 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProduct(LoadProductData::PRODUCT_1);
 
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
 
         $this->client->request(
             'GET',
@@ -141,7 +140,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertContains(
             $this->translator->trans(
-                'orob2b.frontend.sale.product.view.request_a_quote'
+                'oro.frontend.sale.product.view.request_a_quote'
             ),
             $result->getContent()
         );
@@ -151,7 +150,7 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProduct(LoadProductData::PRODUCT_3);
 
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
 
         $this->client->request(
             'GET',
@@ -164,7 +163,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertNotContains(
             $this->translator->trans(
-                'orob2b.frontend.sale.product.view.request_a_quote'
+                'oro.frontend.sale.product.view.request_a_quote'
             ),
             $result->getContent()
         );

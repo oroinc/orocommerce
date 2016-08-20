@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 /**
  * Interface is implemented by subtotal providers which operate entities implemented SubtotalAwareInterface.

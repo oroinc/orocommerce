@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -40,7 +40,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ];
     }
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
+    const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList';
 
     /**
      * @var ShoppingListType
@@ -63,7 +63,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
         $expectedShoppingList
             ->setLabel('new label');
 
-        $existingShoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 1);
+        $existingShoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1);
         $existingShoppingList
             ->setLabel('existing label');
 

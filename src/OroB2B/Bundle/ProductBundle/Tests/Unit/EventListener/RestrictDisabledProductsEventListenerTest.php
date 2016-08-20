@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
     protected function setUp()
     {
         $this->modifier = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier')
             ->disableOriginalConstructor()
             ->getMock();
 

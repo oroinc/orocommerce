@@ -1,22 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\AccountBundle\Event\AccountGroupEvent;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Event\AccountGroupEvent;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupListener extends AbstractPriceListCollectionAwareListener
 {
     /**
      * @var string
      */
-    protected $relationClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
+    protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
 
     /**
      * @var string
      */
-    protected $fallbackClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback';
+    protected $fallbackClass = 'Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback';
 
     /**
      * @param AccountGroupEvent $event

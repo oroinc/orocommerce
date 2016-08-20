@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 {
@@ -20,7 +19,7 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');
@@ -38,8 +37,8 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
     protected function getRootCategory()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getMasterCatalogRoot();
     }
 }

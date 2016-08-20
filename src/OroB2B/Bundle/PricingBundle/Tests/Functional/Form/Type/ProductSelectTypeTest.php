@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Form\Type;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractProductSelectTypeTest;
-use OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractProductSelectTypeTest;
+use Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 

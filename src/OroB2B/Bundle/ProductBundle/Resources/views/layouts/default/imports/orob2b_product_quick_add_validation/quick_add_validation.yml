@@ -11,23 +11,23 @@ layout:
                 __quick_add_validation_items_table_title:
                     blockType: text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.import_validation.number_of_items'
+                        text: 'oro.product.frontend.quick_add.import_validation.number_of_items'
                 __quick_add_validation_items_table_body:
                     blockType: container
                 __quick_add_validation_total_items_count:
                     blockType: import_validation_items_count_text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.import_validation.total_items'
+                        text: 'oro.product.frontend.quick_add.import_validation.total_items'
                         collection: '=data["collection"]'
                 __quick_add_validation_valid_items_count:
                     blockType: import_validation_items_count_text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.import_validation.valid_items'
+                        text: 'oro.product.frontend.quick_add.import_validation.valid_items'
                         collection: '=data["collection"]'
                 __quick_add_validation_invalid_items_count:
                     blockType: import_validation_items_count_text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.import_validation.invalid_items'
+                        text: 'oro.product.frontend.quick_add.import_validation.invalid_items'
                         collection: '=data["collection"]'
                 __quick_add_validation_invalid_items:
                     blockType: import_validation_items

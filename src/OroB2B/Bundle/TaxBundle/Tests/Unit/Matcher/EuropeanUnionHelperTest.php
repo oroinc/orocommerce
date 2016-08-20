@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
-use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 
 class EuropeanUnionHelperTest extends \PHPUnit_Framework_TestCase
 {

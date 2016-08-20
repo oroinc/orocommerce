@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner\Fixtures\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Owner\Fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

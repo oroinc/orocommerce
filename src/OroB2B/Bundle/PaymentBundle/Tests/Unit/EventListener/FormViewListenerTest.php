@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,15 +9,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\EventListener\FormViewListener;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
-    const PAYMENT_TERM_CLASS = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm';
+    const PAYMENT_TERM_CLASS = 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm';
 
     protected function tearDown()
     {
@@ -92,7 +91,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         }
 
         $paymentTermRepository = $this->getMockBuilder(
-            'OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
+            'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,7 +103,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:Account', $accountId)
+            ->with('OroAccountBundle:Account', $accountId)
             ->willReturn($account);
 
         $this->doctrineHelper->expects($this->any())
@@ -118,12 +117,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
         if ($isPaymentTermExist) {
             $environment->expects($isPaymentTermExist ? $this->once() : $this->never())
                 ->method('render')
-                ->with('OroB2BPaymentBundle:Account:payment_term_view.html.twig')
+                ->with('OroPaymentBundle:Account:payment_term_view.html.twig')
                 ->willReturn($templateAccountPaymentTermHtml);
         } else {
             $this->translator->expects($this->at(0))
                 ->method('trans')
-                ->with('orob2b.payment.account.payment_term_non_defined_in_group');
+                ->with('oro.payment.account.payment_term_non_defined_in_group');
 
             $paymentTermRepository->expects($this->any())
                 ->method('getOnePaymentTermByAccountGroup')
@@ -133,13 +132,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
             if ($isPaymentTermInGroupExist) {
                 $this->translator->expects($this->at(1))
                     ->method('trans')
-                    ->with('orob2b.payment.account.payment_term_defined_in_group');
+                    ->with('oro.payment.account.payment_term_defined_in_group');
             }
 
             $environment->expects($this->once())
                 ->method('render')
                 ->with(
-                    'OroB2BPaymentBundle:Account:payment_term_view.html.twig'
+                    'OroPaymentBundle:Account:payment_term_view.html.twig'
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
@@ -188,7 +187,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $templateHtml = 'template_html';
         $emptyTemplate = 'template_html_empty';
 
-        $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
+        $priceRepository = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
@@ -198,7 +197,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
+            ->with('OroAccountBundle:AccountGroup', $accountGroupId)
             ->willReturn($accountGroup);
 
         $this->doctrineHelper->expects($this->once())
@@ -211,7 +210,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPaymentBundle:Account:payment_term_view.html.twig'
+                'OroPaymentBundle:Account:payment_term_view.html.twig'
             )
             ->willReturn($isPaymentTermExist ? $templateHtml : $emptyTemplate);
 
@@ -248,7 +247,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPaymentBundle:Account/Form:payment_term_update.html.twig', ['form' => $formView])
+            ->with('OroPaymentBundle:Account/Form:payment_term_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);

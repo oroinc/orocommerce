@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
  * @dbIsolation
@@ -320,8 +319,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUser')
-            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->getManagerForClass('OroAccountBundle:AccountUser')
+            ->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy($criteria);
     }
 

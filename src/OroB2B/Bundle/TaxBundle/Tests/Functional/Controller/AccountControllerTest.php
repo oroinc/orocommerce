@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @dbIsolation
@@ -26,9 +25,9 @@ class AccountControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
             ]
         );
     }
@@ -52,8 +51,8 @@ class AccountControllerTest extends WebTestCase
 
         /** @var Account $taxAccount */
         $taxAccount = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Account')
-            ->getRepository('OroB2BAccountBundle:Account')
+            ->getManagerForClass('OroAccountBundle:Account')
+            ->getRepository('OroAccountBundle:Account')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($taxAccount);
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity\Listener;
+namespace Oro\Bundle\SaleBundle\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteListener
 {

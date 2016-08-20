@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 
 class CombinedPriceListActivationRuleTest extends \PHPUnit_Framework_TestCase
 {

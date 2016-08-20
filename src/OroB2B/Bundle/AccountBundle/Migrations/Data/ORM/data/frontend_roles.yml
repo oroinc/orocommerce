@@ -9,8 +9,8 @@ BUYER:
     max_permissions: true
     self_managed: true
     permissions:
-        entity|OroB2B\Bundle\AccountBundle\Entity\Account: [VIEW_SYSTEM]
-        entity|OroB2B\Bundle\AccountBundle\Entity\AccountAddress: [VIEW_LOCAL]
-        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUser: [VIEW_LOCAL, EDIT_LOCAL]
-        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress: [VIEW_BASIC]
-        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUserRole: []
+        entity|Oro\Bundle\AccountBundle\Entity\Account: [VIEW_SYSTEM]
+        entity|Oro\Bundle\AccountBundle\Entity\AccountAddress: [VIEW_LOCAL]
+        entity|Oro\Bundle\AccountBundle\Entity\AccountUser: [VIEW_LOCAL, EDIT_LOCAL]
+        entity|Oro\Bundle\AccountBundle\Entity\AccountUserAddress: [VIEW_BASIC]
+        entity|Oro\Bundle\AccountBundle\Entity\AccountUserRole: []

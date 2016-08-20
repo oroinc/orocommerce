@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\DependencyInjection;
+namespace Oro\Bundle\MoneyOrderBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 
 class Configuration implements ConfigurationInterface
 {
@@ -32,7 +31,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root(OroB2BMoneyOrderExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroMoneyOrderExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,

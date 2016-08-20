@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Event;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent;
 
 class AbstractProductDuplicateEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class AbstractProductDuplicateEventTest extends \PHPUnit_Framework_TestCase
         $sourceProduct->setSku('SKU-2');
 
         /** @var AbstractProductDuplicateEvent $event */
-        $event = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent')
+        $event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent')
             ->setConstructorArgs([$product, $sourceProduct])
             ->getMockForAbstractClass();
 

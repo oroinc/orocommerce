@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
+namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 {

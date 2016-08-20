@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Resolver;
+namespace Oro\Bundle\WebsiteBundle\Resolver;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteUrlResolver
 {

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -22,8 +21,8 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
             ]
         );
     }
@@ -37,8 +36,8 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         $alias = 'account_group';
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
-            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->getManagerForClass('OroAccountBundle:AccountGroup')
+            ->getRepository('OroAccountBundle:AccountGroup')
             ->createQueryBuilder($alias);
 
         /** @var BasePriceList $priceList */
@@ -266,7 +265,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListToAccountGroup');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceListToAccountGroup');
     }
 
     public function testDelete()

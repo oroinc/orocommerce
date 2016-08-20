@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Placeholder;
+namespace Oro\Bundle\ShoppingListBundle\Placeholder;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 

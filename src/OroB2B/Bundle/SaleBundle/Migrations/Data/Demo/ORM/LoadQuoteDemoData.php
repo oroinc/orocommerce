@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -14,17 +14,16 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class LoadQuoteDemoData extends AbstractFixture implements
     FixtureInterface,
@@ -51,11 +50,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
         ];
     }
 
@@ -69,7 +68,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $organization = $user->getOrganization();
         $accounts = $this->getAccounts($manager);
         $website = $this->container->get('doctrine')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => 'Default']);
 
         for ($i = 0; $i < 20; $i++) {
@@ -119,7 +118,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:Account')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroAccountBundle:Account')->findBy([], null, 10));
     }
 
     /**
@@ -266,7 +265,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
+        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, 10);
 
         if (!count($products)) {
             throw new \LogicException('There are no products in system');
@@ -281,7 +280,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getRequests(ObjectManager $manager)
     {
-        $requests = $manager->getRepository('OroB2BRFPBundle:Request')->findBy([], null, 10);
+        $requests = $manager->getRepository('OroRFPBundle:Request')->findBy([], null, 10);
 
         if (!count($requests)) {
             throw new \LogicException('There are no RFPRequests in system');
@@ -323,7 +322,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         static $productUnits = null;
 
         if (null === $productUnits) {
-            $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')->findBy([], null, 10);
+            $productUnits = $manager->getRepository('OroProductBundle:ProductUnit')->findBy([], null, 10);
         }
 
         return $productUnits;

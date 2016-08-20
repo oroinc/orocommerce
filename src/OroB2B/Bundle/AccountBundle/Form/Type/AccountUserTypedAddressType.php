@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 class AccountUserTypedAddressType extends AccountTypedAddressType
 {

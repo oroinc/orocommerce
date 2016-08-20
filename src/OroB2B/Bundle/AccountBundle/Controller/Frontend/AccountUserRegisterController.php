@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,9 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 
 class AccountUserRegisterController extends Controller
 {
@@ -58,9 +57,9 @@ class AccountUserRegisterController extends Controller
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
         if ($userManager->isConfirmationRequired()) {
-            $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
+            $registrationMessage = 'oro.account.controller.accountuser.registered_with_confirmation.message';
         } else {
-            $registrationMessage = 'orob2b.account.controller.accountuser.registered.message';
+            $registrationMessage = 'oro.account.controller.accountuser.registered.message';
         }
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
@@ -91,17 +90,17 @@ class AccountUserRegisterController extends Controller
         if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 $this->get('translator')
-                    ->trans('orob2b.account.controller.accountuser.confirmation_error.message')
+                    ->trans('oro.account.controller.accountuser.confirmation_error.message')
             );
         }
 
         $messageType = 'warn';
-        $message = 'orob2b.account.controller.accountuser.already_confirmed.message';
+        $message = 'oro.account.controller.accountuser.already_confirmed.message';
         if (!$accountUser->isConfirmed()) {
             $userManager->confirmRegistration($accountUser);
             $userManager->updateUser($accountUser);
             $messageType = 'success';
-            $message = 'orob2b.account.controller.accountuser.confirmed.message';
+            $message = 'oro.account.controller.accountuser.confirmed.message';
         }
 
         $this->get('session')->getFlashBag()->add($messageType, $message);

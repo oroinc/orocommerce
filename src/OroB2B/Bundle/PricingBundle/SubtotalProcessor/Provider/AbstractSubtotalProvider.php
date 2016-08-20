@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 abstract class AbstractSubtotalProvider
 {

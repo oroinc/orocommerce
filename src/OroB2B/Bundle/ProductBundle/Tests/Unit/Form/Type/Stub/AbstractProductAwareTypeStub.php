@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
+use Oro\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 
 class AbstractProductAwareTypeStub extends AbstractProductAwareType
 {

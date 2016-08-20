@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Provider;
+namespace Oro\Bundle\CatalogBundle\Provider;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {

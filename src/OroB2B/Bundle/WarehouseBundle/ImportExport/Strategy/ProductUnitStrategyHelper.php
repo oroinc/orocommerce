@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer;
 
 class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
 {
@@ -54,7 +53,7 @@ class ProductUnitStrategyHelper extends AbstractWarehouseInventoryLevelStrategyH
         $productUnit = $productUnitPrecision->getUnit();
 
         if ($this->isUnitRequired($product, $existingWarehouse) && !$productUnit) {
-            $this->addError('orob2b.warehouse.import.error.unit_required');
+            $this->addError('oro.warehouse.import.error.unit_required');
 
             return null;
         }

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Method\Config;
+namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CurrencyConfigAwareInterface;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
+use Oro\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface;
+use Oro\Bundle\PaymentBundle\Method\Config\CurrencyConfigAwareInterface;
 
 interface MoneyOrderConfigInterface extends
     PaymentConfigInterface,

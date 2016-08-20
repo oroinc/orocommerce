@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,8 +30,8 @@ class QuickAddType extends AbstractType
                         'validation_required' => $options['validation_required']
                     ],
                     'error_bubbling' => true,
-                    'constraints' => [new NotBlank(['message' => 'orob2b.product.at_least_one_item'])],
-                    'add_label' => 'orob2b.product.form.add_row',
+                    'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
+                    'add_label' => 'oro.product.form.add_row',
                     'products' => $options['products'],
                 ]
             )

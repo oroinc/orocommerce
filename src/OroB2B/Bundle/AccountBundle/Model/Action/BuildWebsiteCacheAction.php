@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BuildWebsiteCacheAction extends AbstractVisibilityRegistryAwareAction
 {
@@ -46,6 +46,6 @@ class BuildWebsiteCacheAction extends AbstractVisibilityRegistryAwareAction
      */
     protected function getEntityManager()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        return $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 }

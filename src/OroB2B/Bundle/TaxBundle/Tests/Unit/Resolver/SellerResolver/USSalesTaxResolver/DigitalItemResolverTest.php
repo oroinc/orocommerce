@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
 
 class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
 {

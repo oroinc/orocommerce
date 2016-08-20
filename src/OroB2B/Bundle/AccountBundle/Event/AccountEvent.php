@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Event;
+namespace Oro\Bundle\AccountBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountEvent extends Event
 {

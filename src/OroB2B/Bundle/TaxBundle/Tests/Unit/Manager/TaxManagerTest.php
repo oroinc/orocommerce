@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
-use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
+use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -38,18 +38,18 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->factory = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxFactory')
+        $this->factory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventDispatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher')
+        $this->eventDispatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Event\TaxEventDispatcher')
             ->disableOriginalConstructor()->getMock();
 
-        $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
+        $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -91,7 +91,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $this->manager->addTransformer('stdClass', $transformer);
 
         $this->taxValueManager->expects($this->once())->method('getTaxValue')
@@ -112,7 +112,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('transform')->willReturnCallback(
             function (TaxValue $taxValue) {
                 return $taxValue->getResult();
@@ -124,7 +124,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->with($taxable->getClassName(), $taxable->getIdentifier())->willReturn($taxValue);
 
         $result = $this->manager->loadTax(new \stdClass());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $result);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
         $this->assertSame($taxResult, $result);
     }
 
@@ -140,12 +140,12 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                 $this->callback(
                     function ($dispatchedTaxable) use ($taxable) {
                         /** @var Taxable $dispatchedTaxable */
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
+                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
                         $this->assertSame($taxable, $dispatchedTaxable);
 
                         /** @var Result $dispatchedResult */
                         $dispatchedResult = $dispatchedTaxable->getResult();
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $dispatchedResult);
+                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $dispatchedResult);
                         $unit = $dispatchedResult->getUnit();
                         $unit->offsetSet(ResultElement::EXCLUDING_TAX, 20);
                         $dispatchedResult->offsetSet(Result::UNIT, $unit);
@@ -156,7 +156,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             );
 
         $result = $this->manager->getTax(new \stdClass());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $result);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
         $this->assertEquals(20, $result->getUnit()->getExcludingTax());
         $this->assertEquals(null, $result->getUnit()->getIncludingTax());
     }
@@ -173,7 +173,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('transform')->willReturnCallback(
             function (TaxValue $taxValue) {
                 return $taxValue->getResult();
@@ -189,12 +189,12 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                 $this->callback(
                     function ($dispatchedTaxable) use ($taxable, $taxResult) {
                         /** @var Taxable $dispatchedTaxable */
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
+                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
                         $this->assertSame($taxable, $dispatchedTaxable);
 
                         /** @var Result $dispatchedResult */
                         $dispatchedResult = $dispatchedTaxable->getResult();
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $dispatchedResult);
+                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $dispatchedResult);
                         $this->assertSame($taxResult, $taxResult);
                         /** @var Result $dispatchedResult */
                         $unit = $dispatchedResult->getUnit();
@@ -207,7 +207,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             );
 
         $result = $this->manager->getTax(new \stdClass());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $result);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
         $this->assertEquals(20, $result->getUnit()->getExcludingTax());
         $this->assertEquals(null, $result->getUnit()->getIncludingTax());
         $this->assertEquals(10, $result->getRow()->getExcludingTax());
@@ -225,7 +225,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('reverseTransform')->willReturnCallback(
             function (Result $result) use ($taxValue) {
                 $taxValue->setResult($result);
@@ -286,7 +286,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->exactly(2))
             ->method('reverseTransform')
             ->willReturnCallback(
@@ -446,7 +446,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())
             ->method('reverseTransform')
             ->willReturnCallback(
@@ -476,7 +476,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException
+     * @expectedException \Oro\Bundle\TaxBundle\Exception\TaxationDisabledException
      */
     public function testExceptionWhenTaxationDisabled()
     {

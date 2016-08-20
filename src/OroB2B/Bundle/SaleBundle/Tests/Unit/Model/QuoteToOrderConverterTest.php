@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,25 +8,24 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -57,7 +56,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->orderCurrencyHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderCurrencyHandler->expects($this->any())
@@ -69,12 +68,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->subTotalLineItemProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -162,7 +161,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
             ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
-            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
@@ -214,7 +213,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
             ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
-            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
@@ -255,7 +254,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
             ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
-            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
@@ -312,7 +311,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
-            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
@@ -520,14 +519,14 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('persist')
-            ->with($this->isInstanceOf('OroB2B\Bundle\OrderBundle\Entity\Order'));
+            ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
         $manager->expects($this->once())
             ->method('flush')
-            ->with($this->isInstanceOf('OroB2B\Bundle\OrderBundle\Entity\Order'));
+            ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BOrderBundle:Order')
+            ->with('OroOrderBundle:Order')
             ->willReturn($manager);
     }
 

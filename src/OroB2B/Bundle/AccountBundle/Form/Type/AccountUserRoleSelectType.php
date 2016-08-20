@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class AccountUserRoleSelectType extends AbstractType
 {
@@ -69,7 +69,7 @@ class AccountUserRoleSelectType extends AbstractType
                     return (string)$role;
                 }
 
-                $roleType = 'orob2b.account.accountuserrole.type.';
+                $roleType = 'oro.account.accountuserrole.type.';
                 $roleType .= $role->isPredefined() ? 'predefined.label' : 'customizable.label';
                 return sprintf('%s (%s)', $role->getLabel(), $this->translator->trans($roleType));
             }

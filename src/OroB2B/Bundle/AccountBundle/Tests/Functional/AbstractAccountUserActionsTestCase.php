@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional;
+namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 {
@@ -14,7 +13,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 
     public function testConfirm()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getReference(static::EMAIL);
         $this->assertNotNull($user);
 
@@ -124,7 +123,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**

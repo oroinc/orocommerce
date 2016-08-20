@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -13,8 +13,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 abstract class AbstractLoadAddressDemoData extends AbstractEntityReferenceFixture implements ContainerAwareInterface
 {

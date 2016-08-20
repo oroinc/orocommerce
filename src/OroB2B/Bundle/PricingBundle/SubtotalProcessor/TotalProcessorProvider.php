@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
@@ -95,7 +95,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $total = new Subtotal();
 
         $total->setType(self::TYPE);
-        $translation = sprintf('orob2b.pricing.subtotals.%s.label', $total->getType());
+        $translation = sprintf('oro.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
         $baseCurrency = $this->getBaseCurrency($entity);
         $total->setCurrency($baseCurrency);

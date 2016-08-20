@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguraton;
 
 /**

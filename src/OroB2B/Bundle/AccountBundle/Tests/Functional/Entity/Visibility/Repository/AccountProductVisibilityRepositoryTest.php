@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 
 /**
  * @dbIsolation
@@ -28,16 +28,16 @@ class AccountProductVisibilityRepositoryTest extends AbstractProductVisibilityRe
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository(
-            'OroB2BAccountBundle:Visibility\AccountProductVisibility'
+            'OroAccountBundle:Visibility\AccountProductVisibility'
         );
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility');
+            ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             ]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,11 +13,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
 
 class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 {
@@ -91,10 +90,10 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 
     public function submitDataProvider()
     {
-        $firstWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
-        $secondWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
+        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
+        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
 
-        $warehouseClass = 'OroB2BWarehouseBundle:Warehouse';
+        $warehouseClass = 'OroWarehouseBundle:Warehouse';
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -106,9 +105,9 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
             ]);
 
         /** @var ProductUnitPrecision $firstPrecision */
-        $firstPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
+        $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
         /** @var ProductUnitPrecision $secondPrecision */
-        $secondPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
+        $secondPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
 
         $product = new Product();
         $product->addUnitPrecision($firstPrecision)
@@ -163,7 +162,7 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 
         $productId = 42;
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
         $product->addUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
 
         $constraints = ['some' => 'constraints'];

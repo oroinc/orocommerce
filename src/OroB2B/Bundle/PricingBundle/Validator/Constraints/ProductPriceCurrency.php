@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,7 +9,7 @@ class ProductPriceCurrency extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.product_price.currency.message';
+    public $message = 'oro.pricing.validators.product_price.currency.message';
 
     /**
      * {@inheritdoc}

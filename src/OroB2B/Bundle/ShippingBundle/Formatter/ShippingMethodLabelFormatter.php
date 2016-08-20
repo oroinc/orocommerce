@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Formatter;
+namespace Oro\Bundle\ShippingBundle\Formatter;
 
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingMethodLabelFormatter
 {

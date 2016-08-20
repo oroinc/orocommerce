@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
 
 class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +48,7 @@ class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('orob2b_tax_autocomplete', $options['autocomplete_alias']);
         $this->assertEquals('orob2b_tax_create', $options['create_form_route']);
         $this->assertEquals(
-            ['placeholder' => 'orob2b.tax.form.choose'],
+            ['placeholder' => 'oro.tax.form.choose'],
             $options['configs']
         );
     }

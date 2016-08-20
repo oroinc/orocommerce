@@ -2,4 +2,4 @@ IS_AUTHENTICATED_ANONYMOUSLY:
     label: Non-Authenticated Visitors
     public: false
     permissions:
-        entity|OroB2B\Bundle\ProductBundle\Entity\Product: [VIEW_SYSTEM]
+        entity|Oro\Bundle\ProductBundle\Entity\Product: [VIEW_SYSTEM]

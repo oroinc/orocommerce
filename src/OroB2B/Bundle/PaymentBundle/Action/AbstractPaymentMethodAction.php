@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Action;
+namespace Oro\Bundle\PaymentBundle\Action;
 
 use Psr\Log\LoggerAwareTrait;
 
@@ -10,10 +10,9 @@ use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {

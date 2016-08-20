@@ -1,6 +1,6 @@
 operations:
     orob2b_product_duplicate:
-        label: orob2b.product.ui.duplicate
+        label: oro.product.ui.duplicate
         applications: [backend]
         routes:
             - orob2b_product_view
@@ -26,7 +26,7 @@ operations:
                 conditions:
                     '@equal': [$.hasSuccessMessage, false]
                 parameters:
-                    message: orob2b.product.controller.product.duplicated.message
+                    message: oro.product.controller.product.duplicated.message
                     type: 'success'
             - '@redirect':
                 route: orob2b_product_view
@@ -45,7 +45,7 @@ action_groups:
     orob2b_product_duplicate:
         parameters:
             data:
-                type: OroB2B\Bundle\ProductBundle\Entity\Product
+                type: Oro\Bundle\ProductBundle\Entity\Product
         acl_resource: orob2b_product_create
         actions:
             - '@call_service_method':

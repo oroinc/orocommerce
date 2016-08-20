@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+use Oro\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
 {

@@ -8,7 +8,7 @@
 
 {% macro urlFromString(file, filter) -%}
     {%- if file is empty %}
-        {% set file = '/bundles/orob2bproduct/default/images/no_image.png' %}
+        {% set file = '/bundles/oroproduct/default/images/no_image.png' %}
     {% endif %}
     {{- file|imagine_filter(filter) -}}
 {%- endmacro -%}
@@ -23,7 +23,7 @@
         <table class="table table-bordered table-condensed">
             <thead>
                 <tr>
-                    <th>{{ 'orob2b.product.productimage.file.label'|trans }}</th>
+                    <th>{{ 'oro.product.productimage.file.label'|trans }}</th>
                     {% for imageType in imageTypes %}
                         <th>{{ imageType.label|trans }}</th>
                     {% endfor %}

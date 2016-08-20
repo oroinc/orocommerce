@@ -5,8 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener;
-
-use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 
 class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +47,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
         /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMock('OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
+        $event = $this->getMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
         $event
             ->expects($this->never())
             ->method('markFailed');
@@ -71,7 +70,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
         /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMock('OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
+        $event = $this->getMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
         $event
             ->expects($this->once())
             ->method('markFailed');
@@ -89,7 +88,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
         /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMock('OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
+        $event = $this->getMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
         $event
             ->expects($this->once())
             ->method('markFailed');

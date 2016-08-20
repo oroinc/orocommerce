@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_shopping_list_index'),
-        'indexLabel': 'orob2b.shoppinglist.entity_plural_label'|trans,
+        'indexLabel': 'oro.shoppinglist.entity_plural_label'|trans,
         'entityTitle': entity.label|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -17,7 +17,7 @@
     {% set shoppingListInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.shoppinglist.widgets.shopping_list_information'|trans,
+            'title': 'oro.shoppinglist.widgets.shopping_list_information'|trans,
             'url': path('orob2b_shopping_list_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -25,7 +25,7 @@
     {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_entity_totals',
                 method: 'GET',
@@ -43,7 +43,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.shoppinglist.sections.general'|trans,
+            'title': 'oro.shoppinglist.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }
@@ -51,7 +51,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.shoppinglist.lineitem.entity_plural_label'|trans,
+            'title' : 'oro.shoppinglist.lineitem.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
@@ -64,7 +64,7 @@
     ]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.shoppinglist.sections.subtotals'|trans,
+        'title': 'oro.shoppinglist.sections.subtotals'|trans,
         'subblocks': [{'data' : [subtotals]}]
     }]) %}
 

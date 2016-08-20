@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
@@ -11,14 +11,13 @@ use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  *
- * @covers \OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
+ * @covers \Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
 class ImportExportTest extends WebTestCase
 {
@@ -95,7 +94,7 @@ class ImportExportTest extends WebTestCase
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    'entity' => 'Oro\Bundle\ProductBundle\Entity\Product',
                     '_widgetContainer' => 'dialog',
                 ]
             )

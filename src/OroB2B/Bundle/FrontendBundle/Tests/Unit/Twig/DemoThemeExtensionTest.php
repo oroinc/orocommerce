@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Twig;
 
 use Symfony\Bundle\AsseticBundle\Factory\AssetFactory;
 
 use Oro\Bundle\AsseticBundle\AssetsConfiguration;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension;
-use OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
+use Oro\Bundle\FrontendBundle\Twig\DemoThemeExtension;
+use Oro\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
 
 class DemoThemeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -66,7 +65,7 @@ class DemoThemeExtensionTest extends \PHPUnit_Framework_TestCase
 
         /** @var FrontendAsseticTokenParser $parser */
         $parser = $parsers[0];
-        $this->assertInstanceOf('OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser', $parser);
+        $this->assertInstanceOf('Oro\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser', $parser);
 
         $this->assertEquals(DemoThemeExtension::TAG_NAME, $parser->getTag());
         $this->assertAttributeSame($this->assetsConfiguration, 'assetsConfiguration', $parser);

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
-use OroB2B\Bundle\TaxBundle\Resolver\CurrencyResolver;
-use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
+use Oro\Bundle\TaxBundle\Resolver\CurrencyResolver;
+use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 class CurrencyResolverTest extends \PHPUnit_Framework_TestCase
 {

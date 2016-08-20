@@ -1,10 +1,10 @@
 orob2b_payment:
-    resource:     "@OroB2BPaymentBundle/Controller/PaymentTermController.php"
+    resource:     "@OroPaymentBundle/Controller/PaymentTermController.php"
     type:         annotation
     prefix:       /payment/term
 
 oro_organziation_api:
-    resource:     "@OroB2BPaymentBundle/Controller/Api/Rest/PaymentTermController.php"
+    resource:     "@OroPaymentBundle/Controller/Api/Rest/PaymentTermController.php"
     type:         rest
     prefix:       api/rest/{version}/
     requirements:
@@ -14,7 +14,7 @@ oro_organziation_api:
         version:  latest
 
 orob2b_payment_callback:
-    resource:     "@OroB2BPaymentBundle/Controller/Frontend/CallbackController.php"
+    resource:     "@OroPaymentBundle/Controller/Frontend/CallbackController.php"
     type:         annotation
     prefix:       /payment/callback
     options:

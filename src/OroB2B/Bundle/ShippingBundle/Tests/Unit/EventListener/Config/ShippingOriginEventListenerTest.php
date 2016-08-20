@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Config;
+namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener;
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener;
+use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +31,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->shippingOriginModelFactory = $this->getMockBuilder(
-            'OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory'
+            'Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -96,7 +95,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                         $this->assertInternalType('array', $settings['orob2b_shipping___shipping_origin']);
                         $this->assertArrayHasKey('value', $settings['orob2b_shipping___shipping_origin']);
                         $value = $settings['orob2b_shipping___shipping_origin']['value'];
-                        $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin', $value);
+                        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\ShippingOrigin', $value);
                         $this->assertEquals($shippingOrigin, $value);
 
                         return true;

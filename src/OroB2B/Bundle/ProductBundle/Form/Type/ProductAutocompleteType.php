@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -49,8 +49,8 @@ class ProductAutocompleteType extends AbstractProductAwareType
                         'name' => 'orob2b_product_visibility_limited',
                     ],
                     'selection_template_twig' =>
-                        'OroB2BProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
-                    'componentModule' => 'orob2bproduct/js/app/components/product-autocomplete-component',
+                        'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
+                    'componentModule' => 'oroproduct/js/app/components/product-autocomplete-component',
                 ],
                 'attr' => ['spellcheck' => 'false'],
             ]

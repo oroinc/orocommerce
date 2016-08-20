@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
+namespace Oro\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 class TaxBaseExclusionTransformer implements DataTransformerInterface
 {

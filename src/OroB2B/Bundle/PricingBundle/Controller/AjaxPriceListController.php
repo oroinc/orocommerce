@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -10,9 +10,8 @@ use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class AjaxPriceListController extends Controller
 {
@@ -31,7 +30,7 @@ class AjaxPriceListController extends Controller
             $response = [
                 'successful' => true,
                 'message' => $this->getTranslator()->trans(
-                    'orob2b.pricing.pricelist.set_default.message',
+                    'oro.pricing.pricelist.set_default.message',
                     [
                         '{{ priceListName }}' => $priceList->getName()
                     ]

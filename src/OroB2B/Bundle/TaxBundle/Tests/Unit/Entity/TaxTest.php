@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\Tax;
 
 class TaxTest extends \PHPUnit_Framework_TestCase
 {

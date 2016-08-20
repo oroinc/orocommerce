@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Filter;
+namespace Oro\Bundle\PricingBundle\Filter;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class FrontendProductPriceFilter extends ProductPriceFilter
 {

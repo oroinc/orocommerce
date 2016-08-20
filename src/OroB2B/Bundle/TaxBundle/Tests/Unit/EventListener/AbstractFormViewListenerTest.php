@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\TaxBundle\EventListener\AbstractFormViewListener;
+use Oro\Bundle\TaxBundle\EventListener\AbstractFormViewListener;
 
 abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 {

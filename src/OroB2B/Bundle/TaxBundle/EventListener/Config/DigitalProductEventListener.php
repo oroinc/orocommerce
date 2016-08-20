@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener\Config;
+namespace Oro\Bundle\TaxBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
-use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 
 class DigitalProductEventListener
 {
@@ -46,7 +45,7 @@ class DigitalProductEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . $this->settingsKey;
+        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . $this->settingsKey;
         if (!array_key_exists($key, $settings)) {
             return;
         }
@@ -71,7 +70,7 @@ class DigitalProductEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $this->settingsKey;
+        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $this->settingsKey;
         if (!array_key_exists($key, $settings)) {
             return;
         }

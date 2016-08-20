@@ -1,24 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 
 class QuoteProductOfferTypeTest extends AbstractTest
 {
@@ -37,7 +36,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         parent::setUp();
 
         $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
     }
 
     public function testConfigureOptions()
@@ -224,7 +223,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         }
 
         /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $item = $this->getMock('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
         $item
             ->expects($this->any())
             ->method('getId')

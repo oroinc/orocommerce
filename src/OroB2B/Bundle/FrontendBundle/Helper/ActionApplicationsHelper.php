@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Helper;
+namespace Oro\Bundle\FrontendBundle\Helper;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper extends ApplicationsHelper
 {

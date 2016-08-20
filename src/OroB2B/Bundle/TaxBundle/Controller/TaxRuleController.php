@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Controller;
+namespace Oro\Bundle\TaxBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
 
 class TaxRuleController extends Controller
 {
@@ -36,7 +35,7 @@ class TaxRuleController extends Controller
      * @Acl(
      *      id="orob2b_tax_rule_view",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxRule",
+     *      class="OroTaxBundle:TaxRule",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class TaxRuleController extends Controller
 
     /**
      * @Route("/create", name="orob2b_tax_rule_create")
-     * @Template("OroB2BTaxBundle:TaxRule:update.html.twig")
+     * @Template("OroTaxBundle:TaxRule:update.html.twig")
      * @Acl(
      *      id="orob2b_tax_rule_create",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxRule",
+     *      class="OroTaxBundle:TaxRule",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class TaxRuleController extends Controller
      * @Acl(
      *      id="orob2b_tax_rule_update",
      *      type="entity",
-     *      class="OroB2BTaxBundle:TaxRule",
+     *      class="OroTaxBundle:TaxRule",
      *      permission="EDIT"
      * )
      *
@@ -106,7 +105,7 @@ class TaxRuleController extends Controller
                     'parameters' => ['id' => $taxRule->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.tax.controller.taxrule.saved.message')
+            $this->get('translator')->trans('oro.tax.controller.taxrule.saved.message')
         );
     }
 }

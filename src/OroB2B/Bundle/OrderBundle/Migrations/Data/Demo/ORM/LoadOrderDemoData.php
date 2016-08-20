@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -14,13 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -53,12 +52,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
-            'OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData'
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
+            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData'
         ];
     }
 
@@ -69,13 +68,13 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
+        $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $manager->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
+        $shoppingList = $manager->getRepository('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
@@ -127,7 +126,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setSubtotal($row['subtotal'])
                 ->setTotal($row['total']);
 
-            if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+            if ($row['sourceEntityClass'] === 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList') {
                 $order->setSourceEntityClass($row['sourceEntityClass']);
                 $order->setSourceEntityId($shoppingList->getId());
             }
@@ -172,7 +171,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        return $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
+        return $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
     }
 
     /**
@@ -211,7 +210,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getPaymentTerm(EntityManager $manager, $label)
     {
         if (!array_key_exists($label, $this->paymentTerms)) {
-            $this->paymentTerms[$label] = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm')
+            $this->paymentTerms[$label] = $manager->getRepository('OroPaymentBundle:PaymentTerm')
                 ->findOneBy(['label' => $label]);
         }
 
@@ -226,7 +225,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getWebsite(EntityManager $manager, $name)
     {
         if (!array_key_exists($name, $this->websites)) {
-            $this->websites[$name] = $manager->getRepository('OroB2BWebsiteBundle:Website')
+            $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')
                 ->findOneBy(['name' => $name]);
         }
 

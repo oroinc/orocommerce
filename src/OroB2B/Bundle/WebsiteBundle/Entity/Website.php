@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace Oro\Bundle\WebsiteBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +10,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableBusinessUnitAwareTrait;
-use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
+use Oro\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
 /**
  * @ORM\Table(
@@ -20,7 +20,7 @@ use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
  *          @ORM\Index(name="idx_orob2b_website_updated_at", columns={"updated_at"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
  * @Config(
  *      routeName="oro_websitepro_index",
  *      routeView="oro_websitepro_view",

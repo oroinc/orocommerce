@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener;
-use OroB2B\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
+use Oro\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener;
+use Oro\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
 
 class PostUpMigrationListenerTest extends \PHPUnit_Framework_TestCase
 {

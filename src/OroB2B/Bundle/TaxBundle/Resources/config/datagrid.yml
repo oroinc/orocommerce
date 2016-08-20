@@ -70,9 +70,9 @@ datagrid:
                     - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
         columns:
             code:
-                label: orob2b.tax.producttaxcode.code.label
+                label: oro.tax.producttaxcode.code.label
             description:
-                label: orob2b.tax.producttaxcode.description.label
+                label: oro.tax.producttaxcode.description.label
         properties:
             view_link:
                 route: orob2b_tax_product_tax_code_view
@@ -91,9 +91,9 @@ datagrid:
                     - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
         columns:
             code:
-                label: orob2b.tax.accounttaxcode.code.label
+                label: oro.tax.accounttaxcode.code.label
             description:
-                label: orob2b.tax.accounttaxcode.description.label
+                label: oro.tax.accounttaxcode.description.label
         properties:
             view_link:
                 route: orob2b_tax_account_tax_code_view
@@ -129,11 +129,11 @@ datagrid:
                     - { table: %orob2b_tax.entity.tax.class%, alias: tax }
         columns:
             code:
-                label: orob2b.tax.code.label
+                label: oro.tax.code.label
             description:
-                label: orob2b.tax.description.label
+                label: oro.tax.description.label
             rate:
-                label: orob2b.tax.rate.label
+                label: oro.tax.rate.label
                 frontend_type: percent
             createdAt:
                 label:         oro.ui.created_at
@@ -218,15 +218,15 @@ datagrid:
                         - { join: tax_rule.taxJurisdiction, alias: tax_jutisdiction }
         columns:
             account_tax_code_code:
-                label: orob2b.tax.taxrule.account_tax_code.label
+                label: oro.tax.taxrule.account_tax_code.label
             product_tax_code_code:
-                label: orob2b.tax.taxrule.product_tax_code.label
+                label: oro.tax.taxrule.product_tax_code.label
             tax_jurisdiction_code:
-                label: orob2b.tax.taxrule.tax_jurisdiction.label
+                label: oro.tax.taxrule.tax_jurisdiction.label
             tax_code:
-                label: orob2b.tax.taxrule.tax.label
+                label: oro.tax.taxrule.tax.label
             description:
-                label: orob2b.tax.taxrule.description.label
+                label: oro.tax.taxrule.description.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -304,9 +304,9 @@ datagrid:
                     - { table: %orob2b_tax.entity.tax_jurisdiction.class%, alias: jurisdiction }
         columns:
             code:
-                label: orob2b.tax.taxjurisdiction.code.label
+                label: oro.tax.taxjurisdiction.code.label
             description:
-                label: orob2b.tax.taxjurisdiction.description.label
+                label: oro.tax.taxjurisdiction.description.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

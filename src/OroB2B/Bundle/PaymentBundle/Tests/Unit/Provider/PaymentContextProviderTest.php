@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
+use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
 {

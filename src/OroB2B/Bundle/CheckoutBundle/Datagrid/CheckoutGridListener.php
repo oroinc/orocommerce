@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 
@@ -8,13 +8,12 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout

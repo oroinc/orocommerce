@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
 {
@@ -15,7 +15,7 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'];
+        return ['Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'];
     }
 
     /**
@@ -26,7 +26,7 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
         parent::load($manager);
 
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
+        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }

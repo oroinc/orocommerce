@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Brick\Math\BigDecimal;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
 
 class ResultElementTest extends \PHPUnit_Framework_TestCase
 {

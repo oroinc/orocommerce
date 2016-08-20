@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\EventListener;
+namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -61,7 +61,7 @@ abstract class BaseFormViewListener
             return;
         }
 
-        $template = $event->getEnvironment()->render('OroB2BSEOBundle:SEO:view.html.twig', [
+        $template = $event->getEnvironment()->render('OroSEOBundle:SEO:view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
@@ -75,7 +75,7 @@ abstract class BaseFormViewListener
     protected function addEditPageBlock(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BSEOBundle:SEO:update.html.twig',
+            'OroSEOBundle:SEO:update.html.twig',
             ['form' => $event->getFormView()]
         );
 
@@ -88,7 +88,7 @@ abstract class BaseFormViewListener
      */
     protected function addSEOBlock(ScrollData $scrollData, $html)
     {
-        $blockLabel = $this->translator->trans('orob2b.seo.label');
+        $blockLabel = $this->translator->trans('oro.seo.label');
         $blockId = $scrollData->addBlock($blockLabel, 10);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);

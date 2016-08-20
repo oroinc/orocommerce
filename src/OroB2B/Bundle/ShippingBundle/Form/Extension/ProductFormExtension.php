@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Extension;
+namespace Oro\Bundle\ShippingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,12 +11,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -45,7 +45,7 @@ class ProductFormExtension extends AbstractTypeExtension
             self::FORM_ELEMENT_NAME,
             ProductShippingOptionsCollectionType::NAME,
             [
-                'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
+                'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
                 'constraints' => [new UniqueProductUnitShippingOptions()],
@@ -172,7 +172,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductShippingOptionsObjectManager()
     {
-        return $this->registry->getManagerForClass('OroB2BShippingBundle:ProductShippingOptions');
+        return $this->registry->getManagerForClass('OroShippingBundle:ProductShippingOptions');
     }
 
     /**
@@ -181,7 +181,7 @@ class ProductFormExtension extends AbstractTypeExtension
     protected function getProductShippingOptionsRepository()
     {
         return $this->getProductShippingOptionsObjectManager()
-            ->getRepository('OroB2BShippingBundle:ProductShippingOptions');
+            ->getRepository('OroShippingBundle:ProductShippingOptions');
     }
 
     /**

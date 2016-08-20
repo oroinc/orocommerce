@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
@@ -25,7 +24,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->entity = $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\Category');
+        $this->entity = $this->getMock('Oro\Bundle\CatalogBundle\Entity\Category');
         $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 
@@ -136,7 +135,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     {
         $category = new Category();
         $categoryRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $categoryRepository->expects($this->any())
@@ -144,13 +143,13 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->will($this->returnValue($category));
         $this->manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BCatalogBundle:Category')
+            ->with('OroCatalogBundle:Category')
             ->will($this->returnValue($categoryRepository));
     }
     
     protected function assertCategoryUnitPrecisionUpdate()
     {
-        $defaultProductOptions = $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions = $this->getMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
         $defaultProductOptions->expects($this->once())
             ->method('updateUnitPrecision');
         $this->entity->expects($this->any())

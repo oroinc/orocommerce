@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -11,10 +11,9 @@ use Symfony\Component\Validator\Validation;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
 {
@@ -51,7 +50,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $this->formType = new FrontendAccountUserRegistrationType($this->configManager, $this->userManager);
-        $this->formType->setDataClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->formType->setDataClass('Oro\Bundle\AccountBundle\Entity\AccountUser');
     }
 
     protected function tearDown()

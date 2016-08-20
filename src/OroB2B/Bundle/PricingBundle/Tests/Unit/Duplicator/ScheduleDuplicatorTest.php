@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Duplicator;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Duplicator\ScheduleDuplicator;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Duplicator\ScheduleDuplicator;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class ScheduleDuplicatorTest extends \PHPUnit_Framework_TestCase
 {

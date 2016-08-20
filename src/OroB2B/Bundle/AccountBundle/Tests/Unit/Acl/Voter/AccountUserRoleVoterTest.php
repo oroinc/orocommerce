@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -8,11 +8,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -115,7 +114,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->getMocksForVote($object);
 
         $entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -129,7 +128,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
-            ->with('OroB2BAccountBundle:AccountUserRole')
+            ->with('OroAccountBundle:AccountUserRole')
             ->will($this->returnValue($entityRepository));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
@@ -183,10 +182,10 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $failAccountUserRole = false
     ) {
         /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
+        $roleAccount = $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $accountId);
 
         /** @var Account $userAccount */
-        $userAccount = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $loggedUserAccountId);
+        $userAccount = $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $loggedUserAccountId);
 
         if ($failAccountUserRole) {
             $accountUserRole = new \stdClass();
@@ -232,10 +231,10 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $failAccountUserRole = false
     ) {
         /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
+        $roleAccount = $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $accountId);
 
         /** @var Account $userAccount */
-        $userAccount = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $loggedUserAccountId);
+        $userAccount = $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $loggedUserAccountId);
 
         if ($failAccountUserRole) {
             $accountUserRole = new \stdClass();
@@ -369,7 +368,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $securityFacade->expects($accountUser ? $this->once() : $this->never())
             ->method('isGranted')
-            ->with($attribute, 'entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole')
+            ->with($attribute, 'entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole')
             ->willReturn($isGranted);
     }
 }

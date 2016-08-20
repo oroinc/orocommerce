@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller;
+namespace Oro\Bundle\OrderBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderController extends Controller
 {

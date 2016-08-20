@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Condition;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
-use OroB2B\Bundle\PaymentBundle\Condition\PaymentMethodEnabled;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Condition\PaymentMethodEnabled;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
         $this->condition = new PaymentMethodEnabled($this->paymentMethodRegistry);
     }
 
@@ -73,7 +73,7 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
         $context = [];
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('isEnabled')
             ->willReturn($expected);

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
-use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 /**
  * @dbIsolation
@@ -20,7 +19,7 @@ class PaymentTermRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
     }
 
     public function testAccountPaymentTerm()
@@ -104,7 +103,7 @@ class PaymentTermRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPaymentBundle:PaymentTerm');
     }
 
     /**
@@ -112,6 +111,6 @@ class PaymentTermRepositoryTest extends WebTestCase
      */
     protected function getManager()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPaymentBundle:PaymentTerm');
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroPaymentBundle:PaymentTerm');
     }
 }

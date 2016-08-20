@@ -5,11 +5,11 @@ define(function (require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var ValueChangingListener = require('orob2bpricing/js/app/listener/value-changing-listener');
+    var ValueChangingListener = require('oropricing/js/app/listener/value-changing-listener');
 
     /**
-     * @export orob2bpricing/js/app/listener/totals-listener
-     * @class orob2bpricing.app.listener.TotalsListener
+     * @export oropricing/js/app/listener/totals-listener
+     * @class oropricing.app.listener.TotalsListener
      */
     TotalsListener = {
         /**

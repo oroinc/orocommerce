@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpression;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\LogicalExpressionValidator;
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
+use Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression;
+use Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpressionValidator;
 
 class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {

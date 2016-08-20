@@ -1,106 +1,106 @@
 orob2b_account:
-    resource:     "@OroB2BAccountBundle/Controller/AccountController.php"
+    resource:     "@OroAccountBundle/Controller/AccountController.php"
     type:         annotation
     prefix:       /account
 
 orob2b_account_address:
-    resource:     "@OroB2BAccountBundle/Controller/AccountAddressController.php"
+    resource:     "@OroAccountBundle/Controller/AccountAddressController.php"
     type:         annotation
     prefix:       /account/address
 
 orob2b_account_account_user_address:
-    resource:     "@OroB2BAccountBundle/Controller/AccountUserAddressController.php"
+    resource:     "@OroAccountBundle/Controller/AccountUserAddressController.php"
     type:         annotation
     prefix:       /account/user/address
 
 orob2b_account_group:
-    resource:     "@OroB2BAccountBundle/Controller/AccountGroupController.php"
+    resource:     "@OroAccountBundle/Controller/AccountGroupController.php"
     type:         annotation
     prefix:       /account/group
 
 orob2b_account_account_user:
-    resource: "@OroB2BAccountBundle/Controller/AccountUserController.php"
+    resource: "@OroAccountBundle/Controller/AccountUserController.php"
     type: annotation
     prefix: /account/user
 
 orob2b_account_account_user_ajax:
-    resource: "@OroB2BAccountBundle/Controller/AjaxAccountUserController.php"
+    resource: "@OroAccountBundle/Controller/AjaxAccountUserController.php"
     type: annotation
     prefix: /account/user
 
 orob2b_account_frontend_account_user_ajax:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
 orob2b_account_account_user_role:
-    resource: "@OroB2BAccountBundle/Controller/AccountUserRoleController.php"
+    resource: "@OroAccountBundle/Controller/AccountUserRoleController.php"
     type: annotation
     prefix: /account/user/role
 
 orob2b_account_acl_permission:
-    resource: "@OroB2BAccountBundle/Controller/AclPermissionController.php"
+    resource: "@OroAccountBundle/Controller/AclPermissionController.php"
     type: annotation
     prefix: /account/acl
 
 orob2b_account_product_visibility:
-    resource: "@OroB2BAccountBundle/Controller/ProductVisibilityController.php"
+    resource: "@OroAccountBundle/Controller/ProductVisibilityController.php"
     type: annotation
     prefix: /product/visibility
 
 orob2b_account_frontend_account_user_profile:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserProfileController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountUserProfileController.php"
     type: annotation
     prefix: /account/profile
     options:
         frontend: true
 
 orob2b_account_frontend_account_user_register:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRegisterController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountUserRegisterController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
 orob2b_account_frontend_account_user:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountUserController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
 orob2b_account_frontend_account_user_address:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserAddressController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountUserAddressController.php"
     type: annotation
     prefix: /account/user/address
     options:
         frontend: true
 
 orob2b_account_frontend_account_address:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountAddressController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountAddressController.php"
     type: annotation
     prefix: /account/user/address/account/
     options:
         frontend: true
 
 orob2b_account_user_security:
-    resource: "@OroB2BAccountBundle/Controller/SecurityController.php"
+    resource: "@OroAccountBundle/Controller/SecurityController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
 orob2b_account_user_password_reset:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/ResetController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/ResetController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
 orob2b_account_bundle_api:
-    resource:     "@OroB2BAccountBundle/Resources/config/oro/routing_api.yml"
+    resource:     "@OroAccountBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1
@@ -115,7 +115,7 @@ orob2b_account_pinbar_help:
         frontend: true
 
 orob2b_account_frontend_account_user_role:
-    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRoleController.php"
+    resource: "@OroAccountBundle/Controller/Frontend/AccountUserRoleController.php"
     type:     annotation
     prefix:   /account/roles
     options:
@@ -124,7 +124,7 @@ orob2b_account_frontend_account_user_role:
 orob2b_account_frontend_acl_access_levels:
     path: /account/roles/acl-access-levels/{oid}
     defaults:
-        _controller: OroB2BAccountBundle:AclPermission:aclAccessLevels
+        _controller: OroAccountBundle:AclPermission:aclAccessLevels
         _format: json
     requirements:
         oid: '\w+:[\w\(\)]+'
@@ -162,7 +162,7 @@ orob2b_account_frontend_entity_pagination_last:
         frontend: true
 
 orob2b_account_audit:
-    resource:     "@OroB2BAccountBundle/Controller/AuditController.php"
+    resource:     "@OroAccountBundle/Controller/AuditController.php"
     type:         annotation
     options:
         frontend: true

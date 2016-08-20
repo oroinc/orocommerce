@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Entity\Listener;
+namespace Oro\Bundle\MenuBundle\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Component\DependencyInjection\ServiceLink;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemListener
 {

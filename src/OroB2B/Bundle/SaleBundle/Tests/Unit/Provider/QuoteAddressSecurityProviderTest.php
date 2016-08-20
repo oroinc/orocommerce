@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +29,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->quoteAddressProvider = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider')
+        $this->quoteAddressProvider = $this->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

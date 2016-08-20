@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
 
 class ProductVariantFieldTest extends \PHPUnit_Framework_TestCase
 {

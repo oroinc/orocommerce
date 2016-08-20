@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @method BaseCategoryVisibilityResolved setSourceCategoryVisibility(VisibilityInterface $sourceVisibility = null)
@@ -22,7 +22,7 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
      * @var Category
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;

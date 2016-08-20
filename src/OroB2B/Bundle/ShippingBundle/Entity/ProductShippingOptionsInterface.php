@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 interface ProductShippingOptionsInterface
 {

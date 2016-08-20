@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,8 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class AccountUserRoleController extends Controller
 {
@@ -23,7 +22,7 @@ class AccountUserRoleController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_index",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -67,7 +66,7 @@ class AccountUserRoleController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -100,7 +99,7 @@ class AccountUserRoleController extends Controller
             $this->addFlash(
                 'warning',
                 $this->get('translator')
-                    ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
+                    ->trans('oro.account.accountuserrole.frontend.edit-predifined-role.message')
             );
         }
 
@@ -131,7 +130,7 @@ class AccountUserRoleController extends Controller
                     'parameters' => ['id' => $role->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
+            $this->get('translator')->trans('oro.account.controller.accountuserrole.saved.message'),
             $handler
         );
 

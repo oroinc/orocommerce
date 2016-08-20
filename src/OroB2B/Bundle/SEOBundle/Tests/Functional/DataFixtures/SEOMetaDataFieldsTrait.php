@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

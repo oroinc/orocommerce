@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -76,7 +76,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                 'UPDATE oro_workflow_item SET data = :data, entity_class = :entity_class WHERE id = :id',
                 [
                     'data' => json_encode($data),
-                    'entity_class' => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+                    'entity_class' => 'Oro\Bundle\CheckoutBundle\Entity\Checkout',
                     'id' => $row['workflow_item_id']
                 ],
                 ['data' => Type::STRING, 'entity_class' => Type::STRING, 'id' => Type::INTEGER]
@@ -93,7 +93,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
     protected function getWorkflowItems(LoggerInterface $logger)
     {
         $sql = 'SELECT id, data FROM oro_workflow_item AS wi WHERE entity_class = :entity_class';
-        $params = ['entity_class' => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
+        $params = ['entity_class' => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
         $types = ['entity_class' => Type::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
@@ -138,7 +138,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                 INNER JOIN oro_workflow_item AS wi
                   ON CAST(c.id as %s) = CAST(wi.entity_id as %s) AND wi.entity_class = :class';
         $sql = sprintf($sql, $castType, $castType);
-        $params = ['class' => 'OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
+        $params = ['class' => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'];
         $types = ['class' => Type::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);

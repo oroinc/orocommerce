@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 
 /**
  * @dbIsolation
@@ -28,13 +27,13 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
+        $className = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $this->manager = $this->getContainer()->get('doctrine')
             ->getManagerForClass($className);
         $this->repository = $this->manager->getRepository($className);
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
             ]
         );
     }

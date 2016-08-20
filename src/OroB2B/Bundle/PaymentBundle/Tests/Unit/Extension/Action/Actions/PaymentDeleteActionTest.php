@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Extension\Action\Actions;
+namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Extension\Action\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
-
-use OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction;
+use Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction;
 
 class PaymentDeleteActionTest extends \PHPUnit_Framework_TestCase
 {

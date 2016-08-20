@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(
@@ -16,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListAccountGroupFallbackRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListAccountGroupFallbackRepository")
  */
 class PriceListAccountGroupFallback extends PriceListFallback
 {
@@ -25,7 +25,7 @@ class PriceListAccountGroupFallback extends PriceListFallback
 
     /** @var AccountGroup
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $accountGroup;

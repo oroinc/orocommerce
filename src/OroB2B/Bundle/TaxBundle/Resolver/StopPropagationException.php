@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver;
+namespace Oro\Bundle\TaxBundle\Resolver;
 
 class StopPropagationException extends \Exception
 {

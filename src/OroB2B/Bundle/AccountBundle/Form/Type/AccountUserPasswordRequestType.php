@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +21,7 @@ class AccountUserPasswordRequestType extends AbstractType
             'email',
             [
                 'required' => true,
-                'label' => 'orob2b.account.accountuser.email.label',
+                'label' => 'oro.account.accountuser.email.label',
                 'constraints' => [
                     new NotBlank(),
                     new Email()

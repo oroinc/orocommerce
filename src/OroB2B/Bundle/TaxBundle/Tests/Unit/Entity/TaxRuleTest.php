@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
 class TaxRuleTest extends \PHPUnit_Framework_TestCase
 {

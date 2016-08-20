@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,8 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclPrivilegeType;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 abstract class AbstractAccountUserRoleType extends AbstractType
 {
@@ -41,7 +40,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'label',
                 'text',
                 [
-                    'label' => 'orob2b.account.accountuserrole.role.label',
+                    'label' => 'oro.account.accountuserrole.role.label',
                     'required' => true,
                     'constraints' => [new Length(['min' => 3, 'max' => 32])]
                 ]
@@ -51,14 +50,14 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuserrole.self_managed.label'
+                    'label' => 'oro.account.accountuserrole.self_managed.label'
                 ]
             )
             ->add(
                 'appendUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                    'class'    => 'Oro\Bundle\AccountBundle\Entity\AccountUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
@@ -68,7 +67,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'removeUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                    'class'    => 'Oro\Bundle\AccountBundle\Entity\AccountUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true

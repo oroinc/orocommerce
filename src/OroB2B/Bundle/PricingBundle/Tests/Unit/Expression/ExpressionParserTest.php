@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\PricingBundle\Expression;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Expression;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Compiler;
+namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
-use OroB2B\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
+use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
+use Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
 
 abstract class AbstractRuleCompiler
 {

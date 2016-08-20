@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener;
 
 class OrderWarehouseBeforeRenderListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
 class PriceRuleQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {

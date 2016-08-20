@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SystemConfig;
+namespace Oro\Bundle\PricingBundle\SystemConfig;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 
 class PriceListConfig implements PriceListAwareInterface
 {

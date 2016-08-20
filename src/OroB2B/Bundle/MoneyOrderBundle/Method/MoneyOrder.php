@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Method;
+namespace Oro\Bundle\MoneyOrderBundle\Method;
 
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class MoneyOrder implements PaymentMethodInterface
 {

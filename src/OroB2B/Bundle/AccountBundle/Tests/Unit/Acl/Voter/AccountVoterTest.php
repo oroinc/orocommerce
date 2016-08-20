@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -10,12 +10,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Acl\Voter\AccountVoter;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +47,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
+        $this->securityProvider = $this->getMockBuilder('Oro\Bundle\AccountBundle\Security\AccountUserProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -194,7 +193,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'supported class'  => [
-                $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'),
+                $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'),
                 true,
             ],
             'not supported class'  => [
@@ -525,7 +524,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getIdentity()
     {
-        return new ObjectIdentity('entity', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
+        return new ObjectIdentity('entity', 'Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
 
     /**
@@ -536,7 +535,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         return sprintf(
             'entity:%s@%s',
             AccountUser::SECURITY_GROUP,
-            'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'
+            'Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'
         );
     }
 
@@ -549,7 +548,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected function getObject($id, $accountUserId = null, $accountId = null)
     {
         /* @var $object AccountOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $object = $this->getMockEntity('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', $id);
+        $object = $this->getMockEntity('Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', $id);
 
         if ($accountUserId) {
             $object->expects($this->any())
@@ -576,7 +575,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected function getAccountUser($id, $accountId = null)
     {
         /* @var $user AccountUser */
-        $user = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
+        $user = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $id);
 
         if ($accountId) {
             $user->setAccount($this->getAccount($accountId));
@@ -591,7 +590,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getAccount($id)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $id);
+        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $id);
     }
 
     /**

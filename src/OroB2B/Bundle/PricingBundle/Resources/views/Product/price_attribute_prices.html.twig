@@ -8,7 +8,7 @@
             {% if attribute.currencies|length > 1 %}
                 <table class="grid table table-condensed table-bordered product-price-attributes">
                     <thead>
-                    <th>{{ 'orob2b.pricing.priceAttribute.unit.label'|trans }}</th>
+                    <th>{{ 'oro.pricing.priceAttribute.unit.label'|trans }}</th>
                     {% for currency in attribute.currencies %}
                         <th>{{ currency }}</th>
                     {% endfor %}
@@ -24,7 +24,7 @@
                                     {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
                                         {{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency})  }}
                                     {% else %}
-                                        {{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }}
+                                        {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
                                     {% endif %}
                                 </td>
                             {% endfor %}
@@ -39,7 +39,7 @@
                             {% if priceAttributePrices[attribute.name][unit][currency] is defined %}
                                 <li>{{ priceAttributePrices[attribute.name][unit][currency]|oro_format_currency({'currency': currency}) }} / {{ unit }}</li>
                             {% else %}
-                                <li>{{ 'orob2b.pricing.priceAttribute.withoutPrice'|trans }} / {{ unit }}</li>
+                                <li>{{ 'oro.pricing.priceAttribute.withoutPrice'|trans }} / {{ unit }}</li>
                             {% endif %}
                         {% endfor %}
                     {% endfor %}

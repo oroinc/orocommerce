@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model;
+namespace Oro\Bundle\AccountBundle\Model;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -8,15 +8,14 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -133,7 +132,7 @@ class ProductVisibilityQueryBuilderModifier
     protected function getProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
         $queryBuilder->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -159,7 +158,7 @@ class ProductVisibilityQueryBuilderModifier
     protected function getAccountGroupProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, AccountGroup $account)
     {
         $queryBuilder->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
             'account_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -189,7 +188,7 @@ class ProductVisibilityQueryBuilderModifier
     protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Account $account)
     {
         $queryBuilder->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
             'account_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(

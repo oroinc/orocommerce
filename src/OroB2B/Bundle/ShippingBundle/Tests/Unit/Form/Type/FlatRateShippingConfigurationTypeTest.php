@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 
 class FlatRateShippingConfigurationTypeTest extends FormIntegrationTestCase
 {

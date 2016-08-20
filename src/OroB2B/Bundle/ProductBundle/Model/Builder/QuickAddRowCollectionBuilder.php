@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model\Builder;
+namespace Oro\Bundle\ProductBundle\Model\Builder;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
@@ -12,12 +12,12 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddRowCollectionBuilder
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class PriceListsSettingsType extends AbstractType
 {
@@ -46,7 +46,7 @@ class PriceListsSettingsType extends AbstractType
             self::FALLBACK_FIELD,
             'choice',
             [
-                'label' => 'orob2b.pricing.fallback.label',
+                'label' => 'oro.pricing.fallback.label',
                 'mapped' => true,
                 'choices' => $options[self::FALLBACK_CHOICES],
             ]
@@ -55,7 +55,7 @@ class PriceListsSettingsType extends AbstractType
                 self::PRICE_LIST_COLLECTION_FIELD,
                 PriceListCollectionType::NAME,
                 [
-                    'label' => 'orob2b.pricing.pricelist.entity_plural_label',
+                    'label' => 'oro.pricing.pricelist.entity_plural_label',
                     'mapped' => true,
                     'options' => [
                         'data_class' => $options[self::PRICE_LIST_RELATION_CLASS]

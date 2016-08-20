@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend\QuickAddControllerTest as BaseControllerTest;
+use Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend\QuickAddControllerTest as BaseControllerTest;
 
 /**
  * @dbIsolation

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
@@ -8,8 +8,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @dbIsolation
@@ -32,8 +31,8 @@ class ImportExportTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices'
             ]
         );
 
@@ -94,7 +93,7 @@ class ImportExportTest extends WebTestCase
         $locator = $this->getContainer()->get('file_locator');
         $this->assertFileEquals(
             $locator->locate(
-                '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/expected_export_with_relations.csv'
+                '@OroPricingBundle/Tests/Functional/ImportExport/data/expected_export_with_relations.csv'
             ),
             $this->getExportFile()
         );
@@ -108,7 +107,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
             'Error in row #2. Product has duplication of product prices. '
             .'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
         );
@@ -122,7 +121,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/invalid_currency.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_currency.csv',
             'Error in row #1. price.currency: Currency "ARS" is not valid for current price list'
         );
     }
@@ -135,7 +134,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
             'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
         );
     }
@@ -148,7 +147,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
             'Error in row #1. Unit Code: Product unit does not exist.'
         );
     }
@@ -161,7 +160,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
             'Error in row #1. Product SKU: Product does not exist.'
         );
     }
@@ -174,7 +173,7 @@ class ImportExportTest extends WebTestCase
     {
         $this->assertErrors(
             $strategy,
-            '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/negative_price_value.csv',
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/negative_price_value.csv',
             'Error in row #1. price.value: This value should be 0 or more.'
         );
     }
@@ -215,7 +214,7 @@ class ImportExportTest extends WebTestCase
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',
+                    'entity' => 'Oro\Bundle\PricingBundle\Entity\ProductPrice',
                     '_widgetContainer' => 'dialog',
                     'options[price_list_id]' => $this->priceList->getId(),
                     'importJob' => 'price_list_product_prices_entity_import_from_csv',

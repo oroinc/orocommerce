@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture as BaseAbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -8,9 +8,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 
 class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtureInterface
 {
@@ -37,7 +36,7 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
         ];
     }
 

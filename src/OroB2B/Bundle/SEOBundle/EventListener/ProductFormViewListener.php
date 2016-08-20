@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\EventListener;
+namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -13,7 +13,7 @@ class ProductFormViewListener extends BaseFormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, 'OroB2BProductBundle:Product');
+        $this->addViewPageBlock($event, 'OroProductBundle:Product');
     }
 
     /**
@@ -30,6 +30,6 @@ class ProductFormViewListener extends BaseFormViewListener
      */
     public function getMetaFieldLabelPrefix()
     {
-        return 'orob2b.product';
+        return 'oro.product';
     }
 }

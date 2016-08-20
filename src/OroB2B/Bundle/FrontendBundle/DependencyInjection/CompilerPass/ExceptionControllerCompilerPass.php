@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\FrontendBundle\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class ExceptionControllerCompilerPass implements CompilerPassInterface
 {
     const CONTROLLER_PARAMETER = 'twig.exception_listener.controller';
-    const CONTROLLER_VALUE = 'OroB2B\Bundle\FrontendBundle\Controller\ExceptionController::showAction';
+    const CONTROLLER_VALUE = 'Oro\Bundle\FrontendBundle\Controller\ExceptionController::showAction';
 
     /**
      * {@inheritdoc}

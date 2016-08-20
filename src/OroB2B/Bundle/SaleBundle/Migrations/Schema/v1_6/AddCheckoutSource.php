@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_6;
+namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -32,11 +32,11 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroB2BSaleQuoteDemandTable($schema);
-        $this->createOroB2BSaleQuoteProductDemandTable($schema);
-        $this->addOroB2BSaleQuoteProductDemandForeignKeys($schema);
+        $this->createOroSaleQuoteDemandTable($schema);
+        $this->createOroSaleQuoteProductDemandTable($schema);
+        $this->addOroSaleQuoteProductDemandForeignKeys($schema);
 
-        if (class_exists('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
+        if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 'orob2b_checkout_source',
@@ -45,7 +45,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
-                    'entity' => ['label' => 'orob2b.sale.quote.entity_label'],
+                    'entity' => ['label' => 'oro.sale.quote.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM
@@ -69,7 +69,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BSaleQuoteDemandTable(Schema $schema)
+    protected function createOroSaleQuoteDemandTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -82,7 +82,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BSaleQuoteProductDemandTable(Schema $schema)
+    protected function createOroSaleQuoteProductDemandTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_quote_product_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -97,7 +97,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
      *
      * @param Schema $schema
      */
-    protected function addOroB2BSaleQuoteProductDemandForeignKeys(Schema $schema)
+    protected function addOroSaleQuoteProductDemandForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_quote_product_demand');
         $table->addForeignKeyConstraint(

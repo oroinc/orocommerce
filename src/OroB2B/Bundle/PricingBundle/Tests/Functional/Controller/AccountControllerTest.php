@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
 
 /**
  * @dbIsolation
@@ -63,7 +63,7 @@ class AccountControllerTest extends AbstractPriceListsByEntityTestCase
             ->getContainer()
             ->get('doctrine')
             ->getManager()
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->getRepository('OroPricingBundle:PriceListToAccount')
             ->findBy(['account' => $this->account]);
     }
 }

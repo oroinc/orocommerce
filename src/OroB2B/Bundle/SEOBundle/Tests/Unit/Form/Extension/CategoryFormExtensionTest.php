@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\SEOBundle\Form\Extension\CategoryFormExtension;
-use OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub\CategoryStub;
+use Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension;
+use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\CategoryStub;
 
 class CategoryFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

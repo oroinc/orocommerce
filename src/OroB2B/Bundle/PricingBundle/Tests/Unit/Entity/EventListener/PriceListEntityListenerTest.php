@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EventListener;
 
 use Doctrine\Common\Cache\Cache;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 
 class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
 {

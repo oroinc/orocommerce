@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
+use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,12 +32,12 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->converterMock = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->changeTriggerHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

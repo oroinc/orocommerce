@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -12,9 +12,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -33,11 +32,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      * Edit product form
      *
      * @Route("/update/{id}", name="orob2b_product_price_update_widget", requirements={"id"="\d+"})
-     * @Template("OroB2BPricingBundle:ProductPrice:widget/update.html.twig")
+     * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
      *      id="orob2b_pricing_product_price_update",
      *      type="entity",
-     *      class="OroB2BPricingBundle:ProductPrice",
+     *      class="OroPricingBundle:ProductPrice",
      *      permission="EDIT"
      * )
      * @param ProductPrice $productPrice

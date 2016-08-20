@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Extension\Action\Actions;
+namespace Oro\Bundle\PaymentBundle\Extension\Action\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\Action\Actions\AbstractAction;

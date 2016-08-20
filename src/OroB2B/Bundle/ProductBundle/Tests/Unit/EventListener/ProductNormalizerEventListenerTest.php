@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListenerTest extends \PHPUnit_Framework_TestCase
 {

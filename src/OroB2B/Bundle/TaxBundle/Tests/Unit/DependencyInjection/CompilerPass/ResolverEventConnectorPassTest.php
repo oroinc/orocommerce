@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-use OroB2B\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
+use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
 
 class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
 {
@@ -85,7 +85,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
     public function testTag()
     {
         $id = 'orob2b_tax.resolver.total';
-        $class = 'OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector';
+        $class = 'Oro\Bundle\TaxBundle\Event\ResolverEventConnector';
 
         $this->containerBuilder
             ->expects($this->once())

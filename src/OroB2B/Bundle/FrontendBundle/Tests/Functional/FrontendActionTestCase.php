@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Functional;
+namespace Oro\Bundle\FrontendBundle\Tests\Functional;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 

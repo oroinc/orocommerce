@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\DataConverter;
+namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 
 use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
 

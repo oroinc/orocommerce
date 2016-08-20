@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Menu;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\Matcher\Matcher;
@@ -11,8 +11,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Router;
 
 use Oro\Bundle\NavigationBundle\Provider\BuilderChainProvider;
-
-use OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager;
+use Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager;
 
 class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -212,7 +211,7 @@ class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsRouteFrontend(Route $route, $expected)
     {
-        $reflectionClass = new \ReflectionClass('\OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager');
+        $reflectionClass = new \ReflectionClass('\Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager');
         $method = $reflectionClass->getMethod('isRouteFrontend');
         $method->setAccessible(true);
         $actual = $method->invoke($this->manager, $route);

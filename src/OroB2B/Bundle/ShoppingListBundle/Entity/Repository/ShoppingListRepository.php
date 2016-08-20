@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
+namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Common\Collections\Criteria;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {

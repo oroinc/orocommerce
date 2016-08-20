@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\RFPBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TranslationBundle\DataFixtures\AbstractTranslatableEntityFixture;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
 abstract class AbstractLoadRequestStatus extends AbstractTranslatableEntityFixture
 {

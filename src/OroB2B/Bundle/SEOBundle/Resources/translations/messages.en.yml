@@ -1,15 +1,15 @@
-orob2b:
+oro:
     seo:
         label: SEO
 
-orob2b.product.meta_titles.label: Meta title
-orob2b.product.meta_descriptions.label: Meta description
-orob2b.product.meta_keywords.label: Meta keywords
+oro.product.meta_titles.label: Meta title
+oro.product.meta_descriptions.label: Meta description
+oro.product.meta_keywords.label: Meta keywords
 
-orob2b.catalog.category.meta_titles.label: Meta title
-orob2b.catalog.category.meta_descriptions.label: Meta description
-orob2b.catalog.category.meta_keywords.label: Meta keywords
+oro.catalog.category.meta_titles.label: Meta title
+oro.catalog.category.meta_descriptions.label: Meta description
+oro.catalog.category.meta_keywords.label: Meta keywords
 
-orob2b.cms.page.meta_titles.label: Meta title
-orob2b.cms.page.meta_descriptions.label: Meta description
-orob2b.cms.page.meta_keywords.label: Meta keywords
+oro.cms.page.meta_titles.label: Meta title
+oro.cms.page.meta_descriptions.label: Meta description
+oro.cms.page.meta_keywords.label: Meta keywords

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
+namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesProvider
 {
@@ -60,7 +59,7 @@ class FrontendProductPricesProvider
             $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
             /** @var ProductPriceRepository $priceRepository */
-            $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
+            $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
             $prices = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
                 [$productId],

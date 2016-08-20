@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 
 class ProductLineItemTest extends \PHPUnit_Framework_TestCase
 {

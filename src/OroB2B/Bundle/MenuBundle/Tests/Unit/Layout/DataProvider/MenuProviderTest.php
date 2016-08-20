@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Layout\DataProvider;
 
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
-use OroB2B\Bundle\MenuBundle\Layout\DataProvider\MenuProvider;
+use Oro\Bundle\MenuBundle\Layout\DataProvider\MenuProvider;
 
 class MenuProviderTest extends \PHPUnit_Framework_TestCase
 {

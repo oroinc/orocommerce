@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,7 +9,7 @@ class EnabledConfigurationValidationGroup extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.shipping.shippingrule.configuration.count.message';
+    public $message = 'oro.shipping.shippingrule.configuration.count.message';
 
     /**
      * @var int

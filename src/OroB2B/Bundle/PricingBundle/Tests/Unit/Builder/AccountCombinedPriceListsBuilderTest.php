@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
 {
@@ -23,7 +23,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     protected function getPriceListToEntityRepositoryClass()
     {
-        return 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository';
+        return 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository';
     }
 
     /**

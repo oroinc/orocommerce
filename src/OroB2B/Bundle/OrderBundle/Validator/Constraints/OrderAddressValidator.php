@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
 
 class OrderAddressValidator extends ConstraintValidator
 {

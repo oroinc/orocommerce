@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 

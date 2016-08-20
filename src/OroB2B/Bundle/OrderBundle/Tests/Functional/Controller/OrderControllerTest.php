@@ -1,5 +1,5 @@
 <?php
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -8,12 +8,11 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
@@ -109,10 +108,10 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
 
@@ -220,8 +219,8 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Order $order */
         $order = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BOrderBundle:Order')
-            ->getRepository('OroB2BOrderBundle:Order')
+            ->getManagerForClass('OroOrderBundle:Order')
+            ->getRepository('OroOrderBundle:Order')
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
 

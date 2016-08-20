@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,9 +11,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 
 class CheckoutGridHelper
 {
@@ -80,10 +79,10 @@ class CheckoutGridHelper
             if ($subtotalFields) {
                 $updates['selects'][]           = sprintf('COALESCE(%s) as subtotal', implode(',', $subtotalFields));
                 $updates['columns']['subtotal'] = [
-                    'label'         => 'orob2b.checkout.grid.subtotal.label',
+                    'label'         => 'oro.checkout.grid.subtotal.label',
                     'type'          => 'twig',
                     'frontend_type' => 'html',
-                    'template'      => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
+                    'template'      => 'OroPricingBundle:Datagrid:Column/subtotal.html.twig',
                     'order'         => 25
                 ];
                 $updates['filters']['subtotal'] = [
@@ -96,10 +95,10 @@ class CheckoutGridHelper
             if ($totalFields) {
                 $updates['selects'][]        = sprintf('COALESCE(%s) as total', implode(',', $totalFields));
                 $updates['columns']['total'] = [
-                    'label'         => 'orob2b.checkout.grid.total.label',
+                    'label'         => 'oro.checkout.grid.total.label',
                     'type'          => 'twig',
                     'frontend_type' => 'html',
-                    'template'      => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
+                    'template'      => 'OroPricingBundle:Datagrid:Column/total.html.twig',
                     'order'         => 85,
                     'renderable'    => false
                 ];

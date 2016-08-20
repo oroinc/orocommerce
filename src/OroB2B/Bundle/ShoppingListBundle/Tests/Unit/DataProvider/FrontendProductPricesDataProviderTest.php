@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +49,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
+        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,12 +57,12 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()->getMock();
 
         $this->provider = new FrontendProductPricesDataProvider(
@@ -98,7 +97,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
                 ->willReturn(self::TEST_CURRENCY);
 
             /** @var BasePriceList $priceList */
-            $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
+            $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
             $this->priceListRequestHandler->expects($this->once())
                 ->method('getPriceListByAccount')
                 ->willReturn($priceList);
@@ -123,7 +122,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     public function getDataDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
         $productUnit = new ProductUnit();
         $productUnit->setCode('test');
         $quantity = 100;

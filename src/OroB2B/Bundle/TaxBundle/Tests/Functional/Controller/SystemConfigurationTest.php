@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Component\PhpUtils\ArrayUtil;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 
 /**
  * @dbIsolation
@@ -99,6 +98,6 @@ class SystemConfigurationTest extends WebTestCase
         $provider = reset($providers);
 
         $this->assertNotNull($provider);
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider', $provider);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider', $provider);
     }
 }

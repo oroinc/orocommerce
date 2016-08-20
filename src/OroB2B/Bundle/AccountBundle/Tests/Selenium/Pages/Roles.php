@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPageFilteredGrid;
 

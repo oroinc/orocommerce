@@ -1,4 +1,4 @@
-{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+{% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
 
 {% set buttonOptions = {
     dataUrl: false,
@@ -10,7 +10,7 @@
     current: buttonOptions,
     existing: buttonOptions,
     shoppingLists: actionData.shoppingLists,
-    componentModule: params.buttonOptions.page_component_module|default('orob2bshoppinglist/js/app/views/product-quick-add-to-shopping-list-view'),
+    componentModule: params.buttonOptions.page_component_module|default('oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view'),
     componentOptions: {
         'quickAddComponentPrefix': 'quick-add'
     }|merge(params.buttonOptions.page_component_options|default({}))
@@ -25,7 +25,7 @@
                 'layout': 'separate'
             },
             'options': {
-                'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
+                'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                 'widgetName': 'productAddToDropdownButtonProcessor',
                 'truncateLength': 25
             }

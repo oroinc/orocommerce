@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderTotalEventListener
 {

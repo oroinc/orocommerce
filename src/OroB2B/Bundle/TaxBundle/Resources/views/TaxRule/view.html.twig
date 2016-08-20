@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_tax_rule_index'),
-        'indexLabel': 'orob2b.tax.taxrule.entity_plural_label'|trans,
+        'indexLabel': 'oro.tax.taxrule.entity_plural_label'|trans,
         'entityTitle': entity.id|default('N/A'|trans)
     } %}
 
@@ -16,15 +16,15 @@
 
 {% block content_data %}
     {% set taxRuleInfo %}
-        {{ UI.renderProperty('orob2b.tax.taxrule.account_tax_code.label'|trans, entity.accountTaxCode) }}
-        {{ UI.renderProperty('orob2b.tax.taxrule.product_tax_code.label'|trans, entity.productTaxCode) }}
-        {{ UI.renderProperty('orob2b.tax.taxrule.tax_jurisdiction.label'|trans, entity.taxJurisdiction) }}
-        {{ UI.renderProperty('orob2b.tax.taxrule.tax.label'|trans, entity.tax) }}
-        {{ UI.renderProperty('orob2b.tax.taxrule.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('oro.tax.taxrule.account_tax_code.label'|trans, entity.accountTaxCode) }}
+        {{ UI.renderProperty('oro.tax.taxrule.product_tax_code.label'|trans, entity.productTaxCode) }}
+        {{ UI.renderProperty('oro.tax.taxrule.tax_jurisdiction.label'|trans, entity.taxJurisdiction) }}
+        {{ UI.renderProperty('oro.tax.taxrule.tax.label'|trans, entity.tax) }}
+        {{ UI.renderProperty('oro.tax.taxrule.description.label'|trans, entity.description) }}
     {% endset %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.tax.sections.general'|trans,
+        'title': 'oro.tax.sections.general'|trans,
         'class': 'active',
         'subblocks': [
             {'data' : [taxRuleInfo]},

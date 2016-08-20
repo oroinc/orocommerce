@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Migration;
+namespace Oro\Bundle\FrontendBundle\Migration;
 
 use Doctrine\DBAL\Types\Type;
 

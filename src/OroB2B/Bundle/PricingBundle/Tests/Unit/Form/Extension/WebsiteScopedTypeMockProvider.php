@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +17,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
      */
     public function getWebsiteScopedDataType()
     {
-        $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', ['id' => 1, 'name' => 'US']);
+        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1, 'name' => 'US']);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -26,10 +25,10 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getReference')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1)
+            ->with('Oro\Bundle\WebsiteBundle\Entity\Website', 1)
             ->willReturn($website);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,16 +43,16 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->willReturn($repository);
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->willReturn($em);
 
         /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
-        $websiteProvider = $this->getMock('OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider = $this->getMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
         $websiteProvider->expects($this->any())
             ->method('getWebsites')
             ->willReturn([$website]);

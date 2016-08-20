@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener
 {

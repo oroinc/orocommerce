@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,12 +10,11 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
-use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 {
@@ -43,11 +42,11 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->getMock();
 
         $this->orderAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressManager = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager')
+        $this->orderAddressManager = $this->getMockBuilder('Oro\Bundle\OrderBundle\Manager\OrderAddressManager')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -102,7 +102,7 @@ define([
                 unitOption = _.findWhere(this.unitChoices, {value: value.unit}).shortLabel;
             }
 
-            hintValue += ' ' + __('orob2b.pricing.filter.product_price.per') + ' ' + unitOption;
+            hintValue += ' ' + __('oro.pricing.filter.product_price.per') + ' ' + unitOption;
 
             return hintValue;
         },

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Component\Tree\Handler;
+namespace Oro\Component\Tree\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
+use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
 {

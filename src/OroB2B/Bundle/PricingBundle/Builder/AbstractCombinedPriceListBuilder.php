@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractCombinedPriceListBuilder
 {

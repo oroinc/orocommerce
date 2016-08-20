@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
  * @dbIsolation
@@ -23,8 +22,8 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(

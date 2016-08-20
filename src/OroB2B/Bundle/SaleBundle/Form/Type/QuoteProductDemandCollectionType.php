@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 class QuoteProductDemandCollectionType extends CollectionType
 {

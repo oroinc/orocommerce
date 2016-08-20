@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
+namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 class ProductTaxCodeRepository extends AbstractTaxCodeRepository
 {

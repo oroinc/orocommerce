@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class AccountGroupCategoryVisibilityRepository extends EntityRepository
 {

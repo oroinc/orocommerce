@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Model;
+namespace Oro\Bundle\MenuBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 /**
  * @method File getImage()

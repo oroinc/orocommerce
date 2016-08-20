@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Twig\UnitValueExtensionTestCase;
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension;
+use Oro\Bundle\ProductBundle\Tests\Unit\Twig\UnitValueExtensionTestCase;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension;
 
 class DimensionsUnitValueExtensionTest extends UnitValueExtensionTestCase
 {

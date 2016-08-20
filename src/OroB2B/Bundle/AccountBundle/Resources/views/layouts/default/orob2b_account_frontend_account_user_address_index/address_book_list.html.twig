@@ -24,7 +24,7 @@
 
 {% block _account_address_book_addresses_list_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orob2baccount/js/app/components/frontend-account-address-book-component',
+        'data-page-component-module': 'oroaccount/js/app/components/frontend-account-address-book-component',
         'data-page-component-options': componentOptions|merge({
             template: '#account-address-book-addresses-list-template'
         }),
@@ -71,7 +71,7 @@
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__type"}) %}
     <div {{ block('block_attributes') }}>
         <% _.each(types, function(type) { %>
-        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('orob2b.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
+        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
         <% }) %>
     </div>
 {% endblock %}
@@ -109,7 +109,7 @@
 
 {% block _account_address_book_user_addresses_list_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orob2baccount/js/app/components/frontend-account-address-book-component',
+        'data-page-component-module': 'oroaccount/js/app/components/frontend-account-address-book-component',
         'data-page-component-options': componentOptions|merge({
             template: '#account-address-book-user-addresses-list-template'
         }),

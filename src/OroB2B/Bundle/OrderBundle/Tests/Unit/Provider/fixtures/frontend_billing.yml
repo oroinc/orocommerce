@@ -1,5 +1,5 @@
 frontend_billing_not_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -13,7 +13,7 @@ frontend_billing_not_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_view_account_user_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -26,7 +26,7 @@ frontend_billing_view_account_user_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_use_account_user_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -39,7 +39,7 @@ frontend_billing_use_account_user_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_use_account_user_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -52,7 +52,7 @@ frontend_billing_use_account_user_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_user_address_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -65,7 +65,7 @@ frontend_billing_account_user_address_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_user_address_granted_with_entity:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -78,7 +78,7 @@ frontend_billing_account_user_address_granted_with_entity:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_user_address_granted_with_entity_and_address:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -91,7 +91,7 @@ frontend_billing_account_user_address_granted_with_entity_and_address:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: true
 frontend_billing_account_user_address_granted_with_entity_and_address:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -104,7 +104,7 @@ frontend_billing_account_user_address_granted_with_entity_and_address:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: true
 frontend_billing_account_user_address_granted_with_manual:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
@@ -118,7 +118,7 @@ frontend_billing_account_user_address_granted_with_manual:
     isAccountAddressGranted: true
     isAccountUserAddressGranted: true
 frontend_billing_account_not_granted:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]
@@ -130,7 +130,7 @@ frontend_billing_account_not_granted:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_without_entity:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]
@@ -142,7 +142,7 @@ frontend_billing_account_without_entity:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_with_entity:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]
@@ -154,7 +154,7 @@ frontend_billing_account_with_entity:
     isAccountAddressGranted: ~
     isAccountUserAddressGranted: ~
 frontend_billing_account_with_entity_and_addresses:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]
@@ -166,7 +166,7 @@ frontend_billing_account_with_entity_and_addresses:
     isAccountAddressGranted: true
     isAccountUserAddressGranted: ~
 frontend_billing_account_with_manual:
-    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    userClass: Oro\Bundle\AccountBundle\Entity\AccountUser
     addressType: billing
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Model;
+namespace Oro\Bundle\CMSBundle\Model;
 
 class ExtendPage
 {

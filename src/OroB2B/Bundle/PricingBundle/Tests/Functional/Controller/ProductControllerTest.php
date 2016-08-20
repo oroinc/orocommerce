@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 /**
  * @dbIsolation
@@ -33,7 +32,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
     }
 
     public function testSidebar()
@@ -63,7 +62,7 @@ class ProductControllerTest extends WebTestCase
         }
 
         $this->assertContains(
-            $this->getContainer()->get('translator')->trans('orob2b.pricing.productprice.show_tier_prices.label'),
+            $this->getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
             $crawler->filter('.sidebar-item.show-tier-prices-choice')->html()
         );
     }
@@ -291,8 +290,8 @@ class ProductControllerTest extends WebTestCase
 
         /** @var ProductPrice $price */
         $price = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
+            ->getManagerForClass('OroPricingBundle:ProductPrice')
+            ->getRepository('OroPricingBundle:ProductPrice')
             ->findOneBy([
                 'product' => $product,
                 'priceList' => $priceList,

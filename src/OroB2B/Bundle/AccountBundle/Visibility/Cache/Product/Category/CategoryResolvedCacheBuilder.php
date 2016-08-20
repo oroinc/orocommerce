@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 
 class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
@@ -117,8 +117,8 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function buildCache(Website $website = null)
     {
         /** @var CategoryVisibilityRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
+        $repository = $this->registry->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\CategoryVisibility');
         /** @var CategoryRepository $resolvedRepository */
         $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)
             ->getRepository($this->cacheClass);
@@ -196,7 +196,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     protected function getEntityManager()
     {
         return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**
@@ -205,7 +205,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     protected function getRepository()
     {
         return $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**

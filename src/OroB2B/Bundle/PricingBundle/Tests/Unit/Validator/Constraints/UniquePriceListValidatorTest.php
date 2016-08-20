@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 
 class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
 {

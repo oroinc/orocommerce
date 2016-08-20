@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 abstract class AbstractAccountFormViewListener
 {
@@ -36,7 +35,7 @@ abstract class AbstractAccountFormViewListener
     /**
      * @var string
      */
-    protected $updateTemplate = 'OroB2BPricingBundle:Account:price_list_update.html.twig';
+    protected $updateTemplate = 'OroPricingBundle:Account:price_list_update.html.twig';
 
     /**
      * @param RequestStack $requestStack
@@ -65,7 +64,7 @@ abstract class AbstractAccountFormViewListener
             $this->updateTemplate,
             ['form' => $event->getFormView()]
         );
-        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $blockLabel = $this->translator->trans('oro.pricing.pricelist.entity_plural_label');
         $scrollData = $event->getScrollData();
         $blockId = $scrollData->addBlock($blockLabel, 0);
         $subBlockId = $scrollData->addSubBlock($blockId);
@@ -91,14 +90,14 @@ abstract class AbstractAccountFormViewListener
         $fallback
     ) {
         $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Account:price_list_view.html.twig',
+            'OroPricingBundle:Account:price_list_view.html.twig',
             [
                 'priceLists' => $priceLists,
                 'fallback' => $fallback
             ]
         );
 
-        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $blockLabel = $this->translator->trans('oro.pricing.pricelist.entity_plural_label');
         $scrollData = $event->getScrollData();
         $blockId = $scrollData->addBlock($blockLabel, 0);
         $subBlockId = $scrollData->addSubBlock($blockId);

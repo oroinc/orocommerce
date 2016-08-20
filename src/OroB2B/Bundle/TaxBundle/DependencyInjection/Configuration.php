@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\DependencyInjection;
+namespace Oro\Bundle\TaxBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-
-use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class Configuration implements ConfigurationInterface
 {
@@ -19,7 +18,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root(OroB2BTaxExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroTaxExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,

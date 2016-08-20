@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -8,13 +8,12 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -58,10 +57,10 @@ class InvoiceControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
 
@@ -131,7 +130,7 @@ class InvoiceControllerTest extends WebTestCase
                     'value' => 100,
                     'currency' => 'USD',
                 ],
-                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
+                'priceType' => $this->getContainer()->get('translator')->trans('oro.pricing.price_type.unit'),
                 'sortOrder' => 1,
             ],
         ];
@@ -221,7 +220,7 @@ class InvoiceControllerTest extends WebTestCase
                     'value' => 10,
                     'currency' => 'USD',
                 ],
-                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
+                'priceType' => $this->getContainer()->get('translator')->trans('oro.pricing.price_type.unit'),
                 'sortOrder' => 1,
             ],
             [
@@ -233,7 +232,7 @@ class InvoiceControllerTest extends WebTestCase
                     'value' => 200,
                     'currency' => 'USD',
                 ],
-                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.bundled'),
+                'priceType' => $this->getContainer()->get('translator')->trans('oro.pricing.price_type.bundled'),
                 'sortOrder' => 2,
             ],
         ];
@@ -278,7 +277,7 @@ class InvoiceControllerTest extends WebTestCase
     {
         return $this->client->getContainer()
             ->get('oro_entity.doctrine_helper')
-            ->getEntityRepository('OroB2B\Bundle\InvoiceBundle\Entity\Invoice')
+            ->getEntityRepository('Oro\Bundle\InvoiceBundle\Entity\Invoice')
             ->findOneBy($criteria);
     }
 
@@ -330,6 +329,6 @@ class InvoiceControllerTest extends WebTestCase
     {
         $doctrine = $this->getContainer()->get('doctrine');
 
-        return $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
+        return $doctrine->getRepository('OroAccountBundle:Account')->findOneBy([]);
     }
 }

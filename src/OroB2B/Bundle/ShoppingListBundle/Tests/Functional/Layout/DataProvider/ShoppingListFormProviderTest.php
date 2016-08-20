@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
-use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider;
 
 class ShoppingListFormProviderTest extends WebTestCase
 {

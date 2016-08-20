@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
 
 class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
 {

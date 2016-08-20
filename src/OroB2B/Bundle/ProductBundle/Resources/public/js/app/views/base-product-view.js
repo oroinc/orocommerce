@@ -3,7 +3,7 @@ define(function(require) {
 
     var BaseProductView;
     var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var $ = require('jquery');
     var _ = require('underscore');

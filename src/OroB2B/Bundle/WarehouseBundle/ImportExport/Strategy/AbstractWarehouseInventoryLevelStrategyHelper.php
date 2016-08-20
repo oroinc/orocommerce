@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -47,7 +47,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
             $classNamespace = explode('\\', $class);
             $shortClassName = end($classNamespace);
             $this->addError(
-                'orob2b.warehouse.import.error.not_found_entity',
+                'oro.warehouse.import.error.not_found_entity',
                 ['%entity%' => $alternaiveClassName ?: $shortClassName]
             );
         }

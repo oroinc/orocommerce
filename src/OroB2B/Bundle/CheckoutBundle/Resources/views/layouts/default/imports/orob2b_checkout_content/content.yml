@@ -43,7 +43,7 @@ layout:
                     blockType: price_totals
                     options:
                         totals: '=data["orob2b_checkout_totals"].getData(data["checkout"])'
-                        entityClassName: 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout'
+                        entityClassName: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                         entityId: '=data["checkout"].getId()'
                         events:
                             - 'checkout:shipping-method:changed'

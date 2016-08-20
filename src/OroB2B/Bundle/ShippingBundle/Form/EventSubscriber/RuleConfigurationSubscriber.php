@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\EventSubscriber;
+namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -11,8 +11,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class RuleConfigurationSubscriber implements EventSubscriberInterface
 {

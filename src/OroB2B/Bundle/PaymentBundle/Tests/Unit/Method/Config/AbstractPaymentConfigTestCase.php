@@ -1,11 +1,10 @@
 <?php
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -73,6 +72,6 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getExtensionAlias()
     {
-        return OroB2BPaymentExtension::ALIAS;
+        return OroPaymentExtension::ALIAS;
     }
 }

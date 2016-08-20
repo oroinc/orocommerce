@@ -38,13 +38,13 @@ datagrid:
                         - { join: account.internal_rating, alias: internalRating }
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             group_name:
-                label: orob2b.account.group.label
+                label: oro.account.group.label
             parent_name:
-                label: orob2b.account.parent.label
+                label: oro.account.parent.label
             internal_rating_name:
-                label: orob2b.account.internal_rating.label
+                label: oro.account.internal_rating.label
         properties:
             id: ~
         sorters:
@@ -112,7 +112,7 @@ datagrid:
                     - { table: %orob2b_account.entity.account_group.class%, alias: account_group }
         columns:
             name:
-                label: orob2b.account.accountgroup.name.label
+                label: oro.account.accountgroup.name.label
         properties:
             id: ~
         sorters:
@@ -220,9 +220,9 @@ datagrid:
                 - group
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             parent_name:
-                label: orob2b.account.parent.label
+                label: oro.account.parent.label
         sorters:
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
@@ -247,13 +247,13 @@ datagrid:
                 - group
         columns:
             hasGroup:
-                label: orob2b.account.has_group.label
+                label: oro.account.has_group.label
                 editable: true
                 frontend_type: boolean
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             parent_name:
-                label: orob2b.account.parent.label
+                label: oro.account.parent.label
         filters:
             columns:
                 hasGroup:
@@ -293,16 +293,16 @@ datagrid:
                     - { table: %orob2b_account.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
-                label: orob2b.account.accountuser.first_name.label
+                label: oro.account.accountuser.first_name.label
             lastName:
-                label: orob2b.account.accountuser.last_name.label
+                label: oro.account.accountuser.last_name.label
             email:
-                label: orob2b.account.accountuser.email.label
+                label: oro.account.accountuser.email.label
             enabled:
-                label: orob2b.account.accountuser.enabled.label
+                label: oro.account.accountuser.enabled.label
                 frontend_type: boolean
             confirmed:
-                label: orob2b.account.accountuser.confirmed.label
+                label: oro.account.accountuser.confirmed.label
                 frontend_type: boolean
         properties:
             id: ~
@@ -354,7 +354,7 @@ datagrid:
                         - { join: accountUser.account, alias: account }
         columns:
             accountName:
-                label: orob2b.account.accountuser.account.label
+                label: oro.account.accountuser.account.label
                 order: -1
         sorters:
             columns:
@@ -419,7 +419,7 @@ datagrid:
                         - { join: accountUser.account, alias: account }
         columns:
             accountName:
-                label: orob2b.account.accountuser.account.label
+                label: oro.account.accountuser.account.label
                 order: -1
         sorters:
             columns:
@@ -470,13 +470,13 @@ datagrid:
                     - id
         columns:
             label:
-                label: orob2b.account.accountuserrole.role.label
+                label: oro.account.accountuserrole.role.label
             isRolePredefined:
                 type: twig
-                label: orob2b.account.accountuserrole.type.label
+                label: oro.account.accountuserrole.type.label
                 frontend_type: html
                 data_name: isRolePredefined
-                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
+                template: OroAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
         sorters:
             columns:
                 label:
@@ -496,8 +496,8 @@ datagrid:
                     options:
                         field_options:
                             choices:
-                                true:  orob2b.account.accountuserrole.type.predefined.label
-                                false: orob2b.account.accountuserrole.type.customizable.label
+                                true:  oro.account.accountuserrole.type.predefined.label
+                                false: oro.account.accountuserrole.type.customizable.label
         actions:
             view:
                 type:          navigate
@@ -518,9 +518,9 @@ datagrid:
                         - { join: role.account, alias: role_account }
         columns:
             account_name:
-                label: orob2b.account.accountuserrole.account.label
+                label: oro.account.accountuserrole.account.label
             self_managed:
-                label: orob2b.account.accountuserrole.self_managed.label
+                label: oro.account.accountuserrole.self_managed.label
                 frontend_type: boolean
                 data_name: self_managed
         sorters:
@@ -597,15 +597,15 @@ datagrid:
         extends: account-account-users-grid-basic
         columns:
             hasRole:
-                label: orob2b.account.accountuser.has_role.label
+                label: oro.account.accountuser.has_role.label
                 editable: true
                 frontend_type: boolean
             firstName:
-                label: orob2b.account.accountuser.first_name.label
+                label: oro.account.accountuser.first_name.label
             lastName:
-                label: orob2b.account.accountuser.last_name.label
+                label: oro.account.accountuser.last_name.label
             email:
-                label: orob2b.account.accountuser.email.label
+                label: oro.account.accountuser.email.label
         filters:
             columns:
                 hasRole:
@@ -673,11 +673,11 @@ datagrid:
                     default: NULL
         columns:
             firstName:
-                label: orob2b.account.accountuser.first_name.label
+                label: oro.account.accountuser.first_name.label
             lastName:
-                label: orob2b.account.accountuser.last_name.label
+                label: oro.account.accountuser.last_name.label
             email:
-                label: orob2b.account.accountuser.email.label
+                label: oro.account.accountuser.email.label
 
     account-account-users-grid-view:
         acl_resource: orob2b_account_account_user_view
@@ -691,7 +691,7 @@ datagrid:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: orob2b.account.accountuser.account.label
+                label: oro.account.accountuser.account.label
         filters:
             columns:
                 accountName:
@@ -753,23 +753,23 @@ datagrid:
                     default: NULL
         columns:
             fullName:
-                label: orob2b.account.frontend.account_user.full_name.label
+                label: oro.account.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
                 data_name: fullName
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
-                label: orob2b.account.frontend.account_user.email.label
+                label: oro.account.frontend.account_user.email.label
                 type: twig
                 frontend_type: html
                 data_name: user.email
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
             status:
-                label: orob2b.account.frontend.account_user.status.label
+                label: oro.account.frontend.account_user.status.label
                 type: twig
                 frontend_type: html
                 data_name: status
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
         filters:
             columns:
                 fullName:
@@ -784,8 +784,8 @@ datagrid:
                     options:
                         field_options:
                             choices:
-                                true:  orob2b.account.frontend.account_user.status_active.label
-                                false: orob2b.account.frontend.account_user.status_inactive.label
+                                true:  oro.account.frontend.account_user.status_active.label
+                                false: oro.account.frontend.account_user.status_inactive.label
 
     account-account-users-grid-update:
         acl_resource: orob2b_account_account_user_view
@@ -799,7 +799,7 @@ datagrid:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: orob2b.account.accountuser.account.label
+                label: oro.account.accountuser.account.label
         filters:
             columns:
                 accountName:
@@ -817,27 +817,27 @@ datagrid:
         extends: frontend-account-account-users-grid-basic
         columns:
             hasRole:
-                label: orob2b.account.accountuser.has_role.label
+                label: oro.account.accountuser.has_role.label
                 editable: true
                 frontend_type: boolean
             fullName:
-                label: orob2b.account.frontend.account_user.full_name.label
+                label: oro.account.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
                 data_name: fullName
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
-                label: orob2b.account.frontend.account_user.email.label
+                label: oro.account.frontend.account_user.email.label
                 type: twig
                 frontend_type: html
                 data_name: user.email
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
             status:
-                label: orob2b.account.frontend.account_user.status.label
+                label: oro.account.frontend.account_user.status.label
                 type: twig
                 frontend_type: html
                 data_name: status
-                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
+                template: OroAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
         filters:
             columns:
                 hasRole:
@@ -855,8 +855,8 @@ datagrid:
                     options:
                         field_options:
                             choices:
-                                true:  orob2b.account.frontend.account_user.status_active.label
-                                false: orob2b.account.frontend.account_user.status_inactive.label
+                                true:  oro.account.frontend.account_user.status_active.label
+                                false: oro.account.frontend.account_user.status_inactive.label
         sorters:
             columns:
                 hasRole:
@@ -889,9 +889,9 @@ datagrid:
                 - target_entity_id
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             visibility:
-                label: orob2b.account.visibility.accountcategoryvisibility.entity_label
+                label: oro.account.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -938,9 +938,9 @@ datagrid:
                 - target_entity_id
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             visibility:
-                label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
+                label: oro.account.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -990,9 +990,9 @@ datagrid:
                 - website_id
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             visibility:
-                label: orob2b.account.visibility.accountproductvisibility.entity_label
+                label: oro.account.visibility.accountproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -1041,9 +1041,9 @@ datagrid:
                 - website_id
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             visibility:
-                label: orob2b.account.visibility.accountgroupproductvisibility.entity_label
+                label: oro.account.visibility.accountgroupproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -1123,7 +1123,7 @@ datagrid:
                 join:
                     left:
                         b2b_audit:
-                            join: OroB2BAccountBundle:Audit
+                            join: OroAccountBundle:Audit
                             alias: b2b_a
                             conditionType: WITH
                             condition: b2b_a.id = a.id
@@ -1141,7 +1141,7 @@ datagrid:
                 join:
                     left:
                         b2b_audit:
-                            join: OroB2BAccountBundle:Audit
+                            join: OroAccountBundle:Audit
                             alias: b2b_a
                             conditionType: WITH
                             condition: b2b_a.id = a.id
@@ -1162,7 +1162,7 @@ datagrid:
             author:
                 label: oro.dataaudit.datagrid.author
                 type: twig
-                template: OroB2BAccountBundle:DataAudit:author.html.twig
+                template: OroAccountBundle:DataAudit:author.html.twig
                 frontend_type: html
                 data_name: author
 
@@ -1195,20 +1195,20 @@ datagrid:
             id: ~
         columns:
             street:
-                label: orob2b.account.accountaddress.entity_label
+                label: oro.account.accountaddress.entity_label
             city:
-                label: orob2b.account.accountaddress.city.label
+                label: oro.account.accountaddress.city.label
             state:
-                label: orob2b.account.accountaddress.region.label
+                label: oro.account.accountaddress.region.label
             zip:
-                label: orob2b.account.accountuseraddress.postal_code.label
+                label: oro.account.accountuseraddress.postal_code.label
             countryName:
-                label: orob2b.account.accountaddress.country.label
+                label: oro.account.accountaddress.country.label
             types:
-                label: orob2b.account.accountaddress.types.singular_label
+                label: oro.account.accountaddress.types.singular_label
                 type: twig
                 frontend_type: html
-                template: OroB2BAccountBundle:Address:Frontend/Datagrid/types.html.twig
+                template: OroAccountBundle:Address:Frontend/Datagrid/types.html.twig
         sorters:
             columns:
                 street:

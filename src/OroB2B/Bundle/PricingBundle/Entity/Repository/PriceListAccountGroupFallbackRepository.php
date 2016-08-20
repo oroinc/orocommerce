@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 
 class PriceListAccountGroupFallbackRepository extends EntityRepository
 {
@@ -21,11 +20,11 @@ class PriceListAccountGroupFallbackRepository extends EntityRepository
     {
         /** @var PriceListAccountFallbackRepository $accountFallbackRepository */
         $accountFallbackRepository = $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:PriceListAccountFallback');
+            ->getRepository('OroPricingBundle:PriceListAccountFallback');
         $qb = $accountFallbackRepository->getBaseQbForFallback($websiteId);
 
         $qb->leftJoin(
-            'OroB2BPricingBundle:PriceListAccountGroupFallback',
+            'OroPricingBundle:PriceListAccountGroupFallback',
             'accountGroupFallback',
             Join::WITH,
             $qb->expr()->andX(

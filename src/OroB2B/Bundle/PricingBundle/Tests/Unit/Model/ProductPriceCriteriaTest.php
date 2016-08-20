@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceCriteriaTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class ProductPriceCriteriaTest extends \PHPUnit_Framework_TestCase
             $currency
         );
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria', $instance);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\Model\ProductPriceCriteria', $instance);
         $this->assertEquals($this->getProduct(42), $instance->getProduct());
         $this->assertEquals((new ProductUnit())->setCode('kg'), $instance->getProductUnit());
         $this->assertEquals($quantity, $instance->getQuantity());

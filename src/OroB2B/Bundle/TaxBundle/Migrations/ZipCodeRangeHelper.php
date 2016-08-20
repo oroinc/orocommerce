@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Migrations;
+namespace Oro\Bundle\TaxBundle\Migrations;
 
 class ZipCodeRangeHelper
 {

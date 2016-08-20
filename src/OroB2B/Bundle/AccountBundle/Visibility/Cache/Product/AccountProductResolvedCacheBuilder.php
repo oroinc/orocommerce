@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
+use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
@@ -34,8 +34,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
         $er = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $hasAccountProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasAccountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
@@ -44,13 +44,13 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
 
         if ($selectedVisibility === AccountProductVisibility::CATEGORY) {
             $category = $this->registry
-                ->getManagerForClass('OroB2BCatalogBundle:Category')
-                ->getRepository('OroB2BCatalogBundle:Category')
+                ->getManagerForClass('OroCatalogBundle:Category')
+                ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
                 $visibility = $this->registry
-                    ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+                    ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+                    ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
                     ->getFallbackToAccountVisibility($category, $account);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
@@ -96,14 +96,14 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
     public function productCategoryChanged(Product $product)
     {
         $category = $this->registry
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->findOneByProduct($product);
 
         if (!$category) {
             $this->registry
-                ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-                ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+                ->getManagerForClass('OroAccountBundle:Visibility\AccountProductVisibility')
+                ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
                 ->setToDefaultWithoutCategoryByProduct($product);
         }
 

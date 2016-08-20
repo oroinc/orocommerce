@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Form\Type;
+namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -13,14 +13,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
-use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -117,7 +116,7 @@ class InvoiceLineItemType extends AbstractType
                 ProductSelectType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.entity_label',
+                    'label' => 'oro.product.entity_label',
                     'create_enabled' => false,
                 ]
             )
@@ -126,7 +125,7 @@ class InvoiceLineItemType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.sku.label',
+                    'label' => 'oro.product.sku.label',
                 ]
             )
             ->add(
@@ -134,7 +133,7 @@ class InvoiceLineItemType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.entity_label',
+                    'label' => 'oro.product.entity_label',
                 ]
             )
             ->add(
@@ -142,7 +141,7 @@ class InvoiceLineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.order.invoicelineitem.quantity.label',
+                    'label' => 'oro.order.invoicelineitem.quantity.label',
                     'default_data' => 1,
                     'product_holder' => $builder->getData(),
                 ]
@@ -151,7 +150,7 @@ class InvoiceLineItemType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.product.productunit.entity_label',
+                    'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
                 ]
             )
@@ -161,7 +160,7 @@ class InvoiceLineItemType extends AbstractType
                 [
                     'error_bubbling' => false,
                     'required' => true,
-                    'label' => 'orob2b.invoice.invoicelineitem.price.label',
+                    'label' => 'oro.invoice.invoicelineitem.price.label',
                     'hide_currency' => true,
                     'default_currency' => $options['currency'],
                 ]
@@ -185,7 +184,7 @@ class InvoiceLineItemType extends AbstractType
                 'intention' => 'invoice_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [
-                    'view' => 'orob2binvoice/js/app/views/invoice-line-item-view',
+                    'view' => 'oroinvoice/js/app/views/invoice-line-item-view',
                     'freeFormUnits' => $this->getFreeFormUnits(),
                     'precision' => $this->priceRounding->getPrecision()
                 ],

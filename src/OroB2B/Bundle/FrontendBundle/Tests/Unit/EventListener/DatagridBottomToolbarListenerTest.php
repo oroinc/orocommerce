@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class DatagridBottomToolbarListenerTest extends FrontendDatagridListenerTestCase
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Owner;
+namespace Oro\Bundle\AccountBundle\Owner;
 
 use Oro\Bundle\SecurityBundle\Owner\AbstractEntityOwnershipDecisionMaker;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class EntityOwnershipDecisionMaker extends AbstractEntityOwnershipDecisionMaker
 {

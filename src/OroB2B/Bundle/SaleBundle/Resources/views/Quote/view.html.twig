@@ -6,8 +6,8 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_sale_quote_index'),
-        'indexLabel': 'orob2b.sale.quote.entity_plural_label'|trans,
-        'entityTitle': 'orob2b.sale.navigation.view'|trans({
+        'indexLabel': 'oro.sale.quote.entity_plural_label'|trans,
+        'entityTitle': 'oro.sale.navigation.view'|trans({
             '%id%': entity.qid|default('N/A'|trans)
         })
     } %}
@@ -18,15 +18,15 @@
     {{ parent() }}
     <div class="pull-left">
         {% if entity.locked %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.locked.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'oro.sale.quote.locked.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_locked.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'oro.sale.quote.not_locked.label'|trans }}</div>
         {% endif %}
 
         {% if entity.expired %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.expired.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_expired.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'oro.sale.quote.not_expired.label'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -35,7 +35,7 @@
     {% set quoteInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.sale.quote.widgets.quote_information'|trans,
+            'title': 'oro.sale.quote.widgets.quote_information'|trans,
             'url': path('orob2b_sale_quote_info', {'id': entity.id})
         }) }}
     {% endset %}
@@ -45,12 +45,12 @@
             <table class="grid table table-bordered table-condensed quote-line-items">
                 <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.sale.quoteproduct.column.product'|trans }}</span></th>
-                        <th class="quote-line_item-quantity"><span>{{ 'orob2b.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
-                        <th class="quote-line_item-price"><span>{{ 'orob2b.sale.quoteproductoffer.price.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.sale.quoteproduct.comment_account.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.sale.quoteproduct.comment.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.sale.quoteproduct.column.product'|trans }}</span></th>
+                        <th class="quote-line_item-quantity"><span>{{ 'oro.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
+                        <th class="quote-line_item-price"><span>{{ 'oro.sale.quoteproductoffer.price.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.sale.quoteproduct.comment.label'|trans }}</span></th>
                     </tr>
                 </thead>
                 {% for quoteProduct in entity.quoteProducts %}
@@ -72,7 +72,7 @@
                             {% endif %}
                             <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
                                 {{ quoteProductOffer.quantity|orob2b_format_short_product_unit_value(quoteProductOffer.productUnit) }}
-                                {% if quoteProductOffer.allowIncrements %}{{ 'orob2b.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
+                                {% if quoteProductOffer.allowIncrements %}{{ 'oro.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                             </td>
                             <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
                                 {{ quoteProductOffer.price|oro_format_price }}
@@ -91,59 +91,59 @@
 
     {% set shippingAddress %}
         {% if entity.shippingAddress %}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.label.label'|trans, entity.shippingAddress.label) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.name_prefix.label'|trans, entity.shippingAddress.namePrefix) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.first_name.label'|trans, entity.shippingAddress.firstName) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.middle_name.label'|trans,entity.shippingAddress.middleName) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name|default('N/A')) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.label.label'|trans, entity.shippingAddress.label) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.name_prefix.label'|trans, entity.shippingAddress.namePrefix) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.first_name.label'|trans, entity.shippingAddress.firstName) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.middle_name.label'|trans,entity.shippingAddress.middleName) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name|default('N/A')) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
+            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
         {% else %}
             <div class="items list-box list-shaped"></div>
             <div class="no-data">
-                <span>{{ "orob2b.sale.quoteaddress.no_exist"|trans|raw }}</span>
+                <span>{{ "oro.sale.quoteaddress.no_exist"|trans|raw }}</span>
             </div>
         {% endif %}
     {% endset %}
 
     {% set shippingInformation %}
         {% if entity.shippingEstimate is not null %}
-            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans,
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans,
             entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 
     {% set id = 'quote-view' %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.order.sections.general'|trans,
+        'title': 'oro.order.sections.general'|trans,
         'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 
     {% if entity.quoteProducts | length %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'title': 'oro.sale.quote.sections.quote_products'|trans,
             'subblocks': [{'data' : [quoteProducts]}]
         }]) %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.sale.quote.sections.shipping_address'|trans,
+        'title': 'oro.sale.quote.sections.shipping_address'|trans,
         'subblocks': [{'data' : [shippingAddress]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+        'title': 'oro.sale.quote.sections.shipping_information'|trans,
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 

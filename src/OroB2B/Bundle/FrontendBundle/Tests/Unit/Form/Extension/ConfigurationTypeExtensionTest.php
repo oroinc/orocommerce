@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
@@ -8,10 +8,9 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\InstallerBundle\Form\Type\ConfigurationType;
-
-use OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension;
-use OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType;
-use OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub\ConfigurationTypeStub;
+use Oro\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension;
+use Oro\Bundle\FrontendBundle\Form\Type\Configuration\WebType;
+use Oro\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub\ConfigurationTypeStub;
 
 class ConfigurationTypeExtensionTest extends FormIntegrationTestCase
 {

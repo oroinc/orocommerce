@@ -6,12 +6,12 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var FormView = require('orob2bfrontend/js/app/views/form-view');
+    var FormView = require('orofrontend/js/app/views/form-view');
 
     /**
-     * @export orob2border/js/app/components/related-data-component
+     * @export oroorder/js/app/components/related-data-component
      * @extends oroui.app.components.base.Component
-     * @class orob2border.app.components.RelatedDataComponent
+     * @class oroorder.app.components.RelatedDataComponent
      */
     RelatedDataComponent = BaseComponent.extend({
         /**

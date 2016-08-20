@@ -11,9 +11,9 @@ define(function(require) {
      * Options:
      * - defaultCategoryId - default selected category id
      *
-     * @export orob2bcatalog/js/app/components/product-sidebar-component
-     * @extends orob2bcatalog.app.components.BasicTreeComponent
-     * @class orob2bcatalog.app.components.ProductSidebarComponent
+     * @export orocatalog/js/app/components/product-sidebar-component
+     * @extends orocatalog.app.components.BasicTreeComponent
+     * @class orocatalog.app.components.ProductSidebarComponent
      */
     ProductSidebarComponent = BasicTreeComponent.extend({
         /**

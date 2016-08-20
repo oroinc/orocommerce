@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\OrderBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -62,7 +62,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
-        $translation = 'orob2b.order.subtotals.' . self::TYPE;
+        $translation = 'oro.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
         $subtotal->setVisible(false);
 

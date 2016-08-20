@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\DataProvider\Manager;
+namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManager
 {

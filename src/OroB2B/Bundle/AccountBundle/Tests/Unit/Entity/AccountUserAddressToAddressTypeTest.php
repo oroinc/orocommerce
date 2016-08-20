@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType;
 
 class AccountUserAddressToAddressTypeTest extends \PHPUnit_Framework_TestCase
 {

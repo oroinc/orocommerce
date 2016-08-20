@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,16 +12,15 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
-use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class FrontendOrderType extends AbstractType
 {
@@ -88,19 +87,19 @@ class FrontendOrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
-            ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
-            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
+            ->add('poNumber', 'text', ['required' => false, 'label' => 'oro.order.po_number.label'])
+            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'oro.order.ship_until.label'])
             ->add(
                 'customerNotes',
                 'textarea',
-                ['required' => false, 'label' => 'orob2b.order.customer_notes.frontend.label']
+                ['required' => false, 'label' => 'oro.order.customer_notes.frontend.label']
             )
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,
                 [
                     'type' => FrontendOrderLineItemType::NAME,
-                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'add_label' => 'oro.order.orderlineitem.add_label',
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
@@ -113,7 +112,7 @@ class FrontendOrderType extends AbstractType
                 'billingAddress',
                 OrderAddressType::NAME,
                 [
-                    'label' => 'orob2b.order.billing_address.label',
+                    'label' => 'oro.order.billing_address.label',
                     'object' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_BILLING,
@@ -132,7 +131,7 @@ class FrontendOrderType extends AbstractType
                 'shippingAddress',
                 OrderAddressType::NAME,
                 [
-                    'label' => 'orob2b.order.shipping_address.label',
+                    'label' => 'oro.order.shipping_address.label',
                     'object' => $object,
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,

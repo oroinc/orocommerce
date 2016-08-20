@@ -8,11 +8,11 @@
             <div class="clearfix">
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
                     {{ form_widget(form.productSku, {attr: {
-                        placeholder: "orob2b.product.sku.placeholder"
+                        placeholder: "oro.product.sku.placeholder"
                     }}) }}
                 </div>
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
-                    {{ form_widget(form.productQuantity, {attr: {placeholder: "orob2b.product.quantity.placeholder"}}) }}
+                    {{ form_widget(form.productQuantity, {attr: {placeholder: "oro.product.quantity.placeholder"}}) }}
                 </div>
                 {% if allow_delete %}
                     <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="icon-remove"></i></span>
@@ -44,10 +44,10 @@
             <div class="grid">
                 <fieldset class="{{ class_prefix }}__form__row {{ class_prefix }}__form__row__head">
                     <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
-                        <label>{{ 'orob2b.product.item_number.label'|trans }}</label>
+                        <label>{{ 'oro.product.item_number.label'|trans }}</label>
                     </div>
                     <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
-                        <label>{{ 'orob2b.product.quantity.label'|trans }}</label>
+                        <label>{{ 'oro.product.quantity.label'|trans }}</label>
                     </div>
                 </fieldset>
 

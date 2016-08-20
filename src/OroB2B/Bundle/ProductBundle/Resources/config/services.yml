@@ -1,12 +1,12 @@
 parameters:
-    orob2b_product.entity.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
-    orob2b_product.entity.product_unit.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnit
-    orob2b_product.entity.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
-    orob2b_product.entity.product_variant_link.class: OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink
-    orob2b_product.entity.product_image.class: OroB2B\Bundle\ProductBundle\Entity\ProductImage
-    orob2b_product.entity.product_image_type.class: OroB2B\Bundle\ProductBundle\Entity\ProductImageType
+    orob2b_product.entity.product.class: Oro\Bundle\ProductBundle\Entity\Product
+    orob2b_product.entity.product_unit.class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+    orob2b_product.entity.product_unit_precision.class: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision
+    orob2b_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
+    orob2b_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
+    orob2b_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
 
-    orob2b_product.event_listener.scoped_product_select_db_query.common_class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
+    orob2b_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
 
 services:
     orob2b_product.product.manager.api:
@@ -17,40 +17,40 @@ services:
             - "@doctrine.orm.entity_manager"
 
     orob2b_product.service.abstract_rounding:
-        class: 'OroB2B\Bundle\ProductBundle\Rounding\AbstractRoundingService'
+        class: 'Oro\Bundle\ProductBundle\Rounding\AbstractRoundingService'
         public: false
         abstract: true
         arguments:
             - "@oro_config.manager"
 
     orob2b_product.service.quantity_rounding:
-        class: 'OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService'
+        class: 'Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService'
         public: false
         parent: orob2b_product.service.abstract_rounding
 
     orob2b_product.formatter.unit_value:
         abstract: true
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter'
+        class: 'Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter'
         arguments:
             - "@translator"
 
     orob2b_product.formatter.unit_label:
         public: false
         abstract: true
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
+        class: 'Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
         arguments:
             - "@translator"
 
     orob2b_product.formatter.product_unit_value:
         parent: orob2b_product.formatter.unit_value
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
 
     orob2b_product.formatter.product_unit_label:
         parent: orob2b_product.formatter.unit_label
-        class: 'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
 
     orob2b_product.twig.product_unit_value:
-        class: 'OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
         public: false
         arguments:
             - "@orob2b_product.formatter.product_unit_value"
@@ -58,7 +58,7 @@ services:
             - { name: twig.extension }
 
     orob2b_product.twig.product_unit_label:
-        class: 'OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
             - "@orob2b_product.formatter.product_unit_label"
@@ -76,14 +76,14 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_frontend, acl_resource: orob2b_product_frontend_view }
 
     orob2b_product.service.sku_incrementor:
-        class: 'OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor'
+        class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_product.entity.product.class%'
 
     orob2b_product.service.duplicator:
-        class: 'OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator'
+        class: 'Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@event_dispatcher"
@@ -93,7 +93,7 @@ services:
             - [setSkuIncrementor,  ["@orob2b_product.service.sku_incrementor"]]
 
     orob2b_product.service.product_update_handler:
-        class: 'OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
+        class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
         scope: request
         calls:
@@ -102,7 +102,7 @@ services:
             - [setRouter, ['@router']]
 
     orob2b_product.service.product_create_step_one_handler:
-        class: 'OroB2B\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
+        class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
         public: true
         scope: request
 
@@ -115,30 +115,30 @@ services:
             - [setName, ['product_data_bag']]
 
     orob2b_product.storage.session_data_storage:
-        class: 'OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage'
+        class: 'Oro\Bundle\ProductBundle\Storage\ProductDataStorage'
         abstract: true
         arguments:
             - "@session"
 
     orob2b_product.storage.product_data_storage:
-        class: 'OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage'
+        class: 'Oro\Bundle\ProductBundle\Storage\ProductDataStorage'
         parent: orob2b_product.storage.session_data_storage
 
     orob2b_product.validator.product_by_sku:
-        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator'
         arguments:
             - "@doctrine"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
 
     orob2b_product.validator.product_image:
-        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_image_validator }
 
     orob2b_product.validator.product_image_collection:
-        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
         public: true
         arguments:
             - "@oro_layout.provider.image_type"
@@ -147,7 +147,7 @@ services:
             - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
 
     orob2b_product.component_processor.filter:
-        class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
+        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
         arguments:
             - "@orob2b_product.product.manager"
@@ -156,11 +156,11 @@ services:
             - [setProductClass, ['%orob2b_product.entity.product.class%']]
 
     orob2b_product.component_processor.registry:
-        class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'
+        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'
         public: false
 
     orob2b_product.component_processor.data_storage_aware.processor:
-        class: 'OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor'
+        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor'
         arguments:
             - "@router"
             - "@orob2b_product.storage.product_data_storage"
@@ -173,7 +173,7 @@ services:
         abstract: true
 
     orob2b_product.form_handler.quick_add:
-        class: 'OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
+        class: 'Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler'
         arguments:
             - "@orob2b_product.layout.data_provider.product_form"
             - "@orob2b_product.model.builder.quick_add_row_collection"
@@ -182,14 +182,14 @@ services:
             - "@translator"
 
     orob2b_product.event_listener.product_grid_widget:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener'
         arguments:
             - "@oro_datagrid.datagrid.request_parameters_factory"
         tags:
             - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender }
 
     orob2b_product.menu.frontend.quick_add:
-        class: 'OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder'
+        class: 'Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder'
         public: false
         arguments:
             - "@orob2b_product.component_processor.registry"
@@ -197,27 +197,27 @@ services:
             - { name: oro_menu.builder, alias: frontend_menu }
 
     orob2b_product.provider.custom_field_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\CustomFieldProvider'
         public: false
         arguments:
             - "@oro_entity_config.provider.extend"
             - "@oro_entity_config.provider.entity"
 
     orob2b_product.provider.product_status_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
 
     orob2b_product.provider.product_units_provider:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider'
         arguments:
             - "@doctrine"
             - "@orob2b_product.formatter.product_unit_label"
 
     orob2b_product.provider.default_product_unit_provider.chain:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
         public: false
 
     orob2b_product.provider.default_product_unit_provider.system:
-        class: 'OroB2B\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider'
         public: false
         arguments:
             - "@oro_config.manager"
@@ -226,7 +226,7 @@ services:
             - {name: orob2b_product.default_product_unit_provider, priority: 0}
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@orob2b_product.provider.custom_field_provider"
@@ -238,19 +238,19 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
 
     orob2b_product.validator.unique_variant_links:
-        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
 
     orob2b_product.validator.product_variant_field:
-        class: 'OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
         arguments:
             - "@orob2b_product.provider.custom_field_provider"
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_variant_field }
 
     orob2b_product.event_listener.restricted_products_datagrid:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
         arguments:
             - "@request_stack"
             - "@orob2b_product.product.manager"
@@ -260,18 +260,18 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
     orob2b_product.event_listener.command.platform_update:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener'
         arguments:
             - "@oro_entity_config.config_model_manager"
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
 
     orob2b_product.model.product_visibility_query_builder_modifier:
-        class: 'OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
+        class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler:
-        class: 'OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
+        class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
         public: false
         arguments:
             - '%orob2b_product.entity.product.class%'
@@ -285,12 +285,12 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: "orob2b_product_visibility_limited" }
 
     orob2b_product.product.manager:
-        class: 'OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager'
+        class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'
         arguments:
             - "@event_dispatcher"
 
     orob2b_product.event_listener.restrict_disabled_products:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener'
         arguments:
             - "@orob2b_product.model.product_visibility_query_builder_modifier"
         tags:
@@ -304,7 +304,7 @@ services:
             - "@orob2b_frontend.request.frontend_helper"
 
     orob2b_product.event_listener.product_select_db_query:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
         parent: orob2b_product.event_listener.abstract_product_select_db_query
         calls:
             - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
@@ -319,20 +319,20 @@ services:
             - '%orob2b_product.entity.product.class%'
 
     orob2b_product.model.builder.quick_add_row_collection:
-        class: 'OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
+        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
         public: false
         arguments:
             - "@orob2b_product.repository.product"
 
     orob2b_product.datagrid_theme_helper:
-        class: 'OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
+        class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
         public: false
         arguments:
             - '@request_stack'
             - '@session'
 
     orob2b_product.event_listener.frontend_product_datagrid:
-        class: 'OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - '@orob2b_product.datagrid_theme_helper'
             - '@doctrine'
@@ -343,21 +343,21 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
 
     orob2b_product.layout.data_provider.frontend_datagrid_row_view:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
         arguments:
             - '@orob2b_product.datagrid_theme_helper'
         tags:
             - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
 
     orob2b_product.layout.data_provider.product_form:
-        class: 'OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
         tags:
             - { name: layout.data_provider, alias: orob2b_product_form }
 
     orob2b_product.api.processor.update_product.build_query:
-        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
         arguments:
             - '@oro_api.doctrine_helper'
             - '@oro_api.criteria_connector'
@@ -365,11 +365,11 @@ services:
             - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%orob2b_product.entity.product.class%'}
 
     orob2b_product.api.processor.product_id.normalize_input:
-        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
         tags:
             - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%orob2b_product.entity.product.class%'}
 
     orob2b_product.api.processor.entity_id.load_data:
-        class: 'OroB2B\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}

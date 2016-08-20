@@ -1,33 +1,33 @@
 oro_menu_config:
     items:
         marketing_tab:
-            label:           'orob2b.cms.menu.marketing_tab.label'
+            label:           'oro.cms.menu.marketing_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-book
                 position:    400
 
         page_list:
-            label:           'orob2b.cms.page.entity_plural_label'
+            label:           'oro.cms.page.entity_plural_label'
             route:           'orob2b_cms_page_index'
             extras:
                 position:    100
                 routes:      ['/^orob2b_cms_page/']
-                description: 'orob2b.cms.menu.page_list.description'
+                description: 'oro.cms.menu.page_list.description'
 
         login_page_list:
-            label:           'orob2b.cms.loginpage.entity_plural_label'
+            label:           'oro.cms.loginpage.entity_plural_label'
             route:           'orob2b_cms_loginpage_index'
             extras:
                 position:    101
                 routes:      ['/^orob2b_cms_loginpage/']
-                description: 'orob2b.cms.menu.loginpage_list.description'
+                description: 'oro.cms.menu.loginpage_list.description'
 
         shortcut_page_list:
-            label:           'orob2b.cms.page.entity_plural_label'
+            label:           'oro.cms.page.entity_plural_label'
             route:           'orob2b_cms_page_index'
             extras:
-                description: 'orob2b.cms.menu.shortcut_page_list.description'
+                description: 'oro.cms.menu.shortcut_page_list.description'
     tree:
         application_menu:
             children:

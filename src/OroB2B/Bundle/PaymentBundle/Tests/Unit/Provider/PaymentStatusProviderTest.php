@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,12 +23,12 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->paymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->totalProcessorProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
+namespace Oro\Bundle\ProductBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductCollectionTransformer implements DataTransformerInterface
 {

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
+use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
 
 class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
 {
@@ -102,7 +101,7 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             '\InvalidArgumentException',
-            'Value must be instance of "OroB2B\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+            'Value must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
         );
         $this->validator->validate(new \stdClass(), $this->constraint);
     }

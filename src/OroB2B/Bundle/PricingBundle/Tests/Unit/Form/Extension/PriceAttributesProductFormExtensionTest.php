@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -11,18 +11,17 @@ use Symfony\Component\Form\PreloadedExtension;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 {
@@ -78,8 +77,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $attributeRepository->expects($this->once())->method('findAll')->willReturn([]);
 
         $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
-            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+            ['OroPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroPricingBundle:PriceAttributeProductPrice', $priceRepository],
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
@@ -131,8 +130,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->willReturn([$priceAttribute1, $priceAttribute2]);
 
         $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
-            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+            ['OroPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroPricingBundle:PriceAttributeProductPrice', $priceRepository],
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
@@ -197,8 +196,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->willReturn([$priceAttribute]);
 
         $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
-            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+            ['OroPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroPricingBundle:PriceAttributeProductPrice', $priceRepository],
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 
@@ -252,8 +251,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->willReturn([$priceAttribute]);
 
         $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
-            ['OroB2BPricingBundle:PriceAttributePriceList', $attributeRepository],
-            ['OroB2BPricingBundle:PriceAttributeProductPrice', $priceRepository],
+            ['OroPricingBundle:PriceAttributePriceList', $attributeRepository],
+            ['OroPricingBundle:PriceAttributeProductPrice', $priceRepository],
         ]);
         $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
 

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
+namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
-use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
 abstract class AbstractOrderMapper implements TaxMapperInterface
 {

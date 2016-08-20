@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
-
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListListener
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -11,8 +11,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\SignInProvider;
 
 /**
  * @dbIsolation

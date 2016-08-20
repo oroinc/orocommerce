@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Model;
+namespace Oro\Bundle\InvoiceBundle\Model;
 
 class ExtendInvoice
 {

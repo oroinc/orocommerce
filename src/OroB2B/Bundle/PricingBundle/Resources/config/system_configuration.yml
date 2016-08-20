@@ -1,46 +1,46 @@
 oro_system_configuration:
     groups:
         default_price_lists:
-            title: orob2b.pricing.system_configuration.groups.default_price_lists.title
+            title: oro.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
-            title: orob2b.pricing.system_configuration.groups.price_rounding.title
+            title: oro.pricing.system_configuration.groups.price_rounding.title
         price_lists_update:
-            title: orob2b.pricing.system_configuration.groups.price_lists_update.title
+            title: oro.pricing.system_configuration.groups.price_lists_update.title
         display_currencies:
-            title:  orob2b.pricing.system_configuration.groups.display_currencies.title
+            title:  oro.pricing.system_configuration.groups.display_currencies.title
         pricing:
-            title: orob2b.pricing.system_configuration.groups.pricing.title
+            title: oro.pricing.system_configuration.groups.pricing.title
             icon: 'icon-credit-card'
     fields:
         oro_b2b_pricing.default_price_lists:
             data_type: array
             type: orob2b_pricing_price_list_system_config
             options:
-                label: orob2b.pricing.system_configuration.fields.price_lists.title
+                label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
         oro_b2b_pricing.rounding_type:
             data_type: string
             type: choice
             priority: 10
             options:
-                label: orob2b.pricing.system_configuration.fields.rounding_type.label
-                tooltip: orob2b.pricing.system_configuration.fields.rounding_type.tooltip
+                label: oro.pricing.system_configuration.fields.rounding_type.label
+                tooltip: oro.pricing.system_configuration.fields.rounding_type.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    0: orob2b.pricing.system_configuration.fields.rounding_type.choices.ceil.label
-                    1: orob2b.pricing.system_configuration.fields.rounding_type.choices.floor.label
-                    5: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_down.label
-                    6: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_up.label
-                    4: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_even.label
+                    0: oro.pricing.system_configuration.fields.rounding_type.choices.ceil.label
+                    1: oro.pricing.system_configuration.fields.rounding_type.choices.floor.label
+                    5: oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label
+                    6: oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label
+                    4: oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label
         oro_b2b_pricing.precision:
             data_type: integer
             type: integer
             priority: 20
             options:
-                label: orob2b.pricing.system_configuration.fields.precision.label
+                label: oro.pricing.system_configuration.fields.precision.label
                 required: true
                 constraints:
                     - NotBlank: ~
@@ -52,21 +52,21 @@ oro_system_configuration:
             data_type: string
             type: choice
             options:
-                label: orob2b.pricing.system_configuration.fields.price_lists_update_mode.label
-                tooltip: orob2b.pricing.system_configuration.fields.price_lists_update_mode.tooltip
+                label: oro.pricing.system_configuration.fields.price_lists_update_mode.label
+                tooltip: oro.pricing.system_configuration.fields.price_lists_update_mode.tooltip
                 choice_translation_domain: messages
                 choices:
-                    scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
-                    real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
+                    scheduled: oro.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
+                    real_time: oro.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
         oro_b2b_pricing.offset_of_processing_cpl_prices:
             data_type: float
             type: number
             options:
-                label: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
-                tooltip: orob2b.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
+                label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
+                tooltip: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
                 constraints:
                     - NotBlank: ~
-                    - 'OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
+                    - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
         oro_b2b_pricing.enabled_currencies:
@@ -74,7 +74,7 @@ oro_system_configuration:
             type: oro_currency_selection
             priority: 200
             options:
-                label: orob2b.pricing.system_configuration.fields.enabled_currencies.label
+                label: oro.pricing.system_configuration.fields.enabled_currencies.label
                 required: true
                 multiple: true
                 constraints:
@@ -84,7 +84,7 @@ oro_system_configuration:
             type: orob2b_pricing_default_currency_selection
             priority: 100
             options:
-                label: orob2b.pricing.system_configuration.fields.default_currency.label
+                label: oro.pricing.system_configuration.fields.default_currency.label
                 required: true
                 multiple: false
                 constraints:

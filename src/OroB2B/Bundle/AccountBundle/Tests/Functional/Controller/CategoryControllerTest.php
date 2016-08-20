@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -9,15 +9,14 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 /**
  * @dbIsolation
@@ -38,8 +37,8 @@ class CategoryControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             ]
         );
 
@@ -112,13 +111,13 @@ class CategoryControllerTest extends WebTestCase
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $categoryVisibilityRepo = $em->getRepository(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility'
+            'Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility'
         );
         $accountCategoryVisibilityRepo = $em->getRepository(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility'
+            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility'
         );
         $accountGroupCategoryVisibilityRepo = $em->getRepository(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
+            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
         );
 
         $this->assertNotEquals(0, $this->getEntitiesCount($categoryVisibilityRepo));

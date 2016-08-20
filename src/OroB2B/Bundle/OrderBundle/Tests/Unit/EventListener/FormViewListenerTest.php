@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\OrderBundle\EventListener\FormViewListener;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
@@ -56,7 +55,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BOrderBundle:AccountUser:orders_view.html.twig', ['entity' => $accountUser])
+            ->with('OroOrderBundle:AccountUser:orders_view.html.twig', ['entity' => $accountUser])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();
@@ -97,7 +96,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BOrderBundle:Account:orders_view.html.twig', ['entity' => $account])
+            ->with('OroOrderBundle:Account:orders_view.html.twig', ['entity' => $account])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();

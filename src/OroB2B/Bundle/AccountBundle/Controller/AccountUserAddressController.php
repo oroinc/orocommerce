@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -11,16 +11,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
 
 class AccountUserAddressController extends Controller
 {
     /**
      * @Route("/address-book/{id}", name="orob2b_account_account_user_address_book", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:Address/widget:addressBook.html.twig")
+     * @Template("OroAccountBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("orob2b_account_account_user_view")
      *
      * @param AccountUser $accountUser
@@ -41,7 +40,7 @@ class AccountUserAddressController extends Controller
      *      name="orob2b_account_account_user_address_create",
      *      requirements={"accountUserId"="\d+"}
      * )
-     * @Template("OroB2BAccountBundle:Address/widget:update.html.twig")
+     * @Template("OroAccountBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_account_account_user_create")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
@@ -59,7 +58,7 @@ class AccountUserAddressController extends Controller
      *      name="orob2b_account_account_user_address_update",
      *      requirements={"accountUserId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
-     * @Template("OroB2BAccountBundle:Address/widget:update.html.twig")
+     * @Template("OroAccountBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_account_account_user_update")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *

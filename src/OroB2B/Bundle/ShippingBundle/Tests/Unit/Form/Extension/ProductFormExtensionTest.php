@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -12,13 +12,12 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-
-use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -48,13 +47,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BShippingBundle:ProductShippingOptions')
+            ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($this->repo);
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BShippingBundle:ProductShippingOptions')
+            ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($this->manager);
 
         $this->extension = new ProductFormExtension($this->registry);
@@ -75,7 +74,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ProductFormExtension::FORM_ELEMENT_NAME,
                 ProductShippingOptionsCollectionType::NAME,
                 [
-                    'label' => 'orob2b.shipping.product_shipping_options.entity_plural_label',
+                    'label' => 'oro.shipping.product_shipping_options.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
                     'constraints' => [new UniqueProductUnitShippingOptions()],
@@ -144,7 +143,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(true);
 
-        $removedOption = $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 42]);
+        $removedOption = $this->getEntity('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 42]);
 
         $this->repo->expects($this->once())
             ->method('findBy')
@@ -155,8 +154,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn(
                 [
-                    $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1]),
-                    $this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => null]),
+                    $this->getEntity('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1]),
+                    $this->getEntity('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => null]),
                 ]
             );
 
@@ -176,7 +175,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $form->expects($this->once())
             ->method('getData')
-            ->willReturn([$this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1])]);
+            ->willReturn([$this->getEntity('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions', ['id' => 1])]);
 
         $this->manager->expects($this->never())->method('persist');
 
@@ -217,11 +216,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(
                 [
                     $this->getEntity(
-                        'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
+                        'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions',
                         [
                             'id' => 42,
                             'productUnit' => $this->getEntity(
-                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'test1']
                             )
                         ]
@@ -289,6 +288,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     private function createMockProduct($id = 1)
     {
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
     }
 }

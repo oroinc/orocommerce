@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -363,12 +363,12 @@ class QuoteProductTest extends AbstractTest
      */
     public function getProductNameProvider()
     {
-        $product1 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product1 = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product1->expects($this->any())
             ->method('__toString')
             ->willReturn('Product 1');
         ;
-        $product2 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product2 = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product2->expects($this->any())
             ->method('__toString')
             ->willReturn('Product 2');

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Provider;
+namespace Oro\Bundle\SaleBundle\Provider;
 
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class QuoteAddressProvider extends OrderAddressProvider
 {

@@ -1,8 +1,8 @@
-{% extends 'OroB2BShoppingListBundle:layouts/default/orob2b_shopping_list_frontend_view:shopping_lists_menu.html.twig' %}
+{% extends 'OroShoppingListBundle:layouts/default/orob2b_shopping_list_frontend_view:shopping_lists_menu.html.twig' %}
 
 {% block _shopping_list_view_tabs_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orob2bshoppinglist/js/app/components/shoppinglist-view-component',
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-view-component',
         'data-page-component-options': {
             eventChannelId: 'shopping-list-title'
         },
@@ -52,7 +52,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            view: 'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view'
+            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
         },
         '~class': ' shopping-list-dropdown'
     }) %}

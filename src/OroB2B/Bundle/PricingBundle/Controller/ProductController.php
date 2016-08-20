@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -9,9 +9,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class ProductController extends Controller
 {
@@ -45,7 +44,7 @@ class ProductController extends Controller
                 'empty_value' => false,
                 'empty_data' => $priceList,
                 'configs' => ['allowClear' => false],
-                'label' => 'orob2b.pricing.pricelist.entity_label',
+                'label' => 'oro.pricing.pricelist.entity_label',
             ]
         );
     }
@@ -80,7 +79,7 @@ class ProductController extends Controller
             'checkbox',
             null,
             [
-                'label' => 'orob2b.pricing.productprice.show_tier_prices.label',
+                'label' => 'oro.pricing.productprice.show_tier_prices.label',
                 'required' => false,
                 'data' => $this->getPriceListHandler()->getShowTierPrices(),
             ]

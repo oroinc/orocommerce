@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,11 +14,10 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -58,7 +57,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $organization = $user->getOrganization();
 
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -158,7 +157,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $productImage = null;
 
         try {
-            $imagePath = $locator->locate(sprintf('@OroB2BProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            $imagePath = $locator->locate(sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
@@ -198,7 +197,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     protected function getProductUnit(EntityManager $manager, $code)
     {
         if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroB2BProductBundle:ProductUnit')->find($code);
+            $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
         }
 
         return $this->productUnis[$code];

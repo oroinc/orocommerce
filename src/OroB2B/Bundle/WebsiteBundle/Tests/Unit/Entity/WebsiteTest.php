@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteTest extends \PHPUnit_Framework_TestCase
 {

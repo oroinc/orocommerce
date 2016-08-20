@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Resolver;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 
 class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
 {

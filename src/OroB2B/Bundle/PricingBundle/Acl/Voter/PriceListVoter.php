@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Acl\Voter;
+namespace Oro\Bundle\PricingBundle\Acl\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListVoter extends AbstractEntityVoter
 {

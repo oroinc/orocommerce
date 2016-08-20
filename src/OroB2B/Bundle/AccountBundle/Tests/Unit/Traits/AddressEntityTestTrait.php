@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Traits;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Traits;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 trait AddressEntityTestTrait
 {

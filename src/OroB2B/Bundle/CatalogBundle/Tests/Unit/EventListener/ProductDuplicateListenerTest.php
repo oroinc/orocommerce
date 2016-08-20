@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener;
 
 class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,7 +64,7 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->categoryRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

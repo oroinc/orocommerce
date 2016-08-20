@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Form\Extension;
+namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,11 +9,11 @@ use Symfony\Component\Form\FormEvents;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -51,7 +51,7 @@ class ProductFormExtension extends AbstractTypeExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.catalog.category.entity_label'
+                    'label' => 'oro.catalog.category.entity_label'
                 ]
             );
 
@@ -116,8 +116,8 @@ class ProductFormExtension extends AbstractTypeExtension
     protected function getCategoryRepository()
     {
         if (!$this->categoryRepository) {
-            $this->categoryRepository = $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
-                ->getRepository('OroB2BCatalogBundle:Category');
+            $this->categoryRepository = $this->registry->getManagerForClass('OroCatalogBundle:Category')
+                ->getRepository('OroCatalogBundle:Category');
         }
 
         return $this->categoryRepository;

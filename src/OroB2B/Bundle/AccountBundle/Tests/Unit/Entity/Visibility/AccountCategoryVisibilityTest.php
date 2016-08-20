@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {

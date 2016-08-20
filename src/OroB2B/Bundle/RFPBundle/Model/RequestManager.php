@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Model;
+namespace Oro\Bundle\RFPBundle\Model;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class RequestManager
 {
@@ -103,7 +102,7 @@ class RequestManager
     protected function getProducts(array $ids)
     {
         $products = $this->doctrineHelper
-            ->getEntityRepositoryForClass('OroB2BProductBundle:Product')
+            ->getEntityRepositoryForClass('OroProductBundle:Product')
             ->findBy(['id' => $ids]);
         return array_reduce($products, function ($result, Product $product) {
             $result[$product->getId()] = $product;
@@ -119,7 +118,7 @@ class RequestManager
     protected function getUnits(array $productIds, array $codes)
     {
         /** @var ProductUnitRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass('OroB2BProductBundle:ProductUnit');
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass('OroProductBundle:ProductUnit');
         return $repository->getProductsUnitsByCodes($productIds, $codes);
     }
 }

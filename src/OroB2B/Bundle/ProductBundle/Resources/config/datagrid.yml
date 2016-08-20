@@ -21,16 +21,16 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
             sku:
-                label:         orob2b.product.sku.label
+                label:         oro.product.sku.label
             productName:
-                label:         orob2b.product.names.label
+                label:         oro.product.names.label
             inventoryStatus:
-                label:         orob2b.product.inventory_status.label
+                label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
             status:
-                label:         orob2b.product.status.label
+                label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
@@ -121,7 +121,7 @@ datagrid:
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
             requireJSModules:
-                - orob2bproduct/js/app/datagrid/frontend-product-display-options-builder
+                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
         source:
             type:         orm
             query:
@@ -137,9 +137,9 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
             sku:
-                label: orob2b.product.sku.label
+                label: oro.product.sku.label
             name:
-                label: orob2b.product.names.label
+                label: oro.product.names.label
         properties:
             id: ~
             name:
@@ -262,24 +262,24 @@ datagrid:
                         - product.id <> :parentProduct
         columns:
             isVariant:
-                label: orob2b.product.is_variant.label
+                label: oro.product.is_variant.label
                 editable: true
                 frontend_type: boolean
             id:
-                label:         orob2b.product.id.label
+                label:         oro.product.id.label
             sku:
-                label:         orob2b.product.sku.label
+                label:         oro.product.sku.label
             productName:
-                label:         orob2b.product.names.label
+                label:         oro.product.names.label
             status:
-                label:         orob2b.product.status.label
+                label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
             inventoryStatus:
-                label:         orob2b.product.inventory_status.label
+                label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
         sorters:
             columns:
                 isVariant:
@@ -303,23 +303,23 @@ datagrid:
                         - productVariantLink.parentProduct = :parentProduct
         columns:
             id:
-                label:         orob2b.product.id.label
+                label:         oro.product.id.label
             sku:
-                label:         orob2b.product.sku.label
+                label:         oro.product.sku.label
             productName:
-                label:         orob2b.product.names.label
+                label:         oro.product.names.label
             visible:
-                label:         orob2b.product.productvariantlink.visible.label
+                label:         oro.product.productvariantlink.visible.label
                 frontend_type: boolean
             status:
-                label:         orob2b.product.status.label
+                label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
             inventoryStatus:
-                label:         orob2b.product.inventory_status.label
+                label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
         sorters:
             columns:
                 visible:

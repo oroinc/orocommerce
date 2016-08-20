@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\ShippingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
 {
@@ -17,7 +17,7 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
      */
     protected function addWeightUnits(ObjectManager $manager, array $weightUnits)
     {
-        $repository = $manager->getRepository('OroB2BShippingBundle:WeightUnit');
+        $repository = $manager->getRepository('OroShippingBundle:WeightUnit');
         foreach ($weightUnits as $unit) {
             if (!$repository->findOneBy(['code' => $unit['code']])) {
                 $entity = new WeightUnit();
@@ -34,7 +34,7 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
      */
     protected function addLengthUnits(ObjectManager $manager, array $lengthUnits)
     {
-        $repository = $manager->getRepository('OroB2BShippingBundle:LengthUnit');
+        $repository = $manager->getRepository('OroShippingBundle:LengthUnit');
         foreach ($lengthUnits as $unit) {
             if (!$repository->findOneBy(['code' => $unit['code']])) {
                 $entity = new LengthUnit();
@@ -51,7 +51,7 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
      */
     protected function addFreightClasses(ObjectManager $manager, array $freightClasses)
     {
-        $repository = $manager->getRepository('OroB2BShippingBundle:FreightClass');
+        $repository = $manager->getRepository('OroShippingBundle:FreightClass');
         foreach ($freightClasses as $unit) {
             if (!$repository->findOneBy(['code' => $unit['code']])) {
                 $entity = new FreightClass();

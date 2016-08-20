@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -9,11 +9,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
 
 class ResetController extends Controller
 {
@@ -88,7 +87,7 @@ class ResetController extends Controller
         if (!$token || null === $user || $user->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 $this->get('translator')->trans(
-                    'orob2b.account.controller.accountuser.token_not_found.message',
+                    'oro.account.controller.accountuser.token_not_found.message',
                     ['%token%' => $token]
                 )
             );
@@ -99,7 +98,7 @@ class ResetController extends Controller
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
                 'warn',
-                'orob2b.account.accountuser.profile.password.reset.ttl_expired.message'
+                'oro.account.accountuser.profile.password.reset.ttl_expired.message'
             );
 
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_request'));
@@ -118,7 +117,7 @@ class ResetController extends Controller
 
             $session->getFlashBag()->add(
                 'success',
-                'orob2b.account.accountuser.profile.password_reset.message'
+                'oro.account.accountuser.profile.password_reset.message'
             );
 
             return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));

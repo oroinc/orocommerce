@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 
 class FrontendProductListModifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +30,7 @@ class FrontendProductListModifierTest extends \PHPUnit_Framework_TestCase
     {
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -11,12 +11,11 @@ use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
 {

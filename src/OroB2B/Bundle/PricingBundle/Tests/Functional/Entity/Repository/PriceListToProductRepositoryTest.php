@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -39,7 +38,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceListToProduct');
+            ->getRepository('OroPricingBundle:PriceListToProduct');
     }
     
     public function testGetProductsWithoutPrices()
@@ -66,7 +65,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
 
     public function testDeleteGeneratedRelations()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
         $priceList = new PriceList();
         $priceList->setName('test price list');
         $em->persist($priceList);

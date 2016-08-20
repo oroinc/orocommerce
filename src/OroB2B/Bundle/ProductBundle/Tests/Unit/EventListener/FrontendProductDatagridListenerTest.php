@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -15,9 +14,9 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +49,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
+        $this->themeHelper = $this->getMockBuilder('Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -59,7 +58,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->unitFormatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
 
         $this->listener = new FrontendProductDatagridListener(
@@ -124,8 +123,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'columns' => [
-                        'image' => ['label' => 'orob2b.product.image.label'],
-                        'shortDescription' => ['label' => 'orob2b.product.short_descriptions.label'],
+                        'image' => ['label' => 'oro.product.image.label'],
+                        'shortDescription' => ['label' => 'oro.product.short_descriptions.label'],
                     ]
                 ]
             ],
@@ -140,7 +139,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'columns' => [
-                        'image' => ['label' => 'orob2b.product.image.label'],
+                        'image' => ['label' => 'oro.product.image.label'],
                     ]
                 ]
             ],
@@ -208,11 +207,11 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $productRepository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+        $productRepository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $productUnitRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -220,14 +219,14 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnMap(
                 [
-                    ['OroB2BProductBundle:Product', $productRepository],
-                    ['OroB2BProductBundle:ProductUnit', $productUnitRepository]
+                    ['OroProductBundle:Product', $productRepository],
+                    ['OroProductBundle:ProductUnit', $productUnitRepository]
                 ]
             );
 
         $images = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
+            $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);
@@ -361,15 +360,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->willReturn($em);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()->getMock();
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->willReturn($repository);
 
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */

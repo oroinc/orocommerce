@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormFactory;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\InvoiceBundle\EventListener\TotalCalculateListener;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\InvoiceBundle\EventListener\TotalCalculateListener;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +41,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
             ->setMethods(['submit'])
             ->disableOriginalConstructor()
             ->getMock();

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 
 class FrontendShoppingListProductUnitsQuantityProvider
 {

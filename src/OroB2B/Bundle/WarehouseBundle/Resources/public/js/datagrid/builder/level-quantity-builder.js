@@ -22,8 +22,8 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/fo
          */
         constraintNames: {
             range: 'Range',
-            decimal: 'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
-            integer: 'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\Integer'
+            decimal: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
+            integer: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Integer'
         },
 
         /**

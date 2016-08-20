@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
-use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -316,7 +315,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $shippingRule = $this->getEntityManager()->find('OroB2BShippingBundle:ShippingRule', $shippingRule->getId());
+        $shippingRule = $this->getEntityManager()->find('OroShippingBundle:ShippingRule', $shippingRule->getId());
         $this->assertCount(0, $shippingRule->getDestinations());
 
         return $shippingRule;
@@ -460,7 +459,7 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BShippingBundle:ShippingRule');
+            ->getManagerForClass('OroShippingBundle:ShippingRule');
     }
 
     /**
@@ -470,7 +469,7 @@ class ShippingRuleControllerTest extends WebTestCase
     protected function getShippingRuleByName($name)
     {
         return $this->getEntityManager()
-            ->getRepository('OroB2BShippingBundle:ShippingRule')
+            ->getRepository('OroShippingBundle:ShippingRule')
             ->findOneBy(['name' => $name]);
     }
 }

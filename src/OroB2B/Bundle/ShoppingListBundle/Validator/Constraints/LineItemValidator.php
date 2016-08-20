@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Validator\Constraints;
+namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -18,14 +18,14 @@ class LineItemValidator extends ConstraintValidator
     }
 
     /**
-     * @param \OroB2B\Bundle\ShoppingListBundle\Entity\LineItem $value
+     * @param \Oro\Bundle\ShoppingListBundle\Entity\LineItem $value
      * @param Constraint|LineItem $constraint
      *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        if ($this->registry->getRepository('OroB2BShoppingListBundle:LineItem')->findDuplicate($value)) {
+        if ($this->registry->getRepository('OroShoppingListBundle:LineItem')->findDuplicate($value)) {
             $this->context->addViolation($constraint->message);
         }
     }

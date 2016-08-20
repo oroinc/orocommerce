@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
@@ -8,16 +8,16 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision';
+    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision';
 
     /**
      * @var CategoryUnitPrecisionType

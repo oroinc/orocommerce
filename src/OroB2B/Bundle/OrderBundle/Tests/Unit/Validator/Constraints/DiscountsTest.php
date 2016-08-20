@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\Discounts;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Validator\Constraints\Discounts;
+use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
 
 class DiscountsTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +28,7 @@ class DiscountsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value must be instance of "OroB2B\Bundle\OrderBundle\Entity\Order"
+     * @expectedExceptionMessage Value must be instance of "Oro\Bundle\OrderBundle\Entity\Order"
      */
     public function testValidateException()
     {
@@ -95,7 +94,7 @@ class DiscountsTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 (new Order())->setSubtotal(10)->setTotalDiscounts(Price::create(15, 'USD')),
-                ['orob2b.order.discounts.sum.error.label']
+                ['oro.order.discounts.sum.error.label']
             ]
         ];
     }

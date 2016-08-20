@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 

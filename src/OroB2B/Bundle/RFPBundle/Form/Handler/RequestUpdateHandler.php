@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Handler;
+namespace Oro\Bundle\RFPBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
-
-use OroB2B\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
+use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
 
 class RequestUpdateHandler extends UpdateHandler
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
+use Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {

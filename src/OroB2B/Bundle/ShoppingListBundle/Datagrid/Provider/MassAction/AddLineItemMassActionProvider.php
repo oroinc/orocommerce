@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
@@ -48,11 +47,11 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
 
         $actions['new'] = $this->getConfig([
             'type' => 'window',
-            'label' => $this->translator->trans('orob2b.shoppinglist.product.create_new_shopping_list.label'),
+            'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
             'icon' => 'plus',
             'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
             'frontend_options' => [
-                'title' => $this->translator->trans('orob2b.shoppinglist.product.add_to_shopping_list.label'),
+                'title' => $this->translator->trans('oro.shoppinglist.product.add_to_shopping_list.label'),
                 'regionEnabled' => false,
                 'incrementalPosition' => false,
                 'dialogOptions' => [
@@ -91,7 +90,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     protected function getLabel(ShoppingList $shoppingList)
     {
         return $this->translator->trans(
-            'orob2b.shoppinglist.actions.add_to_shopping_list',
+            'oro.shoppinglist.actions.add_to_shopping_list',
             [
                 '{{ shoppingList }}' => $shoppingList->getLabel()
             ]

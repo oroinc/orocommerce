@@ -5,7 +5,7 @@
 
 {% set formAction = entity.id ? path('orob2b_account_group_update', {id: entity.id}) : path('orob2b_account_group_create') %}
 
-{% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.account.accountgroup.entity_label'|trans} }) %}
+{% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.account.accountgroup.entity_label'|trans} }) %}
 
 {% set gridName = 'account-group-accounts-grid-update' %}
 
@@ -17,7 +17,7 @@
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
-            'entity_label': 'orob2b.account.accountgroup.entity_label'|trans,
+            'entity_label': 'oro.account.accountgroup.entity_label'|trans,
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
@@ -34,12 +34,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_account_group_index'),
-            'indexLabel': 'orob2b.account.accountgroup.entity_plural_label'|trans,
+            'indexLabel': 'oro.account.accountgroup.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.account.accountgroup.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.account.accountgroup.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -49,7 +49,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.account.sections.general'|trans,
+            'title': 'oro.account.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {
@@ -62,7 +62,7 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title' : 'orob2b.account.sections.accountgroup.accounts'|trans,
+        'title' : 'oro.account.sections.accountgroup.accounts'|trans,
         'subblocks': [{
             'title' : null,
             'useSpan': false,

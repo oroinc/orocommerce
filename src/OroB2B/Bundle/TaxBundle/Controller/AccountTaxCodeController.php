@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Controller;
+namespace Oro\Bundle\TaxBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeType;
 
 class AccountTaxCodeController extends Controller
 {
@@ -36,7 +35,7 @@ class AccountTaxCodeController extends Controller
      * @Acl(
      *      id="orob2b_tax_account_tax_code_view",
      *      type="entity",
-     *      class="OroB2BTaxBundle:AccountTaxCode",
+     *      class="OroTaxBundle:AccountTaxCode",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class AccountTaxCodeController extends Controller
 
     /**
      * @Route("/create", name="orob2b_tax_account_tax_code_create")
-     * @Template("OroB2BTaxBundle:AccountTaxCode:update.html.twig")
+     * @Template("OroTaxBundle:AccountTaxCode:update.html.twig")
      * @Acl(
      *      id="orob2b_tax_account_tax_code_create",
      *      type="entity",
-     *      class="OroB2BTaxBundle:AccountTaxCode",
+     *      class="OroTaxBundle:AccountTaxCode",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class AccountTaxCodeController extends Controller
      * @Acl(
      *      id="orob2b_tax_account_tax_code_update",
      *      type="entity",
-     *      class="OroB2BTaxBundle:AccountTaxCode",
+     *      class="OroTaxBundle:AccountTaxCode",
      *      permission="EDIT"
      * )
      *
@@ -106,7 +105,7 @@ class AccountTaxCodeController extends Controller
                     'parameters' => ['id' => $accountTaxCode->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.tax.controller.account_tax_code.saved.message')
+            $this->get('translator')->trans('oro.tax.controller.account_tax_code.saved.message')
         );
     }
 }

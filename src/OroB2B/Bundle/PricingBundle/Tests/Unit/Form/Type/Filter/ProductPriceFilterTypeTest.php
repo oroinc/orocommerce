@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -9,10 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTest;
-
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
@@ -32,7 +31,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         parent::setUp();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $formatter */
-        $formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $formatter->expects($this->any())
@@ -49,7 +48,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     public function getRegistry()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnit $productUnitMock */
-        $productUnitMock = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+        $productUnitMock = $this->getMock('Oro\Bundle\ProductBundle\Entity\ProductUnit');
         $productUnitMock->expects($this->any())
             ->method('getCode')
             ->will($this->returnValue('item'));
@@ -57,7 +56,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $productUnitRepository */
         $productUnitRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
+                'Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -72,13 +71,13 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->getMock();
         $entityManager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->will($this->returnValue($productUnitRepository));
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->will($this->returnValue($entityManager));
 
         return $this->registry;

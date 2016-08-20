@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Translation\Strategy;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Translation\Strategy;
 
 use Oro\Bundle\TranslationBundle\Strategy\DefaultTranslationStrategy;
-
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy;
 
 class CompositeFallbackStrategyTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +30,7 @@ class CompositeFallbackStrategyTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->frontendStrategy = $this
             ->getMockBuilder('Oro\Bundle\TranslationBundle\Strategy\DefaultTranslationStrategy')

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
  * @ORM\Table("orob2b_shipping_orig_warehouse")
@@ -17,7 +17,7 @@ class ShippingOriginWarehouse extends ShippingOrigin
     /**
      * @var Warehouse
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\WarehouseBundle\Entity\Warehouse")
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\WarehouseBundle\Entity\Warehouse")
      * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $warehouse;

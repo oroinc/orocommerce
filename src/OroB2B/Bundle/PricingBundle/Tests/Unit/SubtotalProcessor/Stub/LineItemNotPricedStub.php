@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
-use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class LineItemNotPricedStub implements
     ProductUnitHolderInterface,

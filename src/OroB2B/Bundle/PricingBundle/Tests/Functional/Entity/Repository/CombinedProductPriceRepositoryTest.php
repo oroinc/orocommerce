@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -24,8 +23,8 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
         ]);
         $this->insertFromSelectQueryExecutor = $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
@@ -178,7 +177,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     protected function getCombinedProductPriceRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedProductPrice');
+            ->getRepository('OroPricingBundle:CombinedProductPrice');
     }
 
     /**
@@ -187,6 +186,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     protected function getCombinedPriceListToPriceListRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
+            ->getRepository('OroPricingBundle:CombinedPriceListToPriceList');
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductUnitHolderTypeStub extends AbstractType
 {
@@ -19,7 +19,7 @@ class ProductUnitHolderTypeStub extends AbstractType
     {
         $builder
             ->add('productUnit', ProductUnitSelectionType::NAME, [
-                'label' =>  'orob2b.productunit.entity_label',
+                'label' =>  'oro.productunit.entity_label',
             ])
         ;
     }
@@ -38,7 +38,7 @@ class ProductUnitHolderTypeStub extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class' => 'OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface',
+            'class' => 'Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface',
             'create_enabled' => true,
             'configs' => [
                 'placeholder' => null,

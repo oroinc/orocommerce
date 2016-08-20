@@ -1,30 +1,29 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Event\ContextEvent;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
 class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_TAX_CODE_CLASS = 'PRODUCT_TAX_CODE_CLASS';
     const ACCOUNT_TAX_CODE_CLASS = 'ACCOUNT_TAX_CODE_CLASS';
-    const ORDER_LINE_ITEM_CLASS = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
+    const ORDER_LINE_ITEM_CLASS = 'Oro\Bundle\OrderBundle\Entity\OrderLineItem';
     const PRODUCT_TAX_CODE = 'PTC';
     const ACCOUNT_TAX_CODE = 'ATC';
     const ACCOUNT_GROUP_TAX_CODE = 'AGTC';
@@ -100,7 +99,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->order->setShippingAddress($shippingAddress);
 
         $this->addressProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -125,7 +124,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->repository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

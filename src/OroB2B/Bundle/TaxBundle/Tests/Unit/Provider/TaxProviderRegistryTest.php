@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface;
-use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,7 +67,7 @@ class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProviderMock($name)
     {
-        $mock = $this->getMock('OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock = $this->getMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
         $mock->expects($this->any())
             ->method('getName')
             ->willReturn($name);

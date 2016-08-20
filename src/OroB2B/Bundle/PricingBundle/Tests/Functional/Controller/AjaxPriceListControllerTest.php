@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class AjaxPriceListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testDefaultAction()
@@ -40,7 +39,7 @@ class AjaxPriceListControllerTest extends WebTestCase
 
         $defaultPriceLists = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroPricingBundle:PriceList')
             ->findBy(['default' => true]);
 
         $this->assertEquals([$priceList], $defaultPriceLists);

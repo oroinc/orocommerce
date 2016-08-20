@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Entity;
+namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,16 +14,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
-use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\OrderBundle\Model\ExtendOrder;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -221,7 +220,7 @@ class Order extends ExtendOrder implements
     /**
      * @var PaymentTerm
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTerm")
      * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -236,7 +235,7 @@ class Order extends ExtendOrder implements
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -251,7 +250,7 @@ class Order extends ExtendOrder implements
     /**
      * @var Collection|OrderLineItem[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderLineItem",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
      * @ConfigField(
@@ -326,7 +325,7 @@ class Order extends ExtendOrder implements
     /**
      * @var Collection|OrderDiscount[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderDiscount",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
      * @ConfigField(

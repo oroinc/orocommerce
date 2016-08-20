@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\EventListener\OrderFormViewListener;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\EventListener\OrderFormViewListener;
 
 class OrderFormViewListenerTest extends \PHPUnit_Framework_TestCase
 {

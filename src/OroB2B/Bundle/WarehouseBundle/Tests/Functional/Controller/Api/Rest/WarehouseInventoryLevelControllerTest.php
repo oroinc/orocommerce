@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
@@ -23,7 +22,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
+                'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
             ]
         );
     }

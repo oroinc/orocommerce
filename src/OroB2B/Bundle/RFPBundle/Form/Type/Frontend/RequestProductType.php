@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
+namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 
 class RequestProductType extends AbstractType
 {
@@ -37,7 +37,7 @@ class RequestProductType extends AbstractType
         $builder
             ->add('product', ProductSelectType::NAME, [
                 'required' => true,
-                'label' => 'orob2b.product.entity_label',
+                'label' => 'oro.product.entity_label',
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
                 'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
@@ -51,14 +51,14 @@ class RequestProductType extends AbstractType
                 ]
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
-                'label' => 'orob2b.rfp.requestproductitem.entity_plural_label',
+                'label' => 'oro.rfp.requestproductitem.entity_plural_label',
                 'options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])
             ->add('comment', 'textarea', [
                 'required' => false,
-                'label' => 'orob2b.rfp.requestproduct.notes.label',
+                'label' => 'oro.rfp.requestproduct.notes.label',
             ])
         ;
     }

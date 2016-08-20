@@ -29,20 +29,20 @@ datagrid:
 
         columns:
             id:
-                label:         orob2b.shoppinglist.id.label
+                label:         oro.shoppinglist.id.label
             label:
-                label:         orob2b.shoppinglist.label.label
+                label:         oro.shoppinglist.label.label
             notes:
-                label:         orob2b.shoppinglist.notes.label
+                label:         oro.shoppinglist.notes.label
             account:
-                label:         orob2b.shoppinglist.account.label
+                label:         oro.shoppinglist.account.label
             account_user:
-                label:         orob2b.shoppinglist.account_user.label
+                label:         oro.shoppinglist.account_user.label
             subtotal:
-                label:         orob2b.shoppinglist.subtotal.label
+                label:         oro.shoppinglist.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig
+                template:      OroPricingBundle:Datagrid:Column/subtotal.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -131,18 +131,18 @@ datagrid:
                 - shopping_list_id
         columns:
             productSku:
-                label:         orob2b.shoppinglist.lineitem.product_sku.label
+                label:         oro.shoppinglist.lineitem.product_sku.label
             productName:
-                label:         orob2b.shoppinglist.lineitem.product_name.label
+                label:         oro.shoppinglist.lineitem.product_name.label
             quantity:
-                label:         orob2b.shoppinglist.lineitem.quantity.label
+                label:         oro.shoppinglist.lineitem.quantity.label
             unitCode:
-                label:         orob2b.shoppinglist.lineitem.unit.label
+                label:         oro.shoppinglist.lineitem.unit.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             notes:
-                label:         orob2b.shoppinglist.lineitem.notes.label
+                label:         oro.shoppinglist.lineitem.notes.label
         sorters:
             columns:
                 productSku:
@@ -185,7 +185,7 @@ datagrid:
         actions:
             view_product:
                 type:          navigate
-                label:         orob2b.shoppinglist.lineitem.grid.action.view.product
+                label:         oro.shoppinglist.lineitem.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
                 acl_resource:  orob2b_product_view

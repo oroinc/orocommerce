@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Component\Action\Tests\Unit\Action\Stub\StubStorage;
-
-use OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
 {
@@ -129,12 +128,12 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BCheckoutBundle:Checkout')
+            ->with('OroCheckoutBundle:Checkout')
             ->willReturn($repository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BCheckoutBundle:Checkout')
+            ->with('OroCheckoutBundle:Checkout')
             ->willReturn($em);
     }
 }

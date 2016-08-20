@@ -10,7 +10,7 @@
     <% var collapseIn = _.defaults(item.data.in, true); %>
     <div class="collapse<%= collapseIn ? ' in' : '' %>" id="order-taxes-totals-table">
         <div class="controls">
-            {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
+            {% import 'OroTaxBundle::macros.html.twig' as TAX %}
             <% var total = item.data.total %>
             {{ TAX.renderJsItems() }}
             <% var taxes = item.data.taxes %>

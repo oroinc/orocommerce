@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace Oro\Bundle\ShoppingListBundle\Provider;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListEntityNameProvider implements EntityNameProviderInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,10 +9,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductItemType extends AbstractType
 {
@@ -43,7 +42,7 @@ class RequestProductItemType extends AbstractType
                 [
                     'currency_empty_value' => null,
                     'required' => true,
-                    'label' => 'orob2b.rfp.requestproductitem.price.label',
+                    'label' => 'oro.rfp.requestproductitem.price.label',
                     'validation_groups' => ['Optional'],
                 ]
             )
@@ -51,7 +50,7 @@ class RequestProductItemType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.product.productunit.entity_label',
+                    'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
                     'compact' => $options['compact_units'],
                 ]
@@ -61,7 +60,7 @@ class RequestProductItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.rfp.requestproductitem.quantity.label',
+                    'label' => 'oro.rfp.requestproductitem.quantity.label',
                     'default_data' => 1,
                 ]
             );

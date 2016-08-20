@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Validator\ExecutionContext;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ZipCode';
+    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ZipCode';
 
     /**
      * @var ZipCodeType
@@ -61,7 +60,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
 
         $transformers = $form->getConfig()->getModelTransformers();
         $this->assertCount(1, $transformers);
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer', $transformers[0]);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer', $transformers[0]);
 
 
         $form->submit($submittedData);
@@ -125,7 +124,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     {
         $zipCodeFieldsConstraint = new ZipCodeFields();
         $zipCodeFieldsValidator = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator')
             ->setMethods(['initialize', 'isInteger'])
             ->getMock();
 

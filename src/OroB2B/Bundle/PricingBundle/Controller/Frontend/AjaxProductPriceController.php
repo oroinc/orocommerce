@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller\Frontend;
+namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
+use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
+namespace Oro\Bundle\CheckoutBundle\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -11,19 +11,18 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Start checkout process on frontend
@@ -196,7 +195,7 @@ class StartCheckout extends AbstractAction
         /** @var CheckoutSourceEntityInterface $sourceEntity */
         $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_ENTITY_KEY]);
 
-        $sourceRepository = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource');
+        $sourceRepository = $em->getRepository('OroCheckoutBundle:CheckoutSource');
         $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 

@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -121,7 +121,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     protected function getResolvedValues()
     {
         return $this->registry
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
             ->findAll();
     }
     /**
@@ -171,7 +171,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     protected function getSourceRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            'OroB2BAccountBundle:Visibility\AccountProductVisibility'
+            'OroAccountBundle:Visibility\AccountProductVisibility'
         );
     }
     /**
@@ -180,7 +180,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
+            'OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
         );
     }
     /**
@@ -203,7 +203,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => 'Default']);
+            ->getManagerForClass('OroWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => 'Default']);
     }
 }

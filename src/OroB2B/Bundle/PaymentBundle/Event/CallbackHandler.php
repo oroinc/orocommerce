@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Event;
+namespace Oro\Bundle\PaymentBundle\Event;
 
 use Psr\Log\LoggerAwareTrait;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class CallbackHandler
 {

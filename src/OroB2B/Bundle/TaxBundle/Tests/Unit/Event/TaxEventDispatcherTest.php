@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
-use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class TaxEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,9 +20,9 @@ class TaxEventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $eventDispatcher->expects($this->exactly(3))->method('dispatch')
             ->withConsecutive(
-                [ResolveTaxEvent::RESOLVE_BEFORE, $this->isInstanceOf('OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent')],
-                [ResolveTaxEvent::RESOLVE, $this->isInstanceOf('OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent')],
-                [ResolveTaxEvent::RESOLVE_AFTER, $this->isInstanceOf('OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent')]
+                [ResolveTaxEvent::RESOLVE_BEFORE, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')],
+                [ResolveTaxEvent::RESOLVE, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')],
+                [ResolveTaxEvent::RESOLVE_AFTER, $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ResolveTaxEvent')]
             );
 
         $taxDispatcher->dispatch($taxable);

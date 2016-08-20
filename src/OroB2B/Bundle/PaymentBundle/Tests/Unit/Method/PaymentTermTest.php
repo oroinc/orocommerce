@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method;
 
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -8,12 +8,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -40,7 +39,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,7 +51,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface');
+        $this->config = $this->getMock('Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface');
 
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -419,7 +419,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         if ($reference === self::ROOT_CATEGORY) {
             return $this->getContainer()->get('doctrine')
-                ->getRepository('OroB2BCatalogBundle:Category')
+                ->getRepository('OroCatalogBundle:Category')
                 ->getMasterCatalogRoot()
                 ->getId();
         }
@@ -438,8 +438,8 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var AccountGroupCategoryVisibility[] $visibilities */
         $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter(
@@ -566,8 +566,8 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 
     /**

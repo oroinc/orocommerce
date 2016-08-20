@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -8,11 +8,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
 
 class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -32,9 +31,9 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
         ];
     }
 
@@ -68,7 +67,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $taxCode = $this->entitiesFactory->createAccountTaxCode($code, $data['description'], $manager, $this);
             if (isset($data['accounts'])) {
                 foreach ($data['accounts'] as $accountName) {
-                    $account = $manager->getRepository('OroB2BAccountBundle:Account')->findOneByName($accountName);
+                    $account = $manager->getRepository('OroAccountBundle:Account')->findOneByName($accountName);
                     if (null !== $account) {
                         $taxCode->addAccount($account);
                     }
@@ -76,7 +75,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             }
             if (isset($data['account_groups'])) {
                 foreach ($data['account_groups'] as $groupName) {
-                    $group = $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneByName($groupName);
+                    $group = $manager->getRepository('OroAccountBundle:AccountGroup')->findOneByName($groupName);
                     if (null !== $group) {
                         $taxCode->addAccountGroup($group);
                     }
@@ -98,7 +97,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
         foreach ($productTaxCodes as $code => $data) {
             $taxCode = $this->entitiesFactory->createProductTaxCode($code, $data['description'], $manager, $this);
             foreach ($data['products'] as $sku) {
-                $product = $manager->getRepository('OroB2BProductBundle:Product')->findOneBySku($sku);
+                $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
                 if ($product) {
                     $taxCode->addProduct($product);
                 }
@@ -158,16 +157,16 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     private function loadTaxRules(ObjectManager $manager, $taxRules)
     {
         foreach ($taxRules as $rule) {
-            /** @var \OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode $accountTaxCode */
+            /** @var \Oro\Bundle\TaxBundle\Entity\AccountTaxCode $accountTaxCode */
             $accountTaxCode = $this->getReference($rule['account_tax_code']);
 
-            /** @var \OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode $productTaxCode */
+            /** @var \Oro\Bundle\TaxBundle\Entity\ProductTaxCode $productTaxCode */
             $productTaxCode = $this->getReference($rule['product_tax_code']);
 
-            /** @var \OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction $taxJurisdiction */
+            /** @var \Oro\Bundle\TaxBundle\Entity\TaxJurisdiction $taxJurisdiction */
             $taxJurisdiction = $this->getReference($rule['tax_jurisdiction']);
 
-            /** @var \OroB2B\Bundle\TaxBundle\Entity\Tax $tax */
+            /** @var \Oro\Bundle\TaxBundle\Entity\Tax $tax */
             $tax = $this->getReference($rule['tax']);
 
             $this->entitiesFactory->createTaxRule(

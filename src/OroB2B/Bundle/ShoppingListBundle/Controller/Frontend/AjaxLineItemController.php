@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
+namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -14,13 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class AjaxLineItemController extends Controller
 {
@@ -35,11 +34,11 @@ class AjaxLineItemController extends Controller
      * @Acl(
      *      id="orob2b_shopping_list_line_item_frontend_add",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
+     *      class="OroShoppingListBundle:LineItem",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
-     * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
+     * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
      * @param Product $product
@@ -72,7 +71,7 @@ class AjaxLineItemController extends Controller
         }
 
         return new JsonResponse(
-            $this->getSuccessResponse($shoppingList, $product, 'orob2b.shoppinglist.product.added.label')
+            $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.product.added.label')
         );
     }
 
@@ -87,11 +86,11 @@ class AjaxLineItemController extends Controller
      * @Acl(
      *      id="orob2b_shopping_list_line_item_frontend_remove",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
+     *      class="OroShoppingListBundle:LineItem",
      *      permission="DELETE",
      *      group_name="commerce"
      * )
-     * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
+     * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      * @Method("POST")
      *
      * @param Request $request
@@ -108,7 +107,7 @@ class AjaxLineItemController extends Controller
         $result = [
             'successful' => false,
             'message' => $this->get('translator')
-                ->trans('orob2b.frontend.shoppinglist.lineitem.product.cant_remove.label')
+                ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
         ];
 
         if ($shoppingList) {
@@ -118,7 +117,7 @@ class AjaxLineItemController extends Controller
                 $result = $this->getSuccessResponse(
                     $shoppingList,
                     $product,
-                    'orob2b.frontend.shoppinglist.lineitem.product.removed.label'
+                    'oro.frontend.shoppinglist.lineitem.product.removed.label'
                 );
             }
         }
@@ -153,7 +152,7 @@ class AjaxLineItemController extends Controller
 
     /**
      * @Route("/{gridName}/massAction/{actionName}/create", name="orob2b_shopping_list_add_products_to_new_massaction")
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
      * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
      *
      * @param Request $request

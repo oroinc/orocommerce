@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Provider;
+namespace Oro\Bundle\AccountBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserRelationsProvider
 {
@@ -60,7 +59,7 @@ class AccountUserRelationsProvider
 
             if ($anonymousGroupId) {
                 return $this->doctrineHelper->getEntityReference(
-                    'OroB2BAccountBundle:AccountGroup',
+                    'OroAccountBundle:AccountGroup',
                     $anonymousGroupId
                 );
             }

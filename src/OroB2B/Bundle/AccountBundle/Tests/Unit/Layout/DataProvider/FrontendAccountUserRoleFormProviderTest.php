@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
@@ -8,10 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormProvider;
 
 class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
     protected function setUp()
     {
         $this->handler = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -72,11 +71,11 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
     {
         return [
             [
-                'role' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole'),
+                'role' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserRole'),
                 'route' => 'orob2b_account_frontend_account_user_role_create'
             ],
             [
-                'role' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole', ['id' => 42]),
+                'role' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserRole', ['id' => 42]),
                 'route' => 'orob2b_account_frontend_account_user_role_update',
                 'routeParameters' => ['id' => 42]
             ]

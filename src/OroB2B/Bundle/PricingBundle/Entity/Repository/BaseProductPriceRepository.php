@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
@@ -8,12 +8,11 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 abstract class BaseProductPriceRepository extends EntityRepository
 {
@@ -290,7 +289,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('partial unit.{code}')
-            ->from('OroB2BProductBundle:ProductUnit', 'unit')
+            ->from('OroProductBundle:ProductUnit', 'unit')
             ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
             ->where($qb->expr()->eq('price.product', ':product'))
             ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
@@ -318,7 +317,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')
-            ->from('OroB2BProductBundle:ProductUnit', 'unit')
+            ->from('OroProductBundle:ProductUnit', 'unit')
             ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
             ->where($qb->expr()->in('price.product', ':products'))
             ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))

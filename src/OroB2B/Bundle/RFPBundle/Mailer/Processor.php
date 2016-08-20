@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Mailer;
+namespace Oro\Bundle\RFPBundle\Mailer;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Mailer\BaseProcessor;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\Request;
 
 class Processor extends BaseProcessor
 {

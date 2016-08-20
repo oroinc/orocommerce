@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,11 +9,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
+use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 
 class ProductVariantLinksTypeTest extends FormIntegrationTestCase
 {
@@ -48,7 +47,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->transformer = $this->getMock(
-            'OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'
+            'Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'
         );
         $this->formType = new ProductVariantLinksType($this->transformer);
     }

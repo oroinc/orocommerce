@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -25,8 +24,8 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }

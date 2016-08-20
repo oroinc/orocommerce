@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +34,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();
         $this->shippingRuleDestination = $this->getEntity(
-            'OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination',
             [
                 'region' => $this->region,
                 'country' => $this->country,
@@ -101,7 +100,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString(array $data, $expectedString)
     {
-        $entity = (string)$this->getEntity('OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination', $data);
+        $entity = (string)$this->getEntity('Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination', $data);
         $this->assertEquals($expectedString, $entity);
     }
 

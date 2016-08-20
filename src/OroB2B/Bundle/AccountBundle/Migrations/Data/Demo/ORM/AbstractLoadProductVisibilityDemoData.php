@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -9,15 +9,15 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -40,7 +40,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
             __NAMESPACE__.'\LoadAccountDemoData',
             __NAMESPACE__.'\LoadCategoryVisibilityDemoData',
         ];
@@ -53,7 +53,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getProduct(ObjectManager $manager, $sku)
     {
-        return $manager->getRepository('OroB2BProductBundle:Product')->findOneBySku($sku);
+        return $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
     }
 
     /**
@@ -63,7 +63,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getWebsite(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $name]);
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getAccount(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroAccountBundle:Account')->findOneBy(['name' => $name]);
     }
 
     /**
@@ -83,7 +83,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getAccountGroup(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
     }
 
     /**
@@ -124,10 +124,10 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     protected function resetVisibilities(ObjectManager $manager)
     {
         // products with categories
-        $productIds = $manager->getRepository('OroB2BProductBundle:Product')
+        $productIds = $manager->getRepository('OroProductBundle:Product')
             ->createQueryBuilder('product')
             ->select('product.id')
-            ->innerJoin('OroB2BCatalogBundle:Category', 'category', 'WITH', 'product MEMBER OF category.products')
+            ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'product MEMBER OF category.products')
             ->getQuery()
             ->getArrayResult();
         $productIds = array_map('current', $productIds);
@@ -136,7 +136,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         }
 
         /** @var ProductVisibility[] $visibilities */
-        $visibilities = $manager->getRepository('OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility')
+        $visibilities = $manager->getRepository('Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility')
             ->createQueryBuilder('visibility')
             ->andWhere('IDENTITY(visibility.product) IN (:productIds)')
             ->setParameter('productIds', $productIds)
@@ -161,7 +161,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         if ($row['all']) {
             $productVisibility = $this->findVisibilityEntity(
                 $manager,
-                'OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
+                'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
                 ['website' => $website, 'product' => $product]
             );
             if (!$productVisibility) {

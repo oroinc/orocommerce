@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -8,8 +8,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 
 class PriceListAccountFallbackRepository extends EntityRepository
 {
@@ -42,9 +41,9 @@ class PriceListAccountFallbackRepository extends EntityRepository
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('DISTINCT account.id')
-            ->from('OroB2BAccountBundle:Account', 'account');
+            ->from('OroAccountBundle:Account', 'account');
         $qb->leftJoin(
-            'OroB2BPricingBundle:PriceListAccountFallback',
+            'OroPricingBundle:PriceListAccountFallback',
             'accountFallback',
             Join::WITH,
             $qb->expr()->andX(

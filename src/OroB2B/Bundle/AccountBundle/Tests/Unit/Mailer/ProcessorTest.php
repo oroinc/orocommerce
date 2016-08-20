@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Mailer;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Mailer;
 
 use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
-
-use OroB2B\Bundle\AccountBundle\Mailer\Processor;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Mailer\Processor;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ProcessorTest extends AbstractProcessorTest
 {

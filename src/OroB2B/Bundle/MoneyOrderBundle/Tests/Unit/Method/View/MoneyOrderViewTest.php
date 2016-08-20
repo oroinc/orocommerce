@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Unit\Method\View;
+namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\View;
 
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use OroB2B\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
-
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
@@ -94,6 +93,6 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
      */
     protected function getConfigKey($key)
     {
-        return OroB2BMoneyOrderExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return OroMoneyOrderExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }

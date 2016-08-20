@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\EventListener;
+namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -8,9 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class FormViewListener
 {
@@ -61,17 +60,17 @@ class FormViewListener
         }
 
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
         if (!$product) {
             return;
         }
 
         /** @var CategoryRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroB2BCatalogBundle:Category');
+        $repository = $this->doctrineHelper->getEntityRepository('OroCatalogBundle:Category');
         $category = $repository->findOneByProduct($product);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BCatalogBundle:Product:category_view.html.twig',
+            'OroCatalogBundle:Product:category_view.html.twig',
             ['entity' => $category]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);
@@ -83,7 +82,7 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BCatalogBundle:Product:category_update.html.twig',
+            'OroCatalogBundle:Product:category_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);
@@ -95,7 +94,7 @@ class FormViewListener
      */
     protected function addCategoryBlock(ScrollData $scrollData, $html)
     {
-        $blockLabel = $this->translator->trans('orob2b.catalog.product.section.catalog');
+        $blockLabel = $this->translator->trans('oro.catalog.product.section.catalog');
         $blockId    = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);

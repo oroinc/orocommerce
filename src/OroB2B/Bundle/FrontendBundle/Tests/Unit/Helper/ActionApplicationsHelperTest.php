@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Helper;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Helper;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\ActionBundle\Tests\Unit\Helper\ApplicationsHelperTest;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class ActionApplicationsHelperTest extends ApplicationsHelperTest
 {

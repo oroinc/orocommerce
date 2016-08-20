@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
-
-use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
+use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
 class ProductGridWidgetRenderEventListener
 {

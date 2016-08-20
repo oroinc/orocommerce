@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportTemplateType;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
 {
@@ -18,9 +17,9 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
     {
         return [
             'orob2b_product.inventory_status_only_template'
-                => 'orob2b.product.export.inventory_status_only',
+                => 'oro.product.export.inventory_status_only',
             'orob2b_warehouse.detailed_inventory_levels_template'
-                => 'orob2b.warehouse.export.detailed_inventory_levels',
+                => 'oro.warehouse.export.detailed_inventory_levels',
         ];
     }
 
@@ -49,7 +48,7 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
             'processorAlias',
             'choice',
             [
-                'label' => 'orob2b.warehouse.export.popup.options.label',
+                'label' => 'oro.warehouse.export.popup.options.label',
                 'choices' => $processorAliases,
                 'required' => true,
                 'placeholder' => false,

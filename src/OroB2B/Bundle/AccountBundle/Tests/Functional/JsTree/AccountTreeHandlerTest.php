@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\JsTree;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\JsTree;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
-use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 /**
  * @dbIsolation
@@ -16,7 +16,7 @@ class AccountTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getFixtures()
     {
-        return 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts';
+        return 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts';
     }
 
     /**

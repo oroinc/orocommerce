@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -9,13 +9,12 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
@@ -36,8 +35,8 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new PriceListSystemConfigType(
-            'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig',
-            'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag'
+            'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig',
+            'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigBag'
         );
         $this->testPriceListConfigs = $this->createConfigs(2);
         foreach ($this->testPriceListConfigs as $config) {

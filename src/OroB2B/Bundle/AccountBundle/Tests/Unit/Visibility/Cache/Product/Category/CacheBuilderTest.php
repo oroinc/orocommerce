@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\AbstractCacheBuilderTest;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product\AbstractCacheBuilderTest;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {
@@ -34,7 +34,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryCaseCacheBuilderInterface $customBuilder */
         $customBuilder
-            = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+            = $this->getMock('Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
         $customBuilder->expects($this->once())
             ->method('categoryPositionChanged')
             ->with($category);

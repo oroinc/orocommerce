@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\EventListener;
+namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListener
 {

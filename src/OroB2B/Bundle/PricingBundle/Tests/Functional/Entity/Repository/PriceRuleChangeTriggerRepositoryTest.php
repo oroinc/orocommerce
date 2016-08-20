@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
 /**
  * @dbIsolation

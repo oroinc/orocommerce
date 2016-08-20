@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\Ajax\AjaxMassAction;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;

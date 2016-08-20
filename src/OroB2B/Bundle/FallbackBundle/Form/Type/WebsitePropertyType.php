@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FallbackBundle\Form\Type;
+namespace Oro\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,7 +43,7 @@ class WebsitePropertyType extends AbstractType
             ->add(
                 self::FIELD_DEFAULT,
                 $formType,
-                array_merge($formOptions, ['label' => 'orob2b.fallback.value.default'])
+                array_merge($formOptions, ['label' => 'oro.fallback.value.default'])
             )
             ->add(self::FIELD_WEBSITES, WebsiteCollectionType::NAME, ['type' => $formType, 'options' => $formOptions]);
 

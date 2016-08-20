@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\Strategy;
+namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
 {

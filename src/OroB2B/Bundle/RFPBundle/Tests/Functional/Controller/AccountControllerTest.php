@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -21,14 +20,14 @@ class AccountControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
         ]);
     }
 
     public function testQuoteGridOnAccountViewPage()
     {
         $repo = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository('OroB2BRFPBundle:Request');
+            ->getEntityRepository('OroRFPBundle:Request');
         /** @var Request $request */
         $request = $repo->findOneBy(['note' => 'rfp.request.3']);
         /** @var Account $account */

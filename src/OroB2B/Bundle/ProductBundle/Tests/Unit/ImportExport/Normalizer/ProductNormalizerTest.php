@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Normalizer;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
-
-use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +38,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $this->productClass = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+        $this->productClass = 'Oro\Bundle\ProductBundle\Entity\Product';
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
         $this->productNormalizer->setProductClass($this->productClass);
         $this->productNormalizer->setEventDispatcher($this->eventDispatcher);
@@ -78,7 +77,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
                         $this->isType('string'),
                         $this->equalTo('orob2b_product.normalizer.normalizer')
                     ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]
             );
 
@@ -120,7 +119,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
                         $this->isType('string'),
                         $this->equalTo('orob2b_product.normalizer.denormalizer')
                     ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]
             );
 
@@ -177,7 +176,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
             ['\stdClass', false],
             ['string', false],
             ['', false],
-            ['OroB2B\Bundle\ProductBundle\Entity\Product', true],
+            ['Oro\Bundle\ProductBundle\Entity\Product', true],
         ];
     }
 }

@@ -4,14 +4,14 @@
     {% for choice in form.unit.vars.choices %}
         {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
     {% endfor %}
-    <div data-page-component-module="orob2bproduct/js/app/components/product-primary-unit-limitations-component"
+    <div data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
          data-page-component-options="{{ { 'precisions': precisions }|json_encode }}">
 
         <div class="float-holder">
             <table>
                 <tr>
                     <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
-                    <td><div class="control-label"><label>{{ 'orob2b.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
+                    <td><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
                     <td>{{ form_widget(form.conversionRate) }}</td>
                     <td>{{ form_widget(form.sell) }}</td>
@@ -73,10 +73,10 @@
             <div>
                 <table class="grid table table-condensed table-bordered table-hover">
                     <thead>
-                        <th>{{ 'orob2b.product.productunitprecision.unit.label'|trans }}</th>
-                        <th>{{ 'orob2b.product.productunitprecision.precision.label'|trans }}</th>
-                        <th>{{ 'orob2b.product.productunitprecision.conversion_rate.label'|trans }}</th>
-                        <th>{{ 'orob2b.product.productunitprecision.sell.label'|trans }}</th>
+                        <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
+                        <th>{{ 'oro.product.productunitprecision.precision.label'|trans }}</th>
+                        <th>{{ 'oro.product.productunitprecision.conversion_rate.label'|trans }}</th>
+                        <th>{{ 'oro.product.productunitprecision.sell.label'|trans }}</th>
                         <th></th>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
@@ -106,7 +106,7 @@
         {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
     {% endfor %}
 
-    <div data-page-component-module="orob2bproduct/js/app/components/product-unit-selection-limitations-component"
+    <div data-page-component-module="oroproduct/js/app/components/product-unit-selection-limitations-component"
          data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="unit-precisions-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection ' }) %}
         {{ block('oro_product_precision_collection_widget') }}
@@ -148,12 +148,12 @@
         {% set id = id ~ '_collection' %}
         {% set prototype_name = form.vars.prototype_name %}
 
-        <div class="row-oro" data-page-component-module="orob2bproduct/js/app/components/product-image-type-radio-control-component">
+        <div class="row-oro" data-page-component-module="oroproduct/js/app/components/product-image-type-radio-control-component">
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                         <tr>
-                            <th class="file"><span>{{ 'orob2b.product.productimage.file.label'|trans }}</span></th>
+                            <th class="file"><span>{{ 'oro.product.productimage.file.label'|trans }}</span></th>
                             {% for imageType in form.vars.imageTypes %}
                                 <th><span>{{ imageType.label|trans }}</span></th>
                             {% endfor %}
@@ -181,7 +181,7 @@
                 </table>
                 {% if allow_add %}
                     <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
-                        <i class="icon-plus"></i>{{ 'orob2b.product.productimage.add.label'|trans }}
+                        <i class="icon-plus"></i>{{ 'oro.product.productimage.add.label'|trans }}
                     </a>
                 {% endif %}
             </div>

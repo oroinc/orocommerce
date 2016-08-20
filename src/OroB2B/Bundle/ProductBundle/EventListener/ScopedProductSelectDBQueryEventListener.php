@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 class ScopedProductSelectDBQueryEventListener extends ProductSelectDBQueryEventListener
 {

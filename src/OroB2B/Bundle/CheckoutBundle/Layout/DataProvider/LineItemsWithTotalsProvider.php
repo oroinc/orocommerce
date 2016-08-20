@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class LineItemsWithTotalsProvider
 {

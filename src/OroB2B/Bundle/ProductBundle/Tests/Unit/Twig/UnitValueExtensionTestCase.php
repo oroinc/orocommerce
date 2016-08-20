@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 abstract class UnitValueExtensionTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ abstract class UnitValueExtensionTestCase extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter')
+        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter')
             ->disableOriginalConstructor()
             ->getMock();
     }

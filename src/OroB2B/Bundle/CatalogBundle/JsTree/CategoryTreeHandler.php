@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\JsTree;
+namespace Oro\Bundle\CatalogBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class CategoryTreeHandler extends AbstractTreeHandler
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,10 +34,10 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->modifier = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier')
             ->disableOriginalConstructor()->getMock();
         $this->listener = new ProductSelectDBQueryEventListener(
             $this->frontendHelper,
@@ -96,7 +96,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEventMock()
     {
-        return $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        return $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
             ->disableOriginalConstructor()->getMock();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,9 +9,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductRowCollectionType extends AbstractType
 {

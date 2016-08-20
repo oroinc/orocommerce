@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use OroB2B\Bundle\RFPBundle\Form\Type\OffersType;
+use Oro\Bundle\RFPBundle\Form\Type\OffersType;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

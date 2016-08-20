@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Twig;
+namespace Oro\Bundle\CheckoutBundle\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class LineItemsExtension extends \Twig_Extension
 {

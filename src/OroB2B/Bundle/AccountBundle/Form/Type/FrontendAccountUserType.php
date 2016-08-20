@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,8 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserType extends AbstractType
 {
@@ -53,7 +52,7 @@ class FrontendAccountUserType extends AbstractType
             'roles',
             FrontendAccountUserRoleSelectType::NAME,
             [
-                'label' => 'orob2b.account.accountuser.roles.label'
+                'label' => 'oro.account.accountuser.roles.label'
             ]
         );
     }

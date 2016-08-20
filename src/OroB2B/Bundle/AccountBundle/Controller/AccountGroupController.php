@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,10 +12,9 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountGroupHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountGroupHandler;
 
 class AccountGroupController extends Controller
 {
@@ -39,7 +38,7 @@ class AccountGroupController extends Controller
      * @Acl(
      *      id="orob2b_account_group_view",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountGroup",
+     *      class="OroAccountBundle:AccountGroup",
      *      permission="VIEW"
      * )
      * @Template()
@@ -56,11 +55,11 @@ class AccountGroupController extends Controller
 
     /**
      * @Route("/create", name="orob2b_account_group_create")
-     * @Template("OroB2BAccountBundle:AccountGroup:update.html.twig")
+     * @Template("OroAccountBundle:AccountGroup:update.html.twig")
      * @Acl(
      *      id="orob2b_account_group_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountGroup",
+     *      class="OroAccountBundle:AccountGroup",
      *      permission="CREATE"
      * )
      *
@@ -77,7 +76,7 @@ class AccountGroupController extends Controller
      * @Acl(
      *      id="orob2b_account_group_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountGroup",
+     *      class="OroAccountBundle:AccountGroup",
      *      permission="EDIT"
      * )
      *
@@ -118,14 +117,14 @@ class AccountGroupController extends Controller
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.accountgroup.saved.message'),
+            $this->get('translator')->trans('oro.account.controller.accountgroup.saved.message'),
             $handler
         );
     }
 
     /**
      * @Route("/info/{id}", name="orob2b_account_group_info", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountGroup/widget:info.html.twig")
+     * @Template("OroAccountBundle:AccountGroup/widget:info.html.twig")
      * @AclAncestor("orob2b_account_group_view")
      *
      * @param AccountGroup $group

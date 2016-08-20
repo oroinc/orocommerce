@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 
 class AccountTaxExtension extends AbstractTaxExtension
 {
@@ -33,7 +33,7 @@ class AccountTaxExtension extends AbstractTaxExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.taxcode.label',
+                    'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
                 ]
             );

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermData extends AbstractFixture
 {

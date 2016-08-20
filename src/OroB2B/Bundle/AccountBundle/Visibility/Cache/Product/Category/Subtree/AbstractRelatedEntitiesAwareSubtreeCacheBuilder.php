@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
@@ -75,8 +75,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         }
 
         $childCategories = $this->registry
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getAllChildCategories($category);
 
         $childCategoryLevels = [];
@@ -159,8 +159,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function removeIdsWithConfigFallback(Category $category, array $accountGroupIds)
     {
         $accountGroupsCategoryVisibilities = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->getVisibilitiesForAccountGroups($category, $accountGroupIds);
 
         $accountGroupsWithConfigCallbackIds = [];
@@ -183,8 +183,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         array $restrictedAccountGroupIds = null
     ) {
         return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
-            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->getManagerForClass('OroAccountBundle:AccountGroup')
+            ->getRepository('OroAccountBundle:AccountGroup')
             ->getCategoryAccountGroupIdsByVisibility(
                 $category,
                 AccountGroupCategoryVisibility::PARENT_CATEGORY,
@@ -200,8 +200,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToParent(Category $category, array $restrictedAccountIds = null)
     {
         return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Account')
-            ->getRepository('OroB2BAccountBundle:Account')
+            ->getManagerForClass('OroAccountBundle:Account')
+            ->getRepository('OroAccountBundle:Account')
             ->getCategoryAccountIdsByVisibility(
                 $category,
                 AccountCategoryVisibility::PARENT_CATEGORY,
@@ -216,8 +216,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToAll(Category $category)
     {
         return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Account')
-            ->getRepository('OroB2BAccountBundle:Account')
+            ->getManagerForClass('OroAccountBundle:Account')
+            ->getRepository('OroAccountBundle:Account')
             ->getCategoryAccountIdsByVisibility($category, AccountCategoryVisibility::CATEGORY);
     }
 
@@ -234,13 +234,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Account')
+            ->getManagerForClass('OroAccountBundle:Account')
             ->createQueryBuilder();
 
         $qb->select('account.id')
-            ->from('OroB2BAccountBundle:Account', 'account')
+            ->from('OroAccountBundle:Account', 'account')
             ->leftJoin(
-                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+                'OroAccountBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -267,12 +267,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getChildrenQueryBuilderPartial($category);
 
         $qb->leftJoin(
-            'OroB2BAccountBundle:Visibility\CategoryVisibility',
+            'OroAccountBundle:Visibility\CategoryVisibility',
             'categoryVisibility',
             Join::WITH,
             $qb->expr()->eq('node.id', 'categoryVisibility.category')
@@ -297,10 +297,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.category', ':category'))
             ->andWhere($qb->expr()->in('agpvr.accountGroup', ':accountGroupIds'))
@@ -325,10 +325,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
             ->where($qb->expr()->eq('apvr.category', ':category'))
             ->andWhere($qb->expr()->in('apvr.account', ':accountIds'))
@@ -353,10 +353,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
             ->set('acvr.visibility', $visibility)
             ->where($qb->expr()->eq('acvr.category', ':category'))
             ->andWhere($qb->expr()->in('acvr.account', ':accountIds'))
@@ -384,10 +384,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
             ->set('agcvr.visibility', $visibility)
             ->where($qb->expr()->eq('agcvr.category', ':category'))
             ->andWhere($qb->expr()->in('agcvr.accountGroup', ':accountGroupIds'))

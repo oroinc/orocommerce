@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\DependencyInjection\Configuration;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\DependencyInjection\Configuration;
 
 /**
  * @dbIsolation
@@ -18,7 +17,7 @@ class AccountGroupControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
             ]
         );
     }

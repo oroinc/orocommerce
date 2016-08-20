@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Intl\Locale\Locale;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType;
+use Oro\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType;
 
 class EnabledCurrencySelectionTypeTest extends FormIntegrationTestCase
 {

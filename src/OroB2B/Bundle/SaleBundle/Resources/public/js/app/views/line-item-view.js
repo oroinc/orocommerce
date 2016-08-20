@@ -12,9 +12,9 @@ define(function(require) {
     require('jquery.validate');
 
     /**
-     * @export orob2bsale/js/app/views/line-item-view
+     * @export orosale/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
-     * @class orob2bsale.app.views.LineItemView
+     * @class orosale.app.views.LineItemView
      */
     LineItemView = BaseView.extend({
         /**
@@ -447,7 +447,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                    required: 'oro.sale.quoteproduct.free_form_product.blank'
                 }
             });
 
@@ -459,7 +459,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                    required: 'oro.sale.quoteproduct.free_form_product.blank'
                 }
             });
 
@@ -471,7 +471,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'orob2b.sale.quoteproduct.product.blank'
+                    required: 'oro.sale.quoteproduct.product.blank'
                 }
             });
 
@@ -483,7 +483,7 @@ define(function(require) {
                     }
                 },
                 messages: {
-                    required: 'orob2b.sale.quoteproduct.product.blank'
+                    required: 'oro.sale.quoteproduct.product.blank'
                 }
             });
         },

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Datagrid\ActionPermissionProvider;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Datagrid\ActionPermissionProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {

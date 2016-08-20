@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -8,12 +8,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class LoadCategoryVisibilityData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -44,9 +44,9 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
         ];
     }
 

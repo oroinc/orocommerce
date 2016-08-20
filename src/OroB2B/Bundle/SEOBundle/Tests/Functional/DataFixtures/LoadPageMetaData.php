@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterface
@@ -47,7 +47,7 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData',
+            'Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData',
         ];
     }
 }

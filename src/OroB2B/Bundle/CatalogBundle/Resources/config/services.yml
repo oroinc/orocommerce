@@ -1,11 +1,11 @@
 parameters:
-    orob2b_catalog.entity.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
-    orob2b_catalog.entity.category_default_product_options.class: OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions
-    orob2b_catalog.entity.category_unit_precision.class: OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision
+    orob2b_catalog.entity.category.class: Oro\Bundle\CatalogBundle\Entity\Category
+    orob2b_catalog.entity.category_default_product_options.class: Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions
+    orob2b_catalog.entity.category_unit_precision.class: Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision
 
 services:
     orob2b_catalog.category_tree_handler:
-        class: 'OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler'
+        class: 'Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler'
         arguments:
             - '%orob2b_catalog.entity.category.class%'
             - '@doctrine'
@@ -13,7 +13,7 @@ services:
             - '@orob2b_catalog.provider.category_tree_provider'
 
     orob2b_catalog.provider.category_tree_provider:
-        class: 'OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider'
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider'
         public: false
         arguments:
             - '@orob2b_catalog.repository.category'
@@ -34,7 +34,7 @@ services:
             - "@doctrine.orm.entity_manager"
 
     orob2b_catalog.event_listener.form_view:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
             - "@translator"
             - "@oro_entity.doctrine_helper"
@@ -45,7 +45,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-one, method: onProductEdit }
 
     orob2b_catalog.event_listener.datagrid:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\DatagridListener'
         arguments:
             - "@doctrine"
             - "@orob2b_catalog.handler.request_product"
@@ -57,7 +57,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
 
     orob2b_catalog.event_listener.product_duplicate:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
         calls:
             - [setCategoryClass, ['%orob2b_catalog.entity.category.class%']]
             - [setDoctrineHelper, ["@oro_entity.doctrine_helper"]]
@@ -65,38 +65,38 @@ services:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
 
     orob2b_catalog.event_listener.abstract_product_import:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener'
         abstract: true
         arguments:
             - "@doctrine"
             - '%orob2b_catalog.entity.category.class%'
 
     orob2b_catalog.event_listener.product_strategy:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener'
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.strategy.process_after, method: onProcessAfter }
             - { name: doctrine.event_listener, event: onClear, method: onClear }
 
     orob2b_catalog.event_listener.product_data_converter:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
         tags:
             - { name: kernel.event_listener, event: orob2b_product.data_converter.backend_header, method: onBackendHeader }
 
     orob2b_catalog.event_listener.product_normalizer:
-        class: 'OroB2B\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener'
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener'
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: doctrine.event_listener, event: onClear, method: onClear }
 
     orob2b_catalog.handler.request_product:
-        class: 'OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler'
+        class: 'Oro\Bundle\CatalogBundle\Handler\RequestProductHandler'
         arguments:
             - "@request_stack"
 
     orob2b_catalog.provider.default_product_unit_provider.category:
-        class: 'OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
         public: true
         tags:
             - {name: orob2b_product.default_product_unit_provider, priority: 10}

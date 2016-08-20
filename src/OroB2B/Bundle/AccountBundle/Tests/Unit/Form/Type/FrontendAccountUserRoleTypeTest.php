@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
 class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
 {
@@ -55,8 +55,8 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
     public function testSubmitUpdateAccountUsers()
     {
         /** @var Account $account */
-        $account1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
-        $account2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2);
+        $account1 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1);
+        $account2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2);
 
         /** @var AccountUserRole $role */
         $role = $this->getEntity(self::DATA_CLASS, 1);
@@ -64,15 +64,15 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
         $role->setAccount($account1);
 
         /** @var AccountUser $accountUser1 */
-        $accountUser1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1);
+        $accountUser1 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1);
         $accountUser1->setAccount($account1);
 
         /** @var AccountUser $accountUser2 */
-        $accountUser2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2);
+        $accountUser2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2);
         $accountUser2->setAccount($account2);
 
         /** @var AccountUser $accountUser3 */
-        $accountUser3 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 3);
+        $accountUser3 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 3);
 
         /** @var AccountUserRole $predefinedRole */
         $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Rounding;
+namespace Oro\Bundle\ProductBundle\Rounding;
 
-use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class QuantityRoundingService extends AbstractRoundingService
 {

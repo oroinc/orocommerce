@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Event;
+namespace Oro\Bundle\CheckoutBundle\Event;
 
 class CheckoutEvents
 {

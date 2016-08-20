@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Component\Duplicator\Test;
+namespace Oro\Component\Duplicator\Test;
 
-use OroB2B\Component\Duplicator\Duplicator;
-use OroB2B\Component\Duplicator\Filter\FilterFactory;
-use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
-use OroB2B\Component\Duplicator\ObjectType;
-use OroB2B\Component\Duplicator\Test\Stub\ProductUnit;
-use OroB2B\Component\Duplicator\Test\Stub\RequestProduct;
-use OroB2B\Component\Duplicator\Test\Stub\RequestProductItem;
-use OroB2B\Component\Duplicator\Test\Stub\RFPRequest;
-use OroB2B\Component\Duplicator\Test\Stub\Status;
+use Oro\Component\Duplicator\Duplicator;
+use Oro\Component\Duplicator\Filter\FilterFactory;
+use Oro\Component\Duplicator\Matcher\MatcherFactory;
+use Oro\Component\Duplicator\ObjectType;
+use Oro\Component\Duplicator\Test\Stub\ProductUnit;
+use Oro\Component\Duplicator\Test\Stub\RequestProduct;
+use Oro\Component\Duplicator\Test\Stub\RequestProductItem;
+use Oro\Component\Duplicator\Test\Stub\RFPRequest;
+use Oro\Component\Duplicator\Test\Stub\Status;
 
 class DuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,9 +22,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
             [['collection'], ['propertyType', ['Doctrine\Common\Collections\Collection']]],
             [['setNull'], ['propertyName', ['id']]],
             [['keep'], ['propertyName', ['status']]],
-            [['replaceValue', $now], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RFPRequest', 'createdAt']]],
-            [['setNull'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProduct', 'id']]],
-            [['shallowCopy'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProductItem', 'unit']]],
+            [['replaceValue', $now], ['property', ['Oro\Component\Duplicator\Test\Stub\RFPRequest', 'createdAt']]],
+            [['setNull'], ['property', ['Oro\Component\Duplicator\Test\Stub\RequestProduct', 'id']]],
+            [['shallowCopy'], ['property', ['Oro\Component\Duplicator\Test\Stub\RequestProductItem', 'unit']]],
         ];
         $rfpRequest = $this->getRFP();
 
@@ -122,8 +122,8 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
             ->addObjectType(new ObjectType('keep', '\DeepCopy\Filter\KeepFilter'))
             ->addObjectType(new ObjectType('collection', '\DeepCopy\Filter\Doctrine\DoctrineCollectionFilter'))
             ->addObjectType(new ObjectType('emptyCollection', $collectionFilterClass))
-            ->addObjectType(new ObjectType('replaceValue', '\OroB2B\Component\Duplicator\Filter\ReplaceValueFilter'))
-            ->addObjectType(new ObjectType('shallowCopy', '\OroB2B\Component\Duplicator\Filter\ShallowCopyFilter'));
+            ->addObjectType(new ObjectType('replaceValue', '\Oro\Component\Duplicator\Filter\ReplaceValueFilter'))
+            ->addObjectType(new ObjectType('shallowCopy', '\Oro\Component\Duplicator\Filter\ShallowCopyFilter'));
 
         return $factory;
     }

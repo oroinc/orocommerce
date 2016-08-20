@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Rounding;
+namespace Oro\Bundle\ProductBundle\Rounding;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
+use Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
 abstract class AbstractRoundingService implements RoundingServiceInterface
 {

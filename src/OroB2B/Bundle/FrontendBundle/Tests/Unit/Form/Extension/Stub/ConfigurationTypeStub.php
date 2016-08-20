@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub;
 
 use Symfony\Component\Form\FormBuilderInterface;
 

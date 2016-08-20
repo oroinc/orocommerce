@@ -23,15 +23,15 @@ datagrid:
 
         columns:
             name:
-                label:         orob2b.pricing.pricelist.name.label
+                label:         oro.pricing.pricelist.name.label
             default:
-                label:         orob2b.pricing.pricelist.default.label
+                label:         oro.pricing.pricelist.default.label
                 frontend_type: boolean
             activity:
-                label:         orob2b.pricing.pricelist_schedule.activity.label
+                label:         oro.pricing.pricelist_schedule.activity.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BPricingBundle:PriceList:Datagrid/schedule.html.twig
+                template:      OroPricingBundle:PriceList:Datagrid/schedule.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -74,10 +74,10 @@ datagrid:
                     options:
                         field_options:
                             choices:
-                                disabled: orob2b.pricing.pricelist_schedule.disabled
-                                inactive: orob2b.pricing.pricelist_schedule.inactive
-                                active: orob2b.pricing.pricelist_schedule.active
-                    label: orob2b.pricing.pricelist_schedule.activity.label
+                                disabled: oro.pricing.pricelist_schedule.disabled
+                                inactive: oro.pricing.pricelist_schedule.inactive
+                                active: oro.pricing.pricelist_schedule.active
+                    label: oro.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
@@ -96,7 +96,7 @@ datagrid:
         actions:
             default:
                 type:          ajax
-                label:         orob2b.pricing.pricelist.set_default.label
+                label:         oro.pricing.pricelist.set_default.label
                 link:          default_link
                 icon:          check
                 acl_resource:  orob2b_pricing_price_list_update
@@ -167,11 +167,11 @@ datagrid:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
             groupName:
-                label: orob2b.account.group.label
+                label: oro.account.group.label
             parentName:
-                label: orob2b.account.parent.label
+                label: oro.account.parent.label
         properties:
             view_link:
                 route:  orob2b_account_view
@@ -210,7 +210,7 @@ datagrid:
                         - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
-                label: orob2b.account.accountgroup.name.label
+                label: oro.account.accountgroup.name.label
         properties:
             view_link:
                 route:  orob2b_account_group_view
@@ -238,7 +238,7 @@ datagrid:
                 - price_list_id
         columns:
             has_price_list:
-                label:          orob2b.pricing.pricelist.has_price_list.label
+                label:          oro.pricing.pricelist.has_price_list.label
                 editable:       true
                 frontend_type:  boolean
         filters:
@@ -282,11 +282,11 @@ datagrid:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label:          orob2b.account.name.label
+                label:          oro.account.name.label
             groupName:
-                label:          orob2b.account.group.label
+                label:          oro.account.group.label
             parentName:
-                label:          orob2b.account.parent.label
+                label:          oro.account.parent.label
         filters:
             columns:
                 groupName:
@@ -323,7 +323,7 @@ datagrid:
                         - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
-                label:          orob2b.account.accountgroup.name.label
+                label:          oro.account.accountgroup.name.label
         options:
             rowSelection:
                 selectors:
@@ -343,9 +343,9 @@ datagrid:
                         - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
         columns:
             name:
-                label:          orob2b.website.name.label
+                label:          oro.website.name.label
             url:
-                label:          orob2b.website.url.label
+                label:          oro.website.url.label
         filters:
             columns:
                 url:
@@ -389,25 +389,25 @@ datagrid:
                 - price_list_id
         columns:
             productSku:
-                label:         orob2b.pricing.productprice.product_sku.label
+                label:         oro.pricing.productprice.product_sku.label
             productName:
-                label:         orob2b.pricing.productprice.product_name.label
+                label:         oro.pricing.productprice.product_name.label
             quantity:
-                label:         orob2b.pricing.productprice.quantity.label
+                label:         oro.pricing.productprice.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit_code.label
+                label:         oro.pricing.productprice.unit_code.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
-                label:         orob2b.pricing.productprice.value.label
+                label:         oro.pricing.productprice.value.label
             currency:
-                label:         orob2b.pricing.productprice.currency.label
+                label:         oro.pricing.productprice.currency.label
             ruleId:
-                label:         orob2b.pricing.productprice.type.label
+                label:         oro.pricing.productprice.type.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BPricingBundle:Datagrid:Column/manual.html.twig
+                template:      OroPricingBundle:Datagrid:Column/manual.html.twig
         sorters:
             columns:
                 productSku:
@@ -452,12 +452,12 @@ datagrid:
                 filter:
                     type:       single_choice
                     data_name:  ruleId
-                    label:      orob2b.pricing.productprice.type.label
+                    label:      oro.pricing.productprice.type.label
                     options:
                         field_options:
                             choices:
-                                generated: orob2b.pricing.productprice.generated.label
-                                manual: orob2b.pricing.productprice.manual.label
+                                generated: oro.pricing.productprice.generated.label
+                                manual: oro.pricing.productprice.manual.label
 
         properties:
             id: ~
@@ -477,7 +477,7 @@ datagrid:
         actions:
             view_product:
                 type:          navigate
-                label:         orob2b.pricing.grid.action.view.product
+                label:         oro.pricing.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
@@ -520,18 +520,18 @@ datagrid:
                 - product_id
         columns:
             priceListName:
-                label:         orob2b.pricing.pricelist.entity_label
+                label:         oro.pricing.pricelist.entity_label
             quantity:
-                label:         orob2b.pricing.productprice.quantity.label
+                label:         oro.pricing.productprice.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit_code.label
+                label:         oro.pricing.productprice.unit_code.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
+                template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
-                label:         orob2b.pricing.productprice.value.label
+                label:         oro.pricing.productprice.value.label
             currency:
-                label:         orob2b.pricing.productprice.currency.label
+                label:         oro.pricing.productprice.currency.label
         sorters:
             columns:
                 priceListName:
@@ -581,7 +581,7 @@ datagrid:
         actions:
             view:
                 type:          navigate
-                label:         orob2b.pricing.grid.action.view.price_list
+                label:         oro.pricing.grid.action.view.price_list
                 link:          view_price_list_link
                 icon:          eye-open
                 acl_resource:  orob2b_pricing_price_list_view
@@ -601,14 +601,14 @@ datagrid:
 
         columns:
             name:
-                label:         orob2b.pricing.priceattributepricelist.name.label
+                label:         oro.pricing.priceattributepricelist.name.label
             fieldName:
-                label:         orob2b.pricing.priceattributepricelist.field_name.label
+                label:         oro.pricing.priceattributepricelist.field_name.label
             currencies:
-                label:         orob2b.pricing.priceattributepricelist.currencies.label
+                label:         oro.pricing.priceattributepricelist.currencies.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BPricingBundle:PriceAttributePriceList:Datagrid/currencies.html.twig
+                template:      OroPricingBundle:PriceAttributePriceList:Datagrid/currencies.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

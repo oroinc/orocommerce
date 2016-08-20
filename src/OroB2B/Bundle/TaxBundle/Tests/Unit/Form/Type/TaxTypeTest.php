@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 
 class TaxTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\Tax';
+    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\Tax';
 
     /**
      * @var TaxType

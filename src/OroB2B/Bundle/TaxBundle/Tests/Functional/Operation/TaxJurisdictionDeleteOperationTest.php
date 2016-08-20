@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
 /**
  * @dbIsolation
@@ -18,7 +17,7 @@ class TaxJurisdictionDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions'
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions'
             ]
         );
     }

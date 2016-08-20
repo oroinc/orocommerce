@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Form\Handler;
+namespace Oro\Bundle\CMSBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\RedirectBundle\Manager\SlugManager;
 
 class PageHandler
 {

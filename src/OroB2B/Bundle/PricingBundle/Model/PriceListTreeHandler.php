@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class PriceListTreeHandler
 {

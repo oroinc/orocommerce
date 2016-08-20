@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,7 +20,7 @@ class AccountAddressToAddressType extends AbstractAddressToAddressType
     /**
      * @var AccountAddress
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress", inversedBy="types")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountAddress", inversedBy="types")
      * @ORM\JoinColumn(name="account_address_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $address;

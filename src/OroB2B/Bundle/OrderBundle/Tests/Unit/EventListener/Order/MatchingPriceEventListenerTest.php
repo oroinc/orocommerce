@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 
 class MatchingPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +27,7 @@ class MatchingPriceEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
+        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 

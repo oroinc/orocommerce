@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Provider;
+namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
@@ -40,8 +39,8 @@ class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInte
         $defaultUnitPrecision = (int)$this->configManager->get('orob2b_product.default_unit_precision');
 
         $unit = $this->registry
-            ->getManagerForClass('OroB2BProductBundle:ProductUnit')
-            ->getRepository('OroB2BProductBundle:ProductUnit')
+            ->getManagerForClass('OroProductBundle:ProductUnit')
+            ->getRepository('OroProductBundle:ProductUnit')
             ->findOneBy(['code' => $defaultUnitValue]);
         if ($unit instanceof ProductUnit) {
             $productUnitPrecision = new ProductUnitPrecision();

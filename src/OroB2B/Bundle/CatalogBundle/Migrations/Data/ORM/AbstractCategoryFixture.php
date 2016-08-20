@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 abstract class AbstractCategoryFixture extends AbstractFixture
 {
@@ -25,7 +24,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
+        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
         $root = $categoryRepository->getMasterCatalogRoot();
 
         $this->addCategories($root, $this->categories, $manager);

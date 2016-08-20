@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -26,7 +26,7 @@ class RequestStatusTranslationType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'translatable_class'   => 'OroB2B\\Bundle\\RFPBundle\\Entity\\RequestStatus',
+                'translatable_class'   => 'Oro\\Bundle\\RFPBundle\\Entity\\RequestStatus',
                 'intention'            => 'request_status_translation',
                 'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
                 'cascade_validation'   => true,

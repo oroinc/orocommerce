@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Audit;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Audit;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-use OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener;
+use Oro\Bundle\AccountBundle\Audit\DiscriminatorMapListener;
 
 class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
 {

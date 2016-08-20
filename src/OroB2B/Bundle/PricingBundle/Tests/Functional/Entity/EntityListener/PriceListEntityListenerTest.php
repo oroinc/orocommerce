@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
@@ -29,7 +29,7 @@ class PriceListEntityListenerTest extends WebTestCase
     {
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repository = $em->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
+        $repository = $em->getRepository('OroPricingBundle:PriceListChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');

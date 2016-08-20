@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
-use OroB2B\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
+use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategyEventListenerTest extends AbstractProductImportEventListenerTest
 {

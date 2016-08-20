@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
 
 class AccountController extends Controller
 {
@@ -36,7 +35,7 @@ class AccountController extends Controller
      * @Acl(
      *      id="orob2b_account_view",
      *      type="entity",
-     *      class="OroB2BAccountBundle:Account",
+     *      class="OroAccountBundle:Account",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class AccountController extends Controller
 
     /**
      * @Route("/create", name="orob2b_account_create")
-     * @Template("OroB2BAccountBundle:Account:update.html.twig")
+     * @Template("OroAccountBundle:Account:update.html.twig")
      * @Acl(
      *      id="orob2b_account_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:Account",
+     *      class="OroAccountBundle:Account",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class AccountController extends Controller
      * @Acl(
      *      id="orob2b_account_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:Account",
+     *      class="OroAccountBundle:Account",
      *      permission="EDIT"
      * )
      *
@@ -106,13 +105,13 @@ class AccountController extends Controller
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.account.saved.message')
+            $this->get('translator')->trans('oro.account.controller.account.saved.message')
         );
     }
 
     /**
      * @Route("/info/{id}", name="orob2b_account_info", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:Account/widget:info.html.twig")
+     * @Template("OroAccountBundle:Account/widget:info.html.twig")
      * @AclAncestor("orob2b_account_view")
      *
      * @param Account $account

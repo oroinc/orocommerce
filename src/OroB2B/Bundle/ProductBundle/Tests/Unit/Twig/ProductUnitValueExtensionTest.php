@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class ProductUnitValueExtensionTest extends UnitValueExtensionTestCase
 {
@@ -13,7 +13,7 @@ class ProductUnitValueExtensionTest extends UnitValueExtensionTestCase
 
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
             ->disableOriginalConstructor()
             ->getMock();
     }

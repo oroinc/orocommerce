@@ -1,7 +1,7 @@
 oro_system_configuration:
     groups:
         catalog:
-            title: orob2b.catalog.system_configuration.groups.catalog.title
+            title: oro.catalog.system_configuration.groups.catalog.title
 
     tree:
         system_configuration:

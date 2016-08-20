@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -11,11 +11,10 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListener
 {
@@ -109,7 +108,7 @@ class FrontendProductDatagridListener
         $updates = [
             '[columns]' => [
                 'image' => [
-                    'label' => 'orob2b.product.image.label',
+                    'label' => 'oro.product.image.label',
                 ]
             ],
         ];
@@ -124,7 +123,7 @@ class FrontendProductDatagridListener
         $updates = [
             '[columns]' => [
                 'shortDescription' => [
-                    'label' => 'orob2b.product.short_descriptions.label',
+                    'label' => 'oro.product.short_descriptions.label',
                 ]
             ],
             '[properties]' => [
@@ -222,8 +221,8 @@ class FrontendProductDatagridListener
     protected function getProductRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product');
+            ->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product');
     }
 
     /**
@@ -232,7 +231,7 @@ class FrontendProductDatagridListener
     protected function getProductUnitRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroB2BProductBundle:ProductUnit')
-            ->getRepository('OroB2BProductBundle:ProductUnit');
+            ->getManagerForClass('OroProductBundle:ProductUnit')
+            ->getRepository('OroProductBundle:ProductUnit');
     }
 }

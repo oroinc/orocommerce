@@ -3,7 +3,7 @@ define(function(require) {
     'use strict';
 
     var SwitchableEditableViewComponent;
-    var AttachedEditableViewComponent = require('orob2bfrontend/js/app/components/attached-editable-view-component');
+    var AttachedEditableViewComponent = require('orofrontend/js/app/components/attached-editable-view-component');
     var _ = require('underscore');
 
     SwitchableEditableViewComponent = AttachedEditableViewComponent.extend(/** @exports SwitchableEditableViewComponent.prototype */{

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -9,9 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\OriginAddressType;
-use OroB2B\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\Form\Type\OriginAddressType;
+use Oro\Bundle\TaxBundle\Model\Address;
 
 class OriginAddressTypeTest extends AbstractAddressTestCase
 {
@@ -21,7 +20,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     protected function setUp()
     {
         $this->formType = new OriginAddressType(new AddressCountryAndRegionSubscriberStub());
-        $this->formType->setDataClass('OroB2B\Bundle\TaxBundle\Model\Address');
+        $this->formType->setDataClass('Oro\Bundle\TaxBundle\Model\Address');
 
         parent::setUp();
     }
@@ -38,7 +37,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('data_class', $options);
-        $this->assertEquals('OroB2B\Bundle\TaxBundle\Model\Address', $options['data_class']);
+        $this->assertEquals('Oro\Bundle\TaxBundle\Model\Address', $options['data_class']);
     }
 
     /**

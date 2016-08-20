@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
+namespace Oro\Bundle\PaymentBundle\EventListener\Callback;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 
 class RedirectListener
 {
@@ -40,7 +40,7 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);
-        $this->setErrorMessage('orob2b.payment.result.error');
+        $this->setErrorMessage('oro.payment.result.error');
     }
 
     /**

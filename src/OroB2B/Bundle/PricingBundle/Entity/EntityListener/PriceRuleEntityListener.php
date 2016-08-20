@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 
 class PriceRuleEntityListener
 {

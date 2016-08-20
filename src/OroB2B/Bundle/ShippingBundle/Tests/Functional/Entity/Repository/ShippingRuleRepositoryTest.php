@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 
 /**
  * @dbIsolation
@@ -27,7 +26,7 @@ class ShippingRuleRepositoryTest extends WebTestCase
             LoadShippingRules::class,
         ]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroB2BShippingBundle:ShippingRule');
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
     }
 
     /**

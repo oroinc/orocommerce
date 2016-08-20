@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Form\Type;
+namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,7 +19,7 @@ class LoginPageType extends AbstractType
                 'topContent',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.top_content.label',
+                    'label' => 'oro.cms.loginpage.top_content.label',
                     'required' => false
                 ]
             )
@@ -27,7 +27,7 @@ class LoginPageType extends AbstractType
                 'bottomContent',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.bottom_content.label',
+                    'label' => 'oro.cms.loginpage.bottom_content.label',
                     'required' => false
                 ]
             )
@@ -35,7 +35,7 @@ class LoginPageType extends AbstractType
                 'css',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.css.label',
+                    'label' => 'oro.cms.loginpage.css.label',
                     'required' => false
                 ]
             )
@@ -43,7 +43,7 @@ class LoginPageType extends AbstractType
                 'logoImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.cms.loginpage.logo_image.label',
+                    'label'    => 'oro.cms.loginpage.logo_image.label',
                     'required' => false
                 ]
             )
@@ -51,7 +51,7 @@ class LoginPageType extends AbstractType
                 'backgroundImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.cms.loginpage.background_image.label',
+                    'label'    => 'oro.cms.loginpage.background_image.label',
                     'required' => false
                 ]
             );

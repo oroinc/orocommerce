@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures\Stub\PaymentTermStub;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Fixtures\Stub\PaymentTermStub;
 
 class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -73,7 +72,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         $paymentTermId = 1;
 
         $paymentTermRepository = $this->getMockBuilder(
-            'OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
+            'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -88,12 +87,12 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         $om = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
         $om->expects($this->once())
             ->method('getRepository')
-            ->with($this->equalTo('OroB2BPaymentBundle:PaymentTerm'))
+            ->with($this->equalTo('OroPaymentBundle:PaymentTerm'))
             ->willReturn($paymentTermRepository);
 
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
-            ->with($this->equalTo('OroB2BPaymentBundle:PaymentTerm'))
+            ->with($this->equalTo('OroPaymentBundle:PaymentTerm'))
             ->willReturn($om);
 
         $message = $this->extension->getDeleteMessageTextForDataGrid($paymentTermId);
@@ -124,7 +123,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 $paymentTermId,
                 $accountGroupFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GROUP_GRID_NAME,
-                'orob2b.account.accountgroup.entity_label'
+                'oro.account.accountgroup.entity_label'
             );
         } else {
             $this->assertNull($message['accountGroupFilterUrl']);
@@ -136,7 +135,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 $paymentTermId,
                 $accountFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
-                'orob2b.account.entity_label'
+                'oro.account.entity_label'
             );
         } else {
             $this->assertNull($message['accountFilterUrl']);

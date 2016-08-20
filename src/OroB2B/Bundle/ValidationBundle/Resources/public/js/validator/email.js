@@ -6,7 +6,7 @@ define([
 
     var constraint = _.clone(emailConstraint);
 
-    constraint[0] = 'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\Email';
+    constraint[0] = 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Email';
 
     return constraint;
 });

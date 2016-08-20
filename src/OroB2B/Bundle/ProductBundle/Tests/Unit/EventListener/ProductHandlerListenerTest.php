@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\EventListener\ProductHandlerListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 
 class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
 {

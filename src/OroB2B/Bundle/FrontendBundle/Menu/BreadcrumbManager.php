@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Menu;
+namespace Oro\Bundle\FrontendBundle\Menu;
 
 use Symfony\Component\Routing\Route;
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Form\Handler;
+namespace Oro\Bundle\PaymentBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 class PaymentTermHandler
 {
@@ -130,6 +130,6 @@ class PaymentTermHandler
      */
     protected function getPaymentTermRepository()
     {
-        return $this->manager->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        return $this->manager->getRepository('OroPaymentBundle:PaymentTerm');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 
 class CallbackNotifyEventTest extends AbstractCallbackEventTest
 {

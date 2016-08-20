@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BMenuBundle:layouts:default/page/footer_menu.html.twig'
+            themes: 'OroMenuBundle:layouts:default/page/footer_menu.html.twig'
         - '@addTree':
             items:
                 footer_menu_container:

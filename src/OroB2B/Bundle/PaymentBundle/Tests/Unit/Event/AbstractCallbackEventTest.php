@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
 use Symfony\Component\HttpFoundation\Response;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 
 abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +47,7 @@ abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction',
+            'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction',
             $event->getPaymentTransaction()
         );
         $this->assertSame($paymentTransaction, $event->getPaymentTransaction());

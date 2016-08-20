@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_cpl_activation_rule")
  * @ORM\Entity(
- *     repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository"
+ *     repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository"
  * )
  */
 class CombinedPriceListActivationRule
@@ -24,7 +24,7 @@ class CombinedPriceListActivationRule
     /**
      * @var CombinedPriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
      * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $combinedPriceList;
@@ -32,7 +32,7 @@ class CombinedPriceListActivationRule
     /**
      * @var CombinedPriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
      * @ORM\JoinColumn(name="full_combined_price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $fullChainPriceList;

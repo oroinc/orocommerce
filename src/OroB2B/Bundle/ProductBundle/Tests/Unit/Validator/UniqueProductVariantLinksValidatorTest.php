@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
+use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 
 class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +40,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     //@codingStandardsIgnoreStart
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "OroB2B\Bundle\ProductBundle\Entity\Product", "stdClass" given
+     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
      */
     //@codingStandardsIgnoreEnd
     public function testNotProductValidate()

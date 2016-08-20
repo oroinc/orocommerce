@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,8 +8,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Manager\QuoteDemandManager;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 
 class QuoteDemandType extends AbstractType
 {
@@ -34,7 +34,7 @@ class QuoteDemandType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
-        $resolver->setDefault('data_class', 'OroB2B\Bundle\SaleBundle\Entity\QuoteDemand');
+        $resolver->setDefault('data_class', 'Oro\Bundle\SaleBundle\Entity\QuoteDemand');
     }
 
     /**

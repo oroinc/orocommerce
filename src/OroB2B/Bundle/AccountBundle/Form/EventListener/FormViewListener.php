@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Form\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -8,8 +8,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class FormViewListener
 {
@@ -56,10 +55,10 @@ class FormViewListener
         $categoryId = $request->get('id');
 
         /** @var Category $category */
-        $category = $this->doctrineHelper->getEntityReference('OroB2BCatalogBundle:Category', $categoryId);
+        $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
         if ($category) {
             $template = $event->getEnvironment()->render(
-                'OroB2BAccountBundle:Category:account_category_visibility_edit.html.twig',
+                'OroAccountBundle:Category:account_category_visibility_edit.html.twig',
                 [
                     'entity' => $category,
                     'form' => $event->getFormView(),
@@ -75,7 +74,7 @@ class FormViewListener
      */
     protected function addAccountCategoryVisibilityBlock(ScrollData $scrollData, $html)
     {
-        $blockLabel = $this->translator->trans('orob2b.account.visibility.categoryvisibility.visibility.label');
+        $blockLabel = $this->translator->trans('oro.account.visibility.categoryvisibility.visibility.label');
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);

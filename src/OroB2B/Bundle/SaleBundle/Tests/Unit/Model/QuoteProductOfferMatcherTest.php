@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 
 class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
 {

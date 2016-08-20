@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadLoginAccountUserData;
 
 /**
@@ -25,14 +24,14 @@ class AccountUserControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
             ]
         );
     }
 
     public function testDelete()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
 
         $this->assertNotNull($user);
@@ -64,6 +63,6 @@ class AccountUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 }

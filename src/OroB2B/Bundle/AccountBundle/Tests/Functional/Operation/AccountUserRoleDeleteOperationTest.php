@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
@@ -20,14 +19,14 @@ class AccountUserRoleDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
     }
 
     public function testDelete()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $userRole */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserRole $userRole */
         $userRole = $this->getUserRoleRepository()
             ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_EMPTY]);
 
@@ -60,6 +59,6 @@ class AccountUserRoleDeleteOperationTest extends ActionTestCase
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUserRole');
     }
 }

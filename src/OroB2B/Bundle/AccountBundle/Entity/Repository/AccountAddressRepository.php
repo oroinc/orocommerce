@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Repository;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountAddressRepository extends AbstractDefaultTypedAddressRepository
 {

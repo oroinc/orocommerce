@@ -1,4 +1,4 @@
-orob2b.account:
+oro.account:
     entity_label: 'Account'
     entity_plural_label: 'Accounts'
     name.label: 'Name'
@@ -438,7 +438,7 @@ orob2b.account:
         privileges:
             entity.label: Access
             action.label: Capabillities
-        address: #orob2b.account.frontend.address
+        address: #oro.account.frontend.address
             title:
                 create: 'Create'
                 edit: 'Edit'

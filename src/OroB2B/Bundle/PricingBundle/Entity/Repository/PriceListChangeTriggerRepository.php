@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 
 class PriceListChangeTriggerRepository extends EntityRepository
 {
@@ -36,7 +35,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->getRepository('OroPricingBundle:PriceListToAccount')
             ->getAccountWebsitePairsByAccountGroupQueryBuilder($accountGroup, $websiteIds);
         $insertFromSelectQueryExecutor->execute(
             $this->getClassName(),
@@ -51,7 +50,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
     public function deleteAll()
     {
         $this->createQueryBuilder('priceListChangeTrigger')
-        ->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
+        ->delete('OroPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
         ->getQuery()
         ->execute();
     }
@@ -68,7 +67,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
     ) {
         $qb = $this->_em->createQueryBuilder();
 
-        $qb->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger');
+        $qb->delete('OroPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger');
 
         if ($websites) {
             $qb->andWhere($qb->expr()->in('priceListChangeTrigger.website', ':websites'))
@@ -95,7 +94,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
         InsertFromSelectQueryExecutor $insertFromSelect
     ) {
         $qb =  $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->getRepository('OroPricingBundle:PriceListToAccount')
             ->createQueryBuilder('priceListToAccount');
 
         $qb->select([
@@ -123,7 +122,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
         InsertFromSelectQueryExecutor $insertFromSelect
     ) {
         $qb =  $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getRepository('OroPricingBundle:PriceListToAccountGroup')
             ->createQueryBuilder('PriceListToAccountGroup');
 
         $qb->select([
@@ -149,7 +148,7 @@ class PriceListChangeTriggerRepository extends EntityRepository
         InsertFromSelectQueryExecutor $insertFromSelect
     ) {
         $qb =  $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:PriceListToWebsite')
+            ->getRepository('OroPricingBundle:PriceListToWebsite')
             ->createQueryBuilder('priceListToWebsite');
 
         $qb->select([

@@ -2,44 +2,44 @@ method: saveTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
-    'OroB2B\Bundle\OrderBundle\Entity\Order':
+    'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             currency: 'USD'
             billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
             shippingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
-    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
-            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 6 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
-            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
-    'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
-            entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+            entityClass: { property_value: 'Oro\Bundle\OrderBundle\Entity\Order' }
             entityId: { reference: simple_order, property: id }
             address: { property_value: address }
             result:
-                class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                class: 'Oro\Bundle\TaxBundle\Model\Result'
                 property_value:
                     total:
-                        class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                        class: 'Oro\Bundle\TaxBundle\Model\ResultElement'
                         property_value:
                             includingTax: '123'
                             excludingTax: '123'
@@ -47,7 +47,7 @@ databaseBefore:
                             adjustment: '0'
                     taxes:
                         -
-                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            class: 'Oro\Bundle\TaxBundle\Model\ResultElement'
                             property_value:
                                 tax: 'TAX1'
                                 rate: '0.1'
@@ -94,5 +94,5 @@ expectedResult:
     taxes:
         - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33', currency: 'USD' }
 databaseAfter:
-    'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
-        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order', entityId: { reference: 'simple_order' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxValue':
+        - { entityClass: 'Oro\Bundle\OrderBundle\Entity\Order', entityId: { reference: 'simple_order' } }

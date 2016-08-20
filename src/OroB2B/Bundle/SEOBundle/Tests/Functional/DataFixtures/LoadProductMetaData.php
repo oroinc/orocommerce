@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadProductMetaData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -47,7 +47,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Type;
+namespace Oro\Bundle\WarehouseBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +24,7 @@ class WarehouseType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.warehouse.name.label'
+                    'label' => 'oro.warehouse.name.label'
                 ]
             );
     }

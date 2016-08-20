@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,10 +10,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
@@ -68,7 +67,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     public function supportsClass($class)
     {
-        return is_a($class, 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', true);
+        return is_a($class, 'Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', true);
     }
 
     /**

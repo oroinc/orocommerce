@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Event;
+namespace Oro\Bundle\PaymentBundle\Event;
 
 use Symfony\Component\HttpFoundation\Response;
 

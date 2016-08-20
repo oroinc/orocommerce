@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Layout\DataProvider;
+namespace Oro\Bundle\MenuBundle\Layout\DataProvider;
 
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;

@@ -13,9 +13,9 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
 
     /**
-     * @export orob2bshipping/js/app/components/product-shipping-freight-classes-component
+     * @export oroshipping/js/app/components/product-shipping-freight-classes-component
      * @extends oroui.app.components.base.Component
-     * @class orob2bshipping.app.components.ProductShippingFreightClassesComponent
+     * @class oroshipping.app.components.ProductShippingFreightClassesComponent
      */
     ProductShippingFreightClassesComponent = BaseComponent.extend({
         /**

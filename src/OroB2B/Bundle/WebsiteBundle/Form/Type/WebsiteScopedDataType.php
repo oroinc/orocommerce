@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Form\Type;
+namespace Oro\Bundle\WebsiteBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,8 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataType extends AbstractType
 {
@@ -34,7 +34,7 @@ class WebsiteScopedDataType extends AbstractType
     /**
      * @var string
      */
-    protected $websiteCLass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+    protected $websiteCLass = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * @var WebsiteProviderInterface

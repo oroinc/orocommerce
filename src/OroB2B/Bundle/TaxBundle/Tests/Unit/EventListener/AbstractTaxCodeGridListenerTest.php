@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -33,7 +33,7 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage for "\stdClass" not found in "OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode"
+     * @expectedExceptionMessage for "\stdClass" not found in "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode"
      */
     public function testOnBuildBeforeWithoutAssociation()
     {
@@ -49,7 +49,7 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCa
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityMetadataForClass')
-            ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')
+            ->with('Oro\Bundle\TaxBundle\Entity\AbstractTaxCode')
             ->willReturn($metadata);
 
         $this->listener->onBuildBefore($event);

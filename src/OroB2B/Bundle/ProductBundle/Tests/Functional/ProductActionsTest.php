@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional;
+namespace Oro\Bundle\ProductBundle\Tests\Functional;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -18,7 +17,7 @@ class ProductActionsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
             ]
         );
     }
@@ -58,7 +57,7 @@ class ProductActionsTest extends WebTestCase
                     'operationName' => $operationName,
                     'route' => 'orob2b_product_view',
                     'entityId' => $product->getId(),
-                    'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
+                    'entityClass' => 'Oro\Bundle\ProductBundle\Entity\Product'
                 ]
             ),
             [],

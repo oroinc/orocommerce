@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture;
+namespace Oro\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Entity\Locale;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -20,7 +19,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      */
     public function getEntityClass()
     {
-        return 'OroB2B\Bundle\ProductBundle\Entity\Product';
+        return 'Oro\Bundle\ProductBundle\Entity\Product';
     }
 
     /**
@@ -83,7 +82,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setDefaultPrecision(0);
 
         $primaryProductUnitPrecision = $this
-            ->createEntityWithId('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', 1);
+            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 1);
         $primaryProductUnitPrecision
             ->setUnit($primaryProductUnit)
             ->setPrecision($primaryProductUnit->getDefaultPrecision())
@@ -91,7 +90,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setSell(true);
 
         $additionalProductUnitPrecision = $this
-            ->createEntityWithId('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
+            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
         $additionalProductUnitPrecision
             ->setUnit($additionalProductUnit)
             ->setPrecision($additionalProductUnit->getDefaultPrecision())

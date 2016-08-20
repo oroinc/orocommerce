@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Component\Tree\Test;
+namespace Oro\Component\Tree\Test;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 abstract class AbstractTreeHandlerTestCase extends WebTestCase
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfig;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfig;
 
 class PaymentTermConfigTest extends AbstractPaymentConfigWithCountryAndCurrencyTest
 {

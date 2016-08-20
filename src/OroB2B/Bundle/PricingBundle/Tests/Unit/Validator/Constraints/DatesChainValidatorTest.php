@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChain;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator;
+use Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain;
+use Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator;
 
 class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
 {
     const FIRST_LABEL = 'First';
     const SECOND_LABEL = 'Second';
     const THIRD_LABEL = 'Third';
-    const MESSAGE = 'orob2b.pricing.validators.price_list.dates_chain.message';
+    const MESSAGE = 'oro.pricing.validators.price_list.dates_chain.message';
 
     /**
      * @dataProvider validateDataProvider

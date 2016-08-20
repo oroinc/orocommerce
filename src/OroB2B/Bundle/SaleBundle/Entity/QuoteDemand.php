@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,10 +10,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  *
@@ -52,14 +52,14 @@ class QuoteDemand implements
 
     /**
      * @var Quote
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\Quote")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote")
      * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quote;
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteProductDemand",
      *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
      * @ORM\OrderBy({"id" = "ASC"})
      */

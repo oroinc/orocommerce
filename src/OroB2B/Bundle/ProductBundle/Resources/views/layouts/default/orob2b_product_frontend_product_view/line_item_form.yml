@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/line_item_form.html.twig'
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_product_view/line_item_form.html.twig'
         - '@addTree':
             items:
                 line_item_form:

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class WeightTransformerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\TriggersFiller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\TriggersFiller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -28,8 +27,8 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
         $this->triggersFiller = $this->getContainer()
@@ -157,8 +156,8 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
     public function testCreateTriggerByPriceListProduct()
     {
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:ProductPriceChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+            ->getManagerForClass('OroPricingBundle:ProductPriceChangeTrigger')
+            ->getRepository('OroPricingBundle:ProductPriceChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
@@ -180,7 +179,7 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
     protected function assertPriceListChangeTriggersCount($count)
     {
         $priceListChangeTriggers = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroPricingBundle:PriceListChangeTrigger')
             ->findAll();
         $this->assertCount($count, $priceListChangeTriggers);
     }
@@ -188,10 +187,10 @@ class ScopeRecalculateTriggersFillerTest extends WebTestCase
     protected function clearTriggers()
     {
         $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+            ->getManagerForClass('OroPricingBundle:PriceListChangeTrigger')
+            ->getRepository('OroPricingBundle:PriceListChangeTrigger')
             ->createQueryBuilder('priceListChangeTrigger')
-            ->delete('OroB2BPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
+            ->delete('OroPricingBundle:PriceListChangeTrigger', 'priceListChangeTrigger')
             ->getQuery()
             ->execute();
     }

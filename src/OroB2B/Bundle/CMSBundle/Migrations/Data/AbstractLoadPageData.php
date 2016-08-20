@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Migrations\Data;
+namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -10,9 +10,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
 {

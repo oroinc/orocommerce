@@ -1,11 +1,11 @@
 oro_system_configuration:
     groups:
         websites:
-            title: orob2b.website.system_configuration.groups.webistes.title
+            title: oro.website.system_configuration.groups.webistes.title
         general:
-            title: orob2b.website.system_configuration.groups.general.title
+            title: oro.website.system_configuration.groups.general.title
         routing:
-            title: orob2b.website.system_configuration.groups.routing.title
+            title: oro.website.system_configuration.groups.routing.title
             icon: 'icon-sitemap'
     fields:
         oro_b2b_website.url:
@@ -14,7 +14,7 @@ oro_system_configuration:
             priority: 2000
             options:
                 default_protocol: 'http'
-                label: orob2b.website.system_configuration.fields.url.label
+                label: oro.website.system_configuration.fields.url.label
                 constraints:
                     - Url: ~
         oro_b2b_website.secure_url:
@@ -23,7 +23,7 @@ oro_system_configuration:
             priority: 1000
             options:
                 default_protocol: 'https'
-                label: orob2b.website.system_configuration.fields.secure_url.label
+                label: oro.website.system_configuration.fields.secure_url.label
                 constraints:
                     - Url: ~
 

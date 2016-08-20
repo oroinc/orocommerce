@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 class SubtotalProviderRegistry
 {

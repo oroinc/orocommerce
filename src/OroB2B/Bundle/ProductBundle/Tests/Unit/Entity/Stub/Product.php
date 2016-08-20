@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product as BaseProduct;
+use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
 
 class Product extends BaseProduct
 {

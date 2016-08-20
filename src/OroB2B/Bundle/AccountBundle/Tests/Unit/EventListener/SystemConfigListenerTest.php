@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener;
+use Oro\Bundle\AccountBundle\EventListener\SystemConfigListener;
 
 class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
 {

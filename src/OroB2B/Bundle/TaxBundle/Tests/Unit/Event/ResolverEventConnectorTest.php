@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
-use OroB2B\Bundle\TaxBundle\Resolver\StopPropagationException;
+use Oro\Bundle\TaxBundle\Event\ResolverEventConnector;
+use Oro\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
+use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ResolverInterface $resolver */
-        $this->resolver = $this->getMock('OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface');
+        $this->resolver = $this->getMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');
         $this->connector = new ResolverEventConnector($this->resolver);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -11,9 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 
 class AccountUserController extends Controller
 {
@@ -23,7 +22,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_view",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -62,7 +61,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -82,7 +81,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -133,7 +132,7 @@ class AccountUserController extends Controller
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.accountuser.saved.message'),
+            $this->get('translator')->trans('oro.account.controller.accountuser.saved.message'),
             $handler
         );
 

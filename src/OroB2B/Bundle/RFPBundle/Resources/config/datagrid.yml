@@ -25,13 +25,13 @@ datagrid:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             id:
-                label:         orob2b.rfp.request.id.label
+                label:         oro.rfp.request.id.label
             status_label:
-                label:         orob2b.rfp.request.status.label
+                label:         oro.rfp.request.status.label
             poNumber:
-                label:         orob2b.rfp.request.po_number.label
+                label:         oro.rfp.request.po_number.label
             shipUntil:
-                label:         orob2b.rfp.request.ship_until.label
+                label:         oro.rfp.request.ship_until.label
                 frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
@@ -85,7 +85,7 @@ datagrid:
                 - account_id
         columns:
             accountUserName:
-                label:         orob2b.rfp.request.account_user.label
+                label:         oro.rfp.request.account_user.label
                 order:         1
         sorters:
             columns:
@@ -177,28 +177,28 @@ datagrid:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             firstName:
-                label:         orob2b.rfp.request.first_name.label
+                label:         oro.rfp.request.first_name.label
                 order:         1
             lastName:
-                label:         orob2b.rfp.request.last_name.label
+                label:         oro.rfp.request.last_name.label
                 order:         2
             email:
-                label:         orob2b.rfp.request.email.label
+                label:         oro.rfp.request.email.label
                 order:         3
             phone:
-                label:         orob2b.rfp.request.phone.label
+                label:         oro.rfp.request.phone.label
                 order:         4
             company:
-                label:         orob2b.rfp.request.company.label
+                label:         oro.rfp.request.company.label
                 order:         5
             role:
-                label:         orob2b.rfp.request.role.label
+                label:         oro.rfp.request.role.label
                 order:         6
             accountUserName:
-                label:         orob2b.rfp.request.account_user.label
+                label:         oro.rfp.request.account_user.label
                 order:         7
             accountName:
-                label:         orob2b.rfp.request.account.label
+                label:         oro.rfp.request.account.label
                 order:         8
         sorters:
             columns:
@@ -289,14 +289,14 @@ datagrid:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             label:
-                label:         orob2b.rfp.requeststatus.label.label
+                label:         oro.rfp.requeststatus.label.label
             name:
-                label:         orob2b.rfp.requeststatus.name.label
+                label:         oro.rfp.requeststatus.name.label
             deleted:
-                label:         orob2b.rfp.requeststatus.deleted.label
+                label:         oro.rfp.requeststatus.deleted.label
                 frontend_type: boolean
             sortOrder:
-                label:         orob2b.rfp.requeststatus.sort_order.label
+                label:         oro.rfp.requeststatus.sort_order.label
                 frontend_type: integer
         properties:
             id: ~
@@ -357,7 +357,7 @@ datagrid:
             restore:
                 type:          ajax
                 acl_resource:  orob2b_rfp_request_status_delete
-                label:         orob2b.rfp.datagrid.action_restore
+                label:         oro.rfp.datagrid.action_restore
                 icon:          ok
                 link:          restore_link
             delete:
@@ -394,19 +394,19 @@ datagrid:
 
         columns:
             id:
-                label:         orob2b.frontend.rfp.request.id.label
+                label:         oro.frontend.rfp.request.id.label
             statusLabel:
-                label:         orob2b.frontend.rfp.request.status.label
+                label:         oro.frontend.rfp.request.status.label
             poNumber:
-                label:         orob2b.frontend.rfp.request.po_number.label
+                label:         oro.frontend.rfp.request.po_number.label
             shipUntil:
-                label:         orob2b.frontend.rfp.request.ship_until.label
+                label:         oro.frontend.rfp.request.ship_until.label
                 frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
             accountUserName:
-                label:         orob2b.frontend.rfp.request.account_user.label
+                label:         oro.frontend.rfp.request.account_user.label
         properties:
             id: ~
             view_link:

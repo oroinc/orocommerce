@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Model\Stub;
 
-use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
+use Oro\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
 
 class CombinedPriceListQueueListenerStub extends CombinedPriceListQueueListener
 {

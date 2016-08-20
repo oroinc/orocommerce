@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -21,7 +21,7 @@ class PriceListSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_pricing_price_list',
                 'create_form_route' => 'orob2b_pricing_price_list_create',
                 'configs' => [
-                    'placeholder' => 'orob2b.pricing.form.choose_price_list'
+                    'placeholder' => 'oro.pricing.form.choose_price_list'
                 ]
             ]
         );

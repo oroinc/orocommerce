@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Entity;
+namespace Oro\Bundle\InvoiceBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,13 +12,12 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
-use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\InvoiceBundle\Model\ExtendInvoice;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(
@@ -54,7 +53,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          }
  *      }
  * )
- * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
+ * @ORM\EntityListeners({ "Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements
@@ -102,7 +101,7 @@ class Invoice extends ExtendInvoice implements
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -145,7 +144,7 @@ class Invoice extends ExtendInvoice implements
      * @var ArrayCollection
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
+     *     targetEntity="Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
      *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
      *

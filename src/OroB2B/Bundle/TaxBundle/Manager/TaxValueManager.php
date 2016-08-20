@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Manager;
+namespace Oro\Bundle\TaxBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
 class TaxValueManager
 {

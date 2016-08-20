@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Resolver;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Acl\Resolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class RoleTranslationPrefixResolverTest extends \PHPUnit_Framework_TestCase
 {

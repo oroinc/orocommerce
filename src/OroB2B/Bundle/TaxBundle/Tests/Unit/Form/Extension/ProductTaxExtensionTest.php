@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension;
-use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension;
+use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
@@ -30,7 +30,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function getExtension()
     {
-        return new ProductTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:ProductTaxCode');
+        return new ProductTaxExtension($this->doctrineHelper, 'OroTaxBundle:ProductTaxCode');
     }
 
     public function testGetExtendedType()
@@ -45,13 +45,13 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
     {
         $this->entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
             ->method('getEntityRepository')
-            ->with('OroB2BTaxBundle:ProductTaxCode')
+            ->with('OroTaxBundle:ProductTaxCode')
             ->willReturn($this->entityRepository);
     }
 
@@ -69,7 +69,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.taxcode.label',
+                    'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
                 ]
             );
@@ -155,7 +155,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
     }
 
     /**
@@ -165,6 +165,6 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function createTaxCode($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => $id]);
     }
 }

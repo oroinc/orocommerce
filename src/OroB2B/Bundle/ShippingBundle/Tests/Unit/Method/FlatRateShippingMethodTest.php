@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Method;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 {

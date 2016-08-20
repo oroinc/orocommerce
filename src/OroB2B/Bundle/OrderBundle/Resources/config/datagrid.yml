@@ -29,25 +29,25 @@ datagrid:
                         - { join: '%orob2b_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%orob2b_order.entity.order.class%'" }
         columns:
             identifier:
-                label:         orob2b.order.identifier.label
+                label:         oro.order.identifier.label
             poNumber:
-                label:         orob2b.order.po_number.label
+                label:         oro.order.po_number.label
             shipUntil:
-                label:         orob2b.order.ship_until.label
+                label:         oro.order.ship_until.label
                 frontend_type: date
             currency:
-                label:         orob2b.order.currency.label
+                label:         oro.order.currency.label
             subtotal:
-                label:         orob2b.order.subtotal.label
+                label:         oro.order.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
+                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
                 renderable:    false
             total:
-                label:         orob2b.order.total.label
+                label:         oro.order.total.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/total.html.twig
+                template:      OroOrderBundle:Order:Datagrid/total.html.twig
         sorters:
             columns:
                 identifier:
@@ -109,27 +109,27 @@ datagrid:
         delete: false
         columns:
             paymentStatus:
-                label:         orob2b.order.payment_status.label
+                label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
             paymentMethods:
-                label: orob2b.order.payment_method.label
+                label: oro.order.payment_method.label
                 renderable: true
                 type: twig
-                template: 'OroB2BOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+                template: 'OroOrderBundle:Order:Datagrid/paymentMethod.html.twig'
                 frontend_type: html
             paymentTermLabel:
-                label:         orob2b.order.payment_term.label
+                label:         oro.order.payment_term.label
             shippingMethod:
-                label:         orob2b.order.shipping_method.label
+                label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
-                label:         orob2b.order.po_number.label
+                label:         oro.order.po_number.label
             shipUntil:
-                label:         orob2b.order.ship_until.label
+                label:         oro.order.ship_until.label
                 frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
@@ -200,45 +200,45 @@ datagrid:
                         - { join: order1.account, alias: account }
         columns:
             accountName:
-                label:         orob2b.order.account.label
+                label:         oro.order.account.label
             accountUserName:
-                label:         orob2b.order.account_user.label
+                label:         oro.order.account_user.label
             owner:
-                label:         orob2b.order.owner.label
+                label:         oro.order.owner.label
             paymentStatus:
-                label:         orob2b.order.payment_status.label
+                label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
             paymentMethods:
-                label: orob2b.order.payment_method.label
+                label: oro.order.payment_method.label
                 renderable: true
                 type: twig
-                template: 'OroB2BOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
             paymentTermLabel:
-                label:         orob2b.order.payment_term.label
+                label:         oro.order.payment_term.label
             shippingMethod:
-                label:         orob2b.order.shipping_method.label
+                label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroB2BOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
-                label:         orob2b.order.po_number.label
+                label:         oro.order.po_number.label
             shipUntil:
-                label:         orob2b.order.ship_until.label
+                label:         oro.order.ship_until.label
                 frontend_type: date
             sourceEntityClass:
-                label:         orob2b.order.source_document.label
+                label:         oro.order.source_document.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/sourceDocument.html.twig
+                template:      OroOrderBundle:Order:Datagrid/sourceDocument.html.twig
                 renderable:    false
             totalDiscountsAmount:
-                label:         orob2b.order.discount.label
+                label:         oro.order.discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/discount.html.twig
+                template:      OroOrderBundle:Order:Datagrid/discount.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -341,26 +341,26 @@ datagrid:
                         - { join: order1.lineItems, alias: lineItems}
         columns:
             identifier:
-                label:         orob2b.order.identifier.label
+                label:         oro.order.identifier.label
             subtotal:
-                label:         orob2b.order.subtotal.label
+                label:         oro.order.subtotal.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
+                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
                 renderable:    false
             total:
-                label:         orob2b.order.total.label
+                label:         oro.order.total.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/total.html.twig
+                template:      OroOrderBundle:Order:Datagrid/total.html.twig
             lineItemsCount:
-                label:         orob2b.order.line_items_count.label
+                label:         oro.order.line_items_count.label
                 type: field
                 frontend_type: integer
             poNumber:
-                label:         orob2b.order.po_number.label
+                label:         oro.order.po_number.label
             shipUntil:
-                label:         orob2b.order.ship_until.label
+                label:         oro.order.ship_until.label
                 frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
@@ -462,7 +462,7 @@ datagrid:
                 - account_id
         columns:
             accountUserName:
-                label:         orob2b.order.account_user.label
+                label:         oro.order.account_user.label
         sorters:
             columns:
                 accountUserName:
@@ -506,45 +506,45 @@ datagrid:
         extends: base-order-line-items-grid
         columns:
             productSku:
-                label: orob2b.product.sku.label
+                label: oro.product.sku.label
             product:
-                label:         orob2b.product.entity_label
+                label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/product.html.twig
+                template:      OroOrderBundle:Order:Datagrid/product.html.twig
             quantity:
-                label: orob2b.order.orderlineitem.quantity.label
+                label: oro.order.orderlineitem.quantity.label
             price:
-                label:         orob2b.order.orderlineitem.price.label
+                label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/price.html.twig
+                template:      OroOrderBundle:Order:Datagrid/price.html.twig
             shipBy:
-                label:         orob2b.order.orderlineitem.ship_by.label
+                label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
             comment:
-                label: orob2b.order.orderlineitem.comment.label
+                label: oro.order.orderlineitem.comment.label
 
     order-line-items-grid-frontend:
         extends: base-order-line-items-grid
         columns:
             product:
-                label:         orob2b.product.entity_label
+                label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/frontendProduct.html.twig
+                template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
             quantity:
-                label: orob2b.order.orderlineitem.quantity.label
+                label: oro.order.orderlineitem.quantity.label
             price:
-                label:         orob2b.order.orderlineitem.price.label
+                label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/price.html.twig
+                template:      OroOrderBundle:Order:Datagrid/price.html.twig
             shipBy:
-                label:         orob2b.order.orderlineitem.ship_by.label
+                label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
             comment:
-                label: orob2b.order.orderlineitem.comment.label
+                label: oro.order.orderlineitem.comment.label
         options:
             toolbarOptions:
                 placement:

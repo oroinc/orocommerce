@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ExecutionContextInterface;
 
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Validator\Constraints;
 
 class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
 {

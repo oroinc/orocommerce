@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
+        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,10 +97,10 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
     {
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
 
         $product = new Product();
         $product->setSku($productSku);
@@ -111,7 +110,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
         /** @var RequestProductItem $requestProductItem */
         $requestProductItem = $this->getEntity(
-            'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem',
+            'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
             [
                 'id' => rand(1, 1000),
                 'quantity' => $quantity,

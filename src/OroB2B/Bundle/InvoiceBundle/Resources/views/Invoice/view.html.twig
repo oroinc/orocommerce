@@ -6,8 +6,8 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_invoice_index'),
-        'indexLabel': 'orob2b.invoice.entity_plural_label'|trans,
-        'entityTitle': 'orob2b.invoice.navigation.view'|trans({
+        'indexLabel': 'oro.invoice.entity_plural_label'|trans,
+        'entityTitle': 'oro.invoice.navigation.view'|trans({
             '%identifier%': entity.invoiceNumber|default('N/A'|trans)
         })
     } %}
@@ -18,7 +18,7 @@
     {% set invoiceInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.invoice.widgets.invoice_information'|trans,
+            'title': 'oro.invoice.widgets.invoice_information'|trans,
             'url': path('orob2b_invoice_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -27,7 +27,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.invoice.navigation.sections.general'|trans,
+            'title': 'oro.invoice.navigation.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }
@@ -40,11 +40,11 @@
                     <thead>
                     <tr>
                         <th><span>#</span></th>
-                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.entity_label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -72,7 +72,7 @@
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.invoice.navigation.sections.invoice_line_items'|trans,
+            'title': 'oro.invoice.navigation.sections.invoice_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
     {% endif %}

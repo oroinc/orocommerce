@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Controller;
+namespace Oro\Bundle\SaleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormView;
@@ -12,13 +12,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 
 class AjaxQuoteController extends Controller
 {
@@ -70,7 +69,7 @@ class AjaxQuoteController extends Controller
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->renderView('OroB2BSaleBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
+        return $this->renderView('OroSaleBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
     }
 
     /**

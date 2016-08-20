@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type\Frontend;
+namespace Oro\Bundle\AccountBundle\Form\Type\Frontend;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType as BaseAccountUserMultiSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType as BaseAccountUserMultiSelectType;
 
 class AccountUserMultiSelectType extends BaseAccountUserMultiSelectType
 {
@@ -22,7 +22,7 @@ class AccountUserMultiSelectType extends BaseAccountUserMultiSelectType
                     'route_name' => 'orob2b_frontend_autocomplete_search',
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',
-                    'placeholder' => 'orob2b.account.accountuser.form.choose',
+                    'placeholder' => 'oro.account.accountuser.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-accountuser-multiselect',

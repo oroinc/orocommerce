@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
+namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 
 class CheckoutAddressType extends AbstractOrderAddressType
 {
@@ -37,7 +36,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
             }
 
             $accountAddressOptions = [
-                'label' => sprintf('orob2b.checkout.form.address.select.%s.label', $type),
+                'label' => sprintf('oro.checkout.form.address.select.%s.label', $type),
                 'required' => true,
                 'mapped' => false,
                 'choices' => $this->getChoices($addresses),
@@ -52,7 +51,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $accountAddressOptions['choices'] = array_merge(
                     $accountAddressOptions['choices'],
-                    [self::ENTER_MANUALLY => 'orob2b.checkout.form.address.manual']
+                    [self::ENTER_MANUALLY => 'oro.checkout.form.address.manual']
                 );
             }
             $builder

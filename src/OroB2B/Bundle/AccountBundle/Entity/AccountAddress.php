@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\AccountBundle\Model\ExtendAccountAddress;
+use Oro\Bundle\AccountBundle\Model\ExtendAccountAddress;
 
 /**
  * @ORM\Table("orob2b_account_address")
@@ -43,7 +42,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountAddress;
  *          }
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository")
  */
 class AccountAddress extends ExtendAccountAddress
 {

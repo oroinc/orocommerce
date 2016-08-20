@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsValueTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ShippingBundle\Model\DimensionsValue';
+    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\DimensionsValue';
 
     /** @var DimensionsValueType */
     protected $formType;

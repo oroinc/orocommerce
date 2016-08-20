@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Event;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
+use Oro\Bundle\TaxBundle\Event\ContextEvent;
 
 class ContextEventTest extends \PHPUnit_Framework_TestCase
 {

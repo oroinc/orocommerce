@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Layout\Provider;
+namespace Oro\Bundle\TaxBundle\Layout\Provider;
 
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 class TaxProvider
 {

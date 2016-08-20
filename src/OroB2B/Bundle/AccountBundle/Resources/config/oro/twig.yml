@@ -1,2 +1,2 @@
 bundles:
-    - OroB2BAccountBundle:Form:fields.html.twig
+    - OroAccountBundle:Form:fields.html.twig

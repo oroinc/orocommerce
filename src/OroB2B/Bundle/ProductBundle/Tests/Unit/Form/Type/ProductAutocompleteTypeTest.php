@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormConfigInterface;
@@ -8,9 +8,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,8 +50,8 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
                                     'name' => 'orob2b_product_visibility_limited',
                                 ],
                                 'selection_template_twig' =>
-                                    'OroB2BProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
-                                'componentModule' => 'orob2bproduct/js/app/components/product-autocomplete-component',
+                                    'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
+                                'componentModule' => 'oroproduct/js/app/components/product-autocomplete-component',
                             ],
                             $options['autocomplete']
                         );

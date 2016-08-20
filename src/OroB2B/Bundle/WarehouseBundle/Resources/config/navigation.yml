@@ -1,21 +1,21 @@
 oro_menu_config:
     items:
         warehouse_tab:
-            label:  'orob2b.warehouse.menu.warehouse_tab.label'
+            label:  'oro.warehouse.menu.warehouse_tab.label'
             uri:    '#'
             extras:
                 icon:     icon-building
                 position: 400
 
         warehouse_inventory_level_list:
-            label: 'orob2b.warehouse.menu.inventory_list.label'
+            label: 'oro.warehouse.menu.inventory_list.label'
             route: 'orob2b_warehouse_inventory_level_index'
             extras:
                 position: 50
                 routes:   ['/^orob2b_warehouse_inventory_level/']
 
         warehouse_list:
-            label:  'orob2b.warehouse.entity_plural_label'
+            label:  'oro.warehouse.entity_plural_label'
             route:  'orob2b_warehouse_index'
             extras:
                 position:    100

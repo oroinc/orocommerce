@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -9,8 +9,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class LoadBasePriceListRelationDemoData extends AbstractFixture implements
     ContainerAwareInterface,
@@ -78,7 +78,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     protected function getWebsites(EntityManager $manager)
     {
         if (!$this->websites) {
-            $this->websites = $manager->getRepository('OroB2BWebsiteBundle:Website')->findAll();
+            $this->websites = $manager->getRepository('OroWebsiteBundle:Website')->findAll();
         }
 
         return $this->websites;
@@ -91,7 +91,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     protected function getPriceLists(EntityManager $manager)
     {
         if (!$this->priceLists) {
-            $this->priceLists = $manager->getRepository('OroB2BPricingBundle:PriceList')->findAll();
+            $this->priceLists = $manager->getRepository('OroPricingBundle:PriceList')->findAll();
         }
 
         return $this->priceLists;
@@ -103,9 +103,9 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
         ];
     }
 }

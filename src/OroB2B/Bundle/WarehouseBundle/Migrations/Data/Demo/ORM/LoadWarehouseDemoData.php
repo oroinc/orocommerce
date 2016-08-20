@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,9 +8,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
@@ -42,7 +42,7 @@ class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements De
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
 
@@ -55,7 +55,7 @@ class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements De
         $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
-        $precisions   = $this->getObjectReferences($manager, 'OroB2BProductBundle:ProductUnitPrecision');
+        $precisions   = $this->getObjectReferences($manager, 'OroProductBundle:ProductUnitPrecision');
 
         foreach ($this->warehouses as $reference => $row) {
             $warehouse = new Warehouse();

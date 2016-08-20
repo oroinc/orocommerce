@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method\View;
+namespace Oro\Bundle\PaymentBundle\Method\View;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
@@ -42,7 +42,7 @@ class PaymentTermView implements PaymentMethodViewInterface
         if ($paymentTerm) {
             return [
                 'value' => $this->translator->trans(
-                    'orob2b.payment.payment_terms.label',
+                    'oro.payment.payment_terms.label',
                     ['%paymentTerm%' => $paymentTerm->getLabel()]
                 ),
             ];

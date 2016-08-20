@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,7 +46,7 @@ class AccountGroupType extends AbstractType
                 'name',
                 'text',
                 [
-                    'label' => 'orob2b.account.accountgroup.name.label',
+                    'label' => 'oro.account.accountgroup.name.label',
                     'required' => true
                 ]
             )

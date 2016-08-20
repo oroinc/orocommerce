@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Autocomplete;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-
-use OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler;
+use Oro\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler;
 
 class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +47,7 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')

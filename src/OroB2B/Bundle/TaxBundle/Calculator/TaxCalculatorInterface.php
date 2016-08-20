@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Calculator;
+namespace Oro\Bundle\TaxBundle\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
 
 interface TaxCalculatorInterface
 {

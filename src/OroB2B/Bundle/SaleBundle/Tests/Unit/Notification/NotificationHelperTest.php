@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Notification;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Notification;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,18 +11,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Notification\NotificationHelper;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
 
 class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const QUOTE_CLASS_NAME = 'OroB2B\Bundle\SaleBundle\Entity\Quote';
+    const QUOTE_CLASS_NAME = 'Oro\Bundle\SaleBundle\Entity\Quote';
     const EMAIL_TEMPLATE_CLASS_NAME = 'Oro\Bundle\EmailBundle\Entity\EmailTemplate';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */

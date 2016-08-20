@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,7 +30,7 @@ class AccountUserMultiSelectType extends AbstractType
                 'configs' => [
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',
-                    'placeholder' => 'orob2b.account.accountuser.form.choose',
+                    'placeholder' => 'oro.account.accountuser.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-accountuser-multiselect',

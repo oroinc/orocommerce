@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 
 class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -153,7 +152,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(10);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:AccountGroup', 10)
+            ->with('OroAccountBundle:AccountGroup', 10)
             ->willReturn($accountGroup);
     }
 }

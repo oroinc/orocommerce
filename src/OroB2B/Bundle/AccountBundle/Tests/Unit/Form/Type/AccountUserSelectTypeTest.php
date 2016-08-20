@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 class AccountUserSelectTypeTest extends FormIntegrationTestCase
 {
@@ -51,7 +50,7 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-accountuser',
-                            'placeholder' => 'orob2b.account.accountuser.form.choose',
+                            'placeholder' => 'oro.account.accountuser.form.choose',
                         ],
                         $options['configs']
                     );

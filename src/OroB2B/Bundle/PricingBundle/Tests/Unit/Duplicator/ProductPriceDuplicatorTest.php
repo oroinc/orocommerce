@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Duplicator;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,7 +51,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
             $this->insertExecutor
         );
         $this->repository = $this
-            ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository');
+            ->getMockWithoutConstructor('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository');
     }
 
     /**
@@ -62,7 +61,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDuplicate(PriceList $sourcePriceList, PriceList $targetPriceList)
     {
-        $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice';
+        $priceListClass = 'Oro\Bundle\PricingBundle\Entity\ProductPrice';
         $this->priceDuplicator->setPriceListClass($priceListClass);
 
         $this->manager->expects($this->once())

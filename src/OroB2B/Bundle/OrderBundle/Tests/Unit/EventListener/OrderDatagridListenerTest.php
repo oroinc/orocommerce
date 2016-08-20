@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\EventListener\OrderDatagridListener;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class OrderDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Placeholder;
+namespace Oro\Bundle\FrontendBundle\Placeholder;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
+use Oro\Bundle\FrontendBundle\EventListener\ThemeListener;
 
 class ThemeFilter
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity\Repository;
+namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleRepository extends EntityRepository
 {

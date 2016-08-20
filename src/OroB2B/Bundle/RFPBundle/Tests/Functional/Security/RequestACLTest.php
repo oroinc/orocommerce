@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Security;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Security;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -12,11 +12,10 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
 
 /**
  * @dbIsolation
@@ -31,7 +30,7 @@ class RequestACLTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData'
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData'
         ]);
     }
 
@@ -48,7 +47,7 @@ class RequestACLTest extends WebTestCase
 
         /** @var AccountUser $user */
         $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $user);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
@@ -74,10 +73,10 @@ class RequestACLTest extends WebTestCase
 
         // Check isset RFP request with first user ownership
         /** @var Request $request */
-        $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
+        $request = $this->getContainer()->get('doctrine')->getRepository('OroRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
         $this->assertEquals($user->getId(), $request->getAccountUser()->getId());
 
         // Check owner access
@@ -138,14 +137,14 @@ class RequestACLTest extends WebTestCase
 
         $role = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole')
+            ->getManagerForClass('OroAccountBundle:AccountUserRole')
+            ->getRepository('OroAccountBundle:AccountUserRole')
             ->findOneBy(['role' => LoadAccountUsersData::BUYER]);
 
         $aclPrivilege = new AclPrivilege();
         $identity = new AclPrivilegeIdentity(
-            'entity:OroB2B\Bundle\RFPBundle\Entity\Request',
-            'orob2b.rfp.request.entity_label'
+            'entity:Oro\Bundle\RFPBundle\Entity\Request',
+            'oro.rfp.request.entity_label'
         );
 
         $aclPrivilege->setIdentity($identity);

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSubscriber;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSubscriber;
 
 use Symfony\Component\Form\FormEvents;
 

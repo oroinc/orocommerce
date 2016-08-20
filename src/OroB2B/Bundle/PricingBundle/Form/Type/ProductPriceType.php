@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,9 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceType extends AbstractType
 {
@@ -32,7 +31,7 @@ class ProductPriceType extends AbstractType
                 'priceList',
                 PriceListSelectType::NAME,
                 [
-                    'label' => 'orob2b.pricing.pricelist.entity_label',
+                    'label' => 'oro.pricing.pricelist.entity_label',
                     'create_enabled' => false,
                     'required' => true,
                     'constraints' => [new NotBlank()],
@@ -42,8 +41,8 @@ class ProductPriceType extends AbstractType
                 'unit',
                 ProductPriceUnitSelectorType::NAME,
                 [
-                    'label' => 'orob2b.pricing.unit.label',
-                    'empty_value' => 'orob2b.product.productunitprecision.unit_precision_required',
+                    'label' => 'oro.pricing.unit.label',
+                    'empty_value' => 'oro.product.productunitprecision.unit_precision_required',
                     'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
@@ -52,8 +51,8 @@ class ProductPriceType extends AbstractType
                 'price',
                 PriceType::NAME,
                 [
-                    'label' => 'orob2b.pricing.price.label',
-                    'currency_empty_value' => 'orob2b.pricing.pricelist.form.pricelist_required',
+                    'label' => 'oro.pricing.price.label',
+                    'currency_empty_value' => 'oro.pricing.pricelist.form.pricelist_required',
                     'full_currency_list' => true,
                 ]
             )
@@ -61,7 +60,7 @@ class ProductPriceType extends AbstractType
                 'quantity',
                 QuantityType::NAME,
                 [
-                    'label' => 'orob2b.pricing.quantity.label',
+                    'label' => 'oro.pricing.quantity.label',
                     'product' => $options['product'],
                     'product_unit_field' => 'unit',
                 ]

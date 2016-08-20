@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\TriggersFiller;
+namespace Oro\Bundle\PricingBundle\TriggersFiller;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Event\PriceRuleChange;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Event\PriceRuleChange;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceRuleTriggerFiller

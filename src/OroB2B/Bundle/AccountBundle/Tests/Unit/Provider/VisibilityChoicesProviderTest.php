@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Provider;
 
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 
 class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
+    const VISIBILITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
 
     /**
      * @var VisibilityChoicesProvider
@@ -37,10 +37,10 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS, $this->createCategory());
         $expected = [
-            'parent_category' => '[trans]orob2b.account.visibility.categoryvisibility.choice.parent_category[/trans]',
-            'config' => '[trans]orob2b.account.visibility.categoryvisibility.choice.config[/trans]',
-            'hidden' => '[trans]orob2b.account.visibility.categoryvisibility.choice.hidden[/trans]',
-            'visible' => '[trans]orob2b.account.visibility.categoryvisibility.choice.visible[/trans]',
+            'parent_category' => '[trans]oro.account.visibility.categoryvisibility.choice.parent_category[/trans]',
+            'config' => '[trans]oro.account.visibility.categoryvisibility.choice.config[/trans]',
+            'hidden' => '[trans]oro.account.visibility.categoryvisibility.choice.hidden[/trans]',
+            'visible' => '[trans]oro.account.visibility.categoryvisibility.choice.visible[/trans]',
         ];
         $this->assertEquals($expected, $actual);
     }
@@ -79,7 +79,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetChoicesForProduct($productCategory, array $expected)
     {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->any())
@@ -96,7 +96,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $actual = $this->formatter->getChoices(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
+            'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
             new Product()
         );
         $this->assertEquals($expected, $actual);

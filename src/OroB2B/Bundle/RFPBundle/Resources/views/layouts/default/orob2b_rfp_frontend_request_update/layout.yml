@@ -9,10 +9,10 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.rfp.request.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.rfp.request.entity_plural_label'
                 -
-                    label: 'orob2b.frontend.rfp.request.edit_title.label'
+                    label: 'oro.frontend.rfp.request.edit_title.label'
                     parameters:
                         '%id%': '=data["entity"].getId()'
 
@@ -25,6 +25,6 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.rfp.request.edit_title.label'
+                label: 'oro.frontend.rfp.request.edit_title.label'
                 parameters:
                     '%id%': '=data["entity"].getId()'

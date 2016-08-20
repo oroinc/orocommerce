@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
+namespace Oro\Bundle\TaxBundle\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderTaxesListener
 {

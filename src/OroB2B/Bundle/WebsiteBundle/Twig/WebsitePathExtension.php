@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Twig;
+namespace Oro\Bundle\WebsiteBundle\Twig;
 
-use OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
+use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 
 class WebsitePathExtension extends \Twig_Extension
 {

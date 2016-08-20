@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener;
 
 class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
 {
@@ -25,8 +25,8 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
         return new AccountGroupFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode',
-            'OroB2B\Bundle\AccountBundle\Entity\AccountGroup'
+            'Oro\Bundle\TaxBundle\Entity\AccountTaxCode',
+            'Oro\Bundle\AccountBundle\Entity\AccountGroup'
         );
     }
 
@@ -41,7 +41,7 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:AccountGroup:tax_code_update.html.twig', ['form' => new FormView()])
+            ->with('OroTaxBundle:AccountGroup:tax_code_update.html.twig', ['form' => new FormView()])
             ->willReturn('');
 
         $event->expects($this->once())
@@ -85,7 +85,7 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:AccountGroup:tax_code_view.html.twig', ['entity' => $taxCode])
+            ->with('OroTaxBundle:AccountGroup:tax_code_view.html.twig', ['entity' => $taxCode])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();

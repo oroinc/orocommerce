@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Twig;
+namespace Oro\Bundle\CMSBundle\Twig;
 
-use OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler;
+use Oro\Bundle\CMSBundle\JsTree\PageTreeHandler;
 
 class PageExtension extends \Twig_Extension
 {

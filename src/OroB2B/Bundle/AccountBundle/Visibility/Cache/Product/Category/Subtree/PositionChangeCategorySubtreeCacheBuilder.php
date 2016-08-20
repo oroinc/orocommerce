@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
@@ -27,8 +27,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     {
         $parentCategory = $category->getParentCategory();
         $visibility = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->getFallbackToAllVisibility($parentCategory);
 
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
@@ -87,8 +87,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountGroupIdsWithConfigVisibility = [];
 
         $parentAccountGroupsVisibilities = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->getVisibilitiesForAccountGroups(
                 $category->getParentCategory(),
                 $accountGroupIdsWithFallbackToParent
@@ -134,8 +134,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountIdsWithConfigVisibility = [];
 
         $parentAccountsVisibilities = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->getVisibilitiesForAccounts($category->getParentCategory(), $accountIdsWithFallbackToParent);
 
         foreach ($parentAccountsVisibilities as $accountId => $accountVisibility) {

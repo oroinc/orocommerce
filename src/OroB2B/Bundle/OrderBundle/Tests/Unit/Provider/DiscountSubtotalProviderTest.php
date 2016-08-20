@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
 class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -45,7 +44,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -57,7 +56,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             );
 
         $this->lineItemSubtotal = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -86,7 +85,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
         $order = new Order();
@@ -101,9 +100,9 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->exactly(3))
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
-        $subtotalMock =  $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
+        $subtotalMock =  $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
         $this->lineItemSubtotal->expects($this->once())
             ->method('getSubtotal')
             ->willReturn($subtotalMock);
@@ -132,7 +131,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $secondDiscountSubtotal = $subtotal[1];
         $threadDiscountSubtotal = $subtotal[2];
         $this->assertCount(3, $subtotal);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $firstDiscountSubtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $firstDiscountSubtotal);
         $this->assertEquals(DiscountSubtotalProvider::TYPE, $firstDiscountSubtotal->getType());
         $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
         $this->assertEquals('Discount', $secondDiscountSubtotal->getLabel());
@@ -147,10 +146,10 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
-        $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $accountUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);
@@ -167,7 +166,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($order);
         $discountSubtotal = $subtotal[0];
         $this->assertCount(1, $subtotal);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $discountSubtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $discountSubtotal);
         $this->assertEquals(DiscountSubtotalProvider::TYPE, $discountSubtotal->getType());
         $this->assertEquals($description, $discountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());

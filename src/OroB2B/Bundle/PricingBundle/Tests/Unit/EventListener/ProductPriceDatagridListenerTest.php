@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -11,14 +11,13 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,7 +56,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -136,30 +135,30 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'expectedConfig' => [
                     'columns' => [
                         'price_column_usd' => [
-                            'label' => 'orob2b.pricing.productprice.price_in_USD.trans',
+                            'label' => 'oro.pricing.productprice.price_in_USD.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => true,
                         ],
                         'price_column_eur' => [
-                            'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
+                            'label' => 'oro.pricing.productprice.price_in_EUR.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => true,
                         ],
                         'price_column_usd_unit1' => [
-                            'label' => 'orob2b.pricing.productprice.price_unit1_in_USD.trans',
+                            'label' => 'oro.pricing.productprice.price_unit1_in_USD.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
                         'price_column_eur_unit1' => [
-                            'label' => 'orob2b.pricing.productprice.price_unit1_in_EUR.trans',
+                            'label' => 'oro.pricing.productprice.price_unit1_in_EUR.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
@@ -213,7 +212,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'join' => [
                                 'left' => [
                                     0 => [
-                                        'join' => 'OroB2BPricingBundle:ProductPrice',
+                                        'join' => 'OroPricingBundle:ProductPrice',
                                         'alias' => 'price_column_usd_table',
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_usd_table.product = product.id ' .
@@ -222,7 +221,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                             'AND price_column_usd_table.quantity = 1',
                                     ],
                                     1 => [
-                                        'join' => 'OroB2BPricingBundle:ProductPrice',
+                                        'join' => 'OroPricingBundle:ProductPrice',
                                         'alias' => 'price_column_eur_table',
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_eur_table.product = product.id ' .
@@ -231,7 +230,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                             'AND price_column_eur_table.quantity = 1',
                                     ],
                                     2 => [
-                                        'join' => 'OroB2BPricingBundle:ProductPrice',
+                                        'join' => 'OroPricingBundle:ProductPrice',
                                         'alias' => 'price_column_usd_unit1_table',
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_usd_unit1_table.product = product.id ' .
@@ -241,7 +240,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                             'AND price_column_usd_unit1_table.unit = \'unit1\'' ,
                                     ],
                                     3 => [
-                                        'join' => 'OroB2BPricingBundle:ProductPrice',
+                                        'join' => 'OroPricingBundle:ProductPrice',
                                         'alias' => 'price_column_eur_unit1_table',
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_eur_unit1_table.product = product.id ' .
@@ -385,7 +384,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUpRepository()
     {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->any())
@@ -394,7 +393,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
-            ->withConsecutive(['OroB2BProductBundle:ProductUnit'], ['OroB2BPricingBundle:ProductPrice'])
+            ->withConsecutive(['OroProductBundle:ProductUnit'], ['OroPricingBundle:ProductPrice'])
             ->willReturn($repository);
 
         return $repository;

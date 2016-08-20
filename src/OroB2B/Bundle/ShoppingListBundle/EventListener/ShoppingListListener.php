@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListListener
 {
@@ -28,7 +28,7 @@ class ShoppingListListener
      */
     protected function setNewCurrent(EntityManager $em, AccountUser $accountUser)
     {
-        $shoppingList = $em->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+        $shoppingList = $em->getRepository('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->findLatestForAccountUserExceptCurrent($accountUser);
 
         if ($shoppingList instanceof ShoppingList) {

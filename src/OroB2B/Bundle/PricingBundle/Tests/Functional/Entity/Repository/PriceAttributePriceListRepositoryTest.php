@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
 
 /**
  * @dbIsolation
@@ -113,6 +112,6 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceAttributePriceList');
+            ->getRepository('OroPricingBundle:PriceAttributePriceList');
     }
 }

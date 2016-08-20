@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Event;
+namespace Oro\Bundle\AccountBundle\Event;
 
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountGroupEvent extends AfterFormProcessEvent
 {

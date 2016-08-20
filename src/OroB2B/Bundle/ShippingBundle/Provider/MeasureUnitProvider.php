@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 class MeasureUnitProvider
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -20,12 +20,12 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility');
+            ->getRepository('OroAccountBundle:Visibility\ProductVisibility');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             ]
         );
     }
@@ -119,13 +119,13 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     }
 
     /**
-     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
+     * @return \Oro\Bundle\WebsiteBundle\Entity\Website
      */
     protected function getDefaultWebsite()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->getDefaultWebsite();
     }
 }

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Model;
+namespace Oro\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusion extends AbstractResult
 {

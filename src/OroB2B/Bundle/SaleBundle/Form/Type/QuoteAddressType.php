@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,12 +14,11 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
 {
@@ -74,7 +73,7 @@ class QuoteAddressType extends AbstractType
             'required' => false,
             'mapped' => false,
             'choices' => $this->getChoices($addresses),
-            'configs' => ['placeholder' => 'orob2b.quote.form.address.choose'],
+            'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
             'attr' => [
                 'data-addresses' => json_encode($this->getPlainData($addresses)),
                 'data-default' => $this->getDefaultAddressKey($quote, $type, $addresses),
@@ -84,9 +83,9 @@ class QuoteAddressType extends AbstractType
         if ($isManualEditGranted) {
             $accountAddressOptions['choices'] = array_merge(
                 $accountAddressOptions['choices'],
-                ['orob2b.sale.quote.form.address.manual']
+                ['oro.sale.quote.form.address.manual']
             );
-            $accountAddressOptions['configs']['placeholder'] = 'orob2b.sale.quote.form.address.choose_or_create';
+            $accountAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
         }
 
         $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
@@ -161,7 +160,7 @@ class QuoteAddressType extends AbstractType
             ->setRequired(['quote', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass])
             ->setAllowedValues('addressType', [ AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('quote', 'OroB2B\Bundle\SaleBundle\Entity\Quote');
+            ->setAllowedTypes('quote', 'Oro\Bundle\SaleBundle\Entity\Quote');
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CurrencyConfigAwareInterface;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface;
+use Oro\Bundle\PaymentBundle\Method\Config\CurrencyConfigAwareInterface;
 
 abstract class AbstractPaymentConfigWithCountryAndCurrencyTest extends AbstractPaymentConfigTestCase
 {

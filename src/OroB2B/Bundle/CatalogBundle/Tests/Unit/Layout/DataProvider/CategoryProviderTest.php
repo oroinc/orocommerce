@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
+use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
 class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 {

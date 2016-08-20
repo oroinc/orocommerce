@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -127,7 +127,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getManagerForVisibility()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility');
+        return $this->registry->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility');
     }
 
     /**
@@ -135,7 +135,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getManagerForVisibilityResolved()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        return $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 
     /**
@@ -143,8 +143,8 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getVisibility()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+        return $this->registry->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->findOneBy(['website' => $this->website, 'product' => $this->product]);
     }
 
@@ -155,7 +155,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     {
         $entityManager = $this->getManagerForVisibilityResolved();
         $entity = $entityManager
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->findByPrimaryKey($this->product, $this->website);
 
         if ($entity) {
@@ -171,7 +171,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     protected function getSourceRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            'OroB2BAccountBundle:Visibility\ProductVisibility'
+            'OroAccountBundle:Visibility\ProductVisibility'
         );
     }
 
@@ -181,7 +181,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved'
+            'OroAccountBundle:VisibilityResolved\ProductVisibilityResolved'
         );
     }
 

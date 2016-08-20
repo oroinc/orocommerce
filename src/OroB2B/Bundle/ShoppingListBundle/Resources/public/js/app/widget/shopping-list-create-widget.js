@@ -17,7 +17,7 @@ define(function(require) {
             }
             this.options.url = options.url = routing.generate('orob2b_shopping_list_frontend_create', urlOptions);
 
-            this.options.title = __('orob2b.shoppinglist.widget.add_to_new_shopping_list');
+            this.options.title = __('oro.shoppinglist.widget.add_to_new_shopping_list');
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 

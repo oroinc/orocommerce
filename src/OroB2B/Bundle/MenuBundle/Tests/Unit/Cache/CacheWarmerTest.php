@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Cache;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Cache;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\MenuBundle\Cache\CacheWarmer;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
+use Oro\Bundle\MenuBundle\Cache\CacheWarmer;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 class CacheWarmerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +34,7 @@ class CacheWarmerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->menuProvider = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
+        $this->menuProvider = $this->getMockBuilder('Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->warmer = new CacheWarmer($this->doctrineHelper, $this->menuProvider);
@@ -48,7 +47,7 @@ class CacheWarmerTest extends \PHPUnit_Framework_TestCase
             (new MenuItem())->setDefaultTitle('first_menu'),
             (new MenuItem())->setDefaultTitle('second_menu'),
         ];
-        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrineHelper->expects($this->once())

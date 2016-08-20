@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductOfferTest extends AbstractTest
 {

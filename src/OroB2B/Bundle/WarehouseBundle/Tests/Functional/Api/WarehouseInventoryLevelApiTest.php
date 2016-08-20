@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Api;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Api;
 
 use Symfony\Component\HttpFoundation\Response;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit;
 
 /**
  * @dbIsolation

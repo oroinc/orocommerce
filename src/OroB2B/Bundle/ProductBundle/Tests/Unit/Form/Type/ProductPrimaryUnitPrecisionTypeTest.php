@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
@@ -10,17 +10,16 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision';
+    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision';
 
     /**
      * @var ProductPrimaryUnitPrecisionType

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -28,13 +27,13 @@ class AccountGroupRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountGroup');
+            ->getRepository('OroAccountBundle:AccountGroup');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             ]
         );
     }

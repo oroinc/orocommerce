@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Command;
+namespace Oro\Bundle\AccountBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class VisibilityCacheBuildCommand extends ContainerAwareCommand
 {
@@ -44,8 +44,8 @@ class VisibilityCacheBuildCommand extends ContainerAwareCommand
         if (null !== $input->getOption('website_id')) {
             $website = $this->getContainer()
                 ->get('doctrine')
-                ->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getManagerForClass('OroWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')
                 ->find((int)$input->getOption('website_id'));
             if (!$website instanceof Website) {
                 $output->writeln('<error>Website id is not valid</error>');

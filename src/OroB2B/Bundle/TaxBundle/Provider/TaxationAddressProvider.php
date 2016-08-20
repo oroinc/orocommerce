@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
-use OroB2B\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use Oro\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxationAddressProvider
 {

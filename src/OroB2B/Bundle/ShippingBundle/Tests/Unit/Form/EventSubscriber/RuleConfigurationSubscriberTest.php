@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
@@ -18,19 +18,18 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
-use OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class RuleConfigurationSubscriberTest extends FormIntegrationTestCase
 {

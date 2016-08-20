@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
 
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 
 class CombinedPriceListsUpdateEventTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Component;
+namespace Oro\Bundle\TaxBundle\Tests\Component;
 
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 
 class ZipCodeTestHelper
 {

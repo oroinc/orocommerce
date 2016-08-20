@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 
 class FrontendProductListModifier
 {
@@ -56,7 +56,7 @@ class FrontendProductListModifier
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroB2BPricingBundle:CombinedProductPrice', $productPriceAlias)
+                $limitationQb->from('OroPricingBundle:CombinedProductPrice', $productPriceAlias)
                     ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
                     ->where($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'priceList'),

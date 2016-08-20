@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
+namespace Oro\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class AccountFormExtension extends AbstractPaymentTermExtension
 {
@@ -24,13 +24,13 @@ class AccountFormExtension extends AbstractPaymentTermExtension
 
             if ($paymentTermByAccountGroup) {
                 $placeholder = $this->translator->trans(
-                    'orob2b.payment.account.payment_term_defined_in_group',
+                    'oro.payment.account.payment_term_defined_in_group',
                     [
                         '{{ payment_term }}' => $paymentTermByAccountGroup->getLabel()
                     ]
                 );
             } else {
-                $placeholder = $this->translator->trans('orob2b.payment.account.payment_term_non_defined_in_group');
+                $placeholder = $this->translator->trans('oro.payment.account.payment_term_non_defined_in_group');
             }
 
             $options['paymentTermOptions']['configs']['placeholder'] = $placeholder;

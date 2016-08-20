@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\RequestHandler;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,9 +9,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 
 class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,12 +39,12 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $accountClass = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    protected $accountClass = 'Oro\Bundle\AccountBundle\Entity\Account';
 
     /**
      * @var string
      */
-    protected $accountUserClass = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    protected $accountUserClass = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     protected function setUp()
     {

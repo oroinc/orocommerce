@@ -21,12 +21,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_warehouse_index'),
-            'indexLabel': 'orob2b.warehouse.entity_plural_label'|trans,
+            'indexLabel': 'oro.warehouse.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.warehouse.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.warehouse.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -37,7 +37,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.warehouse.sections.general'|trans,
+            'title': 'oro.warehouse.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'data': [
@@ -55,7 +55,7 @@
 
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.warehouse.sections.additional'|trans,
+            'title': 'oro.warehouse.sections.additional'|trans,
             'subblocks': [{
             'title': '',
             'useSpan': false,

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Selenium;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Selenium;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Selenium\Pages\ShoppingListTestPage;
+use Oro\Bundle\ShoppingListBundle\Tests\Selenium\Pages\ShoppingListTestPage;
 
 /**
  * @dbIsolation

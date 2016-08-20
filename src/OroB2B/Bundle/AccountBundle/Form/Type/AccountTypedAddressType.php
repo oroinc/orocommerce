@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\FixAddressesPrimarySubscriber;
-
-use OroB2B\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSubscriber;
+use Oro\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSubscriber;
 
 class AccountTypedAddressType extends AbstractType
 {

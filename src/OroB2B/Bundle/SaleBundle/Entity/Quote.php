@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,18 +14,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SaleBundle\Model\ExtendQuote;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
- * @ORM\EntityListeners({"OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
+ * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
+ * @ORM\EntityListeners({"Oro\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_sale_quote_index",
@@ -94,7 +93,7 @@ class Quote extends ExtendQuote implements
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -109,7 +108,7 @@ class Quote extends ExtendQuote implements
     /**
      * @var Request
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\Request")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\Request")
      * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -239,7 +238,7 @@ class Quote extends ExtendQuote implements
     /**
      * @var Collection|AccountUser[]
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinTable(
      *      name="oro_quote_assigned_acc_users",
      *      joinColumns={

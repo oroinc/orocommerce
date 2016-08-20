@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\TemplateFixture;
+namespace Oro\Bundle\PricingBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceListFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -17,7 +16,7 @@ class PriceListFixture extends AbstractTemplateRepository implements TemplateFix
      */
     public function getEntityClass()
     {
-        return 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice';
+        return 'Oro\Bundle\PricingBundle\Entity\ProductPrice';
     }
 
     /**

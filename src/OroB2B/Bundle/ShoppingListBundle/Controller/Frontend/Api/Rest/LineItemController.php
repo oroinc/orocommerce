@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
 use FOS\RestBundle\Util\Codes;
 
@@ -15,10 +15,9 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 /**
  * @NamePrefix("orob2b_api_shopping_list_frontend_")
@@ -33,7 +32,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * @Acl(
      *      id="orob2b_shopping_list_line_item_frontend_delete",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
+     *      class="OroShoppingListBundle:LineItem",
      *      permission="DELETE",
      *      group_name="commerce"
      * )
@@ -47,8 +46,8 @@ class LineItemController extends RestController implements ClassResourceInterfac
         $success = false;
         /** @var LineItem $lineItem */
         $lineItem = $this->getDoctrine()
-            ->getManagerForClass('OroB2BShoppingListBundle:LineItem')
-            ->getRepository('OroB2BShoppingListBundle:LineItem')
+            ->getManagerForClass('OroShoppingListBundle:LineItem')
+            ->getRepository('OroShoppingListBundle:LineItem')
             ->find($id);
 
         $view = $this->view(null, Codes::HTTP_NO_CONTENT);

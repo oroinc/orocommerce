@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\EventListener\RoutingListener;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\EventListener\RoutingListener;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 

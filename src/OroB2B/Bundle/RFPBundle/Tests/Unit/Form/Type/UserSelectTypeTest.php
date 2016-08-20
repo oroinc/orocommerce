@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\UserSelectType;
+use Oro\Bundle\RFPBundle\Form\Type\UserSelectType;
 
 class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Menu;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -8,13 +8,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\MenuBundle\Menu\MenuSerializer;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
+use Oro\Bundle\MenuBundle\Menu\BuilderInterface;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Menu\MenuSerializer;
+use Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -66,7 +65,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->builder = $this->getMock('OroB2B\Bundle\MenuBundle\Menu\BuilderInterface');
+        $this->builder = $this->getMock('Oro\Bundle\MenuBundle\Menu\BuilderInterface');
 
         $this->currentLocalization = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
         $this->localizationHelper = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Helper\LocalizationHelper')
@@ -76,7 +75,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentLocalization')
             ->willReturn($this->currentLocalization);
 
-        $this->serializer = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\MenuSerializer')
+        $this->serializer = $this->getMockBuilder('Oro\Bundle\MenuBundle\Menu\MenuSerializer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -295,7 +294,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $menuItem = new MenuItem();
         $menuItem->setRoot($rootId);
 
-        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())
@@ -392,7 +391,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $serializedMenu1 = ['menuItem1.1', 'menuItem2.1'];
         $serializedMenu2 = ['menuItem1.2', 'menuItem2.2', 'meuItem2.3'];
 
-        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())
@@ -455,7 +454,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $menu1root = $this->createRootMenuItem('menu1');
         $menu2root = $this->createRootMenuItem('menu2');
 
-        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())

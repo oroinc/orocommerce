@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
-use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -59,12 +58,12 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->categoryVisibilityResolver = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->accountUserRelationsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -193,7 +192,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'hiddenCategoryIds' => [3],
                 'user' => new AccountUser(),
-                'account' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 42])
+                'account' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 42])
             ]
         ];
     }
@@ -208,7 +207,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         $categoriesCollection = [];
         foreach ($categories as $item) {
             /** @var Category $category */
-            $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $item['id']]);
+            $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => $item['id']]);
 
             $category->setParentCategory($this->getParent($item['parent'], $categoriesCollection));
             $categoriesCollection[$category->getId()] = $category;

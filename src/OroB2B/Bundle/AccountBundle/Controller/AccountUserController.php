@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -12,10 +12,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserType;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 
 class AccountUserController extends Controller
 {
@@ -25,7 +24,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="orob2b_account_account_user_view",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="VIEW"
      * )
      *
@@ -74,7 +73,7 @@ class AccountUserController extends Controller
      *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
      *      defaults={"accountId"=0, "accountUserId"=0}
      * )
-     * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
+     * @Template("OroAccountBundle:AccountUser:widget/roles.html.twig")
      * @AclAncestor("orob2b_account_account_user_view")
      *
      * @param string $accountUserId
@@ -113,11 +112,11 @@ class AccountUserController extends Controller
      * Create account user form
      *
      * @Route("/create", name="orob2b_account_account_user_create")
-     * @Template("OroB2BAccountBundle:AccountUser:update.html.twig")
+     * @Template("OroAccountBundle:AccountUser:update.html.twig")
      * @Acl(
      *      id="orob2b_account_account_user_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -136,7 +135,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="orob2b_account_account_user_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
+     *      class="OroAccountBundle:AccountUser",
      *      permission="EDIT"
      * )
      * @param AccountUser $accountUser
@@ -180,7 +179,7 @@ class AccountUserController extends Controller
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.accountuser.saved.message'),
+            $this->get('translator')->trans('oro.account.controller.accountuser.saved.message'),
             $handler
         );
 

@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\AccountBundle\Event\AccountGroupEvent;
+use Oro\Bundle\AccountBundle\Event\AccountGroupEvent;
 
 /**
  * @NamePrefix("orob2b_api_account_")
@@ -28,7 +27,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      * @Acl(
      *      id="orob2b_account_group_delete",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountGroup",
+     *      class="OroAccountBundle:AccountGroup",
      *      permission="DELETE"
      * )
      *
@@ -39,7 +38,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->get('oro_api.doctrine_helper')
-            ->getEntityRepository('OroB2BAccountBundle:AccountGroup')
+            ->getEntityRepository('OroAccountBundle:AccountGroup')
             ->find($id);
         if ($accountGroup) {
             $this->get('event_dispatcher')

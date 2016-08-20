@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountFormViewListener extends AbstractAccountFormViewListener
 {
@@ -15,9 +14,9 @@ class AccountFormViewListener extends AbstractAccountFormViewListener
      */
     protected $fallbackChoices = [
         PriceListAccountFallback::CURRENT_ACCOUNT_ONLY =>
-            'orob2b.pricing.fallback.current_account_only.label',
+            'oro.pricing.fallback.current_account_only.label',
         PriceListAccountFallback::ACCOUNT_GROUP =>
-            'orob2b.pricing.fallback.account_group.label',
+            'oro.pricing.fallback.account_group.label',
     ];
 
     /**
@@ -31,17 +30,17 @@ class AccountFormViewListener extends AbstractAccountFormViewListener
         }
 
         /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', (int)$request->get('id'));
+        $account = $this->doctrineHelper->getEntityReference('OroAccountBundle:Account', (int)$request->get('id'));
 
         /** @var PriceListToAccount[] $priceLists */
         $websites = $this->websiteProvider->getWebsites();
         $priceLists = $this->doctrineHelper
-            ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->getEntityRepository('OroPricingBundle:PriceListToAccount')
             ->findBy(['account' => $account, 'website' => $websites]);
 
         /** @var PriceListAccountFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
-            ->getEntityRepository('OroB2BPricingBundle:PriceListAccountFallback')
+            ->getEntityRepository('OroPricingBundle:PriceListAccountFallback')
             ->findOneBy(['account' => $account, 'website' => $websites]);
 
         $fallback = $fallbackEntity

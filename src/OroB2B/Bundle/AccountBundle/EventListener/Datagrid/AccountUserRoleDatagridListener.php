@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener\Datagrid;
+namespace Oro\Bundle\AccountBundle\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserRoleDatagridListener
 {

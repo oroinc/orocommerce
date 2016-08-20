@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Provider;
+namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductPriceProvider
 {

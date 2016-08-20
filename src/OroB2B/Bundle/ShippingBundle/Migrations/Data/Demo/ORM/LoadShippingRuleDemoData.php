@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 
 class LoadShippingRuleDemoData extends AbstractFixture
 {

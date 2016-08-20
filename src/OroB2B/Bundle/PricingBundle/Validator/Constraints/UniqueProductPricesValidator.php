@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class UniqueProductPricesValidator extends ConstraintValidator
 {
@@ -23,7 +23,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
 
         foreach ($value as $productPrice) {
             if (!$productPrice instanceof ProductPrice) {
-                throw new UnexpectedTypeException($productPrice, 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+                throw new UnexpectedTypeException($productPrice, 'Oro\Bundle\PricingBundle\Entity\ProductPrice');
             }
 
             $hash = $this->getHash($productPrice);

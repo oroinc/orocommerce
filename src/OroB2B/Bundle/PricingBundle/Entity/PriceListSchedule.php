@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_price_list_schedule")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
  */
 class PriceListSchedule
 {
@@ -22,7 +22,7 @@ class PriceListSchedule
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="schedules")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="schedules")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $priceList;

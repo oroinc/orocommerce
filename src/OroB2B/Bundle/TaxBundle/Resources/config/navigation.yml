@@ -1,51 +1,51 @@
 oro_menu_config:
     items:
         taxes_tab:
-            label:           'orob2b.tax.menu.taxes_tab.label'
+            label:           'oro.tax.menu.taxes_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-filter
                 position:    400
 
         product_tax_code_list:
-            label:           'orob2b.tax.producttaxcode.entity_plural_label'
+            label:           'oro.tax.producttaxcode.entity_plural_label'
             route:           'orob2b_tax_product_tax_code_index'
             extras:
                 position:    100
                 routes:      ['orob2b_tax_product_tax_code_index', 'orob2b_tax_product_tax_code_view', 'orob2b_tax_product_tax_code_update', 'orob2b_tax_product_tax_code_create']
-                description: 'orob2b.tax.producttaxcode.description'
+                description: 'oro.tax.producttaxcode.description'
 
         account_tax_code_list:
-            label:           'orob2b.tax.accounttaxcode.entity_plural_label'
+            label:           'oro.tax.accounttaxcode.entity_plural_label'
             route:           'orob2b_tax_account_tax_code_index'
             extras:
                 position:    100
                 routes:      ['orob2b_tax_account_tax_code_index', 'orob2b_tax_account_tax_code_view', 'orob2b_tax_account_tax_code_update', 'orob2b_tax_account_tax_code_create']
-                description: 'orob2b.tax.accounttaxcode.description'
+                description: 'oro.tax.accounttaxcode.description'
 
         tax_list:
-            label:           'orob2b.tax.entity_plural_label'
+            label:           'oro.tax.entity_plural_label'
             route:           'orob2b_tax_index'
             extras:
                 position:    100
                 routes:      ['orob2b_tax_index', 'orob2b_tax_view', 'orob2b_tax_update', 'orob2b_tax_create']
-                description: 'orob2b.tax.tax.description'
+                description: 'oro.tax.tax.description'
 
         tax_rule_list:
-            label:           'orob2b.tax.taxrule.entity_plural_label'
+            label:           'oro.tax.taxrule.entity_plural_label'
             route:           'orob2b_tax_rule_index'
             extras:
                 position:    100
                 routes:      ['orob2b_tax_rule_index', 'orob2b_tax_rule_view', 'orob2b_tax_rule_update', 'orob2b_tax_rule_create']
-                description: 'orob2b.tax.taxrule.description'
+                description: 'oro.tax.taxrule.description'
 
         tax_jurisdiction:
-            label:           'orob2b.tax.taxjurisdiction.entity_plural_label'
+            label:           'oro.tax.taxjurisdiction.entity_plural_label'
             route:           'orob2b_tax_jurisdiction_index'
             extras:
                 position:    100
                 routes:      ['orob2b_tax_jurisdiction_index', 'orob2b_tax_jurisdiction_view', 'orob2b_tax_jurisdiction_update', 'orob2b_tax_jurisdiction_create']
-                description: 'orob2b.tax.taxjurisdiction.description'
+                description: 'oro.tax.taxjurisdiction.description'
 
     tree:
         application_menu:

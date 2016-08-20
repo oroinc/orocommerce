@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -19,7 +19,7 @@ class AccountUserRoleType extends AbstractAccountUserRoleType
             AccountSelectType::NAME,
             [
                 'required' => false,
-                'label' => 'orob2b.account.accountuserrole.account.label'
+                'label' => 'oro.account.accountuserrole.account.label'
             ]
         );
     }

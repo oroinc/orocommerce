@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Formatter;
+namespace Oro\Bundle\OrderBundle\Formatter;
 
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 

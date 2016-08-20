@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Entity;
+namespace Oro\Bundle\WarehouseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
 
 /**
  * @ORM\Table(
@@ -51,7 +50,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var Warehouse $warehouse
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WarehouseBundle\Entity\Warehouse")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseBundle\Entity\Warehouse")
      * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $warehouse;
@@ -59,7 +58,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var Product $product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $product;
@@ -67,7 +66,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var ProductUnitPrecision $productUnitPrecision
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision")
      * @ORM\JoinColumn(name="product_unit_precision_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $productUnitPrecision;

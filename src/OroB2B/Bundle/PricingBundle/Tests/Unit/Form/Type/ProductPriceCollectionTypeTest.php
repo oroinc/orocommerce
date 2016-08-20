@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -8,13 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceType;
 
 class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const PRICE_LIST_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
+    const PRICE_LIST_CLASS = 'Oro\Bundle\PricingBundle\Entity\PriceList';
 
     /**
      * @var ProductPriceCollectionType
@@ -38,7 +37,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->formType = new ProductPriceCollectionType($this->registry);
-        $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
         $this->formType->setPriceListClass(self::PRICE_LIST_CLASS);
     }
 
@@ -104,7 +103,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

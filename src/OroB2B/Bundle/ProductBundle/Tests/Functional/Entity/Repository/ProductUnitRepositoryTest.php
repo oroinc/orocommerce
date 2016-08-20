@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class ProductUnitRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
 
     /**
@@ -70,7 +69,7 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
@@ -169,7 +168,7 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsByCodesNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();

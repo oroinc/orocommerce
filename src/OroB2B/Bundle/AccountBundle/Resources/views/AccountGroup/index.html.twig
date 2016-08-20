@@ -3,14 +3,14 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% set gridName = 'account-groups-grid' %}
-{% set pageTitle = 'orob2b.account.accountgroup.entity_plural_label'|trans %}
+{% set pageTitle = 'oro.account.accountgroup.entity_plural_label'|trans %}
 
 {% block navButtons %}
     {% if resource_granted('orob2b_account_group_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('orob2b_account_group_create'),
-                'entity_label': 'orob2b.account.accountgroup.entity_label'|trans
+                'entity_label': 'oro.account.accountgroup.entity_label'|trans
             }) }}
         </div>
     {% endif %}

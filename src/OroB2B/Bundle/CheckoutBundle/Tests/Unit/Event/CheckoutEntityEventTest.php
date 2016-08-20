@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Event;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Event;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 
 class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Type;
+namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,8 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionType extends AbstractType
 {
@@ -74,9 +73,9 @@ class TaxBaseExclusionType extends AbstractType
                     'required' => true,
                     'choices' => [
                         TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN =>
-                            'orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label',
+                            'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label',
                         TaxationSettingsProvider::USE_AS_BASE_DESTINATION =>
-                            'orob2b.tax.system_configuration.fields.use_as_base.destination.label',
+                            'oro.tax.system_configuration.fields.use_as_base.destination.label',
                     ],
                     'constraints' => [new NotBlank()],
                 ]

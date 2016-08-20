@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\Form;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\EventListener\InvoiceFormListener;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject $provider*/
         $provider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();

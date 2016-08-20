@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 
 class AlternativeCheckoutByQuote extends AbstractAction
 {
@@ -75,7 +74,7 @@ class AlternativeCheckoutByQuote extends AbstractAction
      */
     protected function getRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BCheckoutBundle:Checkout')
-            ->getRepository('OroB2BCheckoutBundle:Checkout');
+        return $this->registry->getManagerForClass('OroCheckoutBundle:Checkout')
+            ->getRepository('OroCheckoutBundle:Checkout');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Handler;
+namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\Form\FormInterface;
@@ -11,8 +11,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -78,7 +77,7 @@ class ProductUpdateHandler extends UpdateHandler
         );
 
         if ($result instanceof RedirectResponse && $this->isSaveAndDuplicateAction()) {
-            $saveMessage = $this->translator->trans('orob2b.product.controller.product.saved_and_duplicated.message');
+            $saveMessage = $this->translator->trans('oro.product.controller.product.saved_and_duplicated.message');
             $this->session->getFlashBag()->set('success', $saveMessage);
             if ($actionGroup = $this->actionGroupRegistry->findByName('orob2b_product_duplicate')) {
                 $actionData = $actionGroup->execute(new ActionData(['data' => $entity]));

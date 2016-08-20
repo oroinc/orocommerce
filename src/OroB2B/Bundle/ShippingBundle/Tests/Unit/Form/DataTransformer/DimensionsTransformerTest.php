@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
 
 class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
 {

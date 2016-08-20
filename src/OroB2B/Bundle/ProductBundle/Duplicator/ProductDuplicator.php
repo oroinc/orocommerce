@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Duplicator;
+namespace Oro\Bundle\ProductBundle\Duplicator;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicator
 {

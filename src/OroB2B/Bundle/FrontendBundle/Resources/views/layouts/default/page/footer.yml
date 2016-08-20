@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BFrontendBundle:layouts:default/page/footer.html.twig'
+            themes: 'OroFrontendBundle:layouts:default/page/footer.html.twig'
         - '@addTree':
             items:
                 footer:

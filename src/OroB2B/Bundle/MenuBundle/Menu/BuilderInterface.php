@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Menu;
+namespace Oro\Bundle\MenuBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
+namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
@@ -14,10 +14,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemWidgetType extends AbstractType
 {
@@ -72,12 +72,12 @@ class FrontendLineItemWidgetType extends AbstractType
                 [
                     'mapped' => false,
                     'required' => false,
-                    'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
+                    'label' => 'oro.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
                     'query_builder' => function (ShoppingListRepository $repository) {
                         return $repository->createFindForAccountUserQueryBuilder($this->getAccountUser());
                     },
-                    'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
+                    'empty_value' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
                 ]
             )
             ->add(
@@ -86,7 +86,7 @@ class FrontendLineItemWidgetType extends AbstractType
                 [
                     'mapped' => false,
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.new_shopping_list_label'
+                    'label' => 'oro.shoppinglist.lineitem.new_shopping_list_label'
                 ]
             )
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
@@ -113,7 +113,7 @@ class FrontendLineItemWidgetType extends AbstractType
 
         if (!$form->get('shoppingList')->getData() && !$form->get('shoppingListLabel')->getData()) {
             $form->get('shoppingListLabel')->addError(
-                new FormError($this->translator->trans('orob2b.shoppinglist.not_empty', [], 'validators'))
+                new FormError($this->translator->trans('oro.shoppinglist.not_empty', [], 'validators'))
             );
         }
     }

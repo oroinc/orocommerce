@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
 
 class LoadQuoteDataForPerformance extends AbstractFixture
 {
@@ -115,10 +115,10 @@ class LoadQuoteDataForPerformance extends AbstractFixture
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
 }

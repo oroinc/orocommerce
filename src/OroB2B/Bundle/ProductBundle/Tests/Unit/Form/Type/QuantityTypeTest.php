@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -8,11 +8,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
 
 class QuantityTypeTest extends FormIntegrationTestCase
 {
@@ -75,15 +74,15 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $entityType = new EntityType(
             [
                 1 => $this->getEntity(
-                    'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    'Oro\Bundle\ProductBundle\Entity\Product',
                     [
                         'id' => 1,
                         'unitPrecisions' => [
                             $this->getEntity(
-                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                                'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                                 [
                                     'unit' => $this->getEntity(
-                                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                         ['code' => 'kg']
                                     ),
                                     'precision' => 3,
@@ -92,11 +91,11 @@ class QuantityTypeTest extends FormIntegrationTestCase
                         ],
                     ]
                 ),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
-                3 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
+                2 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                3 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
+                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
                 'item' => $this->getEntity(
-                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                    'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                     ['code' => 'item', 'defaultPrecision' => 5]
                 ),
             ]
@@ -144,7 +143,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
             'product passed from parent type, product field not exists' => [
                 [
                     'product_holder' => $this->getProductHolder(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2])
                     ),
                 ],
                 [],
@@ -172,12 +171,12 @@ class QuantityTypeTest extends FormIntegrationTestCase
                     'product_field' => 'productField',
                     'product_unit_field' => 'productUnitField',
                     'product_holder' => $this->getProductHolder(
-                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2])
+                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2])
                     ),
                 ],
                 ['productField' => 3],
                 [
-                    'productField' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
+                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 3]),
                     'productUnitField' => null,
                     'quantityField' => null,
                 ],
@@ -192,7 +191,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
                 ['productField' => 2, 'productUnitField' => 'missing'],
                 [
-                    'productField' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
                     'quantityField' => null,
                 ],
             ],
@@ -201,15 +200,15 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ['productField' => 1, 'productUnitField' => 'kg', 'quantityField' => 0.555555555555],
                 [
                     'productField' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\Product',
+                        'Oro\Bundle\ProductBundle\Entity\Product',
                         [
                             'id' => 1,
                             'unitPrecisions' => [
                                 $this->getEntity(
-                                    'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                                    'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                                     [
                                         'unit' => $this->getEntity(
-                                            'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                             ['code' => 'kg']
                                         ),
                                         'precision' => 3,
@@ -219,7 +218,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
                         ]
                     ),
                     'productUnitField' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                         ['code' => 'kg']
                     ),
                     'quantityField' => 0.556,
@@ -229,9 +228,9 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
                 ['productField' => 2, 'productUnitField' => 'item', 'quantityField' => 0.555555555555],
                 [
-                    'productField' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
                     'productUnitField' => $this->getEntity(
-                        'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                        'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                         ['code' => 'item', 'defaultPrecision' => 5]
                     ),
                     'quantityField' => 0.55556,
@@ -246,7 +245,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
      */
     protected function getProductHolder(Product $product = null)
     {
-        $holder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $holder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $holder->expects($this->any())->method('getProduct')->willReturn($product);
 
         return $holder;

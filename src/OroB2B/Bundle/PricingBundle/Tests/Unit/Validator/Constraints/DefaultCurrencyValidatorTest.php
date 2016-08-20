@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrency;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator;
+use Oro\Bundle\PricingBundle\Validator\Constraints\DefaultCurrency;
+use Oro\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator;
 
 class DefaultCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
 {

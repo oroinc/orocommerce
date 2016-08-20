@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")
  * @ORM\Table(
  *      name="orob2b_price_list_to_product",
  *      uniqueConstraints={
@@ -16,7 +16,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *          )
  *      }
  * )
- * @ORM\EntityListeners({ "OroB2B\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
+ * @ORM\EntityListeners({ "Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
 class PriceListToProduct
 {
@@ -32,7 +32,7 @@ class PriceListToProduct
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $priceList;
@@ -40,7 +40,7 @@ class PriceListToProduct
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $product;

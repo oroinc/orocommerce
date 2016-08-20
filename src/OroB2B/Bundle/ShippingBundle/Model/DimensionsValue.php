@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Model;
+namespace Oro\Bundle\ShippingBundle\Model;
 
 class DimensionsValue
 {

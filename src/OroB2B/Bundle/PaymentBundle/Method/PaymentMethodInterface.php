@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 interface PaymentMethodInterface
 {

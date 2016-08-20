@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Checkout\DataProvider;
+namespace Oro\Component\Checkout\DataProvider;
 
 interface CheckoutDataProviderInterface
 {

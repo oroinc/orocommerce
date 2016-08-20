@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\SubtotalEntityStub;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -47,11 +46,11 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         parent::setUp();
         $this->subtotalProviderRegistry =
-            $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
+            $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -79,7 +78,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub());
@@ -88,7 +87,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(0);
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
@@ -108,13 +107,13 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub());
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
@@ -125,7 +124,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     public function testRecalculationIsEnabledAndProviderIsCacheAware()
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
-        $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
+        $subtotalProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -146,7 +145,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -168,7 +167,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -194,7 +193,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -207,7 +206,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -228,7 +227,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     public function testRecalculationIsDisabledAndProviderIsCacheAware()
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
-        $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
+        $subtotalProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -249,7 +248,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -271,7 +270,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
         $subtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -293,7 +292,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub());
@@ -301,14 +300,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(0);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
 
         // try to get again but getProviders and getSubtotal expect run once
         $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(0);
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
@@ -320,7 +319,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub(), 2);
@@ -328,7 +327,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal1 = $subtotals->get(0);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal1);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal1);
         $this->provider->clearCache();
 
         // try to get again and getProviders and getSubtotal expect run twice
@@ -337,7 +336,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal1 = $subtotals->get(0);
         $subtotal2 = $subtotals->get(1);
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal1);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal1);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal1->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal1->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal1->getCurrency());
@@ -355,7 +354,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = new EntityWithoutCurrencyStub();
@@ -366,7 +365,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $entity = $this->prepareSubtotals($entity);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals('USD', $total->getCurrency());
@@ -378,13 +377,13 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub(), 1, Subtotal::OPERATION_SUBTRACTION);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
@@ -396,13 +395,13 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub(), 1, Subtotal::OPERATION_SUBTRACTION, 200.0);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
         $this->assertEquals($entity->getCurrency(), $total->getCurrency());
@@ -426,12 +425,12 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     ) {
         $currency = 'USD';
         $subtotalProvider1 = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $subtotalProvider2 = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -474,7 +473,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $entity = $this->prepareSubtotals(new EntityStub());

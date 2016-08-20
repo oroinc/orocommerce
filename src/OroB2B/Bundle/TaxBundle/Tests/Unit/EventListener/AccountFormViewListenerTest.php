@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\TaxBundle\EventListener\AccountFormViewListener;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountFormViewListenerTest extends AbstractFormViewListenerTest
 {
@@ -26,8 +26,8 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         return new AccountFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode',
-            'OroB2B\Bundle\AccountBundle\Entity\Account'
+            'Oro\Bundle\TaxBundle\Entity\AccountTaxCode',
+            'Oro\Bundle\AccountBundle\Entity\Account'
         );
     }
 
@@ -42,7 +42,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:Account:tax_code_update.html.twig', ['form' => new FormView()])
+            ->with('OroTaxBundle:Account:tax_code_update.html.twig', ['form' => new FormView()])
             ->willReturn('');
 
         $event->expects($this->once())
@@ -91,7 +91,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         $env->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BTaxBundle:Account:tax_code_view.html.twig',
+                'OroTaxBundle:Account:tax_code_view.html.twig',
                 [
                     'entity' => $taxCode,
                     'groupAccountTaxCode' => null,
@@ -117,7 +117,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -147,7 +147,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         $env->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BTaxBundle:Account:tax_code_view.html.twig',
+                'OroTaxBundle:Account:tax_code_view.html.twig',
                 [
                     'entity' => null,
                     'groupAccountTaxCode' => $accountTaxCode,
@@ -173,7 +173,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -201,7 +201,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         $env->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BTaxBundle:Account:tax_code_view.html.twig',
+                'OroTaxBundle:Account:tax_code_view.html.twig',
                 [
                     'entity' => null,
                     'groupAccountTaxCode' => null,

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductTypeStub extends AbstractType
 {

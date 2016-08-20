@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Twig;
+namespace Oro\Bundle\OrderBundle\Twig;
 
-use OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
+use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class OrderExtension extends \Twig_Extension
 {

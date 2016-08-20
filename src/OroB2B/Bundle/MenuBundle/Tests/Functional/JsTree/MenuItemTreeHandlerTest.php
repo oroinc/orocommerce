@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\JsTree;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\JsTree;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
-use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 /**
  * @dbIsolation
@@ -18,7 +18,7 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getFixtures()
     {
-        return 'OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData';
+        return 'Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData';
     }
 
     /**
@@ -234,9 +234,9 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
     protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
         /** @var EntityManager $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
-        $entity = $em->getReference('OroB2BMenuBundle:MenuItem', $entityId);
-        $entities = $em->getRepository('OroB2BMenuBundle:MenuItem')
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
+        $entity = $em->getReference('OroMenuBundle:MenuItem', $entityId);
+        $entities = $em->getRepository('OroMenuBundle:MenuItem')
             ->findBy(['root' => $entity->getRoot()], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, MenuItem $menuItem) {
             $result[$menuItem->getDefaultTitle()->getString()] = [];

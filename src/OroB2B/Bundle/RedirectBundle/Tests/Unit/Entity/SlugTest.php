@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class SlugTest extends EntityTestCase
 {

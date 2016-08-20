@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @dbIsolation
@@ -30,12 +29,12 @@ class AccountGroupControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->entityManager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup');
+            ->getManagerForClass('OroAccountBundle:AccountGroup');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
             ]
         );
     }
@@ -176,8 +175,8 @@ class AccountGroupControllerTest extends WebTestCase
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
-            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->getManagerForClass('OroAccountBundle:AccountGroup')
+            ->getRepository('OroAccountBundle:AccountGroup')
             ->findOneBy(['name' => $name]);
 
         return $accountGroup->getId();

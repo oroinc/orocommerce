@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 class CustomShippingRuleConfiguration extends ShippingRuleConfiguration
 {

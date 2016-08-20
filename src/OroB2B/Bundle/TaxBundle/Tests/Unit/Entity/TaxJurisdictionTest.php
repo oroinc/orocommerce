@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 
 class TaxJurisdictionTest extends \PHPUnit_Framework_TestCase
 {

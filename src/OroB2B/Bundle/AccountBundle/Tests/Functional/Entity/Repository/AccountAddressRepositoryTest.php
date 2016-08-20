@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 
 /**
  * @dbIsolation
@@ -24,11 +23,11 @@ class AccountAddressRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountAddress');
+            ->getRepository('OroAccountBundle:AccountAddress');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses'
             ]
         );
     }

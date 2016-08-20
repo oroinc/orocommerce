@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,8 +11,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+use Oro\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AccountTypedAddressWithDefaultType extends AbstractType
 {
@@ -63,7 +62,7 @@ class AccountTypedAddressWithDefaultType extends AbstractType
             }
 
             $choiceLabels[$pkValue] = $this->translator->trans(
-                'orob2b.account.account_typed_address_with_default_type.choice.default_text',
+                'oro.account.account_typed_address_with_default_type.choice.default_text',
                 [
                     '%type_name%' => $value
                 ]

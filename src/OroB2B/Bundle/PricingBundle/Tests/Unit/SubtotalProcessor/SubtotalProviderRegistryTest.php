@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 
 class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,7 +57,7 @@ class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProviderMock($name)
     {
-        $provider = $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
+        $provider = $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
         $provider->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));

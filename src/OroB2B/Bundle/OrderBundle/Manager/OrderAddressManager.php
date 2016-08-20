@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Manager;
+namespace Oro\Bundle\OrderBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class OrderAddressManager extends AbstractAddressManager
 {
@@ -78,12 +77,12 @@ class OrderAddressManager extends AbstractAddressManager
     {
         return array_merge(
             $this->getTypesMapping(
-                'OroB2BAccountBundle:AccountAddressToAddressType',
+                'OroAccountBundle:AccountAddressToAddressType',
                 self::ACCOUNT_LABEL,
                 $addresses
             ),
             $this->getTypesMapping(
-                'OroB2BAccountBundle:AccountUserAddressToAddressType',
+                'OroAccountBundle:AccountUserAddressToAddressType',
                 self::ACCOUNT_USER_LABEL,
                 $addresses
             )

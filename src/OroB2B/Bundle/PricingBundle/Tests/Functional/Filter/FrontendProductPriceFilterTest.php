@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Filter;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 /**
  * @dbIsolation
@@ -30,14 +29,14 @@ class FrontendProductPriceFilterTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
         $cpl = $this->getReference('1f');
         /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
-        $handler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+        $handler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $handler->expects($this->once())->method('getPriceListByAccount')->willReturn($cpl);
@@ -58,7 +57,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
             ]
         );
         $this->filter->setRegistry($this->registry);
-        $this->filter->setProductPriceClass('OroB2BPricingBundle:CombinedProductPrice');
+        $this->filter->setProductPriceClass('OroPricingBundle:CombinedProductPrice');
     }
 
     /**
@@ -68,7 +67,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
      */
     public function testFilter(array $data, $productsCount)
     {
-        $qb = $this->registry->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('product');
+        $qb = $this->registry->getRepository('OroProductBundle:Product')->createQueryBuilder('product');
         $adapter = new OrmFilterDatasourceAdapter($qb);
 
         $this->filter->apply($adapter, $data);

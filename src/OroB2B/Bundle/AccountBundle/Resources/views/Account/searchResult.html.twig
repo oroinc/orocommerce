@@ -1,6 +1,6 @@
 {#
     Available variables:
-    * entity       - OroB2B\Bundle\AccountBundle\Entity\Account or null
+    * entity       - Oro\Bundle\AccountBundle\Entity\Account or null
     * indexer_item - indexer item Oro\Bundle\SearchBundle\Query\Result\Item
 #}
 
@@ -9,4 +9,4 @@
 {% set showImage = false %}
 {% set recordUrl = indexer_item.recordUrl %}
 {% set title = indexer_item.recordTitle %}
-{% set entityType = 'orob2b.account.entity_label'|trans %}
+{% set entityType = 'oro.account.entity_label'|trans %}

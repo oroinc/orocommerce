@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class ProductSelectType extends AbstractType
@@ -45,11 +45,11 @@ class ProductSelectType extends AbstractType
                 self::DATA_PARAMETERS => [],
                 'autocomplete_alias' => 'orob2b_product_visibility_limited',
                 'create_form_route' => 'orob2b_product_create',
-                'empty_label' => 'orob2b.product.removed',
+                'empty_label' => 'oro.product.removed',
                 'configs' => [
-                    'placeholder' => 'orob2b.product.form.choose',
-                    'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
+                    'placeholder' => 'oro.product.form.choose',
+                    'result_template_twig' => 'OroProductBundle:Product:Autocomplete/result.html.twig',
+                    'selection_template_twig' => 'OroProductBundle:Product:Autocomplete/selection.html.twig',
                 ],
             ]
         );

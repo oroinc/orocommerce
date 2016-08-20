@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Twig;
+namespace Oro\Bundle\MenuBundle\Twig;
 
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Matcher\MatcherInterface;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
 
 class MenuItemExtension extends \Twig_Extension
 {

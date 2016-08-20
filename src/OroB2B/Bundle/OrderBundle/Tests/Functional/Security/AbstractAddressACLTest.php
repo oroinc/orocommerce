@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Security;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -94,8 +94,8 @@ abstract class AbstractAddressACLTest extends WebTestCase
     protected function getAccountAddressIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:OroB2B\Bundle\AccountBundle\Entity\AccountAddress',
-            'orob2b.account.accountaddress.entity_label'
+            'entity:Oro\Bundle\AccountBundle\Entity\AccountAddress',
+            'oro.account.accountaddress.entity_label'
         );
     }
 
@@ -105,8 +105,8 @@ abstract class AbstractAddressACLTest extends WebTestCase
     protected function getAccountAddressUserIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress',
-            'orob2b.account.accountuseraddress.entity_label'
+            'entity:Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
+            'oro.account.accountuseraddress.entity_label'
         );
     }
 

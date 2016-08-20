@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,11 +11,10 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 
 class QuoteType extends AbstractType
 {
@@ -57,48 +56,48 @@ class QuoteType extends AbstractType
         $builder
             ->add('qid', 'hidden')
             ->add('owner', 'oro_user_select', [
-                'label'     => 'orob2b.sale.quote.owner.label',
+                'label'     => 'oro.sale.quote.owner.label',
                 'required'  => true
             ])
             ->add('accountUser', AccountUserSelectType::NAME, [
-                'label'     => 'orob2b.sale.quote.account_user.label',
+                'label'     => 'oro.sale.quote.account_user.label',
                 'required'  => false
             ])
             ->add('account', AccountSelectType::NAME, [
-                'label'     => 'orob2b.sale.quote.account.label',
+                'label'     => 'oro.sale.quote.account.label',
                 'required'  => false
             ])
             ->add('validUntil', OroDateTimeType::NAME, [
-                'label'     => 'orob2b.sale.quote.valid_until.label',
+                'label'     => 'oro.sale.quote.valid_until.label',
                 'required'  => false
             ])
             ->add('locked', 'checkbox', [
-                'label' => 'orob2b.sale.quote.locked.label',
+                'label' => 'oro.sale.quote.locked.label',
                 'required'  => false
             ])
             ->add('poNumber', 'text', [
                 'required' => false,
-                'label' => 'orob2b.sale.quote.po_number.label'
+                'label' => 'oro.sale.quote.po_number.label'
             ])
             ->add('shipUntil', OroDateType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.sale.quote.ship_until.label'
+                'label' => 'oro.sale.quote.ship_until.label'
             ])
             ->add(
                 'quoteProducts',
                 QuoteProductCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.sale.quoteproduct.add_label',
+                    'add_label' => 'oro.sale.quoteproduct.add_label',
                     'options' => [
                         'compact_units' => true,
                     ]
                 ]
             )
             ->add('assignedUsers', UserMultiSelectType::NAME, [
-                'label' => 'orob2b.sale.quote.assigned_users.label',
+                'label' => 'oro.sale.quote.assigned_users.label',
             ])
             ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'orob2b.sale.quote.assigned_account_users.label',
+                'label' => 'oro.sale.quote.assigned_account_users.label',
             ])
             ->add(
                 'shippingEstimate',
@@ -107,7 +106,7 @@ class QuoteType extends AbstractType
                     'currency_empty_value' => null,
                     'error_bubbling' => false,
                     'required' => false,
-                    'label' => 'orob2b.sale.quote.shipping_estimate.label',
+                    'label' => 'oro.sale.quote.shipping_estimate.label',
                     'validation_groups' => ['Optional']
                 ]
             )
@@ -119,7 +118,7 @@ class QuoteType extends AbstractType
                     'shippingAddress',
                     QuoteAddressType::NAME,
                     [
-                        'label' => 'orob2b.sale.quote.shipping_address.label',
+                        'label' => 'oro.sale.quote.shipping_address.label',
                         'quote' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,

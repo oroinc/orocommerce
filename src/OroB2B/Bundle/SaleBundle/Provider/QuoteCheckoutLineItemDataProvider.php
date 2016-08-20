@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Provider;
+namespace Oro\Bundle\SaleBundle\Provider;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-
-use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
 class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {

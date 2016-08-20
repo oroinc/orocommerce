@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceCurrencyValidator extends ConstraintValidator
 {
@@ -23,7 +23,7 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Value must be instance of "%s", "%s" given',
-                    'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',
+                    'Oro\Bundle\PricingBundle\Entity\ProductPrice',
                     is_object($value) ? ClassUtils::getClass($value) : gettype($value)
                 )
             );

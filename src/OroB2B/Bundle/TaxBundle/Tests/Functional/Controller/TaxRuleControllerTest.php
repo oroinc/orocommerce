@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
 /**
  * @dbIsolation
@@ -32,10 +31,10 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
             ]
         );
     }
@@ -65,8 +64,8 @@ class TaxRulesControllerTest extends WebTestCase
 
         /** @var TaxRule $taxRule */
         $taxRule = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BTaxBundle:TaxRule')
-            ->getRepository('OroB2BTaxBundle:TaxRule')
+            ->getManagerForClass('OroTaxBundle:TaxRule')
+            ->getRepository('OroTaxBundle:TaxRule')
             ->findOneBy(['description' => self::TAX_DESCRIPTION]);
         $this->assertNotEmpty($taxRule);
 

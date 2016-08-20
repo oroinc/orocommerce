@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 
 class OrderAddressProvider implements AddressProviderInterface
 {

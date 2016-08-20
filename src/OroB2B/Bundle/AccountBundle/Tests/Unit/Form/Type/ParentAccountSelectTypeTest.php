@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
 
 class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,7 +43,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-entity-parent',
-                            'placeholder' => 'orob2b.account.form.choose_parent'
+                            'placeholder' => 'oro.account.form.choose_parent'
                         ],
                         $options['configs']
                     );

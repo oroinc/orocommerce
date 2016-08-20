@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Entity;
+namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_rfp_request_product")
@@ -48,7 +47,7 @@ class RequestProduct implements ProductHolderInterface
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $product;

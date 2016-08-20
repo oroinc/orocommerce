@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedProductSelectTypeTest;
+use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedProductSelectTypeTest;
 
 /**
  * @dbIsolation

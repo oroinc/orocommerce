@@ -19,7 +19,7 @@
           data-disable-autofocus="true"
           id="{{ form.vars.id }}"
           name="{{ form.vars.name }}"
-          data-page-component-module="orob2bsale/js/app/components/quote-demand-component"
+          data-page-component-module="orosale/js/app/components/quote-demand-component"
           data-page-component-options="{{ componentOptions|json_encode }}"
           class="quote-choice-form"
     >
@@ -34,7 +34,7 @@
 {% block _quote_choice_submit_button_widget %}
     <div class=" order-checkout-widget order-checkout-widget_block text-right mb4-md">
         <div class=" text-right mb4-md">
-            <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+            <button class="btn theme-btn btn-orange" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
         </div>
     </div>
 {% endblock %}
@@ -65,7 +65,7 @@
         <div class="account-oq__item__head">
             <div class="account-oq__item account-oq__item_full mb0-sm">
                 <h2 class="account-oq__item__title">
-                    {{ 'orob2b.frontend.sale.quote.sections.general'|trans }}
+                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
                 </h2>
             </div>
         </div>
@@ -76,7 +76,7 @@
                         <tbody>
                         {% if quote.assignedUsers | length %}
                             <tr>
-                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
                                 <td>
                                     {% set assigned_users = [] %}
                                     {% for entity in quote.assignedUsers %}
@@ -87,11 +87,11 @@
                             </tr>
                         {% endif %}
                         <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
                             <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
                         </tr>
                         <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
                         </tr>
                         </tbody>
@@ -103,7 +103,7 @@
                     <table class="table borderless  mobile-table">
                         <tbody>
                         <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
                         {{ block_widget(block) }}

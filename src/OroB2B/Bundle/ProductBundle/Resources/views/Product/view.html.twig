@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_product_index'),
-        'indexLabel': 'orob2b.product.entity_plural_label'|trans,
+        'indexLabel': 'oro.product.entity_plural_label'|trans,
         'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
     } %}
     {{ parent() }}
@@ -19,9 +19,9 @@
         {% if not entity.status %}
             {# status not defined #}
         {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.product.status.enabled'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
         {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.product.status.disabled'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -34,15 +34,15 @@
         }) }}
     {% endset %}
     {% set productDescription %}
-        {{ UI.renderHtmlProperty('orob2b.product.descriptions.label'|trans, entity.defaultDescription) }}
+        {{ UI.renderHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription) }}
     {% endset %}
     {% set productShortDescription %}
-        {{ UI.renderHtmlProperty('orob2b.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
+        {{ UI.renderHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
     {% endset %}
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.product.sections.general'|trans,
+            'title': 'oro.product.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [productInformationWidget]},
@@ -53,7 +53,7 @@
 
     {% if entity.getHasVariants %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title' : 'orob2b.product.sections.productVariants'|trans,
+            'title' : 'oro.product.sections.productVariants'|trans,
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,

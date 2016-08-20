@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Twig;
+namespace Oro\Bundle\PaymentBundle\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {

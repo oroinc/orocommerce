@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 
 class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 {
-    const TAX_VALUE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
-    const TAX_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\Tax';
+    const TAX_VALUE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
+    const TAX_CLASS = 'Oro\Bundle\TaxBundle\Entity\Tax';
 
     /** @var  TaxValueManager */
     protected $manager;
@@ -34,7 +33,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTaxValue()
     {
-        $class = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
+        $class = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
         $id = 1;
         $taxValue = new TaxValue();
 
@@ -58,7 +57,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTaxValueNew()
     {
-        $class = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
+        $class = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
         $id = 1;
 
         $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
@@ -74,7 +73,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')->willReturn($repository);
 
         $taxValue = $this->manager->getTaxValue($class, $id);
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Entity\TaxValue', $taxValue);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Entity\TaxValue', $taxValue);
 
         // cache
         $this->assertSame($taxValue, $this->manager->getTaxValue($class, $id));
@@ -103,7 +102,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $repo->expects($this->once())->method('findOneBy')->with(['code' => 'code']);
 
         $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
-            ->with('OroB2B\Bundle\TaxBundle\Entity\Tax')->willReturn($repo);
+            ->with('Oro\Bundle\TaxBundle\Entity\Tax')->willReturn($repo);
 
         $this->manager->getTax($code);
     }

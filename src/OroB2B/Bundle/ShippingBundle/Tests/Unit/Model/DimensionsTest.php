@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +41,7 @@ class DimensionsTest extends \PHPUnit_Framework_TestCase
 
         $model = Dimensions::create(12, 34, 56, $unit);
 
-        $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\Dimensions', $model);
+        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Dimensions', $model);
         $this->assertAttributeEquals(DimensionsValue::create(12, 34, 56), 'value', $model);
         $this->assertAttributeSame($unit, 'unit', $model);
     }

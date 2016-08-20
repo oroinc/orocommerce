@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -10,9 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData;
 
 class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -57,7 +56,7 @@ class LoadShippingOriginDemoData extends AbstractFixture implements ContainerAwa
     {
         return [
             'Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData',
-            'OroB2B\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData'
+            'Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData'
         ];
     }
 

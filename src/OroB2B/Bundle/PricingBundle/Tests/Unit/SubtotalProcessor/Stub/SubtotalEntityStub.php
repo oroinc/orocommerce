@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
 class SubtotalEntityStub extends EntityStub implements SubtotalAwareInterface
 {

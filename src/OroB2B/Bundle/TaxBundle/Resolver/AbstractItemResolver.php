@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver;
+namespace Oro\Bundle\TaxBundle\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxCode;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Bundle\TaxBundle\Matcher\MatcherInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxCode;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 abstract class AbstractItemResolver implements ResolverInterface
 {

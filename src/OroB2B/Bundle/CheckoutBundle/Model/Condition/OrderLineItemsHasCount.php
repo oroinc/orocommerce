@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Model\Condition;
+namespace Oro\Bundle\CheckoutBundle\Model\Condition;
 
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
 class OrderLineItemsHasCount extends AbstractCondition implements ContextAccessorAwareInterface
 {
@@ -43,7 +42,7 @@ class OrderLineItemsHasCount extends AbstractCondition implements ContextAccesso
 
         if (!$entity instanceof CheckoutInterface) {
             throw new Exception\InvalidArgumentException(
-                'Entity must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface'
+                'Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface'
             );
         }
         $lineItems = $this->checkoutLineItemsManager->getData($entity);

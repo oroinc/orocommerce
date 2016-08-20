@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Entity;
+namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,13 +12,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
-use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
+use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
+use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
  * Request
@@ -187,7 +186,7 @@ class Request extends ExtendRequest implements
 
     /**
      * @var RequestStatus
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatus")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\RequestStatus")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -260,7 +259,7 @@ class Request extends ExtendRequest implements
     /**
      * @var Collection|AccountUser[]
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinTable(
      *      name="oro_rfp_assigned_acc_users",
      *      joinColumns={

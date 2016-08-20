@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -8,10 +8,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountGroupVoter;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Acl\Voter\AccountGroupVoter;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,7 +58,7 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(self::DEFAULT_GROUP_ID);
 
         $this->voter = new AccountGroupVoter($doctrineHelper);
-        $this->voter->setClassName('OroB2B\Bundle\AccountBundle\Entity\AccountGroup');
+        $this->voter->setClassName('Oro\Bundle\AccountBundle\Entity\AccountGroup');
         $this->voter->setConfigManager($configManager);
     }
 
@@ -119,6 +118,6 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getGroup($id)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => $id]);
     }
 }

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @group segfault
@@ -51,7 +50,7 @@ class CategoryControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
         $this->localizations = $this->getContainer()
             ->get('doctrine')
@@ -59,7 +58,7 @@ class CategoryControllerTest extends WebTestCase
             ->findAll();
         $this->masterCatalog = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getMasterCatalogRoot();
     }
 
@@ -80,7 +79,7 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testCreateCategory()
     {
-        $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
+        $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category')->getMasterCatalogRoot();
 
         return $this->assertCreate($this->masterCatalog->getId());
     }
@@ -270,11 +269,11 @@ class CategoryControllerTest extends WebTestCase
 
         $smallImageName = self::SMALL_IMAGE_NAME;
         $smallImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
         );
         $largeImageName = self::LARGE_IMAGE_NAME;
         $largeImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
         );
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName);
@@ -583,7 +582,7 @@ class CategoryControllerTest extends WebTestCase
     protected function getProductBySku($sku)
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')
+            ->getRepository('OroProductBundle:Product')
             ->findOneBy(['sku' => $sku]);
     }
 
@@ -595,7 +594,7 @@ class CategoryControllerTest extends WebTestCase
     protected function getProductCategoryByProduct(Product $product)
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->findOneByProduct($product);
     }
 }

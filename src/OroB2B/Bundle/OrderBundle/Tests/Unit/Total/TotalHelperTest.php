@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Total;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Total;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,19 +26,19 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->totalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->lineItemSubtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->discountSubtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
+            'Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();

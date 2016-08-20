@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class LoadPriceAttributePriceListDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -31,7 +31,7 @@ class LoadPriceAttributePriceListDemoData extends AbstractFixture implements Con
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BPricingBundle/Migrations/Data/Demo/ORM/data/price_attribute.csv');
+        $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_attribute.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);

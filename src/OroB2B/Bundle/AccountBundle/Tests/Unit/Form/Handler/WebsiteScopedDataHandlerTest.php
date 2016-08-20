@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 
 class WebsiteScopedDataHandlerTest extends FormHandlerTestCase
 {
@@ -23,7 +22,7 @@ class WebsiteScopedDataHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Product')
+        $this->entity = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
             ->disableOriginalConstructor()
             ->getMock();
 

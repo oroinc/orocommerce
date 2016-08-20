@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListLineItemsDataProvider
 {
@@ -24,7 +24,7 @@ class ShoppingListLineItemsDataProvider
 
     /**
      * @param ShoppingList $shoppingList
-     * @return \OroB2B\Bundle\ShoppingListBundle\Entity\LineItem[]
+     * @return \Oro\Bundle\ShoppingListBundle\Entity\LineItem[]
      */
     public function getShoppingListLineItems(ShoppingList $shoppingList)
     {
@@ -33,8 +33,8 @@ class ShoppingListLineItemsDataProvider
             return $this->lineItems[$shoppingListId];
         }
         /** @var LineItemRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')
-            ->getRepository('OroB2BShoppingListBundle:LineItem');
+        $repository = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem')
+            ->getRepository('OroShoppingListBundle:LineItem');
         $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
         $this->lineItems[$shoppingListId] = $lineItems;
         return $lineItems;

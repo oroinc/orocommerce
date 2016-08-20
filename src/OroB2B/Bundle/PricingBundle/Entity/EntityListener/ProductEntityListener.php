@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Handle product scalar attributes change that may affect prices recalculation.

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-
-use OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider;
+use Oro\Bundle\RFPBundle\Datagrid\ActionPermissionProvider;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {

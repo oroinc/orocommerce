@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
 {
@@ -28,7 +28,7 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
         $userManager = $this->container->get('orob2b_account_user.manager');
 
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
+        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }

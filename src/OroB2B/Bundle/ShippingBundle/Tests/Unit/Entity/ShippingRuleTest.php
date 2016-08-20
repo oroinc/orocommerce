@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
 
 class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -73,7 +72,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getEntity(
-            'OroB2B\Bundle\ShippingBundle\Entity\ShippingRule',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRule',
             [
                 'id' => $id,
                 'name' => $name,

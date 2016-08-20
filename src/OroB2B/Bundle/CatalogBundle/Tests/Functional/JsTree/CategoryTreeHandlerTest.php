@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\JsTree;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\JsTree;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
-use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 /**
  * @dbIsolation
@@ -17,7 +17,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getFixtures()
     {
-        return 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData';
+        return 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData';
     }
 
     /**
@@ -176,8 +176,8 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
-        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
+        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, Category $category) {
             $result[$category->getDefaultTitle()->getString()] = [];
             if ($category->getParentCategory()) {

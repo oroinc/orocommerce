@@ -1,9 +1,9 @@
 parameters:
-    orob2b_redirect.entity.slug.class: OroB2B\Bundle\RedirectBundle\Entity\Slug
+    orob2b_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
 
 services:
     orob2b_redirect.kernel.listener.process_redirects:
-        class: 'OroB2B\Bundle\RedirectBundle\EventListener\ForwardListener'
+        class: 'Oro\Bundle\RedirectBundle\EventListener\ForwardListener'
         arguments:
             - "@router"
             - "@doctrine"
@@ -17,12 +17,12 @@ services:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
 
     orob2b_redirect.slug.manager:
-        class: 'OroB2B\Bundle\RedirectBundle\Manager\SlugManager'
+        class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
         arguments:
             - "@doctrine"
 
     orob2b_redirect.slug.generator:
-        class: 'OroB2B\Bundle\RedirectBundle\Generator\SlugGenerator'
+        class: 'Oro\Bundle\RedirectBundle\Generator\SlugGenerator'
 
     orob2b_redirect.slug.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'

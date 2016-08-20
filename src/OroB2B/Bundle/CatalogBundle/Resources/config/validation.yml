@@ -1,9 +1,9 @@
-OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
+Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
     properties:
         precision:
             - NotBlank:
-                message: 'orob2b.product.productunit.precision.blank'
+                message: 'oro.product.productunit.precision.blank'
             - Range:
                 min: 0
                 max: 10
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~

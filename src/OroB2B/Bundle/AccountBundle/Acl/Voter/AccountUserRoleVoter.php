@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
@@ -8,11 +8,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountUserRoleVoter extends AbstractEntityVoter
 {
@@ -91,7 +90,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     protected function getPermissionForDelete()
     {
         /** @var AccountUserRoleRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroB2BAccountBundle:AccountUserRole');
+        $repository = $this->doctrineHelper->getEntityRepository('OroAccountBundle:AccountUserRole');
 
         $isDefaultForWebsite = $repository->isDefaultForWebsite($this->object);
         $hasAssignedUsers = $repository->hasAssignedUsers($this->object);

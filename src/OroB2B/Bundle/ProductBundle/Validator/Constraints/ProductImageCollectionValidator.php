@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -10,8 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
+use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 
 class ProductImageCollectionValidator extends ConstraintValidator
 {

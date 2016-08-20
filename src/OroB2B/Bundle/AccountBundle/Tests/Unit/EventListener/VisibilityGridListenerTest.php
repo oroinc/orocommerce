@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
@@ -16,20 +16,19 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener;
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\EventListener\VisibilityGridListener;
+use Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
-    const PRODUCT_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility';
+    const CATEGORY_VISIBILITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+    const PRODUCT_VISIBILITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility';
 
-    const CATEGORY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID = 'account-group-category-visibility-grid';
@@ -78,7 +77,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->visibilityChoicesProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,7 +85,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getFormattedChoices')
             ->willReturn($this->choices);
 
-        $this->categoryClass = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+        $this->categoryClass = 'Oro\Bundle\CatalogBundle\Entity\Category';
 
         $this->listener = new VisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
         $this->listener->addSubscribedGridConfig(

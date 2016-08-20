@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model;
+namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 
 class QuickAddRowCollection extends ArrayCollection
 {

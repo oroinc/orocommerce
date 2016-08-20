@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Type;
+namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,15 +30,15 @@ class TaxType extends AbstractType
     {
         $builder
             ->add('code', 'text', [
-                'label' => 'orob2b.tax.code.label',
+                'label' => 'oro.tax.code.label',
                 'required' => true
             ])
             ->add('description', 'textarea', [
-                'label' => 'orob2b.tax.description.label',
+                'label' => 'oro.tax.description.label',
                 'required' => false
             ])
             ->add('rate', 'oro_percent', [
-                'label' => 'orob2b.tax.rate.label',
+                'label' => 'oro.tax.rate.label',
                 'required' => true
             ]);
     }

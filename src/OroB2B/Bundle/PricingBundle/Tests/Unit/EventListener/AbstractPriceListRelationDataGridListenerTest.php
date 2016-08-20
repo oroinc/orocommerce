@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,10 +11,9 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountDataGridListener;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\EventListener\AccountDataGridListener;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -66,9 +65,9 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Fr
         $this->assertSame(
             $configArray['columns']['price_lists'],
             [
-                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
+                'label' => 'oro.pricing.pricelist.entity_plural_label',
                 'type' => 'twig',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
+                'template' => 'OroPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',
                 'renderable' => false,
             ]

@@ -1,29 +1,28 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Manager;
+namespace Oro\Bundle\OrderBundle\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\OrderBundle\Provider\AddressProviderInterface;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 
 class AbstractAddressManager
 {
     const DELIMITER = '_';
 
-    // TODO use orob2b.order.form.group_label.account in the admin
-    const ACCOUNT_LABEL = 'orob2b.frontend.order.form.group_label.account';
-    // TODO use orob2b.order.form.group_label.account_user in the admin
-    const ACCOUNT_USER_LABEL = 'orob2b.frontend.order.form.group_label.account_user';
+    // TODO use oro.order.form.group_label.account in the admin
+    const ACCOUNT_LABEL = 'oro.frontend.order.form.group_label.account';
+    // TODO use oro.order.form.group_label.account_user in the admin
+    const ACCOUNT_USER_LABEL = 'oro.frontend.order.form.group_label.account_user';
 
     /**
      * @var AddressProviderInterface

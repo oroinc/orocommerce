@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_5;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -9,8 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
-use OroB2B\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 {
@@ -41,8 +40,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['onDelete' => 'SET NULL']
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\NoteBundle\Entity\Note',
-            'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            'Oro\Bundle\PricingBundle\Entity\PriceList',
             'price_list_895c1635',
             'price_list_9919ee5',
             RelationType::MANY_TO_ONE

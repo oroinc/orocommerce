@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Method\Config;
+namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
-use OroB2B\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
+use Oro\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
 
 class MoneyOrderConfig extends AbstractPaymentConfig implements MoneyOrderConfigInterface
 {
@@ -16,7 +16,7 @@ class MoneyOrderConfig extends AbstractPaymentConfig implements MoneyOrderConfig
     /** {@inheritdoc} */
     protected function getPaymentExtensionAlias()
     {
-        return OroB2BMoneyOrderExtension::ALIAS;
+        return OroMoneyOrderExtension::ALIAS;
     }
 
     /** {@inheritdoc} */

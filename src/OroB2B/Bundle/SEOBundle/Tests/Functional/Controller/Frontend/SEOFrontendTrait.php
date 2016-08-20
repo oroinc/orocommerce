@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 

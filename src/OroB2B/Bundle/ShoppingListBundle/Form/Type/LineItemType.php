@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
+namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,10 +9,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemType extends AbstractType
 {
@@ -38,7 +38,7 @@ class LineItemType extends AbstractType
                 ProductSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.product.label',
+                    'label' => 'oro.shoppinglist.lineitem.product.label',
                     'create_enabled' => false,
                     'disabled' => $isExisting,
                     'data_parameters' => [
@@ -51,9 +51,9 @@ class LineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'label' => 'oro.shoppinglist.lineitem.unit.label',
                     'product_holder' => $data,
-                    'placeholder' => 'orob2b.product.form.product_required'
+                    'placeholder' => 'oro.product.form.product_required'
                 ]
             )
             ->add(
@@ -61,7 +61,7 @@ class LineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
+                    'label' => 'oro.shoppinglist.lineitem.quantity.label',
                     'product_holder' => $data,
                     'product_unit_field' => 'unit',
                 ]
@@ -71,7 +71,7 @@ class LineItemType extends AbstractType
                 'textarea',
                 [
                     'required' => false,
-                    'label' => 'orob2b.shoppinglist.lineitem.notes.label',
+                    'label' => 'oro.shoppinglist.lineitem.notes.label',
                     'empty_data' => null,
                 ]
             );
@@ -94,7 +94,7 @@ class LineItemType extends AbstractType
             ProductUnitSelectionType::NAME,
             [
                 'required' => true,
-                'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                'label' => 'oro.shoppinglist.lineitem.unit.label',
                 'placeholder' => null,
                 'product_holder' => $entity,
             ]

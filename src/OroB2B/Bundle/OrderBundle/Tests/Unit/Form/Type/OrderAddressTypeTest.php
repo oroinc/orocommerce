@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\OrderAddressType;
 
 class OrderAddressTypeTest extends AbstractOrderAddressTypeTest
 {
@@ -15,7 +15,7 @@ class OrderAddressTypeTest extends AbstractOrderAddressTypeTest
             $this->orderAddressSecurityProvider,
             $this->serializer
         );
-        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
+        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
     public function testGetName()

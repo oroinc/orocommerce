@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,10 +8,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Component\PhpUtils\ArrayUtil;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -58,13 +57,13 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->select('DISTINCT o')
             ->from($className, 'o')
             ->innerJoin(
-                'OroB2BPaymentBundle:PaymentTransaction',
+                'OroPaymentBundle:PaymentTransaction',
                 'transaction',
                 'WITH',
                 'o.id = transaction.entityIdentifier AND transaction.entityClass = :className'
             )
             ->leftJoin(
-                'OroB2BPaymentBundle:PaymentStatus',
+                'OroPaymentBundle:PaymentStatus',
                 'status',
                 'WITH',
                 'o.id = status.entityIdentifier AND status.entityClass = :className'

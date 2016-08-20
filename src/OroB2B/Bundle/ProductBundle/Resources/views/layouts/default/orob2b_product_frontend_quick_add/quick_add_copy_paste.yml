@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add_copy_paste.html.twig'
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add_copy_paste.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
         - '@addTree':
             items:
                 quick_add_copy_paste_form:
@@ -27,16 +27,16 @@ layout:
                     options:
                         type: button
                         action: submit
-                        text: orob2b.product.frontend.quick_add.continue.label
+                        text: oro.product.frontend.quick_add.continue.label
                         style: dark
                 quick_add_copy_paste_title:
                     blockType: text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.copy_paste.title'
+                        text: 'oro.product.frontend.quick_add.copy_paste.title'
                 quick_add_copy_paste_description:
                     blockType: text
                     options:
-                        text: 'orob2b.product.frontend.quick_add.copy_paste.description'
+                        text: 'oro.product.frontend.quick_add.copy_paste.description'
             tree:
                 quick_add_container:
                     quick_add_copy_paste_form:

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -9,18 +9,17 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
+use Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
-
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 
 class EntityVisibilityTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
 
     /**
      * @var EntityVisibilityType
@@ -38,13 +37,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->visibilityPostSetDataListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
+            'Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->visibilityChoicesProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -22,8 +21,8 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
         ]);
     }
 
@@ -240,7 +239,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility');
 
         $accountGroupVisibility = new AccountGroupCategoryVisibility();
 
@@ -264,13 +263,13 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     ) {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility');
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         /** @var AccountGroupCategoryVisibility $accountGroupVisibility */
         $accountGroupVisibility = $em
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->findOneBy(
                 [
                     'category' => $category,
@@ -292,13 +291,13 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+            ->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
 
         /** @var Account $account */
         $account = $this->getReference('account.level_1');
         /** @var AccountCategoryVisibility $accountVisibility */
         $accountVisibility = $em
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $category, 'account' => $account]);
 
         $accountVisibility->setVisibility($visibility);
@@ -314,8 +313,8 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUser')
-            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->getManagerForClass('OroAccountBundle:AccountUser')
+            ->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['email' => LoadAccountUserData::EMAIL]);
     }
 

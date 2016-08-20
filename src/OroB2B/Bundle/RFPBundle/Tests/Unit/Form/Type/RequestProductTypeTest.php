@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -8,18 +8,17 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -37,7 +36,7 @@ class RequestProductTypeTest extends AbstractTest
     {
         /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,7 +50,7 @@ class RequestProductTypeTest extends AbstractTest
 
 
         $this->formType     = new RequestProductType($productUnitLabelFormatter);
-        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
     }
@@ -245,7 +244,7 @@ class RequestProductTypeTest extends AbstractTest
     protected function createProduct($id, array $units = [])
     {
         $product = $this->getMockEntity(
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'Oro\Bundle\ProductBundle\Entity\Product',
             [
                 'getId' => $id,
                 'getAvailableUnitCodes' => $units,

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
+namespace Oro\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\FormEvent;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class AccountGroupFormExtension extends AbstractPaymentTermExtension
 {

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Component\PropertyAccess\PropertyAccessor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
@@ -23,7 +22,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Entity must be instance of "%s", "%s" given',
-                    'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    'Oro\Bundle\ProductBundle\Entity\Product',
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );

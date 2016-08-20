@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
 
 class WeightType extends AbstractType
 {
@@ -42,7 +42,7 @@ class WeightType extends AbstractType
                 'unit',
                 WeightUnitSelectType::NAME,
                 [
-                    'placeholder' => 'orob2b.shipping.form.placeholder.weight_unit.label',
+                    'placeholder' => 'oro.shipping.form.placeholder.weight_unit.label',
                     'required' => false,
                 ]
             );

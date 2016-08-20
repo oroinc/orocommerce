@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\Tax;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -44,8 +44,8 @@ class TaxControllerTest extends WebTestCase
 
         /** @var Tax $tax */
         $tax = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BTaxBundle:Tax')
-            ->getRepository('OroB2BTaxBundle:Tax')
+            ->getManagerForClass('OroTaxBundle:Tax')
+            ->getRepository('OroTaxBundle:Tax')
             ->findOneBy(['code' => self::TAX_CODE]);
         $this->assertNotEmpty($tax);
 

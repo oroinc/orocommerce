@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider;
-use OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
+use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface;
 
 class FreightClassesProviderTest extends MeasureUnitProviderTest
 {
@@ -97,7 +97,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
      */
     protected function getClassesExtension(array $classes)
     {
-        $extension = $this->getMock('OroB2B\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface');
+        $extension = $this->getMock('Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface');
         $extension->expects($this->any())
             ->method('isApplicable')
             ->willReturnCallback(function (FreightClass $class, ProductShippingOptions $options) use ($classes) {

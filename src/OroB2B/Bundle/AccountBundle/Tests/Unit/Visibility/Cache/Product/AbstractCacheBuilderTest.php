@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder as ProductCaseCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder as CategoryCaseCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder as ProductCaseCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder as CategoryCaseCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
 abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $cacheBuilderInterface = 'OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface';
+    protected $cacheBuilderInterface = 'Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface';
 
     protected function setUp()
     {
@@ -41,13 +41,13 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCallAllBuilders(
             'buildCache',
-            $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website')
         );
     }
 
     public function testResolveVisibilitySettings()
     {
-        $mock = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface');
+        $mock = $this->getMock('Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface');
         $concreteBuilder = $this->getMock($this->cacheBuilderInterface);
 
         $concreteBuilder->expects($this->once())
@@ -76,7 +76,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->assertCallAllBuilders(
             'isVisibilitySettingsSupported',
-            $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
+            $this->getMock('Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
         );
 
         $this->assertFalse($result);
@@ -98,7 +98,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->assertCallAllBuilders(
             'isVisibilitySettingsSupported',
-            $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
+            $this->getMock('Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
         );
 
         $this->assertTrue($result);
@@ -106,7 +106,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildCache()
     {
-        $this->assertCallAllBuilders('buildCache', $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website'));
+        $this->assertCallAllBuilders('buildCache', $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website'));
     }
 
     /**

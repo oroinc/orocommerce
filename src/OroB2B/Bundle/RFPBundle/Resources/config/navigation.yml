@@ -1,20 +1,20 @@
 oro_menu_config:
     items:
         sales_tab:
-            label: 'orob2b.menu.sales_tab.label'
+            label: 'oro.menu.sales_tab.label'
             uri:   '#'
             extras:
                 position: 300
 
         frontend_request:
-            label:           'orob2b.frontend.rfp.request.entity_plural_label'
+            label:           'oro.frontend.rfp.request.entity_plural_label'
             route:           'orob2b_rfp_frontend_request_index'
             extras:
                 position:   300
                 routes: ['/^orob2b_rfp_frontend/']
 
         request_list:
-            label:           'orob2b.rfp.request.entity_plural_label'
+            label:           'oro.rfp.request.entity_plural_label'
             route:           'orob2b_rfp_request_index'
             extras:
                 position:    200
@@ -22,10 +22,10 @@ oro_menu_config:
                     - 'orob2b_rfp_request_index'
                     - 'orob2b_rfp_request_view'
                     - 'orob2b_rfp_request_update'
-                description: 'orob2b.rfp.menu.request_list.description'
+                description: 'oro.rfp.menu.request_list.description'
 
         request_status_list:
-            label:           'orob2b.rfp.requeststatus.entity_plural_label'
+            label:           'oro.rfp.requeststatus.entity_plural_label'
             route:           'orob2b_rfp_request_status_index'
             extras:
                 position:    1100
@@ -34,19 +34,19 @@ oro_menu_config:
                     - 'orob2b_rfp_request_status_view'
                     - 'orob2b_rfp_request_status_update'
                     - 'orob2b_rfp_request_status_create'
-                description: 'orob2b.rfp.menu.request_status_list.description'
+                description: 'oro.rfp.menu.request_status_list.description'
 
         shortcut_request_list:
-            label:           'orob2b.rfp.request.entity_plural_label'
+            label:           'oro.rfp.request.entity_plural_label'
             route:           'orob2b_rfp_request_index'
             extras:
-                description: 'orob2b.rfp.menu.shortcut_request_list.description'
+                description: 'oro.rfp.menu.shortcut_request_list.description'
 
         shortcut_request_statuses_list:
-            label:           'orob2b.rfp.requeststatus.entity_plural_label'
+            label:           'oro.rfp.requeststatus.entity_plural_label'
             route:           'orob2b_rfp_request_status_index'
             extras:
-                description: 'orob2b.rfp.menu.shortcut_request_statuses_list.description'
+                description: 'oro.rfp.menu.shortcut_request_statuses_list.description'
 
     tree:
         frontend_menu:
@@ -76,5 +76,5 @@ oro_titles:
 
     orob2b_rfp_frontend_request_create: oro.ui.create_entity
     orob2b_rfp_frontend_request_update: 'RFQ #%%title%% - oro.ui.edit'
-    orob2b_rfp_frontend_request_index:  orob2b.frontend.rfp.request.entity_plural_label
+    orob2b_rfp_frontend_request_index:  oro.frontend.rfp.request.entity_plural_label
     orob2b_rfp_frontend_request_view:   'RFQ #%%title%%'

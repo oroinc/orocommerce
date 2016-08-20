@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 
 class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 {

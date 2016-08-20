@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginTest extends \PHPUnit_Framework_TestCase
 {

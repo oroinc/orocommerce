@@ -48,10 +48,10 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
     }
 
     /**
-     * @export orob2bpricing/js/validator/unique-product-prices
+     * @export oropricing/js/validator/unique-product-prices
      */
     return [
-        'OroB2B\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
+        'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
         function (value, element) {
             var noDuplicationFound = true,
                 processedPrices = [];

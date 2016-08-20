@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductTest extends AbstractTest
 {

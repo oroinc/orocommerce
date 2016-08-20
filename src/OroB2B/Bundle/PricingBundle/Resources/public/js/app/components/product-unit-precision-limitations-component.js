@@ -17,7 +17,7 @@ define(function (require) {
         options: {
             selectSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
             unitsAttribute: 'units',
-            unitRemovedSuffix: __('orob2b.product.productunit.removed.suffix')
+            unitRemovedSuffix: __('oro.product.productunit.removed.suffix')
         },
 
         /**

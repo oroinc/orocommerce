@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractSubtreeCacheBuilder
 {
@@ -112,8 +111,8 @@ abstract class AbstractSubtreeCacheBuilder
     protected function getChildCategoriesWithFallbackStatic(Category $category, $target)
     {
         $qb = $this->registry
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getChildrenQueryBuilderPartial($category);
 
         $qb = $this->joinCategoryVisibility($qb, $target);
@@ -134,8 +133,8 @@ abstract class AbstractSubtreeCacheBuilder
         $target
     ) {
         $qb = $this->registry
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getChildrenQueryBuilder($category)
             ->select('partial node.{id}');
 

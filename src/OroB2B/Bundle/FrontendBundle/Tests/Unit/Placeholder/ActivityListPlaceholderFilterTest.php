@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Placeholder;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActivityListBundle\Placeholder\PlaceholderFilter;
 use Oro\Bundle\UIBundle\Event\BeforeGroupingChainWidgetEvent;
-
-use OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ActivityListPlaceholderFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +36,7 @@ class ActivityListPlaceholderFilterTest extends \PHPUnit_Framework_TestCase
         $this->basicFilter = $this->getMockBuilder('Oro\Bundle\ActivityListBundle\Placeholder\PlaceholderFilter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->helper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')

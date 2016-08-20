@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 

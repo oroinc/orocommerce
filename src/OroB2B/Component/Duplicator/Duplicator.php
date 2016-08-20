@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Component\Duplicator;
+namespace Oro\Component\Duplicator;
 
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Filter;
 use DeepCopy\Matcher\Matcher;
 
-use OroB2B\Component\Duplicator\Filter\FilterFactory;
-use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
+use Oro\Component\Duplicator\Filter\FilterFactory;
+use Oro\Component\Duplicator\Matcher\MatcherFactory;
 
 class Duplicator implements DuplicatorInterface
 {

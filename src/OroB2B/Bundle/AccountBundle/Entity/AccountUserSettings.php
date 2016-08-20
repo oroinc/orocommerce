@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-
-use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserSettings;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Model\ExtendAccountUserSettings;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @Config()
@@ -34,7 +33,7 @@ class AccountUserSettings extends ExtendAccountUserSettings
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", inversedBy="settings")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser", inversedBy="settings")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $accountUser;
@@ -42,7 +41,7 @@ class AccountUserSettings extends ExtendAccountUserSettings
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $website;

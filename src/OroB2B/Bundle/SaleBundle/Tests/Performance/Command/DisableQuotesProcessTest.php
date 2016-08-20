@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Performance\Command;
+namespace Oro\Bundle\SaleBundle\Tests\Performance\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
-
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
-use OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
 
 /**
  * @dbIsolation
@@ -32,10 +31,10 @@ class DisableQuotesProcessTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
-            ['OroB2B\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance']
+            ['Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance']
         );
         $this->doctrineHelper = $this->client->getContainer()->get('oro_entity.doctrine_helper');
-        $this->quoteEm = $this->doctrineHelper->getEntityManager('OroB2BSaleBundle:Quote');
+        $this->quoteEm = $this->doctrineHelper->getEntityManager('OroSaleBundle:Quote');
     }
 
     public function testDisableQuotesProcessPerformance()
@@ -77,7 +76,7 @@ class DisableQuotesProcessTest extends WebTestCase
     {
         $qb = $this->quoteEm->createQueryBuilder()
             ->select('COUNT(q)')
-            ->from('OroB2BSaleBundle:Quote', 'q');
+            ->from('OroSaleBundle:Quote', 'q');
 
         if ($onlyNotExpired) {
             $qb->where('q.expired = FALSE')

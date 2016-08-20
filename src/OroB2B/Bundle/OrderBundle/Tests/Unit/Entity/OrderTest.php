@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,15 +9,14 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -71,7 +70,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $lineItems = new ArrayCollection([new OrderLineItem()]);
 
         /** @var Order $order */
-        $order = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
+        $order = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
         $order->setLineItems($lineItems);
 
         $result = $order->getLineItems();
@@ -98,7 +97,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
 
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
         $account->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));

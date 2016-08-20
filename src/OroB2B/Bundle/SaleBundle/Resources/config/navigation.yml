@@ -1,21 +1,21 @@
 oro_menu_config:
     items:
         sales_tab:
-            label: 'orob2b.menu.sales_tab.label'
+            label: 'oro.menu.sales_tab.label'
             uri:   '#'
             extras:
                 icon:     icon-usd
                 position: 100
 
         sale_quote_list:
-            label: 'orob2b.frontend.sale.quote.entity_plural_label'
+            label: 'oro.frontend.sale.quote.entity_plural_label'
             route: 'orob2b_sale_quote_index'
             extras:
                 position: 300
                 routes: ['/^orob2b_sale/']
 
         sale_quote_frontend_list:
-            label: 'orob2b.frontend.sale.quote.entity_plural_label'
+            label: 'oro.frontend.sale.quote.entity_plural_label'
             route: 'orob2b_sale_quote_frontend_index'
             extras:
                 position: 400
@@ -33,9 +33,9 @@ oro_menu_config:
 
 oro_titles:
     orob2b_sale_quote_index: ~
-    orob2b_sale_quote_view:   'orob2b.sale.navigation.view'
-    orob2b_sale_quote_update: 'orob2b.sale.navigation.view - oro.ui.edit'
+    orob2b_sale_quote_view:   'oro.sale.navigation.view'
+    orob2b_sale_quote_update: 'oro.sale.navigation.view - oro.ui.edit'
     orob2b_sale_quote_create: 'oro.ui.create_entity'
 
     orob2b_sale_quote_frontend_index: ~
-    orob2b_sale_quote_frontend_view:  'orob2b.sale.navigation.view'
+    orob2b_sale_quote_frontend_view:  'oro.sale.navigation.view'

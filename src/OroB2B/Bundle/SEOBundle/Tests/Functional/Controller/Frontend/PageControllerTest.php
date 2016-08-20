@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
-use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 
 /**
  * @dbIsolation
@@ -27,8 +26,8 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData',
-            'OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData',
+            'Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData',
+            'Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData',
         ]);
     }
 

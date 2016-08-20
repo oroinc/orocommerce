@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Provider;
+namespace Oro\Bundle\ProductBundle\Provider;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStatusProvider
 {
@@ -12,8 +12,8 @@ class ProductStatusProvider
     public function getAvailableProductStatuses()
     {
         return [
-            Product::STATUS_DISABLED => 'orob2b.product.status.disabled',
-            Product::STATUS_ENABLED => 'orob2b.product.status.enabled'
+            Product::STATUS_DISABLED => 'oro.product.status.disabled',
+            Product::STATUS_ENABLED => 'oro.product.status.enabled'
         ];
     }
 }

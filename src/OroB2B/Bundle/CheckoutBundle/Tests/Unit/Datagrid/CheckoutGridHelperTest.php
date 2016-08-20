@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use OroB2B\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -93,7 +93,7 @@ class CheckoutGridHelperTest extends \PHPUnit_Framework_TestCase
         ];
         $this->fieldProvider->expects($this->once())
                             ->method('getRelations')
-                            ->with('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')
+                            ->with('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')
                             ->willReturn($relationsMetadata);
 
         $configValue1 = [
@@ -141,18 +141,18 @@ class CheckoutGridHelperTest extends \PHPUnit_Framework_TestCase
         $expectedColumns = [
            // 'id' => ['label' => 'id'],
             'total' => [
-                'label' => 'orob2b.checkout.grid.total.label',
+                'label' => 'oro.checkout.grid.total.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/total.html.twig',
+                'template' => 'OroPricingBundle:Datagrid:Column/total.html.twig',
                 'order' => 85,
                 'renderable' => false
             ],
             'subtotal' => [
-                'label' => 'orob2b.checkout.grid.subtotal.label',
+                'label' => 'oro.checkout.grid.subtotal.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/subtotal.html.twig',
+                'template' => 'OroPricingBundle:Datagrid:Column/subtotal.html.twig',
                 'order' => 25
             ]
         ];

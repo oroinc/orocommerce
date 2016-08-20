@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,10 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
-use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
+use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -37,13 +37,13 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->sessionStorage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface')
+        $this->sessionStorage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\DataStorageInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formDataStorage = $this->getMock('OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage');
+        $this->formDataStorage = $this->getMock('Oro\Bundle\RFPBundle\Storage\OffersFormStorage');
 
-        $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
         $this->extension = new OrderLineItemDataStorageExtension(
             $this->requestStack,
@@ -286,7 +286,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider" expected, "NULL" given
+     * @expectedExceptionMessage "Oro\Bundle\OrderBundle\Form\Section\SectionProvider" expected, "NULL" given
      */
     public function testSectionProviderInvalid()
     {

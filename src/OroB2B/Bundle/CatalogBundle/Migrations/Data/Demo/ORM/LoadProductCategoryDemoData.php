@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,9 +11,9 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -56,8 +56,8 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
         ];
     }
 
@@ -67,7 +67,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -126,7 +126,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
     protected function getProductRepository(ObjectManager $manager)
     {
         if (!$this->productRepository) {
-            $this->productRepository = $manager->getRepository('OroB2BProductBundle:Product');
+            $this->productRepository = $manager->getRepository('OroProductBundle:Product');
         }
 
         return $this->productRepository;
@@ -140,7 +140,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
     protected function getCategoryRepository(ObjectManager $manager)
     {
         if (!$this->categoryRepository) {
-            $this->categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
+            $this->categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
         }
 
         return $this->categoryRepository;

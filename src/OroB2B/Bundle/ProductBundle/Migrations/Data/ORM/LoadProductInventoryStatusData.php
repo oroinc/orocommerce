@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductInventoryStatusData extends AbstractEnumFixture
 {

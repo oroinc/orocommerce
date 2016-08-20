@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility;
 
 interface VisibilityInterface
 {

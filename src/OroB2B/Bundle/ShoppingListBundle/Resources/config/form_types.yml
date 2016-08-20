@@ -1,20 +1,20 @@
 services:
     orob2b_shopping_list.form.type.shopping_list:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType'
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType'
         tags:
             - { name: form.type, alias: orob2b_shopping_list_type }
         calls:
             - [setDataClass, ['%orob2b_shopping_list.entity.shopping_list.class%']]
 
     orob2b_shopping_list.form.type.line_item:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType'
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType'
         calls:
             - [setDataClass, ['%orob2b_shopping_list.entity.line_item.class%']]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_line_item }
 
     orob2b_shopping_list.form.type.frontend_line_item_widget:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType'
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType'
         arguments:
             - "@doctrine"
             - "@security.token_storage"

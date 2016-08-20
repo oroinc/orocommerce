@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -24,10 +24,10 @@ class LoadCombinedPriceListDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountGroupDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToWebsiteDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountGroupDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToWebsiteDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData',
         ];
     }
 

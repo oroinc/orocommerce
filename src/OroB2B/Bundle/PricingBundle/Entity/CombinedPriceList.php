@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_price_list_combined")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository")
  */
 class CombinedPriceList extends BasePriceList
 {
@@ -22,7 +22,7 @@ class CombinedPriceList extends BasePriceList
      * @var Collection|CombinedProductPrice[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedProductPrice",
      *      mappedBy="priceList",
      *      fetch="EXTRA_LAZY"
      * )
@@ -33,7 +33,7 @@ class CombinedPriceList extends BasePriceList
      * @var CombinedPriceListCurrency[]|Collection
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListCurrency",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency",
      *      mappedBy="priceList",
      *      cascade={"all"},
      *      orphanRemoval=true

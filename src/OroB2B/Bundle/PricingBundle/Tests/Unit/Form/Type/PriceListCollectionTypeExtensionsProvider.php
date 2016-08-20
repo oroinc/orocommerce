@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -8,11 +8,10 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 
 class PriceListCollectionTypeExtensionsProvider
 {

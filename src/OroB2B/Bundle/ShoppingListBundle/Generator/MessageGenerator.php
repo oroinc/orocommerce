@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Generator;
+namespace Oro\Bundle\ShoppingListBundle\Generator;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -32,7 +32,7 @@ class MessageGenerator
     public function getSuccessMessage($shoppingListId = null, $entitiesCount = 0, $transChoiceKey = null)
     {
         $message = $this->translator->transChoice(
-            $transChoiceKey ?: 'orob2b.shoppinglist.actions.add_success_message',
+            $transChoiceKey ?: 'oro.shoppinglist.actions.add_success_message',
             $entitiesCount,
             ['%count%' => $entitiesCount]
         );
@@ -42,7 +42,7 @@ class MessageGenerator
                 '%s (<a href="%s">%s</a>).',
                 $message,
                 $this->router->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]),
-                $linkTitle = $this->translator->trans('orob2b.shoppinglist.actions.view')
+                $linkTitle = $this->translator->trans('oro.shoppinglist.actions.view')
             );
         }
 
@@ -54,6 +54,6 @@ class MessageGenerator
      */
     public function getFailedMessage()
     {
-        return $this->translator->trans('orob2b.shoppinglist.actions.failed_mesage');
+        return $this->translator->trans('oro.shoppinglist.actions.failed_mesage');
     }
 }

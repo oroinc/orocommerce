@@ -3,8 +3,8 @@
     'savedId': savedId is defined and savedId and form.vars.errors is empty ? savedId : null
 } %}
 <div class="widget-content"
-     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.warehouse.warehouse_inventory_level_save.flash.success'})|json_encode }}"
+     data-page-component-module="orofrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.warehouse.warehouse_inventory_level_save.flash.success'})|json_encode }}"
 >
     {% if form.vars.data is empty and noDataReason is defined %}
         <div class="no-data">
@@ -27,8 +27,8 @@
             </div>
 
             <div class="widget-actions">
-                <button type="reset" class="btn">{{ 'orob2b.warehouse.widgets.actions.cancel'|trans }}</button>
-                <button type="submit" class="btn btn-success">{{ 'orob2b.warehouse.widgets.actions.save'|trans }}</button>
+                <button type="reset" class="btn">{{ 'oro.warehouse.widgets.actions.cancel'|trans }}</button>
+                <button type="submit" class="btn btn-success">{{ 'oro.warehouse.widgets.actions.save'|trans }}</button>
             </div>
         </form>
         {{ oro_form_js_validation(form) }}

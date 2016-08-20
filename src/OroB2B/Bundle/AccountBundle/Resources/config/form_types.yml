@@ -1,6 +1,6 @@
 services:
     orob2b_account.form.type.account:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountType'
         arguments:
           - '@event_dispatcher'
         calls:
@@ -9,7 +9,7 @@ services:
             - { name: form.type, alias: orob2b_account_type }
 
     orob2b_account.form.type.account_group:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountGroupType'
         calls:
             - [setDataClass, ['%orob2b_account.entity.account_group.class%']]
             - [setAccountClass, ['%orob2b_account.entity.account.class%']]
@@ -17,37 +17,37 @@ services:
             - { name: form.type, alias: orob2b_account_group_type }
 
     orob2b_account.form.type.account_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_select }
 
     orob2b_account.form.type.account_group_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountGroupSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_group_select }
 
     orob2b_account.form.type.parent_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\ParentAccountSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_parent_select }
 
     orob2b_account.form.type.account_user_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_account_user_select }
 
     orob2b_account.form.type.account_user_multiselect_type:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_account_user_multiselect }
 
     orob2b_account.form.type.frontend.account_user_multiselect_type:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType'
         tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user_multiselect }
 
     orob2b_account.form.type.account_user:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserType'
         arguments:
             - '@oro_security.security_facade'
         calls:
@@ -57,7 +57,7 @@ services:
             - { name: form.type, alias: orob2b_account_account_user }
 
     orob2b_account.form.type.account_user_role_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType'
         arguments:
             - '@translator'
         calls:
@@ -66,28 +66,28 @@ services:
             - { name: form.type, alias: orob2b_account_account_user_role_select }
 
     orob2b_account.form.type.account_user_role:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType'
         calls:
             - [setDataClass, ['%orob2b_account.entity.account_user_role.class%']]
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
 
     orob2b_account.form.type.frontend.account_user_role:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType'
         calls:
             - [setDataClass, ['%orob2b_account.entity.account_user_role.class%']]
         tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user_role }
 
     orob2b_account.form.type.frontend.account_user_profile:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType'
         calls:
             - [setDataClass, ['%orob2b_account.entity.account_user.class%']]
         tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user_profile }
 
     orob2b_account.form.type.frontend.account_user:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserType'
         arguments:
             - '@oro_security.security_facade'
         calls:
@@ -96,7 +96,7 @@ services:
             - { name: form.type, alias: orob2b_account_frontend_account_user }
 
     orob2b_account.form.type.frontend.account_user_role_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType'
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
@@ -106,7 +106,7 @@ services:
             - { name: form.type, alias: orob2b_account_frontend_account_user_role_select }
 
     orob2b_account.form.type.frontend.account_user.register:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType'
         arguments:
             - '@oro_config.manager'
             - '@oro_user.manager'
@@ -116,12 +116,12 @@ services:
             - { name: form.type, alias: orob2b_account_frontend_account_user_register }
 
     orob2b_account.form.type.frontend.account_user.password_request:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType'
         tags:
             - { name: form.type, alias: orob2b_account_account_user_password_request }
 
     orob2b_account.form.type.frontend.account_user.password_reset:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType'
         calls:
             - [setDataClass, ['%orob2b_account.entity.account_user.class%']]
         tags:
@@ -129,7 +129,7 @@ services:
 
     orob2b_account.form.handler.update_account_user_role:
         parent: oro_user.form.handler.abstract.acl_role
-        class: 'OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler'
+        class: 'Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler'
         scope: prototype
         calls:
             - [setRequestStack, ['@request_stack']]
@@ -141,13 +141,13 @@ services:
 
     orob2b_account.form.handler.update_account_user_role_frontend:
         parent: orob2b_account.form.handler.update_account_user_role
-        class: 'OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler'
+        class: 'Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler'
         scope: prototype
         calls:
             - [setTokenStorage, ['@security.token_storage']]
 
     orob2b_account.form.type.typed_address:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressType'
         calls:
              - [setDataClass, ['%orob2b_account.entity.account_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
@@ -155,7 +155,7 @@ services:
              - { name: form.type, alias: orob2b_account_typed_address}
 
     orob2b_account.form.type.account_user_typed_address:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType'
         calls:
              - [setDataClass, ['%orob2b_account.entity.account_user_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
@@ -163,7 +163,7 @@ services:
              - { name: form.type, alias: orob2b_account_account_user_typed_address}
 
     orob2b_account.form.type.typed_address_with_default:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType'
         arguments: ['@translator']
         calls:
              - [setRegistry, ['@doctrine']]
@@ -171,35 +171,35 @@ services:
              - { name: form.type, alias: orob2b_account_typed_address_with_default}
 
     orob2b_account.form.type.acl_access_level_text:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\AccountAclAccessLevelTextType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\AccountAclAccessLevelTextType'
         arguments:
             - '@orob2b_account.acl.resolver.role_translation_prefix'
         tags:
              - { name: form.type, alias: orob2b_account_acl_access_level_text }
 
     orob2b_account.form.extension.acl_permission:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension'
+        class: 'Oro\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension'
         arguments:
             - '@orob2b_account.acl.resolver.role_translation_prefix'
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
     orob2b_account.form.event_listener.category.post_set_data:
-        class: 'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
+        class: 'Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
         parent: orob2b_account.form.event_listener.abstract_visibility
 
     orob2b_account.form.event_listener.abstract_visibility:
-        class: 'OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener'
+        class: 'Oro\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener'
         abstract: true
         arguments:
             - '@doctrine'
 
     orob2b_account.form.event_listener.abstract_visibility_post_submit:
-        class: 'OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
+        class: 'Oro\Bundle\AccountBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
         parent: orob2b_account.form.event_listener.abstract_visibility
 
     orob2b_account.form.extension.category_type:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension'
+        class: 'Oro\Bundle\AccountBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
         calls:
@@ -208,38 +208,38 @@ services:
             - [setVisibilityToAccountClass,['%orob2b_account.entity.account_category_visibility.class%']]
 
     orob2b_account.form.type.catalog_visibility:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\CatalogVisibilityType'
         tags:
             - { name: form.type, alias: orob2b_account_catalog_default_visibility }
 
     orob2b_account.form.type.product_visibility:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\ProductVisibilityType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\ProductVisibilityType'
         tags:
             - { name: form.type, alias: orob2b_account_product_default_visibility }
 
     orob2b_account.form.extension.select_or_create_inline:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
+        class: 'Oro\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
         arguments:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: "oro_entity_create_or_select_inline" }
 
     orob2b_account.form.extension.frontend_product_select:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension'
+        class: 'Oro\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension'
         arguments:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: orob2b_product_select }
 
     orob2b_account.form.extension.address:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension'
+        class: 'Oro\Bundle\AccountBundle\Form\Extension\AddressExtension'
         arguments:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: "oro_address" }
 
     orob2b_account.form.type.entity_visibility_type:
-        class: 'OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType'
+        class: 'Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType'
         arguments:
             - '@orob2b_account.form.event_listener.category.post_set_data'
             - '@orob2b_account.provider.visibility_choices'

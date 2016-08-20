@@ -1,5 +1,5 @@
 parameters:
-    orob2b_menu.entity.menu_item.class: OroB2B\Bundle\MenuBundle\Entity\MenuItem
+    orob2b_menu.entity.menu_item.class: Oro\Bundle\MenuBundle\Entity\MenuItem
 
 services:
     orob2b_menu.cache:
@@ -9,21 +9,21 @@ services:
             - [ setNamespace, [ 'orob2b_menu' ] ]
 
     orob2b_menu.form.type.menu_item:
-        class: 'OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType'
+        class: 'Oro\Bundle\MenuBundle\Form\Type\MenuItemType'
         calls:
             - [setDataClass, ['%orob2b_menu.entity.menu_item.class%']]
         tags:
             - { name: form.type, alias: orob2b_menu_item }
 
     orob2b_menu.tree.menu_item_tree_handler:
-        class: 'OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler'
+        class: 'Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler'
         arguments:
             - '%orob2b_menu.entity.menu_item.class%'
             - "@doctrine"
             - "@orob2b_menu.menu_provider"
 
     orob2b_menu.entity.menu_item_manager:
-        class: 'OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager'
+        class: 'Oro\Bundle\MenuBundle\Entity\Manager\MenuItemManager'
 
     orob2b_menu.menu.factory:
         class: 'Knp\Menu\MenuFactory'
@@ -32,14 +32,14 @@ services:
             - [ addExtension, [ "@orob2b_menu.menu.condition.condition_extension" ] ]
 
     orob2b_menu.menu.database_builder:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder'
+        class: 'Oro\Bundle\MenuBundle\Menu\DatabaseBuilder'
         public: false
         arguments:
             - "@doctrine"
             - "@orob2b_menu.menu.factory"
 
     orob2b_menu.twig.menu_item_extension:
-        class: 'OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension'
+        class: 'Oro\Bundle\MenuBundle\Twig\MenuItemExtension'
         public: false
         arguments:
             - "@orob2b_menu.tree.menu_item_tree_handler"
@@ -58,14 +58,14 @@ services:
         public: false
 
     orob2b_menu.menu_serializer:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\MenuSerializer'
+        class: 'Oro\Bundle\MenuBundle\Menu\MenuSerializer'
         public: false
         arguments:
             - "@orob2b_menu.menu_array_loader"
             - "@orob2b_menu.menu_manipulator"
 
     orob2b_menu.menu_provider:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider'
+        class: 'Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider'
         public: false
         arguments:
             - "@orob2b_menu.menu.database_builder"
@@ -82,11 +82,11 @@ services:
             - { name: oro_service_link,  service: orob2b_menu.menu_provider }
 
     orob2b_menu.menu.condition.condition_extension:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension'
+        class: 'Oro\Bundle\MenuBundle\Menu\Condition\ConditionExtension'
         public: false
 
     orob2b_menu.menu.condition.config_value_expression_language_provider:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider'
+        class: 'Oro\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider'
         public: false
         arguments:
             - "@oro_config.manager"
@@ -94,7 +94,7 @@ services:
             - { name: orob2b_menu.condition.expression_language_provider, alias: config_value }
 
     orob2b_menu.menu.condition.logged_in_expression_language_provider:
-        class: 'OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
+        class: 'Oro\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
         public: false
         arguments:
             - "@oro_security.security_facade"
@@ -102,7 +102,7 @@ services:
             - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }
 
     orob2b_menu.event_listener.orm.menu_item_cache_listener:
-        class: OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener
+        class: Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener
         public: false
         arguments:
             - "@orob2b_menu.menu_provider.link"
@@ -110,7 +110,7 @@ services:
             - { name: doctrine.orm.entity_listener } #todo: add entity and event keys https://magecore.atlassian.net/browse/BB-1289
 
     orob2b_menu.event_listener.localization_listener:
-        class: OroB2B\Bundle\MenuBundle\EventListener\LocalizationListener
+        class: Oro\Bundle\MenuBundle\EventListener\LocalizationListener
         public: false
         arguments:
             - "@orob2b_menu.menu_provider.link"
@@ -120,7 +120,7 @@ services:
             - { name: doctrine.event_listener, event: postRemove }
 
     orob2b_menu.event_listener.menu_item_form_handler_listener:
-        class: OroB2B\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener
+        class: Oro\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener
         arguments:
             - "@orob2b_menu.menu_provider"
         tags:
@@ -138,7 +138,7 @@ services:
 
     orob2b_menu.cache.warmer:
         public: false
-        class: OroB2B\Bundle\MenuBundle\Cache\CacheWarmer
+        class: Oro\Bundle\MenuBundle\Cache\CacheWarmer
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@orob2b_menu.menu_provider"
@@ -148,7 +148,7 @@ services:
             - { name: kernel.cache_warmer }
 
     orob2b_menu.layout.data_provider.menu:
-        class: 'OroB2B\Bundle\MenuBundle\Layout\DataProvider\MenuProvider'
+        class: 'Oro\Bundle\MenuBundle\Layout\DataProvider\MenuProvider'
         arguments:
             - "@orob2b_menu.menu_provider"
         tags:

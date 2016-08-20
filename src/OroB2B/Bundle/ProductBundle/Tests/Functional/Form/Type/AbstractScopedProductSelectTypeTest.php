@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -21,7 +21,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             ]
         );
 

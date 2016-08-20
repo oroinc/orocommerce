@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class TaxRuleDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules'
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules'
             ]
         );
     }

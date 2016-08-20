@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
  * @dbIsolation
@@ -159,8 +158,8 @@ class WarehouseControllerTest extends WebTestCase
     {
         /** @var Warehouse $warehouse */
         $warehouse = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BWarehouseBundle:Warehouse')
-            ->getRepository('OroB2BWarehouseBundle:Warehouse')
+            ->getManagerForClass('OroWarehouseBundle:Warehouse')
+            ->getRepository('OroWarehouseBundle:Warehouse')
             ->findOneBy(['name' => $name]);
         $this->assertNotEmpty($warehouse);
 

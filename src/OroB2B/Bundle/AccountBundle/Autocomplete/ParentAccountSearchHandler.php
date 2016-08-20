@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Autocomplete;
+namespace Oro\Bundle\AccountBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository;
 
 class ParentAccountSearchHandler extends SearchHandler
 {

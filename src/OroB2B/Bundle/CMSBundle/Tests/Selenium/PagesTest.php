@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Selenium;
+namespace Oro\Bundle\CMSBundle\Tests\Selenium;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
-
-use OroB2B\Bundle\CMSBundle\Tests\Selenium\Pages\Pages;
+use Oro\Bundle\CMSBundle\Tests\Selenium\Pages\Pages;
 
 class PagesTest extends Selenium2TestCase
 {
@@ -46,7 +45,7 @@ class PagesTest extends Selenium2TestCase
     public function testCreatePages()
     {
         /** @var Pages $pages */
-        $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        $pages = $this->login()->openPages('Oro\Bundle\CMSBundle');
         sleep(1);
 
         // create root level page
@@ -88,7 +87,7 @@ class PagesTest extends Selenium2TestCase
     public function testSlugJsComponent()
     {
         /** @var Pages $pages */
-        $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        $pages = $this->login()->openPages('Oro\Bundle\CMSBundle');
         sleep(1);
 
         $page = $pages->openPage(self::$firstPage)
@@ -131,7 +130,7 @@ class PagesTest extends Selenium2TestCase
     public function testDragAndDrop()
     {
         /** @var Pages $pages */
-        $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        $pages = $this->login()->openPages('Oro\Bundle\CMSBundle');
         sleep(1);
 
         /**
@@ -192,7 +191,7 @@ class PagesTest extends Selenium2TestCase
     public function testDeletePages()
     {
         /** @var Pages $pages */
-        $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        $pages = $this->login()->openPages('Oro\Bundle\CMSBundle');
         sleep(1);
 
         /**

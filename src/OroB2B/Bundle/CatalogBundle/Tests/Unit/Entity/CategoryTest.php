@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
-use OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

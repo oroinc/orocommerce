@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Action;
+namespace Oro\Bundle\RFPBundle\Action;
 
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
-
-use OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory;
-use OroB2B\Component\Duplicator\Duplicator;
+use Oro\Bundle\RFPBundle\Factory\DuplicatorFactory;
+use Oro\Component\Duplicator\Duplicator;
 
 class Duplicate extends AbstractAction
 {

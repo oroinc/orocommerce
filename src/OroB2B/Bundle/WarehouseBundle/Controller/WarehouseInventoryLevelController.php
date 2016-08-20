@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Controller;
+namespace Oro\Bundle\WarehouseBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,12 +13,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
-use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
-use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
-use OroB2B\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
+use Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
+use Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
+use Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 
 class WarehouseInventoryLevelController extends Controller
 {
@@ -50,7 +49,7 @@ class WarehouseInventoryLevelController extends Controller
      * @Acl(
      *      id="orob2b_product_warehouse_inventory_update",
      *      type="entity",
-     *      class="OroB2BWarehouseBundle:WarehouseInventoryLevel",
+     *      class="OroWarehouseBundle:WarehouseInventoryLevel",
      *      permission="EDIT"
      * )
      *
@@ -72,7 +71,7 @@ class WarehouseInventoryLevelController extends Controller
 
         $handler = new WarehouseInventoryLevelHandler(
             $form,
-            $this->getDoctrine()->getManagerForClass('OroB2BWarehouseBundle:WarehouseInventoryLevel'),
+            $this->getDoctrine()->getManagerForClass('OroWarehouseBundle:WarehouseInventoryLevel'),
             $request,
             $this->get('orob2b_product.service.quantity_rounding')
         );
@@ -101,9 +100,9 @@ class WarehouseInventoryLevelController extends Controller
     {
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
-            $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.units';
+            $noDataReason = 'oro.warehouse.warehouseinventorylevel.error.units';
         } elseif (0 === $this->getAvailableWarehousesCount()) {
-            $noDataReason = 'orob2b.warehouse.warehouseinventorylevel.error.warehouses';
+            $noDataReason = 'oro.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
         return $noDataReason

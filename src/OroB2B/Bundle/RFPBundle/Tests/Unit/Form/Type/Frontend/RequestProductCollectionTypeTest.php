@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Frontend\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Frontend\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 
 class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 {

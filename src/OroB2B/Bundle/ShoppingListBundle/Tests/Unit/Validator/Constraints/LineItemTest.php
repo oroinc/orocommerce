@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItem;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem;
 
 class LineItemTest extends \PHPUnit_Framework_TestCase
 {

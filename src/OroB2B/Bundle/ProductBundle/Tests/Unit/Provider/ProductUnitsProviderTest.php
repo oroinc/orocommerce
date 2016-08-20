@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
+namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,11 +21,11 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($units as $v) {
             $productUnits[] = $this->
-            getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $v]);
+            getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => $v]);
         }
 
         $productUnitRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -37,27 +36,27 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($productUnitRepository);
 
         $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\ProductBundle\Entity\ProductUnit')
+            ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($manager);
         
-        $formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $formatter->expects($this->exactly(6))
             ->method('format')
             ->will($this->returnValueMap([
-                ['each', false, false, 'orob2b.product_unit.each.label.full'],
-                ['kg', false, false, 'orob2b.product_unit.kg.label.full'],
-                ['hour', false, false, 'orob2b.product_unit.hour.label.full'],
-                ['item', false, false, 'orob2b.product_unit.item.label.full'],
-                ['set', false, false, 'orob2b.product_unit.set.label.full'],
-                ['piece', false, false, 'orob2b.product_unit.piece.label.full'],
+                ['each', false, false, 'oro.product_unit.each.label.full'],
+                ['kg', false, false, 'oro.product_unit.kg.label.full'],
+                ['hour', false, false, 'oro.product_unit.hour.label.full'],
+                ['item', false, false, 'oro.product_unit.item.label.full'],
+                ['set', false, false, 'oro.product_unit.set.label.full'],
+                ['piece', false, false, 'oro.product_unit.piece.label.full'],
             ]));
 
         $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $formatter);
@@ -66,12 +65,12 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAvailableProductUnits()
     {
         $expected = [
-            'each' => 'orob2b.product_unit.each.label.full',
-            'kg' => 'orob2b.product_unit.kg.label.full',
-            'hour' => 'orob2b.product_unit.hour.label.full',
-            'item' => 'orob2b.product_unit.item.label.full',
-            'set' => 'orob2b.product_unit.set.label.full',
-            'piece' => 'orob2b.product_unit.piece.label.full',
+            'each' => 'oro.product_unit.each.label.full',
+            'kg' => 'oro.product_unit.kg.label.full',
+            'hour' => 'oro.product_unit.hour.label.full',
+            'item' => 'oro.product_unit.item.label.full',
+            'set' => 'oro.product_unit.set.label.full',
+            'piece' => 'oro.product_unit.piece.label.full',
 
         ];
 

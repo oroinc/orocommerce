@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Model;
+namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\OrderBundle\Manager\AbstractAddressManager;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 class QuoteAddressManager extends AbstractAddressManager
 {

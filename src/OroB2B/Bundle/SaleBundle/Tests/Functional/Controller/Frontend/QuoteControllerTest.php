@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -25,7 +24,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
         ]);
     }
 
@@ -277,27 +276,27 @@ class QuoteControllerTest extends WebTestCase
                     'createOrderButton' => false,
                     'columns' => [
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'label' => 'oro.frontend.sale.quote.qid.label',
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'label' => 'oro.frontend.sale.quote.ship_estimate.label',
                             'property' => 'shipping_estimate',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'label' => 'oro.sale.quote.sections.shipping_address',
                             'property' => 'shippingAddress.street',
                         ]
                     ],
@@ -313,27 +312,27 @@ class QuoteControllerTest extends WebTestCase
                     'createOrderButton' => true,
                     'columns' => [
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'label' => 'oro.frontend.sale.quote.qid.label',
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.ship_estimate.label',
+                            'label' => 'oro.frontend.sale.quote.ship_estimate.label',
                             'property' => 'shipping_estimate',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'label' => 'oro.sale.quote.sections.shipping_address',
                             'property' => 'shippingAddress.street',
                         ]
                     ],
@@ -349,19 +348,19 @@ class QuoteControllerTest extends WebTestCase
                     'createOrderButton' => false,
                     'columns' => [
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'label' => 'oro.frontend.sale.quote.qid.label',
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
                     ],
@@ -377,19 +376,19 @@ class QuoteControllerTest extends WebTestCase
                     'createOrderButton' => false,
                     'columns' => [
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'label' => 'oro.frontend.sale.quote.qid.label',
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
                     ],
@@ -405,19 +404,19 @@ class QuoteControllerTest extends WebTestCase
                     'createOrderButton' => true,
                     'columns' => [
                         [
-                            'label' => 'orob2b.frontend.sale.quote.qid.label',
+                            'label' => 'oro.frontend.sale.quote.qid.label',
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.valid_until.label',
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
                     ],

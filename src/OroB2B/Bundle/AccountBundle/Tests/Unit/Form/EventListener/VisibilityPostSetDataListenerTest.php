@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
 
 class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCase
 {
@@ -37,7 +37,7 @@ class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCa
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
         /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', 1);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', 1);
         $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
         $event->expects($this->any())->method('getForm')->willReturn($this->form);
 
@@ -97,7 +97,7 @@ class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCa
     public function onPostSetDataWithDefaultCategoryVisibilityDataProvider()
     {
         /** @var Category $rootCategory */
-        $rootCategory = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', 1);
+        $rootCategory = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', 1);
         $subCategory = clone($rootCategory);
         $subCategory->setParentCategory($rootCategory);
 
@@ -248,7 +248,7 @@ class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCa
      */
     protected function getCategoryVisibility()
     {
-        $categoryVisibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
+        $categoryVisibility = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
             ->setMethods(['getVisibility'])
             ->getMock();
         $categoryVisibility->expects($this->once())
@@ -264,12 +264,12 @@ class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCa
     protected function getAccountCategoryVisibility()
     {
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $this->account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $this->account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
         $this->account->expects($this->once())
             ->method('getId')
             ->willReturn(1);
 
-        $visibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility')
+        $visibility = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility')
             ->setMethods(['getVisibility', 'getAccount'])
             ->getMock();
         $visibility->expects($this->exactly(2))
@@ -288,13 +288,13 @@ class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCa
     protected function getAccountGroupCategoryVisibility()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $this->accountGroup = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountGroup');
+        $this->accountGroup = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountGroup');
         $this->accountGroup->expects($this->once())
             ->method('getId')
             ->willReturn(1);
 
         $visibility = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
+            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
         )
             ->setMethods(['getVisibility', 'getAccountGroup'])
             ->getMock();

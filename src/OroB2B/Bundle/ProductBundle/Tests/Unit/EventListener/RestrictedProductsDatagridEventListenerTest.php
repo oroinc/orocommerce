@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -10,10 +10,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
-
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
+        $this->productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
             ->disableOriginalConstructor()
             ->getMock();
 

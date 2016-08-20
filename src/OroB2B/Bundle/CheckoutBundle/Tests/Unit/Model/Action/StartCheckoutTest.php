@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -14,20 +14,19 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
 
 class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 {
@@ -79,10 +78,10 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
-        $this->websiteManager = $this->getMockWithoutConstructor('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager');
+        $this->websiteManager = $this->getMockWithoutConstructor('Oro\Bundle\WebsiteBundle\Manager\WebsiteManager');
         $this->setUpTokenStorage();
         $this->currencyManager = $this
-            ->getMockWithoutConstructor('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager');
+            ->getMockWithoutConstructor('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager');
         $this->redirect = $this->getMockBuilder('Oro\Component\Action\Action\AbstractAction')
             ->disableOriginalConstructor()
             ->setMethods(['initialize', 'execute'])
@@ -160,7 +159,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BCheckoutBundle:CheckoutSource')
+            ->with('OroCheckoutBundle:CheckoutSource')
             ->willReturn($checkoutSourceRepository);
 
         $this->registry->expects($this->any())
@@ -196,7 +195,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
             $em->expects($this->once())
                 ->method('persist')
-                ->with($this->isInstanceOf('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'));
+                ->with($this->isInstanceOf('Oro\Bundle\CheckoutBundle\Entity\Checkout'));
             $em->expects($this->exactly(2))->method('flush');
         } else {
             $this->workflowManager->expects($this->once())

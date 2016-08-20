@@ -4,7 +4,7 @@ security:
             id: orob2b_user.security.provider
 
     encoders:
-        OroB2B\Bundle\AccountBundle\Entity\AccountUser: sha512
+        Oro\Bundle\AccountBundle\Entity\AccountUser: sha512
 
     firewalls:
         frontend_secure:
@@ -37,8 +37,8 @@ security:
 doctrine:
     orm:
         resolve_target_entities:
-            OroB2B\Bundle\AccountBundle\Entity\CustomerUserIdentity: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+            Oro\Bundle\AccountBundle\Entity\CustomerUserIdentity: Oro\Bundle\AccountBundle\Entity\AccountUser
         filters:
             soft_deleteable:
-                class:      OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter
+                class:      Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter
                 enabled:    false

@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
      * @var ComponentProcessorFilter|\PHPUnit_Framework_MockObject_MockObject
@@ -56,7 +56,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     protected function getProductManager()
     {
         if (!$this->productManager) {
-            $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
+            $this->productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
                 ->disableOriginalConstructor()
                 ->getMock();
         }
@@ -100,7 +100,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     {
         if (!$this->productRepository) {
             $this->productRepository = $this
-                ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
         }

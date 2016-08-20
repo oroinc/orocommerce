@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Mapper;
+namespace Oro\Bundle\TaxBundle\Mapper;
 
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 interface TaxMapperInterface
 {

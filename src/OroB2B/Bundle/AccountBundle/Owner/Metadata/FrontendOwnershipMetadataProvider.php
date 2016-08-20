@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Owner\Metadata;
+namespace Oro\Bundle\AccountBundle\Owner\Metadata;
 
 use Doctrine\Common\Cache\CacheProvider;
 
@@ -9,8 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 {

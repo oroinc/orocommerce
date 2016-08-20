@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Generator;
+namespace Oro\Bundle\RedirectBundle\Generator;
 
 class SlugGenerator
 {

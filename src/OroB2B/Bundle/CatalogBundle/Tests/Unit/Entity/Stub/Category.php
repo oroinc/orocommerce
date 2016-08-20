@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category as BaseCategory;
+use Oro\Bundle\CatalogBundle\Entity\Category as BaseCategory;
 
 class Category extends BaseCategory
 {

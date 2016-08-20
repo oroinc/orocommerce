@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Controller;
+namespace Oro\Bundle\RFPBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -12,9 +12,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 
 class RequestController extends Controller
 {
@@ -24,7 +23,7 @@ class RequestController extends Controller
      * @Acl(
      *      id="orob2b_rfp_request_view",
      *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
+     *      class="OroRFPBundle:Request",
      *      permission="VIEW"
      * )
      *
@@ -74,7 +73,7 @@ class RequestController extends Controller
      *     id="orob2b_rfp_request_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroB2BRFPBundle:Request"
+     *     class="OroRFPBundle:Request"
      * )
      *
      * @param RFPRequest $rfpRequest
@@ -110,7 +109,7 @@ class RequestController extends Controller
                     'parameters' => ['id' => $request->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
+            $this->get('translator')->trans('oro.rfp.controller.request.saved.message')
         );
     }
 }

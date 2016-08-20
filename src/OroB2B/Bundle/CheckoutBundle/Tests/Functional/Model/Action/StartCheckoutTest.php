@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Model\Action;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Model\Action;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -9,13 +9,12 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -45,14 +44,14 @@ class StartCheckoutTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
             ]
         );
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->user = $this->registry
-            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $token = new UsernamePasswordToken($this->user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
@@ -160,7 +159,7 @@ class StartCheckoutTest extends WebTestCase
      */
     protected function getCheckouts()
     {
-        return $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
+        return $this->registry->getRepository('OroCheckoutBundle:Checkout')->findAll();
     }
 
     /**

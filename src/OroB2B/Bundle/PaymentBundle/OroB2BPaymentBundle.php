@@ -1,22 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle;
+namespace Oro\Bundle\PaymentBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
-use OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
+use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
-class OroB2BPaymentBundle extends Bundle
+class OroPaymentBundle extends Bundle
 {
     /** {@inheritdoc} */
     public function getContainerExtension()
     {
-        return new OroB2BPaymentExtension();
+        return new OroPaymentExtension();
     }
 
     /**
@@ -35,7 +35,7 @@ class OroB2BPaymentBundle extends Bundle
         if (!SecureArrayType::hasType(SecureArrayType::TYPE)) {
             SecureArrayType::addType(
                 SecureArrayType::TYPE,
-                'OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType'
+                'Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType'
             );
 
             $mcrypt = $this->container->get('oro_security.encoder.mcrypt');

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Expression;
+namespace Oro\Bundle\PricingBundle\Expression;
 
 use Symfony\Component\ExpressionLanguage\Node;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
 
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class ExpressionLanguageConverter
 {

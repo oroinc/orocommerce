@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Entity;
+namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,8 +22,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          @ORM\Index(name="orob2b_rfp_status_name_idx",columns={"name"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
- * @Gedmo\TranslationEntity(class="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
+ * @Gedmo\TranslationEntity(class="Oro\Bundle\RFPBundle\Entity\RequestStatusTranslation")
  * @Config(
  *      routeName="orob2b_rfp_request_status_index",
  *      routeView="orob2b_rfp_request_status_view",
@@ -73,7 +73,7 @@ class RequestStatus implements Translatable
 
     /**
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation",
+     *     targetEntity="Oro\Bundle\RFPBundle\Entity\RequestStatusTranslation",
      *     mappedBy="object",
      *     cascade={"persist", "remove"}
      * )

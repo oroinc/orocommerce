@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductSelectTypeStub extends AbstractType
 {
@@ -24,7 +24,7 @@ class ProductSelectTypeStub extends AbstractType
     {
         $resolver->setDefaults([
             'data_parameters' => [],
-            'class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'class' => 'Oro\Bundle\ProductBundle\Entity\Product',
             'property' => 'sku',
             'create_enabled' => true,
             'configs' => [

@@ -1,22 +1,22 @@
 parameters:
-    orob2b_invoice.entity.invoice.class: OroB2B\Bundle\InvoiceBundle\Entity\Invoice
-    orob2b_invoice.entity.invoice_line_item.class: OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem
+    orob2b_invoice.entity.invoice.class: Oro\Bundle\InvoiceBundle\Entity\Invoice
+    orob2b_invoice.entity.invoice_line_item.class: Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem
 
 services:
     orob2b_invoice.form.type.invoice:
-        class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType'
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType'
         calls:
             - [setDataClass, ['%orob2b_invoice.entity.invoice.class%']]
         tags:
             - { name: form.type, alias: orob2b_invoice_type }
 
     orob2b_invoice.form.type.invoice_line_item_collection:
-        class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemsCollectionType'
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemsCollectionType'
         tags:
             - { name: form.type, alias: "orob2b_invoice_line_items_collection" }
 
     orob2b_invoice.form.type.invoice_line_item:
-        class: 'OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
         arguments:
             - "@doctrine"
             - "@orob2b_product.formatter.product_unit_label"
@@ -28,10 +28,10 @@ services:
             - { name: form.type, alias: "orob2b_invoice_line_item" }
 
     orob2b_invoice.doctrine.orm.invoice_number_generator:
-        class: 'OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator'
+        class: 'Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator'
 
     orob2b_invoice.event_listener.orm.invoice_event_listener:
-        class: 'OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener'
+        class: 'Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener'
         public: false
         calls:
             - [setInvoiceNumberGenerator, ["@orob2b_invoice.doctrine.orm.invoice_number_generator"]]
@@ -39,14 +39,14 @@ services:
             - { name: doctrine.orm.entity_listener }
 
     orob2b_invoice.event_listener.invoice_form_listener:
-        class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        class: Oro\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
         arguments:
             - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}
 
     orob2b_invoice.event_listener.total_calculate_listener:
-        class: 'OroB2B\Bundle\InvoiceBundle\EventListener\TotalCalculateListener'
+        class: 'Oro\Bundle\InvoiceBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
         tags:

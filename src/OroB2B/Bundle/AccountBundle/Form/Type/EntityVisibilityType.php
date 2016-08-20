@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,11 +8,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
-
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
+use Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
+use Oro\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use Oro\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 
 class EntityVisibilityType extends AbstractType
 {
@@ -97,7 +96,7 @@ class EntityVisibilityType extends AbstractType
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'orob2b.account.visibility.to_all.label',
+                    'label' => 'oro.account.visibility.to_all.label',
                     'choices' => $choices,
                 ]
             )

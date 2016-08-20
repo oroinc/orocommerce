@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Entity;
+namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -8,13 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(name="orob2b_payment_term")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository")
  * @Config(
  *      routeName="orob2b_payment_term_index",
  *      routeView="orob2b_payment_term_view",
@@ -63,7 +62,7 @@ class PaymentTerm
     /**
      * @var AccountGroup[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
      *      name="orob2b_payment_term_to_acc_grp",
      *      joinColumns={
@@ -79,7 +78,7 @@ class PaymentTerm
     /**
      * @var Account[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinTable(
      *      name="orob2b_payment_term_to_account",
      *      joinColumns={

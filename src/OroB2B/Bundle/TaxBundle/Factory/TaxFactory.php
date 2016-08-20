@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Factory;
+namespace Oro\Bundle\TaxBundle\Factory;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
-use OroB2B\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class TaxFactory
 {

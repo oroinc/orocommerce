@@ -1,29 +1,29 @@
 orob2b_order:
-    resource:     "@OroB2BOrderBundle/Controller/OrderController.php"
+    resource:     "@OroOrderBundle/Controller/OrderController.php"
     type:         annotation
     prefix:       /order
 
 orob2b_order_frontend:
-    resource:     "@OroB2BOrderBundle/Controller/Frontend/OrderController.php"
+    resource:     "@OroOrderBundle/Controller/Frontend/OrderController.php"
     type:         annotation
     prefix:       /account/order
     options:
         frontend: true
 
 orob2b_order_ajax:
-    resource:     "@OroB2BOrderBundle/Controller/AjaxOrderController.php"
+    resource:     "@OroOrderBundle/Controller/AjaxOrderController.php"
     type:         annotation
     prefix:       /order
 
 orob2b_order_ajax_frontend:
-    resource:     "@OroB2BOrderBundle/Controller/Frontend/AjaxOrderController.php"
+    resource:     "@OroOrderBundle/Controller/Frontend/AjaxOrderController.php"
     type:         annotation
     prefix:       /account/order
     options:
         frontend: true
 
 orob2b_order_bundle_api:
-    resource:     "@OroB2BOrderBundle/Resources/config/oro/routing_api.yml"
+    resource:     "@OroOrderBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1

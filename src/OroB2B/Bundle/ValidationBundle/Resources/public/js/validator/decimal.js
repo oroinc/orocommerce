@@ -9,7 +9,7 @@ define([
         decimalSeparator = options.decimal_separator_symbol;
 
     return [
-        'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
+        'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
         function(value, element, param) {
             param.pattern = '/^[0-9\\+\\-\\' + groupingSeparator + '\\' + decimalSeparator + ']*$/';
             return regexConstraint[1].call(this, value, element, param);

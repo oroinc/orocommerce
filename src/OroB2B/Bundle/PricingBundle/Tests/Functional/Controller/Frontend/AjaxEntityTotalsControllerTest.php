@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -28,8 +27,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
@@ -93,7 +92,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     protected function getCurrentUser()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -103,7 +102,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     protected function getCurrentWebsite()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->find(1);
     }
 }

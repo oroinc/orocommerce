@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -10,10 +10,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
 class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandler
 {

@@ -11,7 +11,7 @@
     {% if context is defined and not context.data.locked %}
         <div class="alert alert-warning">
             <div class="message">
-                {{ 'orob2b.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
+                {{ 'oro.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
             </div>
         </div>
     {% endif %}
@@ -78,11 +78,11 @@
                 {{ form_rest(form) }}
 
                 <div class="widget-actions form-actions">
-                    <button class="btn" type="reset">{{ 'orob2b.sale.btn.cancel'|trans }}</button>
+                    <button class="btn" type="reset">{{ 'oro.sale.btn.cancel'|trans }}</button>
 
-                    {% set button_text = 'orob2b.sale.btn.notify_and_lock'|trans %}
+                    {% set button_text = 'oro.sale.btn.notify_and_lock'|trans %}
                     {% if context.data.locked %}
-                        {% set button_text = 'orob2b.sale.btn.send'|trans %}
+                        {% set button_text = 'oro.sale.btn.send'|trans %}
                     {% endif %}
                     <button class="btn btn-primary" type="submit">{{ button_text }}</button>
                 </div>

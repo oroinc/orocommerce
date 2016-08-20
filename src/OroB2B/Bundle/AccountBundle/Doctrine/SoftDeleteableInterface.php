@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Doctrine;
+namespace Oro\Bundle\AccountBundle\Doctrine;
 
 interface SoftDeleteableInterface
 {
     const FIELD_NAME = 'deletedAt';
-    const NAME = 'OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface';
+    const NAME = 'Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface';
 
     /**
      * @return \DateTime

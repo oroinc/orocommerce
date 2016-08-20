@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
  * @dbIsolation
@@ -20,14 +19,14 @@ class AccountUserDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
             ]
         );
     }
 
     public function testDelete()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
 
         $this->assertNotNull($user);
@@ -58,6 +57,6 @@ class AccountUserDeleteOperationTest extends ActionTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 }

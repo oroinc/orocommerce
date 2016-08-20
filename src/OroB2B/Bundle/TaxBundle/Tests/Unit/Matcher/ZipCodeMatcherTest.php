@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
-use OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
-use OroB2B\Bundle\TaxBundle\Model\TaxCode;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Matcher\RegionMatcher;
+use Oro\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
+use Oro\Bundle\TaxBundle\Model\TaxCode;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
 {
@@ -28,7 +27,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
         $this->matcher = new ZipCodeMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
 
-        $this->regionMatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher')
+        $this->regionMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\RegionMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 

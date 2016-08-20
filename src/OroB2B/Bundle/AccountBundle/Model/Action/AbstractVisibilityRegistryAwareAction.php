@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

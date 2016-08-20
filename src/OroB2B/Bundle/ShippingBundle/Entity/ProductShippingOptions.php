@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 /**
  * @ORM\Table(
@@ -41,7 +41,7 @@ class ProductShippingOptions implements
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $product;
@@ -49,7 +49,7 @@ class ProductShippingOptions implements
     /**
      * @var ProductUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      */
     protected $productUnit;
@@ -64,7 +64,7 @@ class ProductShippingOptions implements
     /**
      * @var WeightUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\WeightUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\WeightUnit")
      * @ORM\JoinColumn(name="weight_unit_code", referencedColumnName="code")
      */
     protected $weightUnit;
@@ -98,7 +98,7 @@ class ProductShippingOptions implements
     /**
      * @var LengthUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\LengthUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\LengthUnit")
      * @ORM\JoinColumn(name="dimensions_unit_code", referencedColumnName="code")
      */
     protected $dimensionsUnit;
@@ -111,7 +111,7 @@ class ProductShippingOptions implements
     /**
      * @var FreightClass
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\FreightClass")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\FreightClass")
      * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code")
      */
     protected $freightClass;

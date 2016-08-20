@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListener
 {

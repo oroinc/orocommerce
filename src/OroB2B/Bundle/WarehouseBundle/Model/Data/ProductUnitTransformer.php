@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Model\Data;
+namespace Oro\Bundle\WarehouseBundle\Model\Data;
 
 use Doctrine\Common\Inflector\Inflector;
 
-use OroB2B\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitTransformer
 {

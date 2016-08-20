@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,11 +26,11 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->shippingMethodRegistry = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->shippingMethod = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->formatter = new ShippingMethodLabelFormatter(

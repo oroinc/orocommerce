@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
@@ -17,8 +16,8 @@ class OrderDeleteOperationTest extends ActionTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
             ]
         );
     }

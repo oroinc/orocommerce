@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Event;
+namespace Oro\Bundle\ProductBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 abstract class AbstractProductDuplicateEvent extends Event
 {

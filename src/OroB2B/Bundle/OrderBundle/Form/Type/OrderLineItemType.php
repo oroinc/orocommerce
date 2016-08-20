@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -9,11 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class OrderLineItemType extends AbstractOrderLineItemType
 {
@@ -62,7 +61,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
         $resolver->setDefault(
             'page_component_options',
             [
-                'view' => 'orob2border/js/app/views/line-item-view',
+                'view' => 'oroorder/js/app/views/line-item-view',
                 'freeFormUnits' => $this->getFreeFormUnits(),
             ]
         );
@@ -81,7 +80,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 ProductSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.product.entity_label',
+                    'label' => 'oro.product.entity_label',
                     'create_enabled' => false,
                     'data_parameters' => [
                         'scope' => 'order'
@@ -93,7 +92,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.sku.label',
+                    'label' => 'oro.product.sku.label',
                 ]
             )
             ->add(
@@ -101,7 +100,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.entity_label',
+                    'label' => 'oro.product.entity_label',
                 ]
             )
             ->add(
@@ -110,7 +109,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 [
                     'error_bubbling' => false,
                     'required' => true,
-                    'label' => 'orob2b.order.orderlineitem.price.label',
+                    'label' => 'oro.order.orderlineitem.price.label',
                     'hide_currency' => true,
                     'default_currency' => $options['currency'],
                 ]
@@ -152,7 +151,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'label' => 'orob2b.product.productunit.entity_label',
+                'label' => 'oro.product.productunit.entity_label',
                 'required' => true,
             ]
         );

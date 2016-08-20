@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
-use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 
 class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,11 +44,11 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->taxManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxManager')
+        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->taxFactory = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxFactory')
+        $this->taxFactory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -111,9 +111,9 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->willThrowException(new TaxationDisabledException());
 
         $subtotal = $this->provider->getSubtotal(new Order());
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals('Orob2b.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
+        $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
         $this->assertFalse($subtotal->isVisible());
     }
 
@@ -129,9 +129,9 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertSubtotal(Subtotal $subtotal, ResultElement $total)
     {
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals('Orob2b.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
+        $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
         $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -11,12 +11,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
@@ -165,7 +164,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $neededPrices = [];
         $unites = $product->getAvailableUnits();
         $priceAttributes = $this->getManager()
-            ->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
+            ->getRepository('OroPricingBundle:PriceAttributePriceList')
             ->findAll();
 
         foreach ($priceAttributes as $attribute) {
@@ -185,7 +184,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductExistingPrices($product)
     {
-        return $this->getManager()->getRepository('OroB2BPricingBundle:PriceAttributeProductPrice')
+        return $this->getManager()->getRepository('OroPricingBundle:PriceAttributeProductPrice')
             ->findBy(['product' => $product]);
     }
 }

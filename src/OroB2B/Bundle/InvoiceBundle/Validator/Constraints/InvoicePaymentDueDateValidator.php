@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Validator\Constraints;
+namespace Oro\Bundle\InvoiceBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoicePaymentDueDateValidator extends ConstraintValidator
 {

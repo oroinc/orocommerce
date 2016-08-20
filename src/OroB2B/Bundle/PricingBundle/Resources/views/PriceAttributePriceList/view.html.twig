@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
     'entity': entity,
     'indexPath': path('orob2b_pricing_price_attribute_price_list_index'),
-    'indexLabel': 'orob2b.pricing.priceattributepricelist.entity_plural_label'|trans,
+    'indexLabel': 'oro.pricing.priceattributepricelist.entity_plural_label'|trans,
     'entityTitle': entity.name|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -17,7 +17,7 @@
     {% set pricingInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.pricing.widgets.price_attribute_information'|trans,
+            'title': 'oro.pricing.widgets.price_attribute_information'|trans,
             'url': path('orob2b_pricing_price_attribute_price_list_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -27,7 +27,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.pricing.sections.general'|trans,
+            'title': 'oro.pricing.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }

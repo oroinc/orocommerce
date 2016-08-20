@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -163,9 +162,9 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
 

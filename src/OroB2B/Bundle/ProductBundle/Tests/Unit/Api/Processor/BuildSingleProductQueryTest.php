@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Collection\Criteria;
 use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorOrmRelatedTestCase;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
-
-use OroB2B\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class BuildSingleProductQueryTest extends GetProcessorOrmRelatedTestCase
 {

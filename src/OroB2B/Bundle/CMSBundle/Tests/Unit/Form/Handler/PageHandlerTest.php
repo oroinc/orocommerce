@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Handler;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Form\Handler\PageHandler;
-use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Handler\PageHandler;
+use Oro\Bundle\RedirectBundle\Manager\SlugManager;
 
 class PageHandlerTest extends FormHandlerTestCase
 {
@@ -19,7 +18,7 @@ class PageHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->slugManager = $this->getMockBuilder('OroB2B\Bundle\RedirectBundle\Manager\SlugManager')
+        $this->slugManager = $this->getMockBuilder('Oro\Bundle\RedirectBundle\Manager\SlugManager')
             ->disableOriginalConstructor()
             ->getMock();
 

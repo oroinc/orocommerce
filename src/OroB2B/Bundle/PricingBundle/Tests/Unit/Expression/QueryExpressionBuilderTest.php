@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use Doctrine\ORM\Query\Expr;
 
-use OroB2B\Bundle\PricingBundle\Expression;
-use OroB2B\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
+use Oro\Bundle\PricingBundle\Expression;
+use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
 
 class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
 {

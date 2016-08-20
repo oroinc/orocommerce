@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Symfony\Component\Form\PreloadedExtension;
@@ -8,19 +8,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 
 class QuoteProductRequestTypeTest extends AbstractTest
 {
@@ -39,7 +38,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         parent::setUp();
 
         $this->formType = new QuoteProductRequestType();
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest');
+        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
     }
 
     public function testConfigureOptions()
@@ -177,7 +176,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         }
 
         /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductRequest */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest');
+        $item = $this->getMock('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
         $item
             ->expects($this->any())
             ->method('getId')

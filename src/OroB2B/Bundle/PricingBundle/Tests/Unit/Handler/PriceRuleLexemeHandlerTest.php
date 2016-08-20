@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Handler;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Expression\ExpressionParser;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRule;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -82,20 +81,20 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->parser->expects($this->any())
             ->method('getUsedLexemes')
             ->willReturnMap([
-                [$assignmentRule, ['OroB2B\Bundle\ProductBundle\Entity\Category' => ['id', null]]],
-                [$rule, ['OroB2B\Bundle\ProductBundle\Entity\Product::msrp' => ['value']]],
-                [$ruleCondition, ['OroB2B\Bundle\ProductBundle\Entity\Product' => ['sku']]]
+                [$assignmentRule, ['Oro\Bundle\ProductBundle\Entity\Category' => ['id', null]]],
+                [$rule, ['Oro\Bundle\ProductBundle\Entity\Product::msrp' => ['value']]],
+                [$ruleCondition, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sku']]]
             ]);
 
         $this->priceRuleProvider->expects($this->any())
             ->method('getRealClassName')
             ->willReturnMap([
-                ['OroB2B\Bundle\ProductBundle\Entity\Category', 'OroB2B\Bundle\ProductBundle\Entity\Category'],
+                ['Oro\Bundle\ProductBundle\Entity\Category', 'Oro\Bundle\ProductBundle\Entity\Category'],
                 [
-                    'OroB2B\Bundle\ProductBundle\Entity\Product::msrp',
-                    'OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice'
+                    'Oro\Bundle\ProductBundle\Entity\Product::msrp',
+                    'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice'
                 ],
-                ['OroB2B\Bundle\ProductBundle\Entity\Product', 'OroB2B\Bundle\ProductBundle\Entity\Product']
+                ['Oro\Bundle\ProductBundle\Entity\Product', 'Oro\Bundle\ProductBundle\Entity\Product']
             ]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $lexemeRepository */

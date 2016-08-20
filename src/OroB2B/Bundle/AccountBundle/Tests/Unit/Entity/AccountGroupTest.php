@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountGroupTest extends EntityTestCase
 {
@@ -33,7 +32,7 @@ class AccountGroupTest extends EntityTestCase
         $account = $this->createAccountEntity();
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\AccountBundle\Entity\AccountGroup',
+            'Oro\Bundle\AccountBundle\Entity\AccountGroup',
             $accountGroup->addAccount($account)
         );
 

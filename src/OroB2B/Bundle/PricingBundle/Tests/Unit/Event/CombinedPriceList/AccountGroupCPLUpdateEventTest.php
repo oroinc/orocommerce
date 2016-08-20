@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
 
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 
 class AccountGroupCPLUpdateEventTest extends \PHPUnit_Framework_TestCase
 {

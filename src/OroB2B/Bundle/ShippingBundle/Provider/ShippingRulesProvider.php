@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRulesProvider
 {
@@ -61,8 +60,8 @@ class ShippingRulesProvider
 
         /** @var ShippingRuleRepository $repository */
         $repository = $this->doctrineHelper
-            ->getEntityManagerForClass('OroB2BShippingBundle:ShippingRule')
-            ->getRepository('OroB2BShippingBundle:ShippingRule');
+            ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
+            ->getRepository('OroShippingBundle:ShippingRule');
         return $repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $shippingRuleContext['currency'],
             $shippingAddress->getCountry()

@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class RequestProductItemTypeTest extends AbstractTest
 {
@@ -35,7 +34,7 @@ class RequestProductItemTypeTest extends AbstractTest
         parent::setUp();
 
         $this->formType = new RequestProductItemType();
-        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
+        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
     }
 
     public function testGetName()
@@ -218,7 +217,7 @@ class RequestProductItemTypeTest extends AbstractTest
         }
 
         /* @var $item \PHPUnit_Framework_MockObject_MockObject|RequestProductItem */
-        $item = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
+        $item = $this->getMock('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
         $item
             ->expects($this->any())
             ->method('getId')

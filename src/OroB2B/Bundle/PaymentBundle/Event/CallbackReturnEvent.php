@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Event;
+namespace Oro\Bundle\PaymentBundle\Event;
 
 class CallbackReturnEvent extends AbstractCallbackEvent
 {

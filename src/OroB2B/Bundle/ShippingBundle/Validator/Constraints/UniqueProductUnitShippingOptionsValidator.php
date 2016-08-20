@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class UniqueProductUnitShippingOptionsValidator extends ConstraintValidator
 {
@@ -25,7 +25,7 @@ class UniqueProductUnitShippingOptionsValidator extends ConstraintValidator
             if (!$option instanceof ProductUnitHolderInterface) {
                 throw new UnexpectedTypeException(
                     $option,
-                    'OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface'
+                    'Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface'
                 );
             }
 

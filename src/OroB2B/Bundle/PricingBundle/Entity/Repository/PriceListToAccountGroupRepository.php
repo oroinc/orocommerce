@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
@@ -8,11 +8,10 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -58,10 +57,10 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
-            ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup');
+            ->from('OroAccountBundle:AccountGroup', 'accountGroup');
 
         $qb->innerJoin(
-            'OroB2BPricingBundle:PriceListToAccountGroup',
+            'OroPricingBundle:PriceListToAccountGroup',
             'plToAccountGroup',
             Join::WITH,
             $qb->expr()->andX(
@@ -71,7 +70,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
         );
 
         $qb->leftJoin(
-            'OroB2BPricingBundle:PriceListAccountGroupFallback',
+            'OroPricingBundle:PriceListAccountGroupFallback',
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
-use OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
+use Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider;
 
 class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
@@ -22,7 +22,7 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     {
         parent::setUp();
 
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\FreightClassesProvider')
+        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

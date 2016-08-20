@@ -1,7 +1,7 @@
-OroB2B\Bundle\OrderBundle\Entity\Order:
+Oro\Bundle\OrderBundle\Entity\Order:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
-        - OroB2B\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
+        - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
     properties:
         owner:
             - NotBlank: ~
@@ -20,16 +20,16 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - Range:
                 min: 0
                 max: 999999999999999999
-                minMessage: 'orob2b.order.total.min.error.label'
-                maxMessage: 'orob2b.order.total.max.error.label'
+                minMessage: 'oro.order.total.min.error.label'
+                maxMessage: 'oro.order.total.max.error.label'
         subtotal:
             - Type:
                 type: numeric
             - Range:
                 min: 0
                 max: 999999999999999999
-                minMessage: 'orob2b.order.subtotal.min.error.label'
-                maxMessage: 'orob2b.order.subtotal.max.error.label'
+                minMessage: 'oro.order.subtotal.min.error.label'
+                maxMessage: 'oro.order.subtotal.max.error.label'
         account:
             - NotBlank: ~
         website:
@@ -37,12 +37,12 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         lineItems:
             - Count:
                 min: 1
-                minMessage: 'orob2b.order.orderlineitem.count'
+                minMessage: 'oro.order.orderlineitem.count'
             - Valid: ~
 
-OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
-        - OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+        - Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
     properties:
         order:
             - NotBlank: ~
@@ -54,13 +54,13 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
                 groups: [ Import ]
         quantity:
             - NotBlank: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         priceType:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
@@ -68,7 +68,7 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
             - NotBlank: ~
             - Valid: ~
 
-OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
         street:
             - NotBlank:
@@ -95,7 +95,7 @@ OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
             - Length:
                 max: 255
 
-OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
+Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     properties:
         percent:
             - NotBlank: ~

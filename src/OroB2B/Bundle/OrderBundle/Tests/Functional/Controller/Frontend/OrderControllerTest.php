@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -9,10 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -42,8 +41,8 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 

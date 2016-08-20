@@ -4,7 +4,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <% if (!_.isEmpty(model.prices)) { %>
-            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
+            {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
             <div class="product-item__price_block">
                 <% _.each(model.prices, function(price, forField) { %>
                     <div><span class="fs16 blue"><%= price.formatted_price %></span> / <%= price.formatted_unit %></div>

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\DependencyInjection;
+namespace Oro\Bundle\AccountBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class Configuration implements ConfigurationInterface
 {
@@ -18,7 +17,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(OroB2BAccountExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroAccountExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,

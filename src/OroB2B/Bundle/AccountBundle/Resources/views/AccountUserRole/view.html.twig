@@ -10,7 +10,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_account_account_user_role_index'),
-        'indexLabel': 'orob2b.account.accountuserrole.entity_plural_label'|trans,
+        'indexLabel': 'oro.account.accountuserrole.entity_plural_label'|trans,
         'entityTitle': entity.label|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -21,23 +21,23 @@
     {% if entity.public %}
         {% set selfManagedPropertyValue = '' %}
         {% if entity.selfManaged %}
-            {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.true.label'|trans %}
+            {% set selfManagedPropertyValue = 'oro.account.accountuserrole.self_managed.value.true.label'|trans %}
         {% else %}
-            {% set selfManagedPropertyValue = 'orob2b.account.accountuserrole.self_managed.value.false.label'|trans %}
+            {% set selfManagedPropertyValue = 'oro.account.accountuserrole.self_managed.value.false.label'|trans %}
         {% endif %}
-        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.self_managed.label'|trans, selfManagedPropertyValue) %}
+        {% set selfManagedProperty = UI.renderProperty('oro.account.accountuserrole.self_managed.label'|trans, selfManagedPropertyValue) %}
     {% else %}
-        {% set selfManagedProperty = UI.renderProperty('orob2b.account.accountuserrole.self_managed.label'|trans, 'N/A'|trans) %}
+        {% set selfManagedProperty = UI.renderProperty('oro.account.accountuserrole.self_managed.label'|trans, 'N/A'|trans) %}
     {% endif %}
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.account.sections.general'|trans,
+            'title': 'oro.account.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [
-                    UI.renderProperty('orob2b.account.accountuserrole.label.label'|trans, entity.label),
-                    UI.renderProperty('orob2b.account.accountuserrole.account.label'|trans, entity.account),
+                    UI.renderProperty('oro.account.accountuserrole.label.label'|trans, entity.label),
+                    UI.renderProperty('oro.account.accountuserrole.account.label'|trans, entity.account),
                     selfManagedProperty
                 ]}
             ]
@@ -57,7 +57,7 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.account.sections.accountuserrole.entity'|trans,
+        'title': 'oro.account.sections.accountuserrole.entity'|trans,
         'subblocks': [{
             'data': [
                 rolePermissionsGrid
@@ -66,7 +66,7 @@
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title' : 'orob2b.account.accountuser.entity_plural_label'|trans,
+        'title' : 'oro.account.accountuser.entity_plural_label'|trans,
         'subblocks': [{
             'title' : null,
             'useSpan': false,

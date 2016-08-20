@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model;
+namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 /**
  * @method File getImage()

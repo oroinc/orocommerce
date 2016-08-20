@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener;
 
 class OrderWarehouseGridListenerTest extends \PHPUnit_Framework_TestCase
 {

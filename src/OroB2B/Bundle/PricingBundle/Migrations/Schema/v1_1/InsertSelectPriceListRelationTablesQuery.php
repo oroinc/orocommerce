@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_1;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\Common\Collections\Criteria;
 
@@ -95,7 +95,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     }
 
     /**
-     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
+     * @return \Oro\Bundle\WebsiteBundle\Entity\Website
      */
     protected function getDefaultWebsiteId()
     {

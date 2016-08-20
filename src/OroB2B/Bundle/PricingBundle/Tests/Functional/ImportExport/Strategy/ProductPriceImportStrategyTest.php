@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 
 use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @dbIsolation
@@ -40,7 +39,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Controller;
+namespace Oro\Bundle\ShoppingListBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -9,9 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListController extends Controller
 {
@@ -21,7 +20,7 @@ class ShoppingListController extends Controller
      * @Acl(
      *      id="orob2b_shopping_list_view",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      class="OroShoppingListBundle:ShoppingList",
      *      permission="VIEW"
      * )
      *

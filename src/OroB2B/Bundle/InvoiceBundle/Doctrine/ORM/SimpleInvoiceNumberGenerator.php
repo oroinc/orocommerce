@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Doctrine\ORM;
+namespace Oro\Bundle\InvoiceBundle\Doctrine\ORM;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class SimpleInvoiceNumberGenerator implements InvoiceNumberGeneratorInterface
 {

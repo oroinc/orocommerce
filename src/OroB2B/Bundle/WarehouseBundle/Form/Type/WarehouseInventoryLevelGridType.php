@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Type;
+namespace Oro\Bundle\WarehouseBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,11 +12,10 @@ use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
-use OroB2B\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
 
 class WarehouseInventoryLevelGridType extends AbstractType
 {
@@ -83,7 +82,7 @@ class WarehouseInventoryLevelGridType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('product');
-        $resolver->setAllowedTypes('product', 'OroB2B\Bundle\ProductBundle\Entity\Product');
+        $resolver->setAllowedTypes('product', 'Oro\Bundle\ProductBundle\Entity\Product');
     }
 
     /**

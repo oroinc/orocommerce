@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Controller;
+namespace Oro\Bundle\InvoiceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -10,12 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType;
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -59,7 +58,7 @@ class InvoiceController extends Controller
      * @Acl(
      *      id="orob2b_invoice_view",
      *      type="entity",
-     *      class="OroB2BInvoiceBundle:Invoice",
+     *      class="OroInvoiceBundle:Invoice",
      *      permission="VIEW"
      * )
      *
@@ -78,11 +77,11 @@ class InvoiceController extends Controller
      * Create invoice form
      *
      * @Route("/create", name="orob2b_invoice_create")
-     * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
+     * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
      *      id="orob2b_invoice_create",
      *      type="entity",
-     *      class="OroB2BInvoiceBundle:Invoice",
+     *      class="OroInvoiceBundle:Invoice",
      *      permission="CREATE"
      * )
      *
@@ -102,11 +101,11 @@ class InvoiceController extends Controller
      * Update invoice form
      *
      * @Route("/update/{id}", name="orob2b_invoice_update")
-     * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
+     * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
      *      id="orob2b_invoice_update",
      *      type="entity",
-     *      class="OroB2BInvoiceBundle:Invoice",
+     *      class="OroInvoiceBundle:Invoice",
      *      permission="EDIT"
      * )
      * @param Invoice $invoice
@@ -141,7 +140,7 @@ class InvoiceController extends Controller
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.invoice.controller.invoice.saved.message'),
+            $this->get('translator')->trans('oro.invoice.controller.invoice.saved.message'),
             null,
             function (Invoice $invoice, FormInterface $form, Request $request) {
                 return [

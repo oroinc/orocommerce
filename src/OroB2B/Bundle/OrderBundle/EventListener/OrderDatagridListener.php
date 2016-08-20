@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener;
+namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class OrderDatagridListener
 {

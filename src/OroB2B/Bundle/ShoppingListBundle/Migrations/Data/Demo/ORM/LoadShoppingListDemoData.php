@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -37,7 +37,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
+            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
         ];
     }
 
@@ -46,10 +46,10 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
 
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
+        $filePath = $locator->locate('@OroShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -102,7 +102,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     protected function getWebsite(EntityManager $manager, $name)
     {
         if (!array_key_exists($name, $this->websites)) {
-            $this->websites[$name] = $manager->getRepository('OroB2BWebsiteBundle:Website')
+            $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')
                 ->findOneBy(['name' => $name]);
         }
 

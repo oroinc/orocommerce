@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 
 /**
  * @dbIsolation
@@ -31,14 +30,14 @@ class CombinedProductPriceQueueConsumerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
         $this->combinedProductPriceRepository = $this->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
+            ->getEntityRepository('OroPricingBundle:CombinedProductPrice');
     }
 
     /**
@@ -102,9 +101,9 @@ class CombinedProductPriceQueueConsumerTest extends WebTestCase
      */
     protected function changeProductPrice(array $priceData, Price $newPrice)
     {
-        $manager = $this->registry->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $manager = $this->registry->getManagerForClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
         /** @var ProductPrice $productPrice */
-        $productPrice = $manager->getRepository('OroB2B\Bundle\PricingBundle\Entity\ProductPrice')
+        $productPrice = $manager->getRepository('Oro\Bundle\PricingBundle\Entity\ProductPrice')
             ->findOneBy($priceData);
 
         if (!$productPrice) {

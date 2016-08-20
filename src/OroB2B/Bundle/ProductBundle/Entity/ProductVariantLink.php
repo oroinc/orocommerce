@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

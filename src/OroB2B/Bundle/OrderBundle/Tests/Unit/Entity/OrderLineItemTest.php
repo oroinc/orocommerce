@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class OrderLineItemTest extends \PHPUnit_Framework_TestCase
 {
@@ -130,18 +129,18 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
     public function isRequirePriceRecalculationDataProvider()
     {
         $lineItemWithProduct = $this->getEntity(
-            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
             'product',
-            $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 'id', 42)
+            $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 'id', 42)
         );
 
         $lineItemWithProductUnit = $this->getEntity(
-            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
             'product',
-            $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'kg')
+            $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'kg')
         );
 
-        $lineItemWithQuantity = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', 'quantity', 21);
+        $lineItemWithQuantity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', 'quantity', 21);
 
         return [
             [
@@ -165,13 +164,13 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
             [
                 $lineItemWithProduct,
                 'setProduct',
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 'id', 21),
+                $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 'id', 21),
                 true
             ],
             [
                 $lineItemWithProductUnit,
                 'setProductUnit',
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'item'),
+                $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'item'),
                 true
             ],
             [

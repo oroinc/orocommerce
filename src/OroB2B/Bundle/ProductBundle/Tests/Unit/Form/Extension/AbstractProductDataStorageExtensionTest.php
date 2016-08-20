@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -39,7 +39,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
             ],
         ];
 
-        $this->assertMetadataCalled(['product' => ['targetClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product']]);
+        $this->assertMetadataCalled(['product' => ['targetClass' => 'Oro\Bundle\ProductBundle\Entity\Product']]);
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
@@ -48,7 +48,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
 
         $this->assertTrue($this->extension->isAddItemCalled());
 
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $this->entity->product);
+        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $this->entity->product);
         $this->assertEquals(1, $this->entity->product->getId());
         $this->assertEquals(1, $this->entity->scalar);
     }

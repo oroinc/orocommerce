@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation

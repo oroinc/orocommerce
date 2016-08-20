@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -10,9 +10,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -35,7 +34,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxTableRatesDemoData'
+            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxTableRatesDemoData'
         ];
     }
 
@@ -50,7 +49,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
 
         foreach (self::$configurations as $option => $value) {
             $configManager->set(
-                OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
+                OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
                 $value
             );
         }

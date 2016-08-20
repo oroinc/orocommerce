@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Owner;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker;
 
 class EntityOwnershipDecisionMakerTest extends \PHPUnit_Framework_TestCase
 {

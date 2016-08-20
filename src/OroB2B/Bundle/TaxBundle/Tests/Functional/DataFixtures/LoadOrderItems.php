@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 class LoadOrderItems extends AbstractFixture implements DependentFixtureInterface
 {
@@ -37,7 +37,7 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
         ];
     }
 

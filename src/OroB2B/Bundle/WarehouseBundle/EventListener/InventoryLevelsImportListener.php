@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\EventListener;
+namespace Oro\Bundle\WarehouseBundle\EventListener;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Akeneo\Bundle\BatchBundle\Event\StepExecutionEvent;
 use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
 
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
 
 class InventoryLevelsImportListener
 {

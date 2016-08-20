@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -20,8 +19,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
             ]
         );
     }
@@ -117,7 +116,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListToWebsite');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceListToWebsite');
     }
 
     public function testDelete()

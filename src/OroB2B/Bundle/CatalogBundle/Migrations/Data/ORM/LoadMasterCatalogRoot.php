@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class LoadMasterCatalogRoot extends AbstractFixture
 {

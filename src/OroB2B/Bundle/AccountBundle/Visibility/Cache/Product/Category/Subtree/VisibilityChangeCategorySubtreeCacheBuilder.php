@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
@@ -18,8 +18,8 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
 
-        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+        $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->updateCategoryVisibilityByCategory($childCategoryIds, $visibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
@@ -112,13 +112,13 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->getManagerForClass('OroAccountBundle:AccountGroup')
             ->createQueryBuilder();
 
         $qb->select('accountGroup.id')
-            ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup')
+            ->from('OroAccountBundle:AccountGroup', 'accountGroup')
             ->leftJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'OroAccountBundle:Visibility\AccountGroupCategoryVisibility',
                 'accountGroupCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -162,10 +162,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
             ->set('pvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(pvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
@@ -185,10 +185,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
             ->set('cvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
@@ -202,7 +202,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(
-            'OroB2BAccountBundle:Visibility\CategoryVisibility',
+            'OroAccountBundle:Visibility\CategoryVisibility',
             'cv',
             Join::WITH,
             $qb->expr()->eq('node', 'cv.category')

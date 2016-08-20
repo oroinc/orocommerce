@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
+namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ShoppingListHandler
 {
@@ -69,7 +69,7 @@ class ShoppingListHandler
                         $shoppingList
                     );
                 } else {
-                    $em = $this->doctrine->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+                    $em = $this->doctrine->getManagerForClass('OroShoppingListBundle:ShoppingList');
                     $em->persist($shoppingList);
                     $em->flush();
                 }

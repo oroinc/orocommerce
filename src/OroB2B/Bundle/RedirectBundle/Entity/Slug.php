@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Entity;
+namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

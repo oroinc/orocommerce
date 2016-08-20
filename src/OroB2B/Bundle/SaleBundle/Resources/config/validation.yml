@@ -1,4 +1,4 @@
-OroB2B\Bundle\SaleBundle\Entity\Quote:
+Oro\Bundle\SaleBundle\Entity\Quote:
     properties:
         owner:
             - NotBlank: ~
@@ -19,9 +19,9 @@ OroB2B\Bundle\SaleBundle\Entity\Quote:
         quoteProducts:
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
+        - Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
     properties:
         quote:
             - NotBlank: ~
@@ -35,38 +35,38 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
         quoteProductOffers:
             - Count:
                 min: 1
-                minMessage: 'orob2b.sale.quoteproduct.quote_product_items.blank'
+                minMessage: 'oro.sale.quoteproduct.quote_product_items.blank'
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest:
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
     properties:
         quoteProduct:
             - NotBlank: ~
         quantity:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
         price:
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     properties:
         quoteProduct:
             - NotBlank: ~
         quantity:
             - NotBlank: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         priceType:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
@@ -74,19 +74,19 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - NotBlank: ~
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteAddress:
+Oro\Bundle\SaleBundle\Entity\QuoteAddress:
     properties:
         phone:
             - Length:
                 max: 255
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand:
+Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
     constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+        - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
     properties:
         quantity:
             - NotBlank: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         quoteProductOffer:
             - NotBlank: ~

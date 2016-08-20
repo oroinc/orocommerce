@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\ShippingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
  * @ORM\Table(name="orob2b_shipping_freight_class")

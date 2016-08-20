@@ -1,4 +1,4 @@
-orob2b:
+oro:
     shipping:
         delete_shipping_rule_window:
             content: "Warning: Removing the shipping rule will delete all related data"

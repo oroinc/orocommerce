@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_5;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -9,8 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
-use OroB2B\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 {
@@ -41,8 +40,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['onDelete' => 'SET NULL']
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\AttachmentBundle\Entity\Attachment',
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'Oro\Bundle\AttachmentBundle\Entity\Attachment',
+            'Oro\Bundle\ProductBundle\Entity\Product',
             'product_7cf459b8',
             'product_f4309915',
             RelationType::MANY_TO_ONE
@@ -63,8 +62,8 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['onDelete' => 'SET NULL']
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
-            'OroB2B\Bundle\NoteBundle\Entity\Note',
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            'Oro\Bundle\ProductBundle\Entity\Product',
             'product_7cf459b8',
             'product_f4309915',
             RelationType::MANY_TO_ONE

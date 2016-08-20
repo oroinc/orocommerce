@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\RequestHandler;
+namespace Oro\Bundle\OrderBundle\RequestHandler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderRequestHandler
 {

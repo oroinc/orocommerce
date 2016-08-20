@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
-use OroB2B\Bundle\PaymentBundle\Twig\PaymentStatusExtension;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
+use Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension;
 
 class PaymentStatusExtensionTest extends \PHPUnit_Framework_TestCase
 {

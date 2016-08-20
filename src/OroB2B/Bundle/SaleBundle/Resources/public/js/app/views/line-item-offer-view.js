@@ -5,7 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
-    var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
+    var ProductPricesComponent = require('oropricing/js/app/components/product-prices-component');
 
     LineItemOfferView = BaseView.extend({
         /**

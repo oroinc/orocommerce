@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -8,11 +8,11 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 
 class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCase
 {
@@ -99,7 +99,7 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
     {
         $this->setExpectedException(
             '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "OroB2B\Bundle\ShippingBundle\Model\ShippingRuleConfiguration", "stdClass" given'
+            'Expected argument of type "Oro\Bundle\ShippingBundle\Model\ShippingRuleConfiguration", "stdClass" given'
         );
         $data = new ArrayCollection([new \stdClass()]);
         $this->validator->validate($data, $this->constraint);

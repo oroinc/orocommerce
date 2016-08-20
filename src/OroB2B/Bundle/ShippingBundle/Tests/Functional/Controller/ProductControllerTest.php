@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
 
     public function testUpdateProductWithNewUnit()
@@ -64,7 +63,7 @@ class ProductControllerTest extends WebTestCase
 
         $repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BShippingBundle:ProductShippingOptions');
+            ->getRepository('OroShippingBundle:ProductShippingOptions');
 
         /** @var ProductShippingOptions $option */
         $option = $repository->findOneBy(['product' => $product, 'productUnit' => 'box']);

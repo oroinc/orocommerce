@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
 class FrontendDatagridRowViewProvider
 {

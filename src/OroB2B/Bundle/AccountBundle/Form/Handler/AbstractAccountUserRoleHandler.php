@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,11 +9,10 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
 {
@@ -100,7 +99,7 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
      */
     protected function processPrivileges(AbstractRole $role, $className = null)
     {
-        $objectIdentityDescriptor = 'entity:OroB2B\Bundle\ProductBundle\Entity\Product';
+        $objectIdentityDescriptor = 'entity:Oro\Bundle\ProductBundle\Entity\Product';
 
         $extension = $this->aclManager->getExtensionSelector()->select($objectIdentityDescriptor);
         $maskBuilder = $extension->getMaskBuilder('VIEW');

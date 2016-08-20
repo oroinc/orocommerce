@@ -9,7 +9,7 @@
         {% set breadcrumbs = {
         'entity':      entity,
         'indexPath':   path('orob2b_shipping_rule_index'),
-        'indexLabel': 'orob2b.shipping.shippingrule.entity_plural_label'|trans,
+        'indexLabel': 'oro.shipping.shippingrule.entity_plural_label'|trans,
         'entityTitle': entity.name|slice(0, 50)
         } %}
         {{ parent() }}
@@ -19,7 +19,7 @@
             'entityTitle': 'Shipping Rule',
             'indexPath': path('orob2b_shipping_rule_create')
         } %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.shipping.shippingrule.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.shipping.shippingrule.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -50,7 +50,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.shipping.sections.general'|trans,
+            'title': 'oro.shipping.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {
@@ -65,7 +65,7 @@
             ]
         },
         {
-            'title': 'orob2b.shipping.sections.shippingrule_destination'|trans,
+            'title': 'oro.shipping.sections.shippingrule_destination'|trans,
             'subblocks': [
                 {
                     'data': [
@@ -75,7 +75,7 @@
             ]
         },
         {
-            'title': 'orob2b.shipping.sections.shippingrule_conditions'|trans,
+            'title': 'oro.shipping.sections.shippingrule_conditions'|trans,
             'subblocks': [
                 {
                     'data': [
@@ -85,7 +85,7 @@
             ]
         },
         {
-            'title': 'orob2b.shipping.sections.shippingrule_configurations'|trans,
+            'title': 'oro.shipping.sections.shippingrule_configurations'|trans,
             'subblocks': [
                 {
                     'data': [

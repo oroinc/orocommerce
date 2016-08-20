@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
+use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
 
 class TaxJurisdictionSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +48,7 @@ class TaxJurisdictionSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('orob2b_tax_jurisdiction_create', $options['create_form_route']);
         $this->assertEquals('tax-jurisdiction-select-grid', $options['grid_name']);
         $this->assertEquals(
-            ['placeholder' => 'orob2b.tax.taxjurisdiction.form.choose'],
+            ['placeholder' => 'oro.tax.taxjurisdiction.form.choose'],
             $options['configs']
         );
     }

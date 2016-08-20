@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingRules extends AbstractFixture

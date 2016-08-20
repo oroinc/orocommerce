@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Reader;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Reader;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class InventoryLevelReader extends EntityReader
 {

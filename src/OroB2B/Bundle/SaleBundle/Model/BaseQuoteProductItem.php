@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Model;
+namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 
 /**
  * BaseQuoteProductItem
@@ -58,7 +57,7 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderI
     /**
      * @var ProductUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
      */
     protected $productUnit;

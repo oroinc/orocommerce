@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Unit\Method;
+namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -111,6 +111,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getExtensionAlias()
     {
-        return OroB2BMoneyOrderExtension::ALIAS;
+        return OroMoneyOrderExtension::ALIAS;
     }
 }

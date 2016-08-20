@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -18,7 +17,7 @@ class WarehouseInventoryLevelControllerNoDataWarehouseTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
             ]
         );
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Entity\Repository;
+namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class PaymentTermRepository extends EntityRepository
 {

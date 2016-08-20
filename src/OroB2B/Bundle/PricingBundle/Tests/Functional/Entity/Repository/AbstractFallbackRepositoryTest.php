@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 
 abstract class AbstractFallbackRepositoryTest extends WebTestCase
 {
@@ -31,7 +30,7 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
     public function checkExpectedAccounts($expectedAccounts, $iterator)
     {
         $accounts = [];
-        $accountRepository = $this->doctrine->getRepository('OroB2BAccountBundle:Account');
+        $accountRepository = $this->doctrine->getRepository('OroAccountBundle:Account');
         foreach ($iterator as $item) {
             $accounts[] = $accountRepository->find($item['id']);
             $accountRepository->find($item['id'])->getName();

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
 class ProductBySkuTest extends \PHPUnit_Framework_TestCase
 {

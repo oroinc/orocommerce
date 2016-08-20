@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLoadTaxRules;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLoadTaxRules;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 class LoadTaxRules extends BaseLoadTaxRules
 {
@@ -31,10 +31,10 @@ class LoadTaxRules extends BaseLoadTaxRules
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
-            'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
-            'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
-            'OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
+            'Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions',
         ];
     }
 

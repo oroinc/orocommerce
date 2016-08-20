@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\EventSubscriber;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\EventSubscriber;
 
 use Prophecy\Prophecy\ObjectProphecy;
 
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
-use OroB2B\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 
 class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
 {

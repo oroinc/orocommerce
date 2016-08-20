@@ -4,7 +4,7 @@
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
 
-    {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orob2bcheckout/js/app/components/transition-button-component') %}
+    {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orocheckout/js/app/components/transition-button-component') %}
 
     {{ UI.renderPageComponentAttributes({
         module: pageComponentModule,
@@ -44,7 +44,7 @@
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
-    <div>{{ 'orob2b.checkout.workflow.unavailable_transition.message'|trans }}</div>
+    <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
     <ul>
         {% for error in transitionData.errors %}
             <li>{{ error.message|trans(error.parameters) }}</li>
@@ -63,7 +63,7 @@
     %}
     <a href="{{ transitionUrl }}" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         {{ _self.conditionMessagesStart(transitionData) }}
-        <i class="cf-left-open-mini"></i>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
+        <i class="cf-left-open-mini"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
         {{ _self.conditionMessagesEnd(transitionData) }}
     </a>
     {% endif %}

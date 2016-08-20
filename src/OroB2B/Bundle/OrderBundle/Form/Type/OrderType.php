@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,15 +14,14 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 
 class OrderType extends AbstractType
 {
@@ -78,24 +77,24 @@ class OrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
-            ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
+            ->add('account', AccountSelectType::NAME, ['label' => 'oro.order.account.label', 'required' => true])
             ->add(
                 'accountUser',
                 AccountUserSelectType::NAME,
                 [
-                    'label' => 'orob2b.order.account_user.label',
+                    'label' => 'oro.order.account_user.label',
                     'required' => false,
                 ]
             )
-            ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
-            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
-            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
+            ->add('poNumber', 'text', ['required' => false, 'label' => 'oro.order.po_number.label'])
+            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'oro.order.ship_until.label'])
+            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'oro.order.customer_notes.label'])
             ->add('currency', 'hidden')
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'add_label' => 'oro.order.orderlineitem.add_label',
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
@@ -107,7 +106,7 @@ class OrderType extends AbstractType
                     'currency_empty_value' => null,
                     'error_bubbling' => false,
                     'required' => false,
-                    'label' => 'orob2b.order.shipping_cost.label',
+                    'label' => 'oro.order.shipping_cost.label',
                     'validation_groups' => ['Optional'],
                     'currencies_list' => [$order->getCurrency()]
                 ]
@@ -116,7 +115,7 @@ class OrderType extends AbstractType
                 'discounts',
                 OrderDiscountItemsCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.order.discountitem.add_label',
+                    'add_label' => 'oro.order.discountitem.add_label',
                     'cascade_validation' => true,
                     'options' => [
                         'currency' => $order->getCurrency(),
@@ -134,7 +133,7 @@ class OrderType extends AbstractType
                         [
                             'min' => PHP_INT_MAX * (-1), //use some big negative number
                             'max' => $order->getSubtotal(),
-                            'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                            'maxMessage' => 'oro.order.discounts.sum.error.label'
                         ]
                     )],
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
@@ -173,7 +172,7 @@ class OrderType extends AbstractType
         foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
             if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
                 $options = [
-                    'label' => sprintf('orob2b.order.%s_address.label', $type),
+                    'label' => sprintf('oro.order.%s_address.label', $type),
                     'object' => $order,
                     'required' => false,
                     'addressType' => $type,
@@ -273,7 +272,7 @@ class OrderType extends AbstractType
                     'paymentTerm',
                     PaymentTermSelectType::NAME,
                     [
-                        'label' => 'orob2b.order.payment_term.label',
+                        'label' => 'oro.order.payment_term.label',
                         'required' => false,
                         'attr' => [
                             'data-account-payment-term' => $this->getAccountPaymentTermId($order),
@@ -297,7 +296,7 @@ class OrderType extends AbstractType
                     'billingAddress',
                     OrderAddressType::NAME,
                     [
-                        'label' => 'orob2b.order.billing_address.label',
+                        'label' => 'oro.order.billing_address.label',
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
@@ -320,7 +319,7 @@ class OrderType extends AbstractType
                     'shippingAddress',
                     OrderAddressType::NAME,
                     [
-                        'label' => 'orob2b.order.shipping_address.label',
+                        'label' => 'oro.order.shipping_address.label',
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,

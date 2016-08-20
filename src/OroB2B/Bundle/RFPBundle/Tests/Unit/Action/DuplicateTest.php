@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Action;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\RFPBundle\Action\Duplicate;
-use OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory;
+use Oro\Bundle\RFPBundle\Action\Duplicate;
+use Oro\Bundle\RFPBundle\Factory\DuplicatorFactory;
 
 class DuplicateTest extends \PHPUnit_Framework_TestCase
 {

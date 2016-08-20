@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListRepository extends BasePriceListRepository
 {
@@ -30,7 +29,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('partial cpl.{id, priceList, mergeAllowed}')
-            ->from('OroB2BPricingBundle:CombinedPriceListToPriceList', 'cpl')
+            ->from('OroPricingBundle:CombinedPriceListToPriceList', 'cpl')
             ->where($qb->expr()->eq('cpl.combinedPriceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList)
             ->orderBy('cpl.sortOrder');
@@ -50,7 +49,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroB2BPricingBundle:CombinedPriceListToAccount',
+                'OroPricingBundle:CombinedPriceListToAccount',
                 'priceListToAccount',
                 Join::WITH,
                 'priceListToAccount.priceList = priceList'
@@ -79,7 +78,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+                'OroPricingBundle:CombinedPriceListToAccountGroup',
                 'priceListToAccountGroup',
                 Join::WITH,
                 'priceListToAccountGroup.priceList = priceList'
@@ -106,7 +105,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb
             ->innerJoin(
-                'OroB2BPricingBundle:CombinedPriceListToWebsite',
+                'OroPricingBundle:CombinedPriceListToWebsite',
                 'priceListToWebsite',
                 Join::WITH,
                 'priceListToWebsite.priceList = priceList'
@@ -172,9 +171,9 @@ class CombinedPriceListRepository extends BasePriceListRepository
             ->select('priceList');
 
         $relations = [
-            'priceListToWebsite' => 'OroB2BPricingBundle:CombinedPriceListToWebsite',
-            'priceListToAccountGroup' => 'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
-            'priceListToAccount' => 'OroB2BPricingBundle:CombinedPriceListToAccount',
+            'priceListToWebsite' => 'OroPricingBundle:CombinedPriceListToWebsite',
+            'priceListToAccountGroup' => 'OroPricingBundle:CombinedPriceListToAccountGroup',
+            'priceListToAccount' => 'OroPricingBundle:CombinedPriceListToAccount',
         ];
 
         foreach ($relations as $alias => $entityName) {
@@ -187,7 +186,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
             $selectQb->andWhere($alias . '.priceList IS NULL');
         }
         $selectQb->leftJoin(
-            'OroB2BPricingBundle:CombinedPriceListActivationRule',
+            'OroPricingBundle:CombinedPriceListActivationRule',
             'rule',
             Join::WITH,
             $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
@@ -220,7 +219,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $em = $this->getEntityManager();
         $relation = null;
         if ($targetEntity instanceof Account) {
-            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
+            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccount')
                 ->findOneBy(['account' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToAccount();
@@ -231,7 +230,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $em->persist($relation);
             }
         } elseif ($targetEntity instanceof AccountGroup) {
-            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
+            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup')
                 ->findOneBy(['accountGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToAccountGroup();
@@ -242,7 +241,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $em->persist($relation);
             }
         } elseif (!$targetEntity) {
-            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
+            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToWebsite')
                 ->findOneBy(['website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToWebsite();
@@ -270,7 +269,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb->select('cpl')
             ->innerJoin(
-                'OroB2BPricingBundle:CombinedPriceListToPriceList',
+                'OroPricingBundle:CombinedPriceListToPriceList',
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
@@ -298,7 +297,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('cpl');
         $qb->select('distinct cpl')
             ->join(
-                'OroB2BPricingBundle:CombinedPriceListActivationRule',
+                'OroPricingBundle:CombinedPriceListActivationRule',
                 'combinedPriceListActivationRule',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'combinedPriceListActivationRule.combinedPriceList')

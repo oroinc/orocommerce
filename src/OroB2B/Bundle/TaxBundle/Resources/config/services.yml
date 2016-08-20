@@ -1,17 +1,17 @@
 parameters:
-    orob2b_tax.entity.abstract_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode
-    orob2b_tax.entity.product_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode
-    orob2b_tax.entity.account_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode
-    orob2b_tax.entity.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction
-    orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
-    orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
-    orob2b_tax.entity.zip_code.class: OroB2B\Bundle\TaxBundle\Entity\ZipCode
-    orob2b_tax.entity.tax_value.class: OroB2B\Bundle\TaxBundle\Entity\TaxValue
+    orob2b_tax.entity.abstract_tax_code.class: Oro\Bundle\TaxBundle\Entity\AbstractTaxCode
+    orob2b_tax.entity.product_tax_code.class: Oro\Bundle\TaxBundle\Entity\ProductTaxCode
+    orob2b_tax.entity.account_tax_code.class: Oro\Bundle\TaxBundle\Entity\AccountTaxCode
+    orob2b_tax.entity.tax_jurisdiction.class: Oro\Bundle\TaxBundle\Entity\TaxJurisdiction
+    orob2b_tax.entity.tax.class: Oro\Bundle\TaxBundle\Entity\Tax
+    orob2b_tax.entity.tax_rule.class: Oro\Bundle\TaxBundle\Entity\TaxRule
+    orob2b_tax.entity.zip_code.class: Oro\Bundle\TaxBundle\Entity\ZipCode
+    orob2b_tax.entity.tax_value.class: Oro\Bundle\TaxBundle\Entity\TaxValue
 
-    orob2b_tax.model.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion
-    orob2b_tax.model.address.class: OroB2B\Bundle\TaxBundle\Model\Address
+    orob2b_tax.model.tax_base_exclusion.class: Oro\Bundle\TaxBundle\Model\TaxBaseExclusion
+    orob2b_tax.model.address.class: Oro\Bundle\TaxBundle\Model\Address
 
-    orob2b_tax.event.resolver_event_connector.common_class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
+    orob2b_tax.event.resolver_event_connector.common_class: Oro\Bundle\TaxBundle\Event\ResolverEventConnector
 
 services:
     orob2b_tax.form.autocomplete.product_tax_code.search_handler:
@@ -40,7 +40,7 @@ services:
             - "@request_stack"
 
     orob2b_tax.event_listener.account_form_view:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\AccountFormViewListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
@@ -51,7 +51,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
 
     orob2b_tax.event_listener.account_group_form_view:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
@@ -62,7 +62,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
 
     orob2b_tax.event_listener.product_form_view:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
@@ -92,12 +92,12 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_jurisdiction_autocomplete, acl_resource: orob2b_tax_jurisdiction_view }
 
     orob2b_tax.validator.zip_code_fields:
-        class: 'OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator'
+        class: 'Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
 
     orob2b_tax.event_listener.account_grid:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.account_tax_code.class%'
@@ -106,7 +106,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 
     orob2b_tax.event_listener.account_grid_groups:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.account_tax_code.class%'
@@ -115,7 +115,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 
     orob2b_tax.event_listener.account_group_grid:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.account_tax_code.class%'
@@ -124,7 +124,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-select-grid, method: onBuildBefore }
 
     orob2b_tax.event_listener.product_grid:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.product_tax_code.class%'
@@ -134,7 +134,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBefore }
 
     orob2b_tax.event_listener.config.address:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\AddressEventListener'
         arguments:
             - "@orob2b_tax.factory.address_model_factory"
         tags:
@@ -142,7 +142,7 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_tax.event_listener.config.digital_products_eu:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.product_tax_code.class%'
@@ -152,7 +152,7 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_tax.event_listener.config.digital_products_us:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%orob2b_tax.entity.product_tax_code.class%'
@@ -162,7 +162,7 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_tax.event_listener.grid.order_line_item:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener'
         arguments:
             - '@orob2b_tax.provider.taxation_settings_provider'
             - '%orob2b_tax.entity.tax_value.class%'
@@ -171,7 +171,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
 
     orob2b_tax.event_listener.order.taxes:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener'
         arguments:
             - '@orob2b_tax.manager.tax_manager'
             - '@orob2b_tax.provider.taxation_settings_provider'
@@ -180,34 +180,34 @@ services:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -128 }
 
     orob2b_tax.provider.tax_provider_registry:
-        class: 'OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry'
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry'
 
     orob2b_tax.provider.built_in_tax_provider:
-        class: 'OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider'
+        class: 'Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider'
         public: false
         tags:
             - { name: orob2b_tax.tax_provider, priority: 255 }
 
     orob2b_tax.transformer.tax_value:
-        class: 'OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer'
+        class: 'Oro\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer'
         public: false
         arguments:
             - "@orob2b_tax.manager.tax_value_manager"
 
     orob2b_tax.event.tax_event_dispatcher:
-        class: 'OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher'
+        class: 'Oro\Bundle\TaxBundle\Event\TaxEventDispatcher'
         public: false
         arguments:
             - "@event_dispatcher"
 
     orob2b_tax.event.context_event_dispatcher:
-        class: 'OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher'
+        class: 'Oro\Bundle\TaxBundle\Event\ContextEventDispatcher'
         public: false
         arguments:
             - "@event_dispatcher"
 
     orob2b_tax.manager.tax_manager:
-        class: 'OroB2B\Bundle\TaxBundle\Manager\TaxManager'
+        class: 'Oro\Bundle\TaxBundle\Manager\TaxManager'
         arguments:
             - '@orob2b_tax.factory.tax'
             - '@orob2b_tax.event.tax_event_dispatcher'
@@ -218,7 +218,7 @@ services:
             - [addTransformer, ['%orob2b_order.entity.order_line_item.class%', "@orob2b_tax.transformer.tax_value"]]
 
     orob2b_tax.manager.tax_value_manager:
-        class: 'OroB2B\Bundle\TaxBundle\Manager\TaxValueManager'
+        class: 'Oro\Bundle\TaxBundle\Manager\TaxValueManager'
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
@@ -226,23 +226,23 @@ services:
             - '%orob2b_tax.entity.tax.class%'
 
     orob2b_tax.factory.tax:
-        class: 'OroB2B\Bundle\TaxBundle\Factory\TaxFactory'
+        class: 'Oro\Bundle\TaxBundle\Factory\TaxFactory'
         public: false
 
     orob2b_tax.factory.tax_base_exclusion:
-        class: 'OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory'
+        class: 'Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory'
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
 
     orob2b_tax.factory.address_model_factory:
-        class: 'OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory'
+        class: 'Oro\Bundle\TaxBundle\Factory\AddressModelFactory'
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
 
     orob2b_tax.order_tax.mapper.order_mapper:
-        class: 'OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper'
+        class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper'
         public: false
         arguments:
             - '@orob2b_tax.event.context_event_dispatcher'
@@ -254,7 +254,7 @@ services:
             - { name: orob2b_tax.tax_mapper }
 
     orob2b_tax.order_tax.mapper.order_line_item_mapper:
-        class: 'OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper'
+        class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper'
         public: false
         arguments:
             - '@orob2b_tax.event.context_event_dispatcher'
@@ -264,7 +264,7 @@ services:
             - { name: orob2b_tax.tax_mapper }
 
     orob2b_tax.order_tax.context_handler.order_line_item_handler:
-        class: 'OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
+        class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
         arguments:
             - "@orob2b_tax.provider.taxation_address_provider"
             - "@oro_entity.doctrine_helper"
@@ -275,7 +275,7 @@ services:
             - { name: kernel.event_listener, event: orob2b_tax.mapper.context, method: onContextEvent }
 
     orob2b_tax.provider.taxation_settings_provider:
-        class: 'OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
         public: false
         arguments:
             - '@oro_config.global'
@@ -283,7 +283,7 @@ services:
             - '@orob2b_tax.factory.address_model_factory'
 
     orob2b_tax.provider.taxation_address_provider:
-        class: 'OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider'
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider'
         public: false
         arguments:
             - "@orob2b_tax.provider.taxation_settings_provider"
@@ -295,12 +295,12 @@ services:
             - '%orob2b_tax.entity.tax_rule.class%'
 
     orob2b_tax.matcher.country_matcher:
-        class: 'OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher'
+        class: 'Oro\Bundle\TaxBundle\Matcher\CountryMatcher'
         public: false
         parent: orob2b_tax.abstract.matcher
 
     orob2b_tax.matcher.region_matcher:
-        class: 'OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher'
+        class: 'Oro\Bundle\TaxBundle\Matcher\RegionMatcher'
         public: false
         parent: orob2b_tax.abstract.matcher
         calls:
@@ -308,12 +308,12 @@ services:
 
     orob2b_tax.matcher.zip_code_matcher:
         parent: orob2b_tax.abstract.matcher
-        class: 'OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher'
+        class: 'Oro\Bundle\TaxBundle\Matcher\ZipCodeMatcher'
         calls:
             - [setRegionMatcher,  ["@orob2b_tax.matcher.region_matcher"]]
 
     orob2b_tax.calculator:
-        class: 'OroB2B\Bundle\TaxBundle\Calculator\Calculator'
+        class: 'Oro\Bundle\TaxBundle\Calculator\Calculator'
         public: false
         arguments:
             - "@orob2b_tax.provider.taxation_settings_provider"
@@ -321,28 +321,28 @@ services:
             - "@orob2b_tax.calculator.tax"
 
     orob2b_tax.calculator.included_tax:
-        class: 'OroB2B\Bundle\TaxBundle\Calculator\IncludedTaxCalculator'
+        class: 'Oro\Bundle\TaxBundle\Calculator\IncludedTaxCalculator'
         public: false
 
     orob2b_tax.calculator.tax:
-        class: 'OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator'
+        class: 'Oro\Bundle\TaxBundle\Calculator\TaxCalculator'
         public: false
 
     orob2b_tax.resolver.unit:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\UnitResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\UnitResolver'
         public: false
         arguments:
             - "@orob2b_tax.calculator"
 
     orob2b_tax.resolver.row_total:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\RowTotalResolver'
         public: false
         arguments:
             - "@orob2b_tax.provider.taxation_settings_provider"
             - "@orob2b_tax.calculator"
 
     orob2b_tax.resolver.total:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\TotalResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\TotalResolver'
         public: false
         arguments:
             - "@orob2b_tax.provider.taxation_settings_provider"
@@ -351,25 +351,25 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
     orob2b_tax.resolver.shipping:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\ShippingResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\ShippingResolver'
         public: false
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
     orob2b_tax.resolver.rounding:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\RoundingResolver'
         public: false
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
 
     orob2b_tax.resolver.currency:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\CurrencyResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\CurrencyResolver'
         public: false
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
 
     orob2b_tax.resolver.customer_address.item:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver'
         public: false
         arguments:
             - "@orob2b_tax.resolver.unit"
@@ -379,7 +379,7 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
 
     orob2b_tax.resolver.customer_address:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver'
         public: false
         arguments:
             - "@orob2b_tax.resolver.customer_address.item"
@@ -387,7 +387,7 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
 
     orob2b_tax.resolver.eu_item_digital:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver'
         public: false
         arguments:
             - "@orob2b_tax.resolver.unit"
@@ -397,7 +397,7 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
 
     orob2b_tax.resolver.eu_digital:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver'
         public: false
         arguments:
             - "@orob2b_tax.resolver.eu_item_digital"
@@ -405,13 +405,13 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
 
     orob2b_tax.resolver.us_sales_tax_digital.item:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver'
         public: false
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
 
     orob2b_tax.resolver.us_sales_tax_digital:
-        class: 'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver'
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver'
         public: false
         arguments:
             - "@orob2b_tax.resolver.us_sales_tax_digital.item"
@@ -419,7 +419,7 @@ services:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
 
     orob2b_tax.event_listener.tax_value:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\TaxValueListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\TaxValueListener'
         public: false
         arguments:
             - '@orob2b_tax.manager.tax_value_manager'
@@ -427,7 +427,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_tax.entity.tax_value.class%', event: postRemove }
 
     orob2b_tax.event_listener.order_tax:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
         public: false
         arguments:
             - '@orob2b_tax.manager.tax_manager'
@@ -438,7 +438,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_order.entity.order.class%', event: preRemove }
 
     orob2b_tax.event_listener.order_line_item_tax:
-        class: 'OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
         public: false
         arguments:
             - '@orob2b_tax.manager.tax_manager'
@@ -449,7 +449,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_order.entity.order_line_item.class%', event: preRemove }
 
     orob2b_tax.layout.data_provider.tax:
-        class: 'OroB2B\Bundle\TaxBundle\Layout\Provider\TaxProvider'
+        class: 'Oro\Bundle\TaxBundle\Layout\Provider\TaxProvider'
         arguments:
             - '@orob2b_tax.manager.tax_manager'
         tags:
@@ -464,7 +464,7 @@ services:
              - { name: layout.block_type, alias: tax }
 
     orob2b_tax.provider.tax_subtotal:
-        class: 'OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider'
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider'
         public: false
         arguments:
             - '@translator'

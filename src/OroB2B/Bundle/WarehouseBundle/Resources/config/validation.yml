@@ -1,4 +1,4 @@
-OroB2B\Bundle\WarehouseBundle\Entity\Warehouse:
+Oro\Bundle\WarehouseBundle\Entity\Warehouse:
     properties:
         owner:
             - NotBlank: ~
@@ -9,7 +9,7 @@ OroB2B\Bundle\WarehouseBundle\Entity\Warehouse:
             - Length:
                 max: 255
 
-OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
+Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:     [ warehouse, productUnitPrecision ]
@@ -19,7 +19,7 @@ OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
             - NotBlank: ~
             - Range:
                 min: 0
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         warehouse:
             - NotBlank: ~
         product:

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,20 +13,19 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -83,9 +82,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     {
         $shoppingList = $this->manager->create();
 
-        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $shoppingList->getAccount());
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $shoppingList->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\Account', $shoppingList->getAccount());
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $shoppingList->getAccountUser());
         $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
     }
 
@@ -186,14 +185,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     public function testRemoveProduct(array $lineItems, array $relatedLineItems, $flush, $expectedFlush)
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
 
         foreach ($lineItems as $lineItem) {
             $this->shoppingListOne->addLineItem($lineItem);
         }
 
         /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
         $manager->expects($this->exactly(count($relatedLineItems)))
             ->method('remove')
             ->willReturnCallback(
@@ -204,7 +203,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $manager->expects($expectedFlush ? $this->once() : $this->never())->method('flush');
 
         /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
-        $repository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
+        $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
         $repository->expects($this->once())
             ->method('getItemsByShoppingListAndProduct')
             ->with($this->shoppingListOne, $product)
@@ -231,13 +230,13 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     public function removeProductDataProvider()
     {
         /** @var LineItem $lineItem1 */
-        $lineItem1 = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 35]);
+        $lineItem1 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 35]);
 
         /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 36]);
+        $lineItem2 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 36]);
 
         /** @var LineItem $lineItem3 */
-        $lineItem3 = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 37]);
+        $lineItem3 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 37]);
 
         return [
             [
@@ -264,7 +263,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetForCurrentUser()
     {
         $shoppingList = $this->manager->getForCurrentUser();
-        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
+        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
     }
 
     public function testBulkAddLineItems()
@@ -288,7 +287,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList3 = $this->getShoppingList(30, true);
 
         /* @var $repository ShoppingListRepository|\PHPUnit_Framework_MockObject_MockObject */
-        $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())
@@ -363,7 +362,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getRoundingService()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
+        $roundingService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -387,7 +386,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -403,7 +402,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $lineItemRepository */
         $lineItemRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -431,8 +430,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $entityManager->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap([
-                ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
-                ['OroB2BShoppingListBundle:LineItem', $lineItemRepository]
+                ['OroShoppingListBundle:ShoppingList', $shoppingListRepository],
+                ['OroShoppingListBundle:LineItem', $lineItemRepository]
             ]));
 
         $entityManager->expects($this->any())
@@ -470,7 +469,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getUserCurrencyManager()
     {
-        $userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -486,10 +485,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getWebsiteManager()
     {
-        $websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+        $websiteManager = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Manager\WebsiteManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+        $website = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -509,7 +508,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getShoppingList($id, $isCurrent)
     {
         return $this->getEntity(
-            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['id' => $id, 'current' => $isCurrent]
         );
     }

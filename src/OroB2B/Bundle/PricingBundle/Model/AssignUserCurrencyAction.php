@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * Assign user selected currency to selected attribute. Applicable only for frontend

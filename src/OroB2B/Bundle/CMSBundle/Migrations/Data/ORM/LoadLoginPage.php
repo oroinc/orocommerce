@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoadLoginPage extends AbstractFixture
 {

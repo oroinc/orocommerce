@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductUnitTest extends EntityTestCase
 {

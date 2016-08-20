@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 
 class PriceListsSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -43,10 +42,10 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         /** @var PriceList $pl1 */
-        $pl1 = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
+        $pl1 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
 
         /** @var PriceList $pl2 */
-        $pl2 = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
+        $pl2 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
 
         $form = $this->factory->create(
             $this->priceListsSettingsType,
@@ -59,12 +58,12 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             ],
             [
                 PriceListsSettingsType::PRICE_LIST_RELATION_CLASS
-                    => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite',
+                    => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
                 PriceListsSettingsType::FALLBACK_CHOICES => [
                     PriceListWebsiteFallback::CONFIG =>
-                        'orob2b.pricing.fallback.config.label',
+                        'oro.pricing.fallback.config.label',
                     PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
-                        'orob2b.pricing.fallback.current_website_only.label',
+                        'oro.pricing.fallback.current_website_only.label',
                 ]
             ]
         );

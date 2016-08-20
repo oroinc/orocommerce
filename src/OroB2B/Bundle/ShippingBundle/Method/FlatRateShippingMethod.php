@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Method;
+namespace Oro\Bundle\ShippingBundle\Method;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FlatRateShippingMethod implements ShippingMethodInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

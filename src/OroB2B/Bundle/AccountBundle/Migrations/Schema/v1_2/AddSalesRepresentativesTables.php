@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -23,12 +23,12 @@ class AddSalesRepresentativesTables implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BAccountSalesRepresentativesTable($schema);
-        $this->createOroB2BAccountUserSalesRepresentativesTable($schema);
+        $this->createOroAccountSalesRepresentativesTable($schema);
+        $this->createOroAccountUserSalesRepresentativesTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BAccountSalesRepresentativesForeignKeys($schema);
-        $this->addOroB2BAccountUserSalesRepresentativesForeignKeys($schema);
+        $this->addOroAccountSalesRepresentativesForeignKeys($schema);
+        $this->addOroAccountUserSalesRepresentativesForeignKeys($schema);
     }
 
     /**
@@ -36,7 +36,7 @@ class AddSalesRepresentativesTables implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BAccountSalesRepresentativesTable(Schema $schema)
+    protected function createOroAccountSalesRepresentativesTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addColumn('account_id', 'integer');
@@ -49,7 +49,7 @@ class AddSalesRepresentativesTables implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BAccountUserSalesRepresentativesTable(Schema $schema)
+    protected function createOroAccountUserSalesRepresentativesTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addColumn('account_user_id', 'integer');
@@ -62,7 +62,7 @@ class AddSalesRepresentativesTables implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BAccountSalesRepresentativesForeignKeys(Schema $schema)
+    protected function addOroAccountSalesRepresentativesForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -84,7 +84,7 @@ class AddSalesRepresentativesTables implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BAccountUserSalesRepresentativesForeignKeys(Schema $schema)
+    protected function addOroAccountUserSalesRepresentativesForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addForeignKeyConstraint(

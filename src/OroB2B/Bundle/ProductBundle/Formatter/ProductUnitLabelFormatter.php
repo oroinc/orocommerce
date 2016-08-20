@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Formatter;
+namespace Oro\Bundle\ProductBundle\Formatter;
 
 /**
  * @deprecated Use orob2b_product.formatter.unit_label and setTranslationPrefix to define you own service with needed
@@ -13,6 +13,6 @@ class ProductUnitLabelFormatter extends UnitLabelFormatter
      */
     protected function getTranslationPrefix()
     {
-        return 'orob2b.product_unit';
+        return 'oro.product_unit';
     }
 }

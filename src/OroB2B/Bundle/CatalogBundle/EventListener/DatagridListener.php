@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\EventListener;
+namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -9,10 +9,9 @@ use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class DatagridListener
 {
@@ -60,7 +59,7 @@ class DatagridListener
     protected function addCategoryRelation(DatagridConfiguration $config)
     {
         // columns
-        $categoryColumn = ['label' => 'orob2b.catalog.category.entity_label'];
+        $categoryColumn = ['label' => 'oro.catalog.category.entity_label'];
         $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
 
         // properties
@@ -87,7 +86,7 @@ class DatagridListener
         $path = '[source][query][join][left]';
         // join
         $joinCategory = [
-            'join' => 'OroB2BCatalogBundle:Category',
+            'join' => 'OroCatalogBundle:Category',
             'alias' => 'productCategory',
             'conditionType' => 'WITH',
             'condition' => 'product MEMBER OF productCategory.products',

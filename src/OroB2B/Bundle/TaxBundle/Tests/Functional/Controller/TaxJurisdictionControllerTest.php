@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 
 /**
  * @dbIsolation
@@ -77,8 +76,8 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
         /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BTaxBundle:TaxJurisdiction')
-            ->getRepository('OroB2BTaxBundle:TaxJurisdiction')
+            ->getManagerForClass('OroTaxBundle:TaxJurisdiction')
+            ->getRepository('OroTaxBundle:TaxJurisdiction')
             ->findOneBy(['code' => self::CODE]);
         $this->assertNotEmpty($taxJurisdiction);
 

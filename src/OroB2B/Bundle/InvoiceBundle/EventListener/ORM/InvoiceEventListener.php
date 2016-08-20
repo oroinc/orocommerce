@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\EventListener\ORM;
+namespace Oro\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceEventListener
 {

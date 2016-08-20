@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class CategoryDefaultProductOptionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +52,7 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit_Framework_TestCase
         $this->entity->loadUnitPrecision();
 
         $unitPrecision = $this->entity->getUnitPrecision();
-        $this->assertInstanceOf('OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision', $unitPrecision);
+        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision', $unitPrecision);
         $this->assertEquals($precision, $unitPrecision->getPrecision());
         $this->assertSame($unit, $unitPrecision->getUnit());
 

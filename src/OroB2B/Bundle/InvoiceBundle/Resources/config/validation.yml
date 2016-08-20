@@ -1,7 +1,7 @@
-OroB2B\Bundle\InvoiceBundle\Entity\Invoice:
+Oro\Bundle\InvoiceBundle\Entity\Invoice:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: invoiceNumber
-        - OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate: ~
+        - Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate: ~
     properties:
         owner:
             - NotBlank: ~
@@ -21,9 +21,9 @@ OroB2B\Bundle\InvoiceBundle\Entity\Invoice:
         lineItems:
             - Count:
                 min: 1
-                minMessage: 'orob2b.invoice.invoicelineitem.count'
+                minMessage: 'oro.invoice.invoicelineitem.count'
 
-OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
+Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
     properties:
         invoice:
             - NotBlank: ~
@@ -33,13 +33,13 @@ OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
                 max: 255
         quantity:
             - NotBlank: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         priceType:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
         sortOrder:

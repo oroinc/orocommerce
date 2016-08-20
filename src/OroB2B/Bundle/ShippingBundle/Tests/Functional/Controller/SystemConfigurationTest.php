@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Component\PhpUtils\ArrayUtil;
 
 class SystemConfigurationTest extends WebTestCase

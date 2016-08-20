@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model\Action;
+namespace Oro\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ChangeProductCategory extends AbstractVisibilityRegistryAwareAction
 {
@@ -53,6 +53,6 @@ class ChangeProductCategory extends AbstractVisibilityRegistryAwareAction
      */
     protected function getEntityManager()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        return $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Query;
+namespace Oro\Bundle\PricingBundle\Query;
 
 use Doctrine\ORM\QueryBuilder;
 

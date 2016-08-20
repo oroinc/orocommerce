@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Form\Type\DimensionsType;
+use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
+use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ShippingBundle\Model\Dimensions';
+    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\Dimensions';
 
     /** @var DimensionsType */
     protected $formType;
@@ -115,7 +114,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
     public function getExtensions()
     {
         $valueType = new DimensionsValueType();
-        $valueType->setDataClass('OroB2B\Bundle\ShippingBundle\Model\DimensionsValue');
+        $valueType->setDataClass('Oro\Bundle\ShippingBundle\Model\DimensionsValue');
 
         return [
             new PreloadedExtension(

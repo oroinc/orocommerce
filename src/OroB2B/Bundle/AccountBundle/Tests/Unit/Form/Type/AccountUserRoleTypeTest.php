@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
 {

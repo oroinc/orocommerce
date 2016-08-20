@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 /**
  * @dbIsolation
@@ -56,8 +56,8 @@ class RequestStatusControllerTest extends WebTestCase
 
         /** @var RequestStatus $status */
         $status = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
-            ->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->getManagerForClass('OroRFPBundle:RequestStatus')
+            ->getRepository('OroRFPBundle:RequestStatus')
             ->findOneBy(['name' => self::OLD_NAME]);
         $this->assertNotEmpty($status);
 

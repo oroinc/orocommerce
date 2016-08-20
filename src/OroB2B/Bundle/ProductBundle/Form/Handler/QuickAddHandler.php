@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Handler;
+namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 
@@ -12,16 +12,16 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
-use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
 {
@@ -98,7 +98,7 @@ class QuickAddHandler
             $session = $request->getSession();
             $session->getFlashBag()->add(
                 'error',
-                $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
+                $this->translator->trans('oro.product.frontend.quick_add.messages.component_not_accessible')
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
@@ -152,7 +152,7 @@ class QuickAddHandler
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
-                        'orob2b.product.frontend.quick_add.invalid_file_type',
+                        'oro.product.frontend.quick_add.invalid_file_type',
                         [],
                         'validators'
                     )

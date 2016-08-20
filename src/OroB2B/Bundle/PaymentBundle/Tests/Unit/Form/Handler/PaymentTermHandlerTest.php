@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
 
 class PaymentTermHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -69,15 +69,15 @@ class PaymentTermHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidData()
     {
         /** @var Account $appendedAccount */
-        $appendedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
+        $appendedAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1);
         /** @var Account $removedAccount */
-        $removedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2);
+        $removedAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2);
         $this->entity->addAccount($removedAccount);
 
         /** @var AccountGroup $appendedAccountGroup */
-        $appendedAccountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1);
+        $appendedAccountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 1);
         /** @var AccountGroup $removedAccountGroup */
-        $removedAccountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2);
+        $removedAccountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 2);
         $this->entity->addAccountGroup($removedAccountGroup);
 
         $this->form->expects($this->atLeastOnce())
@@ -110,7 +110,7 @@ class PaymentTermHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())->method('isValid')->willReturn(true);
         $this->manager->expects($this->at(0))->method('persist')->with($this->isType('object'));
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()->getMock();
 
         $repository->expects($this->any())->method('setPaymentTermToAccount')->will(
@@ -136,7 +136,7 @@ class PaymentTermHandlerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->manager->expects($this->any())->method('getRepository')
-            ->with('OroB2BPaymentBundle:PaymentTerm')
+            ->with('OroPaymentBundle:PaymentTerm')
             ->willReturn($repository);
 
         $this->manager->expects($this->exactly(2))->method('flush');

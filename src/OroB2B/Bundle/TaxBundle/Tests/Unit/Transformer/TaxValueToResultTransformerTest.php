@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Transformer;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Transformer;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
-use OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
+use Oro\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
 
 class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +41,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
+        $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -85,31 +85,31 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertResult(Result $result)
     {
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $result);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
 
         $total = $result->getTotal();
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $total);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $total);
         $this->assertEquals(static::TOTAL_INCLUDING_TAX, $total->getIncludingTax());
         $this->assertEquals(static::TOTAL_EXCLUDING_TAX, $total->getExcludingTax());
         $this->assertEquals(static::TOTAL_TAX_AMOUNT, $total->getTaxAmount());
         $this->assertEquals(static::TOTAL_TAX_ADJUSTMENT, $total->getAdjustment());
 
         $shipping = $result->getShipping();
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $shipping);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $shipping);
         $this->assertEquals(static::SHIPPING_INCLUDING_TAX, $shipping->getIncludingTax());
         $this->assertEquals(static::SHIPPING_EXCLUDING_TAX, $shipping->getExcludingTax());
         $this->assertEquals(static::SHIPPING_TAX_AMOUNT, $shipping->getTaxAmount());
         $this->assertEquals(static::SHIPPING_TAX_ADJUSTMENT, $shipping->getAdjustment());
 
         $unit = $result->getUnit();
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $unit);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $unit);
         $this->assertEquals(static::UNIT_PRICE_INCLUDING_TAX, $unit->getIncludingTax());
         $this->assertEquals(static::UNIT_PRICE_EXCLUDING_TAX, $unit->getExcludingTax());
         $this->assertEquals(static::UNIT_PRICE_TAX_AMOUNT, $unit->getTaxAmount());
         $this->assertEquals(static::UNIT_PRICE_TAX_ADJUSTMENT, $unit->getAdjustment());
 
         $row = $result->getRow();
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $row);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $row);
         $this->assertEmpty($row->getIncludingTax());
         $this->assertEmpty($row->getExcludingTax());
         $this->assertEmpty($row->getTaxAmount());

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Command;
+namespace Oro\Bundle\PricingBundle\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -8,16 +8,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Builder\PriceRuleQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository;
 
 class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implements CronCommandInterface
 {
@@ -137,8 +136,8 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
             ->get('oro_b2b_pricing.offset_of_processing_cpl_prices');
 
         $combinedPriceLists = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceList')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceList')
+            ->getManagerForClass('OroPricingBundle:CombinedPriceList')
+            ->getRepository('OroPricingBundle:CombinedPriceList')
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
         $combinedProductPriceResolver = $this->getContainer()

@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const CATEGORY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
 
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -65,7 +64,7 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework
     private function mockCategoryRepository()
     {
         $this->categoryRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -113,7 +112,7 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework
         $sku = uniqid('', true);
 
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1, 'sku' => $sku]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1, 'sku' => $sku]);
 
         $category = new Category();
         $title = new LocalizedFallbackValue();

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\EventListener;
+namespace Oro\Bundle\InvoiceBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class InvoiceFormListener
 {

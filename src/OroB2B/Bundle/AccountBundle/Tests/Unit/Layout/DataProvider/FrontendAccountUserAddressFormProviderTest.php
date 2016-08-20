@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider;
 
 class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +39,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
     private function actionTestWithId($id = null)
     {
         /** @var AccountUserAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
-        $mockAccountUserAddress = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress')
+        $mockAccountUserAddress = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUserAddress')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -48,7 +48,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
             ->willReturn($id);
 
         /** @var AccountUser|\PHPUnit_Framework_MockObject_MockObject $mockAccountUser */
-        $mockAccountUser = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $mockAccountUser = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

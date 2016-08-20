@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Twig;
+namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 
 class CategoryExtension extends \Twig_Extension
 {

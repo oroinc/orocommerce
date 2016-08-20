@@ -16,7 +16,7 @@ define(function (require) {
         options: {
             unitsAttribute: 'units',
             allUnitsAttribute: 'all_units',
-            deleteMessage: 'orob2b.product.productunit.delete.confirmation',
+            deleteMessage: 'oro.product.productunit.delete.confirmation',
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',

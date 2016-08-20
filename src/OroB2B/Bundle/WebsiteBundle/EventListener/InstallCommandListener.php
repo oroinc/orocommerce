@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\EventListener;
+namespace Oro\Bundle\WebsiteBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 

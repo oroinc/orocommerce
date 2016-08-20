@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,7 +63,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
-        $this->customFieldProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

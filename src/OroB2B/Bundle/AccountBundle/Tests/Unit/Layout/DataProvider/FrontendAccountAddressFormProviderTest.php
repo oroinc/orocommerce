@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
 
 class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Provider;
+namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteAddressSecurityProvider
 {

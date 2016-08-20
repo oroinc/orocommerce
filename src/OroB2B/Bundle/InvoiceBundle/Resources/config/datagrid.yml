@@ -25,23 +25,23 @@ datagrid:
                         - { join: invoice.account, alias: account }
         columns:
             invoiceNumber:
-                label:         orob2b.invoice.invoice_number.label
+                label:         oro.invoice.invoice_number.label
             accountName:
-                label:         orob2b.invoice.account.label
+                label:         oro.invoice.account.label
             accountUserName:
-                label:         orob2b.invoice.account_user.label
+                label:         oro.invoice.account_user.label
             invoiceDate:
-                label:         orob2b.invoice.invoice_date.label
+                label:         oro.invoice.invoice_date.label
                 frontend_type: date
             paymentDueDate:
-                label:         orob2b.invoice.payment_due_date.label
+                label:         oro.invoice.payment_due_date.label
                 frontend_type: date
             currency:
-                label:         orob2b.invoice.currency.label
+                label:         oro.invoice.currency.label
             poNumber:
-                label:         orob2b.invoice.po_number.label
+                label:         oro.invoice.po_number.label
             owner:
-                label:         orob2b.invoice.owner.label
+                label:         oro.invoice.owner.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

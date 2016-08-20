@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
+use Oro\Bundle\PricingBundle\Expression\RelationNode;
 
 class RelationNodeTest extends \PHPUnit_Framework_TestCase
 {

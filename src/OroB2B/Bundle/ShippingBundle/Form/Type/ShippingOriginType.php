@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -49,7 +49,7 @@ class ShippingOriginType extends AbstractType
                 'country',
                 CountryType::class,
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.country.label',
+                    'label' => 'oro.shipping.shipping_origin.country.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_country']
                 ]
             )
@@ -57,7 +57,7 @@ class ShippingOriginType extends AbstractType
                 'region',
                 RegionType::class,
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.region.label',
+                    'label' => 'oro.shipping.shipping_origin.region.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_region']
                 ]
             )
@@ -65,24 +65,24 @@ class ShippingOriginType extends AbstractType
                 'postalCode',
                 TextType::class,
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.postal_code.label',
-                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.postal_code.label']
+                    'label' => 'oro.shipping.shipping_origin.postal_code.label',
+                    'attr' => ['placeholder' => 'oro.shipping.shipping_origin.postal_code.label']
                 ]
             )
             ->add(
                 'city',
                 TextType::class,
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.city.label',
-                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.city.label']
+                    'label' => 'oro.shipping.shipping_origin.city.label',
+                    'attr' => ['placeholder' => 'oro.shipping.shipping_origin.city.label']
                 ]
             )
             ->add(
                 'street',
                 TextType::class,
                 [
-                    'label' => 'orob2b.shipping.shipping_origin.street.label',
-                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street.label']
+                    'label' => 'oro.shipping.shipping_origin.street.label',
+                    'attr' => ['placeholder' => 'oro.shipping.shipping_origin.street.label']
                 ]
             )
             ->add(
@@ -90,8 +90,8 @@ class ShippingOriginType extends AbstractType
                 TextType::class,
                 [
                     'required' => false,
-                    'label' => 'orob2b.shipping.shipping_origin.street2.label',
-                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street2.label']
+                    'label' => 'oro.shipping.shipping_origin.street2.label',
+                    'attr' => ['placeholder' => 'oro.shipping.shipping_origin.street2.label']
                 ]
             )
             ->add(
@@ -100,8 +100,8 @@ class ShippingOriginType extends AbstractType
                 [
                     'required' => false,
                     'random_id' => true,
-                    'label' => 'orob2b.shipping.shipping_origin.region_text.label',
-                    'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.region_text.label']
+                    'label' => 'oro.shipping.shipping_origin.region_text.label',
+                    'attr' => ['placeholder' => 'oro.shipping.shipping_origin.region_text.label']
                 ]
             );
     }

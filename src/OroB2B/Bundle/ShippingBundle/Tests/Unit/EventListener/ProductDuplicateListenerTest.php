@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 {

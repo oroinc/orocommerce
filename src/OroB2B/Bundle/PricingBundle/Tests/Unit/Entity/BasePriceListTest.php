@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 
 class BasePriceListTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,14 +32,14 @@ class BasePriceListTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $priceList->getCurrencies());
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\BasePriceList',
+            'Oro\Bundle\PricingBundle\Entity\BasePriceList',
             $priceList->setCurrencies(['EUR', 'USD'])
         );
         $this->assertCount(2, $priceList->getCurrencies());
         $this->assertEquals(['EUR', 'USD'], $priceList->getCurrencies());
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\BasePriceList',
+            'Oro\Bundle\PricingBundle\Entity\BasePriceList',
             $priceList->setCurrencies(['EUR', 'PLN'])
         );
         $currentCurrencies = $priceList->getCurrencies();
@@ -52,7 +51,7 @@ class BasePriceListTest extends \PHPUnit_Framework_TestCase
 
         $priceListCurrency = $priceList->getPriceListCurrencyByCode('EUR');
         $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\BasePriceListCurrency',
+            'Oro\Bundle\PricingBundle\Entity\BasePriceListCurrency',
             $priceListCurrency
         );
         $this->assertEquals($priceList, $priceListCurrency->getPriceList());

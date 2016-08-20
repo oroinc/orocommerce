@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class WeightTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity\Repository;
+namespace Oro\Bundle\SaleBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteRepository extends EntityRepository
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\Tax;
 
 class LoadTaxes extends AbstractFixture
 {

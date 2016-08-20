@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
-use OroB2B\Bundle\AccountBundle\Controller\Api\Rest\AccountAddressController as BaseAccountAddressController;
+use Oro\Bundle\AccountBundle\Controller\Api\Rest\AccountAddressController as BaseAccountAddressController;
 
 /**
  * @NamePrefix("orob2b_api_account_frontend_")

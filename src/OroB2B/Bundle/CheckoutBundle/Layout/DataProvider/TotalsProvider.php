@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Layout\ContextInterface;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalsProvider
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
+use Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
 
 class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
     /** {@inheritdoc} */
     protected function setUp()
     {
-        $this->itemResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver')
+        $this->itemResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver')
             ->disableOriginalConstructor()
             ->getMock();
 

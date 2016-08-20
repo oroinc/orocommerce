@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
@@ -11,9 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-
-use OroB2B\Bundle\AccountBundle\Event\AccountEvent;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Event\AccountEvent;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountType extends AbstractType
 {
@@ -49,12 +48,12 @@ class AccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', ['label' => 'orob2b.account.name.label'])
+            ->add('name', 'text', ['label' => 'oro.account.name.label'])
             ->add(
                 self::GROUP_FIELD,
                 AccountGroupSelectType::NAME,
                 [
-                    'label' => 'orob2b.account.group.label',
+                    'label' => 'oro.account.group.label',
                     'required' => false
                 ]
             )
@@ -62,7 +61,7 @@ class AccountType extends AbstractType
                 'parent',
                 ParentAccountSelectType::NAME,
                 [
-                    'label' => 'orob2b.account.parent.label',
+                    'label' => 'oro.account.parent.label',
                     'required' => false
                 ]
             )
@@ -70,7 +69,7 @@ class AccountType extends AbstractType
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label' => 'orob2b.account.addresses.label',
+                    'label' => 'oro.account.addresses.label',
                     'type' => AccountTypedAddressType::NAME,
                     'required' => true,
                     'options' => [
@@ -83,7 +82,7 @@ class AccountType extends AbstractType
                 'internal_rating',
                 'oro_enum_select',
                 [
-                    'label' => 'orob2b.account.internal_rating.label',
+                    'label' => 'oro.account.internal_rating.label',
                     'enum_code' => Account::INTERNAL_RATING_CODE,
                     'configs' => [
                         'allowClear' => false,
@@ -95,7 +94,7 @@ class AccountType extends AbstractType
                 'salesRepresentatives',
                 UserMultiSelectType::NAME,
                 [
-                    'label' => 'orob2b.account.sales_representatives.label',
+                    'label' => 'oro.account.sales_representatives.label',
                 ]
             )
             ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])

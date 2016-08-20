@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
+namespace Oro\Bundle\TaxBundle\EventListener\Order;
 
 use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderLineItemGridListener
 {
@@ -117,11 +116,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'unitPriceIncludingTax'),
             [
-                'label' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
+                'label' => 'oro.tax.order_line_item.unitPrice.includingTax.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -129,11 +128,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'unitPriceExcludingTax'),
             [
-                'label' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
+                'label' => 'oro.tax.order_line_item.unitPrice.excludingTax.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -141,11 +140,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'unitPriceTaxAmount'),
             [
-                'label' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
+                'label' => 'oro.tax.order_line_item.unitPrice.taxAmount.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -153,11 +152,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'rowTotalIncludingTax'),
             [
-                'label' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
+                'label' => 'oro.tax.order_line_item.rowTotal.includingTax.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -165,11 +164,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'rowTotalExcludingTax'),
             [
-                'label' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
+                'label' => 'oro.tax.order_line_item.rowTotal.excludingTax.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -177,11 +176,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'rowTotalTaxAmount'),
             [
-                'label' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
+                'label' => 'oro.tax.order_line_item.rowTotal.taxAmount.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
+                'template' => 'OroTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -189,11 +188,11 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'taxes'),
             [
-                'label' => 'orob2b.tax.order_line_item.taxes.label',
+                'label' => 'oro.tax.order_line_item.taxes.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle::Order/Datagrid/taxes.html.twig',
+                'template' => 'OroTaxBundle::Order/Datagrid/taxes.html.twig',
                 'renderable' => false
             ]
         );

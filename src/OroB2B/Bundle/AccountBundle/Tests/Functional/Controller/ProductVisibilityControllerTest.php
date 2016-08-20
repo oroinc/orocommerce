@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -8,20 +8,19 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 /**
  * @dbIsolation
@@ -36,9 +35,9 @@ class ProductVisibilityControllerTest extends WebTestCase
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
 
-    const PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\ProductVisibility';
-    const ACCOUNT_PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\AccountProductVisibility';
-    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility';
+    const PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\ProductVisibility';
+    const ACCOUNT_PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\AccountProductVisibility';
+    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\AccountGroupProductVisibility';
 
     /** @var  Product */
     protected $product;
@@ -85,11 +84,11 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
         );
 
@@ -160,7 +159,7 @@ class ProductVisibilityControllerTest extends WebTestCase
                     'operationName' => 'orob2b_product_duplicate',
                     'route' => 'orob2b_product_view',
                     'entityId' => $this->product->getId(),
-                    'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
+                    'entityClass' => 'Oro\Bundle\ProductBundle\Entity\Product'
                 ]
             ),
             [],
@@ -171,7 +170,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
-        $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
+        $duplicatedProduct = $em->getRepository('OroProductBundle:Product')
             ->findOneBySku(sprintf('%s-1', $this->product->getSku()));
         foreach ($this->visibilityClassNames as $className) {
             /** @var VisibilityInterface[]|WebsiteAwareInterface[] $visibilities */
@@ -348,8 +347,8 @@ class ProductVisibilityControllerTest extends WebTestCase
     protected function getDefaultWebsite()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getManagerForClass('OroWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->getDefaultWebsite();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
+namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemHandler
 {
@@ -54,7 +54,7 @@ class LineItemHandler
             return false;
         }
         /** @var EntityManagerInterface $manager */
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
         $manager->beginTransaction();
 
         // handle case for new shopping list creation

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Event;
+namespace Oro\Bundle\TaxBundle\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

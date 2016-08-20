@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\EventListener;
+namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -19,6 +19,6 @@ class CategoryFormViewListener extends BaseFormViewListener
      */
     public function getMetaFieldLabelPrefix()
     {
-        return 'orob2b.catalog.category';
+        return 'oro.catalog.category';
     }
 }

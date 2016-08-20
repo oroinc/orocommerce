@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
+use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 
 class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode';
+    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode';
 
     /**
      * @var ProductTaxCodeAutocompleteType

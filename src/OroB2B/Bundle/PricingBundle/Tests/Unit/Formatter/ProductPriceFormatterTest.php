@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,7 +39,7 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%.2f %s formatted_price', $price, $currencyIsoCode);
             }));
         $this->unitLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
         $this->unitLabelFormatter->expects($this->any())
             ->method('format')
@@ -48,7 +47,7 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%s formatted_unit', $unit);
             }));
         $this->unitValueFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
             ->disableOriginalConstructor()->getMock();
         $this->unitValueFormatter->expects($this->any())
             ->method('formatCode')

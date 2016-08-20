@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -24,7 +23,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     /** {@inheritdoc} */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'];
+        return ['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'];
     }
 
     /**
@@ -37,7 +36,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
             'paymentMethod' => PaymentTerm::TYPE,
-            'entityClass' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
@@ -52,7 +51,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'active' => true,
             'successful' => true,
             'paymentMethod' => PaymentTerm::TYPE,
-            'entityClass' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
@@ -67,7 +66,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'active' => true,
             'successful' => true,
             'paymentMethod' => PaymentTerm::TYPE,
-            'entityClass' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',

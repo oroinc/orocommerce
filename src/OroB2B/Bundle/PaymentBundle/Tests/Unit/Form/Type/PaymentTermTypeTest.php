@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermType;
 
 class PaymentTermTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
 
     /**
      * @var PaymentTermType

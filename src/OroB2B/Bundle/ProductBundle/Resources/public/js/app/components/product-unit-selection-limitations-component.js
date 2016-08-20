@@ -17,9 +17,9 @@ define(function (require) {
          */
         options: {
             unitsAttribute: 'units',
-            deleteMessage: 'orob2b.product.productunit.delete.confirmation',
-            errorTitle: 'orob2b.product.productunit.delete.error.title',
-            errorMessage: 'orob2b.product.productunit.delete.error.message',
+            deleteMessage: 'oro.product.productunit.delete.confirmation',
+            errorTitle: 'oro.product.productunit.delete.error.title',
+            errorMessage: 'oro.product.productunit.delete.error.message',
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',
@@ -213,7 +213,7 @@ define(function (require) {
         addConversionRateLabels: function (value) {
             this.options._sourceElement.find(this.options.conversionRateInput).each(function () {
                 var input = $(this);
-                var text = __('orob2b.product.product_unit.' + value + '.label.short_plural');
+                var text = __('oro.product.product_unit.' + value + '.label.short_plural');
                 input.parent('td').find('span').remove();
                 input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()).addClass('conversion-rate-label'));
             });

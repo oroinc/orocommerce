@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,7 +61,7 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
     public function testSourceDocument()
     {
         $shoppingList = $this->getEntity(
-            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             [
                 'id' => 1,
                 'label' => 'TEST'

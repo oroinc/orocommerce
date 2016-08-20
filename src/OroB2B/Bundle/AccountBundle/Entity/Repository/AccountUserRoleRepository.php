@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountUserRoleRepository extends EntityRepository
 {
@@ -63,7 +62,7 @@ class AccountUserRoleRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
             ->select('accountUser.id')
-            ->from('OroB2BAccountBundle:AccountUser', 'accountUser')
+            ->from('OroAccountBundle:AccountUser', 'accountUser')
             ->innerJoin('accountUser.roles', 'accountUserRole')
             ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)
@@ -85,7 +84,7 @@ class AccountUserRoleRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
             ->select('accountUser')
-            ->from('OroB2BAccountBundle:AccountUser', 'accountUser')
+            ->from('OroAccountBundle:AccountUser', 'accountUser')
             ->innerJoin('accountUser.roles', 'accountUserRole')
             ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)

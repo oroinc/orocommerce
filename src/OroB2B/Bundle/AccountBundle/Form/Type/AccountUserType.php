@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,9 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class AccountUserType extends AbstractType
 {
@@ -70,9 +69,9 @@ class AccountUserType extends AbstractType
         $passwordOptions = [
             'type' => 'password',
             'required' => false,
-            'first_options' => ['label' => 'orob2b.account.accountuser.password.label'],
-            'second_options' => ['label' => 'orob2b.account.accountuser.password_confirmation.label'],
-            'invalid_message' => 'orob2b.account.message.password_mismatch',
+            'first_options' => ['label' => 'oro.account.accountuser.password.label'],
+            'second_options' => ['label' => 'oro.account.accountuser.password_confirmation.label'],
+            'invalid_message' => 'oro.account.message.password_mismatch',
         ];
 
         if ($data instanceof AccountUser && $data->getId()) {
@@ -97,7 +96,7 @@ class AccountUserType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_prefix.label'
+                    'label' => 'oro.account.accountuser.name_prefix.label'
                 ]
             )
             ->add(
@@ -105,7 +104,7 @@ class AccountUserType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.first_name.label'
+                    'label' => 'oro.account.accountuser.first_name.label'
                 ]
             )
             ->add(
@@ -113,7 +112,7 @@ class AccountUserType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.middle_name.label'
+                    'label' => 'oro.account.accountuser.middle_name.label'
                 ]
             )
             ->add(
@@ -121,7 +120,7 @@ class AccountUserType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.last_name.label'
+                    'label' => 'oro.account.accountuser.last_name.label'
                 ]
             )
             ->add(
@@ -129,7 +128,7 @@ class AccountUserType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_suffix.label'
+                    'label' => 'oro.account.accountuser.name_suffix.label'
                 ]
             )
             ->add(
@@ -137,7 +136,7 @@ class AccountUserType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.email.label'
+                    'label' => 'oro.account.accountuser.email.label'
                 ]
             )
             ->add(
@@ -145,7 +144,7 @@ class AccountUserType extends AbstractType
                 AccountSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.account.accountuser.account.label'
+                    'label' => 'oro.account.accountuser.account.label'
                 ]
             )
             ->add(
@@ -153,7 +152,7 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.enabled.label',
+                    'label' => 'oro.account.accountuser.enabled.label',
                 ]
             )
             ->add(
@@ -161,14 +160,14 @@ class AccountUserType extends AbstractType
                 'oro_date',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.birthday.label',
+                    'label' => 'oro.account.accountuser.birthday.label',
                 ]
             )
             ->add(
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label' => 'orob2b.account.accountuser.addresses.label',
+                    'label' => 'oro.account.accountuser.addresses.label',
                     'type' => AccountUserTypedAddressType::NAME,
                     'required' => false,
                     'options' => [
@@ -181,7 +180,7 @@ class AccountUserType extends AbstractType
                 'salesRepresentatives',
                 UserMultiSelectType::NAME,
                 [
-                    'label' => 'orob2b.account.sales_representatives.label',
+                    'label' => 'oro.account.sales_representatives.label',
                 ]
             );
 
@@ -202,7 +201,7 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.password_generate.label',
+                    'label' => 'oro.account.accountuser.password_generate.label',
                     'mapped' => false
                 ]
             )
@@ -211,7 +210,7 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'orob2b.account.accountuser.send_email.label',
+                    'label' => 'oro.account.accountuser.send_email.label',
                     'mapped' => false
                 ]
             );

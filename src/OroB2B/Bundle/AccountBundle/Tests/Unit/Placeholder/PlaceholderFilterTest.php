@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Placeholder\PlaceholderFilter;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Placeholder\PlaceholderFilter;
 
 class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
 {

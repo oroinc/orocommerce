@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Provider;
+namespace Oro\Bundle\WebsiteBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteProvider implements WebsiteProviderInterface
 {
@@ -27,8 +27,8 @@ class WebsiteProvider implements WebsiteProviderInterface
     public function getWebsites()
     {
         $websites = [];
-        $websites[] = $this->registry->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+        $websites[] = $this->registry->getManagerForClass('OroWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->getDefaultWebsite();
         
         return $websites;

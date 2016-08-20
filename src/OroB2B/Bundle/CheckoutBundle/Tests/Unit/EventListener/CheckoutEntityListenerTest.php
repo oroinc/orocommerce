@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,7 +67,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($manager);
 
-        $this->userCurrencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -77,7 +76,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Checkout class must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface
+     * @expectedExceptionMessage Checkout class must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface
      */
     public function testCheckoutClassNameInvalid()
     {
@@ -86,7 +85,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckoutClassName()
     {
-        $className = 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout';
+        $className = 'Oro\Bundle\CheckoutBundle\Entity\Checkout';
         $this->listener->setCheckoutClassName($className);
         $this->assertAttributeEquals($className, 'checkoutClassName', $this->listener);
     }
@@ -105,7 +104,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         CheckoutInterface $expected = null,
         $userCurrency = 'USD'
     ) {
-        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
 
         $event = new CheckoutEntityEvent();
 
@@ -171,7 +170,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         CheckoutInterface $found = null,
         CheckoutInterface $expected = null
     ) {
-        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
 
         $event = new CheckoutEntityEvent();
 
@@ -228,7 +227,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
         CheckoutSource $source = null,
         CheckoutInterface $expected = null
     ) {
-        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
         $this->workflowManager->expects($this->any())
             ->method('getApplicableWorkflows')
             ->willReturn($workflows);
@@ -274,10 +273,10 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'LogicException',
-            'More than one active workflow found for entity "OroB2B\Bundle\CheckoutBundle\Entity\Checkout"'
+            'More than one active workflow found for entity "Oro\Bundle\CheckoutBundle\Entity\Checkout"'
         );
 
-        $this->listener->setCheckoutClassName('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
         $this->workflowManager->expects($this->any())
             ->method('getApplicableWorkflows')
             ->willReturn([$this->getWorkflowMock('test1', true), $this->getWorkflowMock('test2', true)]);

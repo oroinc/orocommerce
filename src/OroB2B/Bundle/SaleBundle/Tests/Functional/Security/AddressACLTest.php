@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Security;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Security;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
 
 /**
  * @dbIsolation
@@ -42,7 +41,7 @@ class AddressACLTest extends AbstractAddressACLTest
             ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
         ]);
     }
 

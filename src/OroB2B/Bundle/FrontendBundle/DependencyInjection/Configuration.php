@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\DependencyInjection;
+namespace Oro\Bundle\FrontendBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -15,7 +15,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(OroB2BFrontendExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroFrontendExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,

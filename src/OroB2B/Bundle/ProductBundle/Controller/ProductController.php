@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Controller;
+namespace Oro\Bundle\ProductBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,12 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use OroB2B\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 
 class ProductController extends Controller
 {
@@ -26,7 +25,7 @@ class ProductController extends Controller
      * @Acl(
      *      id="orob2b_product_view",
      *      type="entity",
-     *      class="OroB2BProductBundle:Product",
+     *      class="OroProductBundle:Product",
      *      permission="VIEW"
      * )
      *
@@ -93,11 +92,11 @@ class ProductController extends Controller
      * Create product form
      *
      * @Route("/create", name="orob2b_product_create")
-     * @Template("OroB2BProductBundle:Product:createStepOne.html.twig")
+     * @Template("OroProductBundle:Product:createStepOne.html.twig")
      * @Acl(
      *      id="orob2b_product_create",
      *      type="entity",
-     *      class="OroB2BProductBundle:Product",
+     *      class="OroProductBundle:Product",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -112,7 +111,7 @@ class ProductController extends Controller
      * Create product form step two
      *
      * @Route("/create/step-two", name="orob2b_product_create_step_two")
-     * @Template("OroB2BProductBundle:Product:createStepTwo.html.twig")
+     * @Template("OroProductBundle:Product:createStepTwo.html.twig")
      *
      * @AclAncestor("orob2b_product_create")
      *
@@ -132,7 +131,7 @@ class ProductController extends Controller
      * @Acl(
      *      id="orob2b_product_update",
      *      type="entity",
-     *      class="OroB2BProductBundle:Product",
+     *      class="OroProductBundle:Product",
      *      permission="EDIT"
      * )
      * @param Product $product
@@ -164,7 +163,7 @@ class ProductController extends Controller
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
+            $this->get('translator')->trans('oro.product.controller.product.saved.message')
         );
     }
 
@@ -178,7 +177,7 @@ class ProductController extends Controller
         $handler = new ProductCreateStepOneHandler($form, $request);
 
         if ($handler->process()) {
-            return $this->forward('OroB2BProductBundle:Product:createStepTwo');
+            return $this->forward('OroProductBundle:Product:createStepTwo');
         }
 
         return ['form' => $form->createView()];
@@ -225,7 +224,7 @@ class ProductController extends Controller
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
+            $this->get('translator')->trans('oro.product.controller.product.saved.message')
         );
     }
 }

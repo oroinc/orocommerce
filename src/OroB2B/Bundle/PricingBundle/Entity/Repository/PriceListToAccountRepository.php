@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
@@ -9,13 +9,12 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -62,10 +61,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
-            ->from('OroB2BAccountBundle:Account', 'account');
+            ->from('OroAccountBundle:Account', 'account');
 
         $qb->innerJoin(
-            'OroB2BPricingBundle:PriceListToAccount',
+            'OroPricingBundle:PriceListToAccount',
             'plToAccount',
             Join::WITH,
             $qb->expr()->andX(
@@ -75,7 +74,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         );
 
         $qb->leftJoin(
-            'OroB2BPricingBundle:PriceListAccountFallback',
+            'OroPricingBundle:PriceListAccountFallback',
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
@@ -115,9 +114,9 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $entityPair = new ArrayCollection();
         foreach ($pairs as $pair) {
             /** @var Account $account */
-            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            $account = $em->getReference('OroAccountBundle:Account', $pair['account_id']);
             /** @var Website $website */
-            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $website = $em->getReference('OroWebsiteBundle:Website', $pair['website_id']);
             $entityPair->add(new AccountWebsiteDTO($account, $website));
         }
 
@@ -167,9 +166,9 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $collection = new ArrayCollection();
         foreach ($pairs as $pair) {
             /** @var Account $account */
-            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            $account = $em->getReference('OroAccountBundle:Account', $pair['account_id']);
             /** @var Website $website */
-            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $website = $em->getReference('OroWebsiteBundle:Website', $pair['website_id']);
             $collection->add(new AccountWebsiteDTO($account, $website));
         }
 

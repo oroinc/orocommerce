@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\ExecutionContextInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
-use OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 
 class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const LINE_ITEM_SHORTCUT = 'OroB2BShoppingListBundle:LineItem';
+    const LINE_ITEM_SHORTCUT = 'OroShoppingListBundle:LineItem';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Registry
@@ -46,12 +46,12 @@ class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->repository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
-        $this->constraint = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItem')
+        $this->lineItem = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
+        $this->constraint = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem')
             ->disableOriginalConstructor()
             ->getMock();
     }

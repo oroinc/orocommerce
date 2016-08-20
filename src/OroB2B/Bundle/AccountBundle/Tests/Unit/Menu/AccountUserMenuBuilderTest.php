@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Menu;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Menu;
 
-use OroB2B\Bundle\AccountBundle\Menu\AccountUserMenuBuilder;
+use Oro\Bundle\AccountBundle\Menu\AccountUserMenuBuilder;
 
 class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +46,7 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
         $menu->expects($this->at(2))
             ->method('addChild')
             ->with(
-                'orob2b.account.menu.account_user_logout.label',
+                'oro.account.menu.account_user_logout.label',
                 [
                     'route' => 'orob2b_account_account_user_security_logout',
                     'linkAttributes' => ['class' => 'no-hash']

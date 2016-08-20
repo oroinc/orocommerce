@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Twig;
+namespace Oro\Bundle\ShippingBundle\Twig;
 
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 class ShippingOptionLabelExtension extends \Twig_Extension
 {

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\DependencyInjection;
+namespace Oro\Bundle\RFPBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class Configuration implements ConfigurationInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Model;
+namespace Oro\Bundle\SaleBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 

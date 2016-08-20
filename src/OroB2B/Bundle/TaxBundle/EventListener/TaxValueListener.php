@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener;
+namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 
 class TaxValueListener
 {

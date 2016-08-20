@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
 
 class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +26,7 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
+        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,10 +48,10 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         $unitCode = 'kg';
 
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
 
         $product = new Product();
         $product->setSku($productSku);

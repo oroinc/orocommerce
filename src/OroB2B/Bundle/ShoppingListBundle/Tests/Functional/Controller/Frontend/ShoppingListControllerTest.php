@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -8,12 +8,11 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * @dbIsolation
@@ -38,10 +37,10 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
@@ -186,7 +185,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $expectedMessage = $this->getContainer()
             ->get('translator')
-            ->transChoice('orob2b.shoppinglist.actions.add_success_message', count($products));
+            ->transChoice('oro.shoppinglist.actions.add_success_message', count($products));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($expectedMessage, $crawler->html());
@@ -202,8 +201,8 @@ class ShoppingListControllerTest extends WebTestCase
     protected function assertShoppingListItemSaved(ShoppingList $shoppingList, $sku, $quantity)
     {
         /** @var LineItem[] $items */
-        $items = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BShoppingListBundle:LineItem')
-            ->getRepository('OroB2BShoppingListBundle:LineItem')
+        $items = $this->getContainer()->get('doctrine')->getManagerForClass('OroShoppingListBundle:LineItem')
+            ->getRepository('OroShoppingListBundle:LineItem')
             ->findBy(['shoppingList' => $shoppingList]);
 
         $this->assertCount(1, $items);

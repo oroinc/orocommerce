@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Translation\CacheWarmer;
+namespace Oro\Bundle\WebsiteBundle\Translation\CacheWarmer;
 
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TranslationsCacheWarmer;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;

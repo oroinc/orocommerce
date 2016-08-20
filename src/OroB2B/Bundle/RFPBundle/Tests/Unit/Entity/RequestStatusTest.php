@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
 class RequestStatusTest extends EntityTestCase
 {

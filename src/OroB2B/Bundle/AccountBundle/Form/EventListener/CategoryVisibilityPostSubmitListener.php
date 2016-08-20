@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Form\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 

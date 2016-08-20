@@ -37,15 +37,15 @@
             <div class="row-fluid form-horizontal">
                 <div class="responsive-block">
                     {% if  accountUser.namePrefix is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, accountUser.namePrefix) }}
+                        {{ UI.renderProperty('oro.account.accountuser.name_prefix.label'|trans, accountUser.namePrefix) }}
                     {% endif %}
-                    {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, accountUser.firstName) }}
+                    {{ UI.renderProperty('oro.account.accountuser.first_name.label'|trans, accountUser.firstName) }}
                     {% if  accountUser.middleName is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, accountUser.middleName) }}
+                        {{ UI.renderProperty('oro.account.accountuser.middle_name.label'|trans, accountUser.middleName) }}
                     {% endif %}
-                    {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, accountUser.lastName) }}
+                    {{ UI.renderProperty('oro.account.accountuser.last_name.label'|trans, accountUser.lastName) }}
                     {% if  accountUser.nameSuffix is defined %}
-                        {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, accountUser.nameSuffix) }}
+                        {{ UI.renderProperty('oro.account.accountuser.name_suffix.label'|trans, accountUser.nameSuffix) }}
                     {% endif %}
 
                     {% set birthday_string %}
@@ -54,11 +54,11 @@
                             ({{ accountUser.birthday|age_string({'default': 'N/A'}) }})
                         {% endif %}
                     {% endset %}
-                    {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
-                    {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(accountUser.email)) }}
+                    {{ UI.renderProperty('oro.account.accountuser.birthday.label'|trans, birthday_string) }}
+                    {{ UI.renderHtmlProperty('oro.account.accountuser.email.label'|trans, Email.email_address_simple(accountUser.email)) }}
 
                     {% if accountUser.account %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.profile.company_name'|trans, accountUser.account.name) }}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.profile.company_name'|trans, accountUser.account.name) }}
                     {% endif %}
 
                     {% if resource_granted('orob2b_account_account_user_role_view') %}
@@ -66,11 +66,11 @@
                         {% for accountUserRole in accountUser.roles %}
                             {% set roles = roles|merge([accountUserRole.label]) %}
                         {% endfor %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
                     {% endif %}
 
                     {% if accountUser.salesRepresentatives | length %}
-                        {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(accountUser.salesRepresentatives, 'fullName', 'oro_user_view')) }}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(accountUser.salesRepresentatives, 'fullName', 'oro_user_view')) }}
                     {% endif %}
                 </div>
             </div>

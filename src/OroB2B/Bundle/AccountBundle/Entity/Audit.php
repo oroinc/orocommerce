@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,7 +15,7 @@ class Audit extends AbstractAudit
     /**
      * @var AccountUser $user
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser", cascade={"persist"})
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $accountUser;

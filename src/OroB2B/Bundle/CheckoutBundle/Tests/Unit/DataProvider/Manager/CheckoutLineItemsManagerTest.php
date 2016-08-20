@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -8,15 +8,14 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,12 +44,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->checkoutLineItemsConverter = $this
-            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
+            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->currencyManager = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
@@ -60,7 +59,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnCallback(function ($data) {
                 $result = new ArrayCollection();
                 foreach ($data as $productData) {
-                    $result->add($this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', $productData));
+                    $result->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $productData));
                 }
                 return $result;
             }));
@@ -78,7 +77,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     public function testAddProvider()
     {
         /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
-        $provider = $this->getMock('OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
+        $provider = $this->getMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $this->checkoutLineItemsManager->addProvider($provider);
 
@@ -232,7 +231,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function getProvider($entity, array $returnData, $isSupported = true)
     {
         /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
-        $provider = $this->getMock('OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
+        $provider = $this->getMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $provider->expects($this->once())
             ->method('isEntitySupported')
@@ -255,7 +254,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function getCheckout($entity)
     {
         /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSource = $this->getMock('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource');
+        $checkoutSource = $this->getMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource');
         $checkoutSource->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);

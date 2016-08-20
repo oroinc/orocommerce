@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Api\Processor;
+namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;

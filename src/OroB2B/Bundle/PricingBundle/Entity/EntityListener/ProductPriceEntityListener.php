@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Event\ProductPriceChange;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

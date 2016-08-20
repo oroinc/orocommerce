@@ -38,10 +38,10 @@
         });
         require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
-                'orob2bfrontend/default/js/app/modules/input-widgets',
-                'orob2bfrontend/default/js/app/modules/action-manager',
-                'orob2bfrontend/default/js/app/modules/delete-action',
-                'orob2bfrontend/default/js/app/modules/select-filter'
+                'orofrontend/default/js/app/modules/input-widgets',
+                'orofrontend/default/js/app/modules/action-manager',
+                'orofrontend/default/js/app/modules/delete-action',
+                'orofrontend/default/js/app/modules/select-filter'
             ])
         });
     </script>
@@ -160,7 +160,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            'view': 'orob2bfrontend/default/js/app/views/sticky-panel-view'
+            'view': 'orofrontend/default/js/app/views/sticky-panel-view'
         },
         '~class': ' sticky-panel'
     }) %}

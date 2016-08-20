@@ -8,9 +8,9 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2border/js/app/views/payment-term-view
+     * @export oroorder/js/app/views/payment-term-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.PaymentTermView
+     * @class oroorder.app.views.PaymentTermView
      */
     PaymentTermView = BaseView.extend({
         /**

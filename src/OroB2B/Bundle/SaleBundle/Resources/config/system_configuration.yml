@@ -4,7 +4,7 @@ oro_system_configuration:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.sale.system_configuration.fields.backend_product_visibility.title
+                label: oro.sale.system_configuration.fields.backend_product_visibility.title
 
     tree:
         system_configuration:

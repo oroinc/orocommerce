@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\Test\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\EventListener\PriceListListener;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\EventListener\PriceListListener;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,17 +49,17 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->builder = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->triggerHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->priceRuleLexemeHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -140,7 +139,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function createPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
+        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
         $schedule1 = new PriceListSchedule(
             new \DateTime('2016-03-01T22:00:00Z'),
             new \DateTime('2016-04-01T22:00:00Z')

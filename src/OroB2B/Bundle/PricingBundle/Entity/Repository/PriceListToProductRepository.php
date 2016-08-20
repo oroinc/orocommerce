@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -8,9 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 
 class PriceListToProductRepository extends EntityRepository
 {
@@ -22,15 +21,15 @@ class PriceListToProductRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
-            ->from('OroB2BProductBundle:Product', 'p')
+            ->from('OroProductBundle:Product', 'p')
             ->join(
-                'OroB2BPricingBundle:PriceListToProduct',
+                'OroPricingBundle:PriceListToProduct',
                 'plp',
                 Join::WITH,
                 $qb->expr()->eq('plp.product', 'p')
             )
             ->leftJoin(
-                'OroB2BPricingBundle:ProductPrice',
+                'OroPricingBundle:ProductPrice',
                 'pp',
                 Join::WITH,
                 $qb->expr()->andX(

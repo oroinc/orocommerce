@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model;
+namespace Oro\Bundle\AccountBundle\Model;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @method AbstractEnumValue getInternalRating()

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Action;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Psr\Log\LoggerInterface;
 
@@ -8,10 +8,9 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use OroB2B\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
 
 abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,10 +39,10 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = $this->getMock('Oro\Component\Action\Model\ContextAccessor');
 
-        $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
         $this->paymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

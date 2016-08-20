@@ -7,6 +7,6 @@ require([
     BaseController.loadBeforeAction([
         'jquery', 'jquery.validate'
     ], function ($) {
-        $.validator.loadMethod('orob2bpricing/js/validator/unique-product-prices');
+        $.validator.loadMethod('oropricing/js/validator/unique-product-prices');
     });
 });

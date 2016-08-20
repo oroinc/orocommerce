@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * @dbIsolation
@@ -35,11 +34,11 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadAlternativeCheckouts',
-                'OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+                'Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadAlternativeCheckouts',
+                'Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
+                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
         );
     }
@@ -225,8 +224,8 @@ class OrderControllerTest extends WebTestCase
     {
         if (empty($this->allCheckouts)) {
             $checkouts = $this->getContainer()->get('doctrine')
-                ->getManagerForClass('OroB2BCheckoutBundle:Checkout')
-                ->getRepository('OroB2BCheckoutBundle:Checkout')
+                ->getManagerForClass('OroCheckoutBundle:Checkout')
+                ->getRepository('OroCheckoutBundle:Checkout')
                 ->findAll();
 
             foreach ($checkouts as $checkout) {

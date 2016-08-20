@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
-use OroB2B\Bundle\PaymentBundle\EventListener\PaymentTransactionListener;
-use OroB2B\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use Oro\Bundle\PaymentBundle\EventListener\PaymentTransactionListener;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
 class PaymentTransactionListenerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Controller\Api\Rest;
+namespace Oro\Bundle\FrontendBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 

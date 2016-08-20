@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
+namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
 
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-
-use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional;
+namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -46,7 +45,7 @@ class ProductWithPricesTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testCreate()
@@ -139,8 +138,8 @@ class ProductWithPricesTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product')
+            ->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product')
             ->findOneBy(['sku' => self::TEST_SKU]);
         $this->assertNotEmpty($product);
 

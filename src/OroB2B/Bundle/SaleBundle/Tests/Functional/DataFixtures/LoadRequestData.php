@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class LoadRequestData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -61,7 +61,7 @@ class LoadRequestData extends AbstractFixture implements FixtureInterface, Depen
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
         ];
     }
 

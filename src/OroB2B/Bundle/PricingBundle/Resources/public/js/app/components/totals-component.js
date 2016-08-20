@@ -13,9 +13,9 @@ define(function(require) {
     var localeSettings = require('orolocale/js/locale-settings');
 
     /**
-     * @export orob2bpricing/js/app/components/totals-component
+     * @export oropricing/js/app/components/totals-component
      * @extends oroui.app.components.base.Component
-     * @class orob2bpricing.app.components.TotalsComponent
+     * @class oropricing.app.components.TotalsComponent
      */
     TotalsComponent = BaseComponent.extend({
         /**

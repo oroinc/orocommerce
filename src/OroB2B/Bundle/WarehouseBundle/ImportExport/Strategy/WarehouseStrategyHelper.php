@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
 {
@@ -26,7 +26,7 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
         $importedWarehouse = $importedEntity->getWarehouse();
         if ($warehouses > 1) {
             if (!$importedWarehouse && $this->isWarehouseRequired($importData)) {
-                $this->addError('orob2b.warehouse.import.error.warehouse_required');
+                $this->addError('oro.warehouse.import.error.warehouse_required');
 
                 return null;
             }
@@ -41,9 +41,9 @@ class WarehouseStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHel
 
         if (!$existingWarehouse && $warehouses < 1) {
             $this->addError(
-                'orob2b.warehouse.import.error.warehouse_inexistent',
+                'oro.warehouse.import.error.warehouse_inexistent',
                 [],
-                'orob2b.warehouse.import.error.general_error'
+                'oro.warehouse.import.error.general_error'
             );
 
             return null;

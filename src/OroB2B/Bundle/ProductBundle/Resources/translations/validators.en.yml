@@ -1,4 +1,4 @@
-orob2b:
+oro:
     product:
         product_variant_links:
             unique_variants_combination.message: "Can't save product variants. Variant field value combinations should be unique."

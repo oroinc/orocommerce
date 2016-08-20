@@ -239,7 +239,7 @@ define(function(require) {
         transformCreateNewButton: function() {
             var $button = this.findNewButton();
             if ($button.length) {
-                var label = _.__('orob2b.shoppinglist.widget.add_to_new_shopping_list');
+                var label = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
                 $button.attr('data-intention', 'new')
                     .html(label)
                     .attr('title', label);
@@ -278,12 +278,12 @@ define(function(require) {
 
             var label;
             if (_.isEmpty(this.editShoppingList)) {
-                label =  _.__('orob2b.shoppinglist.actions.add_to_shopping_list', {
+                label =  _.__('oro.shoppinglist.actions.add_to_shopping_list', {
                     shoppingList: $button.data('shoppinglist').label
                 });
                 $button.data('intention', 'add');
             } else {
-                label =  _.__('orob2b.shoppinglist.actions.update_shopping_list', {
+                label =  _.__('oro.shoppinglist.actions.update_shopping_list', {
                     shoppingList: this.editShoppingList.shopping_list_label
                 });
                 $button.data('intention', 'update');

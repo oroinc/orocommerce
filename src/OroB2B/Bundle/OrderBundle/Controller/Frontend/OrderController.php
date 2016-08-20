@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
+namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -9,13 +9,12 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Controller\AbstractOrderController;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 
 class OrderController extends AbstractOrderController
 {
@@ -25,7 +24,7 @@ class OrderController extends AbstractOrderController
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
@@ -59,7 +58,7 @@ class OrderController extends AbstractOrderController
 
     /**
      * @Route("/info/{id}", name="orob2b_order_frontend_info", requirements={"id"="\d+"})
-     * @Template("OroB2BOrderBundle:Order/Frontend:info.html.twig")
+     * @Template("OroOrderBundle:Order/Frontend:info.html.twig")
      * @AclAncestor("orob2b_order_frontend_view")
      *
      * @param Order $order
@@ -79,11 +78,11 @@ class OrderController extends AbstractOrderController
 //     * Create order form
 //     *
 //     * @Route("/create", name="orob2b_order_frontend_create")
-//     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
+//     * @Template("OroOrderBundle:Order/Frontend:update.html.twig")
 //     * @Acl(
 //     *      id="orob2b_order_frontend_create",
 //     *      type="entity",
-//     *      class="OroB2BOrderBundle:Order",
+//     *      class="OroOrderBundle:Order",
 //     *      permission="CREATE",
 //     *      group_name="commerce"
 //     * )
@@ -105,11 +104,11 @@ class OrderController extends AbstractOrderController
 //     * Edit order form
 //     *
 //     * @Route("/update/{id}", name="orob2b_order_frontend_update", requirements={"id"="\d+"})
-//     * @Template("OroB2BOrderBundle:Order/Frontend:update.html.twig")
+//     * @Template("OroOrderBundle:Order/Frontend:update.html.twig")
 //     * @Acl(
 //     *      id="orob2b_order_frontend_update",
 //     *      type="entity",
-//     *      class="OroB2BOrderBundle:Order",
+//     *      class="OroOrderBundle:Order",
 //     *      permission="EDIT",
 //     *      group_name="commerce"
 //     * )
@@ -130,7 +129,7 @@ class OrderController extends AbstractOrderController
      * @Acl(
      *      id="orob2b_order_view",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="EDIT"
      * )
      *
@@ -179,7 +178,7 @@ class OrderController extends AbstractOrderController
 //                    'parameters' => ['id' => $order->getId()],
 //                ];
 //            },
-//            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
+//            $this->get('translator')->trans('oro.order.controller.order.saved.message'),
 //            null,
 //            function (Order $order, FormInterface $form, Request $request) {
 //

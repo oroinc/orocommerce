@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -13,8 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 
 class ShippingRuleDestinationType extends AbstractType
 {

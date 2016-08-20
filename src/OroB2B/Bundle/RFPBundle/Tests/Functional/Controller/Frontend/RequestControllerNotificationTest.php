@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -37,9 +36,9 @@ class RequestControllerNotificationTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
             ]
         );
 

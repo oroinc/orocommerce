@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 

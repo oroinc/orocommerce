@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -19,9 +19,9 @@ class CategoryVisibilityRepository extends EntityRepository
                 'IDENTITY(c.parentCategory) as category_parent_id',
                 'categoryVisibility.visibility'
             )
-            ->from('OroB2BCatalogBundle:Category', 'c')
+            ->from('OroCatalogBundle:Category', 'c')
             ->leftJoin(
-                'OroB2BAccountBundle:Visibility\CategoryVisibility',
+                'OroAccountBundle:Visibility\CategoryVisibility',
                 'categoryVisibility',
                 Join::WITH,
                 $queryBuilder->expr()->eq('categoryVisibility.category', 'c')

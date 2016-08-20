@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
-use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
 class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,12 +40,12 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->addressProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->eventDispatcher = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Event\ContextEventDispatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +57,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         $this->mapper = new OrderLineItemMapper(
             $this->eventDispatcher,
             $this->addressProvider,
-            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem'
+            'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         );
     }
 
@@ -69,7 +68,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProcessingClassName()
     {
-        $this->assertEquals('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', $this->mapper->getProcessingClassName());
+        $this->assertEquals('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $this->mapper->getProcessingClassName());
     }
 
     public function testMap()
@@ -99,7 +98,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
     protected function createLineItem($id, $quantity, $priceValue = null)
     {
         /** @var OrderLineItem $lineItem */
-        $lineItem = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
+        $lineItem = $this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
         $lineItem
             ->setQuantity($quantity)
             ->setOrder(new Order())
@@ -118,7 +117,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertTaxable($taxable, $id, $quantity, $priceValue)
     {
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
         $this->assertEquals($priceValue, $taxable->getPrice());

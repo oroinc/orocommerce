@@ -7,8 +7,8 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     /**
-     * @export orob2border/js/app/listener/value-changing-listener
-     * @class orob2border.app.listener.TotalsListener
+     * @export oroorder/js/app/listener/value-changing-listener
+     * @class oroorder.app.listener.TotalsListener
      */
     ValueChangingListener = {
         /**

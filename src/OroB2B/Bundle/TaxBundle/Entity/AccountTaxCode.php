@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
  * @ORM\Table(name="orob2b_tax_account_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(
@@ -33,7 +32,7 @@ use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 class AccountTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinTable(
      *      name="orob2b_tax_acc_tax_code_acc",
      *      joinColumns={
@@ -49,7 +48,7 @@ class AccountTaxCode extends AbstractTaxCode
     protected $accounts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
      *      name="orob2b_tax_acc_grp_tc_acc_grp",
      *      joinColumns={

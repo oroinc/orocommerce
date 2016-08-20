@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 {
@@ -108,7 +107,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "OroB2B\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+            'Expected argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
         );
         $data = new ArrayCollection([ new \stdClass()]);
         $this->validator->validate($data, $this->constraint);

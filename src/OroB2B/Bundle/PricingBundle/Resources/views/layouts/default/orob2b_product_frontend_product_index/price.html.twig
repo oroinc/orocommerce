@@ -2,14 +2,14 @@
     {% set attr = {
         "data-page-component-module": "oroui/js/app/components/view-component",
         "data-page-component-options": {
-            view: 'orob2bpricing/js/app/views/base-product-prices-view'
+            view: 'oropricing/js/app/views/base-product-prices-view'
         }|json_encode
     }|merge(attr|merge({
         class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.currentRowView %> mb1-md mb1-sm",
     })) %}
     <div {{ block('block_attributes') }}>
         <div data-name="price">
-            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
+            {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
             <div class="product-item__price_block"
                  data-name="prices-hint"
                  data-placement="bottom"
@@ -58,9 +58,9 @@
         </div>
         <div data-name="price-not-found">
             <% if (!_.isEmpty(model.prices)) { %>
-                {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
+                {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
             <% } else { %>
-                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
             <% } %>
         </div>
     </div>
@@ -72,7 +72,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <% if (!_.isEmpty(model.prices)) { %>
-            {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }}
+            {{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}
             <div class="product-item__price_block">
                 <% var pricesPerUnits = {};
                 _.each(model.prices, function(price) {
@@ -82,7 +82,7 @@
                     }
                 }) %>
                 <% _.each(pricesPerUnits, function(price) { %>
-                    <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': '<%= price.quantity_with_unit %>'})|raw }}">
+                    <div title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': '<%= price.quantity_with_unit %>'})|raw }}">
                         <span><%= price.formatted_price %></span> / <%= price.formatted_unit %>
                     </div>
                 <% }) %>
@@ -96,6 +96,6 @@
         class: attr.class|default('') ~ " product-item__mspr product-item__mspr_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {{ 'orob2b.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
+        {{ 'oro.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
     </div>
 {% endblock %}

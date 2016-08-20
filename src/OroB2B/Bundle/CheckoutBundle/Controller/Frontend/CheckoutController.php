@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -16,11 +16,10 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-
-use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
 class CheckoutController extends Controller
 {
@@ -41,7 +40,7 @@ class CheckoutController extends Controller
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
-     *      class="OroB2BCheckoutBundle:Checkout",
+     *      class="OroCheckoutBundle:Checkout",
      *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
@@ -147,7 +146,7 @@ class CheckoutController extends Controller
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
             $this->get('session')->getFlashBag()
-                ->add('warning', 'orob2b.checkout.order.line_items.line_item_has_no_price.message');
+                ->add('warning', 'oro.checkout.order.line_items.line_item_has_no_price.message');
         }
     }
 

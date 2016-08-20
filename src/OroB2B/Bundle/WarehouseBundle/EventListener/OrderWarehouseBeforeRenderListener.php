@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\EventListener;
+namespace Oro\Bundle\WarehouseBundle\EventListener;
 
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class OrderWarehouseBeforeRenderListener
 {

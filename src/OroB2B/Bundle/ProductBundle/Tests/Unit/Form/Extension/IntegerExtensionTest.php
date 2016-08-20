@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 
 class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
 {

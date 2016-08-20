@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Menu;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\Menu;
 
 use Knp\Menu\Util\MenuManipulator;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Menu\DatabaseBuilder;
 
 /**
  * @dbIsolation
@@ -23,7 +22,7 @@ class DatabaseBuilderTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(['OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
+        $this->loadFixtures(['Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
 
         $container = $this->getContainer();
 

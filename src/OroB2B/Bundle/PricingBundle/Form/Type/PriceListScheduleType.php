@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -35,7 +35,7 @@ class PriceListScheduleType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule',
+                'data_class' => 'Oro\Bundle\PricingBundle\Entity\PriceListSchedule',
             ]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -10,12 +10,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
-use OroB2B\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
 class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +33,7 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->defaultProductUnitProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider')
+            ->getMockBuilder('Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +57,7 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => false,
                     'mapped'   => false,
-                    'label'    => 'orob2b.catalog.category.entity_label'
+                    'label'    => 'oro.catalog.category.entity_label'
                 ]
             );
         $builder->expects($this->exactly(1))
@@ -151,6 +150,6 @@ class ProductStepOneFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createCategory($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => $id]);
     }
 }

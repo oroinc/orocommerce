@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Twig;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
-use OroB2B\Bundle\WebsiteBundle\Twig\WebsitePathExtension;
+use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
+use Oro\Bundle\WebsiteBundle\Twig\WebsitePathExtension;
 
 class WebsitePathExtensionTest extends \PHPUnit_Framework_TestCase
 {

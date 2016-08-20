@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Model;
+namespace Oro\Bundle\ShoppingListBundle\Model;
 
 class ExtendShoppingList
 {

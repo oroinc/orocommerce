@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Provider;
+namespace Oro\Bundle\AccountBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityChoicesProvider
 {
@@ -41,7 +41,7 @@ class VisibilityChoicesProvider
 
         $sourceClassReflection = new \ReflectionClass($sourceClass);
         $className = strtolower($sourceClassReflection->getShortName());
-        $translationPattern = 'orob2b.account.visibility.' . $className . '.choice.%s';
+        $translationPattern = 'oro.account.visibility.' . $className . '.choice.%s';
 
         return $this->formatChoices($translationPattern, $choices);
     }
@@ -65,12 +65,12 @@ class VisibilityChoicesProvider
 
     /**
      * @param Product $product
-     * @return null|\OroB2B\Bundle\CatalogBundle\Entity\Category
+     * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
      */
     protected function getProductCategory(Product $product)
     {
-        return $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+        return $this->registry->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->findOneByProduct($product);
     }
 

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\AbstractFrontendDatagridListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\EventListener\AbstractFrontendDatagridListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 abstract class FrontendDatagridListenerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +26,7 @@ abstract class FrontendDatagridListenerTestCase extends \PHPUnit_Framework_TestC
 
     public function setUp()
     {
-        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->datagridConfig = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()->getMock();

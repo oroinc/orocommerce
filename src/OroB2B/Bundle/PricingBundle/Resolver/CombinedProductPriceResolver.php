@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Resolver;
+namespace Oro\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CombinedProductPriceResolver
 {
@@ -76,7 +75,7 @@ class CombinedProductPriceResolver
             $combinedPriceList->setPricesCalculated(true);
             $this->getManager()->flush($combinedPriceList);
         }
-        $this->getManager()->getRepository('OroB2BPricingBundle:MinimalProductPrice')->updateMinimalPrices(
+        $this->getManager()->getRepository('OroPricingBundle:MinimalProductPrice')->updateMinimalPrices(
             $this->insertFromSelectQueryExecutor,
             $combinedPriceList,
             $product
@@ -89,7 +88,7 @@ class CombinedProductPriceResolver
     protected function getManager()
     {
         if (!$this->manager) {
-            $className = 'OroB2BPricingBundle:CombinedPriceList';
+            $className = 'OroPricingBundle:CombinedPriceList';
             $this->manager = $this->registry
                 ->getManagerForClass($className);
         }
@@ -103,7 +102,7 @@ class CombinedProductPriceResolver
     protected function getCombinedPriceListRelationsRepository()
     {
         if (!$this->combinedPriceListRelationsRepository) {
-            $priceListRelationClassName = 'OroB2BPricingBundle:CombinedPriceListToPriceList';
+            $priceListRelationClassName = 'OroPricingBundle:CombinedPriceListToPriceList';
             $this->combinedPriceListRelationsRepository = $this->registry
                 ->getManagerForClass($priceListRelationClassName)
                 ->getRepository($priceListRelationClassName);
@@ -118,7 +117,7 @@ class CombinedProductPriceResolver
     protected function getCombinedProductPriceRepository()
     {
         if (!$this->combinedProductPriceRepository) {
-            $combinedPriceClassName = 'OroB2BPricingBundle:CombinedProductPrice';
+            $combinedPriceClassName = 'OroPricingBundle:CombinedProductPrice';
             $this->combinedProductPriceRepository = $this->registry
                 ->getManagerForClass($combinedPriceClassName)
                 ->getRepository($combinedPriceClassName);

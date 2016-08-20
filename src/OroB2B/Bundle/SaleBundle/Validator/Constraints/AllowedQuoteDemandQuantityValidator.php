@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
+namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 
 class AllowedQuoteDemandQuantityValidator extends ConstraintValidator
 {

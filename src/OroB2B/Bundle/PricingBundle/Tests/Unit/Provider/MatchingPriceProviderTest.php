@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +31,7 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->productPriceProvider = $this
-            ->getMockBuilder('\OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
+            ->getMockBuilder('\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -71,13 +70,13 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         /** @var Product $product */
-        $product = $this->getEntity('\OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $product = $this->getEntity('\Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
         /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('\OroB2B\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 2]);
+        $priceList = $this->getEntity('\Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 2]);
 
         /** @var ProductUnit $productUnit */
         $productUnit = $this->getEntity(
-            '\OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+            '\Oro\Bundle\ProductBundle\Entity\ProductUnit',
             ['code' => $productUnitCode]
         );
 

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener;
+use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener;
 
 class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +32,7 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener = new DigitalProductEventListener(
             $this->doctrineHelper,
-            'OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode',
+            'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
             'digital_products_eu'
         );
 
@@ -63,14 +62,14 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['orob2b_tax___digital_products_eu' => ['value' => $this->data]]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $taxCodes = [
-            $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE1']),
-            $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE2']),
-            $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => '2']),
+            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE1']),
+            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE2']),
+            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => '2']),
         ];
         $repository->expects($this->once())->method('findByCodes')->with(['CODE1', 'CODE2', '2'])
             ->willReturn($taxCodes);
@@ -122,13 +121,13 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['orob2b_tax.digital_products_eu' => ['value' => $this->data]]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $taxCodes = [
-            $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1, 'code' => 'CODE1']),
-            $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 2, 'code' => 'CODE2']),
+            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1, 'code' => 'CODE1']),
+            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 2, 'code' => 'CODE2']),
         ];
 
         $repository->expects($this->once())->method('findBy')->with(['id' => [1, 2]])->willReturn($taxCodes);

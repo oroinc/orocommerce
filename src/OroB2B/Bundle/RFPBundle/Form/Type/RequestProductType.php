@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,11 +8,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
 class RequestProductType extends AbstractType
 {
@@ -52,22 +51,22 @@ class RequestProductType extends AbstractType
         $builder
             ->add('product', ProductSelectType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.product.entity_label',
+                'label'     => 'oro.product.entity_label',
                 'create_enabled' => false,
                 'data_parameters' => [
                     'scope' => 'rfp'
                 ]
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
-                'label'     => 'orob2b.rfp.requestproductitem.entity_plural_label',
-                'add_label' => 'orob2b.rfp.requestproductitem.add_label',
+                'label'     => 'oro.rfp.requestproductitem.entity_plural_label',
+                'add_label' => 'oro.rfp.requestproductitem.add_label',
                 'options' => [
                     'compact_units' => $options['compact_units'],
                 ],
             ])
             ->add('comment', 'textarea', [
                 'required'  => false,
-                'label'     => 'orob2b.rfp.requestproduct.comment.label',
+                'label'     => 'oro.rfp.requestproduct.comment.label',
             ])
         ;
     }
@@ -83,7 +82,7 @@ class RequestProductType extends AbstractType
             'intention'  => 'rfp_request_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => ['view' => 'orob2brfp/js/app/views/line-item-view'],
+            'page_component_options' => ['view' => 'ororfp/js/app/views/line-item-view'],
         ]);
     }
 

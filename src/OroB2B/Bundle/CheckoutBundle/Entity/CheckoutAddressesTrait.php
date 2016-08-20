@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Entity;
+namespace Oro\Bundle\CheckoutBundle\Entity;
 
 trait CheckoutAddressesTrait
 {

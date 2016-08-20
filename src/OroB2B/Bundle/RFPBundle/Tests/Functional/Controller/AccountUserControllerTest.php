@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -21,7 +20,7 @@ class AccountUserControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
         ]);
     }
 

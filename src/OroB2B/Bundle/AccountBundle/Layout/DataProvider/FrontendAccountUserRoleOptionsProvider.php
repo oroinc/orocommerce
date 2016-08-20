@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 use Symfony\Component\Translation\TranslatorInterface;
 

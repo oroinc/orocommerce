@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
 
 class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
+    const ENTITY_CLASS = 'Oro\Bundle\RFPBundle\Entity\RequestStatus';
 
     /**
      * @var RequestStatusSelectType
@@ -66,7 +66,7 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

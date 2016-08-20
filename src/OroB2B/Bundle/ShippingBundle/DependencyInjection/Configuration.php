@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\DependencyInjection;
+namespace Oro\Bundle\ShippingBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -16,7 +16,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root(OroB2BShippingExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroShippingExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,

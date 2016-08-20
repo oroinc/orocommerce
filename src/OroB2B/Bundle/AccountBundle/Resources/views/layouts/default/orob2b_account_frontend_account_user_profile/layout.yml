@@ -9,14 +9,14 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.account.frontend.title.account_user.profile'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.title.account_user.profile'
 
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user.profile'
+                label: 'oro.account.frontend.title.account_user.profile'
 
         - '@setOption':
             id: content
@@ -26,4 +26,4 @@ layout:
         - '@setOption':
             id: account_user_view_information_title
             optionName: text
-            optionValue: 'orob2b.account.frontend.sections.account_user.my_profile'
+            optionValue: 'oro.account.frontend.sections.account_user.my_profile'

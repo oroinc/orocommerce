@@ -3,7 +3,7 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
 
         - '@add':
             id: checkouts_title
@@ -12,7 +12,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'orob2b.checkout.entity_plural_label'
+                text: 'oro.checkout.entity_plural_label'
 
         - '@add':
             id: checkouts
@@ -26,5 +26,5 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.checkout.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.checkout.entity_plural_label'

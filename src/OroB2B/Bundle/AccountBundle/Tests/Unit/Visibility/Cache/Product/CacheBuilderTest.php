@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {
@@ -33,7 +33,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ProductCaseCacheBuilderInterface $customBuilder */
         $customBuilder
-            = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
+            = $this->getMock('Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
         $customBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product);

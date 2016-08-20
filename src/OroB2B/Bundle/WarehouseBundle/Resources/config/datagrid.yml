@@ -16,10 +16,10 @@ datagrid:
                     - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
         columns:
             id:
-                label:         orob2b.warehouse.id.label
+                label:         oro.warehouse.id.label
                 renderable:    false
             name:
-                label:         orob2b.warehouse.name.label
+                label:         oro.warehouse.name.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -95,16 +95,16 @@ datagrid:
                 - productId
         columns:
             warehouseName:
-                label:         orob2b.warehouse.entity_label
+                label:         oro.warehouse.entity_label
             levelQuantity:
-                label:         orob2b.warehouse.warehouseinventorylevel.quantity.label
+                label:         oro.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type: string # can't use decimal because of inappropriate formatter
                 editable:      true
             productUnit:
-                label:         orob2b.product.productunit.entity_label
+                label:         oro.product.productunit.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:      OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
         sorters:
             columns:
                 warehouseName:
@@ -130,7 +130,7 @@ datagrid:
                     - levelQuantity
                 selector: '#warehouse-inventory-level-quantities'
             requireJSModules:
-                - orob2bwarehouse/js/datagrid/builder/level-quantity-builder
+                - orowarehouse/js/datagrid/builder/level-quantity-builder
 
     warehouse-inventory-grid:
         extended_entity_name: %orob2b_warehouse.entity.warehouse_inventory_level.class%
@@ -173,47 +173,47 @@ datagrid:
             enable: true
         save_api_accessor:
             default_route_parameters:
-                className: OroB2B_Bundle_WarehouseBundle_Entity_WarehouseInventoryLevel
+                className: Oro_Bundle_WarehouseBundle_Entity_WarehouseInventoryLevel
         columns:
             sku:
-                label:           orob2b.product.sku.label
+                label:           oro.product.sku.label
             productName:
-                label:           orob2b.product.names.label
+                label:           oro.product.names.label
             inventory_status:
-                label:         orob2b.product.inventory_status.label
+                label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
                 inline_editing:
                     enable: true
                     editor:
                         view: oroform/js/app/views/editor/select-editor-view
                     save_api_accessor:
                         default_route_parameters:
-                            className: OroB2B_Bundle_ProductBundle_Entity_Product
+                            className: Oro_Bundle_ProductBundle_Entity_Product
                         route_parameters_rename_map:
                             productId: id
                 choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
             warehouseName:
-                label:              orob2b.warehouse.entity_label
+                label:              oro.warehouse.entity_label
             quantity:
-                label:           orob2b.warehouse.warehouseinventorylevel.quantity.label
+                label:           oro.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type:   decimal
                 align:           right
                 inline_editing:
                     enable: true
                     editor:
-                        view: orob2bwarehouse/js/app/views/decimals-number-editor-view
+                        view: orowarehouse/js/app/views/decimals-number-editor-view
                         view_options:
                             decimalsField: inventoryLevelPrecision
                     validation_rules:
                         DecimalsNumber:
                             decimalsField: inventoryLevelPrecision
             unit:
-                label:           orob2b.product.productunitprecision.unit.label
+                label:           oro.product.productunitprecision.unit.label
                 type:            twig
                 frontend_type:   html
-                template:        OroB2BProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:        OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
         sorters:
             columns:
                 sku:
@@ -270,4 +270,4 @@ datagrid:
                 mass_action:   true
         options:
             requireJSModules:
-                - orob2bwarehouse/js/datagrid/builder/warehouse-inventory-status-builder
+                - orowarehouse/js/datagrid/builder/warehouse-inventory-status-builder

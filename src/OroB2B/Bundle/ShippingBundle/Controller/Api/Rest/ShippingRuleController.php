@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Controller\Api\Rest;
+namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -18,8 +18,7 @@ use FOS\RestBundle\View\View;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
  * @RouteResource("shippingrules")
@@ -56,7 +55,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message'    => $this->get('translator')->trans('orob2b.shipping.notification.channel.enabled'),
+                    'message'    => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
                     'successful' => true,
                 ],
                 Codes::HTTP_OK
@@ -101,7 +100,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message'    => $this->get('translator')->trans('orob2b.shipping.notification.channel.disabled'),
+                    'message'    => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
                     'successful' => true,
                 ],
                 Codes::HTTP_OK
@@ -128,7 +127,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      id="orob2b_shipping_rule_delete",
      *      type="entity",
      *      permission="DELETE",
-     *      class="OroB2BShippingBundle:ShippingRule"
+     *      class="OroShippingBundle:ShippingRule"
      * )
      *
      * @param int $id

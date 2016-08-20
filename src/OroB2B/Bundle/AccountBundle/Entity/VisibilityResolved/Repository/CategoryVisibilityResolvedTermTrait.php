@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 
 trait CategoryVisibilityResolvedTermTrait
 {
@@ -19,7 +19,7 @@ trait CategoryVisibilityResolvedTermTrait
     protected function getCategoryVisibilityResolvedTerm(QueryBuilder $qb, $configValue)
     {
         $qb->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             Join::WITH,
             $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')
@@ -40,7 +40,7 @@ trait CategoryVisibilityResolvedTermTrait
         $configValue
     ) {
         $qb->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -67,7 +67,7 @@ trait CategoryVisibilityResolvedTermTrait
     protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Account $account, $configValue)
     {
         $qb->leftJoin(
-            'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved',
+            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             Join::WITH,
             $qb->expr()->andX(

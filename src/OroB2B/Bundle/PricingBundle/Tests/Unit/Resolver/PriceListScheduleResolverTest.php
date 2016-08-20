@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
 class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -274,7 +274,7 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
             $obj->setDeactivateAt($this->getDateTimeWithTimestamp($priceListSchedule[PriceListScheduleResolver::OFF]));
         }
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
-        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
+        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\PriceList');
         $priceList->method('getId')->willReturn($priceListSchedule['id']);
         $obj->setPriceList($priceList);
 
@@ -289,7 +289,7 @@ class PriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
     {
         $obj = new CombinedPriceListToPriceList();
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
-        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
+        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\PriceList');
         $priceList->method('getId')->willReturn($priceListId);
         $obj->setPriceList($priceList);
         return $obj;

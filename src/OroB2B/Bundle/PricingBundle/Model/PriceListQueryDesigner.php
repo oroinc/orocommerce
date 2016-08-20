@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 

@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Action;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider;
-use OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
+use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider;
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
 
 class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
 {

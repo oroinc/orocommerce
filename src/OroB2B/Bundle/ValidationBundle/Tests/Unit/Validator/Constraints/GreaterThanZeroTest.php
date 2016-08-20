@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GreaterThanValidator;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
 class GreaterThanZeroTest extends \PHPUnit_Framework_TestCase
 {

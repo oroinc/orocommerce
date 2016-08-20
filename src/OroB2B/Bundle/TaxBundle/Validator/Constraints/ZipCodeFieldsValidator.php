@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Validator\Constraints;
+namespace Oro\Bundle\TaxBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
@@ -26,7 +26,7 @@ class ZipCodeFieldsValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Entity must be instance of "%s", "%s" given',
-                    'OroB2B\Bundle\TaxBundle\Entity\ZipCode',
+                    'Oro\Bundle\TaxBundle\Entity\ZipCode',
                     is_object($entity) ? get_class($entity) : gettype($entity)
                 )
             );

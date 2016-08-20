@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Model;
+namespace Oro\Bundle\OrderBundle\Model;
 
 class ExtendOrderLineItem
 {

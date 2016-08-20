@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
+            themes: 'OroSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
 
         - '@add':
             id: quote_choice_subtotals

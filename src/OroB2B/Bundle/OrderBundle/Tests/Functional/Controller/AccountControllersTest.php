@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
@@ -25,13 +24,13 @@ class AccountControllersTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
             ]
         );
         $manager = $this->client->getContainer()->get('doctrine')->getManagerForClass(
-            'OroB2BAccountBundle:AccountUser'
+            'OroAccountBundle:AccountUser'
         );
-        $this->accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy(
+        $this->accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy(
             ['username' => LoadOrders::ACCOUNT_USER]
         );
     }

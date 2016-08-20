@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -73,7 +73,7 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
                 INNER JOIN oro_workflow_item AS wi
                   ON CAST(c.id as %s) = CAST(wi.entity_id as %s) AND wi.entity_class = :class';
         $sql = sprintf($sql, $castType, $castType);
-        $params = ['class' => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout'];
+        $params = ['class' => 'Oro\Bundle\CheckoutBundle\Entity\Checkout'];
         $types  = ['class' => 'string'];
 
         $this->logQuery($logger, $sql, $params, $types);

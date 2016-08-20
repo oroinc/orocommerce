@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
 class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_VARIANT_LINK_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink';
+    const PRODUCT_VARIANT_LINK_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink';
 
     /**
      * @var ProductVariantLinksDataTransformer

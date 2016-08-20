@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePriceLists;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Intl\Intl;
@@ -72,8 +72,8 @@ class PriceAttributePriceListControllerTest extends WebTestCase
 
         /** @var PriceAttributePriceList $priceAttributePriceList */
         $priceAttributePriceList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:PriceAttributePriceList')
-            ->getRepository('OroB2BPricingBundle:PriceAttributePriceList')
+            ->getManagerForClass('OroPricingBundle:PriceAttributePriceList')
+            ->getRepository('OroPricingBundle:PriceAttributePriceList')
             ->findOneBy(['name' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME]);
         $this->assertNotEmpty($priceAttributePriceList);
     }

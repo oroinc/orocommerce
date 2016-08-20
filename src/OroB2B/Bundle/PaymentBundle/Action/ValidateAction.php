@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Action;
+namespace Oro\Bundle\PaymentBundle\Action;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class ValidateAction extends AbstractPaymentMethodAction
 {

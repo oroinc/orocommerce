@@ -1,7 +1,7 @@
 oro_menu_config:
     items:
         menu_roots_list:
-            label: 'orob2b.menu.menuitem.roots_plural_label'
+            label: 'oro.menu.menuitem.roots_plural_label'
             route: 'orob2b_menu_item_roots'
             extras:
                 position: 90

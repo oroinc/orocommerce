@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use OroB2B\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
 
 class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
 {

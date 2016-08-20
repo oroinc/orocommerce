@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -14,17 +14,16 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -85,7 +84,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             );
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -93,14 +92,14 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
         $this->unitLabelFormatter =
-            $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->unitValueFormatter =
-            $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter')
+            $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->currencyManager = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->currencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -123,7 +122,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->expects($this->any())
             ->method('getPriceListByAccount')
             ->willReturn(
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', ['id' => $priceListId])
+                $this->getEntity('Oro\Bundle\PricingBundle\Entity\CombinedPriceList', ['id' => $priceListId])
             );
 
         $this->currencyManager
@@ -168,7 +167,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                 'expectedConfig' => [
                     'columns' => [
                         'minimum_price' => [
-                            'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
+                            'label' => 'oro.pricing.productprice.price_in_EUR.trans',
                         ],
                     ],
                     'properties' => [
@@ -198,7 +197,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                             'join' => [
                                 'left' => [
                                     [
-                                        'join' => 'OroB2BPricingBundle:MinimalProductPrice',
+                                        'join' => 'OroPricingBundle:MinimalProductPrice',
                                         'alias' => '_min_product_price',
                                         'conditionType' => 'WITH',
                                         'condition' => '_min_product_price.product = product.id ' .
@@ -265,7 +264,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         }
 
         $repository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -279,7 +278,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:CombinedProductPrice')
+            ->with('OroPricingBundle:CombinedProductPrice')
             ->willReturn($repository);
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
@@ -336,7 +335,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     public function onResultAfterDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]);
 
         $price = new Price();
         $price->setCurrency('EUR');

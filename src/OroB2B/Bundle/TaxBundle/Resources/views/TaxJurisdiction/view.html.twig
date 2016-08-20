@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_tax_jurisdiction_index'),
-        'indexLabel': 'orob2b.tax.taxjurisdiction.entity_plural_label'|trans,
+        'indexLabel': 'oro.tax.taxjurisdiction.entity_plural_label'|trans,
         'entityTitle': entity.code|default('N/A'|trans)
     } %}
 
@@ -27,15 +27,15 @@
         {{ codes|join(', ') }}
     {% endset %}
     {% set taxJurisdictionInfo %}
-        {{ UI.renderProperty('orob2b.tax.taxjurisdiction.code.label'|trans, entity.code) }}
-        {{ UI.renderProperty('orob2b.tax.taxjurisdiction.description.label'|trans, entity.description) }}
-        {{ UI.renderProperty('orob2b.tax.taxjurisdiction.region.label'|trans, entity.regionName) }}
-        {{ UI.renderProperty('orob2b.tax.taxjurisdiction.country.label'|trans, entity.country) }}
-        {{ UI.renderProperty('orob2b.tax.taxjurisdiction.zip_codes.label'|trans, zipCodes) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.region.label'|trans, entity.regionName) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.country.label'|trans, entity.country) }}
+        {{ UI.renderProperty('oro.tax.taxjurisdiction.zip_codes.label'|trans, zipCodes) }}
     {% endset %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.tax.sections.general'|trans,
+        'title': 'oro.tax.sections.general'|trans,
         'class': 'active',
         'subblocks': [
             {'data' : [taxJurisdictionInfo]},

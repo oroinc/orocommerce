@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
 use Oro\DBAL\Types\MoneyType;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -73,7 +72,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $configKey = Configuration::getConfigKeyToPriceList();
         $this->assertSame(
-            OroB2BPricingExtension::ALIAS . '.' .Configuration::COMBINED_PRICE_LIST,
+            OroPricingExtension::ALIAS . '.' .Configuration::COMBINED_PRICE_LIST,
             $configKey
         );
     }

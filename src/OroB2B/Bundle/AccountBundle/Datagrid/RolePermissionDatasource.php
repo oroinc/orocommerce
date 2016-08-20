@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Datagrid;
+namespace Oro\Bundle\AccountBundle\Datagrid;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -9,8 +9,7 @@ use Oro\Bundle\SecurityBundle\Acl\Permission\PermissionManager;
 use Oro\Bundle\UserBundle\Datagrid\RolePermissionDatasource as BaseRolePermissionDatasource;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 
 class RolePermissionDatasource extends BaseRolePermissionDatasource
 {

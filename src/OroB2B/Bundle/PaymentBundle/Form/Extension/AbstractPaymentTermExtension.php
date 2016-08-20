@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
+namespace Oro\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,9 +9,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
 {
@@ -44,7 +43,7 @@ abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
     {
         $options = array_replace_recursive([
             'paymentTermOptions' => [
-                'label'    => 'orob2b.payment.paymentterm.entity_label',
+                'label'    => 'oro.payment.paymentterm.entity_label',
                 'required' => false,
                 'mapped'   => false,
             ]

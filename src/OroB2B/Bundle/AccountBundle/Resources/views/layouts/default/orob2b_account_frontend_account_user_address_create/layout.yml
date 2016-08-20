@@ -9,10 +9,10 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - orob2b.account.frontend.address.title.create
-                - orob2b.account.frontend.address.title.subject
+                - oro.account.frontend.address.title.create
+                - oro.account.frontend.address.title.subject
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: orob2b.account.frontend.address.page_title.create
+                label: oro.account.frontend.address.page_title.create

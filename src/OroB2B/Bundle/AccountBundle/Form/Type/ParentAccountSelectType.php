@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class ParentAccountSelectType extends AbstractType
 {
@@ -23,7 +23,7 @@ class ParentAccountSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_account_parent',
                 'configs' => [
                     'component' => 'autocomplete-entity-parent',
-                    'placeholder' => 'orob2b.account.form.choose_parent'
+                    'placeholder' => 'oro.account.form.choose_parent'
                 ]
             ]
         );

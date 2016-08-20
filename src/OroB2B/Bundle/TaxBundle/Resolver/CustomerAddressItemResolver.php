@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver;
+namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class CustomerAddressItemResolver extends AbstractItemResolver
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,12 +14,11 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressType extends AbstractType
 {
@@ -132,7 +131,7 @@ abstract class AbstractOrderAddressType extends AbstractType
                 'isEditEnabled' => true,
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
+            ->setAllowedTypes('object', 'Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
 
     /**

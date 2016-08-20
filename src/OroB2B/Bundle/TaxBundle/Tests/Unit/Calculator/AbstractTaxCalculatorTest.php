@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Calculator;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
+use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 
 abstract class AbstractTaxCalculatorTest extends \PHPUnit_Framework_TestCase
 {

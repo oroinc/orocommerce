@@ -1,15 +1,15 @@
-OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode:
+Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
         code:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
             - NotBlank: ~
             - Length:
                 min: 1
                 max: 255
 
-OroB2B\Bundle\TaxBundle\Entity\Tax:
+Oro\Bundle\TaxBundle\Entity\Tax:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
@@ -18,13 +18,13 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
             - Length:
                 min: 1
                 max: 255
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         rate:
             - NotBlank: ~
             - Range:
                 min: 0
 
-OroB2B\Bundle\TaxBundle\Entity\TaxRule:
+Oro\Bundle\TaxBundle\Entity\TaxRule:
     properties:
         tax:
             - NotBlank: ~
@@ -34,7 +34,7 @@ OroB2B\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         taxJurisdiction:
             - NotBlank: ~
-OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
@@ -43,15 +43,15 @@ OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
             - Length:
                 min: 1
                 max: 255
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         zipCodes:
             - Valid: ~
         country:
             - NotBlank: ~
 
-OroB2B\Bundle\TaxBundle\Entity\ZipCode:
+Oro\Bundle\TaxBundle\Entity\ZipCode:
     constraints:
-        - OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields: ~
+        - Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields: ~
     properties:
         zipCode:
             - Length:

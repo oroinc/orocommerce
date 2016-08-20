@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Security;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
@@ -42,11 +41,11 @@ class AddressACLTest extends AbstractAddressACLTest
             ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
         ]);
     }
 

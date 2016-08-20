@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Entity;
+namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\OrderBundle\Model\ExtendOrderLineItem;
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\OrderBundle\Model\ExtendOrderLineItem;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_order_line_item")
@@ -53,7 +52,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     /**
      * @var Order
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\Order", inversedBy="lineItems")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order", inversedBy="lineItems")
      * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $order;
@@ -61,7 +60,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $product;
@@ -90,7 +89,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
     /**
      * @var ProductUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
      */
     protected $productUnit;

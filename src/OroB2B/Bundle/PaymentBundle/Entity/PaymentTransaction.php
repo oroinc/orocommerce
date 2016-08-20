@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Entity;
+namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -16,8 +15,8 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 /**
  * @ORM\Table(
@@ -26,7 +25,7 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
  *          @ORM\UniqueConstraint(name="orob2b_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
  * @Config(
  *       mode="hidden",
  *       defaultValues={
@@ -124,7 +123,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @var PaymentTransaction
      *
      * @ORM\ManyToOne(
-     *     targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction",
+     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTransaction",
      *     inversedBy="relatedPaymentTransactions"
      * )
      * @ORM\JoinColumn(name="source_payment_transaction", referencedColumnName="id", onDelete="CASCADE")
@@ -135,7 +134,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @var Collection|PaymentTransaction[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction",
+     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTransaction",
      *     mappedBy="sourcePaymentTransaction"
      * )
      */
@@ -162,7 +161,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     /**
      * @param AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $frontendOwner;

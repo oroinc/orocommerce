@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener\ORM;
+namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderListener
 {

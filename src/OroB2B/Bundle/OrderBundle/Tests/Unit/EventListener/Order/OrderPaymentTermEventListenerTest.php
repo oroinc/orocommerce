@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +26,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,10 +48,10 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account1 */
-        $account1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $account1 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
 
         /** @var Account $account2 */
-        $account2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 2]);
+        $account2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 2]);
 
         $accountUser1 = new AccountUser();
         $accountUser1->setAccount($account1);
@@ -125,7 +124,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
 
         $accountUser = new AccountUser();
         $accountUser->setAccount($account);
@@ -203,7 +202,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $accountWithoutGroup = new Account();
 
         $paymentTermWithId = $this->getEntity(
-            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             ['id' => 1]
         );
 

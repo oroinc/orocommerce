@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CompositeCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CompositeCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CacheBuilder extends CompositeCacheBuilder implements CategoryCaseCacheBuilderInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\PricingBundle\Layout\DataProvider\CurrencyProvider;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Layout\DataProvider\CurrencyProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CurrencyProviderTest extends \PHPUnit_Framework_TestCase
 {

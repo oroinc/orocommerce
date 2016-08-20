@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Calculator;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Calculator\Calculator;
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Calculator\Calculator;
+use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class CalculatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,17 +15,17 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()->getMock();
     }
 
     public function testTaxIncluded()
     {
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxIncl */
-        $taxIncl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxIncl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxExcl */
-        $taxExcl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxExcl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         $this->settingsProvider->expects($this->once())->method('isProductPricesIncludeTax')->willReturn(true);
         $taxIncl->expects($this->once())->method('calculate');
@@ -38,10 +38,10 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
     public function testTax()
     {
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxIncl */
-        $taxIncl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxIncl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxExcl */
-        $taxExcl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxExcl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         $this->settingsProvider->expects($this->once())->method('isProductPricesIncludeTax')->willReturn(false);
         $taxExcl->expects($this->once())->method('calculate');
@@ -54,10 +54,10 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
     public function testGetAmountKeyTaxIncl()
     {
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxIncl */
-        $taxIncl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxIncl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxExcl */
-        $taxExcl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxExcl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         $this->settingsProvider->expects($this->once())->method('isProductPricesIncludeTax')->willReturn(false);
         $taxExcl->expects($this->once())->method('getAmountKey');
@@ -70,10 +70,10 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
     public function testGetAmountKey()
     {
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxIncl */
-        $taxIncl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxIncl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         /** @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject $taxExcl */
-        $taxExcl = $this->getMock('OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
+        $taxExcl = $this->getMock('Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface');
 
         $this->settingsProvider->expects($this->once())->method('isProductPricesIncludeTax')->willReturn(true);
         $taxIncl->expects($this->once())->method('getAmountKey');

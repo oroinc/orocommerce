@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
 {
@@ -226,7 +225,7 @@ class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
     protected function getExtensions()
     {
         $shippingOriginType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
-        $shippingOriginType->setDataClass('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
+        $shippingOriginType->setDataClass('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse');
 
         return array_merge(
             parent::getExtensions(),

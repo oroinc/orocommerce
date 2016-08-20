@@ -1,5 +1,5 @@
 oro_api:
     entities:
-        OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
-        OroB2B\Bundle\ProductBundle\Entity\ProductUnit: ~
-        OroB2B\Bundle\ProductBundle\Entity\Product: ~
+        Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
+        Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
+        Oro\Bundle\ProductBundle\Entity\Product: ~

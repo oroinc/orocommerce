@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Form\Type\WeightType;
+use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\ShippingBundle\Model\Weight';
+    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\Weight';
 
     /** @var WeightType */
     protected $formType;

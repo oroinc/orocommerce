@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 abstract class AbstractProductAwareType extends AbstractType
 {
@@ -23,10 +23,10 @@ abstract class AbstractProductAwareType extends AbstractType
             ]
         );
 
-        $resolver->setAllowedTypes('product', ['OroB2B\Bundle\ProductBundle\Entity\Product', 'null']);
+        $resolver->setAllowedTypes('product', ['Oro\Bundle\ProductBundle\Entity\Product', 'null']);
         $resolver->setAllowedTypes(
             'product_holder',
-            ['OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface', 'null']
+            ['Oro\Bundle\ProductBundle\Model\ProductHolderInterface', 'null']
         );
         $resolver->setAllowedTypes('product_field', 'string');
     }

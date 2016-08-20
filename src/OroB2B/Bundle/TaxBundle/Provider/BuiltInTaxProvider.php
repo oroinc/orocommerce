@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace Oro\Bundle\TaxBundle\Provider;
 
 class BuiltInTaxProvider implements TaxProviderInterface
 {
     const NAME = 'built_in';
-    const LABEL = 'orob2b.tax.providers.built_in.label';
+    const LABEL = 'oro.tax.providers.built_in.label';
 
     /**
      * {@inheritdoc}

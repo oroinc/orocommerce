@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\JsTree;
+namespace Oro\Bundle\CMSBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
-use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
+use Oro\Bundle\RedirectBundle\Manager\SlugManager;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class PageTreeHandler extends AbstractTreeHandler
 {

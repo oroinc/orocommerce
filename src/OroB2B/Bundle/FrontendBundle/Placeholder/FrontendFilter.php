@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Placeholder;
+namespace Oro\Bundle\FrontendBundle\Placeholder;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class FrontendFilter
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
@@ -27,7 +27,7 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'];
+        return ['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'];
     }
 
     /**

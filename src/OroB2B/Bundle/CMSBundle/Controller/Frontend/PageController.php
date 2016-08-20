@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Controller\Frontend;
+namespace Oro\Bundle\CMSBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 class PageController extends Controller
 {

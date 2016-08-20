@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -11,12 +11,11 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
 {
@@ -91,8 +90,8 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
         }
 
         $defaultRole = $this->managerRegistry
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole')
+            ->getManagerForClass('OroAccountBundle:AccountUserRole')
+            ->getRepository('OroAccountBundle:AccountUserRole')
             ->getDefaultAccountUserRoleByWebsite($website);
 
         if (!$defaultRole) {

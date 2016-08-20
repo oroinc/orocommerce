@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -45,12 +44,12 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $invalidTotal->setValid(true);
         $invalidTotal->setSubtotal($subtotal);
 
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
+        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal');
         $manager->persist($invalidTotal);
         $manager->flush();
 
         $cpl = $this->getReference('1f');
-        $manager->getRepository('OroB2BShoppingListBundle:ShoppingListTotal')
+        $manager->getRepository('OroShoppingListBundle:ShoppingListTotal')
             ->invalidateByCpl([$cpl->getId()]);
 
         $manager->refresh($invalidTotal);
@@ -59,9 +58,9 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
 
     public function testInvalidateByAccountUsers()
     {
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
+        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal');
         /** @var ShoppingListTotalRepository $repository */
-        $repository = $manager->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+        $repository = $manager->getRepository('OroShoppingListBundle:ShoppingListTotal');
 
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $shoppingListTotal = $repository->findOneBy(['shoppingList' => $shoppingList->getId()]);

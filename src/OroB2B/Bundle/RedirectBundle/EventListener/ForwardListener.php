@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\EventListener;
+namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ForwardListener
 {
@@ -133,8 +133,8 @@ class ForwardListener
         }
 
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroB2BRedirectBundle:Slug');
-        $slug = $em->getRepository('OroB2BRedirectBundle:Slug')->findOneBy(['url' => $slugUrl]);
+        $em = $this->registry->getManagerForClass('OroRedirectBundle:Slug');
+        $slug = $em->getRepository('OroRedirectBundle:Slug')->findOneBy(['url' => $slugUrl]);
         if (!$slug) {
             return;
         }

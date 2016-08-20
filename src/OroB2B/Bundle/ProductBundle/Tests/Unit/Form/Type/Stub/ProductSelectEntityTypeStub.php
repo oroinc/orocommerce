@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductSelectEntityTypeStub extends EntityType
 {
@@ -27,7 +26,7 @@ class ProductSelectEntityTypeStub extends EntityType
             'choice_list'     => $this->choiceList,
             'query_builder'   => null,
             'create_enabled'  => false,
-            'class'           => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'class'           => 'Oro\Bundle\ProductBundle\Entity\Product',
             'data_parameters' => [],
             'property'        => 'sku',
             'configs'         => [

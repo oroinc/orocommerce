@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -29,7 +28,7 @@ class ProductRepository extends AbstractVisibilityRepository
     public function insertByCategory(InsertFromSelectQueryExecutor $executor, Website $website = null)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
 
         $websiteJoinCondition = '1 = 1';
@@ -47,15 +46,15 @@ class ProductRepository extends AbstractVisibilityRepository
             'category.id',
         ])
         ->innerJoin('category.products', 'product')
-        ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
+        ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
         ->leftJoin(
-            'OroB2BAccountBundle:Visibility\ProductVisibility',
+            'OroAccountBundle:Visibility\ProductVisibility',
             'pv',
             'WITH',
             'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
         )
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
             'cvr.category = category'
@@ -92,7 +91,7 @@ class ProductRepository extends AbstractVisibilityRepository
         );
 
         $qb = $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->createQueryBuilder('pv')
             ->select(
                 'pv.id',
@@ -180,7 +179,7 @@ class ProductRepository extends AbstractVisibilityRepository
     protected function getVisibilitiesByCategoryQb($visibility, array $categoryIds, Website $website = null)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
 
         // DQL requires condition to be presented in join, "1 = 1" is used as a dummy condition
@@ -198,9 +197,9 @@ class ProductRepository extends AbstractVisibilityRepository
             'category.id as c_id',
         ])
             ->innerJoin('category.products', 'product')
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
+            ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
             ->leftJoin(
-                'OroB2BAccountBundle:Visibility\ProductVisibility',
+                'OroAccountBundle:Visibility\ProductVisibility',
                 'pv',
                 Join::WITH,
                 'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'

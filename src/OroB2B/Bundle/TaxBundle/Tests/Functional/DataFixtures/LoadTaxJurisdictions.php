@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -10,10 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
 {
@@ -75,7 +74,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
         ];
     }
 

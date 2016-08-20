@@ -1,12 +1,12 @@
 services:
     orob2b_money_order.payment_method.money_order.config:
-        class: 'OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig'
         public: false
         arguments:
             - '@oro_config.global'
 
     orob2b_money_order.payment_method.money_order:
-        class: 'OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder'
         public: false
         arguments:
             - '@orob2b_money_order.payment_method.money_order.config'
@@ -14,7 +14,7 @@ services:
             - { name: orob2b_payment.payment_method }
 
     orob2b_money_order.payment_method.view.money_order:
-        class: 'OroB2B\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
         public: false
         arguments:
             - '@orob2b_money_order.payment_method.money_order.config'

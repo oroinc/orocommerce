@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Method\Config;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 
 class PaymentTermConfig extends AbstractPaymentConfig implements PaymentTermConfigInterface
 {
@@ -14,7 +14,7 @@ class PaymentTermConfig extends AbstractPaymentConfig implements PaymentTermConf
      */
     protected function getPaymentExtensionAlias()
     {
-        return OroB2BPaymentExtension::ALIAS;
+        return OroPaymentExtension::ALIAS;
     }
 
     /**

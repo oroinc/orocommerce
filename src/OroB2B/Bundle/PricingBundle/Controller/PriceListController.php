@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 
 class PriceListController extends Controller
 {
@@ -22,7 +21,7 @@ class PriceListController extends Controller
      * @Acl(
      *      id="orob2b_pricing_price_list_view",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceList",
+     *      class="OroPricingBundle:PriceList",
      *      permission="VIEW"
      * )
      * @param PriceList $priceList
@@ -38,7 +37,7 @@ class PriceListController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_pricing_price_list_info", requirements={"id"="\d+"})
-     * @Template("OroB2BPricingBundle:PriceList/widget:info.html.twig")
+     * @Template("OroPricingBundle:PriceList/widget:info.html.twig")
      * @AclAncestor("orob2b_pricing_price_list_view")
      * @param PriceList $priceList
      * @return array
@@ -68,11 +67,11 @@ class PriceListController extends Controller
      * Create price_list form
      *
      * @Route("/create", name="orob2b_pricing_price_list_create")
-     * @Template("OroB2BPricingBundle:PriceList:update.html.twig")
+     * @Template("OroPricingBundle:PriceList:update.html.twig")
      * @Acl(
      *      id="orob2b_pricing_price_list_create",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceList",
+     *      class="OroPricingBundle:PriceList",
      *      permission="CREATE"
      * )
      * @return array|RedirectResponse
@@ -90,7 +89,7 @@ class PriceListController extends Controller
      * @Acl(
      *      id="orob2b_pricing_price_list_update",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceList",
+     *      class="OroPricingBundle:PriceList",
      *      permission="EDIT"
      * )
      * @param PriceList $priceList
@@ -124,7 +123,7 @@ class PriceListController extends Controller
                     'parameters' => ['id' => $priceList->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message')
+            $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message')
         );
     }
 }

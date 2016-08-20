@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -24,7 +24,7 @@ class QuoteRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
             ]
         );
     }

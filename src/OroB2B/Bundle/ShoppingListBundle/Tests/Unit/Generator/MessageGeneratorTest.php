@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Generator;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Generator;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 
 class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,12 +52,12 @@ class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with('orob2b.shoppinglist.actions.add_success_message', $entitiesCount, ['%count%' => $entitiesCount])
+            ->with('oro.shoppinglist.actions.add_success_message', $entitiesCount, ['%count%' => $entitiesCount])
             ->willReturn($transChoice);
 
         $this->translator->expects($withUrl ? $this->once() : $this->never())
             ->method('trans')
-            ->with('orob2b.shoppinglist.actions.view')
+            ->with('oro.shoppinglist.actions.view')
             ->willReturn($transMessage);
 
         $this->assertEquals($expectedMessage, $this->generator->getSuccessMessage($shoppingListId, $entitiesCount));

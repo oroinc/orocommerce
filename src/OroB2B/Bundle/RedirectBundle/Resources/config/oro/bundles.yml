@@ -1,2 +1,2 @@
 bundles:
-    - { name: OroB2B\Bundle\RedirectBundle\OroB2BRedirectBundle, priority: 10 }
+    - { name: Oro\Bundle\RedirectBundle\OroRedirectBundle, priority: 10 }

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Selenium;
+namespace Oro\Bundle\CatalogBundle\Tests\Selenium;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
-
-use OroB2B\Bundle\CatalogBundle\Tests\Selenium\Pages\Categories;
+use Oro\Bundle\CatalogBundle\Tests\Selenium\Pages\Categories;
 
 class CategoriesTest extends Selenium2TestCase
 {
@@ -30,7 +29,7 @@ class CategoriesTest extends Selenium2TestCase
     public function testCreateCategories()
     {
         /** @var Categories $categories */
-        $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        $categories = $this->login()->openCategories('Oro\Bundle\CatalogBundle');
         sleep(1);
 
         // preconditions
@@ -70,7 +69,7 @@ class CategoriesTest extends Selenium2TestCase
     public function testDragAndDrop()
     {
         /** @var Categories $categories */
-        $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        $categories = $this->login()->openCategories('Oro\Bundle\CatalogBundle');
         sleep(1);
 
         /**
@@ -128,7 +127,7 @@ class CategoriesTest extends Selenium2TestCase
     public function testDeleteCategories()
     {
         /** @var Categories $categories */
-        $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        $categories = $this->login()->openCategories('Oro\Bundle\CatalogBundle');
         sleep(1);
 
         /**

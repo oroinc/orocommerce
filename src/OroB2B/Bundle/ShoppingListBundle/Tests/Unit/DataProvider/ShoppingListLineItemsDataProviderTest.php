@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 
 class ShoppingListLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,13 +35,13 @@ class ShoppingListLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         /** @var LineItem[] $lineItems */
         $lineItems = [
-            $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
+            $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
         ];
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
+        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
 
-        $repo = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())

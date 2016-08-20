@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 
 class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,13 +33,13 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getRegistryMockWithRepository();
-        $className = 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder';
+        $className = 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder';
         $this->planBuilder = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new CombinedPriceListProvider($this->registry);
-        $this->provider->setClassName('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $this->provider->setClassName('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
         $this->provider->setActivationPlanBuilder($this->planBuilder);
     }
 
@@ -64,7 +64,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
         $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
         $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList',
+            'Oro\Bundle\PricingBundle\Entity\CombinedPriceList',
             $combinedPriceList
         );
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
@@ -78,7 +78,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getCombinedPriceListDataProvider()
     {
-        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
         $priceList->expects($this->any())->method('getName')->willReturn('');
         $priceList->expects($this->any())->method('getCurrencies')->willReturn([]);
 
@@ -163,7 +163,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     {
         $priceListsRelations = [];
         foreach ($relations as $priceListData) {
-            $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
+            $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\PriceList');
             $priceList->expects($this->any())
                 ->method('getId')
                 ->willReturn($priceListData['price_list_id']);
@@ -171,7 +171,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                 ->method('getCurrencies')
                 ->willReturn($priceListData['currencies']);
 
-            $priceListRelation = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation')
+            $priceListRelation = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\BasePriceListRelation')
                 ->disableOriginalConstructor()
                 ->getMock();
             $priceListRelation->expects($this->any())

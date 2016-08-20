@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Resolver;
+namespace Oro\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTrait;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTrait;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 
 class CombinedPriceListScheduleResolver
 {
@@ -122,7 +121,7 @@ class CombinedPriceListScheduleResolver
     protected function getCombinedPriceListActivationRuleRepository()
     {
         if (!$this->activationRulesRepository) {
-            $className = 'OroB2BPricingBundle:CombinedPriceListActivationRule';
+            $className = 'OroPricingBundle:CombinedPriceListActivationRule';
             $rulesManager = $this->registry->getManagerForClass($className);
             $this->activationRulesRepository = $rulesManager->getRepository($className);
         }

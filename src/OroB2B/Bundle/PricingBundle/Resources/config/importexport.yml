@@ -3,24 +3,24 @@ services:
     orob2b_pricing.importexport.data_converter.product_price:
         public: false
         parent: oro_importexport.data_converter.configurable
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter'
 
     # Strategy
     orob2b_pricing.importexport.strategy.product_price.add_or_replace:
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy'
         public: false
         parent: oro_importexport.strategy.configurable_add_or_replace
         calls:
             - [setTranslator, ['@translator']]
 
     orob2b_pricing.importexport.strategy.product_price.reset:
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy'
         public: false
         parent: orob2b_pricing.importexport.strategy.product_price.add_or_replace
 
     # Template Fixture
     orob2b_pricing.importexport.template_fixture.product_price:
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceListFixture'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceListFixture'
         public: false
         tags:
             - { name: oro_importexport.template_fixture }
@@ -59,11 +59,11 @@ services:
     orob2b_pricing.importexport.reader.price_list_product_prices:
         public: false
         parent: oro_importexport.reader.entity
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader'
 
     orob2b_pricing.importexport.reader.price_list_additional_product_prices:
         public: false
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListAdditionalProductPriceReader'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListAdditionalProductPriceReader'
         arguments:
             - '@oro_importexport.context_registry'
             - '@doctrine'
@@ -79,6 +79,6 @@ services:
 
     # Writer
     orob2b_pricing.importexport.writer.product_price:
-        class: 'OroB2B\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter'
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter'
         public: false
         parent: oro_integration.writer.persistent_batch_writer

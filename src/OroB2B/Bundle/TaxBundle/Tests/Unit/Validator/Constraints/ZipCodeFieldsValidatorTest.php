@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
-use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
 
 class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -164,7 +164,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "OroB2B\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
+     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
      */
     public function testValidateWrongEntity()
     {

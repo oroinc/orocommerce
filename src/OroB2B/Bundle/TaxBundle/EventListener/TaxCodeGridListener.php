@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener;
+namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr;
 
@@ -100,7 +100,7 @@ class TaxCodeGridListener
      */
     protected function getColumnLabel()
     {
-        return 'orob2b.tax.taxcode.label';
+        return 'oro.tax.taxcode.label';
     }
 
     /**

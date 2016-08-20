@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type\Filter;
+namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -10,8 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPriceFilterType extends AbstractType
 {
@@ -104,8 +103,8 @@ class ProductPriceFilterType extends AbstractType
     protected function getUnitChoices()
     {
         $unitCodes = $this->registry
-            ->getManagerForClass('OroB2BProductBundle:ProductUnit')
-            ->getRepository('OroB2BProductBundle:ProductUnit')
+            ->getManagerForClass('OroProductBundle:ProductUnit')
+            ->getRepository('OroProductBundle:ProductUnit')
             ->getAllUnitCodes();
 
         $choices = [];

@@ -1,2 +1,2 @@
 bundles:
-    - OroB2BRFPBundle:Form:fields.html.twig
+    - OroRFPBundle:Form:fields.html.twig

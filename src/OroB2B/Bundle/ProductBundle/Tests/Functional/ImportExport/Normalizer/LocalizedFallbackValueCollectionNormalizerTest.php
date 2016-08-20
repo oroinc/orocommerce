@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport\Normalizer;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -287,17 +286,17 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
             'not existing collection field' => [
                 new ArrayCollection(),
                 false,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names1'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names1'],
             ],
             'not supported field' => [
                 new ArrayCollection(),
                 false,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'unitPrecisions'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'unitPrecisions'],
             ],
             'supported field' => [
                 new ArrayCollection(),
                 true,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
             ],
         ];
     }
@@ -335,36 +334,36 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     public function supportsdeDenormalizationDataProvider()
     {
         return [
-            'not a collection' => [new ArrayCollection(), 'OroB2B\Bundle\ProductBundle\Entity\Product', false],
+            'not a collection' => [new ArrayCollection(), 'Oro\Bundle\ProductBundle\Entity\Product', false],
             'not existing collection field' => [
                 new ArrayCollection(),
-                'ArrayCollection<OroB2B\Bundle\ProductBundle\Entity\Product>',
+                'ArrayCollection<Oro\Bundle\ProductBundle\Entity\Product>',
                 false,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names1'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names1'],
             ],
             'not supported field' => [
                 new ArrayCollection(),
-                'ArrayCollection<OroB2B\Bundle\ProductBundle\Entity\Product>',
+                'ArrayCollection<Oro\Bundle\ProductBundle\Entity\Product>',
                 false,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'unitPrecisions'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'unitPrecisions'],
             ],
             'supported field' => [
                 new ArrayCollection(),
-                'ArrayCollection<OroB2B\Bundle\ProductBundle\Entity\Product>',
+                'ArrayCollection<Oro\Bundle\ProductBundle\Entity\Product>',
                 true,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
             ],
             'namespace' => [
                 new ArrayCollection(),
-                'Doctrine\Common\Collections\ArrayCollection<OroB2B\Bundle\ProductBundle\Entity\Product>',
+                'Doctrine\Common\Collections\ArrayCollection<Oro\Bundle\ProductBundle\Entity\Product>',
                 true,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
             ],
             'not supported class' => [
                 new ArrayCollection(),
-                'Doctrine\Common\Collections\ArrayCollection<OroB2B\Bundle\ProductBundle\Entity\ProductUnit>',
+                'Doctrine\Common\Collections\ArrayCollection<Oro\Bundle\ProductBundle\Entity\ProductUnit>',
                 true,
-                ['entityName' => 'OroB2B\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
+                ['entityName' => 'Oro\Bundle\ProductBundle\Entity\Product', 'fieldName' => 'names'],
             ],
         ];
     }

@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\Normalizer;
+namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class InventoryStatusNormalizer implements NormalizerInterface
 {

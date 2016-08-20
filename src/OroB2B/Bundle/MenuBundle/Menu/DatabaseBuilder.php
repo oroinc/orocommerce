@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Menu;
+namespace Oro\Bundle\MenuBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 use Knp\Menu\FactoryInterface;
@@ -8,9 +8,8 @@ use Knp\Menu\FactoryInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 
 class DatabaseBuilder implements BuilderInterface
 {
@@ -110,7 +109,7 @@ class DatabaseBuilder implements BuilderInterface
      */
     protected function getRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BMenuBundle:MenuItem')
-            ->getRepository('OroB2BMenuBundle:MenuItem');
+        return $this->registry->getManagerForClass('OroMenuBundle:MenuItem')
+            ->getRepository('OroMenuBundle:MenuItem');
     }
 }

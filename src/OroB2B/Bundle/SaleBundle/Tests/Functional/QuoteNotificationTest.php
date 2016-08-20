@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional;
+namespace Oro\Bundle\SaleBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -22,8 +21,8 @@ class QuoteNotificationTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
             ]
         );
     }
@@ -38,7 +37,7 @@ class QuoteNotificationTest extends WebTestCase
                 'oro_action_widget_form',
                 [
                     'operationName' => 'orob2b_sale_notify_customer_by_email',
-                    'entityClass' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
+                    'entityClass' => 'Oro\Bundle\SaleBundle\Entity\Quote',
                     'entityId' => $quote->getId()
                 ]
             )

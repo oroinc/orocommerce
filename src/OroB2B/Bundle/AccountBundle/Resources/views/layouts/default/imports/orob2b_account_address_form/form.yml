@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/imports/orob2b_account_user_address_form/layout.html.twig'
+            themes: 'OroAccountBundle:layouts:default/imports/orob2b_account_user_address_form/layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/imports/orob2b_account_user_address_form/form.html.twig'
+            themes: 'OroAccountBundle:layouts:default/imports/orob2b_account_user_address_form/form.html.twig'
         - '@addTree':
             items:
                 __account_address_edit_container:
@@ -30,7 +30,7 @@ layout:
                     blockType: button
                     options:
                         action: submit
-                        text: orob2b.account.frontend.address.buttons.save
+                        text: oro.account.frontend.address.buttons.save
                         vars:
                             style: auto
                         attr:
@@ -39,7 +39,7 @@ layout:
                     blockType: link
                     options:
                         path: '=data["backToUrl"]'
-                        text: orob2b.account.frontend.address.buttons.cancel
+                        text: oro.account.frontend.address.buttons.cancel
                         attr:
                             'class': btn theme-btn btn-gray
             tree:

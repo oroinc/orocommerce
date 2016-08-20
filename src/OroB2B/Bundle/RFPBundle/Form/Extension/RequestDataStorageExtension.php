@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Extension;
+namespace Oro\Bundle\RFPBundle\Form\Extension;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -101,9 +100,9 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         $message = $this->container->get('templating')->render(
-            'OroB2BRFPBundle:Form/FlashBag:warning.html.twig',
+            'OroRFPBundle:Form/FlashBag:warning.html.twig',
             [
-                'message' => $this->translator->trans('orob2b.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
                 'products' => $canNotBeAddedToRFQ
             ]
         );

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
+namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 
 class RequestProductItemCollectionType extends AbstractType
 {

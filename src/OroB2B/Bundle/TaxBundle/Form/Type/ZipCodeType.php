@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\Type;
+namespace Oro\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
+use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 
 class ZipCodeType extends AbstractType
 {

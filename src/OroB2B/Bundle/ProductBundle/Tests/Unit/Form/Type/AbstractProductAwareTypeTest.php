@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\AbstractProductAwareTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\AbstractProductAwareTypeStub;
 
 class AbstractProductAwareTypeTest extends FormIntegrationTestCase
 {
@@ -58,8 +57,8 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     public function productOptionsDataProvider()
     {
         $product = new Product();
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolderWithProduct = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
 
         return [
@@ -95,8 +94,8 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     public function parentDataProvider()
     {
         $product = new Product();
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolderWithProduct = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
 
         return [

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Datagrid;
+namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Component\Config\Common\ConfigObject;
-
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class CheckoutGridAccountUserNameListener
 {
@@ -43,6 +42,6 @@ class CheckoutGridAccountUserNameListener
      */
     private function hasPermissionToViewAllPastCheckouts()
     {
-        return $this->accountUserProvider->isGrantedViewLocal('OroB2B\Bundle\CheckoutBundle\Entity\Checkout');
+        return $this->accountUserProvider->isGrantedViewLocal('Oro\Bundle\CheckoutBundle\Entity\Checkout');
     }
 }

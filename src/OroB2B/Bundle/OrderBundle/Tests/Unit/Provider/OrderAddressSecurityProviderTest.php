@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressProvider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider')
+        $this->orderAddressProvider = $this->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

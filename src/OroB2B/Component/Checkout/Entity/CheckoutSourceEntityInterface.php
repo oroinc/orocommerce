@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Checkout\Entity;
+namespace Oro\Component\Checkout\Entity;
 
 interface CheckoutSourceEntityInterface
 {

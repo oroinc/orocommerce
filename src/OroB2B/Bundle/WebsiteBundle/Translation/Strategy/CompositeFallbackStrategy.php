@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Translation\Strategy;
+namespace Oro\Bundle\WebsiteBundle\Translation\Strategy;
 
 use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface;
-
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class CompositeFallbackStrategy implements TranslationStrategyInterface
 {

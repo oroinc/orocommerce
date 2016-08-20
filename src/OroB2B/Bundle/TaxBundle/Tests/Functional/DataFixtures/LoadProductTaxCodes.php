@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
@@ -27,7 +27,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'];
+        return ['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'];
     }
 
     /**

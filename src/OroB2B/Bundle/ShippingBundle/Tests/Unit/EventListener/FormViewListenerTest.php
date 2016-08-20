@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -8,13 +8,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\EventListener\FormViewListener;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -41,7 +40,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         parent::setUp();
 
         $this->shippingOriginProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -84,7 +83,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseBundle:Warehouse', 42)
             ->willReturn(null);
 
         $event = $this->getBeforeListRenderEventMock();
@@ -102,7 +101,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseBundle:Warehouse', 42)
             ->willReturn($warehouse);
 
         $shippingOrigin = new ShippingOrigin();
@@ -127,7 +126,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseBundle:Warehouse', 42)
             ->willReturn($warehouse);
 
         $shippingOrigin = new ShippingOrigin(['region' => 'data']);
@@ -143,7 +142,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())
             ->method('render')
-            ->with('OroB2BShippingBundle:Warehouse:shipping_origin_view.html.twig', ['entity' => $shippingOrigin])
+            ->with('OroShippingBundle:Warehouse:shipping_origin_view.html.twig', ['entity' => $shippingOrigin])
             ->willReturn($renderedHtml);
 
         $event = new BeforeListRenderEvent($twig, $this->getScrollData());
@@ -209,7 +208,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BProductBundle:Product', 42)
+            ->with('OroProductBundle:Product', 42)
             ->willReturn(null);
 
         $event = $this->getBeforeListRenderEventMock();
@@ -233,7 +232,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BProductBundle:Product', 47)
+            ->with('OroProductBundle:Product', 47)
             ->willReturn($product);
 
         $mockRepo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -247,7 +246,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
-            ->with('OroB2BShippingBundle:ProductShippingOptions')
+            ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($mockRepo);
 
         $event = $this->getBeforeListRenderEventMock();
@@ -271,7 +270,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BProductBundle:Product', 47)
+            ->with('OroProductBundle:Product', 47)
             ->willReturn($product);
 
         $mockRepo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -290,7 +289,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
-            ->with('OroB2BShippingBundle:ProductShippingOptions')
+            ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($mockRepo);
 
         $renderedHtml = 'rendered_html';
@@ -300,7 +299,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $twig->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BShippingBundle:Product:shipping_options_view.html.twig',
+                'OroShippingBundle:Product:shipping_options_view.html.twig',
                 [
                     'entity' => $product,
                     'shippingOptions' => [new ProductShippingOptions(), new ProductShippingOptions()]

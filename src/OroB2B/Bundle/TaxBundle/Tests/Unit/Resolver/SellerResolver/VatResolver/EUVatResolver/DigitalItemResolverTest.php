@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EUVatResolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
 use Brick\Math\BigDecimal;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
-use OroB2B\Bundle\TaxBundle\Model\Address;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
+use Oro\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
+use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
 class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,15 +37,15 @@ class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->unitResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\UnitResolver')
+        $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rowTotalResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver')
+        $this->rowTotalResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\RowTotalResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->matcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
+        $this->matcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\CountryMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 

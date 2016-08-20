@@ -1,19 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -62,7 +62,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $visibility->setAccount($this->account);
         $visibility->setVisibility(CategoryVisibility::HIDDEN);
 
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->persist($visibility);
         $em->flush();
 
@@ -78,7 +78,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $visibility = $this->getVisibility();
         $visibility->setVisibility(CategoryVisibility::VISIBLE);
 
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
@@ -93,7 +93,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountCategoryVisibility::CATEGORY);
 
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
@@ -117,7 +117,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountCategoryVisibility::PARENT_CATEGORY);
 
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
@@ -143,7 +143,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
 
         $this->assertNotNull($this->getVisibilityResolved());
 
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
+        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
 
         $this->assertNull($this->getVisibilityResolved());
@@ -435,8 +435,8 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     protected function getResolvedVisibilities()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.category) as category',
@@ -454,8 +454,8 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     protected function getVisibilityResolved()
     {
         $em = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
-        $qb = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+        $qb = $em->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->createQueryBuilder('accountCategoryVisibilityResolved');
         $entity = $qb->select('accountCategoryVisibilityResolved', 'accountCategoryVisibility')
             ->leftJoin('accountCategoryVisibilityResolved.sourceCategoryVisibility', 'accountCategoryVisibility')
@@ -480,8 +480,8 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
      */
     protected function getVisibility()
     {
-        return $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+        return $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $this->category, 'account' => $this->account]);
     }
 

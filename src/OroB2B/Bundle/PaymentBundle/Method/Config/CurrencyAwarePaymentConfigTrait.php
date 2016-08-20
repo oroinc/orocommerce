@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Method\Config;
 
 trait CurrencyAwarePaymentConfigTrait
 {

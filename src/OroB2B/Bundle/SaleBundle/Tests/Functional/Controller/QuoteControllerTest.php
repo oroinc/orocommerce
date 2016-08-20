@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -83,7 +82,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
         ]);
     }
 
@@ -184,8 +183,8 @@ class QuoteControllerTest extends WebTestCase
 
         /** @var Quote $quote */
         $quote = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BSaleBundle:Quote')
-            ->getRepository('OroB2BSaleBundle:Quote')
+            ->getManagerForClass('OroSaleBundle:Quote')
+            ->getRepository('OroSaleBundle:Quote')
             ->find($id);
 
         $this->assertEquals(self::$qidUpdated, $quote->getQid());

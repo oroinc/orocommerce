@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -89,8 +88,8 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals($product->getId(), $result['product']['id']);
 
         $shoppingList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BShoppingListBundle:ShoppingList')
-            ->find('OroB2BShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
+            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
 
         $this->assertSubtotals($expectedSubtotals, $shoppingList);
         $this->assertArrayHasKey('shoppingList', $result);
@@ -217,7 +216,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->assertCount($expectedInitCount - 1, $shoppingList->getLineItems());
 
             $totals = $this->getContainer()->get('doctrine')
-                ->getRepository('OroB2BShoppingListBundle:ShoppingListTotal')
+                ->getRepository('OroShoppingListBundle:ShoppingListTotal')
                 ->findBy(['shoppingList' => $shoppingList]);
             $subtotalProvider = $this->getContainer()
                 ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
@@ -418,7 +417,7 @@ class AjaxLineItemControllerTest extends WebTestCase
      */
     protected function getShoppingListRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:ShoppingList');
     }
 
     /**

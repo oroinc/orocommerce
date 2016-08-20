@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Controller\Api\Rest;
+namespace Oro\Bundle\RedirectBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -34,7 +34,7 @@ class RedirectController extends FOSRestController
      * @Acl(
      *      id="orob2b_redirect_view",
      *      type="entity",
-     *      class="OroB2BRedirectBundle:Slug",
+     *      class="OroRedirectBundle:Slug",
      *      permission="VIEW"
      * )
      *

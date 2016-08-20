@@ -6,12 +6,12 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
-    var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
+    var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
 
     /**
-     * @export orob2border/js/app/views/line-item-abstract-view
+     * @export oroorder/js/app/views/line-item-abstract-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.LineItemAbstractView
+     * @class oroorder.app.views.LineItemAbstractView
      */
     LineItemAbstractView = BaseView.extend({
         /**

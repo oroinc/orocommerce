@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
             ]
         );
     }

@@ -2,12 +2,12 @@ method: getTax
 reference: simple_order
 configuration: {}
 databaseBefore:
-    'OroB2B\Bundle\OrderBundle\Entity\Order':
+    'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
             currency: 'USD'
-    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }

@@ -11,14 +11,14 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
-                - 'orob2b.account.frontend.title.account_user_role.edit'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.role.entity_plural_label'
+                - 'oro.account.frontend.title.account_user_role.edit'
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.frontend.title.page.account_user_role.edit'
+                label: 'oro.account.frontend.title.page.account_user_role.edit'
         - '@setOption':
             id: account_user_role_form_fields
             optionName: vars

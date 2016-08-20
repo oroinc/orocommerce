@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 class LoadAccountAddresses extends AbstractAddressesFixture implements DependentFixtureInterface
 {
@@ -78,7 +78,7 @@ class LoadAccountAddresses extends AbstractAddressesFixture implements Dependent
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -12,13 +12,12 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Utils\FormUtils;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class FrontendOrderLineItemType extends AbstractOrderLineItemType
 {
@@ -63,7 +62,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
 
         $resolver->setDefault(
             'page_component_options',
-            ['view' => 'orob2border/js/app/views/frontend-line-item-view']
+            ['view' => 'oroorder/js/app/views/frontend-line-item-view']
         );
     }
 
@@ -80,7 +79,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
                 ProductSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.product.entity_label',
+                    'label' => 'oro.product.entity_label',
                     'create_enabled' => false,
                     'data_parameters' => [
                         'scope' => 'order',
@@ -167,7 +166,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'label' => 'orob2b.product.productunit.entity_label',
+                'label' => 'oro.product.productunit.entity_label',
                 'required' => true,
                 'choices' => $choices
             ]

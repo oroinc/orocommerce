@@ -1,27 +1,26 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
 
 class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -47,39 +46,39 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             $this->doctrineHelper,
             $this->productClass
         );
-        $this->extension->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
+        $this->extension->setDataClass('Oro\Bundle\SaleBundle\Entity\Quote');
 
         $this->initEntityMetadata([
-            'OroB2B\Bundle\ProductBundle\Entity\ProductUnit' => [
+            'Oro\Bundle\ProductBundle\Entity\ProductUnit' => [
                 'identifier' => ['code'],
             ],
-            'OroB2B\Bundle\SaleBundle\Entity\Quote' => [
+            'Oro\Bundle\SaleBundle\Entity\Quote' => [
                 'associationMappings' => [
                     'request' => [
-                        'targetEntity' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
+                        'targetEntity' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     ],
                     'account' => [
-                        'targetEntity' => 'OroB2B\Bundle\AccountBundle\Entity\Account',
+                        'targetEntity' => 'Oro\Bundle\AccountBundle\Entity\Account',
                     ],
                     'accountUser' => [
-                        'targetEntity' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                        'targetEntity' => 'Oro\Bundle\AccountBundle\Entity\AccountUser',
                     ],
                 ],
             ],
-            'OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest' => [
+            'Oro\Bundle\SaleBundle\Entity\QuoteProductRequest' => [
                 'associationMappings' => [
                     'productUnit' => [
-                        'targetEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                        'targetEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                     ],
                     'requestProductItem' => [
-                        'targetEntity' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem',
+                        'targetEntity' => 'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
                     ],
                 ],
             ],
-            'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer' => [
+            'Oro\Bundle\SaleBundle\Entity\QuoteProductOffer' => [
                 'associationMappings' => [
                     'productUnit' => [
-                        'targetEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                        'targetEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                     ],
                 ],
             ],
@@ -94,10 +93,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     public function testBuild(array $inputData)
     {
         /* @var $request Request */
-        $request = $this->getEntity('OroB2B\Bundle\RFPBundle\Entity\Request', $inputData['requestId']);
+        $request = $this->getEntity('Oro\Bundle\RFPBundle\Entity\Request', $inputData['requestId']);
         /* @var $requestProductItem RequestProductItem */
         $requestProductItem = $this->getEntity(
-            'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem',
+            'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
             $inputData['requestProductItemId']
         );
 
@@ -106,9 +105,9 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $product = $this->getProductEntity($inputData['productSku'], $productUnit);
 
         /* @var $account Account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $inputData['accountId']);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $inputData['accountId']);
         /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $inputData['accountUserId']);
+        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $inputData['accountUserId']);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [

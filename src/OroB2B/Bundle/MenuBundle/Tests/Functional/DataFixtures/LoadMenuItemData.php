@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 class LoadMenuItemData extends AbstractFixture implements DependentFixtureInterface
 {

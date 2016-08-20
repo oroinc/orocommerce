@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
 
@@ -18,8 +18,7 @@ use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Route\Router;
-
-use OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
+use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 
 class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -122,7 +121,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProductMock($getIdCalls = 1)
     {
-        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->exactly($getIdCalls))
             ->method('getId')
             ->will($this->returnValue(self::PRODUCT_ID));
@@ -189,7 +188,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.product.controller.product.saved_and_duplicated.message')
+            ->with('oro.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup $actionGroup */

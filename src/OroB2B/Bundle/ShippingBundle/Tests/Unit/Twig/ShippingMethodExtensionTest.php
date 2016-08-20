@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
-use OroB2B\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
+use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
 
 class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extension = new ShippingMethodExtension(

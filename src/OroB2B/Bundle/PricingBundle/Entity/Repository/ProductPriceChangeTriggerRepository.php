@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 
 class ProductPriceChangeTriggerRepository extends EntityRepository
 {
@@ -41,7 +40,7 @@ class ProductPriceChangeTriggerRepository extends EntityRepository
     public function deleteAll()
     {
         $this->createQueryBuilder('productPriceChangeTrigger')
-            ->delete('OroB2BPricingBundle:ProductPriceChangeTrigger', 'productPriceChangeTrigger')
+            ->delete('OroPricingBundle:ProductPriceChangeTrigger', 'productPriceChangeTrigger')
             ->getQuery()
             ->execute();
     }

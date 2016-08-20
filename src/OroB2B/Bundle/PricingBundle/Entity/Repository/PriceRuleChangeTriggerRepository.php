@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 
 class PriceRuleChangeTriggerRepository extends EntityRepository
 {

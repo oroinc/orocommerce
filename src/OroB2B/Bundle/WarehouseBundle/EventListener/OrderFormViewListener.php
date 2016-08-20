@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\EventListener;
+namespace Oro\Bundle\WarehouseBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class OrderFormViewListener
 {
@@ -30,7 +29,7 @@ class OrderFormViewListener
     {
         if ($this->warehouseCounter->areMoreWarehouses()) {
             $template = $event->getEnvironment()->render(
-                'OroB2BWarehouseBundle:Order:update.html.twig',
+                'OroWarehouseBundle:Order:update.html.twig',
                 ['form' => $event->getFormView()]
             );
             $scrollData = $event->getScrollData();

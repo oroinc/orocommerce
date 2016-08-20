@@ -2,7 +2,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            view: 'orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view'
+            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
         },
         'data-dropdown-trigger': true,
         '~class': ' shopping-list-navigation'
@@ -42,7 +42,7 @@
                 {% set itemsCount = shoppingList.lineItems.count %}
                 {% if itemsCount %}
                     <div class="shopping-list__desc">
-                        <b>{{ shoppingList.lineItems.count }}</b> {{ 'orob2b.shoppinglist.items.label'|transchoice(itemsCount) }}
+                        <b>{{ shoppingList.lineItems.count }}</b> {{ 'oro.shoppinglist.items.label'|transchoice(itemsCount) }}
                     </div>
                 {% endif %}
             </div>

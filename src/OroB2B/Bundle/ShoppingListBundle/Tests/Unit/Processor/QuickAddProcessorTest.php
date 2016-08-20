@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Processor;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 
 class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
 {
@@ -16,7 +16,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         parent::setUp();
 
         $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
-        $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
     }
 
     public function getProcessorName()
@@ -45,10 +45,10 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             $this->returnCallback(
                 function ($shoppingListId) {
                     if (!$shoppingListId) {
-                        return $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+                        return $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
                     }
 
-                    return $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListId);
+                    return $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListId);
                 }
             )
         );
@@ -63,7 +63,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             $this->handler->expects($data ? $this->once() : $this->never())
                 ->method('createForShoppingList')
                 ->with(
-                    $this->isInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'),
+                    $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
                     $productIds,
                     $productQuantities
                 )

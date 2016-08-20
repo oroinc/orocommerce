@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
+namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\OroB2BMoneyOrderExtension;
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigWithCountryAndCurrencyTest;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigWithCountryAndCurrencyTest;
 
 class MoneyOrderConfigTest extends AbstractPaymentConfigWithCountryAndCurrencyTest
 {
@@ -52,6 +51,6 @@ class MoneyOrderConfigTest extends AbstractPaymentConfigWithCountryAndCurrencyTe
      */
     protected function getExtensionAlias()
     {
-        return OroB2BMoneyOrderExtension::ALIAS;
+        return OroMoneyOrderExtension::ALIAS;
     }
 }

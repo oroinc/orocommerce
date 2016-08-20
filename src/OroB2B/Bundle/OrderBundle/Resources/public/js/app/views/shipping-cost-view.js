@@ -4,13 +4,13 @@ define(function(require) {
     var ShippingCostView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
+    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2border/js/app/views/shipping-cost-view
+     * @export oroorder/js/app/views/shipping-cost-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.ShippingCostView
+     * @class oroorder.app.views.ShippingCostView
      */
     ShippingCostView = BaseView.extend({
         /**

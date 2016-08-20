@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
 
 class AccountUserPasswordResetHandlerTest extends AbstractAccountUserPasswordHandlerTestCase
 {
@@ -20,7 +20,7 @@ class AccountUserPasswordResetHandlerTest extends AbstractAccountUserPasswordHan
 
     public function testProcess()
     {
-        $user = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

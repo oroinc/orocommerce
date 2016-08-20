@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class QuoteProductRequestType extends AbstractType
 {
@@ -39,7 +38,7 @@ class QuoteProductRequestType extends AbstractType
                 PriceType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.sale.quoteproductrequest.price.label',
+                    'label' => 'oro.sale.quoteproductrequest.price.label',
                     'read_only' => true,
                 ]
             )
@@ -47,7 +46,7 @@ class QuoteProductRequestType extends AbstractType
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
-                    'label' => 'orob2b.product.productunit.entity_label',
+                    'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
                     'read_only' => true,
                     'compact' => $options['compact_units'],
@@ -58,7 +57,7 @@ class QuoteProductRequestType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.sale.quoteproductrequest.quantity.label',
+                    'label' => 'oro.sale.quoteproductrequest.quantity.label',
                     'read_only' => true,
                     'product_holder' => $builder->getData(),
                 ]

@@ -1,9 +1,9 @@
 parameters:
-    oro_action.helper.applications.class: OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper
+    oro_action.helper.applications.class: Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
+        class: 'Oro\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
         arguments:
             -
                 - oro_translation_jstranslation
@@ -13,7 +13,7 @@ services:
         lazy: true
 
     orob2b_frontend.listener.route_collection:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener'
+        class: 'Oro\Bundle\FrontendBundle\EventListener\RouteCollectionListener'
         arguments:
             - '%web_backend_prefix%'
         tags:
@@ -22,14 +22,14 @@ services:
         lazy: true
 
     orob2b_frontend.menu.breadcrumb_manager:
-        class: 'OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager'
+        class: 'Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager'
         public: false
         parent: oro_navigation.breadcrumb_manager
         tags:
             - {name: oro_breadcrumbs.provider}
 
     orob2b_frontend.listener.theme:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener'
+        class: 'Oro\Bundle\FrontendBundle\EventListener\ThemeListener'
         arguments:
             - '@oro_theme.registry'
             - '@orob2b_frontend.request.frontend_helper'
@@ -47,7 +47,7 @@ services:
             - '%oro_assetic.raw_configuration%'
 
     orob2b_frontend.twig_extension.demo_frontend_theme:
-        class: 'OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension'
+        class: 'Oro\Bundle\FrontendBundle\Twig\DemoThemeExtension'
         public: false
         arguments:
             - '@assetic.asset_factory'
@@ -57,24 +57,24 @@ services:
             - { name: twig.extension }
 
     orob2b_frontend.placeholder.theme_filter:
-        class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter'
+        class: 'Oro\Bundle\FrontendBundle\Placeholder\ThemeFilter'
         arguments:
             - '@oro_theme.registry'
 
     orob2b_frontend.placeholder.filter:
-        class: 'OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter'
+        class: 'Oro\Bundle\FrontendBundle\Placeholder\FrontendFilter'
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
             - '@request_stack'
 
     orob2b_frontend.request.frontend_helper:
-        class: 'OroB2B\Bundle\FrontendBundle\Request\FrontendHelper'
+        class: 'Oro\Bundle\FrontendBundle\Request\FrontendHelper'
         arguments:
             - '%web_backend_prefix%'
             - '@service_container'
 
     orob2b_frontend.activity_list.placeholder.filter:
-        class: 'OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
+        class: 'Oro\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
         arguments:
             - '@oro_activity_list.placeholder.filter'
             - '@orob2b_frontend.request.frontend_helper'
@@ -83,26 +83,26 @@ services:
             - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }
 
     orob2b_frontend.form.type.install_configuration.web:
-        class: 'OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
+        class: 'Oro\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
         public: true
         tags:
             - { name: form.type, alias: orob2b_frontend_install_configuration_web }
 
     orob2b_frontend.form.type.extension.configuration.web:
-        class: 'OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'
+        class: 'Oro\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'
         public: true
         tags:
             - { name: form.type_extension, alias: oro_installer_configuration }
 
     orob2b_frontend.listener.datagrid.bottom_toolbar:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener'
+        class: 'Oro\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener'
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: 10 }
 
     orob2b_frontend.listener.datagrid.fields:
-        class: 'OroB2B\Bundle\FrontendBundle\EventListener\DatagridFieldsListener'
+        class: 'Oro\Bundle\FrontendBundle\EventListener\DatagridFieldsListener'
         arguments:
             - '@orob2b_frontend.request.frontend_helper'
         tags:
@@ -110,7 +110,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
 
     orob2b_frontend.listener.update_migration_namespaces:
-        class: 'OroB2B\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
+        class: 'Oro\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
             - '@doctrine.dbal.default_connection'
             - '@oro_entity_config.config_manager'

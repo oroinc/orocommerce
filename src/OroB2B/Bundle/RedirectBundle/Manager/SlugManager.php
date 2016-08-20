@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Manager;
+namespace Oro\Bundle\RedirectBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class SlugManager
 {
@@ -50,7 +50,7 @@ class SlugManager
      */
     protected function getEntityManager()
     {
-        return $this->managerRegistry->getManagerForClass('OroB2BRedirectBundle:Slug');
+        return $this->managerRegistry->getManagerForClass('OroRedirectBundle:Slug');
     }
 
     /**
@@ -63,7 +63,7 @@ class SlugManager
     {
         return $this
             ->getEntityManager()
-            ->getRepository('OroB2BRedirectBundle:Slug')
+            ->getRepository('OroRedirectBundle:Slug')
             ->findOneBy(['url' => $url]);
     }
 

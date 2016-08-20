@@ -1,35 +1,35 @@
 oro_menu_config:
     items:
         products_tab:
-            label:           'orob2b.product.menu.products_tab.label'
+            label:           'oro.product.menu.products_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-briefcase
                 position:    300
 
         product_list:
-            label:           'orob2b.product.entity_plural_label'
+            label:           'oro.product.entity_plural_label'
             route:           'orob2b_product_index'
             extras:
                 position:    200
                 routes:      ['/^orob2b_product/']
-                description: 'orob2b.product.menu.product_list.description'
+                description: 'oro.product.menu.product_list.description'
 
         shortcut_product_list:
-            label:           'orob2b.product.entity_plural_label'
+            label:           'oro.product.entity_plural_label'
             route:           'orob2b_product_index'
             extras:
-                description: 'orob2b.product.menu.shortcut_product_list.description'
+                description: 'oro.product.menu.shortcut_product_list.description'
 
         shortcut_new_product:
-            label:           'orob2b.product.menu.shortcut_new_product.label'
+            label:           'oro.product.menu.shortcut_new_product.label'
             route:           'orob2b_product_create'
             extras:
-                description:    'orob2b.product.menu.shortcut_new_product.description'
+                description:    'oro.product.menu.shortcut_new_product.description'
                 isCustomAction: true
 
         frontend_product_list:
-            label:           'orob2b.product.entity_plural_label'
+            label:           'oro.product.entity_plural_label'
             route:           'orob2b_product_frontend_product_index'
             extras:
                 position:    100
@@ -57,4 +57,4 @@ oro_titles:
 
     orob2b_product_frontend_product_index: ~
     orob2b_product_frontend_product_view: '%%name%%'
-    orob2b_product_frontend_quick_add: 'orob2b.product.frontend.quick_add.title'
+    orob2b_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'

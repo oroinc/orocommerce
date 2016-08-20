@@ -1,24 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
+use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 
 abstract class AbstractPriceListCollectionAwareListener
 {

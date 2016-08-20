@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'orob2b.rfp.request.entity_label'|trans} }) %}
+{% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'oro.rfp.request.entity_label'|trans} }) %}
 
 {% set formAction = path('orob2b_rfp_request_update', { 'id': entity.id }) %}
 
@@ -9,7 +9,7 @@
     {% set breadcrumbs = {
         'entity':      entity,
         'indexPath':   path('orob2b_rfp_request_index'),
-        'indexLabel':  'orob2b.rfp.request.entity_plural_label'|trans,
+        'indexLabel':  'oro.rfp.request.entity_plural_label'|trans,
         'entityTitle': entity|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -37,7 +37,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.rfp.sections.general'|trans,
+            'title': 'oro.rfp.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
@@ -60,7 +60,7 @@
             }]
         },
         {
-            'title': 'orob2b.rfp.sections.request_products'|trans,
+            'title': 'oro.rfp.sections.request_products'|trans,
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -77,7 +77,7 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.rfp.sections.additional'|trans,
+            'title': 'oro.rfp.sections.additional'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,

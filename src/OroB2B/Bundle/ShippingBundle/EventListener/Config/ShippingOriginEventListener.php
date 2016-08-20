@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\EventListener\Config;
+namespace Oro\Bundle\ShippingBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\ShippingBundle\DependencyInjection\OroB2BShippingExtension;
-use OroB2B\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\DependencyInjection\OroShippingExtension;
+use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginEventListener
 {
@@ -30,7 +29,7 @@ class ShippingOriginEventListener
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
-        $key = OroB2BShippingExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
+        $key = OroShippingExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
         if (!array_key_exists($key, $settings)) {
             return;
         }
@@ -44,7 +43,7 @@ class ShippingOriginEventListener
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
-        $key = OroB2BShippingExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
+        $key = OroShippingExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
 
         if (empty($settings[$key]['value'])) {
             return;

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -18,7 +18,7 @@ class PriceListAccountGroupFallbackRepositoryTest extends AbstractFallbackReposi
     {
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $iterator = $this->doctrine->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback')
+        $iterator = $this->doctrine->getRepository('OroPricingBundle:PriceListAccountGroupFallback')
             ->getAccountIdentityByWebsite($website->getId());
         $this->checkExpectedAccounts($expectedAccounts, $iterator);
     }

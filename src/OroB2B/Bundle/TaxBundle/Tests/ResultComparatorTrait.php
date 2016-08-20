@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests;
+namespace Oro\Bundle\TaxBundle\Tests;
 
 use Brick\Math\BigNumber;
 
-use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\AbstractResult;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
  * @method void assertEquals($expected, $actual, $message = '')

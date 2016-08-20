@@ -14,7 +14,7 @@
         {% set saveAndDuplicateButton = UI.buttonType({
             'type': 'button',
             'class': 'btn-success main-group',
-            'label': 'orob2b.product.ui.save_and_duplicate'|trans,
+            'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'
         }) %}
         {% set html = html ~ saveAndDuplicateButton %}
@@ -30,12 +30,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_product_index'),
-            'indexLabel': 'orob2b.product.entity_plural_label'|trans,
+            'indexLabel': 'oro.product.entity_plural_label'|trans,
             'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.product.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.product.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -62,7 +62,7 @@
     ]) %}
 
     {% set generalBlock = {
-        'title': 'orob2b.product.sections.general'|trans,
+        'title': 'oro.product.sections.general'|trans,
         'class': 'active',
         'subblocks': [{
             'title': '',
@@ -93,7 +93,7 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.product.sections.additional'|trans,
+            'title': 'oro.product.sections.additional'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
@@ -108,7 +108,7 @@
     {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title' : 'orob2b.product.sections.productVariants'|trans,
+            'title' : 'oro.product.sections.productVariants'|trans,
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,

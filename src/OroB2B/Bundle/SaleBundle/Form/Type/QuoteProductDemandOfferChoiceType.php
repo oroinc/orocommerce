@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Form\Type;
+namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
@@ -53,7 +53,7 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
                         );
                         if ($value->isAllowIncrements()) {
                             $label .=  ' ' . $this->translator
-                                ->trans('orob2b.frontend.sale.quoteproductoffer.allow_increments.label');
+                                ->trans('oro.frontend.sale.quoteproductoffer.allow_increments.label');
                         }
                     }
                     return $label;

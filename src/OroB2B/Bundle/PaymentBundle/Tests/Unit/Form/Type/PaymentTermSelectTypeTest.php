@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +41,7 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals('orob2b_payment_term', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_payment_term_create', $options['create_form_route']);
                         $this->assertEquals(
-                            ['placeholder' => 'orob2b.payment.paymentterm.form.choose'],
+                            ['placeholder' => 'oro.payment.paymentterm.form.choose'],
                             $options['configs']
                         );
                         return true;

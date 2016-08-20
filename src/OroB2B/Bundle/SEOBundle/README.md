@@ -1,4 +1,4 @@
-OroB2B\Bundle\ProductBundle\OroB2BProductBundle
+Oro\Bundle\ProductBundle\OroProductBundle
 ===============================================
 
 Table of Contents
@@ -10,15 +10,15 @@ Table of Contents
 
 Description:
 ------------
-The OroB2BSEOBundle introduces SEO (Search Engine Optimization) meta tags (title, description, keywords) for different pages. These meta fields can be edited from the admin section and they are added as meta tags on pages in the frontend (customer) application.
+The OroSEOBundle introduces SEO (Search Engine Optimization) meta tags (title, description, keywords) for different pages. These meta fields can be edited from the admin section and they are added as meta tags on pages in the frontend (customer) application.
 
 Bundle responsabilities:
 ----------------------
-The OroB2BSEOBundle adds functionality both on the admin side and also on the frontend application. This is done through extension of existing entities from the platform by adding new SEO section on view/edit pages from admin side and adding meta tags on html of the configured pages.
+The OroSEOBundle adds functionality both on the admin side and also on the frontend application. This is done through extension of existing entities from the platform by adding new SEO section on view/edit pages from admin side and adding meta tags on html of the configured pages.
 The entities and their corresponding frontend pages that have been extended with this functionality are:
-- Product (OroB2BProductBundle) with admin view and edit
-- Category (OroB2BCatalogBundle) with admin edit
-- LandingPage (OroB2BCMSBundle) with admin view and edit
+- Product (OroProductBundle) with admin view and edit
+- Category (OroCatalogBundle) with admin edit
+- LandingPage (OroCMSBundle) with admin view and edit
 
 The admin functionalities:
 - provide new section on view of extended entities, section which displays the SEO fields title, description and keywords that are set for currently viewed entity
@@ -47,10 +47,10 @@ Oro\Bundle\MigrationBundle\Migration\QueryBag
 Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 Oro\Bundle\UIBundle\View\ScrollData;
 Oro\Bundle\TestFrameworkBundle\Test\WebTestCase
-OroB2B\Bundle\CatalogBundle
-OroB2B\Bundle\CMSBundle
-OroB2B\Bundle\FallbackBundle
-OroB2B\Bundle\ProductBundle
+Oro\Bundle\CatalogBundle
+Oro\Bundle\CMSBundle
+Oro\Bundle\FallbackBundle
+Oro\Bundle\ProductBundle
 Symfony\Component\Config\FileLocator
 Symfony\Component\DependencyInjection\ContainerBuilder
 Symfony\Component\DependencyInjection\Loader

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,13 +10,13 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -41,21 +41,21 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->priceRepository =
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $this->priceManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->priceManager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceRepository);
 
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceManager);
 
         $this->extension = new ProductFormExtension($registry);
@@ -76,7 +76,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 'prices',
                 ProductPriceCollectionType::NAME,
                 [
-                    'label' => 'orob2b.pricing.productprice.entity_plural_label',
+                    'label' => 'oro.pricing.productprice.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
                     'constraints' => [new UniqueProductPrices()],
@@ -241,7 +241,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createProduct($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $id);
+        return $this->createEntity('Oro\Bundle\ProductBundle\Entity\Product', $id);
     }
 
     /**
@@ -250,7 +250,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createProductPrice($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\PricingBundle\Entity\ProductPrice', $id);
+        return $this->createEntity('Oro\Bundle\PricingBundle\Entity\ProductPrice', $id);
     }
 
     /**

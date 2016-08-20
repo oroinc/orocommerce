@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -9,11 +9,10 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use OroB2B\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
 
 abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
 {

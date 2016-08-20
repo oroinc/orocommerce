@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,10 +10,9 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
@@ -50,7 +49,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BCatalogBundle:Product:category_update.html.twig', ['form' => new FormView()])
+            ->with('OroCatalogBundle:Product:category_update.html.twig', ['form' => new FormView()])
             ->willReturn('');
 
         $event->expects($this->once())
@@ -98,7 +97,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
+            ->with('OroCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackHandler;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackHandler;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->paymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

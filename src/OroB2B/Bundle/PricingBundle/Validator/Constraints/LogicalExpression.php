@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,7 +9,7 @@ class LogicalExpression extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.logical_expression.message';
+    public $message = 'oro.pricing.validators.logical_expression.message';
 
     /**
      * {@inheritdoc}

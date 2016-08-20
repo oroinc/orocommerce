@@ -24,7 +24,7 @@
         'additionalSelector': '#' ~ form.additional.vars.id
     } %}
     {% set attr = {
-        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-component',
+        'data-page-component-module': 'oroproduct/js/app/components/quick-add-component',
         'data-page-component-options': pageComponentOptions|json_encode,
         'name': 'orob2b_product_quick_add'
     }|merge(attr) %}
@@ -58,12 +58,12 @@
         'dataUrl': path('orob2b_product_frontend_quick_add_import'),
         'aCss': 'no-hash import-link download-csv-link',
         'iCss': 'cf-download',
-        'label' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+        'label' : 'oro.product.frontend.quick_add.import_from_file.title'|trans,
         'widget' : {
             'type' : 'quick-add-import',
             'options' : {
                 'dialogOptions' : {
-                    'title' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+                    'title' : 'oro.product.frontend.quick_add.import_from_file.title'|trans,
                     'modal': true,
                     'resizable': false,
                     'width': 820,

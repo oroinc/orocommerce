@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\PricingBundle\Expression\BinaryNode;
-use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
+use Oro\Bundle\PricingBundle\Expression\BinaryNode;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 
 class BinaryNodeTest extends \PHPUnit_Framework_TestCase
 {

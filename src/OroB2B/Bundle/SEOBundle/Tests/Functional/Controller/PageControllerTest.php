@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
+use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 
 /**
  * @dbIsolation
@@ -14,7 +13,7 @@ class PageControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData']);
+        $this->loadFixtures(['Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData']);
     }
 
     public function testViewLandingPage()

@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Manager;
+namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 
 class ShoppingListTotalManager
 {
@@ -128,7 +128,7 @@ class ShoppingListTotalManager
      */
     protected function getTotalRepository()
     {
-        return $this->getEntityManager()->getRepository('OroB2BShoppingListBundle:ShoppingListTotal');
+        return $this->getEntityManager()->getRepository('OroShoppingListBundle:ShoppingListTotal');
     }
 
     /**
@@ -137,7 +137,7 @@ class ShoppingListTotalManager
     protected function getEntityManager()
     {
         if (!$this->em) {
-            $this->em = $this->registry->getManagerForClass('OroB2BShoppingListBundle:ShoppingListTotal');
+            $this->em = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal');
         }
 
         return $this->em;

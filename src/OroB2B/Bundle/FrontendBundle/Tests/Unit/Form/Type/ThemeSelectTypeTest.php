@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -8,8 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
-
-use OroB2B\Bundle\FrontendBundle\Form\Type\ThemeSelectType;
+use Oro\Bundle\FrontendBundle\Form\Type\ThemeSelectType;
 
 class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

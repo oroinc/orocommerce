@@ -16,7 +16,7 @@ layout:
                 account_address_book_user_addresses_grid_title:
                     blockType: text
                     options:
-                        text: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
+                        text: 'oro.account.frontend.account_user_address_book.account_user_addresses'
                 account_address_book_user_addresses_grid:
                     blockType: datagrid
                     options:
@@ -42,5 +42,5 @@ layout:
                 route_name: orob2b_account_frontend_account_user_address_create
                 route_parameters:
                     entityId: '=data["entity"].getId()'
-                text: 'orob2b.account.address.add'
+                text: 'oro.account.address.add'
     conditions: 'context["account_user_address_count"]>=8'

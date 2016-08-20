@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\RedirectBundle\Tests\Functional\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 
 /**
  * @dbIsolation
@@ -18,7 +17,7 @@ class CallbackControllerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
     }
 
     public function testWithoutTransactionNoErrors()
@@ -75,7 +74,7 @@ class CallbackControllerTest extends WebTestCase
         );
 
         $objectManager = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
+            ->getRepository('OroPaymentBundle:PaymentTransaction');
 
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $objectManager->find($paymentTransaction->getId());

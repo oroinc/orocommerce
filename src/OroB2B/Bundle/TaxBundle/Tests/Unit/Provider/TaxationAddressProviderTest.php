@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Model\Address;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +31,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->settingsProvider = $this
-            ->getMockBuilder('\OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->getMockBuilder('\Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

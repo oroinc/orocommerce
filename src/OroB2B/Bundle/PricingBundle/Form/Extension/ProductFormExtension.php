@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,12 +9,12 @@ use Symfony\Component\Form\FormEvents;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -43,7 +43,7 @@ class ProductFormExtension extends AbstractTypeExtension
             'prices',
             ProductPriceCollectionType::NAME,
             [
-                'label' => 'orob2b.pricing.productprice.entity_plural_label',
+                'label' => 'oro.pricing.productprice.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
                 'constraints' => [new UniqueProductPrices()],
@@ -95,7 +95,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $entityManager = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice');
+        $entityManager = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
 
         // persist existing prices
         $persistedPriceIds = [];
@@ -133,7 +133,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductPriceRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice');
+        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice')
+            ->getRepository('OroPricingBundle:ProductPrice');
     }
 }

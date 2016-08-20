@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener;
 
 class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -132,7 +132,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'expectedFlashError' => 'orob2b.payment.result.error'
+                'expectedFlashError' => 'oro.payment.result.error'
             ],
             [
                 'errorAlreadyInFlashBag' => true,
@@ -144,7 +144,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'expectedFlashError' => 'orob2b.payment.result.error'
+                'expectedFlashError' => 'oro.payment.result.error'
             ]
         ];
     }

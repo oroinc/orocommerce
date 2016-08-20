@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Twig;
+namespace Oro\Bundle\ProductBundle\Twig;
 
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitLabelExtension extends \Twig_Extension
 {

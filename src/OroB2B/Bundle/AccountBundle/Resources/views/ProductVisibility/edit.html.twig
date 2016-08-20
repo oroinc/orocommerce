@@ -19,7 +19,7 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_product_index'),
-            'indexLabel': 'orob2b.product.entity_plural_label'|trans,
+            'indexLabel': 'oro.product.entity_plural_label'|trans,
             'entityTitle': UI.link({
                 'path': path('orob2b_product_view', {'id': entity.id}),
                 'label': entity.sku ~ ' - ' ~ entity.defaultName
@@ -40,7 +40,7 @@
                 {% if website %}
                     {% set content = '' %}
                     {% if form.children[website.id] is defined  %}
-                        {% include 'OroB2BAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                        {% include 'OroAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
                     {% endif %}
                 {% endif %}
             {% else %}
@@ -49,7 +49,7 @@
                     {% set content = '' %}
                     {% if form.children[website.id] is defined  %}
                         {% set content %}
-                            {% include 'OroB2BAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                            {% include 'OroAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
                         {% endset %}
                     {% endif %}
 

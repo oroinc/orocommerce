@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -8,9 +8,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\PricingBundle\Filter\PriceListsFilter;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 
 abstract class AbstractPriceListRelationDataGridListener
 {
@@ -83,7 +82,7 @@ abstract class AbstractPriceListRelationDataGridListener
         $config->addFilter(
             self::PRICE_LIST_KEY,
             [
-                'label' => 'orob2b.pricing.pricelist.entity_label',
+                'label' => 'oro.pricing.pricelist.entity_label',
                 'type' => 'price-lists',
                 'data_name' => 'price_list',
                 PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => $this->getRelationClassName(),
@@ -91,7 +90,7 @@ abstract class AbstractPriceListRelationDataGridListener
                     'field_type' => 'entity',
                     'field_options' => [
                         'multiple' => false,
-                        'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+                        'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
                         'property' => 'name'
                     ]
                 ]
@@ -107,9 +106,9 @@ abstract class AbstractPriceListRelationDataGridListener
         $config->addColumn(
             'price_lists',
             [
-                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
+                'label' => 'oro.pricing.pricelist.entity_plural_label',
                 'type' => 'twig',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/priceLists.html.twig',
+                'template' => 'OroPricingBundle:Datagrid:Column/priceLists.html.twig',
                 'frontend_type' => 'html',
                 'renderable' => false,
             ]

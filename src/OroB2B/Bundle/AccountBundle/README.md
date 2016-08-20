@@ -1,4 +1,4 @@
-OroB2BAccountBundle
+OroAccountBundle
 ====================
 
 Description:

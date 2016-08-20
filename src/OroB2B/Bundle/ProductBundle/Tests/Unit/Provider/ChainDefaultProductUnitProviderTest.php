@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,12 +34,12 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         $this->unitPrecision = new ProductUnitPrecision();
 
         $this->highPriorityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
             ->disableOriginalConstructor()
             ->setMockClassName('HighPriorityProvider')
             ->getMock();
         $this->lowPriorityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface')
             ->disableOriginalConstructor()
             ->setMockClassName('LowPriorityProvider')
             ->getMock();

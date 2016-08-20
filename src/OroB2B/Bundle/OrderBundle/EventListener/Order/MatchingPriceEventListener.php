@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 
 class MatchingPriceEventListener
 {

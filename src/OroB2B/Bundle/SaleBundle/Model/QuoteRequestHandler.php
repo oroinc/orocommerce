@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Model;
+namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\AccountBundle\Entity\Account;
 
 class QuoteRequestHandler
 {

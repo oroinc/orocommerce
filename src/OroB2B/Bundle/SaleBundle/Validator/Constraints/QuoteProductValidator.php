@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
+namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
-use OroB2B\Bundle\SaleBundle\Entity;
+use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\SaleBundle\Entity;
 
 class QuoteProductValidator extends ConstraintValidator
 {
@@ -22,7 +22,7 @@ class QuoteProductValidator extends ConstraintValidator
         if (!$quoteProduct instanceof Entity\QuoteProduct) {
             throw new UnexpectedTypeException(
                 $quoteProduct,
-                'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct'
+                'Oro\Bundle\SaleBundle\Entity\QuoteProduct'
             );
         }
 

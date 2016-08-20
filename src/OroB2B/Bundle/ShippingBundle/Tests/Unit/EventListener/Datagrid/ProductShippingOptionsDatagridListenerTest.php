@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Datagrid;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -10,17 +10,16 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
 
 class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const PRODUCT_SHIPPING_OPTIONS_CLASS = 'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions';
+    const PRODUCT_SHIPPING_OPTIONS_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions';
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
@@ -69,9 +68,9 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
             [
                 'columns' => [
                     'product_shipping_options' => [
-                        'label' => 'orob2b.shipping.datagrid.shipping_options.column.label',
+                        'label' => 'oro.shipping.datagrid.shipping_options.column.label',
                         'type' => 'twig',
-                        'template' => 'OroB2BShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+                        'template' => 'OroShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
                         'frontend_type' => 'html',
                         'renderable' => false,
                     ]
@@ -167,10 +166,10 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     protected function createShippingOptions($id, $productId)
     {
         return $this->getEntity(
-            'OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions',
+            'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions',
             [
                 'id' => $id,
-                'product' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId])
+                'product' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId])
             ]
         );
     }

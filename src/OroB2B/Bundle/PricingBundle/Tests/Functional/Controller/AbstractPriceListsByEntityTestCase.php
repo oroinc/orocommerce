@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 {
@@ -54,10 +53,10 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+                'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
             ]
         );
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
@@ -163,7 +162,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         if (is_int($identifier)) {
             return $this->getContainer()
                 ->get('doctrine')
-                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')
                 ->find($identifier);
         }
 
@@ -434,8 +433,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     protected function getDefaultWebsite()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getManagerForClass('OroWebsiteBundle:Website')
+            ->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => 'Default']);
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -153,7 +153,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertPaymentTermRepositoryCall()
     {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

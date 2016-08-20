@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsTransformer implements DataTransformerInterface
 {

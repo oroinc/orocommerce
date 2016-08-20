@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
 {

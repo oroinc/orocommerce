@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Handler;
+namespace Oro\Bundle\AccountBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

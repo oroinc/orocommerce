@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
 {
@@ -61,7 +61,7 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
     {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category');
+            ->getManagerForClass('OroCatalogBundle:Category');
 
         $em->remove($category);
         $em->flush();

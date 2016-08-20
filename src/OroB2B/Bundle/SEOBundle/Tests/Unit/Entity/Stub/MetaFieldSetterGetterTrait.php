@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
 trait MetaFieldSetterGetterTrait
 {

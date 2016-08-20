@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -9,15 +9,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class QuickAddTypeTest extends FormIntegrationTestCase
 {

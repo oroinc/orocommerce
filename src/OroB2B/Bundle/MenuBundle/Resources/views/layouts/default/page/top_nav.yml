@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BMenuBundle:layouts:default/page/top_nav.html.twig'
+            themes: 'OroMenuBundle:layouts:default/page/top_nav.html.twig'
         - '@addTree':
             items:
                 top_nav_container:

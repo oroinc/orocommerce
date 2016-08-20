@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 
 class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 {

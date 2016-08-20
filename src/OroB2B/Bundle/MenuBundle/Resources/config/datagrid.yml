@@ -17,7 +17,7 @@ datagrid:
                         - m.parent IS NULL
         columns:
             title:
-                label: orob2b.menu.menuitem.titles.label
+                label: oro.menu.menuitem.titles.label
         properties:
             id: ~
             title:

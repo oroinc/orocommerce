@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 

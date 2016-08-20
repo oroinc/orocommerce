@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -49,7 +49,7 @@ class ZipCode
      * @var TaxJurisdiction
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction",
+     *      targetEntity="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction",
      *      inversedBy="zipCodes",
      *      cascade={"persist"}
      * )

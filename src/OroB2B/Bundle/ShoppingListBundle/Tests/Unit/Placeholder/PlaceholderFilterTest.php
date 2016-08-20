@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter;
+use Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter;
 
 class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
 {

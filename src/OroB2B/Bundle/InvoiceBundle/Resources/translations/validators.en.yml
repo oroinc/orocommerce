@@ -1,4 +1,4 @@
-orob2b:
+oro:
     invoice:
         validation:
             payment_due_date_error.label: 'Payment due date should be greater that invoice date'

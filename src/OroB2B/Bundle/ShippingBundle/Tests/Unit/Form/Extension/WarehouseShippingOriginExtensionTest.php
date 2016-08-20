@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -12,14 +12,13 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -43,7 +42,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->shippingOriginProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,7 +51,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BShippingBundle:ShippingOriginWarehouse')
+            ->with('OroShippingBundle:ShippingOriginWarehouse')
             ->willReturn($this->manager);
 
         $this->extension = new WarehouseShippingOriginExtension($this->shippingOriginProvider, $this->registry);
@@ -79,7 +78,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
                 ShippingOriginWarehouseType::class,
                 [
                     'mapped' => false,
-                    'label' => 'orob2b.shipping.warehouse.section.shipping_origin'
+                    'label' => 'oro.shipping.warehouse.section.shipping_origin'
                 ]
             );
         $builder->expects($this->exactly(2))->method('addEventListener');
@@ -102,7 +101,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetData()
     {
-        $warehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse');
+        $warehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse');
         $shippingOrigin = new ShippingOrigin();
 
         $this->shippingOriginProvider->expects($this->once())
@@ -132,7 +131,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSubmitInvalidForm()
     {
-        $event = $this->createEvent($this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse'));
+        $event = $this->createEvent($this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse'));
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm();
@@ -222,7 +221,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
             $this->manager->expects($this->once())
                 ->method('persist')
-                ->with($this->isInstanceOf('OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse'))
+                ->with($this->isInstanceOf('Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse'))
                 ->willReturnCallback(function (ShippingOriginWarehouse $entity) use (&$shippingOriginWarehouse) {
                     $shippingOriginWarehouse = $entity;
                 });
@@ -254,10 +253,10 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'warehouse' => $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse')
+                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse')
             ],
             [
-                'warehouse' => $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 42]),
+                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 42]),
                 'shippingOriginWarehouse' => new ShippingOriginWarehouse()
             ]
         ];
@@ -289,7 +288,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($expects ? $this->once() : $this->never())
             ->method('getRepository')
-            ->with('OroB2BShippingBundle:ShippingOriginWarehouse')
+            ->with('OroShippingBundle:ShippingOriginWarehouse')
             ->willReturn($repository);
 
         return $repository;

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-
 use Oro\Component\Layout\ContextInterface;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 trait CheckoutAwareContextTrait
 {

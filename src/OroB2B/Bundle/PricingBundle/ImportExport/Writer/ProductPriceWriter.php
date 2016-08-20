@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\Writer;
+namespace Oro\Bundle\PricingBundle\ImportExport\Writer;
 
 use Oro\Bundle\IntegrationBundle\ImportExport\Writer\PersistentBatchWriter;
-use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
+use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 
 class ProductPriceWriter extends PersistentBatchWriter
 {

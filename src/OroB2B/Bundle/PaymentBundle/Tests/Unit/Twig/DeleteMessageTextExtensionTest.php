@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension;
-use OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension;
+use Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
 
 class DeleteMessageTextExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class DeleteMessageTextExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->deleteMessageTextGenerator =
-            $this->getMockBuilder('\OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator')
+            $this->getMockBuilder('\Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator')
                 ->disableOriginalConstructor()
                 ->getMock();
         $this->deleteMessageTextExtension = new DeleteMessageTextExtension($this->deleteMessageTextGenerator);

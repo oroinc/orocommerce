@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
-use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
+use Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
+use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 
 class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
 {

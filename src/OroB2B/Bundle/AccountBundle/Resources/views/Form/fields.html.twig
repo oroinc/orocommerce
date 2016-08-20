@@ -21,9 +21,9 @@
 {% endblock %}
 
 {% block orob2b_account_typed_address_widget %}
-    {{ form_row(form.types, {label: 'orob2b.account.accountaddress.types.label'}) }}
-    {{ form_row(form.defaults, {label: 'orob2b.account.accountaddress.defaults.label'}) }}
-    {{ form_row(form.primary, {label: 'orob2b.account.accountaddress.primary.label'}) }}
+    {{ form_row(form.types, {label: 'oro.account.accountaddress.types.label'}) }}
+    {{ form_row(form.defaults, {label: 'oro.account.accountaddress.defaults.label'}) }}
+    {{ form_row(form.primary, {label: 'oro.account.accountaddress.primary.label'}) }}
     {{ block('oro_address_rows') }}
 {%  endblock %}
 
@@ -33,20 +33,20 @@
 
 {% block oro_address_rows %}
     {{ form_row(form.id) }}
-    {{ form_row(form.label, {label: 'orob2b.account.accountaddress.label.label'}) }}
-    {{ form_row(form.namePrefix, {label: 'orob2b.account.accountaddress.name_prefix.label'}) }}
-    {{ form_row(form.firstName, {label: 'orob2b.account.accountaddress.first_name.label'}) }}
-    {{ form_row(form.middleName, {label: 'orob2b.account.accountaddress.middle_name.label'}) }}
-    {{ form_row(form.lastName, {label: 'orob2b.account.accountaddress.last_name.label'}) }}
-    {{ form_row(form.nameSuffix, {label: 'orob2b.account.accountaddress.name_suffix.label'}) }}
-    {{ form_row(form.organization, {label: 'orob2b.account.accountaddress.organization.label'}) }}
-    {{ form_row(form.country, {label: 'orob2b.account.accountaddress.country.label'}) }}
-    {{ form_row(form.street, {label: 'orob2b.account.accountaddress.street.label'}) }}
-    {{ form_row(form.street2, {label: 'orob2b.account.accountaddress.street2.label'}) }}
-    {{ form_row(form.city, {label: 'orob2b.account.accountaddress.city.label'}) }}
-    {{ form_row(form.region_text, {label: 'orob2b.account.accountaddress.region_text.label'}) }}
-    {{ form_row(form.region, {label: 'orob2b.account.accountaddress.region.label'}) }}
-    {{ form_row(form.postalCode, {label: 'orob2b.account.accountaddress.postal_code.label'}) }}
+    {{ form_row(form.label, {label: 'oro.account.accountaddress.label.label'}) }}
+    {{ form_row(form.namePrefix, {label: 'oro.account.accountaddress.name_prefix.label'}) }}
+    {{ form_row(form.firstName, {label: 'oro.account.accountaddress.first_name.label'}) }}
+    {{ form_row(form.middleName, {label: 'oro.account.accountaddress.middle_name.label'}) }}
+    {{ form_row(form.lastName, {label: 'oro.account.accountaddress.last_name.label'}) }}
+    {{ form_row(form.nameSuffix, {label: 'oro.account.accountaddress.name_suffix.label'}) }}
+    {{ form_row(form.organization, {label: 'oro.account.accountaddress.organization.label'}) }}
+    {{ form_row(form.country, {label: 'oro.account.accountaddress.country.label'}) }}
+    {{ form_row(form.street, {label: 'oro.account.accountaddress.street.label'}) }}
+    {{ form_row(form.street2, {label: 'oro.account.accountaddress.street2.label'}) }}
+    {{ form_row(form.city, {label: 'oro.account.accountaddress.city.label'}) }}
+    {{ form_row(form.region_text, {label: 'oro.account.accountaddress.region_text.label'}) }}
+    {{ form_row(form.region, {label: 'oro.account.accountaddress.region.label'}) }}
+    {{ form_row(form.postalCode, {label: 'oro.account.accountaddress.postal_code.label'}) }}
     {{ form_rest(form) }}
 {%  endblock %}
 
@@ -57,7 +57,7 @@
             disableRepeatedTypes: true
         } %}
     <span
-      data-page-component-module="orob2baccount/js/app/components/account-address-component"
+      data-page-component-module="oroaccount/js/app/components/account-address-component"
       data-page-component-options="{{ options|json_encode }}">
     {{ block('oro_collection_widget') }}
     </span>

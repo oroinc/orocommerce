@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Model;
+namespace Oro\Bundle\CatalogBundle\Model;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class CategoryUnitPrecision implements ProductUnitHolderInterface
 {

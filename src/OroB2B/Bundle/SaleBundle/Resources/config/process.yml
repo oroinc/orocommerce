@@ -3,12 +3,12 @@ definitions:
         label:   'Expire old Quotes'
         enabled: true
         order:   50
-        entity:  OroB2B\Bundle\SaleBundle\Entity\Quote
+        entity:  Oro\Bundle\SaleBundle\Entity\Quote
         actions_configuration:
             - '@create_datetime':
                 attribute: $.date
             - '@find_entities':
-                class: OroB2B\Bundle\SaleBundle\Entity\Quote
+                class: Oro\Bundle\SaleBundle\Entity\Quote
                 attribute: $.quotes
                 where:
                     and:
@@ -29,7 +29,7 @@ definitions:
         label:   'Send alerts about Requests Without Quote'
         enabled: false
         order:   50
-        entity:  OroB2B\Bundle\RFPBundle\Entity\Request
+        entity:  Oro\Bundle\RFPBundle\Entity\Request
         actions_configuration:
             - '@call_service_method':
                 attribute: $.requests

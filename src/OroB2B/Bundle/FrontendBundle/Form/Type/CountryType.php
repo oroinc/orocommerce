@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Form\Type;
+namespace Oro\Bundle\FrontendBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Form\Type\CountryType as BaseCountryType;
 

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityExtendBundle\Grid\AdditionalFieldsExtension;
 use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
-
-use OroB2B\Bundle\FrontendBundle\EventListener\DatagridFieldsListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\EventListener\DatagridFieldsListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class DatagridFieldsListenerTest extends FrontendDatagridListenerTestCase
 {

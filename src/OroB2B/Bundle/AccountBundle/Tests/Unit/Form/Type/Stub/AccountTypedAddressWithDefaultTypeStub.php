@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub;
 
 use Doctrine\ORM\EntityManager;
 
@@ -9,8 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+use Oro\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AccountTypedAddressWithDefaultTypeStub extends AbstractType
 {

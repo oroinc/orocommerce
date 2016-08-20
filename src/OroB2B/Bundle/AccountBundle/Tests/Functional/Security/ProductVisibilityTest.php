@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Security;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Security;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -22,9 +21,9 @@ class ProductVisibilityTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
 
     }
@@ -46,7 +45,7 @@ class ProductVisibilityTest extends WebTestCase
         $configManager->flush();
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
-            $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+            $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
             $this->client->request(
                 'GET',
                 $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])

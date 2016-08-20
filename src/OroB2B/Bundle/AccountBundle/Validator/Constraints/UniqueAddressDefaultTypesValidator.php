@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Validator\Constraints;
+namespace Oro\Bundle\AccountBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 class UniqueAddressDefaultTypesValidator extends ConstraintValidator
 {
@@ -28,7 +28,7 @@ class UniqueAddressDefaultTypesValidator extends ConstraintValidator
             if (!$address instanceof AbstractDefaultTypedAddress) {
                 throw new UnexpectedTypeException(
                     $value,
-                    'OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress'
+                    'Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress'
                 );
             }
 

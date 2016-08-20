@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\RequestHandler;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -9,12 +9,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,7 +63,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

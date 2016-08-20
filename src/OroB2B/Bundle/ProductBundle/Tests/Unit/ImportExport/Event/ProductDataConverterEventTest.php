@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\Event;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Event;
 
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 class ProductDataConverterEventTest extends \PHPUnit_Framework_TestCase
 {

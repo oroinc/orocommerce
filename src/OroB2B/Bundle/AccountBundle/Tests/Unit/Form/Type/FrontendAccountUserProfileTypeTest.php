@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -9,10 +9,9 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 
 class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
 {
@@ -34,7 +33,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new FrontendAccountUserProfileType();
-        $this->formType->setDataClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->formType->setDataClass('Oro\Bundle\AccountBundle\Entity\AccountUser');
     }
 
     /**

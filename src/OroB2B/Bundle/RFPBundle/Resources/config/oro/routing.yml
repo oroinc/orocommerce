@@ -1,15 +1,15 @@
 orob2b_rfp_request:
-    resource:     "@OroB2BRFPBundle/Controller/RequestController.php"
+    resource:     "@OroRFPBundle/Controller/RequestController.php"
     type:         annotation
     prefix:       /rfp/request
 
 orob2b_rfp_request_status:
-    resource:     "@OroB2BRFPBundle/Controller/RequestStatusController.php"
+    resource:     "@OroRFPBundle/Controller/RequestStatusController.php"
     type:         annotation
     prefix:       /rfp/request_status
 
 orob2b_rfp_bundle_api:
-    resource:     "@OroB2BRFPBundle/Resources/config/oro/routing_api.yml"
+    resource:     "@OroRFPBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1
@@ -18,12 +18,12 @@ orob2b_rfp_bundle_api:
         version:  latest
 
 orob2b_rfp_frontend:
-    resource: "@OroB2BRFPBundle/Controller/Frontend/RequestController.php"
+    resource: "@OroRFPBundle/Controller/Frontend/RequestController.php"
     type: annotation
     prefix: /account/rfp
     options:
         frontend: true
 orob2b_rfp_request_order:
-    resource:     "@OroB2BRFPBundle/Controller/OrderController.php"
+    resource:     "@OroRFPBundle/Controller/OrderController.php"
     type:         annotation
     prefix:       /rfp/order

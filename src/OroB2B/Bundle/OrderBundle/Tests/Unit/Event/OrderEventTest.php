@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Event;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class OrderEventTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
@@ -33,7 +32,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             $this->markTestSkipped('ProductBundle is missing');
         }
         $this->loadFixtures(
-            ['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
+            ['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']
         );
 
         $container->get('oro_importexport.field.database_helper')->onClear();
@@ -76,11 +75,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $inventoryStatus = $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
             ->find('in_stock');
 
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $entity */
+        /** @var \Oro\Bundle\ProductBundle\Entity\Product $entity */
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
 
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $result */
+        /** @var \Oro\Bundle\ProductBundle\Entity\Product $result */
         $result = $this->strategy->process($entity);
 
         foreach ($result->getNames() as $localizedFallbackValue) {
@@ -115,10 +114,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 [
                     'sku' => 'product.1',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
@@ -213,7 +212,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $inventoryStatus = $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
             ->find('in_stock');
 
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $entity */
+        /** @var \Oro\Bundle\ProductBundle\Entity\Product $entity */
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
         $entity->setOwner(
@@ -233,10 +232,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 [
                     'sku' => 'new_sku',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
@@ -244,9 +243,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                 ],
                 function ($product) {
-                    $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+                    $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
 
-                    /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+                    /** @var \Oro\Bundle\ProductBundle\Entity\Product $product */
                     $this->assertNull($product->getId());
                     $this->assertEmpty($product->getNames()->toArray());
                 },
@@ -255,10 +254,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 [
                     'sku' => 'product.4',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
                                 ['code' => 'each']
                             ),
                             'precision' => 0,
@@ -284,9 +283,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ]
                 ],
                 function ($product) {
-                    $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+                    $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
 
-                    /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+                    /** @var \Oro\Bundle\ProductBundle\Entity\Product $product */
                     $this->assertNotNull($product->getId());
                     $this->assertNotEmpty($product->getNames()->toArray());
                     $this->assertNull($product->getNames()->last()->getId());

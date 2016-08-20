@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Event;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
+use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
 class ProductGridWidgetRenderEventTest extends \PHPUnit_Framework_TestCase
 {

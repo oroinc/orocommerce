@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -15,9 +15,8 @@ use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 
 class AccountUserAddressController extends Controller
 {
@@ -49,7 +48,7 @@ class AccountUserAddressController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_address_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserAddress",
+     *      class="OroAccountBundle:AccountUserAddress",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -75,7 +74,7 @@ class AccountUserAddressController extends Controller
      * @Acl(
      *      id="orob2b_account_frontend_account_user_address_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserAddress",
+     *      class="OroAccountBundle:AccountUserAddress",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -134,7 +133,7 @@ class AccountUserAddressController extends Controller
                     ];
                 }
             },
-            $this->get('translator')->trans('orob2b.account.controller.accountuseraddress.saved.message'),
+            $this->get('translator')->trans('oro.account.controller.accountuseraddress.saved.message'),
             $handler,
             function (AccountUserAddress $accountAddress, FormInterface $form, Request $request) {
                 $url = $request->getUri();

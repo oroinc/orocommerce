@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -16,7 +16,7 @@ class DatagridListener
     {
         $leftJoins = [
             [
-                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccount',
                 'alias' => 'priceListToAccount',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccount.account = account',
@@ -38,7 +38,7 @@ class DatagridListener
     {
         $leftJoins = [
             [
-                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
                 'alias' => 'priceListToAccountGroup',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccountGroup.accountGroup = account_group',
@@ -69,7 +69,7 @@ class DatagridListener
         }
 
         // column
-        $column = ['label' => 'orob2b.pricing.pricelist.entity_label'];
+        $column = ['label' => 'oro.pricing.pricelist.entity_label'];
         $this->addConfigElement($config, '[columns]', $column, self::PRICE_COLUMN);
 
         // sorter
@@ -83,7 +83,7 @@ class DatagridListener
             'options' => [
                 'field_type' => 'entity',
                 'field_options' => [
-                    'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+                    'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
                     'property' => 'name',
                 ]
             ]

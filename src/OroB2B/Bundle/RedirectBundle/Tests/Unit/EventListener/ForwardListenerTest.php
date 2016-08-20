@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RedirectBundle\Test\Unit\EventListener;
+namespace Oro\Bundle\RedirectBundle\Test\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Bundle\RedirectBundle\EventListener\ForwardListener;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\EventListener\ForwardListener;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +48,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -260,12 +260,12 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BRedirectBundle:Slug')
+            ->with('OroRedirectBundle:Slug')
             ->will($this->returnValue($slugRepository));
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BRedirectBundle:Slug')
+            ->with('OroRedirectBundle:Slug')
             ->will($this->returnValue($em));
     }
 

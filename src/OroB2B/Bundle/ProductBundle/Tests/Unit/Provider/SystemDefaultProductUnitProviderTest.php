@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
 
 class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +35,7 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValueMap($map));
 
         $productUnitRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -50,13 +50,13 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->willReturn($productUnitRepository);
 
         $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BProductBundle:ProductUnit')
+            ->with('OroProductBundle:ProductUnit')
             ->willReturn($manager);
 
         $this->expectedUnitPrecision = new ProductUnitPrecision();

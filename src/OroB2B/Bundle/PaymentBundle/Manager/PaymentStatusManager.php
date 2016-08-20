@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Manager;
+namespace Oro\Bundle\PaymentBundle\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentStatus;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentStatusManager
 {

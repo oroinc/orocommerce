@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
+use Oro\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -76,7 +75,7 @@ class AccountUserTest extends AbstractUserTest
         // createAccount is triggered on prePersist event
         $user->createAccount();
         $account = $user->getAccount();
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $account);
+        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\Account', $account);
         $this->assertEquals($organization, $account->getOrganization());
         $this->assertEquals('John Doe', $account->getName());
 

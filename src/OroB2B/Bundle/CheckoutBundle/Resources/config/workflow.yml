@@ -1,7 +1,7 @@
 workflows:
     b2b_flow_checkout:
         label: Checkout
-        entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+        entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
         start_step: enter_billing_address
         steps_display_ordered: true
@@ -35,7 +35,7 @@ workflows:
                 type: entity
                 label: Shipping Rule Configuration
                 options:
-                    class: OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
+                    class: Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -76,7 +76,7 @@ workflows:
                 type: entity
                 label: Instance of Order entity
                 options:
-                    class: OroB2B\Bundle\OrderBundle\Entity\Order
+                    class: Oro\Bundle\OrderBundle\Entity\Order
         steps:
             enter_billing_address:
                 label: Billing Information
@@ -139,7 +139,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
+                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
                                         validationGroups: ['Default', 'Frontend', 'PersonInfo']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
@@ -171,7 +171,7 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
+                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
                                         validationGroups: ['Default', 'Frontend']
                         save_shipping_address:
                             options:
@@ -188,7 +188,7 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                    page_component_module: 'orob2bcheckout/js/app/components/shipping-transition-button-component'
+                    page_component_module: 'orocheckout/js/app/components/shipping-transition-button-component'
                 form_options:
                     init_actions:
                         - '@call_service_method':
@@ -204,7 +204,7 @@ workflows:
                         shipping_rule_config:
                             form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
                             options:
-                                class: 'OroB2BShippingBundle:ShippingRuleConfiguration'
+                                class: 'OroShippingBundle:ShippingRuleConfiguration'
                                 multiple: false
                                 constraints:
                                     - NotBlank: ~
@@ -216,7 +216,7 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                    page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
+                    page_component_module: 'orocheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     form_init:
                         - '@assign_value': [$payment_validate, true]
@@ -328,7 +328,7 @@ workflows:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
                 conditions:
@@ -388,7 +388,7 @@ workflows:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
                 conditions:
@@ -428,7 +428,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_shipping_methods':
@@ -436,7 +436,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@shipping_method_supports':
-                        message: orob2b.checkout.workflow.condition.shipping_method_supports.message
+                        message: oro.checkout.workflow.condition.shipping_method_supports.message
                         parameters:
                             entity: $checkout
                             shipping_rule_config: $shipping_rule_config
@@ -452,7 +452,7 @@ workflows:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_payment_methods':
@@ -473,7 +473,7 @@ workflows:
                         conditions:
                             '@equal': [$payment_validate, true]
                         actions:
-                            - '@assign_constant_value': [$.result.validateAction, OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                            - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                             - '@assign_url':
                                 attribute: $.result.successUrl
                                 route: orob2b_checkout_frontend_checkout
@@ -503,7 +503,7 @@ workflows:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
-                            message: orob2b.checkout.workflow.condition.order_line_item_has_count.message
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
                         - '@not':
@@ -563,7 +563,7 @@ workflows:
                     - '@flush_entity': $.result.shippingAddress
                     - '@create_entity':
                         attribute: $order
-                        class: OroB2B\Bundle\OrderBundle\Entity\Order
+                        class: Oro\Bundle\OrderBundle\Entity\Order
                         data:
                             website: $checkout.website
                             currency: $checkout.currency
@@ -674,7 +674,7 @@ workflows:
                                 identifier: $.result.typeBillingName
                             - '@create_entity':
                                 attribute: $.result.customerBillingAddress
-                                class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                class: Oro\Bundle\AccountBundle\Entity\AccountUserAddress
                                 data:
                                     frontendOwner: $checkout.accountUser
                                     owner: $checkout.owner
@@ -724,7 +724,7 @@ workflows:
                                 actions:
                                     - '@create_entity':
                                         attribute: $.result.customerShippingAddress
-                                        class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                        class: Oro\Bundle\AccountBundle\Entity\AccountUserAddress
                                         data:
                                             frontendOwner: $checkout.accountUser
                                             owner: $checkout.owner

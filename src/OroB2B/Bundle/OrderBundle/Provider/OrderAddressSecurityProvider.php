@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Provider;
+namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderAddressSecurityProvider
 {

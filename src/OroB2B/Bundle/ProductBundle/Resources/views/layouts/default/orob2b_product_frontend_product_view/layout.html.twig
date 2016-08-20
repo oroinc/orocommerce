@@ -3,7 +3,7 @@
     {% set attr = {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            view: 'orob2bproduct/js/app/views/base-product-view',
+            view: 'oroproduct/js/app/views/base-product-view',
             modelAttr: product
         }|json_encode,
         'data-layout': 'separate'
@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block _product_image_widget %}
-    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     <!-- START Product Gallery -->
     <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
         <div class="product-gallery product-gallery_vertical">
@@ -36,7 +36,7 @@
                              {% if productImage %}
                                  data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                                  {% set options = {
-                                    widgetModule: 'orob2bproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                                    widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',
                                     widgetName: 'elevateZoom',
                                     scrollZoom: true,
                                     zoomWindowWidth: 630,
@@ -107,7 +107,7 @@
 
 {% block _product_specification_sku_widget %}
     <div>
-        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
     </div>
 {% endblock %}
 

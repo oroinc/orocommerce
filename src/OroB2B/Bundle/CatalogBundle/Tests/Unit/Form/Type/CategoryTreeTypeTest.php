@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 
 class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const ENTITY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
 
     /**
      * @var CategoryTreeType

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
+namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,7 +9,7 @@ class QuoteProduct extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.sale.quoteproduct.product.blank';
+    public $message = 'oro.sale.quoteproduct.product.blank';
 
     /**
      * @var string

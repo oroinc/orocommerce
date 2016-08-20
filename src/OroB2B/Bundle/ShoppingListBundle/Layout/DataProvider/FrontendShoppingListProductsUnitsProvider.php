@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendShoppingListProductsUnitsProvider
 {
@@ -57,8 +57,8 @@ class FrontendShoppingListProductsUnitsProvider
             }
         );
 
-        return $this->registry->getManagerForClass('OroB2BProductBundle:ProductUnit')
-            ->getRepository('OroB2BProductBundle:ProductUnit')
+        return $this->registry->getManagerForClass('OroProductBundle:ProductUnit')
+            ->getRepository('OroProductBundle:ProductUnit')
             ->getProductsUnits($products->toArray());
     }
 }

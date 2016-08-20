@@ -7,29 +7,29 @@ configuration:
     start_calculation_with: row_total
     product_prices_include_tax: false
 databaseBefore:
-    'OroB2B\Bundle\OrderBundle\Entity\Order':
+    'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             currency: 'USD'
             billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'CA-ON' } }
             shippingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
                     country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
                     region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'CA-ON' } }
-    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
             product: { reference: product.1 }
-    'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction':
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         canada_ontario_jurisdiction:
             code: { property_value: canada_on_jurisdiction_code }
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
@@ -38,17 +38,17 @@ databaseBefore:
             code: { property_value: canada_ns_jurisdiction_code }
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'CA' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'CA-NS' } }
-    'OroB2B\Bundle\TaxBundle\Entity\TaxRule':
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.TAX1:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: canada_ontario_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX2:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: canada_nova_scotia_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX2 }
-            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '87.95'  # 79.95 + 8

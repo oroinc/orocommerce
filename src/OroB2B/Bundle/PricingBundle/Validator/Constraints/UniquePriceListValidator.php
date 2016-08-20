@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class UniquePriceListValidator extends ConstraintValidator
 {

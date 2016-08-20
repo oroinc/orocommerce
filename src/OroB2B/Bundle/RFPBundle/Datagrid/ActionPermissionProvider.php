@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Datagrid;
+namespace Oro\Bundle\RFPBundle\Datagrid;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;

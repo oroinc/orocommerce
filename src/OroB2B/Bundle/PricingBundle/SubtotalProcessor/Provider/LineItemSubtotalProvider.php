@@ -1,28 +1,27 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider;
+namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
     SubtotalCacheAwareInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'orob2b.pricing.subtotals.subtotal';
+    const NAME = 'oro.pricing.subtotals.subtotal';
 
     /** @var TranslatorInterface */
     protected $translator;

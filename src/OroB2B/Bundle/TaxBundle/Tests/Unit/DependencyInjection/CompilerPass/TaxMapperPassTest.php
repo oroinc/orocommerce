@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use OroB2B\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
 
 class TaxMapperPassTest extends \PHPUnit_Framework_TestCase
 {

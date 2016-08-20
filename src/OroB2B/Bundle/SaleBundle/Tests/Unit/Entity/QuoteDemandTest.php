@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteDemandTest extends AbstractTest
 {
@@ -54,7 +53,7 @@ class QuoteDemandTest extends AbstractTest
     public function testSourceDocument()
     {
         /** @var Quote $quote */
-        $quote = $this->getEntity('OroB2B\Bundle\SaleBundle\Entity\Quote', ['id' => 1, 'poNumber' => 'PO123']);
+        $quote = $this->getEntity('Oro\Bundle\SaleBundle\Entity\Quote', ['id' => 1, 'poNumber' => 'PO123']);
         $demand = new QuoteDemand();
         $demand->setQuote($quote);
 

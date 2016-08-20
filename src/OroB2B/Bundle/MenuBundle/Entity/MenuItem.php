@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Entity;
+namespace Oro\Bundle\MenuBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,14 +10,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
-use OroB2B\Component\Tree\Entity\TreeTrait;
+use Oro\Bundle\MenuBundle\Model\ExtendMenuItem;
+use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_menu_item")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository")
- * @ORM\EntityListeners({ "OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
+ * @ORM\Entity(repositoryClass="Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository")
+ * @ORM\EntityListeners({ "Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      routeName="orob2b_menu_item_roots",

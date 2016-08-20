@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\FreightClass;
-use OroB2B\Bundle\ShippingBundle\Entity\LengthUnit;
-use OroB2B\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Model\Dimensions;
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
 {
@@ -88,7 +87,7 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->entity->loadWeight();
 
         $weight = $this->entity->getWeight();
-        $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\Weight', $weight);
+        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Weight', $weight);
         $this->assertEquals($value, $weight->getValue());
         $this->assertSame($unit, $weight->getUnit());
 
@@ -128,7 +127,7 @@ class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->entity->loadDimensions();
 
         $dimensions = $this->entity->getDimensions();
-        $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Model\Dimensions', $dimensions);
+        $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\Dimensions', $dimensions);
         $this->assertEquals($length, $dimensions->getValue()->getLength());
         $this->assertEquals($width, $dimensions->getValue()->getWidth());
         $this->assertEquals($height, $dimensions->getValue()->getHeight());

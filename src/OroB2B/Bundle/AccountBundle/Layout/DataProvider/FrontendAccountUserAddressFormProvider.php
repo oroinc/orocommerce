@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
 
 class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -11,11 +11,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
-
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
 {
@@ -60,7 +59,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
             ->with('TestWebsiteClass', self::WEBSITE_ID)
             ->willReturn($website);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -84,7 +83,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
             ->willReturn($em);
 
         /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
-        $websiteProvider = $this->getMock('OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider = $this->getMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
         $websiteProvider->expects($this->any())
             ->method('getWebsites')
             ->willReturn([$website]);

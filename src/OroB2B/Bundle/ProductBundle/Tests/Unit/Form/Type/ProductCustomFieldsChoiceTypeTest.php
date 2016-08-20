@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
-use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
 {
@@ -45,7 +45,7 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->customFieldProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

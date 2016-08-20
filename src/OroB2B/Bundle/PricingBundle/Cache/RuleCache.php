@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Cache;
+namespace Oro\Bundle\PricingBundle\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;

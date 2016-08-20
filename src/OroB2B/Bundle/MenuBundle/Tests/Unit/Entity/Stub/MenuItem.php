@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem as BaseMenuItem;
+use Oro\Bundle\MenuBundle\Entity\MenuItem as BaseMenuItem;
 
 class MenuItem extends BaseMenuItem
 {

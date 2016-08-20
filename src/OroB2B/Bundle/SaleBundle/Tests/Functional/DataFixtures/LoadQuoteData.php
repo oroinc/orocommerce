@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -156,10 +155,10 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
 

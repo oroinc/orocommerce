@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity\Repository;
+namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductRepository extends EntityRepository
 {
@@ -184,7 +183,7 @@ class ProductRepository extends EntityRepository
             ->select('imageFile as image, IDENTITY(pi.product) as product_id')
             ->from('OroAttachmentBundle:File', 'imageFile')
             ->join(
-                'OroB2BProductBundle:ProductImage',
+                'OroProductBundle:ProductImage',
                 'pi',
                 Expr\Join::WITH,
                 'imageFile.id = pi.image'

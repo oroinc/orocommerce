@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Expression;
+namespace Oro\Bundle\CheckoutBundle\Expression;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

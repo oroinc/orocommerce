@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\Extension;
+namespace Oro\Bundle\ShippingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,12 +11,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
-use OroB2B\Bundle\ShippingBundle\Model\ShippingOrigin;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
 
 class WarehouseShippingOriginExtension extends AbstractTypeExtension
 {
@@ -55,7 +55,7 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
                 ShippingOriginWarehouseType::class,
                 [
                     'mapped' => false,
-                    'label' => 'orob2b.shipping.warehouse.section.shipping_origin'
+                    'label' => 'oro.shipping.warehouse.section.shipping_origin'
                 ]
             );
 
@@ -145,7 +145,7 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
      */
     protected function getShippingOriginWarehouseManager()
     {
-        return $this->registry->getManagerForClass('OroB2BShippingBundle:ShippingOriginWarehouse');
+        return $this->registry->getManagerForClass('OroShippingBundle:ShippingOriginWarehouse');
     }
 
     /**
@@ -154,6 +154,6 @@ class WarehouseShippingOriginExtension extends AbstractTypeExtension
     protected function getShippingOriginWarehouseRepository()
     {
         return $this->getShippingOriginWarehouseManager()
-            ->getRepository('OroB2BShippingBundle:ShippingOriginWarehouse');
+            ->getRepository('OroShippingBundle:ShippingOriginWarehouse');
     }
 }

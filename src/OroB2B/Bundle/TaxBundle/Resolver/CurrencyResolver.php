@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver;
+namespace Oro\Bundle\TaxBundle\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
-use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Model\AbstractResult;
+use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class CurrencyResolver implements ResolverInterface
 {

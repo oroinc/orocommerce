@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 /**
  * @dbIsolation
@@ -52,8 +51,8 @@ class LoginPageControllerTest extends WebTestCase
 
         /** @var LoginPage $page */
         $page = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCMSBundle:LoginPage')
-            ->getRepository('OroB2BCMSBundle:LoginPage')
+            ->getManagerForClass('OroCMSBundle:LoginPage')
+            ->getRepository('OroCMSBundle:LoginPage')
             ->findOneBy(['id' => static::LOGIN_PAGE_ID]);
         $this->assertNotEmpty($page);
 

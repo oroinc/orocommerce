@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Storage;
 
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-use OroB2B\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Storage\Stub\StubAbstractSessionDataStorage;
+use Oro\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Storage\Stub\StubAbstractSessionDataStorage;
 
 class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
 {

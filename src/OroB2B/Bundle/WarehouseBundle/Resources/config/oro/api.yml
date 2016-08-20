@@ -1,7 +1,7 @@
 oro_api:
     entities:
-        OroB2B\Bundle\WarehouseBundle\Entity\Warehouse: ~
-        OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
+        Oro\Bundle\WarehouseBundle\Entity\Warehouse: ~
+        Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
             filters:
                 fields:
                     product.sku:

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -35,11 +35,11 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->paymentMethodView = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->formatter = new PaymentMethodLabelFormatter(
@@ -118,7 +118,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->translator
             ->expects($this->once())
             ->method('trans')
-            ->with('orob2b.payment.admin.' . $paymentMethod . '.label')
+            ->with('oro.payment.admin.' . $paymentMethod . '.label')
             ->willReturn($paymentMethodLabel);
 
         $this->paymentMethodLabelMock($paymentMethod, $paymentMethodShortLabel);

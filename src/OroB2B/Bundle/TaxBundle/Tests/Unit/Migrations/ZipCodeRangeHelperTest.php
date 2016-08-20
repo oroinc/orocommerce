@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Migrations;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Migrations;
 
-use OroB2B\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
+use Oro\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
 
 class ZipCodeRangeHelperTest extends \PHPUnit_Framework_TestCase
 {

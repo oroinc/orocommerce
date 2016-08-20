@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 
 class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {

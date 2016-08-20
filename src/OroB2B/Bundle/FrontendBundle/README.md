@@ -1,4 +1,4 @@
-OroB2BFrontendBundle
+OroFrontendBundle
 ===========
 
 ## Table of Contents

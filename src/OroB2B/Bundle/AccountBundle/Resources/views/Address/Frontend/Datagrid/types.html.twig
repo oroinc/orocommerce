@@ -3,7 +3,7 @@
 
 {% set labels = [] %}
 {% for type in types %}
-    {% set label = type in defaultTypes ? 'orob2b.account.account_typed_address_with_default_type.choice.default_text'|trans({'%type_name%': type.label}) : type.label %}
+    {% set label = type in defaultTypes ? 'oro.account.account_typed_address_with_default_type.choice.default_text'|trans({'%type_name%': type.label}) : type.label %}
     {% set labels = labels|merge([label]) %}
 {% endfor %}
 

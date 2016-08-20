@@ -1,4 +1,4 @@
 css:
-    'orob2bcms':
-        - 'bundles/orob2bcms/css/less/pages.less'
-        - 'bundles/orob2bcms/css/less/loginPage.less'
+    'orocms':
+        - 'bundles/orocms/css/less/pages.less'
+        - 'bundles/orocms/css/less/loginPage.less'

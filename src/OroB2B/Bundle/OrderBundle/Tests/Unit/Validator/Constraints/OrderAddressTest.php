@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator;
+use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
 
 class OrderAddressTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,7 +51,7 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      * @expectedExceptionMessage
-     * Expected argument of type "OroB2B\Bundle\OrderBundle\Validator\Constraints\ConstraintByValidationGroups"
+     * Expected argument of type "Oro\Bundle\OrderBundle\Validator\Constraints\ConstraintByValidationGroups"
      */
     public function testValidateException()
     {

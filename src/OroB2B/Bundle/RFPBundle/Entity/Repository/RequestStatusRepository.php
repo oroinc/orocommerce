@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Entity\Repository;
+namespace Oro\Bundle\RFPBundle\Entity\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestStatusRepository extends EntityRepository
 {
@@ -35,7 +35,7 @@ class RequestStatusRepository extends EntityRepository
 
         return $qb
             ->leftJoin(
-                'OroB2BRFPBundle:Request',
+                'OroRFPBundle:Request',
                 'request',
                 Join::WITH,
                 $qb->expr()->eq('IDENTITY(request.status)', 'requestStatus.id')

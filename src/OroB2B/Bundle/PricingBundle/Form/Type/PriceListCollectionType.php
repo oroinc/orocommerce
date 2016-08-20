@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Doctrine\Common\Collections\Criteria;
 
@@ -13,10 +13,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListCollectionType extends AbstractType
 {

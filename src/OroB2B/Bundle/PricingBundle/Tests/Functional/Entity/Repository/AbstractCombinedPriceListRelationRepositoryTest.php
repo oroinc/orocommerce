@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 
 abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCase
 {
@@ -15,7 +14,7 @@ abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCa
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
             ]
         );
     }

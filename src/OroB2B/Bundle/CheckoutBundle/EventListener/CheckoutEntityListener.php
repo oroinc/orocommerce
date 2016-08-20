@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -9,11 +9,10 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CheckoutEntityListener
 {
@@ -74,9 +73,9 @@ class CheckoutEntityListener
      */
     public function setCheckoutClassName($checkoutClassName)
     {
-        if (!is_a($checkoutClassName, 'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface', true)) {
+        if (!is_a($checkoutClassName, 'Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface', true)) {
             throw new \InvalidArgumentException(
-                'Checkout class must implement OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface'
+                'Checkout class must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface'
             );
         }
 
@@ -136,7 +135,7 @@ class CheckoutEntityListener
     protected function actualizeCheckoutCurrency(Checkout $checkout)
     {
         /** @var EntityManager $em */
-        $em = $this->doctrine->getManagerForClass('OroB2BCheckoutBundle:Checkout');
+        $em = $this->doctrine->getManagerForClass('OroCheckoutBundle:Checkout');
         $checkout->setCurrency($this->userCurrencyManager->getUserCurrency());
         $em->persist($checkout);
         $em->flush($checkout);

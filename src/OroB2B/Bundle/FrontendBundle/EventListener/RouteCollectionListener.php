@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\EventListener;
+namespace Oro\Bundle\FrontendBundle\EventListener;
 
 use Symfony\Component\Routing\Route;
 

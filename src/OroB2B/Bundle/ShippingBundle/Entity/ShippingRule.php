@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -8,11 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRule;
+use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository")
  * @ORM\Table(
  *     name="orob2b_shipping_rule",
  *     indexes={
@@ -130,7 +129,7 @@ class ShippingRule extends ExtendShippingRule
      * @var Collection|ShippingRuleDestination[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -143,7 +142,7 @@ class ShippingRule extends ExtendShippingRule
      * @var Collection|ShippingRuleConfiguration[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER"

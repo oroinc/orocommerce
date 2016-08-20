@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -8,20 +8,19 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\PaymentBundle\Form\Extension\AccountFormExtension;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    const PAYMENT_TERM_CLASS = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm';
+    const PAYMENT_TERM_CLASS = 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm';
 
     /** @var AccountFormExtension */
     protected $extension;
@@ -53,13 +52,13 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $accountId = 1;
         $this->repository =
-            $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
+            $this->getMockBuilder('Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:Account', $accountId)
+            ->with('OroAccountBundle:Account', $accountId)
             ->willReturn(new Account());
 
         $this->doctrineHelper->expects($this->any())
@@ -147,11 +146,11 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'with group and payment term' => [
                 'options' => [
-                    'label'    => 'orob2b.payment.paymentterm.entity_label',
+                    'label'    => 'oro.payment.paymentterm.entity_label',
                     'required' => false,
                     'mapped'   => false,
                     'configs'  => [
-                        'placeholder' => 'orob2b.payment.account.payment_term_defined_in_group_trans'
+                        'placeholder' => 'oro.payment.account.payment_term_defined_in_group_trans'
                     ]
                 ],
                 'account' => $accountWithGroup,
@@ -160,11 +159,11 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
             ],
             'with group and empty payment term' => [
                 'options' => [
-                    'label'    => 'orob2b.payment.paymentterm.entity_label',
+                    'label'    => 'oro.payment.paymentterm.entity_label',
                     'required' => false,
                     'mapped'   => false,
                     'configs'  => [
-                        'placeholder' => 'orob2b.payment.account.payment_term_non_defined_in_group_trans'
+                        'placeholder' => 'oro.payment.account.payment_term_non_defined_in_group_trans'
                     ],
                 ],
                 'account' => $accountWithGroup,
@@ -172,7 +171,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
             ],
             'without group' => [
                 'options' => [
-                    'label'    => 'orob2b.payment.paymentterm.entity_label',
+                    'label'    => 'oro.payment.paymentterm.entity_label',
                     'required' => false,
                     'mapped'   => false
                 ],
@@ -336,7 +335,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createAccountEntity($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $id);
+        return $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $id);
     }
 
     /**
@@ -345,7 +344,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createAccountGroupEntity($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', $id);
+        return $this->createEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', $id);
     }
 
     /**
@@ -354,7 +353,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPaymentTermEntity($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', $id);
+        return $this->createEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', $id);
     }
 
     /**

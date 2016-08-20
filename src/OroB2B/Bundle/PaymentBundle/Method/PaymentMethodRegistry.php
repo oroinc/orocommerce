@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method;
 
 class PaymentMethodRegistry
 {

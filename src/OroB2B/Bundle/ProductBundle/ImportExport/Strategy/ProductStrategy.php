@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
+namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {

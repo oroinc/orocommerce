@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout\Block\Extension;
+namespace Oro\Bundle\OrderBundle\Layout\Block\Extension;
 
 use Oro\Component\Layout\AbstractBlockTypeExtension;
 use Oro\Component\Layout\Block\Type\BaseType;

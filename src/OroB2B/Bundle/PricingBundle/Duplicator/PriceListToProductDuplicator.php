@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Duplicator;
+namespace Oro\Bundle\PricingBundle\Duplicator;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 
 class PriceListToProductDuplicator
 {

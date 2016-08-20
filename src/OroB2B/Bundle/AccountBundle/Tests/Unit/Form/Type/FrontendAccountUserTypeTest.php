@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Forms;
@@ -13,21 +13,20 @@ use Doctrine\ORM\Query;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
-    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    const DATA_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     /**
      * @var FrontendAccountUserType

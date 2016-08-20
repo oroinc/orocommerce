@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -36,7 +36,7 @@ class OrderAddressType extends AbstractOrderAddressType
                 'required' => false,
                 'mapped' => false,
                 'choices' => $this->getChoices($addresses),
-                'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+                'configs' => ['placeholder' => 'oro.order.form.address.choose'],
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
                     'data-default' => $this->getDefaultAddressKey($entity, $type, $addresses),
@@ -46,9 +46,9 @@ class OrderAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $accountAddressOptions['choices'] = array_merge(
                     $accountAddressOptions['choices'],
-                    ['orob2b.order.form.address.manual']
+                    ['oro.order.form.address.manual']
                 );
-                $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
+                $accountAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }
 
             $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);

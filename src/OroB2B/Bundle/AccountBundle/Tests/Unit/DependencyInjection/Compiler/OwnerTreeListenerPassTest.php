@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\AccountBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
+use Oro\Bundle\AccountBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
 
 class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
 {

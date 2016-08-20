@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsValueFormatterTest extends \PHPUnit_Framework_TestCase
 {
-    const TRANSLATION_PREFIX = 'orob2b.length_unit';
+    const TRANSLATION_PREFIX = 'oro.length_unit';
 
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $translator;

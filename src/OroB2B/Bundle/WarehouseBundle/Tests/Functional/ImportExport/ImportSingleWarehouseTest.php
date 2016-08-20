@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadSingleWarehousesAndInventoryLevels;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadSingleWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation

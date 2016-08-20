@@ -14,11 +14,11 @@
             <table class="grid table-hover table table-bordered table-condensed">
                 <thead>
                 <tr>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.product_sku'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.product'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.requested.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.offers.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.notes'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.product_sku'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.product'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.requested.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.offers.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.notes'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -33,7 +33,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.sale.quote.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.sale.quote.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -52,7 +52,7 @@
         data-page-component-options="{{ page_component_options|json_encode }}">
         {{ form_widget(form) }}
         <td class="quote-lineitem-remove">
-            <button type="button" class="removeLineItem btn icons-holder">{{ 'orob2b.sale.quote.lineitem.remove'|trans }}</button>
+            <button type="button" class="removeLineItem btn icons-holder">{{ 'oro.sale.quote.lineitem.remove'|trans }}</button>
         </td>
     </tr>
 {% endmacro %}
@@ -83,12 +83,12 @@
             <div class="quote-lineitem-product-select quote-lineitem-product-form{% if isProductFreeForm %} hide{% endif %}">
                 {{ form_widget(form.product) }}
                 {{ form_errors(form.product) }}
-                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
+                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'oro.sale.quoteproduct.select.free_form'|trans }}</a>
             </div>
             <div class="quote-lineitem-product-free-form{% if not isProductFreeForm %} hide{% endif %}">
                 {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'quote-lineitem-product-freeform-input'})}) }}
                 {{ form_errors(form.freeFormProduct) }}
-                <a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
+                <a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'oro.sale.quoteproduct.select.product'|trans }}</a>
             </div>
         </div>
 
@@ -96,7 +96,7 @@
             <div class="quote-lineitem-product-replacement-select quote-lineitem-product-form{% if isProductReplacementFreeForm %} hide{% endif %}">
                 {{ form_widget(form.productReplacement) }}
                 {{ form_errors(form.productReplacement) }}
-                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
+                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'oro.sale.quoteproduct.select.free_form'|trans }}</a>
             </div>
             <div class="quote-lineitem-product-free-form{% if not isProductReplacementFreeForm %} hide{% endif %}">
                 {{ form_label(form.productReplacementSku) }}
@@ -105,7 +105,7 @@
                 {{ form_label(form.freeFormProductReplacement) }}
                 {{ form_widget(form.freeFormProductReplacement, {attr: attr|merge({class: 'quote-lineitem-productreplacement-freeform-input'})}) }}
                 {{ form_errors(form.freeFormProductReplacement) }}
-                <br/><a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
+                <br/><a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'oro.sale.quoteproduct.select.product'|trans }}</a>
             </div>
         </div>
         {{ form_widget(form.type) }}
@@ -124,12 +124,12 @@
                 {{ form_widget(form.commentAccount) }}
             </div>
         {% endif %}
-        <a class="btn quote-lineitem-notes-add-btn" href="#">{{ 'orob2b.sale.btn.add_seller_notes'|trans }}</a>
+        <a class="btn quote-lineitem-notes-add-btn" href="#">{{ 'oro.sale.btn.add_seller_notes'|trans }}</a>
         <div class="quote-lineitem-notes quote-lineitem-notes-seller ">
             {{ form_label(form.comment) }}
             {{ form_widget(form.comment) }}
             <a class="btn quote-lineitem-notes-remove-btn" href="#">
-                {{ 'orob2b.sale.btn.remove_seller_notes'|trans }}
+                {{ 'oro.sale.btn.remove_seller_notes'|trans }}
             </a>
         </div>
     </td>
@@ -140,8 +140,8 @@
         <table class="quote-lineitem-requests-widget table-bordered">
             <thead>
                 <tr>
-                    <th colspan="2"><span>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</span></th>
+                    <th colspan="2"><span>{{ 'oro.sale.quoteproductrequest.quantity.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quoteproductrequest.price.label'|trans }}</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -178,8 +178,8 @@
             <table class="table-hover table table-bordered quote-lineitem-offers">
                 <thead>
                 <tr>
-                    <th colspan="3"><span>{{ 'orob2b.sale.quote.lineitem.offers.quantity'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quote.lineitem.offers.price'|trans }}</span></th>
+                    <th colspan="3"><span>{{ 'oro.sale.quote.lineitem.offers.quantity'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.offers.price'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -194,7 +194,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.sale.quote.lineitem.offers.add'|trans }}</a>
+        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -212,7 +212,7 @@
         class="quote-lineitem-offers quote-lineitem-offers-item"
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
-            view: 'orob2bsale/js/app/views/line-item-offer-view',
+            view: 'orosale/js/app/views/line-item-offer-view',
             '$': {
                 product: '#' ~ productForm.product.vars.id,
                 priceValue: '#' ~ form.price.value.vars.id,

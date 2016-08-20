@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +36,7 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
 
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertEquals(
-                        ['placeholder' => 'orob2b.pricing.form.choose_price_list'],
+                        ['placeholder' => 'oro.pricing.form.choose_price_list'],
                         $options['configs']
                     );
                 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -8,14 +8,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 
 class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    const SHOPPING_LIST_SHORTCUT = 'OroB2BShoppingListBundle:ShoppingList';
+    const SHOPPING_LIST_SHORTCUT = 'OroShoppingListBundle:ShoppingList';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface */
     protected $form;
@@ -39,11 +39,11 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $this->shoppingList->expects($this->any())
             ->method('getAccountUser')
             ->willReturn(new AccountUser());
-        $this->manager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+        $this->manager = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
     }

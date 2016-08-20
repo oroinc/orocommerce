@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use OroB2B\Component\Duplicator\Test\Stub\RFPRequest;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Component\Duplicator\Test\Stub\RFPRequest;
 
 /**
  * @dbIsolation
@@ -22,7 +21,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
             ]
         );
     }

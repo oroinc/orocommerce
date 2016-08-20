@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Entity;
+namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
+use Oro\Bundle\CMSBundle\Model\ExtendLoginPage;
 
 /**
  * @ORM\Table(name="orob2b_cms_login_page")

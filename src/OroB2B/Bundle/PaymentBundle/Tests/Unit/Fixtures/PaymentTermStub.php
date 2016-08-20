@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class PaymentTermStub extends PaymentTerm
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Entity;
+namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,7 +15,7 @@ use Gedmo\Translatable\Entity\MappedSuperclass\AbstractPersonalTranslation;
 class RequestStatusTranslation extends AbstractPersonalTranslation
 {
     /**
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatus", inversedBy="translations")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\RequestStatus", inversedBy="translations")
      * @ORM\JoinColumn(name="object_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $object;

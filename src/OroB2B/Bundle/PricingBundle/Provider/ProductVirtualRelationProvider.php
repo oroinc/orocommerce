@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Provider;
+namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\VirtualRelationProviderInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 {

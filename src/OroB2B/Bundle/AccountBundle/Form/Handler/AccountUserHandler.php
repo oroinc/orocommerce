@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Form\Handler;
 
 use Psr\Log\LoggerInterface;
 
@@ -9,9 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -87,7 +86,7 @@ class AccountUserHandler
                             $session->getFlashBag()->add(
                                 'error',
                                 $this->translator
-                                    ->trans('orob2b.account.controller.accountuser.welcome_failed.message')
+                                    ->trans('oro.account.controller.accountuser.welcome_failed.message')
                             );
                         }
                     }

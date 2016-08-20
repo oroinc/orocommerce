@@ -1,27 +1,27 @@
 orob2b_catalog_category:
-    resource:     "@OroB2BCatalogBundle/Controller/CategoryController.php"
+    resource:     "@OroCatalogBundle/Controller/CategoryController.php"
     type:         annotation
     prefix:       /catalog/category
 
 orob2b_catalog_product:
-    resource:     "@OroB2BCatalogBundle/Controller/ProductController.php"
+    resource:     "@OroCatalogBundle/Controller/ProductController.php"
     type:         annotation
     prefix:       /catalog/product
 
 orob2b_catalog_product_frontend:
-    resource:     "@OroB2BCatalogBundle/Controller/Frontend/ProductController.php"
+    resource:     "@OroCatalogBundle/Controller/Frontend/ProductController.php"
     type:         annotation
     prefix:       /catalog/product
     options:
         frontend: true
 
 orob2b_catalog_ajax:
-    resource:     "@OroB2BCatalogBundle/Controller/AjaxCatalogController.php"
+    resource:     "@OroCatalogBundle/Controller/AjaxCatalogController.php"
     type:         annotation
     prefix:       /catalog/ajax
 
 orob2b_catalog_bundle_api:
-    resource:     "@OroB2BCatalogBundle/Resources/config/oro/routing_api.yml"
+    resource:     "@OroCatalogBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1

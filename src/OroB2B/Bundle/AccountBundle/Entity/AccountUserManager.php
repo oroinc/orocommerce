@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-
-use OroB2B\Bundle\AccountBundle\Mailer\Processor;
+use Oro\Bundle\AccountBundle\Mailer\Processor;
 
 class AccountUserManager extends BaseUserManager implements ContainerAwareInterface
 {

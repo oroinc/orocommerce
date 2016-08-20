@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler;
 
 class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordHandlerTestCase
 {
@@ -29,7 +29,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
 
         $this->assertFormErrorAdded(
             $this->form,
-            'orob2b.account.accountuser.profile.email_not_exists',
+            'oro.account.accountuser.profile.email_not_exists',
             ['%email%' => $email]
         );
 
@@ -41,7 +41,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
         $user->expects($this->once())
@@ -77,7 +77,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

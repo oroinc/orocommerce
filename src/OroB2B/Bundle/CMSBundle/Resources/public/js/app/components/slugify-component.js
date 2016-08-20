@@ -67,7 +67,7 @@ define(function (require) {
                                     } else {
                                         messenger.notificationFlashMessage(
                                             'error',
-                                            __("orob2b.cms.slugify_error", {'string': targetInputValue})
+                                            __("oro.cms.slugify_error", {'string': targetInputValue})
                                         );
                                     }
                                 }

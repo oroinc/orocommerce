@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,11 +12,10 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
  * @ORM\Table(name="orob2b_account_user_role",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_account_user_role_account_id_label_idx", columns={
@@ -75,7 +74,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -119,7 +118,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var Website[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinTable(
      *      name="orob2b_account_role_to_website",
      *      joinColumns={
@@ -135,7 +134,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var AccountUser[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
      */
     protected $accountUsers;
 

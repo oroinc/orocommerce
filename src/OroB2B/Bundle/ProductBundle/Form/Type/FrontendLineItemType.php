@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,7 +26,7 @@ class FrontendLineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.product.lineitem.unit.label',
+                    'label' => 'oro.product.lineitem.unit.label',
                     'product_holder' => $builder->getData(),
                     'sell' => true,
                 ]
@@ -36,9 +36,9 @@ class FrontendLineItemType extends AbstractType
                 QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.product.lineitem.quantity.enter',
+                    'label' => 'oro.product.lineitem.quantity.enter',
                     'attr' => [
-                        'placeholder' => 'orob2b.product.lineitem.quantity.placeholder',
+                        'placeholder' => 'oro.product.lineitem.quantity.placeholder',
                     ],
                     'product_holder' => $builder->getData(),
                     'product_unit_field' => 'unit',

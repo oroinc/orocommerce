@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\QueryBuilder;
 
@@ -11,10 +11,9 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
-
-use OroB2B\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelatedTestCase
 {

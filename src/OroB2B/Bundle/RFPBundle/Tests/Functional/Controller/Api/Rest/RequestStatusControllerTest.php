@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
  * @dbIsolation
@@ -20,16 +19,16 @@ class RequestStatusControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData']);
+        $this->loadFixtures(['Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData']);
     }
 
     public function testDeleteAndRestoreAction()
     {
         $entityManager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BRFPBundle:RequestStatus');
+            ->getManagerForClass('OroRFPBundle:RequestStatus');
 
-        $entityRepository = $entityManager->getRepository('OroB2BRFPBundle:RequestStatus');
+        $entityRepository = $entityManager->getRepository('OroRFPBundle:RequestStatus');
 
         $requestStatus = $entityRepository->findOneBy(['name' => LoadRequestStatusData::NAME_NOT_DELETED]);
         $this->assertFalse($requestStatus->getDeleted());

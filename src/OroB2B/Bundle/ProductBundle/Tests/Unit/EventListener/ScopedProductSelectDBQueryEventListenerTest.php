@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener;
+use Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener;
 
 class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEventListenerTest
 {

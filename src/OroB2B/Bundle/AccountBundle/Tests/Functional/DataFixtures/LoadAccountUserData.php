@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,9 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as UserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -122,13 +121,13 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
         $owner = $this->getFirstUser($manager);
-        $role = $manager->getRepository('OroB2BAccountBundle:AccountUserRole')->findOneBy([]);
+        $role = $manager->getRepository('OroAccountBundle:AccountUserRole')->findOneBy([]);
         foreach (static::$users as $user) {
             if (isset($user['account'])) {
                 /** @var Account $account */
                 $account = $this->getReference($user['account']);
             } else {
-                $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+                $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')
                     ->findOneBy(['username' => UserData::AUTH_USER]);
                 $account = $accountUser->getAccount();
             }
@@ -159,7 +158,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity\Manager;
+namespace Oro\Bundle\ProductBundle\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductManager
 {

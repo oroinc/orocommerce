@@ -1,23 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -55,11 +54,11 @@ class DefaultVisibilityListenerTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
         ]);
 
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
@@ -122,27 +121,27 @@ class DefaultVisibilityListenerTest extends WebTestCase
     {
         return [
             'category visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility',
                 'parameters' => ['category'],
             ],
             'account category visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility',
                 'parameters' => ['category', 'account'],
             ],
             'account group category visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility',
                 'parameters' => ['category', 'accountGroup'],
             ],
             'product visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
                 'parameters' => ['website', 'product'],
             ],
             'account product visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility',
                 'parameters' => ['website', 'product', 'account'],
             ],
             'account group product visibility' => [
-                'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
+                'entityClass' => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
                 'parameters' => ['website', 'product', 'accountGroup'],
             ],
         ];

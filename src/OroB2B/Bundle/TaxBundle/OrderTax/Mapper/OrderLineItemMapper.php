@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
+namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class OrderLineItemMapper extends AbstractOrderMapper
 {

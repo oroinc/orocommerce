@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductManagerTest extends \PHPUnit_Framework_TestCase
 {

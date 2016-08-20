@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider;
-use OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider;
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,17 +38,17 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->registry = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry')
+        $this->registry = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->shippingRulesProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\ShippingRulesProvider')
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->shippingContextProviderFactory = $this
-            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory')
+            ->getMockBuilder('Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -77,7 +76,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         /** @var FlatRateRuleConfiguration $shippingConfig */
         $shippingConfig = $this->getEntity(
-            'OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
+            'Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
             [
                 'id'     => 1,
                 'method' => 'flat_rate',
@@ -94,7 +93,7 @@ class ShippingMethodsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getApplicableShippingRules')
             ->willReturn([10 => $shippingRule]);
 
-        $method = $this->getMock('OroB2B\Bundle\ShippingBundle\Method\ShippingMethodInterface');
+        $method = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $method->expects(static::once())->method('getLabel')->willReturn('label');
         $method->expects(static::once())->method('getShippingTypeLabel')->willReturn('typeLabel');
         $method->expects(static::once())->method('calculatePrice')->willReturn(new Price());

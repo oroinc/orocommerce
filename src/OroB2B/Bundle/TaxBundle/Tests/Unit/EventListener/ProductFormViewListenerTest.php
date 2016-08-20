@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 {
@@ -25,8 +25,8 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
         return new ProductFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode',
-            'OroB2B\Bundle\ProductBundle\Entity\Product'
+            'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
+            'Oro\Bundle\ProductBundle\Entity\Product'
         );
     }
 
@@ -41,7 +41,7 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:Product:tax_code_update.html.twig', ['form' => new FormView()])
+            ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => new FormView()])
             ->willReturn('');
 
         $event->expects($this->once())
@@ -89,7 +89,7 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:Product:tax_code_view.html.twig', ['entity' => $taxCode])
+            ->with('OroTaxBundle:Product:tax_code_view.html.twig', ['entity' => $taxCode])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();

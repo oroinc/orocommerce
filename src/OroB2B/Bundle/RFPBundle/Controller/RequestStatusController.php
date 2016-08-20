@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Controller;
+namespace Oro\Bundle\RFPBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -9,10 +9,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
+use Oro\Bundle\RFPBundle\Form\Type\RequestStatusType;
 
 class RequestStatusController extends Controller
 {
@@ -22,7 +21,7 @@ class RequestStatusController extends Controller
      * @Acl(
      *      id="orob2b_rfp_request_status_view",
      *      type="entity",
-     *      class="OroB2BRFPBundle:RequestStatus",
+     *      class="OroRFPBundle:RequestStatus",
      *      permission="VIEW"
      * )
      *
@@ -38,7 +37,7 @@ class RequestStatusController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_rfp_request_status_info", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:RequestStatus/widget:info.html.twig")
+     * @Template("OroRFPBundle:RequestStatus/widget:info.html.twig")
      * @AclAncestor("orob2b_rfp_request_status_view")
      *
      * @param RequestStatus $requestStatus
@@ -67,12 +66,12 @@ class RequestStatusController extends Controller
 
     /**
      * @Route("/create", name="orob2b_rfp_request_status_create")
-     * @Template("OroB2BRFPBundle:RequestStatus:update.html.twig")
+     * @Template("OroRFPBundle:RequestStatus:update.html.twig")
      * @Acl(
      *     id="orob2b_rfp_request_status_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroB2BRFPBundle:RequestStatus"
+     *     class="OroRFPBundle:RequestStatus"
      * )
      */
     public function createAction()
@@ -88,7 +87,7 @@ class RequestStatusController extends Controller
      *     id="orob2b_rfp_request_status_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroB2BRFPBundle:RequestStatus"
+     *     class="OroRFPBundle:RequestStatus"
      * )
      *
      * @param RequestStatus $requestStatus
@@ -137,7 +136,7 @@ class RequestStatusController extends Controller
                         ]
                     ];
                 },
-                $this->get('translator')->trans('orob2b.rfp.message.request_status_saved'),
+                $this->get('translator')->trans('oro.rfp.message.request_status_saved'),
                 $handler
             )
             ;

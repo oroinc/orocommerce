@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Provider;
+namespace Oro\Bundle\WebsiteBundle\Provider;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface WebsiteProviderInterface
 {

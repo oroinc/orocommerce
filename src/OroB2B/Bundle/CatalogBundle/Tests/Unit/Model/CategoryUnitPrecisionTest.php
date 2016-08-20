@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Model;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Model;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
 {

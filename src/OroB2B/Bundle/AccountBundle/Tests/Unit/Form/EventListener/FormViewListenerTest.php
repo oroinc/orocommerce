@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -9,9 +9,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\AccountBundle\Form\EventListener\FormViewListener;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Form\EventListener\FormViewListener;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -68,7 +67,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BCatalogBundle:Category')
+            ->with('OroCatalogBundle:Category')
             ->willReturn(new Category());
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */

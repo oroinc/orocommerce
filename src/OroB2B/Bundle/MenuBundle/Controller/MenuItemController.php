@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Controller;
+namespace Oro\Bundle\MenuBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -11,9 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Form\Type\MenuItemType;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 class MenuItemController extends Controller
 {
@@ -23,7 +22,7 @@ class MenuItemController extends Controller
      * @Acl(
      *      id="orob2b_menu_item_view",
      *      type="entity",
-     *      class="OroB2BMenuBundle:MenuItem",
+     *      class="OroMenuBundle:MenuItem",
      *      permission="VIEW"
      * )
      */
@@ -53,10 +52,10 @@ class MenuItemController extends Controller
      * @Acl(
      *      id="orob2b_menu_item_create_root",
      *      type="entity",
-     *      class="OroB2BMenuBundle:MenuItem",
+     *      class="OroMenuBundle:MenuItem",
      *      permission="CREATE"
      * )
-     * @Template("OroB2BMenuBundle:MenuItem:createRoot.html.twig")
+     * @Template("OroMenuBundle:MenuItem:createRoot.html.twig")
      */
     public function createRootAction()
     {
@@ -73,7 +72,7 @@ class MenuItemController extends Controller
                 ];
             },
             ['route' => 'orob2b_menu_item_roots'],
-            $this->get('translator')->trans('orob2b.menu.controller.menuitem.root.saved.message')
+            $this->get('translator')->trans('oro.menu.controller.menuitem.root.saved.message')
         );
     }
 
@@ -82,10 +81,10 @@ class MenuItemController extends Controller
      * @Acl(
      *      id="orob2b_menu_item_create",
      *      type="entity",
-     *      class="OroB2BMenuBundle:MenuItem",
+     *      class="OroMenuBundle:MenuItem",
      *      permission="CREATE"
      * )
-     * @Template("OroB2BMenuBundle:MenuItem:update.html.twig")
+     * @Template("OroMenuBundle:MenuItem:update.html.twig")
      * @param MenuItem $parent
      *
      * @return array|RedirectResponse
@@ -105,7 +104,7 @@ class MenuItemController extends Controller
      * @Acl(
      *      id="orob2b_menu_item_update",
      *      type="entity",
-     *      class="OroB2BMenuBundle:MenuItem",
+     *      class="OroMenuBundle:MenuItem",
      *      permission="EDIT"
      * )
      * @param MenuItem $menuItem
@@ -128,8 +127,8 @@ class MenuItemController extends Controller
     {
         $rootId = $menuItem->getRoot();
         $root = $this->getDoctrine()
-            ->getManagerForClass('OroB2BMenuBundle:MenuItem')
-            ->getRepository('OroB2BMenuBundle:MenuItem')
+            ->getManagerForClass('OroMenuBundle:MenuItem')
+            ->getRepository('OroMenuBundle:MenuItem')
             ->find($rootId);
 
         $form = $this->createForm(MenuItemType::NAME, $menuItem);
@@ -147,7 +146,7 @@ class MenuItemController extends Controller
                 'route' => 'orob2b_menu_item_view',
                 'parameters' => ['id' => $rootId]
             ],
-            $this->get('translator')->trans('orob2b.menu.controller.menuitem.saved.message'),
+            $this->get('translator')->trans('oro.menu.controller.menuitem.saved.message'),
             null,
             function (MenuItem $entity, FormInterface $form) use ($root) {
                 return [

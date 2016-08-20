@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Model;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Model;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -16,7 +15,7 @@ class RequestHelperTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
             ]
         );
     }

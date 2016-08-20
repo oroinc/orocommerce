@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class PriceAttributePriceListController extends Controller
 {
@@ -36,7 +35,7 @@ class PriceAttributePriceListController extends Controller
      * @Acl(
      *      id="orob2b_pricing_price_attribute_price_list_view",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceAttributePriceList",
+     *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class PriceAttributePriceListController extends Controller
 
     /**
      * @Route("/create", name="orob2b_pricing_price_attribute_price_list_create")
-     * @Template("OroB2BPricingBundle:PriceAttributePriceList:update.html.twig")
+     * @Template("OroPricingBundle:PriceAttributePriceList:update.html.twig")
      * @Acl(
      *      id="orob2b_pricing_price_attribute_price_list_create",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceAttributePriceList",
+     *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class PriceAttributePriceListController extends Controller
      * @Acl(
      *      id="orob2b_pricing_price_attribute_price_list_update",
      *      type="entity",
-     *      class="OroB2BPricingBundle:PriceAttributePriceList",
+     *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="EDIT"
      * )
      *
@@ -106,13 +105,13 @@ class PriceAttributePriceListController extends Controller
                     'parameters' => ['id' => $priceAttribute->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.pricing.controller.price_attribute_price_list.saved.message')
+            $this->get('translator')->trans('oro.pricing.controller.price_attribute_price_list.saved.message')
         );
     }
 
     /**
      * @Route("/info/{id}", name="orob2b_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
-     * @Template("OroB2BPricingBundle:PriceAttributePriceList/widget:info.html.twig")
+     * @Template("OroPricingBundle:PriceAttributePriceList/widget:info.html.twig")
      * @AclAncestor("orob2b_pricing_price_attribute_price_list_view")
      * @param PriceAttributePriceList $priceAttribute
      * @return array

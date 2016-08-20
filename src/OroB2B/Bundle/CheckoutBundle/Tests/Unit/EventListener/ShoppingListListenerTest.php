@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\EventListener\ShoppingListListener;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const CHECKOUT_CLASS_NAME = 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout';
-    const CHECKOUT_SOURCE_CLASS_NAME = 'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource';
+    const CHECKOUT_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\Checkout';
+    const CHECKOUT_SOURCE_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource';
 
     use EntityTrait;
 

@@ -1,4 +1,4 @@
-orob2b.pricing:
+oro.pricing:
     priceattributeproductprice:
         entity_label: Price Attribute Product Price
         entity_plural_label: Price Attribute Product Prices

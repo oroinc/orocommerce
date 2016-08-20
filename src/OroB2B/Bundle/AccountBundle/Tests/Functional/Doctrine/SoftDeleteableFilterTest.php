@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Doctrine;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Doctrine;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -8,11 +8,10 @@ use Doctrine\ORM\Query;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\QueryTracker;
-
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter;
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter;
+use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -45,7 +44,7 @@ class SoftDeleteableFilterTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
             ]
         );
 
@@ -162,8 +161,8 @@ class SoftDeleteableFilterTest extends WebTestCase
         $this->enableFilter();
         $result = $this->em->createQueryBuilder()
             ->select('a')
-            ->from('OroB2BAccountBundle:Account', 'a')
-            ->join('OroB2BRFPBundle:Request', 'r', 'WITH', 'a = r.account')
+            ->from('OroAccountBundle:Account', 'a')
+            ->join('OroRFPBundle:Request', 'r', 'WITH', 'a = r.account')
             ->where('r.firstName = :name')
             ->setParameter('name', 'John')
             ->getQuery()
@@ -175,8 +174,8 @@ class SoftDeleteableFilterTest extends WebTestCase
         $this->disableFilter();
         $result = $this->em->createQueryBuilder()
             ->select('a')
-            ->from('OroB2BAccountBundle:Account', 'a')
-            ->join('OroB2BRFPBundle:Request', 'r', 'WITH', 'a = r.account')
+            ->from('OroAccountBundle:Account', 'a')
+            ->join('OroRFPBundle:Request', 'r', 'WITH', 'a = r.account')
             ->where('r.firstName = :name')
             ->setParameter('name', 'John')
             ->getQuery()
@@ -226,7 +225,7 @@ class SoftDeleteableFilterTest extends WebTestCase
     {
         $connection = $this->em->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $metadata = $this->em->getClassMetadata('OroB2B\Bundle\RFPBundle\Entity\Request');
+        $metadata = $this->em->getClassMetadata('Oro\Bundle\RFPBundle\Entity\Request');
 
         $column = $this->em
             ->getConfiguration()
@@ -241,7 +240,7 @@ class SoftDeleteableFilterTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->em->getRepository('OroB2BRFPBundle:Request');
+        return $this->em->getRepository('OroRFPBundle:Request');
     }
 
     protected function checkQueries()

@@ -25,9 +25,9 @@ System -> Configuration -> Commerce -> Shipping -> Shipping Options
 ```php
 <?php
 
-namespace OroB2B\Bundle\ShippingDemoBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\ShippingDemoBundle\Migrations\Data\ORM;
 
-use OroB2B\Bundle\ShippingBundle\Migrations\Data\ORM\LoadUnitsAndFreightClassesData as BaseLoadUnitData;
+use Oro\Bundle\ShippingBundle\Migrations\Data\ORM\LoadUnitsAndFreightClassesData as BaseLoadUnitData;
 
 class LoadUnitsAndFreightClassesData extends BaseLoadUnitData
 {
@@ -52,7 +52,7 @@ class LoadUnitsAndFreightClassesData extends BaseLoadUnitData
 
 #### Example translations
 ```yml
-orob2b:
+oro:
     weight_unit.demo_lbs:
         label:
             full: demo_pound

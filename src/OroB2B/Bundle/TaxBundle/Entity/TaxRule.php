@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository")
  * @ORM\Table(name="orob2b_tax_rule")
  * @ORM\HasLifecycleCallbacks
  * @Config(
@@ -43,7 +43,7 @@ class TaxRule
     /**
      * @var ProductTaxCode
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\ProductTaxCode")
      * @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $productTaxCode;
@@ -51,7 +51,7 @@ class TaxRule
     /**
      * @var AccountTaxCode
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\AccountTaxCode")
      * @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountTaxCode;
@@ -59,7 +59,7 @@ class TaxRule
     /**
      * @var Tax
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\Tax")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\Tax")
      * @ORM\JoinColumn(name="tax_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $tax;
@@ -67,7 +67,7 @@ class TaxRule
     /**
      * @var TaxJurisdiction
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction")
      * @ORM\JoinColumn(name="tax_jurisdiction_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $taxJurisdiction;

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\OrderBundle\Controller\Frontend\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +25,7 @@ class OrderController extends RestController implements ClassResourceInterface
      * @Acl(
      *      id="orob2b_order_frontend_delete",
      *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
+     *      class="OroOrderBundle:Order",
      *      permission="DELETE",
      *      group_name="commerce"
      * )

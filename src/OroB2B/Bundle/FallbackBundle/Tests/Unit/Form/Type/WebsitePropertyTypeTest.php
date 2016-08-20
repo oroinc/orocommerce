@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -11,15 +11,14 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-
-use OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
-use OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
-use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
+use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
+use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
-    const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+    const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * @var WebsitePropertyType
@@ -204,7 +203,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
      */
     protected function createWebsite($id, $name)
     {
-        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+        $website = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->disableOriginalConstructor()
             ->getMock();
         $website->expects($this->any())

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserRoleDatagridListener;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\EventListener\Datagrid\AccountUserRoleDatagridListener;
 
 class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
@@ -149,10 +148,10 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
     protected function mockUser($userId)
     {
         /** @var AccountUser $user */
-        $user = $this->getEntity('\OroB2B\Bundle\AccountBundle\Entity\AccountUser', $userId);
+        $user = $this->getEntity('\Oro\Bundle\AccountBundle\Entity\AccountUser', $userId);
 
         /** @var Account $account */
-        $account = $this->getEntity('\OroB2B\Bundle\AccountBundle\Entity\Account', static::ACCOUNT_ID);
+        $account = $this->getEntity('\Oro\Bundle\AccountBundle\Entity\Account', static::ACCOUNT_ID);
         $user->setAccount($account);
 
         $this->securityFacade->expects($this->any())

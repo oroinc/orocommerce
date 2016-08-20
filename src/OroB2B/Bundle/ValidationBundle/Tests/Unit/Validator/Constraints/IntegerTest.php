@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator;
 
 class IntegerTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +42,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     public function testConfiguration()
     {
         $this->assertEquals(
-            'OroB2B\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator',
+            'Oro\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator',
             $this->constraint->validatedBy()
         );
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());

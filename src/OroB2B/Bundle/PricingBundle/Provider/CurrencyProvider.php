@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Provider;
+namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class CurrencyProvider
 {

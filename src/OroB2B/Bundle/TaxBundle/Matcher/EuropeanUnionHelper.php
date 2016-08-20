@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Matcher;
+namespace Oro\Bundle\TaxBundle\Matcher;
 
 class EuropeanUnionHelper
 {

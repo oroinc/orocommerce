@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormProvider;
 
 class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -125,11 +124,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'accountUser' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser'),
+                'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser'),
                 'route' => 'orob2b_account_frontend_account_user_create'
             ],
             [
-                'accountUser' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
+                'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
                 'route' => 'orob2b_account_frontend_account_user_update',
                 'routeParameters' => ['id' => 42]
             ]
@@ -143,7 +142,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'accountUser' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
+                'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
                 'route' => 'orob2b_account_frontend_account_user_profile_update',
                 'routeParameters' => ['id' => 42]
             ]

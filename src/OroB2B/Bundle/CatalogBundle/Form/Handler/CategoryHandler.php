@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
+namespace Oro\Bundle\CatalogBundle\Form\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -10,9 +10,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandler
 {
@@ -98,7 +97,7 @@ class CategoryHandler
      */
     protected function appendProducts(Category $category, array $products)
     {
-        $categoryRepository = $this->manager->getRepository('OroB2BCatalogBundle:Category');
+        $categoryRepository = $this->manager->getRepository('OroCatalogBundle:Category');
         /** @var $product Product */
         foreach ($products as $product) {
             $productCategory = $categoryRepository->findOneByProduct($product);

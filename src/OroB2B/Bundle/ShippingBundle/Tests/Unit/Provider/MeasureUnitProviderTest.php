@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
-use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -75,7 +74,7 @@ class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
 
         if (count($units)) {
             foreach ($units as $unit) {
-                $this->assertInstanceOf('OroB2B\Bundle\ShippingBundle\Entity\WeightUnit', $unit);
+                $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Entity\WeightUnit', $unit);
             }
         }
     }

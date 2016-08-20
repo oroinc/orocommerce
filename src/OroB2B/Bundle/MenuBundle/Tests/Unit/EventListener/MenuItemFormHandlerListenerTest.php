@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\EventListener\MenuItemFormHandlerListener;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemFormHandlerListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class MenuItemFormHandlerListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->menuProvider = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
+        $this->menuProvider = $this->getMockBuilder('Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

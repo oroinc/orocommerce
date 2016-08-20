@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -29,13 +28,13 @@ class PriceListProductEntityListenerTest extends WebTestCase
 
     public function testPostRemove()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceListToProduct');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $priceListToProduct = $em->getRepository('OroB2BPricingBundle:PriceListToProduct')
+        $priceListToProduct = $em->getRepository('OroPricingBundle:PriceListToProduct')
             ->findOneBy([
                 'product' => $product,
                 'priceList' => $priceList
@@ -58,8 +57,8 @@ class PriceListProductEntityListenerTest extends WebTestCase
      */
     protected function assertPricesCount(PriceList $priceList, Product $product, $priceCount)
     {
-        $prices = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
+        $prices = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:ProductPrice')
+            ->getRepository('OroPricingBundle:ProductPrice')
             ->findBy([
                 'priceList' => $priceList,
                 'product' => $product

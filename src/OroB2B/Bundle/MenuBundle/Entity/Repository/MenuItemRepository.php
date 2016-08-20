@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Entity\Repository;
+namespace Oro\Bundle\MenuBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 class MenuItemRepository extends NestedTreeRepository
 {

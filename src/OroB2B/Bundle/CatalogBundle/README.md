@@ -1,4 +1,4 @@
-OroB2B\Bundle\CatalogBundle\OroB2BCatalogBundle
+Oro\Bundle\CatalogBundle\OroCatalogBundle
 ===============================================
 
 Table of Contents
@@ -10,4 +10,4 @@ Table of Contents
 Description:
 ------------
 
-The OroB2BCatalogBundle introduces the notion of categories, which are using for products structuring in the system. This bundle provides an UI for category management.
+The OroCatalogBundle introduces the notion of categories, which are using for products structuring in the system. This bundle provides an UI for category management.

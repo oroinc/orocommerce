@@ -13,14 +13,14 @@
     {{ form_row(form._token) }}
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'orob2b.account.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
+        <legend>{{ 'oro.account.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
         <fieldset class="profile__form__row">
             <div class="profile__form__col form__col_x6 col_first">
-                {{ form_row(form.namePrefix, {'attr': {'placeholder': 'orob2b.account.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.firstName, {'attr': {'placeholder': 'orob2b.account.form.placeholder.first_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.middleName, {'attr': {'placeholder': 'orob2b.account.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.lastName, {'attr': {'placeholder': 'orob2b.account.form.placeholder.last_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'orob2b.account.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.account.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.account.form.placeholder.first_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.account.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.account.form.placeholder.last_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.account.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
 
                 {{ form_row(form.enabled, {'attr': {'placeholder': ''|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
 
@@ -29,18 +29,18 @@
                 {% endif %}
             </div>
             <div class="profile__form__col form__col_x6 col_last">
-                {{ form_row(form.email, {'attr': {'placeholder': 'orob2b.account.form.placeholder.email'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.birthday, {'attr': {'placeholder': 'orob2b.account.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.email, {'attr': {'placeholder': 'oro.account.form.placeholder.email'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.birthday, {'attr': {'placeholder': 'oro.account.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
             </div>
         </fieldset>
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'orob2b.account.accountuser.profile.form.sections.password.label'|trans }}</legend>
+        <legend>{{ 'oro.account.accountuser.profile.form.sections.password.label'|trans }}</legend>
 
         <div class="password">
-            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'orob2b.account.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
-            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'orob2b.account.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
+            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'oro.account.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
+            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'oro.account.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
         </div>
 
         {% if form.passwordGenerate is defined %}
@@ -55,14 +55,14 @@
                         }
                     )
                 }}
-                <span data-page-component-module="orob2baccount/js/app/components/password-generate"
+                <span data-page-component-module="oroaccount/js/app/components/password-generate"
                       data-page-component-options="{{ {class: 'password-trigger', targetClass: 'password'}|json_encode }}"></span>
             </div>
         {% endif %}
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'orob2b.account.accountuser.profile.form.sections.roles.label'|trans }}</legend>
+        <legend>{{ 'oro.account.accountuser.profile.form.sections.roles.label'|trans }}</legend>
         {{ form_row(form.roles)}}
     </fieldset>
 
@@ -73,7 +73,7 @@
     {{ block_widget(block) }}
     <fieldset class="profile__form__row">
         <div class="profile__form__req-text"><sup>*</sup>
-            {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+            {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
         </div>
     </fieldset>
 {% endblock %}

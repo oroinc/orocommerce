@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\EventListener;
+namespace Oro\Bundle\PaymentBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -78,9 +78,9 @@ class DatagridListener
 
         $column = [
             'type' => 'twig',
-            'label' => 'orob2b.payment.paymentterm.entity_label',
+            'label' => 'oro.payment.paymentterm.entity_label',
             'frontend_type' => 'html',
-            'template' => 'OroB2BPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
+            'template' => 'OroPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
         ];
         $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
 
@@ -119,7 +119,7 @@ class DatagridListener
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
 
         // column
-        $column = ['label' => 'orob2b.payment.paymentterm.entity_label'];
+        $column = ['label' => 'oro.payment.paymentterm.entity_label'];
         $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
 
         // sorter

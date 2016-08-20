@@ -1,3 +1,3 @@
 css:
-    'orob2binvoice':
-        - 'bundles/orob2binvoice/css/style.css'
+    'oroinvoice':
+        - 'bundles/oroinvoice/css/style.css'

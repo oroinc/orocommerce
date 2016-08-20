@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,19 +29,19 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository';
         $CPLAccountGroupRepositoryMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
         $CPLAccountGroupRepositoryMock->expects($this->once())->method('updateActuality');
 
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountRepository';
         $CPLAccountRepositoryMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
         $CPLAccountRepositoryMock->expects($this->once())->method('updateActuality');
 
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository';
         $CPLWebsiteRepositoryMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
         $CPLWebsiteRepositoryMock->expects($this->once())->method('updateActuality');
 
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
         $activationRuleRepositoryMock = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
         $rule = new CombinedPriceListActivationRule();
         $rule->setCombinedPriceList(new CombinedPriceList());
@@ -54,10 +53,10 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($rule);
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->method('getRepository')->willReturnMap([
-            ['OroB2BPricingBundle:CombinedPriceListToAccount', $CPLAccountRepositoryMock],
-            ['OroB2BPricingBundle:CombinedPriceListToAccountGroup', $CPLAccountGroupRepositoryMock],
-            ['OroB2BPricingBundle:CombinedPriceListToWebsite', $CPLWebsiteRepositoryMock],
-            ['OroB2BPricingBundle:CombinedPriceListActivationRule', $activationRuleRepositoryMock],
+            ['OroPricingBundle:CombinedPriceListToAccount', $CPLAccountRepositoryMock],
+            ['OroPricingBundle:CombinedPriceListToAccountGroup', $CPLAccountGroupRepositoryMock],
+            ['OroPricingBundle:CombinedPriceListToWebsite', $CPLWebsiteRepositoryMock],
+            ['OroPricingBundle:CombinedPriceListActivationRule', $activationRuleRepositoryMock],
         ]);
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->method('getManagerForClass')->willReturn($this->manager);
@@ -73,9 +72,9 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
     public function testUpdateRelations()
     {
         $resolver = new CombinedPriceListScheduleResolver($this->registry, $this->configManager);
-        $resolver->addRelationClass('OroB2BPricingBundle:CombinedPriceListToAccount');
-        $resolver->addRelationClass('OroB2BPricingBundle:CombinedPriceListToAccountGroup');
-        $resolver->addRelationClass('OroB2BPricingBundle:CombinedPriceListToWebsite');
+        $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToAccount');
+        $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToAccountGroup');
+        $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToWebsite');
         $resolver->updateRelations();
     }
 }

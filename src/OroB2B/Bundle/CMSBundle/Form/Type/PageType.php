@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Form\Type;
+namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,9 +11,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageType extends AbstractType
 {
@@ -51,7 +50,7 @@ class PageType extends AbstractType
                 'title',
                 'text',
                 [
-                    'label' => 'orob2b.cms.page.title.label',
+                    'label' => 'oro.cms.page.title.label',
                     'required' => true,
                     'constraints' => [new NotBlank()],
                 ]
@@ -60,7 +59,7 @@ class PageType extends AbstractType
                 'content',
                 OroRichTextType::NAME,
                 [
-                    'label' => 'orob2b.cms.page.content.label',
+                    'label' => 'oro.cms.page.content.label',
                     'required' => false,
                     'wysiwyg_options' => [
                         'statusbar' => true,
@@ -81,7 +80,7 @@ class PageType extends AbstractType
                     'slug',
                     SlugType::NAME,
                     [
-                        'label' => 'orob2b.redirect.slug.entity_label',
+                        'label' => 'oro.redirect.slug.entity_label',
                         'required' => false,
                         'mapped' => false,
                         'type' => 'update',
@@ -94,7 +93,7 @@ class PageType extends AbstractType
                     'slug',
                     SlugType::NAME,
                     [
-                        'label' => 'orob2b.redirect.slug.entity_label',
+                        'label' => 'oro.redirect.slug.entity_label',
                         'required' => false,
                         'mapped' => false,
                         'type' => 'create',

@@ -24,7 +24,7 @@ define(function(require) {
      */
     var TextView = BaseView.extend(/** @exports TextView.prototype */{
         showDefault: true,
-        template: require('tpl!orob2bfrontend/templates/viewer/text-view.html'),
+        template: require('tpl!orofrontend/templates/viewer/text-view.html'),
 
         listen: {
             'change model': 'render'

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
-use OroB2B\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -91,7 +90,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $sourceEntity = $this->getSourceEntity();
         $sourceEntityId = $sourceEntity->getId();
         $checkoutSources = $this->registry
-            ->getRepository('OroB2BCheckoutBundle:CheckoutSource')
+            ->getRepository('OroCheckoutBundle:CheckoutSource')
             ->findBy(['shoppingList' => $sourceEntity]);
 
         $this->assertCount(1, $checkoutSources);
@@ -109,15 +108,15 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll());
+        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
         $this->assertNull(
-            $this->registry->getRepository('OroB2BShoppingListBundle:ShoppingList')->find($sourceEntityId)
+            $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
         );
 
         /** @var EntityRepository $objectManager */
         $objectManager = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPaymentBundle:PaymentTransaction')
+            ->getRepository('OroPaymentBundle:PaymentTransaction')
         ;
 
         $paymentTransactions = $objectManager
@@ -126,7 +125,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $this->assertNotEmpty($paymentTransactions);
         $this->assertCount(1, $paymentTransactions);
-        $this->assertInstanceOf('OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction', $paymentTransactions[0]);
+        $this->assertInstanceOf('Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', $paymentTransactions[0]);
     }
 
     private function moveToPaymentPage()

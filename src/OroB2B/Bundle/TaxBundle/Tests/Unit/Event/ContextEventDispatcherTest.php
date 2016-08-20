@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Event;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
-use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
+use Oro\Bundle\TaxBundle\Event\ContextEvent;
+use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
 
 class ContextEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class ContextEventDispatcherTest extends \PHPUnit_Framework_TestCase
         $eventDispatcher->expects($this->once())->method('dispatch')
             ->with(
                 ContextEvent::NAME,
-                $this->isInstanceOf('OroB2B\Bundle\TaxBundle\Event\ContextEvent')
+                $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ContextEvent')
             );
 
         $taxDispatcher->dispatch(new \stdClass());

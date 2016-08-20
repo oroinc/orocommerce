@@ -1,13 +1,13 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
-{% set pageTitle = 'orob2b.cms.page.entity_plural_label'|trans %}
+{% set pageTitle = 'oro.cms.page.entity_plural_label'|trans %}
 
 {% block navButtons %}
     {% if resource_granted('orob2b_cms_page_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('orob2b_cms_page_create'),
-                'entity_label': 'orob2b.cms.page.entity_label'|trans
+                'entity_label': 'oro.cms.page.entity_label'|trans
             }) }}
         </div>
     {% endif %}
@@ -29,7 +29,7 @@
                             'onMoveRoute' : 'orob2b_cms_page_move'
                         } %}
                         <div
-                            data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                            data-page-component-module="orocms/js/app/components/tree-manage-component"
                             data-page-component-options="{{ treeOptions|json_encode }}"
                         ></div>
                     </div>
@@ -37,7 +37,7 @@
                 <div class="content">
                     {% if resource_granted('orob2b_cms_page_create') and resource_granted('orob2b_cms_page_update') %}
                         <div class="text-center">
-                            {{ 'orob2b.cms.template.select_existing_or_create_new'|trans }}
+                            {{ 'oro.cms.template.select_existing_or_create_new'|trans }}
                         </div>
                     {% endif %}
                 </div>

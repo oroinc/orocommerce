@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Provider;
+namespace Oro\Bundle\ProductBundle\Provider;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 interface DefaultProductUnitProviderInterface
 {

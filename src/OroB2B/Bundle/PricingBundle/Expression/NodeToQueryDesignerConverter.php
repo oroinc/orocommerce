@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Expression;
+namespace Oro\Bundle\PricingBundle\Expression;
 
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Model\PriceListQueryDesigner;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class NodeToQueryDesignerConverter
 {

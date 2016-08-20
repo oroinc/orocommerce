@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate;
-use OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDateValidator;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate;
+use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDateValidator;
 
 use Symfony\Component\Validator\Context\ExecutionContext;
 

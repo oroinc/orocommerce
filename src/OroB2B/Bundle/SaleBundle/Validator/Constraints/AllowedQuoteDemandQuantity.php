@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
+namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -9,12 +9,12 @@ class AllowedQuoteDemandQuantity extends Constraint
     /**
      * @var string
      */
-    public $notEqualQuantityMessage = 'orob2b.sale.quoteproductoffer.configurable.quantity.equal';
+    public $notEqualQuantityMessage = 'oro.sale.quoteproductoffer.configurable.quantity.equal';
 
     /**
      * @var string
      */
-    public $lessQuantityMessage = 'orob2b.sale.quoteproductoffer.configurable.quantity.less';
+    public $lessQuantityMessage = 'oro.sale.quoteproductoffer.configurable.quantity.less';
 
     /**
      * {@inheritdoc}

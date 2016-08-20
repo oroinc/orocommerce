@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity
@@ -84,7 +84,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @var AccountUserRole[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserRole", inversedBy="accountUsers")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
      *      name="orob2b_acc_user_access_role",
      *      joinColumns={
@@ -108,7 +108,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var Account
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\Account",
      *      inversedBy="users",
      *      cascade={"persist"}
      * )
@@ -249,7 +249,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var Collection|AccountUserAddress[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserAddress",
      *      mappedBy="frontendOwner",
      *      cascade={"all"},
      *      orphanRemoval=true
@@ -314,7 +314,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var ArrayCollection|AccountUserSettings[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings",
+     *      targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserSettings",
      *      mappedBy="accountUser",
      *      cascade={"all"},
      *      orphanRemoval=true
@@ -325,7 +325,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={

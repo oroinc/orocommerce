@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Entity\Repository;
+namespace Oro\Bundle\WarehouseBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseRepository extends EntityRepository
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
@@ -9,11 +9,10 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
 
 class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +32,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxManager')
+        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -188,7 +187,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
     {
         $orderId = 1;
         /** @var Order $order */
-        $order = $this->getEntity('\OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => $orderId]);
+        $order = $this->getEntity('\Oro\Bundle\OrderBundle\Entity\Order', ['id' => $orderId]);
 
         $event = new PreFlushEventArgs($this->entityManager);
 

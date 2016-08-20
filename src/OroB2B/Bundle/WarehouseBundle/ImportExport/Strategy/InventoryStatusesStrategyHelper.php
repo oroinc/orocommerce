@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
 {
@@ -34,7 +33,7 @@ class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStr
         if (!empty($product->getInventoryStatus())
             && !$this->isInventoryStatusConsistent($product->getSku(), $product->getInventoryStatus())
         ) {
-            $this->addError('orob2b.warehouse.import.error.inventory_status');
+            $this->addError('oro.warehouse.import.error.inventory_status');
         }
 
         $inventoryStatus = null;

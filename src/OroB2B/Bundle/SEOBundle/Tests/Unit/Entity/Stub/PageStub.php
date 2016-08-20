@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 class PageStub extends Page
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Storage\AbstractSessionDataStorageTest;
-use OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Storage\AbstractSessionDataStorageTest;
+use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
 
 class OffersDataStorageTest extends AbstractSessionDataStorageTest
 {

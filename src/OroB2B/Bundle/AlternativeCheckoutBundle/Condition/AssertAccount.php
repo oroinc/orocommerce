@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Condition;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Condition;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\Exception;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AssertAccount extends AbstractCondition implements ContextAccessorAwareInterface
 {

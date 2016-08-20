@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-
-use OroB2B\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 
 abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,20 +17,20 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity with "OroB2B\Bundle\AccountBundle\Entity\AccountAddress" not registered
+     * @expectedExceptionMessage Entity with "Oro\Bundle\AccountBundle\Entity\AccountAddress" not registered
      */
     public function testGetIdentifierFailed()
     {
-        $this->manager->getIdentifier($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 1));
+        $this->manager->getIdentifier($this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 1));
     }
 
     public function testGetIdentifier()
     {
-        $this->manager->addEntity('a', 'OroB2B\Bundle\AccountBundle\Entity\AccountAddress');
+        $this->manager->addEntity('a', 'Oro\Bundle\AccountBundle\Entity\AccountAddress');
 
         $this->assertEquals(
             'a_1',
-            $this->manager->getIdentifier($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 1))
+            $this->manager->getIdentifier($this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 1))
         );
     }
 
@@ -57,7 +56,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
 
-        $this->manager->addEntity('au', 'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\AccountBundle\Entity\AccountUserAddress');
         $this->manager->getEntityByIdentifier($identifier);
     }
 
@@ -77,7 +76,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEntityByIdentifier()
     {
-        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 1);
+        $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 1);
 
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->exactly(2))->method('find')
@@ -86,7 +85,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
 
-        $this->manager->addEntity('au', 'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\AccountBundle\Entity\AccountUserAddress');
         $this->assertEquals($entity, $this->manager->getEntityByIdentifier('au_1'));
         $this->assertNull($this->manager->getEntityByIdentifier('au_2'));
     }

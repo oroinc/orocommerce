@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListFormProvider extends AbstractFormProvider
 {

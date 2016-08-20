@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace Oro\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class ProductVisibilityType extends AbstractType
 {
@@ -19,8 +19,8 @@ class ProductVisibilityType extends AbstractType
         $resolver->setDefaults(
             [
                 'choices' => [
-                    ProductVisibility::VISIBLE => 'orob2b.account.product.visibility.visible.label',
-                    ProductVisibility::HIDDEN => 'orob2b.account.product.visibility.hidden.label',
+                    ProductVisibility::VISIBLE => 'oro.account.product.visibility.visible.label',
+                    ProductVisibility::HIDDEN => 'oro.account.product.visibility.hidden.label',
                 ],
             ]
         );

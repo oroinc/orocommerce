@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
+namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -14,11 +14,10 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
 {
@@ -28,7 +27,7 @@ class RequestController extends Controller
      * @Acl(
      *      id="orob2b_rfp_frontend_request_view",
      *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
+     *      class="OroRFPBundle:Request",
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
@@ -70,7 +69,7 @@ class RequestController extends Controller
      * @Acl(
      *      id="orob2b_rfp_frontend_request_create",
      *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
+     *      class="OroRFPBundle:Request",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -100,7 +99,7 @@ class RequestController extends Controller
      * @Acl(
      *      id="orob2b_rfp_frontend_request_update",
      *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
+     *      class="OroRFPBundle:Request",
      *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
@@ -168,7 +167,7 @@ class RequestController extends Controller
                     'parameters' => [],
                 ];
             },
-            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
+            $this->get('translator')->trans('oro.rfp.controller.request.saved.message'),
             null,
             function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
                 $url = $request->getUri();

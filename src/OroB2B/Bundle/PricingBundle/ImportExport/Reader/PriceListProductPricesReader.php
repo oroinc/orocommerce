@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\ImportExport\Reader;
+namespace Oro\Bundle\PricingBundle\ImportExport\Reader;
 
 use Doctrine\ORM\QueryBuilder;
 

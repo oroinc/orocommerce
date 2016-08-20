@@ -1,8 +1,8 @@
 {% macro addToCurrentButton(options) %}
     {% import _self as buttons %}
     {% set options = {
-        defaultLabel: 'orob2b.shoppinglist.entity_label'|trans,
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
+        defaultLabel: 'oro.shoppinglist.entity_label'|trans,
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
@@ -10,7 +10,7 @@
 {% macro addToButton(options) -%}
     {% import _self as buttons %}
     {% set options = {
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
@@ -21,7 +21,7 @@
         intention: 'new'
     }) %}
     {% set options = {
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list'|trans
     }|merge(options)|merge({
         dataAttributes: dataAttributes
     }) %}
@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% macro buttonTemplate(options) %}
-    {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% import _self as buttons %}
     {{ utils.underscoreRaw(buttons.addToCurrentButton({
         shoppingList: {
@@ -85,7 +85,7 @@
     {% import _self as buttons %}
     <div class="btn-group"
          {{ UI.renderPageComponentAttributes({
-             module: options.componentModule|default('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view'),
+             module: options.componentModule|default('oroshoppinglist/js/app/views/product-add-to-shopping-list-view'),
              options: {
                  buttonTemplate: buttons.buttonTemplate(options.current),
                  removeButtonTemplate: options.remove is defined ? buttons.buttonTemplate(options.remove),

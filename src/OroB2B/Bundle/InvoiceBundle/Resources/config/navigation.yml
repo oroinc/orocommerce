@@ -1,7 +1,7 @@
 #oro_menu_config:
 #    items:
 #        invoices_list:
-#            label:           'orob2b.invoice.entity_plural_label'
+#            label:           'oro.invoice.entity_plural_label'
 #            route:           'orob2b_invoice_index'
 #            extras:
 #                position:    750

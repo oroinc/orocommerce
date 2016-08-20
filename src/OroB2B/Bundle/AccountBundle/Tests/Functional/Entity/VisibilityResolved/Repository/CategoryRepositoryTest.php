@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -122,8 +122,8 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var CategoryVisibility[] $visibilities */
         $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility')
+            ->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
+            ->getRepository('OroAccountBundle:Visibility\CategoryVisibility')
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter('scalarVisibilities', [CategoryVisibility::VISIBLE, CategoryVisibility::HIDDEN])
@@ -242,8 +242,8 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
     protected function getRepository()
     {
         return $this->getManagerRegistry()
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**

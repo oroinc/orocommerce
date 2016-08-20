@@ -9,4 +9,4 @@ placeholders:
 
 items:
     line_item_templates:
-        template: OroB2BOrderBundle:Js:line_item_templates.js.twig
+        template: OroOrderBundle:Js:line_item_templates.js.twig

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\Form\Extension;
 
 use Oro\Bundle\ImportExportBundle\Form\Type\ExportType;
 
@@ -14,8 +14,8 @@ class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateType
     public static function getProcessorAliases()
     {
         return [
-            'orob2b_product.inventory_status_only' => 'orob2b.product.export.inventory_status_only',
-            'orob2b_warehouse.detailed_inventory_levels' => 'orob2b.warehouse.export.detailed_inventory_levels',
+            'orob2b_product.inventory_status_only' => 'oro.product.export.inventory_status_only',
+            'orob2b_warehouse.detailed_inventory_levels' => 'oro.warehouse.export.detailed_inventory_levels',
         ];
     }
 

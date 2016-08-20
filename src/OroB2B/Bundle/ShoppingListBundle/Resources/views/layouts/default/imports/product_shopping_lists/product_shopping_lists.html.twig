@@ -8,7 +8,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'orob2bshoppinglist/js/app/views/product-shopping-lists-view',
+            view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
             modelAttr: {
                 shopping_lists: shoppingLists
             },
@@ -36,9 +36,9 @@
     <div class="shopping-lists__text">
         <div class="shopping-lists__description-row">
             <span class="shopping-lists__label"><%= _.__(
-                    'orob2b.shoppinglist.actions.line_items_in_shopping_list', {
+                    'oro.shoppinglist.actions.line_items_in_shopping_list', {
                     lineItems: _.__(
-                        'orob2b.product.product_unit.' + lineItem.unit + '.value.short',
+                        'oro.product.product_unit.' + lineItem.unit + '.value.short',
                         {count: lineItem.quantity},
                         lineItem.quantity
                     ),
@@ -63,7 +63,7 @@
     <% }) %>
     <% } else { %>
     <div class="shopping-lists__text">
-        <%= _.__('orob2b.shoppinglist.actions.in_shopping_lists', {
+        <%= _.__('oro.shoppinglist.actions.in_shopping_lists', {
         count: shoppingLists.length
         }) %>
     </div>
@@ -84,25 +84,25 @@
             options: {
                 template: shoppingListsTemplate,
                 quantityComponentOptions: {
-                    dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                    dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                     enable: resource_granted('orob2b_shopping_list_frontend_update'),
                 }
             }
         },
         '~class': ' shopping-lists__link'
     }) %}
-    <a {{ block('block_attributes') }}>({{ 'orob2b.shoppinglist.actions.add_to_multiple'|trans }})</a>
+    <a {{ block('block_attributes') }}>({{ 'oro.shoppinglist.actions.add_to_multiple'|trans }})</a>
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroB2BFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
     <div>
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">
             <tr class="shopping-lists-popup__item">
-                <th class="shopping-lists-popup__list">{{ 'orob2b.shoppinglist.entity_label'|trans }}</th>
-                <th class="shopping-lists-popup__quantity">{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}</th>
+                <th class="shopping-lists-popup__list">{{ 'oro.shoppinglist.entity_label'|trans }}</th>
+                <th class="shopping-lists-popup__quantity">{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}</th>
             </tr>
             </thead>
             <tbody class="shopping-lists-popup__content">
@@ -120,8 +120,8 @@
                             {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                 module: 'oroui/js/app/components/view-component',
                                 options: {
-                                    view: 'orob2bproduct/js/app/views/product-quantity-editable-view',
-                                    dataKey: constant('OroB2B\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                                    view: 'oroproduct/js/app/views/product-quantity-editable-view',
+                                    dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                                     enable: resource_granted('orob2b_shopping_list_frontend_update'),
                                     elements: {
                                         saveButton: '[data-role="accept"]',
@@ -135,7 +135,7 @@
                                         route: 'orob2b_api_shopping_list_frontend_put_line_item'
                                     },
                                     validation: {
-                                        showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                                        showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
                                     },
                                     triggerData: {
                                         lineItemId: '<%= lineItem.line_item_id %>',
@@ -149,7 +149,7 @@
                                     <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
                                     <span class="shopping-lists-units__separate">/</span>
                                     <span class="shopping-lists-units__measurements"><%= _.__(
-                                        'orob2b.product.product_unit.' + lineItem.unit + '.value.label',
+                                        'oro.product.product_unit.' + lineItem.unit + '.value.label',
                                         {count: lineItem.quantity},
                                         lineItem.quantity
                                     ) %></span>
@@ -164,7 +164,7 @@
                                             <li class="actions-row__item actions-row__item--remove">
                                                 <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
-                                                            module: 'orob2bfrontend/js/app/components/delete-item-component',
+                                                            module: 'orofrontend/js/app/components/delete-item-component',
                                                             options: {
                                                                 route: 'orob2b_api_shopping_list_frontend_delete_line_item',
                                                                 routeParams: {
@@ -173,8 +173,8 @@
                                                                 triggerData: {
                                                                     lineItemId: '<%= lineItem.line_item_id %>'
                                                                 },
-                                                                confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                                sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                                                confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                                                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
                                                                 okButtonClass: 'btn ok theme-btn_sm btn-orange',
                                                                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                                             }

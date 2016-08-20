@@ -1,4 +1,4 @@
-OroB2B\Bundle\RFPBundle\Entity\Request:
+Oro\Bundle\RFPBundle\Entity\Request:
     properties:
         firstName:
             - NotBlank: ~
@@ -28,39 +28,39 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
         requestProducts:
             - Valid: ~
 
-OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
     properties:
         request:
             - NotBlank: ~
         product:
             - NotBlank:
-                message: 'orob2b.rfp.requestproduct.product.blank'
+                message: 'oro.rfp.requestproduct.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
         requestProductItems:
             - Count:
                 min: 1
-                minMessage: 'orob2b.rfp.requestproduct.request_product_items.blank'
+                minMessage: 'oro.rfp.requestproduct.request_product_items.blank'
             - Valid: ~
 
-OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     properties:
         requestProduct:
             - NotBlank: ~
         quantity:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.product.productunit.invalid'
+                message: 'oro.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
         price:
             - Valid: ~
 
-OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
+Oro\Bundle\RFPBundle\Entity\RequestStatus:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
               fields:     [ name ]

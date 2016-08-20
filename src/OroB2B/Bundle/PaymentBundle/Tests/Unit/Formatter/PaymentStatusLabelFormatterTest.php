@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -29,7 +29,7 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase
     public function testFormatPaymentStatusLabel()
     {
         $this->translator->expects($this->once())->method('trans')
-            ->with('orob2b.payment.status.full')
+            ->with('oro.payment.status.full')
             ->willReturn('Paid is Full');
 
         $result = $this->formatter->formatPaymentStatusLabel('full');
@@ -48,11 +48,11 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->exactly(5))
             ->method('trans')
             ->withConsecutive(
-                ['orob2b.payment.status.' . PaymentStatusProvider::FULL],
-                ['orob2b.payment.status.' . PaymentStatusProvider::AUTHORIZED],
-                ['orob2b.payment.status.' . PaymentStatusProvider::PENDING],
-                ['orob2b.payment.status.' . PaymentStatusProvider::DECLINED],
-                ['orob2b.payment.status.' . PaymentStatusProvider::PARTIALLY]
+                ['oro.payment.status.' . PaymentStatusProvider::FULL],
+                ['oro.payment.status.' . PaymentStatusProvider::AUTHORIZED],
+                ['oro.payment.status.' . PaymentStatusProvider::PENDING],
+                ['oro.payment.status.' . PaymentStatusProvider::DECLINED],
+                ['oro.payment.status.' . PaymentStatusProvider::PARTIALLY]
             )
             ->willReturnOnConsecutiveCalls(
                 'full',

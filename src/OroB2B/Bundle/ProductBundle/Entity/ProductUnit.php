@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_product_unit")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={

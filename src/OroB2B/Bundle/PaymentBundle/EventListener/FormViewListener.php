@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\EventListener;
+namespace Oro\Bundle\PaymentBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 class FormViewListener
 {
@@ -64,7 +63,7 @@ class FormViewListener
 
         $accountId = (int)$request->get('id');
         /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
+        $account = $this->doctrineHelper->getEntityReference('OroAccountBundle:Account', $accountId);
 
         $paymentTermRepository = $this->getPaymentTermRepository();
         $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccount($account);
@@ -77,14 +76,14 @@ class FormViewListener
                 'defineToTheGroup' => false
             ];
             $template = $event->getEnvironment()->render(
-                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
+                'OroPaymentBundle:Account:payment_term_view.html.twig',
                 ['paymentTermData' => $paymentTermData]
             );
         } else {
             $accountGroupPaymentTerm = null;
 
             $paymentTermLabelForAccount = $this->translator->trans(
-                'orob2b.payment.account.payment_term_non_defined_in_group'
+                'oro.payment.account.payment_term_non_defined_in_group'
             );
 
             if ($account->getGroup()) {
@@ -93,7 +92,7 @@ class FormViewListener
 
                 if ($accountGroupPaymentTerm) {
                     $paymentTermLabelForAccount = $this->translator->trans(
-                        'orob2b.payment.account.payment_term_defined_in_group',
+                        'oro.payment.account.payment_term_defined_in_group',
                         [
                             '{{ payment_term }}' => $accountGroupPaymentTerm->getLabel()
                         ]
@@ -109,7 +108,7 @@ class FormViewListener
             ];
 
             $template = $event->getEnvironment()->render(
-                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
+                'OroPaymentBundle:Account:payment_term_view.html.twig',
                 ['paymentTermData' => $paymentTermData]
             );
         }
@@ -128,7 +127,7 @@ class FormViewListener
 
         $groupId = (int)$request->get('id');
         /** @var AccountGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
+        $group = $this->doctrineHelper->getEntityReference('OroAccountBundle:AccountGroup', $groupId);
         $paymentTermRepository = $this->getPaymentTermRepository();
         $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccountGroup($group);
 
@@ -139,7 +138,7 @@ class FormViewListener
             'defineToTheGroup' => false,
         ];
         $template = $event->getEnvironment()->render(
-            'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
+            'OroPaymentBundle:Account:payment_term_view.html.twig',
             ['paymentTermData' => $paymentTermData]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -151,7 +150,7 @@ class FormViewListener
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPaymentBundle:Account/Form:payment_term_update.html.twig',
+            'OroPaymentBundle:Account/Form:payment_term_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

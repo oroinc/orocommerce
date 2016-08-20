@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Exception;
+namespace Oro\Bundle\TaxBundle\Exception;
 
 use Exception;
 

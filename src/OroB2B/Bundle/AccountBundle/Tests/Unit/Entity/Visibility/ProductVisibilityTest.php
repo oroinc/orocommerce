@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +40,7 @@ class ProductVisibilityTest extends \PHPUnit_Framework_TestCase
     public function testClone()
     {
         /** @var ProductVisibility $entity */
-        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility', ['id' => 1]);
+        $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility', ['id' => 1]);
         $clonedEntity = clone $entity;
         $this->assertNull($clonedEntity->getId());
     }

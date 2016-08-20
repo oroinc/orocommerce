@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-
-use OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider;
+use Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider;
 
 class PriceListPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {

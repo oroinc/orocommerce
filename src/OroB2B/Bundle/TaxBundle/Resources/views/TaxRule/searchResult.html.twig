@@ -1,6 +1,6 @@
 {#
     Available variables:
-    * entity       - OroB2B\Bundle\TaxBundle\Entity\TaxRule or null
+    * entity       - Oro\Bundle\TaxBundle\Entity\TaxRule or null
     * indexer_item - indexer item Oro\Bundle\SearchBundle\Query\Result\Item
 #}
 
@@ -9,4 +9,4 @@
 {% set showImage = false %}
 {% set recordUrl = indexer_item.recordUrl %}
 {% set title = indexer_item.recordTitle %}
-{% set entityType = 'orob2b.tax.taxrule.entity_label'|trans %}
+{% set entityType = 'oro.tax.taxrule.entity_label'|trans %}

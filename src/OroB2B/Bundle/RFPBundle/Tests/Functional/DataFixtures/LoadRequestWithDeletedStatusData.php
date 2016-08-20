@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestWithDeletedStatusData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -31,7 +31,7 @@ class LoadRequestWithDeletedStatusData extends AbstractFixture implements Depend
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
+            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
         ];
     }
 
@@ -40,7 +40,7 @@ class LoadRequestWithDeletedStatusData extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $om)
     {
-        $deletedRequestStatus = $om->getRepository('OroB2BRFPBundle:RequestStatus')
+        $deletedRequestStatus = $om->getRepository('OroRFPBundle:RequestStatus')
             ->findOneBy(['name' => LoadRequestStatusData::NAME_DELETED]);
 
         if (!$deletedRequestStatus instanceof RequestStatus) {

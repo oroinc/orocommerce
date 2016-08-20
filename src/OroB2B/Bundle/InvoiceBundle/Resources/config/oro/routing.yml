@@ -1,4 +1,4 @@
 orob2b_invoice:
-    resource:     "@OroB2BInvoiceBundle/Controller/InvoiceController.php"
+    resource:     "@OroInvoiceBundle/Controller/InvoiceController.php"
     type:         annotation
     prefix:       /invoice

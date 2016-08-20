@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Owner\Metadata;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Owner\Metadata;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
-
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata;
 
 class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
 {
@@ -145,7 +144,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAccessLevelNames(array $arguments, array $levels)
     {
-        $reflection = new \ReflectionClass('OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata');
+        $reflection = new \ReflectionClass('Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadata');
         /** @var FrontendOwnershipMetadata $metadata */
         $metadata = $reflection->newInstanceArgs($arguments);
         $this->assertEquals($levels, $metadata->getAccessLevelNames());

@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
  * QuoteProductOffer

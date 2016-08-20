@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
 
 class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -74,10 +73,10 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
      */
     public function reverseTransformDataProvider()
     {
-        $firstWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
-        $secondWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
+        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
+        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
 
-        $warehouseClass = 'OroB2BWarehouseBundle:Warehouse';
+        $warehouseClass = 'OroWarehouseBundle:Warehouse';
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,9 +88,9 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
             ]);
 
         /** @var ProductUnitPrecision $firstPrecision */
-        $firstPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
+        $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
         /** @var ProductUnitPrecision $secondPrecision */
-        $secondPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
+        $secondPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
 
         $product = new Product();
         $product->addUnitPrecision($firstPrecision)

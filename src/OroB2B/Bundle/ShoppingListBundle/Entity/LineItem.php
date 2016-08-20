@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Entity;
+namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 
 /**
  * @ORM\Table(
@@ -25,7 +24,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *          )
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository")
  * @Config(
  *      defaultValues={
  *          "security"={
@@ -66,7 +65,7 @@ class LineItem extends ExtendLineItem implements
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -82,7 +81,7 @@ class LineItem extends ExtendLineItem implements
      * @var ShoppingList
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
+     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *      cascade={"persist"},
      *      inversedBy="lineItems"
      * )
@@ -114,7 +113,7 @@ class LineItem extends ExtendLineItem implements
     /**
      * @var ProductUnit
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -143,7 +142,7 @@ class LineItem extends ExtendLineItem implements
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={

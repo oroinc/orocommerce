@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -9,12 +9,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use OroB2B\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -48,19 +48,19 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     protected function prepareRegistry($expects = false)
     {
         $this->categoryRepository =
-            $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $entityManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $entityManager->expects($expects ? $this->once() : $this->never())
             ->method('getRepository')
-            ->with('OroB2BCatalogBundle:Category')
+            ->with('OroCatalogBundle:Category')
             ->willReturn($this->categoryRepository);
 
         $this->registry->expects($expects ? $this->once() : $this->never())
             ->method('getManagerForClass')
-            ->with('OroB2BCatalogBundle:Category')
+            ->with('OroCatalogBundle:Category')
             ->willReturn($entityManager);
     }
 
@@ -81,7 +81,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => false,
                     'mapped'   => false,
-                    'label'    => 'orob2b.catalog.category.entity_label'
+                    'label'    => 'oro.catalog.category.entity_label'
                 ]
             );
         $builder->expects($this->exactly(2))
@@ -237,7 +237,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createProduct($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $id);
+        return $this->createEntity('Oro\Bundle\ProductBundle\Entity\Product', $id);
     }
 
     /**
@@ -247,7 +247,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createCategory($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', $id);
+        return $this->createEntity('Oro\Bundle\CatalogBundle\Entity\Category', $id);
     }
 
     /**

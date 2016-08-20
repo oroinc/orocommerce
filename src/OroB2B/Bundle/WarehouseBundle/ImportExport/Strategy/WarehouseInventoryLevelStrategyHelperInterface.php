@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 interface WarehouseInventoryLevelStrategyHelperInterface
 {

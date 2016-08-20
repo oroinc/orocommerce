@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 
 class CombinedPriceListGarbageCollector
 {
@@ -45,9 +44,9 @@ class CombinedPriceListGarbageCollector
     {
         $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         $manager = $this->registry->getManager();
-        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')->deleteInvalidRelations();
-        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')->deleteInvalidRelations();
-        $manager->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
+        $manager->getRepository('OroPricingBundle:CombinedPriceListToAccount')->deleteInvalidRelations();
+        $manager->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup')->deleteInvalidRelations();
+        $manager->getRepository('OroPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
         $exceptPriceLists = [];
         if ($configCombinedPriceList) {
             $exceptPriceLists[] = $configCombinedPriceList;

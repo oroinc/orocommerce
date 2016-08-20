@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Manager;
+namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -9,15 +9,15 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
 {
@@ -115,7 +115,7 @@ class ShoppingListManager
     public function createCurrent($label = '')
     {
         $shoppingList = $this->create();
-        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label'));
+        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('oro.shoppinglist.default.label'));
 
         $this->setCurrent($this->getAccountUser(), $shoppingList);
 
@@ -128,9 +128,9 @@ class ShoppingListManager
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingListRepository = $em->getRepository('OroShoppingListBundle:ShoppingList');
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
 
         if ($currentList instanceof ShoppingList && $currentList->getId() !== $shoppingList->getId()) {
@@ -150,10 +150,10 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
-        $repository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
+        $repository = $em->getRepository('OroShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
             $quantity = $this->rounding->roundQuantity(
@@ -187,8 +187,8 @@ class ShoppingListManager
      */
     public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
     {
-        $objectManager = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-        $repository = $objectManager->getRepository('OroB2BShoppingListBundle:LineItem');
+        $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
+        $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
         $lineItems = $repository->getItemsByShoppingListAndProduct($shoppingList, $product);
 
@@ -210,7 +210,7 @@ class ShoppingListManager
      */
     public function removeLineItem(LineItem $lineItem)
     {
-        $objectManager = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $objectManager->remove($lineItem);
         $shoppingList = $lineItem->getShoppingList();
         $shoppingList->removeLineItem($lineItem);
@@ -243,9 +243,9 @@ class ShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
-        $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
         if ($shoppingListId === null) {
             $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
         } else {
@@ -267,11 +267,11 @@ class ShoppingListManager
     public function getCurrent($create = false, $label = '')
     {
         /* @var $repository ShoppingListRepository */
-        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
         $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
 
         if ($create && !$shoppingList instanceof ShoppingList) {
-            $label = $this->translator->trans($label ?: 'orob2b.shoppinglist.default.label');
+            $label = $this->translator->trans($label ?: 'oro.shoppinglist.default.label');
 
             $shoppingList = $this->create();
             $shoppingList->setLabel($label);
@@ -287,7 +287,7 @@ class ShoppingListManager
     {
         $accountUser = $this->getAccountUser();
         /* @var $repository ShoppingListRepository */
-        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
         return $repository->findByUser($accountUser);
     }

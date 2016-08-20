@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension;
+use Oro\Bundle\AccountBundle\Form\Extension\AddressExtension;
 
 class AddressExtensionTest extends AbstractAccountUserAwareExtensionTest
 {

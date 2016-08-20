@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
-use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
+use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 
 class OffersFormStorageTest extends \PHPUnit_Framework_TestCase
 {

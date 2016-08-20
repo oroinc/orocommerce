@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Processor;
+namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 {

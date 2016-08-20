@@ -1,3 +1,3 @@
 ROLE_ACCOUNT_MANAGER:
     permissions:
-        entity|OroB2B\Bundle\CMSBundle\Entity\LoginPage: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\CMSBundle\Entity\LoginPage: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

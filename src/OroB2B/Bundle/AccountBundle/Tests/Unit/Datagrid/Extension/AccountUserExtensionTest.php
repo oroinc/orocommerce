@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Datagrid\Extension;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserExtension;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Datagrid\Extension\AccountUserExtension;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -80,13 +79,13 @@ class AccountUserExtensionTest extends \PHPUnit_Framework_TestCase
     public function applicableDataProvider()
     {
         return [
-            [new User(), 'OroB2B\Bundle\AccountBundle\Entity\AccountUser', false],
-            [null, 'OroB2B\Bundle\AccountBundle\Entity\AccountUser', true],
-            ['anon.', 'OroB2B\Bundle\AccountBundle\Entity\AccountUser', true],
-            [new AccountUser(), 'OroB2B\Bundle\AccountBundle\Entity\AccountUser', true],
+            [new User(), 'Oro\Bundle\AccountBundle\Entity\AccountUser', false],
+            [null, 'Oro\Bundle\AccountBundle\Entity\AccountUser', true],
+            ['anon.', 'Oro\Bundle\AccountBundle\Entity\AccountUser', true],
+            [new AccountUser(), 'Oro\Bundle\AccountBundle\Entity\AccountUser', true],
             [
-                'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
-                'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                'Oro\Bundle\AccountBundle\Entity\AccountUser',
+                'Oro\Bundle\AccountBundle\Entity\AccountUser',
                 true,
             ],
         ];

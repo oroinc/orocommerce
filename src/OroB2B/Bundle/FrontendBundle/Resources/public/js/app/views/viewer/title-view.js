@@ -24,7 +24,7 @@ define(function(require) {
      */
     var TitleView = BaseView.extend(/** @exports TitleView.prototype */{
         showDefault: true,
-        template: require('tpl!orob2bfrontend/templates/viewer/title-view.html'),
+        template: require('tpl!orofrontend/templates/viewer/title-view.html'),
 
         listen: {
             'change model': 'render'

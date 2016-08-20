@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\RegexValidator;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric;
 
 class AlphanumericTest extends \PHPUnit_Framework_TestCase
 {

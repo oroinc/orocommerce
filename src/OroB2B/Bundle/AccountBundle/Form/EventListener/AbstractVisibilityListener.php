@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace Oro\Bundle\AccountBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 abstract class AbstractVisibilityListener
 {

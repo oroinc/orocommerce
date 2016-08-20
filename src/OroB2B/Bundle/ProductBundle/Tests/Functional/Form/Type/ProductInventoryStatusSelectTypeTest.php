@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 
 /**
  * @dbIsolation

@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
@@ -160,14 +160,14 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
             $this->eventDispatcher->expects($this->never())
                 ->method('dispatch');
         }
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository';
+        $class = 'Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository';
         $this->productPriceTriggerRepo = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
 
         $this->productPriceTriggerRepo->expects($this->once())
             ->method('getProductPriceChangeTriggersIterator')
             ->willReturn($data['changesCollection']);
 
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';
+        $class = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';
         $this->combinedPriceListRepo = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
 
         $this->combinedPriceListRepo->expects($this->any())
@@ -180,11 +180,11 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
                 $this->returnValueMap(
                     [
                         [
-                            'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger',
+                            'Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger',
                             $this->productPriceTriggerRepo,
                         ],
                         [
-                            'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList',
+                            'Oro\Bundle\PricingBundle\Entity\CombinedPriceList',
                             $this->combinedPriceListRepo,
                         ],
                     ]
@@ -197,7 +197,7 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
                 $this->returnValueMap(
                     [
                         [ProductPriceChangeTrigger::class, $this->manager],
-                        ['OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', $this->manager],
+                        ['Oro\Bundle\PricingBundle\Entity\CombinedPriceList', $this->manager],
                     ]
                 )
             );

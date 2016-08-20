@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-
-use OroB2B\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension;
 
 class ShippingOptionLabelExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,17 +22,17 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->lengthUnitLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->weightUnitLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->freightClassLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 

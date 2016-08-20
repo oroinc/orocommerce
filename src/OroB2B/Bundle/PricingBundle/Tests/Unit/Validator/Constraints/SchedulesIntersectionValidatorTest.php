@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListSchedule;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
+use Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection;
+use Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 
 class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const MESSAGE = 'orob2b.pricing.validators.price_list.schedules_intersection.message';
+    const MESSAGE = 'oro.pricing.validators.price_list.schedules_intersection.message';
 
     /**
      * @dataProvider validateSuccessDataProvider

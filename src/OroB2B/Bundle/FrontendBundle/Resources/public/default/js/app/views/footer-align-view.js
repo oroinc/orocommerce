@@ -3,7 +3,7 @@ define(function(require) {
 
     var FooterAlignView;
     var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orob2bfrontend/js/app/elements-helper');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var $ = require('jquery');

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 class MeasureTransformer implements DataTransformerInterface
 {

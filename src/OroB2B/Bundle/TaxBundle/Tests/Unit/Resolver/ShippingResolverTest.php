@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\ShippingResolver;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\ShippingResolver;
 
 class ShippingResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,8 +21,8 @@ class ShippingResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
     }
 
     public function testResolveItem()
@@ -32,7 +32,7 @@ class ShippingResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
+        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
     }
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
-use OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
 class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,7 +63,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
         $this->createPriceListScheduleRepositoryMock();
         $this->createCombinedPriceListToPriceListRepositoryMock();
 
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
         $this->CPLActivationRuleRepository = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -84,7 +84,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
     protected function schedulerResolverMock()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Resolver\PriceListScheduleResolver';
+        $className = 'Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver';
         $this->schedulerResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,7 +101,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
     protected function createCombinedPriceListRepositoryMock()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';
         $this->combinedPriceListRepository = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -112,7 +112,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
     protected function createPriceListScheduleRepositoryMock()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository';
         $this->priceListScheduleRepository = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -121,7 +121,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
     protected function createCombinedPriceListToPriceListRepositoryMock()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository';
+        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository';
         $this->CPLToPriceListRepository = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
@@ -136,10 +136,10 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
         $this->doctrineHelper->method('getEntityRepository')
             ->willReturnMap([
-                ['OroB2BPricingBundle:CombinedPriceListActivationRule', $this->CPLActivationRuleRepository],
-                ['OroB2BPricingBundle:CombinedPriceListToPriceList', $this->CPLToPriceListRepository],
-                ['OroB2BPricingBundle:PriceListSchedule', $this->priceListScheduleRepository],
-                ['OroB2BPricingBundle:CombinedPriceList', $this->combinedPriceListRepository],
+                ['OroPricingBundle:CombinedPriceListActivationRule', $this->CPLActivationRuleRepository],
+                ['OroPricingBundle:CombinedPriceListToPriceList', $this->CPLToPriceListRepository],
+                ['OroPricingBundle:PriceListSchedule', $this->priceListScheduleRepository],
+                ['OroPricingBundle:CombinedPriceList', $this->combinedPriceListRepository],
             ]);
         /** @var \Doctrine\ORM\EntityManager| \PHPUnit_Framework_MockObject_MockObject $manager */
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
@@ -152,7 +152,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
 
     protected function createCombinedPriceListProviderMock()
     {
-        $className = 'OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider';
+        $className = 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider';
         $this->combinedPriceListProvider = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();

@@ -7,9 +7,9 @@
     <thead>
     <tr>
         <th class="renderable"></th>
-        <th class="renderable">{{ 'orob2b.tax.result.short.includingTax'|trans }}</th>
-        <th class="renderable">{{ 'orob2b.tax.result.short.excludingTax'|trans }}</th>
-        <th class="renderable">{{ 'orob2b.tax.result.short.taxAmount'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.short.includingTax'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.short.excludingTax'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.short.taxAmount'|trans }}</th>
     </tr>
     </thead>
 {% endmacro %}
@@ -21,7 +21,7 @@
             <tbody>
             {% for type, data in result if data.includingTax is defined %}
                 <tr>
-                    <td class="renderable">{{ 'orob2b.tax.result.%s'|format(type)|trans }}</td>
+                    <td class="renderable">{{ 'oro.tax.result.%s'|format(type)|trans }}</td>
                     <td class="renderable">{{ data.includingTax|oro_format_currency({currency: data.currency}) }}</td>
                     <td class="renderable">{{ data.excludingTax|oro_format_currency({currency: data.currency}) }}</td>
                     <td class="renderable">{{ data.taxAmount|oro_format_currency({currency: data.currency}) }}</td>
@@ -35,10 +35,10 @@
 {% macro _renderTaxesHead() %}
     <thead>
     <tr>
-        <th class="renderable">{{ 'orob2b.tax.result.tax'|trans }}</th>
-        <th class="renderable">{{ 'orob2b.tax.result.rate'|trans }}</th>
-        <th class="renderable">{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
-        <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.tax'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.rate'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.taxableAmount'|trans }}</th>
+        <th class="renderable">{{ 'oro.tax.result.taxAmount'|trans }}</th>
     </tr>
     </thead>
 {% endmacro %}
@@ -63,9 +63,9 @@
 
 {% macro renderJsItems() %}
     <% var translations = {
-        unit: '{{ 'orob2b.tax.result.unit'|trans }}',
-        row: '{{ 'orob2b.tax.result.row'|trans }}',
-        total: '{{ 'orob2b.tax.result.total'|trans }}'}
+        unit: '{{ 'oro.tax.result.unit'|trans }}',
+        row: '{{ 'oro.tax.result.row'|trans }}',
+        total: '{{ 'oro.tax.result.total'|trans }}'}
     %>
     <% var unit = unit; %>
     <% var row = row; %>

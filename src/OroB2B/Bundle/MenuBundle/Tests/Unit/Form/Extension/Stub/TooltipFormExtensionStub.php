@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

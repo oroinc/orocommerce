@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 abstract class AbstractUserControllerTest extends WebTestCase
 {
@@ -52,7 +51,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function assertMessage($email, \Swift_Message $message)
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $email]);
 
         $this->assertNotNull($user);
@@ -82,7 +81,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**
@@ -90,7 +89,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUserRole');
     }
 
     /**
@@ -98,6 +97,6 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:Account');
     }
 }

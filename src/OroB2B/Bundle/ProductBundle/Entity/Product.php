@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,8 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
-use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
+use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
  * @ORM\Table(
@@ -25,7 +24,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
  * @Config(
  *      routeName="orob2b_product_index",
  *      routeView="orob2b_product_view",
@@ -382,7 +381,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var Collection|ProductImage[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage",
+     *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage",
      *     mappedBy="product",
      *     cascade={"ALL"},
      *     orphanRemoval=true
@@ -914,7 +913,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
         if (false === $this->hasVariants) {
-            // Clear variantLinks in OroB2B\Bundle\ProductBundle\EventListener\ProductHandlerListener
+            // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }
     }

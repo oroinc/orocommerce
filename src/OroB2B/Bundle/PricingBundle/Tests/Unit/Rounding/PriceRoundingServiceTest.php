@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Rounding;
 
-use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Rounding\AbstractRoundingServiceTest;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\ProductBundle\Tests\Unit\Rounding\AbstractRoundingServiceTest;
 
 class PriceRoundingServiceTest extends AbstractRoundingServiceTest
 {

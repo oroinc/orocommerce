@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
@@ -29,7 +28,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         Product $product = null
     ) {
         $qb = $this->getEntityManager()
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
+            ->getRepository('OroPricingBundle:ProductPrice')
             ->createQueryBuilder('pp');
 
         $qb
@@ -55,7 +54,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
 
         $insertFromSelectQueryExecutor->execute(
-            'OroB2BPricingBundle:CombinedProductPrice',
+            'OroPricingBundle:CombinedProductPrice',
             [
                 'product',
                 'unit',
@@ -128,7 +127,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     {
         if ($mergeAllowed) {
             $qb->leftJoin(
-                'OroB2BPricingBundle:CombinedProductPrice',
+                'OroPricingBundle:CombinedProductPrice',
                 'cpp',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -139,7 +138,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             )
             ->setParameter('mergeAllowed', false)
             ->leftJoin(
-                'OroB2BPricingBundle:CombinedProductPrice',
+                'OroPricingBundle:CombinedProductPrice',
                 'cpp2',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -153,7 +152,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             ->andWhere($qb->expr()->isNull('cpp2.id'));
         } else {
             $qb->leftJoin(
-                'OroB2BPricingBundle:CombinedProductPrice',
+                'OroPricingBundle:CombinedProductPrice',
                 'cpp',
                 Join::WITH,
                 $qb->expr()->andX(

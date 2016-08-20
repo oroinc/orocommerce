@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Controller\Frontend\Api\Rest;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,7 +31,7 @@ class AccountUserRoleController extends RestController implements ClassResourceI
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_delete_action",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_DELETE",
      *      group_name="commerce"
      * )

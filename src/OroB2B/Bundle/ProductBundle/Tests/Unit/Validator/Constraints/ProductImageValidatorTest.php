@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Prophecy\Argument;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImage;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
 
 class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
 {

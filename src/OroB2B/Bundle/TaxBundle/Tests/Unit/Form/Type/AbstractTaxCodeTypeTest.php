@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\TaxBundle\Form\Type\AbstractTaxCodeType;
+use Oro\Bundle\TaxBundle\Form\Type\AbstractTaxCodeType;
 
 abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
 {

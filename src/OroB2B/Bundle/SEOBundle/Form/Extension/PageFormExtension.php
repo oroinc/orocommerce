@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Form\Extension;
+namespace Oro\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-
-use OroB2B\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -23,6 +22,6 @@ class PageFormExtension extends BaseMetaFormExtension
      */
     public function getMetaFieldLabelPrefix()
     {
-        return 'orob2b.cms.page';
+        return 'oro.cms.page';
     }
 }

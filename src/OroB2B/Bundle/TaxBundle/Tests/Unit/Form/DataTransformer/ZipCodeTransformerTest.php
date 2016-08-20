@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
-use OroB2B\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
 {

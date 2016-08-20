@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 
 class CombinedPriceListToWebsiteRepository extends PriceListToWebsiteRepository
 {
@@ -14,13 +14,13 @@ class CombinedPriceListToWebsiteRepository extends PriceListToWebsiteRepository
         $qb = $this->createQueryBuilder('relation');
         $qb->select('relation')
             ->leftJoin(
-                'OroB2BPricingBundle:PriceListWebsiteFallback',
+                'OroPricingBundle:PriceListWebsiteFallback',
                 'fallback',
                 Join::WITH,
                 $qb->expr()->eq('fallback.website', 'relation.website')
             )
             ->leftJoin(
-                'OroB2BPricingBundle:PriceListToWebsite',
+                'OroPricingBundle:PriceListToWebsite',
                 'baseRelation',
                 Join::WITH,
                 $qb->expr()->andX(

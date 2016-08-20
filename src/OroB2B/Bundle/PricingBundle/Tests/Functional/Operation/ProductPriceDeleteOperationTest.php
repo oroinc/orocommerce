@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Operation;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 /**
  * @dbIsolation
@@ -15,7 +14,7 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
     }
 
     public function testDelete()

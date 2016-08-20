@@ -6,12 +6,12 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.sale.quote.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.sale.quote.entity_plural_label'
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: 'orob2b.frontend.sale.quote.entity_plural_label'
+            optionValue: 'oro.frontend.sale.quote.entity_plural_label'
         - '@setOption':
             id: content
             optionName: class_prefix

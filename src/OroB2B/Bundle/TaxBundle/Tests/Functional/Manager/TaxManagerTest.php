@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -12,8 +12,7 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 /**
  * @dbIsolation
@@ -37,7 +36,7 @@ class TaxManagerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules',
             ],
             true // self::resetClient doesn't clear loaded fixtures
         );

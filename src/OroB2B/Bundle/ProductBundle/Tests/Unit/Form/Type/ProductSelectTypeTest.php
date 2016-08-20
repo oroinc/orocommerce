@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -12,10 +12,9 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
 
 class ProductSelectTypeTest extends FormIntegrationTestCase
 {
@@ -66,9 +65,9 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
                     function (array $options) {
                         $this->assertArrayHasKey('data_parameters', $options);
                         $configs = [
-                            'placeholder' => 'orob2b.product.form.choose',
-                            'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
-                            'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
+                            'placeholder' => 'oro.product.form.choose',
+                            'result_template_twig' => 'OroProductBundle:Product:Autocomplete/result.html.twig',
+                            'selection_template_twig' => 'OroProductBundle:Product:Autocomplete/selection.html.twig',
                         ];
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
@@ -153,7 +152,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
         $this->assertArrayHasKey('configs', $view->vars);
         $this->assertArrayHasKey('placeholder', $view->vars['configs']);
-        $this->assertEquals('orob2b.product.removed:sku', $view->vars['configs']['placeholder']);
+        $this->assertEquals('oro.product.removed:sku', $view->vars['configs']['placeholder']);
     }
 
     /**
@@ -165,7 +164,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     protected function createProductHolder($id, $productSku, Product $product = null)
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolder
             ->expects($this->any())
             ->method('getEntityIdentifier')

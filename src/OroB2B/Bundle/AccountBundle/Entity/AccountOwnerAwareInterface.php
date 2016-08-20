@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace Oro\Bundle\AccountBundle\Entity;
 
 interface AccountOwnerAwareInterface
 {
     /**
-     * @return \OroB2B\Bundle\AccountBundle\Entity\Account
+     * @return \Oro\Bundle\AccountBundle\Entity\Account
      */
     public function getAccount();
 
     /**
-     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser
+     * @return \Oro\Bundle\AccountBundle\Entity\AccountUser
      */
     public function getAccountUser();
 }

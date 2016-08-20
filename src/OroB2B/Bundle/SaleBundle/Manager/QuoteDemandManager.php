@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Manager;
+namespace Oro\Bundle\SaleBundle\Manager;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class QuoteDemandManager
 {

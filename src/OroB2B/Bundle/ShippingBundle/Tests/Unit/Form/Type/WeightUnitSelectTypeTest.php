@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
+use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 
 class WeightUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {

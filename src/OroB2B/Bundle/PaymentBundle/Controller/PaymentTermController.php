@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Controller;
+namespace Oro\Bundle\PaymentBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,10 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType;
-use OroB2B\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermType;
+use Oro\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
 
 class PaymentTermController extends Controller
 {
@@ -24,7 +23,7 @@ class PaymentTermController extends Controller
      * @Acl(
      *      id="orob2b_payment_term_view",
      *      type="entity",
-     *      class="OroB2BPaymentBundle:PaymentTerm",
+     *      class="OroPaymentBundle:PaymentTerm",
      *      permission="VIEW"
      * )
      *
@@ -56,11 +55,11 @@ class PaymentTermController extends Controller
      * Create payment term form
      *
      * @Route("/create", name="orob2b_payment_term_create")
-     * @Template("OroB2BPaymentBundle:PaymentTerm:update.html.twig")
+     * @Template("OroPaymentBundle:PaymentTerm:update.html.twig")
      * @Acl(
      *      id="orob2b_payment_term_create",
      *      type="entity",
-     *      class="OroB2BPaymentBundle:PaymentTerm",
+     *      class="OroPaymentBundle:PaymentTerm",
      *      permission="CREATE"
      * )
      *
@@ -80,7 +79,7 @@ class PaymentTermController extends Controller
      * @Acl(
      *      id="orob2b_payment_term_update",
      *      type="entity",
-     *      class="OroB2BPaymentBundle:PaymentTerm",
+     *      class="OroPaymentBundle:PaymentTerm",
      *      permission="EDIT"
      * )
      * @param PaymentTerm $paymentTerm
@@ -117,7 +116,7 @@ class PaymentTermController extends Controller
         $handler = new PaymentTermHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
+            $this->getDoctrine()->getManagerForClass('OroPaymentBundle:PaymentTerm')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -135,7 +134,7 @@ class PaymentTermController extends Controller
                     'parameters' => ['id' => $paymentTerm->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.payment.controller.paymentterm.saved.message'),
+            $this->get('translator')->trans('oro.payment.controller.paymentterm.saved.message'),
             $handler
         );
     }

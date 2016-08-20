@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Cache;
+namespace Oro\Bundle\MenuBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class CacheWarmer implements CacheWarmerInterface
 {

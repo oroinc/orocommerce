@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Datagrid;
+namespace Oro\Bundle\AccountBundle\Datagrid;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 

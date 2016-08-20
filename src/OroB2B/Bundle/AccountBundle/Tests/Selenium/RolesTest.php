@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\Roles;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Pages\Roles;
 
 class RolesTest extends Selenium2TestCase
 {
@@ -37,7 +36,7 @@ class RolesTest extends Selenium2TestCase
         /** @var Roles $login */
         $login = $this->login();
         $login
-            ->openRoles('OroB2B\Bundle\AccountBundle')
+            ->openRoles('Oro\Bundle\AccountBundle')
             ->assertTitle('All - Account Users - Customers');
     }
 
@@ -46,7 +45,7 @@ class RolesTest extends Selenium2TestCase
         /** @var Roles $login */
         $login = $this->login();
 
-        $roles = $login->openRoles('OroB2B\Bundle\AccountBundle');
+        $roles = $login->openRoles('Oro\Bundle\AccountBundle');
         //get grid content
         $records = $roles->getRows();
         $headers = $roles->getHeaders();
@@ -88,7 +87,7 @@ class RolesTest extends Selenium2TestCase
         $roleLabel = $this->newRole['LABEL'] . $randomPrefix;
 
         /** @var Roles $login */
-        $roles = $login->openRoles('OroB2B\Bundle\AccountBundle')
+        $roles = $login->openRoles('Oro\Bundle\AccountBundle')
             ->assertTitle('All - Account Users - Customers')
             ->add()
             ->assertTitle('Create Account User Role - Account Users - Customers')
@@ -98,7 +97,7 @@ class RolesTest extends Selenium2TestCase
             ->close();
 
         //verify new Role
-        $roles->openRoles('OroB2B\Bundle\AccountBundle');
+        $roles->openRoles('Oro\Bundle\AccountBundle');
 
         static::assertTrue($roles->entityExists(['name' => $roleLabel]));
 
@@ -113,7 +112,7 @@ class RolesTest extends Selenium2TestCase
     {
         $login = $this->login();
         /** @var Roles $login */
-        $roles = $login->openRoles('OroB2B\Bundle\AccountBundle');
+        $roles = $login->openRoles('Oro\Bundle\AccountBundle');
         $roles->delete(['name' => $this->newRole['LABEL'] . $randomPrefix]);
         static::assertFalse($roles->entityExists(['name' => $this->newRole['LABEL'] . $randomPrefix]));
     }

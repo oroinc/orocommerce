@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -35,7 +34,7 @@ class ProductPriceChangeTriggerRepositoryTest extends WebTestCase
             ->getContainer()
             ->get('doctrine')
             ->getManager()
-            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+            ->getRepository('OroPricingBundle:ProductPriceChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
@@ -50,7 +49,7 @@ class ProductPriceChangeTriggerRepositoryTest extends WebTestCase
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
         /** @var ProductPriceChangeTriggerRepository $repository */
-        $repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+        $repository = $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
@@ -68,7 +67,7 @@ class ProductPriceChangeTriggerRepositoryTest extends WebTestCase
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
         /** @var ProductPriceChangeTriggerRepository $repository */
-        $repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+        $repository = $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger');
         $this->assertNotEmpty($repository->findBy([]));
 
         $repository->deleteAll();

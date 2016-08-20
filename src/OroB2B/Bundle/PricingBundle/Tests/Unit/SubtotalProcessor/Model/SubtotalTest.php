@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class SubtotalTest extends \PHPUnit_Framework_TestCase
 {

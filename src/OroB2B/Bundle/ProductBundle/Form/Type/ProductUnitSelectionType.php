@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -12,10 +12,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
@@ -104,7 +104,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $form->addError(
             new FormError(
-                $this->translator->trans('orob2b.product.productunit.invalid', [], 'validators')
+                $this->translator->trans('oro.product.productunit.invalid', [], 'validators')
             )
         );
     }
@@ -160,7 +160,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
-                'empty_label' => 'orob2b.product.productunit.removed',
+                'empty_label' => 'oro.product.productunit.removed',
                 'sell' => null,
             ]
         );

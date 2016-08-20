@@ -1,11 +1,11 @@
-OroB2B\Bundle\TaxBundle\Entity\Tax:
+Oro\Bundle\TaxBundle\Entity\Tax:
     alias:                          orob2b_tax
     title_fields:                   [code]
     route:
         name:                       orob2b_tax_view
         parameters:
             id:                     id
-    search_template:                OroB2BTaxBundle:Tax:searchResult.html.twig
+    search_template:                OroTaxBundle:Tax:searchResult.html.twig
     fields:
         -
             name:                   code
@@ -16,9 +16,9 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
             target_type:            text
             target_fields:          [description]
 
-OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     alias:            orob2b_product_tax_code
-    search_template:  OroB2BTaxBundle:ProductTaxCode:searchResult.html.twig
+    search_template:  OroTaxBundle:ProductTaxCode:searchResult.html.twig
     fields:
         -
             name:                   code
@@ -29,9 +29,9 @@ OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
             target_type:            text
             target_fields:          [description]
 
-OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
+Oro\Bundle\TaxBundle\Entity\AccountTaxCode:
     alias:            orob2b_account_tax_code
-    search_template:  OroB2BTaxBundle:AccountTaxCode:searchResult.html.twig
+    search_template:  OroTaxBundle:AccountTaxCode:searchResult.html.twig
     fields:
         -
             name:                   code
@@ -42,14 +42,14 @@ OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
             target_type:            text
             target_fields:          [description]
 
-OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     alias:                          orob2b_tax_jurisdiction
     title_fields:                   [code]
     route:
         name:                       orob2b_tax_jurisdiction_view
         parameters:
             id:                     id
-    search_template:                OroB2BTaxBundle:TaxJurisdiction:searchResult.html.twig
+    search_template:                OroTaxBundle:TaxJurisdiction:searchResult.html.twig
     fields:
         -
             name:                   code

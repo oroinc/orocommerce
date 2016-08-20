@@ -1,4 +1,4 @@
-OroB2B\Bundle\CMSBundle\Entity\Page:
+Oro\Bundle\CMSBundle\Entity\Page:
     properties:
         title:
             - NotBlank: ~

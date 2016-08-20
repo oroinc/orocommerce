@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,12 +38,12 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
+        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->treeHandler = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler'
+            'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
         )
             ->setMethods(['getPriceList', 'getPriceListByAccount'])
             ->disableOriginalConstructor()

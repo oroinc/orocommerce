@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace Oro\Bundle\TaxBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
-use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Model\Result;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
@@ -91,7 +91,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
-        $label = 'orob2b.tax.subtotals.' . self::TYPE;
+        $label = 'oro.tax.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);
 

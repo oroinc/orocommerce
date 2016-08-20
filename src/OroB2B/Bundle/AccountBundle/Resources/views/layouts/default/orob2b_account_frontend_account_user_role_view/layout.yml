@@ -3,13 +3,13 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
+            themes: 'OroAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.role.entity_plural_label'
                 - '=data["entity"].getLabel()'
         - '@addTree':
             items:
@@ -24,7 +24,7 @@ layout:
                     blockType: link
                     options:
                         route_name: orob2b_account_frontend_account_user_role_index
-                        text: orob2b.account.frontend.action.back.label
+                        text: oro.account.frontend.action.back.label
                 account_user_role_top_actions:
                     blockType: action_line_buttons
                     options:

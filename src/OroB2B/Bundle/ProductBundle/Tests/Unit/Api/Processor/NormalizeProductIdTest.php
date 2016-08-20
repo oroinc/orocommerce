@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorOrmRelatedTestCase;
-
-use OroB2B\Bundle\ProductBundle\Api\Processor\NormalizeProductId;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class NormalizeProductIdTest extends GetProcessorOrmRelatedTestCase
 {

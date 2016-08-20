@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Event;
+namespace Oro\Bundle\OrderBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderEvent extends Event
 {

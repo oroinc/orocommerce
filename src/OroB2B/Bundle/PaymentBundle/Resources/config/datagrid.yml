@@ -15,7 +15,7 @@ datagrid:
                     - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
         columns:
             label:
-                label: orob2b.payment.paymentterm.label.label
+                label: oro.payment.paymentterm.label.label
         properties:
             id: ~
             view_link:
@@ -33,7 +33,7 @@ datagrid:
                 params: [ id ]
             payment_delete_message:
                 type: twig
-                template: 'OroB2BPaymentBundle:PaymentTerm:deleteMessageDatagrid.html.twig'
+                template: 'OroPaymentBundle:PaymentTerm:deleteMessageDatagrid.html.twig'
         sorters:
             columns:
                 label:
@@ -80,7 +80,7 @@ datagrid:
                     - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
         columns:
             label:
-                label: orob2b.payment.paymentterm.label.label
+                label: oro.payment.paymentterm.label.label
         properties:
             id: ~
         sorters:
@@ -145,7 +145,7 @@ datagrid:
                         - { join: paymentTerm.accounts, alias: relatedEntity }
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
         properties:
             view_link:
                 route:  orob2b_account_group_view
@@ -164,7 +164,7 @@ datagrid:
                         - { join: paymentTerm.accountGroups, alias: relatedEntity }
         columns:
             name:
-                label: orob2b.account.accountgroup.name.label
+                label: oro.account.accountgroup.name.label
         properties:
             view_link:
                 route: orob2b_account_view
@@ -192,7 +192,7 @@ datagrid:
                 - payment_term_id
         columns:
             has_payment_term:
-                label:          orob2b.payment.paymentterm.has_payment_term.label
+                label:          oro.payment.paymentterm.has_payment_term.label
                 editable:       true
                 frontend_type:  boolean
         filters:
@@ -235,7 +235,7 @@ datagrid:
                             condition: 'relatedEntity MEMBER OF paymentTerm.accountGroups'
         columns:
             name:
-                label: orob2b.account.accountgroup.name.label
+                label: oro.account.accountgroup.name.label
         options:
             rowSelection:
                 selectors:
@@ -257,7 +257,7 @@ datagrid:
                             condition: 'relatedEntity MEMBER OF paymentTerm.accounts'
         columns:
             name:
-                label: orob2b.account.name.label
+                label: oro.account.name.label
         options:
             rowSelection:
                 selectors:

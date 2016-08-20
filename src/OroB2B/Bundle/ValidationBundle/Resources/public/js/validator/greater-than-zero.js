@@ -11,7 +11,7 @@ define(['underscore', 'orotranslation/js/translator', 'orolocale/js/formatter/nu
      * @export oroform/js/validator/range
      */
     return [
-        'OroB2B\\Bundle\\ValidationBundle\\Validator\\Constraints\\GreaterThanZero',
+        'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\GreaterThanZero',
         function (value, element) {
             value = numberFormatter.unformat(value);
             return this.optional(element) || value > 0;

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
 class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
 {

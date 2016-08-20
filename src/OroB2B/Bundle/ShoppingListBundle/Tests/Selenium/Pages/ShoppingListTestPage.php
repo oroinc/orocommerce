@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Selenium\Pages;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
@@ -30,7 +30,7 @@ class ShoppingListTestPage extends AbstractPage
      * @var string
      */
     private $sidebarLabelElement =
-        "//*[@data-bound-component='orob2bshoppinglist/js/app/views/shoppinglist-sidebar-view']//h3[1]";
+        "//*[@data-bound-component='oroshoppinglist/js/app/views/shoppinglist-sidebar-view']//h3[1]";
 
     /**
      * @var string

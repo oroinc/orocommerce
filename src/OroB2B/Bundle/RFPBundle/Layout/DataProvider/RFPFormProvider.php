@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Layout\DataProvider;
+namespace Oro\Bundle\RFPBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
 class RFPFormProvider extends AbstractFormProvider
 {

@@ -7,9 +7,9 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2bshipping/js/app/views/shipping-origin-view
+     * @export oroshipping/js/app/views/shipping-origin-view
      * @extends oroui.app.views.base.View
-     * @class orob2bshipping.app.views.ShippingOriginView
+     * @class oroshipping.app.views.ShippingOriginView
      */
     ShippingOriginView = BaseView.extend({
         /**

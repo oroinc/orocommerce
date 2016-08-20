@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,14 +9,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 
 class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
 {
@@ -98,13 +97,13 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
+                'OroPricingBundle:Account:price_list_view.html.twig',
                 [
                     'priceLists' => [
                         $priceListToAccountGroup1,
                         $priceListToAccountGroup2,
                     ],
-                    'fallback' => 'orob2b.pricing.fallback.current_account_group_only.label'
+                    'fallback' => 'oro.pricing.fallback.current_account_group_only.label'
                 ]
             )
             ->willReturn($templateHtml);
@@ -135,7 +134,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
+            ->with('OroPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
         
         $event = $this->createEvent($environment, $formView);
@@ -155,7 +154,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     protected function assertScrollDataPriceBlock(array $scrollData, $html)
     {
         $this->assertEquals(
-            'orob2b.pricing.productprice.entity_plural_label.trans',
+            'oro.pricing.productprice.entity_plural_label.trans',
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
         );
         
@@ -214,7 +213,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         array $websites
     ) {
         $priceToAccountGroupRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $priceToAccountGroupRepository->expects($this->once())
@@ -222,7 +221,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
             ->with(['accountGroup' => $accountGroup, 'website' => $websites])
             ->willReturn($priceListsToAccountGroup);
         $fallbackRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $fallbackRepository->expects($this->once())
@@ -237,8 +236,8 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
             ->will(
                 $this->returnValueMap(
                     [
-                        ['OroB2BPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
-                        ['OroB2BPricingBundle:PriceListAccountGroupFallback', $fallbackRepository]
+                        ['OroPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
+                        ['OroPricingBundle:PriceListAccountGroupFallback', $fallbackRepository]
                     ]
                 )
             );

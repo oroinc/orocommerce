@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 
 /**
  * @dbIsolation
@@ -17,7 +16,7 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions']);
+        $this->loadFixtures(['Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions']);
     }
 
     public function testGetAvailableProductUnitFreightClasses()

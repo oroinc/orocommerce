@@ -52,11 +52,11 @@
                     <thead>
                     <tr>
                         <th><span>#</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.code.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.code.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.entity_label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
                         {% if form.vars.allow_delete %}
                             <th class="invoice-line-item-actions"></th>
                         {% endif %}
@@ -96,11 +96,11 @@
         <div class="fields-row">
             <div class="invoice-line-item-type-product">
                 {{ form_widget(form.product) }}
-                <a class="invoice-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.invoice.invoicelineitem.select.free_form'|trans }}</a>
+                <a class="invoice-line-item-type-free-form" href="javascript: void(0);">{{ 'oro.invoice.invoicelineitem.select.free_form'|trans }}</a>
             </div>
             <div class="invoice-line-item-type-free-form" style="display: none;">
                 {{ form_widget(form.freeFormProduct) }}
-                <br/><a class="invoice-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.invoice.invoicelineitem.select.product'|trans }}</a>
+                <br/><a class="invoice-line-item-type-product" href="javascript: void(0);">{{ 'oro.invoice.invoicelineitem.select.product'|trans }}</a>
             </div>
         </div>
         {{ form_errors(form.product) }}

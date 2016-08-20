@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Placeholder;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\FrontendBundle\Placeholder\FrontendFilter;
 
 class FrontendFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class FrontendFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->helper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
     }

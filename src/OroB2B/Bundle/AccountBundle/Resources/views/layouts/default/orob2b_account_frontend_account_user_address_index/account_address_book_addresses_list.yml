@@ -12,7 +12,7 @@ layout:
                 account_address_book_addresses_list_title:
                     blockType: text
                     options:
-                        text: 'orob2b.account.frontend.account_user_address_book.account_addresses'
+                        text: 'oro.account.frontend.account_user_address_book.account_addresses'
                 account_address_book_addresses_list_create_button:
                     blockType: link
                     options:
@@ -20,7 +20,7 @@ layout:
                         route_name: orob2b_account_frontend_account_address_create
                         route_parameters:
                             entityId: '=data["entity"].getAccount().getId()'
-                        text: 'orob2b.account.frontend.account_user_address_book.create.label'
+                        text: 'oro.account.frontend.account_user_address_book.create.label'
                 account_address_book_addresses_list:
                     blockType: address_book
                     options:

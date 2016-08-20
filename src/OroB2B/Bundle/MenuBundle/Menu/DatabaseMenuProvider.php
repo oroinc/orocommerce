@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Menu;
+namespace Oro\Bundle\MenuBundle\Menu;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -10,9 +10,8 @@ use Knp\Menu\Provider\MenuProviderInterface;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

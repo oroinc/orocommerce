@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider;
-use OroB2B\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
 
 class TotalsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +30,7 @@ class TotalsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetData()
     {
-        $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
+        $checkout = $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
 
         $this->checkoutTotalsProvider->expects($this->once())
             ->method('getTotalsArray')

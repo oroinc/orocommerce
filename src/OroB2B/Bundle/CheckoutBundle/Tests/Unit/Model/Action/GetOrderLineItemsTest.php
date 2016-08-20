@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -9,11 +9,10 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +35,7 @@ class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = new ContextAccessor();
         $this->checkoutLineItemsManager = $this
-            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
+            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
             ->disableOriginalConstructor()
             ->getMock();
 

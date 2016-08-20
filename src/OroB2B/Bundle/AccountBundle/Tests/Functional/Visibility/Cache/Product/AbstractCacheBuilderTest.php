@@ -1,23 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
 {
@@ -41,7 +40,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');
@@ -148,8 +147,8 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     protected function getWebsite($websiteReference)
     {
         if ($websiteReference === 'default') {
-            return $this->registry->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getRepository('OroB2BWebsiteBundle:Website')
+            return $this->registry->getManagerForClass('OroWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')
                 ->getDefaultWebsite();
         }
         return $websiteReference ? $this->getReference($websiteReference) : null;

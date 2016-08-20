@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractCategoryRepositoryTest extends WebTestCase
 {
@@ -25,7 +24,7 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
         ]);
 
         $this->repository = $this->getRepository();
@@ -41,8 +40,8 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
      */
     protected function getMasterCatalog()
     {
-        return $this->getManagerRegistry()->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
+        return $this->getManagerRegistry()->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category')
             ->getMasterCatalogRoot();
     }
 

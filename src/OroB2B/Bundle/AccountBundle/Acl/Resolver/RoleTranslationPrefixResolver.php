@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Acl\Resolver;
+namespace Oro\Bundle\AccountBundle\Acl\Resolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class RoleTranslationPrefixResolver
 {
-    const BACKEND_PREFIX = 'orob2b.account.security.access-level.';
-    const FRONTEND_PREFIX = 'orob2b.account.frontend.security.access-level.';
+    const BACKEND_PREFIX = 'oro.account.security.access-level.';
+    const FRONTEND_PREFIX = 'oro.account.frontend.security.access-level.';
 
     /**
      * @var SecurityFacade

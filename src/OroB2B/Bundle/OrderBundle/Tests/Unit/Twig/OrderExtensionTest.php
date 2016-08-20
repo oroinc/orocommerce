@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\OrderBundle\Tests\Unit\Twig;
+namespace Oro\src\Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
-use OroB2B\Bundle\OrderBundle\Twig\OrderExtension;
+use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
+use Oro\Bundle\OrderBundle\Twig\OrderExtension;
 
 class OrderExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->sourceDocumentFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter')
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extension = new OrderExtension($this->sourceDocumentFormatter);

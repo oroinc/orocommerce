@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 
 class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
 {

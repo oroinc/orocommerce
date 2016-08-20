@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Mailer;
+namespace Oro\Bundle\AccountBundle\Mailer;
 
 use Oro\Bundle\UserBundle\Mailer\BaseProcessor;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserProcessor extends BaseProcessor
 {

@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 class FrontendAccountUserFormProvider extends AbstractFormProvider
 {

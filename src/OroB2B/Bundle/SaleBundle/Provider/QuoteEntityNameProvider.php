@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Provider;
+namespace Oro\Bundle\SaleBundle\Provider;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
@@ -30,7 +30,7 @@ class QuoteEntityNameProvider implements EntityNameProviderInterface
     {
         if ($format === EntityNameProviderInterface::FULL && is_a($entity, Quote::class)) {
             return $this->translator->trans(
-                'orob2b.frontend.sale.quote.title.label',
+                'oro.frontend.sale.quote.title.label',
                 [
                     '%id%' => $entity->getId()
                 ]

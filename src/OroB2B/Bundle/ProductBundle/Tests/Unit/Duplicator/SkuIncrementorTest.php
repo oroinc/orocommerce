@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'OroB2BProductBundle:Product';
+    const PRODUCT_CLASS = 'OroProductBundle:Product';
 
     /**
      * @var SkuIncrementor
@@ -96,7 +95,7 @@ class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
     private function getProductRepositoryMock($existingSku)
     {
         $mock = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

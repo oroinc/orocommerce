@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
  * @ORM\Table(name="orob2b_tax_product_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(
@@ -32,7 +31,7 @@ use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 class ProductTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinTable(
      *      name="orob2b_tax_prod_tax_code_prod",
      *      joinColumns={

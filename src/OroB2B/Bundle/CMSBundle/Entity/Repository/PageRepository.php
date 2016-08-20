@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Entity\Repository;
+namespace Oro\Bundle\CMSBundle\Entity\Repository;
 
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 /**
  * @method PageRepository persistAsFirstChildOf() persistAsFirstChildOf(Page $node, Page $parent)

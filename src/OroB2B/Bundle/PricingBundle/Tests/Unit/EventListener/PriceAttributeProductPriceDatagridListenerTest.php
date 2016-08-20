@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
@@ -10,15 +10,14 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,7 +39,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
     protected function setUp()
     {
         $this->priceListRequestHandler = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
+            'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -83,7 +82,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
             ->with($currencies)
             ->willReturn([['id' => 1, 'currency' => 'USD', 'name' => 'MSRP']]);
         $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceAttributePriceList')
+            ->with('OroPricingBundle:PriceAttributePriceList')
             ->willReturn($repo);
 
         $this->priceAttributeProductPriceDatagridListener->onBuildBefore($event);
@@ -95,7 +94,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
                     'join' => [
                         'left' => [
                             [
-                                'join' => 'OroB2BPricingBundle:PriceAttributeProductPrice',
+                                'join' => 'OroPricingBundle:PriceAttributeProductPrice',
                                 'alias' => 'price_attribute_price_column_usd_1_table',
                                 'conditionType' => 'WITH',
                                 'condition' => 'price_attribute_price_column_usd_1_table.product = product.id'.
@@ -115,7 +114,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
                 'price_attribute_price_column_usd_1' => [
                     'label' => 'MSRP (USD)',
                     'type' => 'twig',
-                    'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+                    'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
                     'frontend_type' => 'html',
                     'renderable' => true,
                 ],
@@ -185,7 +184,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
             ->willReturn([$priceAttributeProductPrice]);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceAttributeProductPrice')
+            ->with('OroPricingBundle:PriceAttributeProductPrice')
             ->willReturn($priceRepository);
         $this->priceAttributeProductPriceDatagridListener
             ->setAttributesWithCurrencies([['id' => 1, 'name' => 'priceAttribute1', 'currency' => 'USD']]);

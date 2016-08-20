@@ -41,10 +41,10 @@ define([
     }
 
     /**
-     * @export orob2bshipping/js/validator/unique-product-unit-shipping-options
+     * @export oroshipping/js/validator/unique-product-unit-shipping-options
      */
     return [
-        'OroB2B\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
+        'Oro\\Bundle\\ShippingBundle\\Validator\\Constraints\\UniqueProductUnitShippingOptions',
 
         /**
          * @param {String} value

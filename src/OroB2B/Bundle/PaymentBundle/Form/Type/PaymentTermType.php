@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Form\Type;
+namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -56,7 +56,7 @@ class PaymentTermType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('label', 'text', ['required' => true, 'label' => 'orob2b.payment.paymentterm.label.label'])
+            ->add('label', 'text', ['required' => true, 'label' => 'oro.payment.paymentterm.label.label'])
             ->add(
                 'appendAccountGroups',
                 EntityIdentifierType::NAME,

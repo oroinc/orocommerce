@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Extension;
+namespace Oro\Bundle\RFPBundle\Form\Extension;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -12,9 +12,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\OffersType;
-use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
-use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\RFPBundle\Form\Type\OffersType;
+use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderLineItemDataStorageExtension extends AbstractTypeExtension
 {
@@ -26,7 +26,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension
     /** @var DataStorageInterface */
     protected $sessionStorage;
 
-    /** @var \OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider */
+    /** @var \Oro\Bundle\OrderBundle\Form\Section\SectionProvider */
     protected $sectionProvider;
 
     /**
@@ -53,11 +53,11 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param \OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider $sectionProvider
+     * @param \Oro\Bundle\OrderBundle\Form\Section\SectionProvider $sectionProvider
      */
     public function setSectionProvider($sectionProvider)
     {
-        $className = 'OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider';
+        $className = 'Oro\Bundle\OrderBundle\Form\Section\SectionProvider';
 
         if (!is_a($sectionProvider, $className)) {
             $actual = is_object($this->sectionProvider) ?

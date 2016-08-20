@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListSequenceMember;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -32,8 +31,8 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
             ]
         );
     }
@@ -335,7 +334,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         foreach ($expectedPriceLists as $expectedPriceListData) {
             if ($expectedPriceListData['priceList'] === self::DEFAULT_PRICE_LIST) {
-                $priceList = $em->getReference('OroB2BPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+                $priceList = $em->getReference('OroPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
             } else {
                 $priceList = $this->getReference($expectedPriceListData['priceList']);
             }
@@ -352,7 +351,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     protected function setPriceListToConfig()
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $priceList = $em->getReference('OroB2BPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+        $priceList = $em->getReference('OroPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
 
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set(

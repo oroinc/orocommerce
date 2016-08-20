@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
+use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 
 class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
 {

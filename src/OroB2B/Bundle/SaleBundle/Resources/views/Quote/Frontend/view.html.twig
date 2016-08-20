@@ -1,4 +1,4 @@
-{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+{% extends 'OroFrontendBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {'%id%': entity.qid }}) %}
@@ -7,8 +7,8 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_sale_quote_frontend_index'),
-        'indexLabel': 'orob2b.frontend.sale.quote.entity_plural_label'|trans,
-        'entityTitle': 'orob2b.sale.navigation.view'|trans({
+        'indexLabel': 'oro.frontend.sale.quote.entity_plural_label'|trans,
+        'entityTitle': 'oro.sale.navigation.view'|trans({
             '%id%': entity.qid|default('N/A'|trans)
         })
     } %}
@@ -21,7 +21,7 @@
     {% set quoteInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.frontend.sale.quote.widgets.quote_information'|trans,
+            'title': 'oro.frontend.sale.quote.widgets.quote_information'|trans,
             'url': path('orob2b_sale_quote_frontend_info', {'id': entity.id})
         }) }}
     {% endset %}
@@ -31,12 +31,12 @@
             <table class="grid table table-bordered table-condensed quote-line-items">
                 <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.column.product'|trans }}</span></th>
-                        <th class="quote-line_item-quantity"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
-                        <th class="quote-line_item-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.frontend.sale.quoteproduct.column.product'|trans }}</span></th>
+                        <th class="quote-line_item-quantity"><span>{{ 'oro.frontend.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
+                        <th class="quote-line_item-price"><span>{{ 'oro.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
                     </tr>
                 </thead>
                 {% for quoteProduct in entity.quoteProducts %}
@@ -56,7 +56,7 @@
                                 {% endif %}
                                 <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
                                     {{ quoteProductOffer.quantity|orob2b_format_short_product_unit_value(quoteProductOffer.productUnit) }}
-                                    {% if quoteProductOffer.allowIncrements %}{{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
+                                    {% if quoteProductOffer.allowIncrements %}{{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                                 </td>
                                 <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
                                     {{ quoteProductOffer.price|oro_format_price }}
@@ -75,30 +75,30 @@
 
     {% set shippingInformation %}
         {% if entity.shippingEstimate is not null %}
-            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans,
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans,
             entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 
     {% set id = 'frontend-quote-view' %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.order.sections.general'|trans,
+        'title': 'oro.order.sections.general'|trans,
         'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 
     {% if entity.quoteProducts | length %}
         {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+        'title': 'oro.sale.quote.sections.quote_products'|trans,
         'subblocks': [{'data' : [quoteProducts]}]
         }]) %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+        'title': 'oro.sale.quote.sections.shipping_information'|trans,
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 

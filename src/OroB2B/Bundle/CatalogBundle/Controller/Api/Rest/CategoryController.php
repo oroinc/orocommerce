@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Controller\Api\Rest;
+namespace Oro\Bundle\CatalogBundle\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,9 +11,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 /**
  * @NamePrefix("orob2b_api_")
@@ -28,7 +27,7 @@ class CategoryController extends RestController implements ClassResourceInterfac
      * @Acl(
      *      id="orob2b_catalog_category_delete",
      *      type="entity",
-     *      class="OroB2BCatalogBundle:Category",
+     *      class="OroCatalogBundle:Category",
      *      permission="DELETE"
      * )
      *
@@ -39,7 +38,7 @@ class CategoryController extends RestController implements ClassResourceInterfac
     {
         $manager = $this->getManager();
         /** @var CategoryRepository $repository */
-        $repository = $manager->getRepository('OroB2BCatalogBundle:Category');
+        $repository = $manager->getRepository('OroCatalogBundle:Category');
 
         /** @var Category $category */
         $category = $manager->find($id);

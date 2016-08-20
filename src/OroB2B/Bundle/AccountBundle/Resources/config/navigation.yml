@@ -51,14 +51,14 @@ oro_menu_config:
             uri: '#'
 
         customers_tab:
-            label:           'orob2b.account.menu.customers_tab.label'
+            label:           'oro.account.menu.customers_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-user
                 position:    200
 
         account_list:
-            label:           'orob2b.account.entity_plural_label'
+            label:           'oro.account.entity_plural_label'
             route:           'orob2b_account_index'
             extras:
                 position:    10
@@ -67,10 +67,10 @@ oro_menu_config:
                     - 'orob2b_account_view'
                     - 'orob2b_account_create'
                     - 'orob2b_account_update'
-                description: 'orob2b.account.menu.account_list.description'
+                description: 'oro.account.menu.account_list.description'
 
         account_group_list:
-            label:           'orob2b.account.accountgroup.entity_plural_label'
+            label:           'oro.account.accountgroup.entity_plural_label'
             route:           'orob2b_account_group_index'
             extras:
                 position:    20
@@ -79,48 +79,48 @@ oro_menu_config:
                     - 'orob2b_account_group_view'
                     - 'orob2b_account_group_create'
                     - 'orob2b_account_group_update'
-                description: 'orob2b.account.menu.account_group_list.description'
+                description: 'oro.account.menu.account_group_list.description'
 
         shortcut_account_list:
-            label:           'orob2b.account.entity_plural_label'
+            label:           'oro.account.entity_plural_label'
             route:           'orob2b_account_index'
             extras:
-                description: 'orob2b.account.menu.shortcut_account_list.description'
+                description: 'oro.account.menu.shortcut_account_list.description'
 
         shortcut_account_group_list:
-            label:           'orob2b.account.accountgroup.entity_plural_label'
+            label:           'oro.account.accountgroup.entity_plural_label'
             route:           'orob2b_account_group_index'
             extras:
-                description: 'orob2b.account.menu.shortcut_account_list.description'
+                description: 'oro.account.menu.shortcut_account_list.description'
 
         account_users:
-            label: 'orob2b.account.accountuser.entity_plural_label'
+            label: 'oro.account.accountuser.entity_plural_label'
             route: 'orob2b_account_account_user_index'
             extras:
                 position: 30
                 routes: ['/^orob2b_account_account_user/']
-                description: 'orob2b.account.menu.account_users.description'
+                description: 'oro.account.menu.account_users.description'
 
         shortcut_new_account_user:
-            label: 'orob2b.account.menu.shortcut_new_account_user.label'
+            label: 'oro.account.menu.shortcut_new_account_user.label'
             route: 'orob2b_account_account_user_create'
             extras:
-                description: 'orob2b.account.menu.shortcut_new_account_user.description'
+                description: 'oro.account.menu.shortcut_new_account_user.description'
 
         shortcut_list_account_users:
-            label: 'orob2b.account.menu.shortcut_list_account_users.label'
+            label: 'oro.account.menu.shortcut_list_account_users.label'
             route: 'orob2b_account_account_user_index'
             extras:
-                description: 'orob2b.account.menu.shortcut_list_account_users.description'
+                description: 'oro.account.menu.shortcut_list_account_users.description'
 
         frontend_shortcut_list_account_users:
-            label: 'orob2b.account.menu.shortcut_list_account_users.label'
+            label: 'oro.account.menu.shortcut_list_account_users.label'
             route: 'orob2b_account_frontend_account_user_index'
             extras:
-                description: 'orob2b.account.menu.shortcut_list_account_users.description'
+                description: 'oro.account.menu.shortcut_list_account_users.description'
 
         account_user_roles:
-            label: 'orob2b.account.accountuserrole.entity_plural_label'
+            label: 'oro.account.accountuserrole.entity_plural_label'
             route: 'orob2b_account_account_user_role_index'
             extras:
                 position: 40
@@ -129,42 +129,42 @@ oro_menu_config:
                     - 'orob2b_account_account_user_role_view'
                     - 'orob2b_account_account_user_role_update'
                     - 'orob2b_account_account_user_role_create'
-                description: 'orob2b.account.menu.account_user_roles.description'
+                description: 'oro.account.menu.account_user_roles.description'
 
         shortcut_new_account_user_role:
-            label: 'orob2b.account.menu.shortcut_new_account_user_role.label'
+            label: 'oro.account.menu.shortcut_new_account_user_role.label'
             route: 'orob2b_account_account_user_role_create'
             extras:
-                description: 'orob2b.account.menu.shortcut_new_account_user_role.description'
+                description: 'oro.account.menu.shortcut_new_account_user_role.description'
 
         shortcut_list_account_user_groups:
-            label: 'orob2b.account.menu.shortcut_list_account_user_roles.label'
+            label: 'oro.account.menu.shortcut_list_account_user_roles.label'
             route: 'orob2b_account_account_user_role_index'
             extras:
-                description: 'orob2b.account.menu.shortcut_list_account_user_roles.description'
+                description: 'oro.account.menu.shortcut_list_account_user_roles.description'
 
         orob2b_account_frontend_account_user_profile:
-            label: 'orob2b.account.menu.account_user_profile.label'
+            label: 'oro.account.menu.account_user_profile.label'
             route: 'orob2b_account_frontend_account_user_profile'
             extras:
                 position: 10
 
         frontend_configuration_tab:
-            label: 'orob2b.account.menu.frontend_configuration_tab'
+            label: 'oro.account.menu.frontend_configuration_tab'
             uri: '#'
             extras:
                 position: 900
 
         frontend_account_users:
-            label: 'orob2b.account.accountuser.entity_plural_label'
+            label: 'oro.account.accountuser.entity_plural_label'
             route: 'orob2b_account_frontend_account_user_index'
             extras:
                 position: 100
                 routes: ['/^orob2b_account_frontend_account_user/']
-                description: 'orob2b.account.menu.account_users.description'
+                description: 'oro.account.menu.account_users.description'
 
         frontend_account_user_roles:
-             label: 'orob2b.account.menu.frontend_account_user_roles.label'
+             label: 'oro.account.menu.frontend_account_user_roles.label'
              route: 'orob2b_account_frontend_account_user_role_index'
              extras:
                  position: 200
@@ -236,13 +236,13 @@ oro_titles:
     orob2b_account_account_user_role_create:    oro.ui.create_entity
 
     orob2b_account_frontend_account_user_profile: '%%email%%'
-    orob2b_account_frontend_account_user_profile_update: orob2b.account.accountuser.profile.edit
+    orob2b_account_frontend_account_user_profile_update: oro.account.accountuser.profile.edit
 
-    orob2b_account_account_user_security_login: orob2b.account.accountuser.profile.login
-    orob2b_account_frontend_account_user_register: orob2b.account.accountuser.profile.registration.title
-    orob2b_account_frontend_account_user_reset_request: orob2b.account.accountuser.profile.forgot_password
-    orob2b_account_frontend_account_user_reset_check_email: orob2b.account.accountuser.profile.check_email.title
-    orob2b_account_frontend_account_user_password_reset: orob2b.account.accountuser.profile.reset_password.title
+    orob2b_account_account_user_security_login: oro.account.accountuser.profile.login
+    orob2b_account_frontend_account_user_register: oro.account.accountuser.profile.registration.title
+    orob2b_account_frontend_account_user_reset_request: oro.account.accountuser.profile.forgot_password
+    orob2b_account_frontend_account_user_reset_check_email: oro.account.accountuser.profile.check_email.title
+    orob2b_account_frontend_account_user_password_reset: oro.account.accountuser.profile.reset_password.title
 
     orob2b_account_frontend_account_user_role_index:  ~
     orob2b_account_frontend_account_user_role_view:   '%%label%% - oro.ui.view'

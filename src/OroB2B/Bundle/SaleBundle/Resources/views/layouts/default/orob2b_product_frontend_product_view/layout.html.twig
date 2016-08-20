@@ -7,7 +7,7 @@
         </tr>
         <tr>
             <td colspan="2" class="text-center">
-                <div class="product_view_request_quote_for_unit">{{ 'orob2b.frontend.sale.btn.add_to_rfp'|trans }}</div>
+                <div class="product_view_request_quote_for_unit">{{ 'oro.frontend.sale.btn.add_to_rfp'|trans }}</div>
             </td>
         </tr>
     {% endfor %}
@@ -22,13 +22,13 @@
     {% if visible == true %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {% set btnOptions = {
-            'label': 'orob2b.frontend.sale.product.view.request_a_quote'|trans,
+            'label': 'oro.frontend.sale.product.view.request_a_quote'|trans,
             'aCss': 'direct-link btn-block btn-orange btn_lg',
             'dataUrl': 'orob2b_rfp_frontend_request_create',
             'pageComponent': {
                 'module': 'oroui/js/app/components/view-component',
                 'options': {
-                    'view': 'orob2bsale/js/app/views/product-add-to-rfq-view'
+                    'view': 'orosale/js/app/views/product-add-to-rfq-view'
                 }
             }
         } %}

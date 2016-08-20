@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
+            themes: 'OroAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'orob2b.account.menu.account_user_login.label'
+            optionValue: 'oro.account.menu.account_user_login.label'
         - '@addTree':
             items:
                 login_page:
@@ -17,7 +17,7 @@ layout:
                 login_form_label:
                     blockType: text
                     options:
-                        text: orob2b.account.accountuser.profile.login
+                        text: oro.account.accountuser.profile.login
                 login_form_error:
                     blockType: text
                     options:
@@ -29,16 +29,16 @@ layout:
                         id: userNameSignIn
                         name: _username
                         value: '=data["orob2b_account_sign_in"].getLastName()'
-                        placeholder: orob2b.account.accountuser.email.label
-                        label: orob2b.account.accountuser.email.label
+                        placeholder: oro.account.accountuser.email.label
+                        label: oro.account.accountuser.email.label
                 login_form_password:
                     blockType: input
                     options:
                         type: password
                         id: passwordSignIn
                         name: _password
-                        placeholder: orob2b.account.accountuser.profile.enter_password
-                        label: orob2b.account.accountuser.password.label
+                        placeholder: oro.account.accountuser.profile.enter_password
+                        label: oro.account.accountuser.password.label
                 login_form_remember:
                     blockType: input
                     options:
@@ -46,7 +46,7 @@ layout:
                         id: rememberMe
                         name: _remember_me
                         value: on
-                        label: orob2b.account.accountuser.profile.remember_me
+                        label: oro.account.accountuser.profile.remember_me
                 login_form_target:
                     blockType: input
                     options:
@@ -63,13 +63,13 @@ layout:
                     options:
                         type: input
                         action: submit
-                        text: orob2b.account.accountuser.profile.login
+                        text: oro.account.accountuser.profile.login
                         style: auto
                 login_form_forgot:
                     blockType: link
                     options:
                         route_name: orob2b_account_frontend_account_user_reset_request
-                        text: orob2b.account.accountuser.profile.forgot_password
+                        text: oro.account.accountuser.profile.forgot_password
                         attr:
                             class: col-md-12
                 login_form_register:
@@ -77,7 +77,7 @@ layout:
                     options:
                         visible: '=data["registrationAllowed"]==true'
                         route_name: orob2b_account_frontend_account_user_register
-                        text: orob2b.account.accountuser.profile.create_an_account
+                        text: oro.account.accountuser.profile.create_an_account
                         attr:
                             class: col-md-12
             tree:

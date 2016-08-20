@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
 
 class AccountSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +43,7 @@ class AccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertEquals('orob2b_account', $options['autocomplete_alias']);
                     $this->assertEquals('orob2b_account_create', $options['create_form_route']);
-                    $this->assertEquals(['placeholder' => 'orob2b.account.form.choose'], $options['configs']);
+                    $this->assertEquals(['placeholder' => 'oro.account.form.choose'], $options['configs']);
                 }
             );
 

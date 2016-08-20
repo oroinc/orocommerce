@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -15,7 +15,7 @@ class LoadProductDemoMetaData extends AbstractFixture implements DependentFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository('OroB2BProductBundle:Product');
+        $repository = $manager->getRepository('OroProductBundle:Product');
 
         $this->addMetaFieldsData($manager, $repository->findAll());
 
@@ -28,7 +28,7 @@ class LoadProductDemoMetaData extends AbstractFixture implements DependentFixtur
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
         ];
     }
 }

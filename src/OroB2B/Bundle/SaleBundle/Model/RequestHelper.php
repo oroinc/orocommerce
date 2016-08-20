@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Model;
+namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\Request;
 
 class RequestHelper
 {

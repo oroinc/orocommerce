@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -19,33 +19,32 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
-use OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 class OrderTypeTest extends TypeTestCase
 {
@@ -86,29 +85,29 @@ class OrderTypeTest extends TypeTestCase
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()->getMock();
         $this->orderAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
+        $this->orderCurrencyHandler = $this->getMockBuilder('Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
 
         $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->discountSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
+        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -127,7 +126,7 @@ class OrderTypeTest extends TypeTestCase
             new SubtotalSubscriber($totalHelper, $this->priceMatcher)
         );
 
-        $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $this->type->setDataClass('Oro\Bundle\OrderBundle\Entity\Order');
         parent::setUp();
     }
 
@@ -268,24 +267,24 @@ class OrderTypeTest extends TypeTestCase
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2),
             ],
             AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
 
         $priceListSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2),
+                1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2),
             ],
             PriceListSelectType::NAME
         );
@@ -297,7 +296,7 @@ class OrderTypeTest extends TypeTestCase
 
         /** @var ProductUnitLabelFormatter $ProductUnitLabelFormatter */
         $ProductUnitLabelFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
 
         /** @var ManagerRegistry $managerRegistry */
@@ -310,7 +309,7 @@ class OrderTypeTest extends TypeTestCase
         $managerRegistry->expects($this->any())->method('getRepository')->willReturn($repository);
 
         $OrderLineItemType = new OrderLineItemType($managerRegistry, $ProductUnitLabelFormatter);
-        $OrderLineItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+        $OrderLineItemType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderLineItem');
         $currencySelectionType = new CurrencySelectionTypeStub();
 
         $this->validator = $this->getMock(
@@ -380,8 +379,8 @@ class OrderTypeTest extends TypeTestCase
     {
         $entityType = new EntityType(
             [
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2),
-                3 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3),
+                2 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 2),
+                3 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 3),
             ]
         );
 
@@ -395,8 +394,8 @@ class OrderTypeTest extends TypeTestCase
     {
         return new ProductUnitSelectionTypeStub(
             [
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
             ]
         );
     }
@@ -425,13 +424,13 @@ class OrderTypeTest extends TypeTestCase
                 }
             } elseif ($fieldName === 'accountUser') {
                 $order->setAccountUser($this->getEntity(
-                    'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                    'Oro\Bundle\AccountBundle\Entity\AccountUser',
                     $value
                 ));
             } elseif ($fieldName === 'account') {
                 $order->setAccount(
                     $this->getEntity(
-                        'OroB2B\Bundle\AccountBundle\Entity\Account',
+                        'Oro\Bundle\AccountBundle\Entity\Account',
                         $value
                     )
                 );
@@ -453,7 +452,7 @@ class OrderTypeTest extends TypeTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($data as $fieldName => $value) {
             if ($fieldName === 'product') {
-                $lineItem->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $value));
+                $lineItem->setProduct($this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $value));
             } elseif ($fieldName === 'price') {
                 $price = new Price();
                 $price->setCurrency($value['currency']);

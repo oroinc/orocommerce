@@ -1,25 +1,25 @@
 oro_menu_config:
     items:
         shipping_rule:
-            label:           'orob2b.shipping.shippingrule.entity_plural_label'
+            label:           'oro.shipping.shippingrule.entity_plural_label'
             route:           'orob2b_shipping_rule_index'
             extras:
                 position:    100
                 routes:      ['/^orob2b_shipping_rule/']
-                description: 'orob2b.shipping.menu.shipping_rule.description'
+                description: 'oro.shipping.menu.shipping_rule.description'
 
         shortcut_shipping_rule:
-            label:           'orob2b.shipping.shippingrule.entity_plural_label'
+            label:           'oro.shipping.shippingrule.entity_plural_label'
             route:           'orob2b_shipping_rule_index'
             extras:
-                description: 'orob2b.shipping.shippingrule.menu.shortcut_shipping_rule.description'
+                description: 'oro.shipping.shippingrule.menu.shortcut_shipping_rule.description'
 
         frontend_shipping_rule:
-            label:           'orob2b.shipping.shippingrule.entity_plural_label'
+            label:           'oro.shipping.shippingrule.entity_plural_label'
             route:           'orob2b_shipping_rule_index'
             extras:
                 position:    200
-                description: 'orob2b.shipping.shippingrule.menu.shipping_rule.description'
+                description: 'oro.shipping.shippingrule.menu.shipping_rule.description'
 
     tree:
         application_menu:

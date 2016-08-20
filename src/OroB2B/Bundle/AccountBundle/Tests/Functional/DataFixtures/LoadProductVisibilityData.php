@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,13 +10,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -39,10 +39,10 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
         ];
     }
 
@@ -52,7 +52,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     public function load(ObjectManager $manager)
     {
         // set default fallback to categories
-        $configVisibilities = $manager->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+        $configVisibilities = $manager->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->findBy(['visibility' => ProductVisibility::CONFIG]);
         foreach ($configVisibilities as $visibilityEntity) {
             $visibilityEntity->setVisibility(ProductVisibility::CATEGORY);
@@ -100,8 +100,8 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         if ($websiteName === 'Default') {
             return $this->container
                 ->get('doctrine')
-                ->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
+                ->getManagerForClass('OroWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
         }
 
         return $this->getReference($websiteName);

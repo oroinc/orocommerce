@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 
 class CombinedPriceListActivationRuleRepository extends EntityRepository
 {
@@ -38,7 +38,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
     /**
      * @param CombinedPriceList $cpl
      * @param \DateTime $now
-     * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule
+     * @return \Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule
      */
     public function getActualRuleByCpl(CombinedPriceList $cpl, \DateTime $now)
     {

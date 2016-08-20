@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
 
 class ShippingRuleConfigurationCollectionTypeTest extends FormIntegrationTestCase
 {

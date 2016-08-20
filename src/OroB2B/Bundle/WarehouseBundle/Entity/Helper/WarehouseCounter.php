@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Entity\Helper;
+namespace Oro\Bundle\WarehouseBundle\Entity\Helper;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseCounter
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Model;
+namespace Oro\Bundle\WarehouseBundle\Model;
 
 class ExtendWarehouseInventoryLevel
 {

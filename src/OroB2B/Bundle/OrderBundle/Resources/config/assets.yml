@@ -1,3 +1,3 @@
 css:
-    'orob2border':
-        - 'bundles/orob2border/css/less/style.less'
+    'oroorder':
+        - 'bundles/oroorder/css/less/style.less'

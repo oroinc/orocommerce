@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 
 class ProductDataStorageExtensionStub extends AbstractProductDataStorageExtension
 {

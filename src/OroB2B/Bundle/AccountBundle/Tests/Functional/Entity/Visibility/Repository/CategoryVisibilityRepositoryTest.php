@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -26,9 +25,9 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
+            ->getRepository('OroAccountBundle:Visibility\CategoryVisibility');
 
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
+        $this->loadFixtures(['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
     }
 
     /**
@@ -137,7 +136,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
     protected function getCategoryId($reference)
     {
         if ($reference === self::ROOT_CATEGORY) {
-            return $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')
+            return $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category')
                 ->getMasterCatalogRoot()->getId();
         }
 

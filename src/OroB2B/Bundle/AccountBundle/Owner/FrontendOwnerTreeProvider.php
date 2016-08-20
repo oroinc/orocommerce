@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Owner;
+namespace Oro\Bundle\AccountBundle\Owner;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\DBAL\Connection;
@@ -10,9 +10,8 @@ use Doctrine\ORM\Query;
 use Oro\Component\DoctrineUtils\ORM\QueryUtils;
 use Oro\Bundle\SecurityBundle\Owner\AbstractOwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeInterface;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
 {

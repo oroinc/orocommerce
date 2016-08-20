@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 
 /**
  * @dbIsolation
@@ -26,7 +25,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceRuleLexeme');
+            ->getRepository('OroPricingBundle:PriceRuleLexeme');
     }
 
     public function testDeleteByPriceList()

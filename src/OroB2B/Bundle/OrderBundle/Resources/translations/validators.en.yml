@@ -1,4 +1,4 @@
-orob2b:
+oro:
     order:
         total:
             max.error.label: 'The total amount cannot exceed the {{ limit }}.'

@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\QueryTracker;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -33,13 +32,13 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')
+        $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger')
             ->createQueryBuilder('cpp')
             ->delete()
             ->getQuery()
             ->execute();
 
-        $em->getRepository('OroB2BPricingBundle:PriceListToProduct')
+        $em->getRepository('OroPricingBundle:PriceListToProduct')
             ->createQueryBuilder('pltp')
             ->delete()
             ->getQuery()
@@ -91,14 +90,14 @@ class ProductPriceEntityListenerTest extends WebTestCase
         }
 
         // assert that needed triggers where created
-        $actualChangeTriggers = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')->findBy([
+        $actualChangeTriggers = $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_5),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1)
         ]);
         $this->assertCount(1, $actualChangeTriggers);
 
         // assert that needed productPriceRelationCreated
-        $plToProductRelations = $em->getRepository('OroB2BPricingBundle:PriceListToProduct')->findBy([
+        $plToProductRelations = $em->getRepository('OroPricingBundle:PriceListToProduct')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_5),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1)
         ]);
@@ -117,7 +116,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->persist($productPrice);
         $em->flush();
 
-        $actual = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')->findBy([
+        $actual = $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_2),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_2)
         ]);
@@ -146,7 +145,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
-        $repository = $em->getRepository('OroB2BPricingBundle:PriceListToProduct');
+        $repository = $em->getRepository('OroPricingBundle:PriceListToProduct');
 
         // new relation should be created when new product specified
         $this->assertCount(1, $repository->findBy([
@@ -170,7 +169,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
         $em->flush();
 
-        $actual = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger')->findBy([
+        $actual = $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_1),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
         ]);

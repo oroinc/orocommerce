@@ -1,14 +1,13 @@
 <?php
-namespace OroB2B\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method;
 
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class PaymentTerm implements PaymentMethodInterface
 {

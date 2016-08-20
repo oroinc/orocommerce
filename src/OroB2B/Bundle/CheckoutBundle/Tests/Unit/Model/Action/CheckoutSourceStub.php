@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 
 class CheckoutSourceStub extends CheckoutSource
 {

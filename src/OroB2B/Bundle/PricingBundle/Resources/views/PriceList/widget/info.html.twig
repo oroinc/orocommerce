@@ -4,20 +4,20 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('orob2b.pricing.pricelist.name.label'|trans, entity.name) }}
+            {{ UI.renderProperty('oro.pricing.pricelist.name.label'|trans, entity.name) }}
 
             {% if entity.currencies %}
                 {% set currencies = [] %}
                 {% for currency in entity.currencies %}
                     {% set currencies = currencies|merge([currency|oro_localized_currency_name]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.currencies.label'|trans, UI.renderList(currencies)) }}
-                {% set status = entity.active ? 'orob2b.pricing.pricelist.status.enabled'|trans : 'orob2b.pricing.pricelist.status.disabled'|trans %}
-                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.status.label'|trans, status) }}
+                {{ UI.renderHtmlProperty('oro.pricing.pricelist.currencies.label'|trans, UI.renderList(currencies)) }}
+                {% set status = entity.active ? 'oro.pricing.pricelist.status.enabled'|trans : 'oro.pricing.pricelist.status.disabled'|trans %}
+                {{ UI.renderHtmlProperty('oro.pricing.pricelist.status.label'|trans, status) }}
             {% endif %}
 
             {% if entity.isActive() and not entity.schedules.isEmpty() %}
-                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.schedule.label'|trans, _self.schedule(entity.schedules)) }}
+                {{ UI.renderHtmlProperty('oro.pricing.pricelist.schedule.label'|trans, _self.schedule(entity.schedules)) }}
             {% endif %}
         </div>
     </div>
@@ -31,14 +31,14 @@
             {% if schedule.activeAt < now %}
                 {% if schedule.activeAt %}
                 <li>
-                    {{ 'orob2b.pricing.pricelist_schedule.was_activated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                    {{ 'oro.pricing.pricelist_schedule.was_activated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
                 </li>
                 {% endif %}
 
                 {% if not schedule.deactivateAt or schedule.deactivateAt > now %}
                     {% set activityShown = true %}
                     <li>
-                        {{ 'orob2b.pricing.pricelist_schedule.active_now'|trans }}
+                        {{ 'oro.pricing.pricelist_schedule.active_now'|trans }}
                     </li>
                 {% endif %}
             {% endif %}
@@ -47,22 +47,22 @@
                 {% if not activityShown %}
                     {% set activityShown = true %}
                     <li>
-                        {{ 'orob2b.pricing.pricelist_schedule.not_active_now'|trans }}
+                        {{ 'oro.pricing.pricelist_schedule.not_active_now'|trans }}
                     </li>
                 {% endif %}
                 <li>
-                    {{ 'orob2b.pricing.pricelist_schedule.will_be_acitivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
+                    {{ 'oro.pricing.pricelist_schedule.will_be_acitivated'|trans({'%date%': schedule.activeAt|oro_format_datetime}) }}
                 </li>
             {% endif %}
 
             {% if schedule.deactivateAt %}
                 {% if schedule.deactivateAt < now %}
                     <li>
-                        {{ 'orob2b.pricing.pricelist_schedule.was_deactivated'|trans({'%date%': schedule.deactivateAt|oro_format_datetime}) }}
+                        {{ 'oro.pricing.pricelist_schedule.was_deactivated'|trans({'%date%': schedule.deactivateAt|oro_format_datetime}) }}
                     </li>
                 {% else %}
                     <li>
-                        {{ 'orob2b.pricing.pricelist_schedule.will_be_deacitivated'|trans({'%date%': schedule.deactivateAt|oro_format_datetime}) }}
+                        {{ 'oro.pricing.pricelist_schedule.will_be_deacitivated'|trans({'%date%': schedule.deactivateAt|oro_format_datetime}) }}
                     </li>
                 {% endif %}
             {% endif %}
@@ -70,7 +70,7 @@
 
         {% if not activityShown %}
             <li>
-                {{ 'orob2b.pricing.pricelist_schedule.not_active_now'|trans }}
+                {{ 'oro.pricing.pricelist_schedule.not_active_now'|trans }}
             </li>
         {% endif %}
     </ul>

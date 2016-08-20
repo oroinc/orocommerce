@@ -1,16 +1,16 @@
 operations:
     orob2b_pricing_add_product_price:
-        label: orob2b.pricing.add_product_price
+        label: oro.pricing.add_product_price
         applications: [backend]
         routes: [orob2b_pricing_price_list_view]
         order: 10
-        acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
+        acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
 
         button_options:
             icon: icon-plus
 
         frontend_options:
-            template: OroB2BPricingBundle:Action:addProductPrice.html.twig
+            template: OroPricingBundle:Action:addProductPrice.html.twig
             options:
                 allowMaximize: true
                 allowMinimize: true
@@ -23,7 +23,7 @@ operations:
                 label: ' '
                 type: object
                 options:
-                    class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+                    class: Oro\Bundle\PricingBundle\Entity\ProductPrice
 
         form_options:
             attribute_fields:
@@ -36,7 +36,7 @@ operations:
 
         form_init:
             - '@create_object':
-                class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+                class: Oro\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.price
             - '@assign_value': [$.price.priceList, $.data]
 
@@ -48,7 +48,7 @@ operations:
                     price: $.price
             - '@refresh_grid': price-list-product-prices-grid
             - '@flash_message':
-                message: orob2b.pricing.productprice.save.success
+                message: oro.pricing.productprice.save.success
                 type: 'success'
     UPDATE:
         exclude_datagrids:
@@ -65,7 +65,7 @@ operations:
             - product-prices-grid
 
     orob2b_pricing_price_list_set_active:
-        label: orob2b.pricing.pricelist.status.enable
+        label: oro.pricing.pricelist.status.enable
         routes: [orob2b_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
@@ -82,7 +82,7 @@ operations:
                     '@not_empty': $.gridName
                 parameters: [$.gridName]
             - '@flash_message':
-                message: orob2b.pricing.pricelist.status.message.enabled
+                message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
             - '@call_service_method':
                 service: orob2b_pricing.price_list_change_trigger_handler
@@ -90,7 +90,7 @@ operations:
                 method_parameters: [$.entity]
 
     orob2b_pricing_price_list_disable:
-        label: orob2b.pricing.pricelist.status.disable
+        label: oro.pricing.pricelist.status.disable
         routes: [orob2b_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
@@ -107,7 +107,7 @@ operations:
                     '@not_empty': $.gridName
                 parameters: [$.gridName]
             - '@flash_message':
-                message: orob2b.pricing.pricelist.status.message.disabled
+                message: oro.pricing.pricelist.status.message.disabled
                 type: 'success'
             - '@call_service_method':
                 service: orob2b_pricing.price_list_change_trigger_handler
@@ -115,7 +115,7 @@ operations:
                 method_parameters: [$.entity]
 
     orob2b_pricing_price_list_duplicate:
-        label: orob2b.pricing.pricelist.duplicate.label
+        label: oro.pricing.pricelist.duplicate.label
         routes: [orob2b_pricing_price_list_view]
         order: 10
         button_options:
@@ -154,7 +154,7 @@ operations:
                 method: duplicate
                 method_parameters: [$.entity, $.newPriceList]
             - '@flash_message':
-                message: orob2b.pricing.pricelist.duplicate.message
+                message: oro.pricing.pricelist.duplicate.message
                 type: 'success'
             - '@redirect':
                 route: 'orob2b_pricing_price_list_view'
@@ -173,7 +173,7 @@ operations:
             - price-list-product-prices-grid
 
     orob2b_pricing_recalculate_price_list:
-        label: orob2b.pricing.pricelist.recalculate.label
+        label: oro.pricing.pricelist.recalculate.label
         routes: [orob2b_pricing_price_list_view]
         order: 10
         button_options:
@@ -188,20 +188,20 @@ operations:
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@flash_message':
-                message: orob2b.pricing.pricelist.recalculate.message
+                message: oro.pricing.pricelist.recalculate.message
                 type: 'success'
 
 action_groups:
     orob2b_pricing_add_product_price:
         parameters:
             data:
-                type: OroB2B\Bundle\PricingBundle\Entity\PriceList
+                type: Oro\Bundle\PricingBundle\Entity\PriceList
             price:
-                type: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
-        acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
+                type: Oro\Bundle\PricingBundle\Entity\ProductPrice
+        acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
         actions:
             - '@create_entity':
-                class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+                class: Oro\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:
                     product: $.price.product

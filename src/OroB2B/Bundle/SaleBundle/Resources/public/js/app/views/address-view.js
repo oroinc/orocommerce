@@ -9,9 +9,9 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2bsale/js/app/views/address-view
+     * @export orosale/js/app/views/address-view
      * @extends oroui.app.views.base.View
-     * @class orob2bsale.app.views.AddressView
+     * @class orosale.app.views.AddressView
      */
     AddressView = BaseView.extend({
         /**

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
  * QuoteProductRequest
@@ -41,7 +40,7 @@ class QuoteProductRequest extends BaseQuoteProductItem
     /**
      * @var RequestProductItem
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestProductItem")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\RequestProductItem")
      * @ORM\JoinColumn(name="request_product_item_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $requestProductItem;

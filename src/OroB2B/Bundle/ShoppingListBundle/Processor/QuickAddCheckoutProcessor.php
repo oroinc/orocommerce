@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Processor;
+namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
@@ -14,9 +14,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\OperationManager;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
@@ -168,7 +167,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         $formatterDate = $this->dateFormatter->format($date);
 
         return $this->translator->trans(
-            'orob2b.frontend.shoppinglist.quick_order.default_label',
+            'oro.frontend.shoppinglist.quick_order.default_label',
             ['%date%' => $formatterDate]
         );
     }

@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsProvider;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsProvider;
 
 class FrontendAccountUserRoleOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +57,7 @@ class FrontendAccountUserRoleOptionsProviderTest extends \PHPUnit_Framework_Test
             $this->translator
         );
 
-        $this->role = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole');
+        $this->role = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserRole');
     }
 
     protected function tearDown()

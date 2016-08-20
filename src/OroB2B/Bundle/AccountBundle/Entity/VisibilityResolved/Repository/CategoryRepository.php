@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
 /**
  * Composite primary key fields order:
@@ -47,7 +46,7 @@ class CategoryRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->from('OroCatalogBundle:Category', 'category')
             ->orderBy('category.id');
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
@@ -71,9 +70,9 @@ class CategoryRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->from('OroCatalogBundle:Category', 'category')
             ->leftJoin(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')
@@ -118,7 +117,7 @@ class CategoryRepository extends EntityRepository
                 $visibilityCondition,
                 (string)CategoryVisibilityResolved::SOURCE_STATIC
             )
-            ->from('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv')
+            ->from('OroAccountBundle:Visibility\CategoryVisibility', 'cv')
             ->where('cv.visibility != :config')
             ->setParameter('config', CategoryVisibility::CONFIG);
 
@@ -155,8 +154,8 @@ class CategoryRepository extends EntityRepository
                 (string)$visibility,
                 $sourceCondition
             )
-            ->from('OroB2BCatalogBundle:Category', 'c')
-            ->leftJoin('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
+            ->from('OroCatalogBundle:Category', 'c')
+            ->leftJoin('OroAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
             ->andWhere('cv.visibility IS NULL')     // parent category fallback
             ->andWhere('c.id IN (:categoryIds)');   // specific category IDs
 
@@ -180,9 +179,9 @@ class CategoryRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configFallback).')')
-            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->from('OroCatalogBundle:Category', 'category')
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
@@ -204,7 +203,7 @@ class CategoryRepository extends EntityRepository
         }
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+        $qb->update('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
             ->set('cvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);

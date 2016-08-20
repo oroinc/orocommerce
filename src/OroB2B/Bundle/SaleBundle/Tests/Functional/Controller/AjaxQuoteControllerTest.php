@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class AjaxQuoteControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
             ]
         );
     }

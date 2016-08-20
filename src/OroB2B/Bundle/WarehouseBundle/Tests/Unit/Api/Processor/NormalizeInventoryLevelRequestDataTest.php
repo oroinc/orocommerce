@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
 {

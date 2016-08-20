@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add_import/dialog/quick_add_import_form.html.twig'
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_quick_add_import/dialog/quick_add_import_form.html.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'
-            optionValue: 'orob2bfrontend/js/app/components/widget-form-component'
+            optionValue: 'orofrontend/js/app/components/widget-form-component'
         - '@addTree':
             items:
                 quick_add_import_help:

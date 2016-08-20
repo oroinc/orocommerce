@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\MoneyOrderBundle\Method\View;
+namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use OroB2B\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use OroB2B\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use OroB2B\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class MoneyOrderView implements PaymentMethodViewInterface
 {

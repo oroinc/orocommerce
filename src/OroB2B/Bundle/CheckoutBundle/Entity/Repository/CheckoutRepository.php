@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Entity\Repository;
+namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class CheckoutRepository extends EntityRepository
 {
@@ -22,11 +22,11 @@ class CheckoutRepository extends EntityRepository
         $databaseResults = $this->createQueryBuilder('c')
             ->select('c.id as id')
             ->addSelect('COALESCE(count(l.id) + count(qp.id), 0) as itemsCount')
-            ->leftJoin('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->leftJoin('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
-            ->leftJoin('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 'l', 'WITH', 'l.shoppingList = sl')
-            ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
-            ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', 'qp', 'WITH', 'qp.quote = qd.quote')
+            ->leftJoin('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
+            ->leftJoin('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
+            ->leftJoin('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 'l', 'WITH', 'l.shoppingList = sl')
+            ->leftJoin('Oro\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
+            ->leftJoin('Oro\Bundle\SaleBundle\Entity\QuoteProduct', 'qp', 'WITH', 'qp.quote = qd.quote')
             ->groupBy('c.id')
             ->where('c.id in (:ids)')
             ->setParameter('ids', $checkoutIds)
@@ -48,10 +48,10 @@ class CheckoutRepository extends EntityRepository
             ->select('c.id as id')
             ->addSelect('qd as quote')
             ->addSelect('sl as shoppingList')
-            ->leftJoin('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
-            ->leftJoin('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
-            ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
-            ->leftJoin('OroB2B\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
+            ->leftJoin('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource', 's', 'WITH', 'c.source = s')
+            ->leftJoin('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 'sl', 'WITH', 's.shoppingList = sl')
+            ->leftJoin('Oro\Bundle\SaleBundle\Entity\QuoteDemand', 'qd', 'WITH', 's.quoteDemand = qd')
+            ->leftJoin('Oro\Bundle\SaleBundle\Entity\Quote', 'q', 'WITH', 'qd.quote = q')
             ->where('c.id in (:ids)')
             ->setParameter('ids', $checkoutIds)
             ->getQuery()

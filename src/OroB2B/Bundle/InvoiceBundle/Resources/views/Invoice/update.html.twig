@@ -3,11 +3,11 @@
 
 {% oro_title_set({params : {
     '%identifier%': entity.invoiceNumber|default('N/A'|trans),
-    '%entityName%': 'orob2b.invoice.entity_label'|trans
+    '%entityName%': 'oro.invoice.entity_label'|trans
 } }) %}
 {% set formAction = entity.id ? path('orob2b_invoice_update', { 'id': entity.id }) : path('orob2b_invoice_create')  %}
 
-{% form_theme form with ['OroB2BInvoiceBundle:Form:fields.html.twig'] %}
+{% form_theme form with ['OroInvoiceBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -25,12 +25,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_invoice_index'),
-            'indexLabel': 'orob2b.invoice.entity_plural_label'|trans,
+            'indexLabel': 'oro.invoice.entity_plural_label'|trans,
             'entityTitle': entity.invoiceNumber|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.invoice.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.invoice.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -39,7 +39,7 @@
     {% set id = 'invoice-edit' %}
 
     {% set totals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
                 selectors: {
@@ -51,7 +51,7 @@
                     'update:account',
                     'update:currency'
                 ],
-                entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
+                entityClassName: 'Oro\\Bundle\\InvoiceBundle\\Entity\\Invoice',
                 entityId: form.vars.value.id,
                 data: totals
             }
@@ -62,7 +62,7 @@
         <div class="invoice-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orob2binvoice/js/app/views/invoice-line-items-view',
+                 view: 'oroinvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
                  tierPricesRoute: 'orob2b_pricing_price_by_account',
@@ -80,13 +80,13 @@
         <div
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                'view': 'orob2bfrontend/js/app/views/form-view',
+                'view': 'orofrontend/js/app/views/form-view',
                 selectors: {
                     currency: 'select[name$="[currency]"]',
                     account: 'input[name$="[account]"]'
                 }
             }|json_encode }}">
-            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+            <div data-page-component-module="oroaccount/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>
@@ -101,14 +101,14 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.invoice.sections.general'|trans,
+            'title': 'oro.invoice.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'data': [mainFormFields]
             }]
         },
         {
-           'title': 'orob2b.invoice.sections.invoice_line_items'|trans,
+           'title': 'oro.invoice.sections.invoice_line_items'|trans,
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -119,7 +119,7 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.invoice.sections.totals'|trans,
+            'title': 'oro.invoice.sections.totals'|trans,
             'class': 'active',
             'subblocks': [{
                 'data': [totals]

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Model;
+namespace Oro\Bundle\TaxBundle\Model;
 
 final class ResultElement extends AbstractResultElement
 {

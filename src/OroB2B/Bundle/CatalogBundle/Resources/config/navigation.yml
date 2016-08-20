@@ -1,18 +1,18 @@
 oro_menu_config:
     items:
         master_catalog:
-            label:           'orob2b.catalog.menu.master_catalog.label'
+            label:           'oro.catalog.menu.master_catalog.label'
             route:           'orob2b_catalog_category_index'
             extras:
                 position:    10
                 routes:      ['/^orob2b_catalog_category/']
-                description: 'orob2b.catalog.menu.master_catalog.description'
+                description: 'oro.catalog.menu.master_catalog.description'
 
         shortcut_master_catalog:
-            label:           'orob2b.catalog.menu.master_catalog.label'
+            label:           'oro.catalog.menu.master_catalog.label'
             route:           'orob2b_catalog_category_index'
             extras:
-                description: 'orob2b.catalog.menu.shortcut_master_catalog.description'
+                description: 'oro.catalog.menu.shortcut_master_catalog.description'
 
     tree:
         application_menu:

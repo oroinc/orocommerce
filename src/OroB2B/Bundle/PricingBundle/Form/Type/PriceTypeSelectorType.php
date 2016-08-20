@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Type;
+namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 class PriceTypeSelectorType extends AbstractType
 {
@@ -19,8 +19,8 @@ class PriceTypeSelectorType extends AbstractType
         $resolver->setDefaults(
             [
                 'choices' => [
-                    PriceTypeAwareInterface::PRICE_TYPE_UNIT => 'orob2b.pricing.price_type.unit',
-                    PriceTypeAwareInterface::PRICE_TYPE_BUNDLED => 'orob2b.pricing.price_type.bundled',
+                    PriceTypeAwareInterface::PRICE_TYPE_UNIT => 'oro.pricing.price_type.unit',
+                    PriceTypeAwareInterface::PRICE_TYPE_BUNDLED => 'oro.pricing.price_type.bundled',
                 ]
             ]
         );

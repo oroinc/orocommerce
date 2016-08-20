@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Functional\JsTree;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\JsTree;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Migrations\Data\ORM\LoadPageData;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
-use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Migrations\Data\ORM\LoadPageData;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 /**
  * @dbIsolation
@@ -17,7 +17,7 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getFixtures()
     {
-        return 'OroB2B\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData';
+        return 'Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData';
     }
 
     /**
@@ -246,8 +246,8 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
-        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page')
-            ->getRepository('OroB2BCMSBundle:Page')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
+        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page')
+            ->getRepository('OroCMSBundle:Page')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, Page $category) {
             $result[$category->getTitle()] = [];
             if ($category->getParentPage()) {
@@ -265,8 +265,8 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
     {
         $page = $this->getReferenceRepository()->hasReference($title) ? $this->getReference($title) : null;
         if (!$page) {
-            $page = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page')
-                ->getRepository('OroB2BCMSBundle:Page')->findOneByTitle($title);
+            $page = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page')
+                ->getRepository('OroCMSBundle:Page')->findOneByTitle($title);
         }
         return $page;
     }

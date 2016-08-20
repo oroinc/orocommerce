@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\ImportExport\Writer;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Writer;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\JobInstance;
@@ -8,9 +8,8 @@ use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
-use OroB2B\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
+use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
+use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
 
 class ProductPriceWriterTest extends WebTestCase
 {

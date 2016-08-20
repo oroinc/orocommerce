@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\DataProvider\Converter;
+namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class CheckoutLineItemsConverter
 {

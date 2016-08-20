@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
+use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
 
 class FreightClassExtensionPassTest extends \PHPUnit_Framework_TestCase
 {

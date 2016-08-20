@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Formatter;
+namespace Oro\Bundle\ProductBundle\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 class UnitValueFormatter extends AbstractUnitFormatter
 {

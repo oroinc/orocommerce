@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Model;
+namespace Oro\Bundle\RFPBundle\Model;
 
 class ExtendRequest
 {

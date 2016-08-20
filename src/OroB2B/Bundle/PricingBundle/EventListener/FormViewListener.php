@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -10,10 +10,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class FormViewListener
 {
@@ -59,10 +58,10 @@ class FormViewListener
 
         $productId = (int)$request->get('id');
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Product:prices_view.html.twig',
+            'OroPricingBundle:Product:prices_view.html.twig',
             [
                 'entity' => $product,
                 'productUnits' => $product->getAvailableUnitCodes(),
@@ -79,7 +78,7 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Product:prices_update.html.twig',
+            'OroPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $this->addProductPricesBlock($event->getScrollData(), $template);
@@ -120,7 +119,7 @@ class FormViewListener
      */
     protected function getPriceAttributePriceListRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributePriceList');
+        return $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributePriceList');
     }
     
     /**
@@ -128,7 +127,7 @@ class FormViewListener
      */
     protected function getPriceAttributePriceListPricesRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceAttributeProductPrice');
+        return $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributeProductPrice');
     }
 
     /**
@@ -137,7 +136,7 @@ class FormViewListener
      */
     protected function addProductPricesBlock(ScrollData $scrollData, $html)
     {
-        $blockLabel = $this->translator->trans('orob2b.pricing.productprice.entity_plural_label');
+        $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProduct;
-use OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct;
+use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class LineItemProductTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +29,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value must be instance of "OroB2B\Bundle\OrderBundle\Entity\OrderLineItem"
+     * @expectedExceptionMessage Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderLineItem"
      */
     public function testValidateException()
     {
@@ -88,10 +87,10 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 new OrderLineItem(),
-                ['orob2b.order.orderlineitem.product.blank', 'orob2b.order.orderlineitem.product_price.blank']
+                ['oro.order.orderlineitem.product.blank', 'oro.order.orderlineitem.product_price.blank']
             ],
-            [(new OrderLineItem())->setProduct(new Product()), 'orob2b.order.orderlineitem.product_price.blank'],
-            [(new OrderLineItem())->setPrice(Price::create(1, 'USD')), 'orob2b.order.orderlineitem.product.blank']
+            [(new OrderLineItem())->setProduct(new Product()), 'oro.order.orderlineitem.product_price.blank'],
+            [(new OrderLineItem())->setPrice(Price::create(1, 'USD')), 'oro.order.orderlineitem.product.blank']
         ];
     }
 

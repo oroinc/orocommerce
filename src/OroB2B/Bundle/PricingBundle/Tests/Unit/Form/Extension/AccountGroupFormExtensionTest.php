@@ -1,24 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\AccountGroupTypeStub;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener;
-use OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\AccountGroupTypeStub;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\PriceListCollectionTypeExtensionsProvider;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\EventListener\AccountGroupListener;
+use Oro\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;
 
 class AccountGroupFormExtensionTest extends FormIntegrationTestCase
 {
@@ -30,7 +29,7 @@ class AccountGroupFormExtensionTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /** @var AccountGroupListener $listener */
-        $listener = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener')
+        $listener = $this->getMockBuilder('Oro\Bundle\PricingBundle\EventListener\AccountGroupListener')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -121,7 +120,7 @@ class AccountGroupFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getPriceList($id)
     {
-        return $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', [
+        return $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', [
             'id' => $id
         ]);
     }

@@ -6,7 +6,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_warehouse_index'),
-        'indexLabel': 'orob2b.warehouse.entity_plural_label'|trans,
+        'indexLabel': 'oro.warehouse.entity_plural_label'|trans,
         'entityTitle': entity.name |default('N/A'|trans)
         }
     %}
@@ -17,7 +17,7 @@
     {% set warehouseInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.warehouse.widgets.warehouse_information'|trans,
+            'title': 'oro.warehouse.widgets.warehouse_information'|trans,
             'url': path('orob2b_warehouse_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -26,7 +26,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.warehouse.sections.general'|trans,
+            'title': 'oro.warehouse.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }

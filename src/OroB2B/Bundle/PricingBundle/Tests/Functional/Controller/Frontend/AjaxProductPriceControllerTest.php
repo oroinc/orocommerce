@@ -1,22 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -63,13 +62,13 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
-        $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite';
-        $cplClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
-        $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+        $priceListClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite';
+        $cplClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceList';
+        $websiteClass = 'Oro\Bundle\WebsiteBundle\Entity\Website';
         $registry = $this->getContainer()->get('doctrine');
 
         $this->manager = $registry->getManagerForClass($priceListClass);

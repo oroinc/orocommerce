@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,22 +43,22 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxManager')
+        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->taxationSettingsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->totalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
+            'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,

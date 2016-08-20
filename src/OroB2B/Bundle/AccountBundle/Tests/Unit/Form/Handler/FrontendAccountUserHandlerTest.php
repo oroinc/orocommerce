@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class FrontendAccountUserHandlerTest extends FormHandlerTestCase
 {
@@ -22,11 +21,11 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
+        $this->entity = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userManager = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

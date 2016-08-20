@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(
@@ -17,7 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  *      }
  * )
  * @ORM\Entity(
- *     repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository"
+ *     repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToAccountGroupRepository"
  * )
  */
 class CombinedPriceListToAccountGroup extends BaseCombinedPriceListRelation
@@ -25,7 +25,7 @@ class CombinedPriceListToAccountGroup extends BaseCombinedPriceListRelation
     /**
      * @var AccountGroup
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $accountGroup;

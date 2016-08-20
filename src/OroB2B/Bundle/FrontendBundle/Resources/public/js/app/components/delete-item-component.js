@@ -5,7 +5,7 @@ define(function (require) {
 
     var DeleteItemComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var DeleteConfirmation = require('orob2bfrontend/js/app/components/delete-confirmation');
+    var DeleteConfirmation = require('orofrontend/js/app/components/delete-confirmation');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var __ = require('orotranslation/js/translator');

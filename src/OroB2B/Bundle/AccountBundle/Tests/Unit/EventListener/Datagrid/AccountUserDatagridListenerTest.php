@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-
-use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener;
+use Oro\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener;
 
 class AccountUserDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {

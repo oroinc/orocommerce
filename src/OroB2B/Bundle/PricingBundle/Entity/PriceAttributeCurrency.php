@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,7 +14,7 @@ class PriceAttributeCurrency extends BasePriceListCurrency
      * @var PriceAttributePriceList
      *
      * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList",
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
      *      inversedBy="currencies",
      *      cascade={"persist"}
      * )

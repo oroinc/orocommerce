@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Provider;
+namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -11,12 +11,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
-use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class PaymentTransactionProvider
 {

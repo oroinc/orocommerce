@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Entity;
+namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,18 +12,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required b
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
-use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @Config(
@@ -78,7 +77,7 @@ class Checkout implements
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     protected $website;
@@ -147,7 +146,7 @@ class Checkout implements
     /**
      * @var CheckoutSource
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     protected $source;

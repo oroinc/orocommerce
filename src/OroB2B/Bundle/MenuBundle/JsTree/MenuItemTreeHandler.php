@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\JsTree;
+namespace Oro\Bundle\MenuBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\JsTree\Exception\MenuItemRootChangedException;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Bundle\MenuBundle\Entity\MenuItem;
+use Oro\Bundle\MenuBundle\JsTree\Exception\MenuItemRootChangedException;
+use Oro\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class MenuItemTreeHandler extends AbstractTreeHandler
 {

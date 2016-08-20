@@ -2,7 +2,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'orob2bproduct/js/app/views/base-product-view'
+            view: 'oroproduct/js/app/views/base-product-view'
         },
         'data-layout': 'separate'
     }) %}
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block _product_grid_row_image_holder_widget %}
-    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__image-holder product-item__image-holder_<%= themeOptions.currentRowView %>"
@@ -83,13 +83,13 @@
 
 {% block _product_grid_row_sku_widget %}
     <div>
-        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
     </div>
 {% endblock %}
 
 {% block _product_grid_row_mfg_widget %}
     <div>
-        {{ 'orob2b.product.frontend.index.mfg'|trans }} <span class="red">1ABC13656</span>
+        {{ 'oro.product.frontend.index.mfg'|trans }} <span class="red">1ABC13656</span>
     </div>
 {% endblock %}
 
@@ -108,7 +108,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>" class="view-product">
-            <span class="underlined">{{ 'orob2b.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
+            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
         </a>
     </div>
 {% endblock %}
@@ -169,7 +169,7 @@
 {% block _line_item_form_fields_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__qty__current-grid",
-        'data-page-component-module': "orob2bproduct/js/app/components/product-unit-select-component"
+        'data-page-component-module': "oroproduct/js/app/components/product-unit-select-component"
     }) %}
     <% if (!_.isEmpty(model.product_units)) { %>
     <div {{ block('block_attributes') }} data-product-units='<%= JSON.stringify(model.product_units) %>'>
@@ -200,7 +200,7 @@
                     'layout': 'separate'
                 },
                 'options': {
-                    'widgetModule': 'orob2bproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',
                     'truncateLength': 25,
                     'groupContainer': '<div class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',

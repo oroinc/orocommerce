@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 /**
  * @dbIsolation
@@ -24,7 +23,7 @@ class ShoppingListAddButtonTest extends WebTestCase
     public function testCreateNewShoppingList()
     {
         $shoppingListRepo = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BShoppingListBundle:ShoppingList');
+            ->getRepository('OroShoppingListBundle:ShoppingList');
         
         $shoppingListsCount = count($shoppingListRepo->findAll());
 
@@ -70,6 +69,6 @@ class ShoppingListAddButtonTest extends WebTestCase
      */
     protected function getShoppingListRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:ShoppingList');
     }
 }

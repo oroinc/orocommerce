@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
-
-use OroB2B\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
+use Oro\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
 
 /**
  * TODO: remove this listener after stable release

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\PaymentBundle\Provider\AddressExtractor;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
 
 class AddressExtractorTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,7 +53,7 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
         return [
             'extract from checkout default billing address property' => [
                 $this->getEntity(
-                    'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+                    'Oro\Bundle\CheckoutBundle\Entity\Checkout',
                     [
                         'billingAddress' => $orderAddress,
                     ]
@@ -64,7 +63,7 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
             ],
             'extract from order default billing address property' => [
                 $this->getEntity(
-                    'OroB2B\Bundle\OrderBundle\Entity\Order',
+                    'Oro\Bundle\OrderBundle\Entity\Order',
                     [
                         'billingAddress' => $orderAddress,
                     ]
@@ -98,11 +97,11 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'extract from checkout default billing address property' => [
-                $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout'),
+                $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout'),
                 'missingProperty',
             ],
             'extract from checkout returns null' => [
-                $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['billingAddress' => null]),
+                $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout', ['billingAddress' => null]),
                 'billingAddress',
             ],
             'extract from array' => [
@@ -148,7 +147,7 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
 
         $entity = new \stdClass();
         $entity->billingAddress = $this->getEntity(
-            'OroB2B\Bundle\OrderBundle\Entity\OrderAddress',
+            'Oro\Bundle\OrderBundle\Entity\OrderAddress',
             ['country' => new Country($iso2code)]
         );
 

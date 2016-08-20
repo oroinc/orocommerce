@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Autocomplete;
+namespace Oro\Bundle\AccountBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
 

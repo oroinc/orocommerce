@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 
 class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
-    const ROLE_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
+    const ROLE_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUserRole';
 
     /** @var  AccountUserRoleSelectType */
     protected $formType;
@@ -74,7 +73,7 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $roleWithoutAccount = new AccountUserRole();
         $roleWithoutAccount->setLabel('roleWithoutAccount');
         $this->assertEquals(
-            'roleWithoutAccount (orob2b.account.accountuserrole.type.predefined.label.trans)',
+            'roleWithoutAccount (oro.account.accountuserrole.type.predefined.label.trans)',
             $formOptions['choice_label']($roleWithoutAccount)
         );
 
@@ -83,7 +82,7 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $roleWithAccount->setAccount($account);
         $roleWithAccount->setLabel('roleWithAccount');
         $this->assertEquals(
-            'roleWithAccount (orob2b.account.accountuserrole.type.customizable.label.trans)',
+            'roleWithAccount (oro.account.accountuserrole.type.customizable.label.trans)',
             $formOptions['choice_label']($roleWithAccount)
         );
 

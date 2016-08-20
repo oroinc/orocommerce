@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
 
 class PaymentMethodPassTest extends \PHPUnit_Framework_TestCase
 {

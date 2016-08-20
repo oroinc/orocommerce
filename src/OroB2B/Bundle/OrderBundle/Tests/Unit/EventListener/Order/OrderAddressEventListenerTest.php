@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -8,10 +8,9 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
 
 class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -83,7 +82,7 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->twigEngine->expects($this->once())
             ->method('render')
-            ->with('OroB2BOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $field1View])
+            ->with('OroOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field1 */

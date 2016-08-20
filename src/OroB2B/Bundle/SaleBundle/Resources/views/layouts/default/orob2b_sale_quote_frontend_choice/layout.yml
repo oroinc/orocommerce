@@ -3,18 +3,18 @@ layout:
         - orob2b_account_menu
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
+            themes: 'OroSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/form_theme.html.twig'
+            themes: 'OroSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/form_theme.html.twig'
 
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.frontend.sale.quote.entity_plural_label'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.sale.quote.entity_plural_label'
                 -
-                    label: 'orob2b.frontend.sale.quote.title.label'
+                    label: 'oro.frontend.sale.quote.title.label'
                     parameters:
                         '%id%': '=data["quote"].getQid()'
 
@@ -27,7 +27,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.sale.quote.title.label'
+                label: 'oro.frontend.sale.quote.title.label'
                 parameters:
                     '%id%': '=data["quote"].getQid()'
 
@@ -50,7 +50,7 @@ layout:
                         route_name: orob2b_sale_quote_frontend_view
                         route_parameters:
                             id: '=data["quote"].getId()'
-                        text: 'orob2b.frontend.sale.quote.sections.back.label'
+                        text: 'oro.frontend.sale.quote.sections.back.label'
                 quote_choice_submit_button:
                     blockType: block
                 quote_choice_subtotals:
@@ -62,7 +62,7 @@ layout:
                     blockType: address
                     options:
                         address: '=data["quote"].getShippingAddress()'
-                        label: 'orob2b.sale.quote.shipping_address.label'
+                        label: 'oro.sale.quote.shipping_address.label'
                         block_prefixes: ['quote_body_column_element']
             tree:
                 content:

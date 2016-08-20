@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 
 class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
 {

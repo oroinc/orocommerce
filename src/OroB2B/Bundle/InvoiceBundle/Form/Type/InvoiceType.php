@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Form\Type;
+namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,10 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceType extends AbstractType
 {
@@ -42,7 +41,7 @@ class InvoiceType extends AbstractType
                 'owner',
                 'oro_user_select',
                 [
-                    'label' => 'orob2b.invoice.owner.label',
+                    'label' => 'oro.invoice.owner.label',
                     'required' => true,
                 ]
             )
@@ -50,7 +49,7 @@ class InvoiceType extends AbstractType
                 'accountUser',
                 AccountUserSelectType::NAME,
                 [
-                    'label' => 'orob2b.invoice.account_user.label',
+                    'label' => 'oro.invoice.account_user.label',
                     'required' => false,
                 ]
             )
@@ -58,7 +57,7 @@ class InvoiceType extends AbstractType
                 'account',
                 AccountSelectType::NAME,
                 [
-                    'label' => 'orob2b.invoice.account.label',
+                    'label' => 'oro.invoice.account.label',
                     'required' => true,
                 ]
             )
@@ -66,7 +65,7 @@ class InvoiceType extends AbstractType
                 'invoiceDate',
                 OroDateType::NAME,
                 [
-                    'label' => 'orob2b.invoice.invoice_date.label',
+                    'label' => 'oro.invoice.invoice_date.label',
                     'required' => true,
                 ]
             )
@@ -74,7 +73,7 @@ class InvoiceType extends AbstractType
                 'paymentDueDate',
                 OroDateType::NAME,
                 [
-                    'label' => 'orob2b.invoice.payment_due_date.label',
+                    'label' => 'oro.invoice.payment_due_date.label',
                     'required' => true,
                 ]
             )
@@ -86,14 +85,14 @@ class InvoiceType extends AbstractType
                 CurrencySelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.invoice.currency.label',
+                    'label' => 'oro.invoice.currency.label',
                 ]
             )
             ->add(
                 'lineItems',
                 InvoiceLineItemsCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.invoice.invoicelineitem.add_label',
+                    'add_label' => 'oro.invoice.invoicelineitem.add_label',
                     'cascade_validation' => true,
                     'options' => ['currency' => $invoice->getCurrency()],
                 ]

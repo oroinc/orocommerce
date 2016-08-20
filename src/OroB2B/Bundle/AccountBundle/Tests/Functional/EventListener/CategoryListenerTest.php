@@ -1,20 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -46,11 +45,11 @@ class CategoryListenerTest extends WebTestCase
         $this->initClient();
 
         $this->categoryManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category');
+            ->getManagerForClass('OroCatalogBundle:Category');
         $this->categoryRepository = $this->categoryManager
-            ->getRepository('OroB2BCatalogBundle:Category');
+            ->getRepository('OroCatalogBundle:Category');
 
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
+        $this->loadFixtures(['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
 
         $this->firstWebsite = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->secondWebsite = $this->getReference(LoadWebsiteData::WEBSITE2);
@@ -143,9 +142,9 @@ class CategoryListenerTest extends WebTestCase
     protected function getVisibility(Website $website, Product $product)
     {
         $entityManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility');
+            ->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility');
 
-        $qb = $entityManager->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+        $qb = $entityManager->getRepository('OroAccountBundle:Visibility\ProductVisibility')
             ->createQueryBuilder('v')
             ->andWhere('v.website = :website')
             ->andWhere('v.product = :product')
@@ -163,9 +162,9 @@ class CategoryListenerTest extends WebTestCase
     protected function getResolvedVisibility(Website $website, Product $product)
     {
         $entityManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
-        $qb = $entityManager->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+        $qb = $entityManager->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->createQueryBuilder('v')
             ->andWhere('v.website = :website')
             ->andWhere('v.product = :product')

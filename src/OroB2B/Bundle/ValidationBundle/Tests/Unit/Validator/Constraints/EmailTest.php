@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\EmailValidator;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Email;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Email;
 
 class EmailTestTest extends \PHPUnit_Framework_TestCase
 {

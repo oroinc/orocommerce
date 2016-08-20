@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 /**
  * Hide all not enabled products

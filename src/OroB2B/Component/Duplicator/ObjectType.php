@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Duplicator;
+namespace Oro\Component\Duplicator;
 
 class ObjectType
 {

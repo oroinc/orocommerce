@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\PricingBundle\Expression\NameNode;
+use Oro\Bundle\PricingBundle\Expression\NameNode;
 
 class NameNodeTest extends \PHPUnit_Framework_TestCase
 {

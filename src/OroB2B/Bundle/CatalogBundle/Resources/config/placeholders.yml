@@ -9,6 +9,6 @@ placeholders:
                 order: 100
 items:
     product_sidebar_category_selector:
-        action: OroB2BCatalogBundle:Product:sidebar
+        action: OroCatalogBundle:Product:sidebar
     frontend_product_sidebar_category_selector:
-        action: OroB2BCatalogBundle:Frontend/Product:sidebar
+        action: OroCatalogBundle:Frontend/Product:sidebar

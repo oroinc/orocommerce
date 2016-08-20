@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -19,7 +18,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+                'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
             ]
         );
     }
@@ -33,7 +32,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
         foreach ($product->getUnitPrecisions() as $unit) {
             $product->removeUnitPrecision($unit);
         }
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')->flush($product);
+        $this->getContainer()->get('doctrine')->getManagerForClass('OroProductBundle:Product')->flush($product);
 
         // open product view page
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-
-use OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener;
-use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
-use OroB2B\Bundle\TaxBundle\Model\Address;
+use Oro\Bundle\TaxBundle\EventListener\Config\AddressEventListener;
+use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Model\Address;
 
 class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +19,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->addressModelFactory = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory')
+        $this->addressModelFactory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\AddressModelFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -83,7 +82,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
                         $this->assertInternalType('array', $settings['orob2b_tax___origin_address']);
                         $this->assertArrayHasKey('value', $settings['orob2b_tax___origin_address']);
                         $value = $settings['orob2b_tax___origin_address']['value'];
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Address', $value);
+                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Address', $value);
                         $this->assertEquals($address, $value);
 
                         return true;

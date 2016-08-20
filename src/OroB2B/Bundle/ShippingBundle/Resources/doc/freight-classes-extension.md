@@ -38,7 +38,7 @@ Extension must be registered at "services.yml" with tag "*orob2b_shipping.extens
 ```yml
 services:
     orob2b_shipping_demo.extension.shipping_freight_classes:
-        class: 'OroB2B\Bundle\ShippingDemoBundle\Extension\Shipping\FreightClassesExtension'
+        class: 'Oro\Bundle\ShippingDemoBundle\Extension\Shipping\FreightClassesExtension'
         tags:
             - { name: orob2b_shipping.extension.freight_classes }
 

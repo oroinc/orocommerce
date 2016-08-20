@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseTest extends \PHPUnit_Framework_TestCase
 {

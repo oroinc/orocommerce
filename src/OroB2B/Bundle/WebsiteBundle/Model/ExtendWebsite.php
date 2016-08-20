@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Model;
+namespace Oro\Bundle\WebsiteBundle\Model;
 
 class ExtendWebsite
 {

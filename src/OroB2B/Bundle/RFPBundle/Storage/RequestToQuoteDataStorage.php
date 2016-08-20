@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Storage;
+namespace Oro\Bundle\RFPBundle\Storage;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 class RequestToQuoteDataStorage
 {

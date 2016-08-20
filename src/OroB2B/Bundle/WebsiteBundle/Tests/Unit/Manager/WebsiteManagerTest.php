@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
 {

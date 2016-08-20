@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Processor;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -10,11 +10,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\OperationManager;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 {
@@ -56,7 +55,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         parent::setUp();
 
         $this->shoppingListManager =  $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->operationManager =  $this
@@ -74,7 +73,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $this->processor = new QuickAddCheckoutProcessor($this->handler, $this->registry, $this->messageGenerator);
 
-        $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
         $this->processor->setOperationManager($this->operationManager);
         $this->processor->setTranslator($this->translator);
@@ -167,7 +166,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                 $this->handler->expects($data ? $this->once() : $this->never())
                     ->method('createForShoppingList')
                     ->with(
-                        $this->isInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'),
+                        $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
                         $productIds,
                         $productQuantities
                     )

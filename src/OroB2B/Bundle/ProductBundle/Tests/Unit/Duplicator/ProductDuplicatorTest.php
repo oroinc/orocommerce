@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;
@@ -13,13 +13,12 @@ use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
-use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator;
+use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,7 +90,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->skuIncrementor = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface')
+        $this->skuIncrementor = $this->getMockBuilder('Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->fileManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\FileManager')

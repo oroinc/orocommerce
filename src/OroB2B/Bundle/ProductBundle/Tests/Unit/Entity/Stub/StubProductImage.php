@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class StubProductImage extends ProductImage
 {

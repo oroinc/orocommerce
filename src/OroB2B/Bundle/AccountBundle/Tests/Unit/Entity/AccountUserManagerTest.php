@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
 
 class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 {
-    const USER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    const USER_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
 
     /**
      * @var AccountUserManager
@@ -51,7 +51,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->emailProcessor = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Mailer\Processor')
+        $this->emailProcessor = $this->getMockBuilder('Oro\Bundle\AccountBundle\Mailer\Processor')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions;
+namespace Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\AbstractMassAction;

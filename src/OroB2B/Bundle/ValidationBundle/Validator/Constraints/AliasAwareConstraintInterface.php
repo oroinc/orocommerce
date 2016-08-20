@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ValidationBundle\Validator\Constraints;
+namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 interface AliasAwareConstraintInterface
 {

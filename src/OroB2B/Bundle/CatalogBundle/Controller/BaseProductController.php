@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Controller;
+namespace Oro\Bundle\CatalogBundle\Controller;
 
-use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
@@ -18,7 +18,7 @@ class BaseProductController extends Controller
             'checkbox',
             null,
             [
-                'label' => 'orob2b.catalog.category.include_subcategories.label',
+                'label' => 'oro.catalog.category.include_subcategories.label',
                 'required' => false,
                 'data' => $this->getCatalogRequestHandler()->getIncludeSubcategoriesChoice(),
             ]

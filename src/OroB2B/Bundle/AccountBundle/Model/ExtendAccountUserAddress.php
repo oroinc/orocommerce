@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Model;
+namespace Oro\Bundle\AccountBundle\Model;
 
-use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 abstract class ExtendAccountUserAddress extends AbstractDefaultTypedAddress
 {

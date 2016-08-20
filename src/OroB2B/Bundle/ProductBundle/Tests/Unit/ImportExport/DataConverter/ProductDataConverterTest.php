@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
-
-use OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
+use Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
 
 class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,7 +39,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator);
-        $this->dataConverter->setEntityName('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $this->dataConverter->setEntityName('Oro\Bundle\ProductBundle\Entity\Product');
     }
 
     public function testConvertToExportFormat()
@@ -68,14 +67,14 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
                         $this->isType('string'),
                         $this->equalTo('orob2b_product.data_converter.backend_header')
                     ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ],
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
                         $this->equalTo('orob2b_product.data_converter.convert_to_export')
                     ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ]
             );
 
@@ -109,7 +108,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
                         $this->isType('string'),
                         $this->equalTo('orob2b_product.data_converter.convert_to_import')
                     ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
+                    $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ]
             );
 

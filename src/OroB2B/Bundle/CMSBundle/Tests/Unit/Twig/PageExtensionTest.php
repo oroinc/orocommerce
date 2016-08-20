@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
-use OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler;
-use OroB2B\Bundle\CMSBundle\Twig\PageExtension;
+use Oro\Bundle\CMSBundle\JsTree\PageTreeHandler;
+use Oro\Bundle\CMSBundle\Twig\PageExtension;
 
 class PageExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class PageExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->pageTreeHandler = $this->getMockBuilder('OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler')
+        $this->pageTreeHandler = $this->getMockBuilder('Oro\Bundle\CMSBundle\JsTree\PageTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $this->extension = new PageExtension($this->pageTreeHandler);

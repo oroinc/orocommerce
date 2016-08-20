@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
-use OroB2B\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractRolesData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractRolesData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadAccountUserRoles extends AbstractRolesData
 {
@@ -24,7 +24,7 @@ class LoadAccountUserRoles extends AbstractRolesData
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData'];
+        return ['Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData'];
     }
 
     /**
@@ -102,8 +102,8 @@ class LoadAccountUserRoles extends AbstractRolesData
     {
         if (!$this->websites) {
             $websitesIterator = $this->container->get('doctrine')
-                ->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getManagerForClass('OroWebsiteBundle:Website')
+                ->getRepository('OroWebsiteBundle:Website')
                 ->getBatchIterator();
 
             $this->websites = iterator_to_array($websitesIterator);

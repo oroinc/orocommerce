@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\SEOBundle\EventListener\FormViewListener;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SEOBundle\EventListener\FormViewListener;
 use Symfony\Component\Form\FormView;
 
 class BaseFormViewListenerTestCase extends FormViewListenerTestCase
@@ -45,7 +45,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BSEOBundle:SEO:view.html.twig', [
+            ->with('OroSEOBundle:SEO:view.html.twig', [
                 'entity' => $entityObject,
                 'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
             ])
@@ -63,7 +63,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BSEOBundle:SEO:update.html.twig', ['form' => new FormView()])
+            ->with('OroSEOBundle:SEO:update.html.twig', ['form' => new FormView()])
             ->willReturn('');
 
         return $env;

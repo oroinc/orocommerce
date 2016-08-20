@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Formatter;
+namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 class QuoteProductFormatter
 {
@@ -75,7 +74,7 @@ class QuoteProductFormatter
      */
     public function formatTypeLabel($typeLabel)
     {
-        $translationKey = sprintf('orob2b.sale.quoteproduct.type.%s', $typeLabel);
+        $translationKey = sprintf('oro.sale.quoteproduct.type.%s', $typeLabel);
 
         return $this->translator->trans($translationKey);
     }
@@ -108,7 +107,7 @@ class QuoteProductFormatter
         }
 
         return $this->translator->trans(
-            'orob2b.sale.quoteproductrequest.item',
+            'oro.sale.quoteproductrequest.item',
             [
                 '{units}'   => $this->formatProductUnit($item, $default),
                 '{price}'   => $this->formatPrice($item, $default),
@@ -125,10 +124,10 @@ class QuoteProductFormatter
     {
         switch ($item->getPriceType()) {
             case QuoteProductOffer::PRICE_TYPE_BUNDLED:
-                $transConstant = 'orob2b.sale.quoteproductoffer.item_bundled';
+                $transConstant = 'oro.sale.quoteproductoffer.item_bundled';
                 break;
             default:
-                $transConstant = 'orob2b.sale.quoteproductoffer.item';
+                $transConstant = 'oro.sale.quoteproductoffer.item';
         }
 
         $str = $this->translator->transChoice(

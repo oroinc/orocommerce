@@ -11,7 +11,7 @@
             'fieldSelector': '#' ~ form.vars.id
         } %}
         <div
-            data-page-component-module="orob2bcatalog/js/app/components/tree-form-type-component"
+            data-page-component-module="orocatalog/js/app/components/tree-form-type-component"
             data-page-component-options="{{ treeOptions|json_encode }}"
         ></div>
     </div>
@@ -26,12 +26,12 @@
             class="category-precision-holder"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                view: 'orob2bcatalog/js/app/views/category-unit-limitations-view',
+                view: 'orocatalog/js/app/views/category-unit-limitations-view',
             }|json_encode }}"
         >
             <tr>
                 <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
-                <td><div class="control-label"><label>{{ 'orob2b.catalog.category.precision.label'|trans }}&nbsp;</label></div></td>
+                <td><div class="control-label"><label>{{ 'oro.catalog.category.precision.label'|trans }}&nbsp;</label></div></td>
                 <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
             </tr>
             <tr>

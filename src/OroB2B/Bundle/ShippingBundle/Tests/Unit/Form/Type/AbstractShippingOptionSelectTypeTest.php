@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-
-use OroB2B\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
-use OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
+use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
+use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
@@ -29,11 +28,11 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     protected function setUp()
     {
-        $this->provider = $this->getMockBuilder('OroB2B\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
+        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
+        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -203,7 +202,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     protected function createUnit($code)
     {
         /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->getMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

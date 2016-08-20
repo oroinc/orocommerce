@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set gridName = 'products-grid' %}
-{% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}
+{% set pageTitle = 'oro.product.entity_plural_label'|trans %}
 
 {% block navButtons %}
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
@@ -9,14 +9,14 @@
         exportProcessor: 'orob2b_product_product',
         exportTemplateProcessor: 'orob2b_product_product_export_template',
         importProcessor: 'orob2b_product_product.add_or_replace',
-        importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'orob2b.product.entity_plural_label'|trans}),
+        importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.product.entity_plural_label'|trans}),
         dataGridName: gridName
     } %}
     {% if resource_granted('orob2b_product_create') %}
         <div class="btn-group pull-right">
             {{ UI.addButton({
                 'path': path('orob2b_product_create'),
-                'entity_label': 'orob2b.product.entity_label'|trans
+                'entity_label': 'oro.product.entity_label'|trans
             }) }}
         </div>
     {% endif %}
@@ -31,10 +31,10 @@
             widgetRouteParameters: widgetRouteParameters
         } %}
         <div class="grid-sidebar"
-             data-page-component-module="orob2bproduct/js/app/components/grid-sidebar-component"
+             data-page-component-module="oroproduct/js/app/components/grid-sidebar-component"
              data-page-component-options="{{ componentOptions|json_encode }}"
         >
-            {% include '@OroB2BProduct/Product/Sidebar/sidebar.html.twig' %}
+            {% include '@OroProduct/Product/Sidebar/sidebar.html.twig' %}
         </div>
         <div class="product-index-content">
             {{ oro_widget_render({

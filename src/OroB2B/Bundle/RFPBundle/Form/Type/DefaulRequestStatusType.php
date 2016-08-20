@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
+use Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class DefaulRequestStatusType extends AbstractType
 {

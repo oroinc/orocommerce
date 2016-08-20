@@ -1,4 +1,4 @@
-orob2b:
+oro:
     menu:
         sales_tab.label: 'Sales'
     rfp:
@@ -202,4 +202,4 @@ orob2b:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'
 
-orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
+oro.order.orderlineitem.offers.label: 'Requested QTY and price'

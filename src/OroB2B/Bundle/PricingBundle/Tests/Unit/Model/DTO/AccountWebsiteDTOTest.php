@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountWebsiteDTOTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
+namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-
-use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\EventListener;
+namespace Oro\Bundle\WebsiteBundle\EventListener;
 
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class RoutingListener

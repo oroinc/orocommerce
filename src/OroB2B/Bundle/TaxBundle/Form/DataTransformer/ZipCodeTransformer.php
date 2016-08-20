@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
+namespace Oro\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 
 class ZipCodeTransformer implements DataTransformerInterface
 {

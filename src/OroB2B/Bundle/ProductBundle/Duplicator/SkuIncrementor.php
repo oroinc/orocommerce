@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Duplicator;
+namespace Oro\Bundle\ProductBundle\Duplicator;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class SkuIncrementor implements SkuIncrementorInterface
 {

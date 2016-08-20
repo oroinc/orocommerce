@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
+namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class TaxRuleRepository extends EntityRepository
 {

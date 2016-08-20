@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Action;
+namespace Oro\Bundle\PaymentBundle\Action;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class CaptureAction extends AbstractPaymentMethodAction
 {

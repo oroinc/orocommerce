@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -9,8 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Form\Type\CurrencyType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
-use OroB2B\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension;
+use Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension;
 
 class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
 {

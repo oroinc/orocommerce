@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -11,12 +11,11 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceDatagridListener
 {
@@ -203,16 +202,16 @@ class ProductPriceDatagridListener
      */
     protected function createPriceColumn($currency, $renderable = true, ProductUnit $unit = null)
     {
-        $message = 'orob2b.pricing.productprice.price_in_%currency%';
+        $message = 'oro.pricing.productprice.price_in_%currency%';
         $params = ['%currency%' => $currency];
         if ($unit) {
-            $message = 'orob2b.pricing.productprice.price_%unit%_in_%currency%';
+            $message = 'oro.pricing.productprice.price_%unit%_in_%currency%';
             $params['%unit%'] = $unit->getCode();
         }
         return [
             'label' => $this->translator->trans($message, $params),
             'type' => 'twig',
-            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
             'frontend_type' => 'html',
             'renderable' => $renderable,
         ];
@@ -224,7 +223,7 @@ class ProductPriceDatagridListener
     protected function getAllUnits()
     {
         return $this->doctrineHelper
-            ->getEntityRepository('OroB2BProductBundle:ProductUnit')
+            ->getEntityRepository('OroProductBundle:ProductUnit')
             ->findBy([], ['code' => 'ASC']);
     }
 
@@ -255,7 +254,7 @@ class ProductPriceDatagridListener
     protected function getPrices(array $records, $showTierPrices)
     {
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:ProductPrice');
 
         $productIds = array_map(function (ResultRecord $record) {
             return $record->getValue('id');
@@ -289,7 +288,7 @@ class ProductPriceDatagridListener
             '[source][query][join][left]',
             [
                 [
-                    'join' => 'OroB2BPricingBundle:ProductPrice',
+                    'join' => 'OroPricingBundle:ProductPrice',
                     'alias' => $joinAlias,
                     'conditionType' => Expr\Join::WITH,
                     'condition' => (string)$joinExpr

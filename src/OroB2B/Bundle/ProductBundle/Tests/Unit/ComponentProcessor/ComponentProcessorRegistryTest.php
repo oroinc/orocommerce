@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
 class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +30,7 @@ class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProcessorMock($name)
     {
-        $processor = $this->getMock('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
+        $processor = $this->getMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
         $processor->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));

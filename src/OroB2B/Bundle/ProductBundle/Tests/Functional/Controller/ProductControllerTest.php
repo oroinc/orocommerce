@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -10,8 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -596,8 +595,8 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var Product $product */
         $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product')
+            ->getManagerForClass('OroProductBundle:Product')
+            ->getRepository('OroProductBundle:Product')
             ->findOneBy(['sku' => $sku]);
         $this->assertNotEmpty($product);
 
@@ -680,7 +679,7 @@ class ProductControllerTest extends WebTestCase
     {
         $productUnitPrecision = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
+            ->getRepository('OroProductBundle:ProductUnitPrecision')
             ->findOneBy(['product' => $productId, 'unit' => $unit]);
 
         $this->assertEquals($expectedPrecision, $productUnitPrecision->getPrecision());

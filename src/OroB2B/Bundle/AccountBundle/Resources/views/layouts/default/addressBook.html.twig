@@ -8,8 +8,8 @@
         <script type="text/html" id="template-addressbook-item">
             <div class="actions pull-right">
                 {% if addressUpdateAclResource is not defined or resource_granted(addressUpdateAclResource) %}
-                    <a class="item-edit-button" title="<%= _.__('orob2b.account.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('orob2b.account.address.edit') %>ohjkhjkjk</i></a>
-                    <% if (!primary) { %><a class="item-remove-button" title="<%= _.__('orob2b.account.address.remove') %>"><i class="icon-trash mml2-md mml2-sm hide-text"><%= _.__('orob2b.account.address.remove') %></i></a><% } %>
+                    <a class="item-edit-button" title="<%= _.__('oro.account.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('oro.account.address.edit') %>ohjkhjkjk</i></a>
+                    <% if (!primary) { %><a class="item-remove-button" title="<%= _.__('oro.account.address.remove') %>"><i class="icon-trash mml2-md mml2-sm hide-text"><%= _.__('oro.account.address.remove') %></i></a><% } %>
                 {% endif %}
             </div>
 
@@ -25,9 +25,9 @@
 
             <% if (primary || !_.isEmpty(types)) { %>
                 <ul class="inline list-unstyled">
-                    <% if (primary) { %> <li><span class="label label-info"><%= _.__('orob2b.account.address.primary') %></span></li> <% } %>
+                    <% if (primary) { %> <li><span class="label label-info"><%= _.__('oro.account.address.primary') %></span></li> <% } %>
                     <% _.each(types, function(type) { %>
-                    <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('orob2b.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span></li>
+                    <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span></li>
                     <% }) %>
                 </ul>
             <% } %>
@@ -35,7 +35,7 @@
 
         <div id="address-book"
              class="list-box map-box"
-             data-page-component-module="orob2baccount/js/app/components/frontend-account-address-book-component"
+             data-page-component-module="oroaccount/js/app/components/frontend-account-address-book-component"
              data-page-component-options="{{ componentOptions|json_encode }}">
         </div>
     </div>

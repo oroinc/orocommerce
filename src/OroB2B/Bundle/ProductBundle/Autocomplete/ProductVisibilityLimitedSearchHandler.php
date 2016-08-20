@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Autocomplete;
+namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {

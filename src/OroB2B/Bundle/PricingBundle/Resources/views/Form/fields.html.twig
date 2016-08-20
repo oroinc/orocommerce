@@ -1,5 +1,5 @@
 {% block orob2b_pricing_product_price_widget %}
-    <div data-page-component-module="orob2bpricing/js/app/components/price-list-currency-limitations-component">
+    <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component">
         <div class="row">
             <div class="small-row">
                 <div>
@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block orob2b_pricing_product_price_collection_widget %}
-    <div data-page-component-module="orob2bpricing/js/app/components/product-unit-precision-limitations-component"
+    <div data-page-component-module="oropricing/js/app/components/product-unit-precision-limitations-component"
          class="product-price-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
         {{ block('oro_collection_widget') }}
@@ -54,16 +54,16 @@
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
-    <div class="pricing-price-list" data-page-component-module="orob2bpricing/js/app/components/price-lists-errors-handler">
+    <div class="pricing-price-list" data-page-component-module="oropricing/js/app/components/price-lists-errors-handler">
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered">
                     <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
+                        <th><span>{{ 'oro.pricing.pricelist.priority.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</span></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -78,7 +78,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.pricing.add_price_list'|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.pricing.add_price_list'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -145,15 +145,15 @@
         <div class="row-oro pl_schedule"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orob2bpricing/js/app/views/price-list-schedule-view',
+                 view: 'oropricing/js/app/views/price-list-schedule-view',
              }|json_encode }}">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                         <tr>
-                            <th><span>{{ 'orob2b.pricing.pricelist_schedule.active_at.label'|trans }}</span></th>
-                            <th><span>{{ 'orob2b.pricing.pricelist_schedule.deactivate_at.label'|trans }}</span></th>
+                            <th><span>{{ 'oro.pricing.pricelist_schedule.active_at.label'|trans }}</span></th>
+                            <th><span>{{ 'oro.pricing.pricelist_schedule.deactivate_at.label'|trans }}</span></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -170,7 +170,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ orob2b.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}</a>
         </div>
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}
             {{ _self.oro_collection_validate_primary_js(_context) }}
@@ -188,7 +188,7 @@
                 <table class="grid table-hover table table-bordered">
                     <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.pricing.priceAttribute.unit.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.pricing.priceAttribute.unit.label'|trans }}</span></th>
                         {% for currency in form.vars.currencies %}
                         <th><span>{{ currency }}</span></th>
                         {% endfor %}
@@ -316,7 +316,7 @@
             </div>
             <div class="price_rules__add_btn">
                 <a class="btn add-list-item" href="javascript: void(0);">
-                    <i class="icon-plus"></i>{{ orob2b.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}
+                    <i class="icon-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}
                 </a>
             </div>
         </div>

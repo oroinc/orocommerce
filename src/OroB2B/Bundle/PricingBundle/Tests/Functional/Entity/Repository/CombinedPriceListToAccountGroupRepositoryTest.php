@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 
 /**
  * @dbIsolation
@@ -23,7 +23,7 @@ class CombinedPriceListToAccountGroupRepositoryTest extends AbstractCombinedPric
         $registry = $this->getContainer()
             ->get('doctrine');
         $em = $registry->getManager();
-        $repo = $registry->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup');
+        $repo = $registry->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup');
         $combinedPriceListsToAccountGroup = $repo->findAll();
         $this->assertCount(1, $combinedPriceListsToAccountGroup);
         //Add Base Relation

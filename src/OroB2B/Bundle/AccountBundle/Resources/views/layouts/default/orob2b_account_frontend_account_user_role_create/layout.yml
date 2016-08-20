@@ -9,19 +9,19 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'orob2b.account.menu.account_user.label'
-                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
-                - 'orob2b.account.frontend.title.account_user_role.create'
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.role.entity_plural_label'
+                - 'oro.account.frontend.title.account_user_role.create'
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.frontend.title.page.account_user_role.create'
+                label: 'oro.account.frontend.title.page.account_user_role.create'
         - '@setOption':
             id: account_user_role_form_actions_update_top
             optionName: text
-            optionValue: orob2b.account.action.account_user_role.create_label
+            optionValue: oro.account.action.account_user_role.create_label
         - '@setOption':
             id: account_user_role_form_actions_update_bottom
             optionName: text
-            optionValue: orob2b.account.action.account_user_role.create_label
+            optionValue: oro.account.action.account_user_role.create_label

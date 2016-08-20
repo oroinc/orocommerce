@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -8,14 +8,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
 
 class PriceListChangeTriggerHandler
 {
@@ -123,13 +122,13 @@ class PriceListChangeTriggerHandler
     public function handleAccountGroupRemove(AccountGroup $accountGroup)
     {
         $websiteIds = $this->registry
-            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getManagerForClass('OroPricingBundle:PriceListToAccountGroup')
+            ->getRepository('OroPricingBundle:PriceListToAccountGroup')
             ->getWebsiteIdsByAccountGroup($accountGroup);
 
         if ($websiteIds) {
             $this->getManager()
-                ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
+                ->getRepository('OroPricingBundle:PriceListChangeTrigger')
                 ->insertAccountWebsitePairsByAccountGroup(
                     $accountGroup,
                     $websiteIds,
@@ -173,6 +172,6 @@ class PriceListChangeTriggerHandler
     protected function getManager()
     {
         return $this->registry
-            ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger');
+            ->getManagerForClass('OroPricingBundle:PriceListChangeTrigger');
     }
 }

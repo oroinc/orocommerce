@@ -1,30 +1,29 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\LineItem';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
      * @var LineItemType
@@ -127,7 +126,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('my note');
 
-        $existingLineItem = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 2);
+        $existingLineItem = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 2);
         $existingLineItem
             ->setShoppingList($shoppingList)
             ->setProduct($expectedProduct)
@@ -190,7 +189,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
         $lineItem = new LineItem();
         /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+        $lineItem2 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 1);
 
         $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
         $this->assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));

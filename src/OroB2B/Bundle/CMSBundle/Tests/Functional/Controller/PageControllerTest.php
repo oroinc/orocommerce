@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
 /**
  * @group segfault
@@ -43,7 +42,7 @@ class PageControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page');
+        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page');
     }
 
     public function testIndex()
@@ -164,7 +163,7 @@ class PageControllerTest extends WebTestCase
     {
         $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
 
-        $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
+        $page = $this->entityManager->find('OroCMSBundle:Page', $id);
         $children = $page->getChildPages();
 
         $this->client->request(
@@ -199,7 +198,7 @@ class PageControllerTest extends WebTestCase
 
         // Check all child page are deleted
         foreach ($children as $childPage) {
-            $this->assertNull($this->entityManager->find('OroB2BCMSBundle:Page', $childPage->getId()));
+            $this->assertNull($this->entityManager->find('OroCMSBundle:Page', $childPage->getId()));
         }
     }
 
@@ -312,7 +311,7 @@ class PageControllerTest extends WebTestCase
     protected function assertSlugs($expectedCurrentSlug, array $expectedRelatedSlugs, $id)
     {
         /** @var Page $page */
-        $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
+        $page = $this->entityManager->find('OroCMSBundle:Page', $id);
 
         $this->assertEquals($expectedCurrentSlug, $page->getCurrentSlug()->getUrl());
 

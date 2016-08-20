@@ -5,8 +5,8 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
         /**
          * Tax Formatter
          *
-         * @export orob2btax/js/formatter/tax
-         * @name   orob2btax.formatter.tax
+         * @export orotax/js/formatter/tax
+         * @name   orotax.formatter.tax
          */
         var taxFormatter = function() {
             var formatElement = function(value, currency) {

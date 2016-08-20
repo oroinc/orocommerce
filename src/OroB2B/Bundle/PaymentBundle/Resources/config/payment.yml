@@ -1,22 +1,22 @@
 services:
     orob2b_payment.payment_method.registry:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
         public: false
 
     orob2b_payment.payment_method.payment_term.config:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\Config\PaymentTermConfig'
+        class: 'Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfig'
         public: false
         arguments:
            - '@oro_config.global'
 
     orob2b_payment.payment_method.view.registry:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
         public: false
         arguments:
             - '@orob2b_payment.payment_method.registry'
 
     orob2b_payment.payment_method.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\PaymentTerm'
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentTerm'
         public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
@@ -27,7 +27,7 @@ services:
             - { name: orob2b_payment.payment_method }
 
     orob2b_payment.payment_method.view.payment_term:
-        class: 'OroB2B\Bundle\PaymentBundle\Method\View\PaymentTermView'
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentTermView'
         public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'

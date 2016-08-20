@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
+namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,8 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
@@ -174,7 +173,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
             if ($isAllowedRFP === false) {
                 $this->session->getFlashBag()->add(
                     'warning',
-                    $this->translator->trans('orob2b.frontend.rfp.data_storage.no_products_be_added_to_rfq')
+                    $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')
                 );
 
                 return false;
@@ -252,7 +251,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         $skus = array_unique($skus);
 
         $message = $this->translator->transChoice(
-            'orob2b.product.frontend.quick_add.messages.not_added_products',
+            'oro.product.frontend.quick_add.messages.not_added_products',
             count($skus),
             ['%sku%' => implode(', ', $skus)]
         );

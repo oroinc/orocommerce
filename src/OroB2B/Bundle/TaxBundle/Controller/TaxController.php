@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Controller;
+namespace Oro\Bundle\TaxBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,9 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 
 class TaxController extends Controller
 {
@@ -36,7 +35,7 @@ class TaxController extends Controller
      * @Acl(
      *      id="orob2b_tax_view",
      *      type="entity",
-     *      class="OroB2BTaxBundle:Tax",
+     *      class="OroTaxBundle:Tax",
      *      permission="VIEW"
      * )
      *
@@ -52,11 +51,11 @@ class TaxController extends Controller
 
     /**
      * @Route("/create", name="orob2b_tax_create")
-     * @Template("OroB2BTaxBundle:Tax:update.html.twig")
+     * @Template("OroTaxBundle:Tax:update.html.twig")
      * @Acl(
      *      id="orob2b_tax_create",
      *      type="entity",
-     *      class="OroB2BTaxBundle:Tax",
+     *      class="OroTaxBundle:Tax",
      *      permission="CREATE"
      * )
      *
@@ -73,7 +72,7 @@ class TaxController extends Controller
      * @Acl(
      *      id="orob2b_tax_update",
      *      type="entity",
-     *      class="OroB2BTaxBundle:Tax",
+     *      class="OroTaxBundle:Tax",
      *      permission="EDIT"
      * )
      *
@@ -106,7 +105,7 @@ class TaxController extends Controller
                     'parameters' => ['id' => $tax->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.tax.controller.tax.saved.message')
+            $this->get('translator')->trans('oro.tax.controller.tax.saved.message')
         );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Controller;
+namespace Oro\Bundle\ShippingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -12,9 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleController extends Controller
 {
@@ -34,12 +33,12 @@ class ShippingRuleController extends Controller
 
     /**
      * @Route("/create", name="orob2b_shipping_rule_create")
-     * @Template("OroB2BShippingBundle:ShippingRule:update.html.twig")
+     * @Template("OroShippingBundle:ShippingRule:update.html.twig")
      * @Acl(
      *     id="orob2b_shipping_rule_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroB2BShippingBundle:ShippingRule"
+     *     class="OroShippingBundle:ShippingRule"
      * )
      *
      * @return array
@@ -55,7 +54,7 @@ class ShippingRuleController extends Controller
      * @Acl(
      *      id="orob2b_shipping_rule_view",
      *      type="entity",
-     *      class="OroB2BShippingBundle:ShippingRule",
+     *      class="OroShippingBundle:ShippingRule",
      *      permission="VIEW"
      * )
      *
@@ -79,7 +78,7 @@ class ShippingRuleController extends Controller
      *     id="orob2b_shipping_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroB2BShippingBundle:ShippingRule"
+     *     class="OroShippingBundle:ShippingRule"
      * )
      * @return array
      */
@@ -98,7 +97,7 @@ class ShippingRuleController extends Controller
         return $this->get('oro_form.model.update_handler')->update(
             $entity,
             $form,
-            $this->get('translator')->trans('orob2b.shipping.controller.rule.saved.message')
+            $this->get('translator')->trans('oro.shipping.controller.rule.saved.message')
         );
     }
 
@@ -108,7 +107,7 @@ class ShippingRuleController extends Controller
      *     id="orob2b_shipping_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroB2BShippingBundle:ShippingRule"
+     *     class="OroShippingBundle:ShippingRule"
      * )
      * @param string $gridName
      * @param string $actionName

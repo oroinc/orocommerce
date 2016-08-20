@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Form\Extension;
+namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 
 class ProductStepOneFormExtension extends AbstractTypeExtension
 {
@@ -47,7 +47,7 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.catalog.category.entity_label'
+                    'label' => 'oro.catalog.category.entity_label'
                 ]
             )
         ;

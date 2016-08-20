@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
+namespace Oro\Bundle\CatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 class CategoryRepository extends NestedTreeRepository
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use OroB2B\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 /**
  * SelectedOffers
@@ -28,7 +28,7 @@ class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface,
 
     /**
      * @var Quote
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteDemand", inversedBy="demandProducts")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteDemand", inversedBy="demandProducts")
      * @ORM\JoinColumn(name="quote_demand_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteDemand;

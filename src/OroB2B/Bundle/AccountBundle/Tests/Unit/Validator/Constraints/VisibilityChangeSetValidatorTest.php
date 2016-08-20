@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
+use Oro\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator;
 
 class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ENTITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
 
     /** @var  VisibilityChangeSet */
     protected $constraint;

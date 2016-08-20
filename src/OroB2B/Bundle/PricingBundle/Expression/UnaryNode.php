@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Expression;
+namespace Oro\Bundle\PricingBundle\Expression;
 
 class UnaryNode implements NodeInterface
 {

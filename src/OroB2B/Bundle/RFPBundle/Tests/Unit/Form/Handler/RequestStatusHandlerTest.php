@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Handler;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
 
 class RequestStatusHandlerTest extends FormHandlerTestCase
 {

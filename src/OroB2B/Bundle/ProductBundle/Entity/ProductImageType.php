@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Entity;
+namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,7 +24,7 @@ class ProductImageType
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductImage", inversedBy="types")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage", inversedBy="types")
      * @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", nullable=false)
      */
     protected $productImage;

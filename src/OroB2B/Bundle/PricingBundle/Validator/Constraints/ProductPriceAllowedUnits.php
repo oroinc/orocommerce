@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -12,17 +12,17 @@ class ProductPriceAllowedUnits extends Constraint
     /**
      * @var string
      */
-    public $notExistingProductMessage = 'orob2b.pricing.validators.product_price.not_existing_product.message';
+    public $notExistingProductMessage = 'oro.pricing.validators.product_price.not_existing_product.message';
 
     /**
      * @var string
      */
-    public $notExistingUnitMessage = 'orob2b.pricing.validators.product_price.not_existing_unit.message';
+    public $notExistingUnitMessage = 'oro.pricing.validators.product_price.not_existing_unit.message';
 
     /**
      * @var string
      */
-    public $notAllowedUnitMessage = 'orob2b.pricing.validators.product_price.not_allowed_unit.message';
+    public $notAllowedUnitMessage = 'oro.pricing.validators.product_price.not_allowed_unit.message';
 
     /**
      * {@inheritDoc}

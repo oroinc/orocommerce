@@ -1,6 +1,6 @@
 services:
     orob2b_shopping_list.mass_action.add_products:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction'
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction'
         arguments:
             - '@oro_entity_merge.metadata.registry'
             - '@translator'
@@ -9,7 +9,7 @@ services:
             - { name: oro_datagrid.extension.mass_action.type, type: addproducts }
 
     orob2b_shopping_list.mass_action.add_products_handler:
-        class: 'OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler'
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler'
         arguments:
             - '@orob2b_shopping_list.handler.shopping_list_line_item'
             - '@orob2b_shopping_list.service.message_generator'

@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\ImportExport\Strategy;
+namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\AbstractImportStrategy;
-use OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
 {

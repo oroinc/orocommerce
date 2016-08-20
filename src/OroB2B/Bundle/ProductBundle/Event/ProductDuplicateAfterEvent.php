@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Event;
+namespace Oro\Bundle\ProductBundle\Event;
 
 class ProductDuplicateAfterEvent extends AbstractProductDuplicateEvent
 {

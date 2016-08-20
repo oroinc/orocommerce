@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Formatter;
+namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -25,7 +25,7 @@ class QuoteProductOfferFormatter
      */
     public function formatPriceTypeLabel($priceTypeLabel)
     {
-        $translationKey = sprintf('orob2b.sale.quoteproductoffer.price_type.%s', $priceTypeLabel);
+        $translationKey = sprintf('oro.sale.quoteproductoffer.price_type.%s', $priceTypeLabel);
 
         return $this->translator->trans($translationKey);
     }

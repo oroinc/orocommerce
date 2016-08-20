@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Resolver;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,14 +62,14 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testIsCategoryVisible()
     {
         /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => 42]);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 42]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $categoryVisibilityResolvedRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,7 +80,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -98,7 +97,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $categoryVisibilityResolvedRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -112,7 +111,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -129,7 +128,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $categoryVisibilityResolvedRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -143,7 +142,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -156,10 +155,10 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testIsCategoryVisibleForAccountGroup()
     {
         /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => 123]);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 123]);
 
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -167,7 +166,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -179,7 +178,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -192,7 +191,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetVisibleCategoryIdsForAccountGroup()
     {
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -200,7 +199,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -216,7 +215,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -232,7 +231,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetHiddenCategoryIdsForAccountGroup()
     {
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -240,7 +239,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -256,7 +255,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -272,10 +271,10 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testIsCategoryVisibleForAccount()
     {
         /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => 10]);
+        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 10]);
 
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -283,7 +282,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -295,7 +294,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -308,7 +307,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetVisibleCategoryIdsForAccount()
     {
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -316,7 +315,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -332,7 +331,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -348,7 +347,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetHiddenCategoryIdsForAccount()
     {
         /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -356,7 +355,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -372,7 +371,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())

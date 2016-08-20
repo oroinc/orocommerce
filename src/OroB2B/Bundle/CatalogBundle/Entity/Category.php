@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Entity;
+namespace Oro\Bundle\CatalogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,14 +11,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
-use OroB2B\Component\Tree\Entity\TreeTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
+use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      routeName="orob2b_catalog_category_index",
@@ -144,7 +143,7 @@ class Category extends ExtendCategory
     /**
      * @var Collection|Product[]
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinTable(
      *      name="orob2b_category_to_product",
      *      joinColumns={

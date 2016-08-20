@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
@@ -94,7 +93,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {

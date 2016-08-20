@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Builder;
+namespace Oro\Bundle\PricingBundle\Builder;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
-use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 
 class CombinedProductPriceQueueConsumer
 {
@@ -43,12 +43,12 @@ class CombinedProductPriceQueueConsumer
     /**
      * @var string
      */
-    protected $productPriceChangeTriggerClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger';
+    protected $productPriceChangeTriggerClass = 'Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger';
 
     /**
      * @var string
      */
-    protected $combinedPriceListClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
+    protected $combinedPriceListClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceList';
 
     /**
      * @var EventDispatcherInterface

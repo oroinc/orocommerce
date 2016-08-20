@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -8,10 +8,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\RFPBundle\EventListener\AccountViewListener;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\RFPBundle\EventListener\AccountViewListener;
 
 class AccountViewListenerTest extends FormViewListenerTestCase
 {
@@ -109,7 +108,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroB2BRFPBundle:Account:rfp_view.html.twig', ['entity' => $account]);
+            ->with('OroRFPBundle:Account:rfp_view.html.twig', ['entity' => $account]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')
@@ -133,7 +132,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroB2BRFPBundle:AccountUser:rfp_view.html.twig', ['entity' => $accountUser]);
+            ->with('OroRFPBundle:AccountUser:rfp_view.html.twig', ['entity' => $accountUser]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')

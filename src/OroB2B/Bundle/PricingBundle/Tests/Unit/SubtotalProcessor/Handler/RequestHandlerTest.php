@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +34,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->totalProvider =
-            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            $this->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
                 ->disableOriginalConstructor()->getMock();
 
         $this->eventDispatcher =
@@ -112,11 +111,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'test with entityId = 0' => [
-                'entityClassName' => 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
+                'entityClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
                 'entityId' => 0
             ],
             'test with entityId > 0' => [
-                'entityClassName' => 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
+                'entityClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
                 'entityId' => 1
             ]
         ];
@@ -127,7 +126,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRecalculateTotalsNoAccessView()
     {
-        $entityClassName = 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub';
+        $entityClassName = 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub';
         $entityId = 1;
 
         $this->entityRoutingHelper->expects($this->once())->method('resolveEntityClass')->willReturn($entityClassName);

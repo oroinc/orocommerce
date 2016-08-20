@@ -1,18 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\AbstractItemResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
-use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Matcher\MatcherInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
+use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
+use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
+use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -38,15 +38,15 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->unitResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\UnitResolver')
+        $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rowTotalResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver')
+        $this->rowTotalResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\RowTotalResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->matcher = $this->getMock('OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface');
+        $this->matcher = $this->getMock('Oro\Bundle\TaxBundle\Matcher\MatcherInterface');
 
         $this->resolver = $this->createResolver();
     }

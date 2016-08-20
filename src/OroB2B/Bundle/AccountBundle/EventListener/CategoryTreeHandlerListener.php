@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
+use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryTreeHandlerListener
 {

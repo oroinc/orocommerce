@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
 use Symfony\Component\Form\FormFactoryInterface;
 
-use OroB2B\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class SubscriberProxy extends RuleConfigurationSubscriber
 {

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Factory;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
+use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionFactoryTest extends \PHPUnit_Framework_TestCase
 {

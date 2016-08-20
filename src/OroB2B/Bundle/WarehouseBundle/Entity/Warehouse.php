@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Entity;
+namespace Oro\Bundle\WarehouseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,8 +11,7 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
-use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouse;
+use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
 
 /**
  * @ORM\Table(
@@ -22,7 +21,7 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  *          @ORM\Index(name="idx_orob2b_warehouse_updated_at", columns={"updated_at"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_warehouse_index",

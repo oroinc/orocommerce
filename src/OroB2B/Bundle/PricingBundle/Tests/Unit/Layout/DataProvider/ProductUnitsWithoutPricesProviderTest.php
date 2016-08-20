@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
-use OroB2B\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
+use Oro\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +26,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->frontendProductPricesProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
+            'Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
         )->disableOriginalConstructor()->getMock();
 
         $this->provider = new ProductUnitsWithoutPricesProvider($this->frontendProductPricesProvider);
@@ -98,7 +97,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     protected function getProduct(array $product)
     {
         $product['unitPrecisions'] = array_map([$this, 'getUnitPrecision'], $product['unitPrecisions']);
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $product);
     }
 
     /**
@@ -107,7 +106,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getUnit(array $unit)
     {
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unit);
+        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $unit);
     }
 
     /**
@@ -117,7 +116,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     protected function getUnitPrecision(array $unitPrecision)
     {
         $unitPrecision['unit'] = $this->getUnit($unitPrecision['unit']);
-        return $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', $unitPrecision);
+        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', $unitPrecision);
     }
 
     /**

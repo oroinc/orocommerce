@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
@@ -16,15 +16,14 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Model\AclPermission;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -187,7 +186,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $role = new AccountUserRole('TEST');
         $roleSecurityIdentity = new RoleSecurityIdentity($role);
 
-        $productObjectIdentity = new ObjectIdentity('entity', 'OroB2B\Bundle\ProductBundle\Entity\Product');
+        $productObjectIdentity = new ObjectIdentity('entity', 'Oro\Bundle\ProductBundle\Entity\Product');
 
         $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
@@ -322,7 +321,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->getMock();
         $aclExtensionSelector->expects($this->once())
             ->method('select')
-            ->with('entity:OroB2B\Bundle\ProductBundle\Entity\Product')
+            ->with('entity:Oro\Bundle\ProductBundle\Entity\Product')
             ->willReturn($aclExtension);
 
         $this->aclManager->expects($this->once())
@@ -408,7 +407,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->willReturn($objectManager);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateHandler $handler */
-        $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
+        $handler = $this->getMockBuilder('\Oro\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
             ->setMethods(['processPrivileges'])
             ->setConstructorArgs([$this->formFactory, $this->aclCache, $this->privilegeConfig])
             ->getMock();
@@ -435,31 +434,31 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
      */
     public function processWithAccountProvider()
     {
-        $oldAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
-        $newAccount1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 10]);
+        $oldAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $newAccount1 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 10]);
         $role1 = $this->createAccountUserRole('test role1', 1);
         $users1 =
             $this->createUsersWithRole($role1, 6, $newAccount1) + $this->createUsersWithRole($role1, 2, $oldAccount, 6);
 
-        $newAccount2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
-        $oldAcc2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 21]);
+        $newAccount2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $oldAcc2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 21]);
         $role2 = $this->createAccountUserRole('test role2', 2);
         $role2->setAccount($oldAcc2);
         $users2 =
             $this->createUsersWithRole($role2, 6, $newAccount2) + $this->createUsersWithRole($role2, 2, $oldAcc2, 6);
 
         $role3 = $this->createAccountUserRole('test role3', 3);
-        $role3->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 31]));
+        $role3->setAccount($this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 31]));
         $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
 
-        $newAccount4 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 41]);
+        $newAccount4 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 41]);
         $role4 = $this->createAccountUserRole('test role4', 4);
-        $role4->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 40]));
+        $role4->setAccount($this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 40]));
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
 
-        $newAccount5 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 50]);
+        $newAccount5 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 50]);
         $role5 = $this->createAccountUserRole('test role5');
-        $role5->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 51]));
+        $role5->setAccount($this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 51]));
         $users5 = $this->createUsersWithRole($role5, 6, $newAccount5);
 
         return [

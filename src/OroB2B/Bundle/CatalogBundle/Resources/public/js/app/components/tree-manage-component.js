@@ -7,9 +7,9 @@ define(function(require) {
     var BasicTreeManageComponent = require('oroui/js/app/components/basic-tree-manage-component');
 
     /**
-     * @export orob2bcatalog/js/app/components/tree-manage-component
+     * @export orocatalog/js/app/components/tree-manage-component
      * @extends oroui.app.components.BasicTreeManageComponent
-     * @class orob2bcatalog.app.components.TreeManageComponent
+     * @class orocatalog.app.components.TreeManageComponent
      */
     TreeManageComponent = BasicTreeManageComponent.extend({
         /**
@@ -25,7 +25,7 @@ define(function(require) {
 
             if (data.parent === '#') {
                 this.rollback(data);
-                messenger.notificationFlashMessage('warning', __("orob2b.catalog.jstree.add_new_root_warning"));
+                messenger.notificationFlashMessage('warning', __("oro.catalog.jstree.add_new_root_warning"));
                 return;
             }
 

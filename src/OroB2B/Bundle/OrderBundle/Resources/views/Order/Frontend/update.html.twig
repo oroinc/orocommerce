@@ -1,13 +1,13 @@
-{% extends 'OroB2BFrontendBundle:actions:update.html.twig' %}
+{% extends 'OroFrontendBundle:actions:update.html.twig' %}
 
 {% oro_title_set({params : {
     '%identifier%': entity.identifier|default('N/A'|trans),
-    '%entityName%': 'orob2b.order.entity_label'|trans
+    '%entityName%': 'oro.order.entity_label'|trans
 } }) %}
 
 {% set formAction = entity.id ? path('orob2b_order_frontend_update', { 'id': entity.id }) : path('orob2b_order_frontend_create')  %}
 
-{% form_theme form with ['OroB2BOrderBundle:Form:fields.html.twig'] %}
+{% form_theme form with ['OroOrderBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -25,18 +25,18 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_order_frontend_index'),
-            'indexLabel': 'orob2b.order.entity_plural_label'|trans,
+            'indexLabel': 'oro.order.entity_plural_label'|trans,
             'entityTitle': entity.identifier|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.order.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.order.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
 {% set pageComponent = {
-    module: 'orob2border/js/app/components/entry-point-component',
+    module: 'oroorder/js/app/components/entry-point-component',
     options: { route: 'orob2b_order_frontend_entry_point', routeParams: {id: entity.id|default(0)} },
 } %}
 
@@ -44,8 +44,8 @@
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
-            pageComponent: 'orob2border/js/app/components/totals-component',
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+            pageComponent: 'oroorder/js/app/components/totals-component',
             options: {totals: orderData.totals}
         } only %}
     {% endset %}
@@ -54,7 +54,7 @@
         <div class="order-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orob2border/js/app/views/line-items-view',
+                 view: 'oroorder/js/app/views/line-items-view',
                  tierPrices: orderData.tierPrices|default({}),
                  matchedPrices: orderData.matchedPrices|default({}),
                  currency: form.vars.value.currency
@@ -64,13 +64,13 @@
             {{ form_errors(form.lineItems) }}
         </div>
         <div
-                data-page-component-module="orob2border/js/app/components/data-load-component"
+                data-page-component-module="oroorder/js/app/components/data-load-component"
                 data-page-component-options="{{ orderData|json_encode }}"></div>
     {% endset %}
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'title': 'oro.order.sections.order_line_items'|trans,
             'content_attr': {'class': 'order-line-items-content'},
             'subblocks': [{
             'title': '',
@@ -86,7 +86,7 @@
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
-                    view: 'orob2border/js/app/views/address-view',
+                    view: 'oroorder/js/app/views/address-view',
                     type: 'billing',
                     selectors: {
                         address: '#' ~ form.billingAddress.accountAddress.vars.id,
@@ -104,7 +104,7 @@
             </div>
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.billing_address.label'|trans,
+            'title': 'oro.order.billing_address.label'|trans,
             'subblocks': [{
                 'data': [billingAddress]
             }]
@@ -121,7 +121,7 @@
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
-                    view: 'orob2border/js/app/views/address-view',
+                    view: 'oroorder/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
                         address: idAddressBlock,
@@ -139,7 +139,7 @@
             </div>
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.shipping_address.label'|trans,
+            'title': 'oro.order.shipping_address.label'|trans,
             'subblocks': [{
                 'data': [shippingAddress]
             }]
@@ -157,7 +157,7 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.sections.additional'|trans,
+            'title': 'oro.order.sections.additional'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
@@ -167,7 +167,7 @@
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.subtotals'|trans,
+        'title': 'oro.order.sections.subtotals'|trans,
         'class': 'active',
         'subblocks': [{
             'data': [subtotals]

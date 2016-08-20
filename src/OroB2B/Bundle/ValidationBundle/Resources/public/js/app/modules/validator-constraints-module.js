@@ -11,15 +11,15 @@ require([
         'jquery', 'jquery.validate'
     ], function ($) {
         var constraints = [
-            'orob2bvalidation/js/validator/letters',
-            'orob2bvalidation/js/validator/alphanumeric',
-            'orob2bvalidation/js/validator/alphanumeric-dash-underscore',
-            'orob2bvalidation/js/validator/url-safe',
-            'orob2bvalidation/js/validator/decimal',
-            'orob2bvalidation/js/validator/integer',
-            'orob2bvalidation/js/validator/greater-than-zero',
-            'orob2bvalidation/js/validator/url',
-            'orob2bvalidation/js/validator/email'
+            'orovalidation/js/validator/letters',
+            'orovalidation/js/validator/alphanumeric',
+            'orovalidation/js/validator/alphanumeric-dash-underscore',
+            'orovalidation/js/validator/url-safe',
+            'orovalidation/js/validator/decimal',
+            'orovalidation/js/validator/integer',
+            'orovalidation/js/validator/greater-than-zero',
+            'orovalidation/js/validator/url',
+            'orovalidation/js/validator/email'
         ];
 
         $.validator.loadMethod(constraints);

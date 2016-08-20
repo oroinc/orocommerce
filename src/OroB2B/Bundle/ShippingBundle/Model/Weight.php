@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Model;
+namespace Oro\Bundle\ShippingBundle\Model;
 
-use OroB2B\Bundle\ShippingBundle\Entity\WeightUnit;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 class Weight
 {

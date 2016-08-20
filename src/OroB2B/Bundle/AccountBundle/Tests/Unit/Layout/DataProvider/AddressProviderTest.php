@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Layout\DataProvider\AddressProvider;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Layout\DataProvider\AddressProvider;
 
 class AddressProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,13 +37,13 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetComponentOptions()
     {
-        $this->provider->setEntityClass('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $this->provider->setEntityClass('Oro\Bundle\AccountBundle\Entity\Account');
         $this->provider->setListRouteName('orob2b_api_account_frontend_get_account_addresses');
         $this->provider->setCreateRouteName('orob2b_account_frontend_account_address_create');
         $this->provider->setUpdateRouteName('orob2b_account_frontend_account_address_update');
 
         /** @var Account $entity */
-        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 40]);
+        $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 40]);
 
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -88,7 +87,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetComponentOptionsWithoutRouteName()
     {
         /** @var Account $entity */
-        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account');
 
         $this->provider->setListRouteName('');
         $this->provider->getComponentOptions($entity);
@@ -100,9 +99,9 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetComponentOptionsWithWrongEntityClass()
     {
         /** @var Account $entity */
-        $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account');
 
-        $this->provider->setEntityClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->provider->setEntityClass('Oro\Bundle\AccountBundle\Entity\AccountUser');
         $this->provider->getComponentOptions($entity);
     }
 }

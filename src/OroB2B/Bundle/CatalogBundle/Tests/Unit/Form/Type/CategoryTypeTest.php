@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -9,14 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 
 class CategoryTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
      * @var CategoryType
@@ -51,7 +50,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.titles.label',
+                    'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
                     'options' => ['constraints' => [new NotBlank()]],
                 ]
@@ -63,7 +62,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
-                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.short_descriptions.label')
+                $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label')
             )
             ->will($this->returnSelf());
 
@@ -72,7 +71,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
-                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.long_descriptions.label')
+                $this->getOroRichTextTypeConfiguration('oro.catalog.category.long_descriptions.label')
             )
             ->will($this->returnSelf());
 
@@ -99,7 +98,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'smallImage',
                 'oro_image',
-                ['label' => 'orob2b.catalog.category.small_image.label', 'required' => false]
+                ['label' => 'oro.catalog.category.small_image.label', 'required' => false]
             )->will($this->returnSelf());
 
         $builder->expects($this->at(7))
@@ -107,7 +106,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'largeImage',
                 'oro_image',
-                ['label' => 'orob2b.catalog.category.large_image.label', 'required' => false]
+                ['label' => 'oro.catalog.category.large_image.label', 'required' => false]
             )->will($this->returnSelf());
 
         $builder->expects($this->at(8))

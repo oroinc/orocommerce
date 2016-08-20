@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
+use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +32,7 @@ class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.sale.quoteproductoffer.price_type.test_type')
+            ->with('oro.sale.quoteproductoffer.price_type.test_type')
         ;
 
         $this->formatter->formatPriceTypeLabel('test_type');
@@ -68,8 +68,8 @@ class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
                     2 => 'type_2'
                 ],
                 'expected' => [
-                    1 => 'orob2b.sale.quoteproductoffer.price_type.type_1',
-                    2 => 'orob2b.sale.quoteproductoffer.price_type.type_2'
+                    1 => 'oro.sale.quoteproductoffer.price_type.type_1',
+                    2 => 'oro.sale.quoteproductoffer.price_type.type_2'
                 ],
             ]
         ];

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +43,7 @@ class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
     {
         /** @var AccountGroupProductVisibility $entity */
         $entity = $this->getEntity(
-            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
+            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
             ['id' => 1]
         );
         $clonedEntity = clone $entity;

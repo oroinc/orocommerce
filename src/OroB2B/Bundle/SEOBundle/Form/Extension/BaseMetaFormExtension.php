@@ -1,9 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SEOBundle\Form\Extension;
+namespace Oro\Bundle\SEOBundle\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 

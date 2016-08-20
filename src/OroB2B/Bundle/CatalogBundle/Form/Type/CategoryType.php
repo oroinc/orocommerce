@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -58,7 +58,7 @@ class CategoryType extends AbstractType
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.titles.label',
+                    'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
                     'options' => ['constraints' => [new NotBlank()]],
                 ]
@@ -67,7 +67,7 @@ class CategoryType extends AbstractType
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.short_descriptions.label',
+                    'label' => 'oro.catalog.category.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
@@ -88,7 +88,7 @@ class CategoryType extends AbstractType
                 'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.long_descriptions.label',
+                    'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
@@ -129,7 +129,7 @@ class CategoryType extends AbstractType
                 'smallImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.catalog.category.small_image.label',
+                    'label'    => 'oro.catalog.category.small_image.label',
                     'required' => false
                 ]
             )
@@ -137,7 +137,7 @@ class CategoryType extends AbstractType
                 'largeImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.catalog.category.large_image.label',
+                    'label'    => 'oro.catalog.category.large_image.label',
                     'required' => false
                 ]
             )

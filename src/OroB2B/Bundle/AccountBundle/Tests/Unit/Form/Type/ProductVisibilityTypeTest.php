@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Form\Type\ProductVisibilityType;
+use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Form\Type\ProductVisibilityType;
 
 class PruductVisibilityTypeTest extends FormIntegrationTestCase
 {
@@ -30,8 +30,8 @@ class PruductVisibilityTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             [
-                ProductVisibility::VISIBLE => 'orob2b.account.product.visibility.visible.label',
-                ProductVisibility::HIDDEN => 'orob2b.account.product.visibility.hidden.label',
+                ProductVisibility::VISIBLE => 'oro.account.product.visibility.visible.label',
+                ProductVisibility::HIDDEN => 'oro.account.product.visibility.hidden.label',
             ],
             $resolvedOptions['choices']
         );

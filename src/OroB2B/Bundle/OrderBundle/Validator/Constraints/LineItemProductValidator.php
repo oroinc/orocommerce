@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Validator\Constraints;
+namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class LineItemProductValidator extends ConstraintValidator
 {
@@ -21,7 +21,7 @@ class LineItemProductValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Value must be instance of "%s", "%s" given',
-                    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+                    'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );

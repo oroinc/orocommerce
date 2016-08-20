@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\Event;
+namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 

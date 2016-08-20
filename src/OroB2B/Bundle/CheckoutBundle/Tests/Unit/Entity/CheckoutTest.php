@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutTest extends \PHPUnit_Framework_TestCase
 {
@@ -77,7 +76,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($expected);
 
             /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-            $checkoutSource = $this->getMockBuilder('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')
+            $checkoutSource = $this->getMockBuilder('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -103,11 +102,11 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ],
             'lineItemsAware' => [
                 'expected' => [new \stdClass()],
-                'source' => '\OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface',
+                'source' => '\Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface',
             ],
             'LineItemsNotPricedAwareInterface' => [
                 'expected' => [new \stdClass()],
-                'source' => '\OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface',
+                'source' => '\Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface',
             ]
         ];
     }
@@ -118,7 +117,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
 
         $item = $this->getEntity(
-            'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+            'Oro\Bundle\CheckoutBundle\Entity\Checkout',
             [
                 'shippingEstimateAmount' => $value,
                 'shippingEstimateCurrency' => $currency

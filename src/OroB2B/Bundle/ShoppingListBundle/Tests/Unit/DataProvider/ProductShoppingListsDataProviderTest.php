@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,12 +32,12 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->shoppingListManager = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->lineItemRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -184,7 +183,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     private function createLineItem($id, $unit, $quantity, $shoppingList)
     {
         $lineItem = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\LineItem')
             ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList'])
             ->getMock();
         $lineItem ->expects($this->any())
@@ -210,7 +209,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function createShoppingList($id, $label)
     {
-        $shoppingList = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+        $shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingList->expects($this->any())->method('getId')->willReturn($id);

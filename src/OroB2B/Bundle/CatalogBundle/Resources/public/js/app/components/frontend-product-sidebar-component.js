@@ -3,12 +3,12 @@ define(function(require) {
 
     var FrontendProductSidebarComponent;
     var _ = require('underscore');
-    var ProductSidebarComponent = require('orob2bcatalog/js/app/components/product-sidebar-component');
+    var ProductSidebarComponent = require('orocatalog/js/app/components/product-sidebar-component');
 
     /**
-     * @export orob2bcatalog/js/app/components/product-sidebar-component
-     * @extends orob2bcatalog.app.components.ProductSidebarComponent
-     * @class orob2bcatalog.app.components.FrontendProductSidebarComponent
+     * @export orocatalog/js/app/components/product-sidebar-component
+     * @extends orocatalog.app.components.ProductSidebarComponent
+     * @class orocatalog.app.components.FrontendProductSidebarComponent
      */
     FrontendProductSidebarComponent = ProductSidebarComponent.extend({
         /**

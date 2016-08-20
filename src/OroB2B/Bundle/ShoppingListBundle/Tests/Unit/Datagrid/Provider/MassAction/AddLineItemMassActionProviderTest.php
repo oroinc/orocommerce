@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Provider\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Provider\MassAction;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +27,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->manager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+        $this->manager = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -74,14 +73,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'new' => [
                         'type' => 'window',
-                        'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
+                        'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
-                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,
                             'incrementalPosition' => false,
                             'dialogOptions' => [
@@ -104,7 +103,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'list1' => [
                         'type' => 'addproducts',
-                        'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -115,7 +114,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'list2' => [
                         'type' => 'addproducts',
-                        'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -126,14 +125,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'new' => [
                         'type' => 'window',
-                        'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
+                        'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
-                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,
                             'incrementalPosition' => false,
                             'dialogOptions' => [
@@ -156,7 +155,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'current' => [
                         'type' => 'addproducts',
-                        'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -167,7 +166,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'list3' => [
                         'type' => 'addproducts',
-                        'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -178,14 +177,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'new' => [
                         'type' => 'window',
-                        'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
+                        'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
-                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,
                             'incrementalPosition' => false,
                             'dialogOptions' => [
@@ -211,7 +210,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
     protected function createShoppingList($id, $isCurrent = false)
     {
         return $this->getEntity(
-            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             [
                 'id' => $id,
                 'label' => 'shopping_list_' . $id,

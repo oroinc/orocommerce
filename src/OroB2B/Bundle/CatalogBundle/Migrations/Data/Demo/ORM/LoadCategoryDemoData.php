@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
-use OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
+use Oro\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
 
 class LoadCategoryDemoData extends AbstractCategoryFixture
 {

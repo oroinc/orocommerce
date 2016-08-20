@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Calculator\Calculator;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
+use Oro\Bundle\TaxBundle\Calculator\Calculator;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
 class UnitResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class UnitResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->calculator = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Calculator\Calculator')
+        $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
             ->disableOriginalConstructor()
             ->getMock();
 

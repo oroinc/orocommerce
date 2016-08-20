@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Mailer;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Mailer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\RFPBundle\Mailer\Processor;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\RFPBundle\Mailer\Processor;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
 
 class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,13 +40,13 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->processor = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Mailer\Processor')
+        $this->processor = $this->getMockBuilder('Oro\Bundle\RFPBundle\Mailer\Processor')
             ->disableOriginalConstructor()
             ->getMock();
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\Request');
+        $this->request = $this->getMock('Oro\Bundle\RFPBundle\Entity\Request');
 
         $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier(
             $this->processor,
@@ -182,11 +181,11 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     protected function configureRequestMock()
     {
         $this->owner = new User();
-        $this->accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->accountUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
         $this->accountUser->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
-        $this->account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->account = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
         $this->account->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);

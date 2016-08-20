@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -11,15 +11,14 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -53,8 +52,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData'
+            'Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData'
         ];
     }
 
@@ -66,7 +65,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BOrderBundle/Migrations/Data/Demo/ORM/data/order-line-items.csv');
+        $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/order-line-items.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -151,7 +150,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getOrder(EntityManager $manager, $identifier)
     {
         if (!array_key_exists($identifier, $this->orders)) {
-            $this->orders[$identifier] = $manager->getRepository('OroB2BOrderBundle:Order')
+            $this->orders[$identifier] = $manager->getRepository('OroOrderBundle:Order')
                 ->findOneBy(['identifier' => $identifier]);
         }
 
@@ -166,7 +165,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getProduct(EntityManager $manager, $sku)
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
@@ -179,7 +178,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
      */
     protected function getProductUnit(EntityManager $manager, $code)
     {
-        return $manager->getReference('OroB2BProductBundle:ProductUnit', $code);
+        return $manager->getReference('OroProductBundle:ProductUnit', $code);
     }
 
     /**

@@ -2,7 +2,7 @@
 define(function(require) {
     'use strict';
 
-    var TransitionButtonComponent = require('orob2bcheckout/js/app/components/transition-button-component');
+    var TransitionButtonComponent = require('orocheckout/js/app/components/transition-button-component');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
 

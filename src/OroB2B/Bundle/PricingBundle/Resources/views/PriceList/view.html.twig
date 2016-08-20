@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_pricing_price_list_index'),
-        'indexLabel': 'orob2b.pricing.pricelist.entity_plural_label'|trans,
+        'indexLabel': 'oro.pricing.pricelist.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -21,7 +21,7 @@
         exportTemplateProcessor: 'orob2b_pricing_product_price',
         importProcessor: 'orob2b_pricing_product_price.add_or_replace',
         importJob: 'price_list_product_prices_entity_import_from_csv',
-        importTitle: 'orob2b.pricing.productprice.import'|trans,
+        importTitle: 'oro.pricing.productprice.import'|trans,
         dataGridName: 'price-list-product-prices-grid',
         options: {'price_list_id': entity.id}
     } %}
@@ -33,7 +33,7 @@
     {% set pricingInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.pricing.widgets.pricing_information'|trans,
+            'title': 'oro.pricing.widgets.pricing_information'|trans,
             'url': path('orob2b_pricing_price_list_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -42,7 +42,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.pricing.sections.general'|trans,
+            'title': 'oro.pricing.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }
@@ -50,7 +50,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'title' : 'oro.pricing.productprice.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
@@ -63,7 +63,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.account.entity_plural_label'|trans,
+            'title' : 'oro.account.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
@@ -76,7 +76,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.account.accountgroup.entity_plural_label'|trans,
+            'title' : 'oro.account.accountgroup.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',

@@ -1,5 +1,5 @@
 orob2b_shopping_list_frontend_update:
     type: entity
-    class: OroB2BShoppingListBundle:ShoppingList
+    class: OroShoppingListBundle:ShoppingList
     permission: EDIT
     group_name: "commerce"

@@ -1,21 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadCombinedPriceLists extends AbstractFixture implements DependentFixtureInterface
 {
@@ -163,10 +163,10 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
 
@@ -258,7 +258,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         array $priceListData,
         CombinedPriceList $combinedPriceList
     ) {
-        $websiteRepository = $manager->getRepository('OroB2BWebsiteBundle:Website');
+        $websiteRepository = $manager->getRepository('OroWebsiteBundle:Website');
         foreach ($priceListData['websites'] as $websiteReference) {
             if ($websiteReference === 'default') {
                 /** @var Website $website */

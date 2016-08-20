@@ -42,7 +42,7 @@
     <div
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
-            view: 'orob2bshipping/js/app/views/shipping-origin-view',
+            view: 'oroshipping/js/app/views/shipping-origin-view',
             selectors: {
                 useSystem: '#' ~ form.system.vars.id
             }
@@ -133,15 +133,15 @@
         <div class="product-shipping-options-collection"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                view: 'orob2bshipping/js/app/views/product-shipping-options-view',
+                view: 'oroshipping/js/app/views/product-shipping-options-view',
             }|json_encode }}" {{ block('widget_container_attributes') }}>
             <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
-                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
-                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.weight.label'|trans }}</span></th>
-                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
-                    <th><span class="text-center">{{ 'orob2b.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.weight.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.dimensions.label'|trans }}</span></th>
+                    <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.freight_class.label'|trans }}</span></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -157,7 +157,7 @@
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.shipping.product_shipping_options.add_label'|trans }}</a>
+            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -172,7 +172,7 @@
     {% endif %}
 
     <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        data-page-component-module="orob2bshipping/js/app/components/product-shipping-freight-classes-component">
+        data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
             <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="icon-remove"></i></button>

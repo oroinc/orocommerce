@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -9,10 +9,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
-use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
 class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +32,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->productListModifier = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();
 

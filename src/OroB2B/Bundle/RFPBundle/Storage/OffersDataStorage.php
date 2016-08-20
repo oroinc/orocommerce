@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Storage;
+namespace Oro\Bundle\RFPBundle\Storage;
 
-use OroB2B\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
+use Oro\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
 
 class OffersDataStorage extends AbstractSessionDataStorage
 {

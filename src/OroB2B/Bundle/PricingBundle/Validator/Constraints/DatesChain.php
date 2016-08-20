@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -11,7 +11,7 @@ class DatesChain extends Constraint implements \JsonSerializable
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.price_list.dates_chain.message';
+    public $message = 'oro.pricing.validators.price_list.dates_chain.message';
 
     /**
      * @var array

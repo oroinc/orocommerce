@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -37,9 +36,9 @@ class PriceListTreeHandlerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
+        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
 
-        $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+        $this->websiteManager = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Manager\WebsiteManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -91,7 +90,7 @@ class PriceListTreeHandlerTest extends WebTestCase
         $accountUser->setAccount($this->getAccount($accountReference));
         $key = implode(
             ConfigManager::SECTION_MODEL_SEPARATOR,
-            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
+            [OroPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
         );
         $configPriceList = $this->getReference($configPriceListReference);
         $this->configManager->set($key, $configPriceList->getId());

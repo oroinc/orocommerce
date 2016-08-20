@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class LineItemsWithTotalsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,12 +35,12 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->checkoutLineItemsManager = $this
-            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
+            ->getMockBuilder('Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -78,7 +77,7 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit_Framework_TestCase
         $lineItems->attach($lineItem1, ['total' => $lineItem1Total]);
         $lineItems->attach($lineItem2, ['total' => $lineItem2Total]);
 
-        $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
+        $checkout = $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
 
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')

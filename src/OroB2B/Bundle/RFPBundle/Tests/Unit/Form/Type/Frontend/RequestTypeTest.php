@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -14,33 +14,32 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\Request';
-    const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
+    const DATA_CLASS = 'Oro\Bundle\RFPBundle\Entity\Request';
+    const REQUEST_STATUS_CLASS = 'Oro\Bundle\RFPBundle\Entity\RequestStatus';
 
     /**
      * @var RequestType
@@ -285,7 +284,7 @@ class RequestTypeTest extends AbstractTest
     {
         /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -297,9 +296,9 @@ class RequestTypeTest extends AbstractTest
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $accountUserMultiSelectType = $this->prepareAccountUserMultiSelectType();
         $requestProductType         = new RequestProductType($productUnitLabelFormatter);
-        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $frontendRequestProductType = new FrontendRequestProductType();
-        $frontendRequestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $frontendRequestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
             new PreloadedExtension(

@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\DataAuditBundle\Entity\AuditField;
 use Oro\Component\Testing\Unit\EntityTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Audit;
+use Oro\Bundle\AccountBundle\Entity\Audit;
 
 class AuditFieldTest extends EntityTestCase
 {

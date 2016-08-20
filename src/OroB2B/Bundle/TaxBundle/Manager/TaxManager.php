@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Manager;
+namespace Oro\Bundle\TaxBundle\Manager;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
-use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
-use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
-use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Factory\TaxFactory;
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 class TaxManager
 {

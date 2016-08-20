@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Layout\DataProvider;
+namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoginPageProvider
 {

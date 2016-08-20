@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AccountGroupProductVisibilityRepository extends EntityRepository
 {
@@ -53,7 +53,7 @@ class AccountGroupProductVisibilityRepository extends EntityRepository
             ->from($this->getEntityName(), 'accountGroupProductVisibility')
             ->leftJoin('accountGroupProductVisibility.product', 'product')
             ->leftJoin(
-                'OroB2BCatalogBundle:Category',
+                'OroCatalogBundle:Category',
                 'category',
                 Join::WITH,
                 $qb->expr()->isMemberOf('product', 'category.products')

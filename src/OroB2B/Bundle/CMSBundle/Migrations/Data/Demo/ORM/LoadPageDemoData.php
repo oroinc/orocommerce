@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
-use OroB2B\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
+use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
 
 class LoadPageDemoData extends AbstractLoadPageData
 {
@@ -11,6 +11,6 @@ class LoadPageDemoData extends AbstractLoadPageData
      */
     protected function getFilePaths()
     {
-        return $this->getFilePathsFromLocator('@OroB2BCMSBundle/Migrations/Data/Demo/ORM/data/pages.yml');
+        return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/Demo/ORM/data/pages.yml');
     }
 }

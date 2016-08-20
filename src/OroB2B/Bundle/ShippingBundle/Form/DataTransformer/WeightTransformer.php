@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Form\DataTransformer;
+namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class WeightTransformer implements DataTransformerInterface
 {

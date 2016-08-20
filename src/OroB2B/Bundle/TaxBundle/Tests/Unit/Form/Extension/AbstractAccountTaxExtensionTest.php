@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
+use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 
 abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionTest
 {
@@ -26,13 +26,13 @@ abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionTest
     protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
     {
         $this->entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
             ->method('getEntityRepository')
-            ->with('OroB2BTaxBundle:AccountTaxCode')
+            ->with('OroTaxBundle:AccountTaxCode')
             ->willReturn($this->entityRepository);
     }
 
@@ -50,7 +50,7 @@ abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionTest
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.taxcode.label',
+                    'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
                 ]
             );
@@ -95,7 +95,7 @@ abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function createTaxCode($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => $id]);
     }
 
     /**

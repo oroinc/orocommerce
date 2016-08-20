@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\View;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -36,7 +36,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView2);
         $this->registry->addPaymentMethodView($testViewMethodDisabled);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->exactly(3))->method('isEnabled')
             ->willReturnOnConsecutiveCalls(true, true, false);
         $paymentMethod->expects($this->exactly(2))->method('isApplicable')->willReturnOnConsecutiveCalls(true, false);
@@ -56,7 +56,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView);
         $this->registry->addPaymentMethodView($testView2);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
 
         $paymentMethod
             ->expects($this->exactly(2))
@@ -87,7 +87,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView);
         $this->registry->addPaymentMethodView($testView2);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
 
         $paymentMethod
             ->expects($this->exactly(2))
@@ -136,7 +136,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTypeMock($name, $order = 0)
     {
-        $type = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
+        $type = $this->getMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $type->expects($this->any())->method('getPaymentMethodType')->will($this->returnValue($name));
         $type->expects($this->any())->method('getOrder')->will($this->returnValue($order));
 

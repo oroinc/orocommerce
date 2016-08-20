@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
-use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
-use OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension;
+use Oro\Bundle\MenuBundle\Menu\BuilderInterface;
+use Oro\Bundle\MenuBundle\Menu\Condition\ConditionExtension;
 
 class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Formatter;
+namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -55,7 +55,7 @@ class PaymentMethodLabelFormatter
     {
         $adminPaymentMethodLabel = $this->translator->trans(
             sprintf(
-                'orob2b.payment.admin.%s.label',
+                'oro.payment.admin.%s.label',
                 $paymentMethod
             )
         );

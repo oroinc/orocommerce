@@ -5,13 +5,13 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var $ = require('jquery');
-    var BaseComponent = require('orob2bpricing/js/app/components/totals-component');
+    var BaseComponent = require('oropricing/js/app/components/totals-component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
-     * @export orob2border/js/app/components/totals-component
-     * @extends orob2bpricing.app.components.TotalsComponent
-     * @class orob2border.app.components.TotalsComponent
+     * @export oroorder/js/app/components/totals-component
+     * @extends oropricing.app.components.TotalsComponent
+     * @class oroorder.app.components.TotalsComponent
      */
     TotalsComponent = BaseComponent.extend({
         /**

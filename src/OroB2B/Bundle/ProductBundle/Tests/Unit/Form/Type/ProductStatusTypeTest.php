@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 
 class ProductStatusTypeTest extends FormIntegrationTestCase
 {
@@ -21,7 +21,7 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
         $this->productStatusProvider =
-            $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider')
+            $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductStatusProvider')
                 ->disableOriginalConstructor()
                 ->getMock();
 

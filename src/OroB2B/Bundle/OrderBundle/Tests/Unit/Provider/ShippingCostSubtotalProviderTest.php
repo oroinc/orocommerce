@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
 class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -33,7 +32,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -60,7 +59,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . ShippingCostSubtotalProvider::TYPE)
+            ->with('oro.order.subtotals.' . ShippingCostSubtotalProvider::TYPE)
             ->willReturn(ucfirst(ShippingCostSubtotalProvider::TYPE));
 
         $order = new Order();
@@ -70,7 +69,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $order->setShippingCost(Price::create($costAmount, $order->getCurrency()));
 
         $subtotal = $this->provider->getSubtotal($order);
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(ShippingCostSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(ShippingCostSubtotalProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());

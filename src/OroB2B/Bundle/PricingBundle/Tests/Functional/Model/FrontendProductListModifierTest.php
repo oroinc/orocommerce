@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -41,7 +40,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
         );
 
@@ -67,7 +66,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
     protected function setupPriceListTreeHandler()
     {
-        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -94,7 +93,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')
-            ->from('OroB2BProductBundle:Product', 'p')
+            ->from('OroProductBundle:Product', 'p')
             ->orderBy('p.sku');
 
         $this->modifier->applyPriceListLimitations($qb, $currency, $priceList);
@@ -173,7 +172,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')
-            ->from('OroB2BProductBundle:Product', 'p')
+            ->from('OroProductBundle:Product', 'p')
             ->orderBy('p.sku');
 
         $this->modifier->applyPriceListLimitations($qb);

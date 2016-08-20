@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity;
+namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_price_list_ch_trigger")
  * @ORM\Entity(
- * repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository")
+ * repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository")
  */
 class PriceListChangeTrigger
 {
@@ -27,14 +27,14 @@ class PriceListChangeTrigger
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $account;
 
     /** @var Website
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $website;
@@ -42,7 +42,7 @@ class PriceListChangeTrigger
     /**
      * @var AccountGroup
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $accountGroup;

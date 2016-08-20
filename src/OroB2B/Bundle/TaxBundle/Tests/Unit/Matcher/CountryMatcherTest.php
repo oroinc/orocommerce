@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
-use OroB2B\Bundle\TaxBundle\Model\TaxCode;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
+use Oro\Bundle\TaxBundle\Model\TaxCode;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcherTest extends AbstractMatcherTest
 {

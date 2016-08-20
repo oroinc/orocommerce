@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,10 +12,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ProductType extends AbstractType
 {
@@ -53,13 +52,13 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
-            ->add('status', ProductStatusType::NAME, ['label' => 'orob2b.product.status.label'])
+            ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
+            ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
             ->add(
                 'inventoryStatus',
                 'oro_enum_select',
                 [
-                    'label'     => 'orob2b.product.inventory_status.label',
+                    'label'     => 'oro.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
                     'configs'   => ['allowClear' => false]
                 ]
@@ -68,16 +67,16 @@ class ProductType extends AbstractType
                 'names',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.product.names.label',
+                    'label' => 'oro.product.names.label',
                     'required' => true,
-                    'options' => ['constraints' => [new NotBlank(['message' => 'orob2b.product.names.blank'])]],
+                    'options' => ['constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])]],
                 ]
             )
             ->add(
                 'descriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.product.descriptions.label',
+                    'label' => 'oro.product.descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
@@ -98,7 +97,7 @@ class ProductType extends AbstractType
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.product.short_descriptions.label',
+                    'label' => 'oro.product.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
@@ -119,8 +118,8 @@ class ProductType extends AbstractType
                 'primaryUnitPrecision',
                 ProductPrimaryUnitPrecisionType::NAME,
                 [
-                    'label'          => 'orob2b.product.primary_unit_precision.label',
-                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'label'          => 'oro.product.primary_unit_precision.label',
+                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => true,
                     'mapped'         => false,
@@ -130,8 +129,8 @@ class ProductType extends AbstractType
                 'additionalUnitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [
-                    'label'          => 'orob2b.product.additional_unit_precisions.label',
-                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'label'          => 'oro.product.additional_unit_precisions.label',
+                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => false,
                     'mapped'         => false,
@@ -140,7 +139,7 @@ class ProductType extends AbstractType
             ->add(
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'orob2b.product.variant_fields.label']
+                ['label' => 'oro.product.variant_fields.label']
             )->add(
                 'images',
                 ProductImageCollectionType::NAME
@@ -165,8 +164,8 @@ class ProductType extends AbstractType
                 'primaryUnitPrecision',
                 ProductPrimaryUnitPrecisionType::NAME,
                 [
-                    'label'          => 'orob2b.product.primary_unit_precision.label',
-                    'tooltip'        => 'orob2b.product.form.tooltip.unit_precision',
+                    'label'          => 'oro.product.primary_unit_precision.label',
+                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
                     'error_bubbling' => false,
                     'required'       => true,
                     'data'           => $this->provider->getDefaultProductUnitPrecision()

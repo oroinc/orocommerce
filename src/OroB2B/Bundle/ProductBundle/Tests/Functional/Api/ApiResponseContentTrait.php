@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Api;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
 trait ApiResponseContentTrait
 {

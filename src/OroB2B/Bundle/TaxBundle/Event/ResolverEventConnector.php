@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Event;
+namespace Oro\Bundle\TaxBundle\Event;
 
-use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
-use OroB2B\Bundle\TaxBundle\Resolver\StopPropagationException;
+use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
+use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class ResolverEventConnector
 {

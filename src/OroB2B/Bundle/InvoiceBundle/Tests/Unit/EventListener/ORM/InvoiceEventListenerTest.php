@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\EventListener\ORM;
+namespace Oro\Bundle\InvoiceBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener;
+use Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener;
 
 class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,7 +67,7 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getInvoiceNumberGenerator()
     {
-        return $this->getMockBuilder('OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator')
+        return $this->getMockBuilder('Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator')
             ->disableOriginalConstructor()
             ->getMock();
     }

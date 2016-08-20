@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
@@ -28,7 +27,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
     }
@@ -84,7 +83,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUserRole');
     }
 
     /**
@@ -92,7 +91,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroAccountBundle:AccountUser');
     }
 
     /**

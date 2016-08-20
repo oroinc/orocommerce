@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use OroB2B\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
 {

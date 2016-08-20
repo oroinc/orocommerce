@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
+namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class OrderMapper extends AbstractOrderMapper
 {

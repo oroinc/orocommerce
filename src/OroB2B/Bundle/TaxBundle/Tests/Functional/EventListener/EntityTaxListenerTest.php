@@ -1,25 +1,24 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
 /**
  * @dbIsolation
  */
 class OrderTaxListenerTest extends WebTestCase
 {
-    const ORDER_CLASS = 'OroB2B\Bundle\OrderBundle\Entity\Order';
-    const TAX_VALUE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
+    const ORDER_CLASS = 'Oro\Bundle\OrderBundle\Entity\Order';
+    const TAX_VALUE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
 
     /** @var ManagerRegistry */
     protected $doctrine;
@@ -94,10 +93,10 @@ class OrderTaxListenerTest extends WebTestCase
             );
         }
         /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrine->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $this->doctrine->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
 
         /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm')->findOneBy([]);
+        $paymentTerm = $this->doctrine->getRepository('OroPaymentBundle:PaymentTerm')->findOneBy([]);
 
         $order = new Order();
         $order

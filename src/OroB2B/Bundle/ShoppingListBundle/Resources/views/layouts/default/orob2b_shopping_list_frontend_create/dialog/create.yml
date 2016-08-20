@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
+            themes: 'OroShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
         - '@setOption':
             id: widget_content
             optionName: savedId
@@ -34,20 +34,20 @@ layout:
                     blockType: button
                     options:
                         action: reset
-                        text: orob2b.shoppinglist.create_new_form.cancel_label
+                        text: oro.shoppinglist.create_new_form.cancel_label
                         style: gray
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: orob2b.shoppinglist.create_new_form.create.label
+                        text: oro.shoppinglist.create_new_form.create.label
                         style: auto
                         visible: '=data["createOnly"]==true'
                 form_actions_create_and_add:
                     blockType: button
                     options:
                         action: submit
-                        text: orob2b.shoppinglist.create_new_form.create_and_add.label
+                        text: oro.shoppinglist.create_new_form.create_and_add.label
                         style: auto
                         visible: '=data["createOnly"]!=true'
             tree:

@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: orob2b.product.entity_plural_label
+            optionValue: oro.product.entity_plural_label
         - '@add':
             id: grid_display_options
             parentId: datagrid_toolbar

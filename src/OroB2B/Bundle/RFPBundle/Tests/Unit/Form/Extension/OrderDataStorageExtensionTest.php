@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -11,12 +11,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
-use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,9 +47,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->productPriceProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider')
+        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()->getMock();
 
         $this->extension = new OrderDataStorageExtension(
@@ -90,7 +89,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\BasePriceList');
+        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\BasePriceList');
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
@@ -190,15 +189,15 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $lineItems = new ArrayCollection();
         foreach ($data['lineItems'] as $lineItem) {
             $lineItem['product'] = $this
-                ->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $lineItem['product']);
+                ->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $lineItem['product']);
             $lineItem['productUnit'] = $this
-                ->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
-            $lineItems->add($this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
+                ->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
+            $lineItems->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
         }
-        $data['account'] = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $data['account']);
-        $data['website'] = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $data['website']);
+        $data['account'] = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $data['account']);
+        $data['website'] = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $data['website']);
         $data['lineItems'] = $lineItems;
-        return $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', $data);
+        return $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', $data);
     }
 
     /**

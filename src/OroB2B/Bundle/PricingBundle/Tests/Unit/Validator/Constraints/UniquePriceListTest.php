@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Symfony\Component\Validator\Constraint;
 
 class UniquePriceListTest extends \PHPUnit_Framework_TestCase

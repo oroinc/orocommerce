@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var ProductQuickAddToShoppingListView;
-    var ProductAddToShoppingListView = require('orob2bshoppinglist/js/app/views/product-add-to-shopping-list-view');
+    var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
     var mediator = require('oroui/js/mediator');
 
     ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({

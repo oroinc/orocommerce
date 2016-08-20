@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Form\DataTransformer;
+namespace Oro\Bundle\WarehouseBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -8,10 +8,9 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInterface
 {
@@ -84,7 +83,7 @@ class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInter
      */
     protected function getWarehouse($id)
     {
-        return $this->doctrineHelper->getEntityReference('OroB2BWarehouseBundle:Warehouse', $id);
+        return $this->doctrineHelper->getEntityReference('OroWarehouseBundle:Warehouse', $id);
     }
 
     /**

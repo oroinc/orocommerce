@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -9,16 +9,16 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -47,7 +47,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new PriceListProductPriceType();
-        $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
 
         parent::setUp();
     }
@@ -173,7 +173,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $defaultProductPrice = new ProductPrice();
         $defaultProductPrice->setPriceList($priceList);
 
-        $defaultProductPriceWithId = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\ProductPrice', 1);
+        $defaultProductPriceWithId = $this->getEntity('Oro\Bundle\PricingBundle\Entity\ProductPrice', 1);
         $defaultProductPriceWithId->setPriceList($priceList);
         $defaultProductPriceWithId->setPrice((new Price())->setCurrency('USD')->setValue(1));
 
@@ -296,8 +296,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+        /** @var \Oro\Bundle\ProductBundle\Entity\Product $product */
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
 
         $unit = new ProductUnit();
         $unit->setCode($unitCode);

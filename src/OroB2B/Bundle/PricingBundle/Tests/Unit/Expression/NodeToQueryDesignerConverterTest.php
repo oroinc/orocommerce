@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Expression;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Expression\NameNode;
-use OroB2B\Bundle\PricingBundle\Expression\NodeInterface;
-use OroB2B\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use OroB2B\Bundle\PricingBundle\Expression\RelationNode;
-use OroB2B\Bundle\PricingBundle\Model\PriceListQueryDesigner;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Expression\NameNode;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
+use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
+use Oro\Bundle\PricingBundle\Expression\RelationNode;
+use Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
 {

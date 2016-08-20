@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Validator\Constraints;
+namespace Oro\Bundle\AccountBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 

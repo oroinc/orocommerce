@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,12 +11,11 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 
 class ProductVisibilityController extends Controller
 {
@@ -34,7 +33,7 @@ class ProductVisibilityController extends Controller
         $form = $this->createWebsiteScopedDataForm(
             $product,
             [
-                $this->getDoctrine()->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite()
+                $this->getDoctrine()->getRepository('OroWebsiteBundle:Website')->getDefaultWebsite()
             ]
         );
 
@@ -55,7 +54,7 @@ class ProductVisibilityController extends Controller
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.visibility.event.saved.message'),
+            $this->get('translator')->trans('oro.account.visibility.event.saved.message'),
             $handler
         );
     }
@@ -67,7 +66,7 @@ class ProductVisibilityController extends Controller
      *      requirements={"productId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("product", options={"id" = "productId"})
-     * @Template("OroB2BAccountBundle:ProductVisibility/widget:website.html.twig")
+     * @Template("OroAccountBundle:ProductVisibility/widget:website.html.twig")
      * @AclAncestor("orob2b_product_update")
      *
      * @param Product $product

@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 
 /**
  * @dbIsolation
@@ -98,12 +97,12 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
         $requestStack = new RequestStack();
 
         /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
-        $productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
+        $productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
-            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'Oro\Bundle\ProductBundle\Entity\Product',
             ['sku'],
             $requestStack,
             $productManager

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Event;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
 {

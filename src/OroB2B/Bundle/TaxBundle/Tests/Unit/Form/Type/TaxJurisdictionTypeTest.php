@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -14,17 +14,16 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
-use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
+use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction';
-    const ZIP_CODE_DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ZipCode';
+    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction';
+    const ZIP_CODE_DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ZipCode';
 
     /**
      * @var TaxJurisdictionType

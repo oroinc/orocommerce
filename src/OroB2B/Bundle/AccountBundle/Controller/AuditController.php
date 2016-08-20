@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -22,7 +22,7 @@ class AuditController extends Controller
      * @Acl(
      *      id="orob2b_account_dataaudit_history",
      *      type="action",
-     *      label="orob2b.account.dataaudit.module_label",
+     *      label="oro.account.dataaudit.module_label",
      *      group_name="commerce"
      * )
      * @param string $entity

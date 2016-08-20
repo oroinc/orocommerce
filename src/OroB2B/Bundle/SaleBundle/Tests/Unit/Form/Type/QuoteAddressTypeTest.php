@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,14 +10,13 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteAddressType;
-use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
+use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteAddressTypeTest extends AbstractAddressTypeTest
 {
@@ -45,11 +44,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             ->getMock();
 
         $this->quoteAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
+            ->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->quoteAddressManager = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager')
+        $this->quoteAddressManager = $this->getMockBuilder('Oro\Bundle\SaleBundle\Model\QuoteAddressManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -64,7 +63,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             $this->serializer
         );
 
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteAddress');
+        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteAddress');
     }
 
     protected function tearDown()

@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 
 class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 {

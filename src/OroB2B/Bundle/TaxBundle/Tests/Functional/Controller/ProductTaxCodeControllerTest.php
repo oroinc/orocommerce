@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 /**
  * @dbIsolation
@@ -42,8 +41,8 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
         /** @var ProductTaxCode $taxCode */
         $taxCode = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BTaxBundle:ProductTaxCode')
-            ->getRepository('OroB2BTaxBundle:ProductTaxCode')
+            ->getManagerForClass('OroTaxBundle:ProductTaxCode')
+            ->getRepository('OroTaxBundle:ProductTaxCode')
             ->findOneBy(['code' => self::PRODUCT_TAX_CODE]);
         $this->assertNotEmpty($taxCode);
 

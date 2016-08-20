@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
+namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions as BaseLoadTaxJurisdictions;
+use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions as BaseLoadTaxJurisdictions;
 
 class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions
 {
@@ -38,7 +38,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 

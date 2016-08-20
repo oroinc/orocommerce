@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
+namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +27,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      * @Acl(
      *      id="orob2b_shopping_list_frontend_delete",
      *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      class="OroShoppingListBundle:ShoppingList",
      *      permission="DELETE",
      *      group_name="commerce"
      * )

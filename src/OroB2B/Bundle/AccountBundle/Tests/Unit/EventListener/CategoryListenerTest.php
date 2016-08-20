@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryListener;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
+use Oro\Bundle\AccountBundle\EventListener\CategoryListener;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,7 +39,7 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->cacheBuilder = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -73,7 +72,7 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($entity));
 
         $productVisibilityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\ProductVisibilityRepository')
+            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Visibility\Repository\ProductVisibilityRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,12 +85,12 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 
         $productVisibilityEm->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->with('OroAccountBundle:Visibility\ProductVisibility')
             ->will($this->returnValue($productVisibilityRepository));
 
         $accountGroupProductVisibilityRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository'
+                'Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -105,12 +104,12 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 
         $accountGroupProductVisibilityEm->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->with('OroAccountBundle:Visibility\AccountGroupProductVisibility')
             ->will($this->returnValue($accountGroupProductVisibilityRepository));
 
         $accountProductVisibilityRepository = $this
             ->getMockBuilder(
-                'OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository'
+                'Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -124,15 +123,15 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 
         $accountProductVisibilityEm->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->with('OroAccountBundle:Visibility\AccountProductVisibility')
             ->will($this->returnValue($accountProductVisibilityRepository));
 
         $this->registry->expects($this->exactly(3))
             ->method('getManagerForClass')
             ->withConsecutive(
-                ['OroB2BAccountBundle:Visibility\ProductVisibility'],
-                ['OroB2BAccountBundle:Visibility\AccountGroupProductVisibility'],
-                ['OroB2BAccountBundle:Visibility\AccountProductVisibility']
+                ['OroAccountBundle:Visibility\ProductVisibility'],
+                ['OroAccountBundle:Visibility\AccountGroupProductVisibility'],
+                ['OroAccountBundle:Visibility\AccountProductVisibility']
             )
             ->willReturnOnConsecutiveCalls(
                 $productVisibilityEm,

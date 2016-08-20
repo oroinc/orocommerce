@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid\Extension;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Datagrid\Extension;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
-
-use OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserByAccountExtension;
+use Oro\Bundle\AccountBundle\Datagrid\Extension\AccountUserByAccountExtension;
 
 class AccountUserByAccountExtensionTest extends \PHPUnit_Framework_TestCase
 {

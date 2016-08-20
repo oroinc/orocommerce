@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -12,15 +12,14 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
-
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\TooltipFormExtensionStub;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
-use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
+use Oro\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\TooltipFormExtensionStub;
+use Oro\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
+use Oro\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItem;
+use Oro\Bundle\MenuBundle\Form\Type\MenuItemType;
 
 class MenuItemTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\MenuBundle\Entity\MenuItem';
+    const DATA_CLASS = 'Oro\Bundle\MenuBundle\Entity\MenuItem';
 
     /**
      * @var MenuItemType

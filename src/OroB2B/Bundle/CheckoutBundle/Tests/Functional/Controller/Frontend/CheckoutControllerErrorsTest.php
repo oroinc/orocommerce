@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -21,10 +20,10 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             true
         );
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
         ], true);
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -38,7 +37,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
+        $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
@@ -59,7 +58,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $noProductsError = $translator
-            ->trans('orob2b.checkout.order.line_items.line_item_has_no_price.message');
+            ->trans('oro.checkout.order.line_items.line_item_has_no_price.message');
         $this->assertContains($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
@@ -82,7 +81,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator->trans('orob2b.checkout.workflow.condition.order_line_item_has_count.message');
+        $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
     }
 }

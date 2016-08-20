@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional;
+namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
  * @dbIsolation
@@ -19,17 +18,17 @@ class RFPActionsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
             ]
         );
     }
 
     public function testChangeStatus()
     {
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $request */
+        /** @var \Oro\Bundle\RFPBundle\Entity\Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST1);
 
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
+        /** @var \Oro\Bundle\RFPBundle\Entity\RequestStatus $status */
         if ($request->getStatus()->getName() === LoadRequestStatusData::NAME_IN_PROGRESS) {
             $status = $this->getReference('request.status.' . LoadRequestStatusData::NAME_NOT_DELETED);
         } else {
@@ -46,7 +45,7 @@ class RFPActionsTest extends WebTestCase
                 'oro_action_widget_form',
                 [
                     'operationName' => 'orob2b_rfp_change_status',
-                    'entityClass' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
+                    'entityClass' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     'entityId' => $request->getId()
                 ]
             ),

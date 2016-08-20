@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
 class LoadAlternativeCheckouts extends AbstractLoadCheckouts
 {
@@ -60,7 +60,7 @@ class LoadAlternativeCheckouts extends AbstractLoadCheckouts
     {
         return array_merge(
             parent::getDependencies(),
-            ['OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData']
+            ['Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData']
         );
     }
 }

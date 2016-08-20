@@ -7,6 +7,6 @@ require([
     BaseController.loadBeforeAction([
         'jquery', 'jquery.validate'
     ], function($) {
-        $.validator.loadMethod('orob2bshipping/js/validator/unique-product-unit-shipping-options');
+        $.validator.loadMethod('oroshipping/js/validator/unique-product-unit-shipping-options');
     });
 });

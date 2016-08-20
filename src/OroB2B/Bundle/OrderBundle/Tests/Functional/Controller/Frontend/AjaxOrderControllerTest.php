@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-
-use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
@@ -23,7 +22,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
             ]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Formatter;
+namespace Oro\Bundle\ProductBundle\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 

@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
 class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
 {

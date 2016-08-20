@@ -1,32 +1,32 @@
 oro_menu_config:
     items:
         order_list:
-            label:           'orob2b.order.entity_plural_label'
+            label:           'oro.order.entity_plural_label'
             route:           'orob2b_order_index'
             extras:
                 position:    400
                 routes:      ['orob2b_order_index', 'orob2b_order_view', 'orob2b_order_update', 'orob2b_order_create']
-                description: 'orob2b.order.menu.order_list.description'
+                description: 'oro.order.menu.order_list.description'
 
         frontend_order_list:
-            label:           'orob2b.order.entity_plural_label'
+            label:           'oro.order.entity_plural_label'
             route:           'orob2b_order_frontend_index'
             extras:
                 position:    600
                 routes:      ['/^orob2b_order_frontend_/']
-                description: 'orob2b.order.menu.order_list.description'
+                description: 'oro.order.menu.order_list.description'
 
         shortcut_order_list:
-            label:           'orob2b.order.entity_plural_label'
+            label:           'oro.order.entity_plural_label'
             route:           'orob2b_order_index'
             extras:
-                description: 'orob2b.order.menu.shortcut_order_list.description'
+                description: 'oro.order.menu.shortcut_order_list.description'
 
         shortcut_new_order:
-            label:           'orob2b.order.menu.shortcut_new_order.label'
+            label:           'oro.order.menu.shortcut_new_order.label'
             route:           'orob2b_order_create'
             extras:
-                description:    'orob2b.order.menu.shortcut_new_order.description'
+                description:    'oro.order.menu.shortcut_new_order.description'
                 isCustomAction: true
 
     tree:
@@ -46,11 +46,11 @@ oro_menu_config:
 
 oro_titles:
     orob2b_order_index: ~
-    orob2b_order_view:   'orob2b.order.navigation.view'
-    orob2b_order_update: 'orob2b.order.navigation.view - oro.ui.edit'
+    orob2b_order_view:   'oro.order.navigation.view'
+    orob2b_order_update: 'oro.order.navigation.view - oro.ui.edit'
     orob2b_order_create: 'oro.ui.create_entity'
 
-    orob2b_order_frontend_index:  'orob2b.order.entity_plural_label'
-    orob2b_order_frontend_view:   'orob2b.order.navigation.view'
-#    orob2b_order_frontend_update: 'orob2b.order.navigation.view - oro.ui.edit'
+    orob2b_order_frontend_index:  'oro.order.entity_plural_label'
+    orob2b_order_frontend_view:   'oro.order.navigation.view'
+#    orob2b_order_frontend_update: 'oro.order.navigation.view - oro.ui.edit'
 #    orob2b_order_frontend_create: 'oro.ui.create_entity'

@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +48,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAvailableCurrencies($priceListId, array $productIds, array $prices, array $expectedData)
     {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -179,9 +178,9 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         array $repositoryData,
         array $expectedData
     ) {
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 12);
+        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 12);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())->method('getPricesBatch')->willReturn($repositoryData);
@@ -236,7 +235,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function getProductPriceCriteria($quantity, $currency)
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
+        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 42);
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');

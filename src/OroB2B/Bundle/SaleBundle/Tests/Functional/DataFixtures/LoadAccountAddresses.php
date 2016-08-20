@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses as BaseLoadAccountAddresses;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses as BaseLoadAccountAddresses;
 
 class LoadAccountAddresses extends BaseLoadAccountAddresses
 {
@@ -74,7 +74,7 @@ class LoadAccountAddresses extends BaseLoadAccountAddresses
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
         ];
     }
 }

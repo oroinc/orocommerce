@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\WebsiteBundle\DependencyInjection\Configuration;
+use Oro\Bundle\WebsiteBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

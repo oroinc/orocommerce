@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 
 class ShippingContextProviderTest extends \PHPUnit_Framework_TestCase
 {

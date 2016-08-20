@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListListener;
 
 class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -76,7 +76,7 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->with('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->willReturn($repository);
 
         return $em;

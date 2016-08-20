@@ -1,24 +1,24 @@
 oro_system_configuration:
     groups:
         shipping:
-            title: orob2b.shipping.system_configuration.groups.shipping.title
+            title: oro.shipping.system_configuration.groups.shipping.title
         shipping_origin:
-            title: orob2b.shipping.system_configuration.groups.shipping_origin.label
+            title: oro.shipping.system_configuration.groups.shipping_origin.label
         shipping_origin_settings:
-            title: orob2b.shipping.system_configuration.groups.shipping_origin.title
+            title: oro.shipping.system_configuration.groups.shipping_origin.title
         shipping_options:
-            title: orob2b.shipping.system_configuration.groups.shipping_options.label
+            title: oro.shipping.system_configuration.groups.shipping_options.label
         shipping_options_settings:
-            title: orob2b.shipping.system_configuration.groups.shipping_options.title
+            title: oro.shipping.system_configuration.groups.shipping_options.title
     fields:
         orob2b_shipping.shipping_origin:
             data_type: array
-            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType'
+            type: 'Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType'
         orob2b_shipping.length_units:
             data_type: array
-            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType'
+            type: 'Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType'
             options:
-                label: orob2b.shipping.system_configuration.fields.length_units.label
+                label: oro.shipping.system_configuration.fields.length_units.label
                 multiple: true
                 full_list: true
                 data_transformer: orob2b_shipping.form.data_transformer.length_unit
@@ -26,9 +26,9 @@ oro_system_configuration:
                     - NotBlank: ~
         orob2b_shipping.weight_units:
             data_type: array
-            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType'
+            type: 'Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType'
             options:
-                label: orob2b.shipping.system_configuration.fields.weight_units.label
+                label: oro.shipping.system_configuration.fields.weight_units.label
                 multiple: true
                 full_list: true
                 data_transformer: orob2b_shipping.form.data_transformer.weight_unit
@@ -36,9 +36,9 @@ oro_system_configuration:
                     - NotBlank: ~
         orob2b_shipping.freight_classes:
             data_type: array
-            type: 'OroB2B\Bundle\ShippingBundle\Form\Type\FreightClassSelectType'
+            type: 'Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType'
             options:
-                label: orob2b.shipping.system_configuration.fields.freight_classes.label
+                label: oro.shipping.system_configuration.fields.freight_classes.label
                 multiple: true
                 full_list: true
                 data_transformer: orob2b_shipping.form.data_transformer.freight_class

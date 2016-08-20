@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu;
+namespace Oro\Bundle\MenuBundle\Tests\Unit\Menu;
 
-use OroB2B\Bundle\MenuBundle\Menu\MenuSerializer;
+use Oro\Bundle\MenuBundle\Menu\MenuSerializer;
 
 class MenuSerializerTest extends \PHPUnit_Framework_TestCase
 {

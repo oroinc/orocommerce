@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 interface CategoryCaseCacheBuilderInterface extends CacheBuilderInterface
 {

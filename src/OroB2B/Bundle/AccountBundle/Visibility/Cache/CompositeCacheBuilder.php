@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace Oro\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CompositeCacheBuilder implements CacheBuilderInterface
 {

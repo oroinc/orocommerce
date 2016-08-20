@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Processor;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
-use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 
 abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,18 +33,18 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->handler = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
+        $this->handler = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->productRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->messageGenerator = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator')
+        $this->messageGenerator = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -54,7 +54,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
 
         $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
-        $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
     }
 
     public function testGetName()

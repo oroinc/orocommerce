@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListQueueChangeEventTest extends \PHPUnit_Framework_TestCase
 {

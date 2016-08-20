@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Controller;
+namespace Oro\Bundle\AccountBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,8 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\UserBundle\Model\PrivilegeCategory;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCapabilityProvider;
 use Oro\Bundle\UserBundle\Provider\RolePrivilegeCategoryProvider;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class AccountUserRoleController extends Controller
 {
@@ -38,7 +37,7 @@ class AccountUserRoleController extends Controller
      * @Acl(
      *      id="orob2b_account_account_user_role_view",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="VIEW"
      * )
      *
@@ -62,11 +61,11 @@ class AccountUserRoleController extends Controller
 
     /**
      * @Route("/create", name="orob2b_account_account_user_role_create")
-     * @Template("OroB2BAccountBundle:AccountUserRole:update.html.twig")
+     * @Template("OroAccountBundle:AccountUserRole:update.html.twig")
      * @Acl(
      *      id="orob2b_account_account_user_role_create",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="CREATE"
      * )
      *
@@ -85,7 +84,7 @@ class AccountUserRoleController extends Controller
      * @Acl(
      *      id="orob2b_account_account_user_role_update",
      *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      class="OroAccountBundle:AccountUserRole",
      *      permission="EDIT"
      * )
      *
@@ -109,7 +108,7 @@ class AccountUserRoleController extends Controller
         if ($handler->process($role)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message')
+                $this->get('translator')->trans('oro.account.controller.accountuserrole.saved.message')
             );
 
             return $this->get('oro_ui.router')->redirect($role);

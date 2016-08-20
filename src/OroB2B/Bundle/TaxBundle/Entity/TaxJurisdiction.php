@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Entity;
+namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -80,7 +80,7 @@ class TaxJurisdiction
      * @var Collection|ZipCode[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\TaxBundle\Entity\ZipCode",
+     *      targetEntity="Oro\Bundle\TaxBundle\Entity\ZipCode",
      *      mappedBy="taxJurisdiction",
      *      cascade={"all"},
      *      orphanRemoval=true

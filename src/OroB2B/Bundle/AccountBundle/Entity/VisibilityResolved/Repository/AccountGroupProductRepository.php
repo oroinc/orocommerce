@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
+namespace Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -30,7 +29,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     {
         $configValue = AccountGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
             ->createQueryBuilder('agpv');
         $qb->select(
             'agpv.id',
@@ -41,15 +40,15 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id'
         )
-        ->innerJoin('OroB2BCatalogBundle:Category', 'category', 'WITH', 'agpv.product MEMBER OF category.products')
+        ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'agpv.product MEMBER OF category.products')
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             'WITH',
             'agcvr.accountGroup = agpv.accountGroup AND agcvr.category = category'
         )
         ->leftJoin(
-            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
             'cvr.category = category'
@@ -84,7 +83,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
     {
         $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
             ->createQueryBuilder('agpv')
             ->select(
                 [
@@ -159,7 +158,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
-                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
                 ->createQueryBuilder('productVisibility');
             $qb->select([
                 'productVisibility.id',
@@ -180,7 +179,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
         if ($category) {
             $configValue = AccountGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
             $qb = $this->getEntityManager()
-                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
                 ->createQueryBuilder('productVisibility');
             $qb->select([
                 'productVisibility.id',
@@ -192,13 +191,13 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 (string)$category->getId()
             ])
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                 'agcvr',
                 'WITH',
                 'agcvr.accountGroup = productVisibility.accountGroup AND agcvr.category = :category'
             )
             ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 'WITH',
                 'cvr.category = :category'

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Menu;
+namespace Oro\Bundle\AccountBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 
@@ -24,7 +24,7 @@ class AccountUserMenuBuilder implements BuilderInterface
 
         $menu
             ->addChild(
-                'orob2b.account.menu.account_user_logout.label',
+                'oro.account.menu.account_user_logout.label',
                 [
                     'route'          => 'orob2b_account_account_user_security_logout',
                     'linkAttributes' => ['class' => 'no-hash']

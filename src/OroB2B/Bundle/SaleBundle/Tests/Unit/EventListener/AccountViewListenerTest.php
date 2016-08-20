@@ -1,18 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\EventListener\AccountViewListener;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\SaleBundle\EventListener\AccountViewListener;
 
 class AccountViewListenerTest extends FormViewListenerTestCase
 {
@@ -114,7 +113,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroB2BSaleBundle:Account:quote_view.html.twig', ['entity' => $account]);
+            ->with('OroSaleBundle:Account:quote_view.html.twig', ['entity' => $account]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')
@@ -138,7 +137,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroB2BSaleBundle:AccountUser:quote_view.html.twig', ['entity' => $accountUser]);
+            ->with('OroSaleBundle:AccountUser:quote_view.html.twig', ['entity' => $accountUser]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')

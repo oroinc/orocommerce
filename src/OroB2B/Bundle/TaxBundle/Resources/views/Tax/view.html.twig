@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_tax_index'),
-        'indexLabel': 'orob2b.tax.entity_plural_label'|trans,
+        'indexLabel': 'oro.tax.entity_plural_label'|trans,
         'entityTitle': entity.code|default('N/A'|trans)
     } %}
 
@@ -16,13 +16,13 @@
 
 {% block content_data %}
     {% set taxInfo %}
-        {{ UI.renderProperty('orob2b.tax.code.label'|trans, entity.code) }}
-        {{ UI.renderProperty('orob2b.tax.description.label'|trans, entity.description) }}
-        {{ UI.renderProperty('orob2b.tax.rate.label'|trans, entity.rate|oro_format_percent) }}
+        {{ UI.renderProperty('oro.tax.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('oro.tax.rate.label'|trans, entity.rate|oro_format_percent) }}
     {% endset %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.tax.sections.general'|trans,
+        'title': 'oro.tax.sections.general'|trans,
         'class': 'active',
         'subblocks': [
             {'data' : [taxInfo]},

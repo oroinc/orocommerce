@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -10,15 +10,14 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-
-use OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
     const QUERY_AND_PATH = '[source][query][where][and]';
     const OPTIONS_CATEGORY = '[options][urlParams][categoryId]';
     const OPTIONS_SUBCATEGORY = '[options][urlParams][includeSubcategories]';
@@ -33,7 +32,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'join' => [
                     'left' => [
                         [
-                            'join' => 'OroB2BCatalogBundle:Category',
+                            'join' => 'OroCatalogBundle:Category',
                             'alias' => 'productCategory',
                             'conditionType' => 'WITH',
                             'condition' => 'product MEMBER OF productCategory.products'
@@ -44,7 +43,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         ],
         'columns' => [
             DatagridListener::CATEGORY_COLUMN => [
-                'label' => 'orob2b.catalog.category.entity_label'
+                'label' => 'oro.catalog.category.entity_label'
             ]
         ],
         'properties' => [
@@ -85,7 +84,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestProductHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler')
+            ->getMockBuilder('Oro\Bundle\CatalogBundle\Handler\RequestProductHandler')
             ->disableOriginalConstructor()
             ->getMock();
         $this->listener = new DatagridListener($this->doctrine, $this->requestProductHandler);
@@ -136,7 +135,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
-        $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->atLeastOnce())->method('find')->with($catId)->willReturn($category);
@@ -216,7 +215,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $catId = 1;
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
         /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
-        $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+        $repo = $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())->method('find')->with($catId)->willReturn(null);

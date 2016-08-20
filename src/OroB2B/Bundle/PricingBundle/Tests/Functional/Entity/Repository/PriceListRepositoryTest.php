@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
  * @dbIsolation
@@ -117,7 +116,7 @@ class PriceListRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceList');
     }
 
     /**
@@ -125,6 +124,6 @@ class PriceListRepositoryTest extends WebTestCase
      */
     protected function getManager()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceList');
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
+use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.
@@ -75,12 +75,12 @@ class ProductSelectPriceListAwareListener
 
     /**
      * @param int $priceListId
-     * @return \OroB2B\Bundle\PricingBundle\Entity\PriceList
+     * @return \Oro\Bundle\PricingBundle\Entity\PriceList
      */
     protected function getPriceListById($priceListId)
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')
+        return $this->registry->getManagerForClass('OroPricingBundle:PriceList')
+            ->getRepository('OroPricingBundle:PriceList')
             ->find($priceListId);
     }
 }

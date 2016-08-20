@@ -1,3 +1,3 @@
 css:
-    'orob2btax':
-        - 'bundles/orob2btax/less/style.less'
+    'orotax':
+        - 'bundles/orotax/less/style.less'

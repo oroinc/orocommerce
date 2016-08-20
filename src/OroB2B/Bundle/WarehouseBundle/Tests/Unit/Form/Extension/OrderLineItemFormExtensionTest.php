@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
-use OroB2B\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use OroB2B\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension;
+use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension;
 
 class OrderLineItemFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

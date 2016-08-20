@@ -8,13 +8,13 @@ define(function(require) {
     /**
      * Delete confirmation dialog
      *
-     * @export  orob2bfrontend/js/delete-confirmation
-     * @class   orob2bfrontend.DeleteConfirmation
+     * @export  orofrontend/js/delete-confirmation
+     * @class   orofrontend.DeleteConfirmation
      * @extends oroui.Modal
      */
     return Modal.extend({
         /** @property {String} */
-        template: require('text!orob2bfrontend/templates/delete-confirmation.html'),
+        template: require('text!orofrontend/templates/delete-confirmation.html'),
 
         /** @property {String} */
         okButtonClass: 'btn ok',

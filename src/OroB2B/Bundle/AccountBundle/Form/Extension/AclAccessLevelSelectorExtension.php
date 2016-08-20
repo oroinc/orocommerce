@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Extension;
+namespace Oro\Bundle\AccountBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
-
-use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
+use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 class AclAccessLevelSelectorExtension extends AbstractTypeExtension
 {

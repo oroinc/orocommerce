@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Formatter;
+namespace Oro\Bundle\ShippingBundle\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Formatter\UnitValueFormatter;
-use OroB2B\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 
 class DimensionsValueFormatter extends UnitValueFormatter
 {

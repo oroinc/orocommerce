@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Entity;
+namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use OroB2B\Bundle\ShippingBundle\Model\ExtendShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleConfiguration;
 
 /**
  * @ORM\Table(name="orob2b_shipping_rule_config")
@@ -70,7 +69,7 @@ abstract class ShippingRuleConfiguration extends ExtendShippingRuleConfiguration
     /**
      * @var ShippingRule
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="configurations")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="configurations")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={

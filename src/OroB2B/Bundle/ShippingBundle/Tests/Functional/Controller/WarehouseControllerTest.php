@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Component\PhpUtils\ArrayUtil;
 
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
-use OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
@@ -20,7 +19,7 @@ class WarehouseControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+                'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
             ]
         );
     }
@@ -127,7 +126,7 @@ class WarehouseControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $translator = $this->getContainer()->get('translator');
-        $systemConfigLabel = $translator->trans('orob2b.shipping.warehouse.system_configuration.label');
+        $systemConfigLabel = $translator->trans('oro.shipping.warehouse.system_configuration.label');
 
         if ($isSystem && $setSystemConfig) {
             $this->assertContains($systemConfigLabel, $html);
@@ -136,7 +135,7 @@ class WarehouseControllerTest extends WebTestCase
         }
 
         if ($isSystem && !$setSystemConfig) {
-            $this->assertNotContains($translator->trans('orob2b.shipping.warehouse.section.shipping_origin'), $html);
+            $this->assertNotContains($translator->trans('oro.shipping.warehouse.section.shipping_origin'), $html);
         } else {
             $shippingOriginWarehouse = $this->getShippingOriginWarehouse($warehouse);
 

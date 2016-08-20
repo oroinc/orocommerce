@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Duplicator\Matcher;
+namespace Oro\Component\Duplicator\Matcher;
 
 interface Matcher extends \DeepCopy\Matcher\Matcher
 {

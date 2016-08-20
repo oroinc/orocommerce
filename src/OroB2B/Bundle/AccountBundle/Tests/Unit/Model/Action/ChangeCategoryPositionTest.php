@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
@@ -10,10 +10,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,7 +42,7 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
         $this->cacheBuilder = $this
-            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+            ->getMock('Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
 
         $this->action->setDispatcher($dispatcher);
         $this->action->setRegistry($this->registry);
@@ -60,7 +59,7 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
 
         /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
         $cacheBuilder = $this
-            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+            ->getMock('Oro\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
 
         /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
@@ -96,7 +95,7 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($em);
 
         $this->action->setCacheBuilder($cacheBuilder);

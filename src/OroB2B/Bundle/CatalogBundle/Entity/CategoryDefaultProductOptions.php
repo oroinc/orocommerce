@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Entity;
+namespace Oro\Bundle\CatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 /**
  * @ORM\Table(name="orob2b_category_def_prod_opts")
@@ -22,7 +22,7 @@ class CategoryDefaultProductOptions
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", onDelete="CASCADE")
      */
     protected $unit;

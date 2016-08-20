@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormConfigInterface;
@@ -11,13 +11,12 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
@@ -39,7 +38,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         $this->formType = new ProductRowType();
 
         $this->validator = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator')
+            ->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator')
             ->disableOriginalConstructor()
             ->getMock();
 

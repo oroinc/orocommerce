@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Model;
+namespace Oro\Bundle\CatalogBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @method File getSmallImage()

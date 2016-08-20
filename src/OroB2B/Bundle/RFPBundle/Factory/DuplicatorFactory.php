@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Factory;
+namespace Oro\Bundle\RFPBundle\Factory;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Component\Duplicator\Duplicator;
-use OroB2B\Component\Duplicator\DuplicatorInterface;
-use OroB2B\Component\Duplicator\Filter\FilterFactory;
-use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
+use Oro\Component\Duplicator\Duplicator;
+use Oro\Component\Duplicator\DuplicatorInterface;
+use Oro\Component\Duplicator\Filter\FilterFactory;
+use Oro\Component\Duplicator\Matcher\MatcherFactory;
 
 class DuplicatorFactory
 {

@@ -5,15 +5,15 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
-    var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
-    var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
-    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
+    var ProductPricesComponent = require('oropricing/js/app/components/product-prices-component');
+    var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
+    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var mediator = require('oroui/js/mediator');
     var localeSettings = require('orolocale/js/locale-settings');
 
     /**
-     * @export orob2binvoice/js/app/views/line-item-view
+     * @export oroinvoice/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class orob2invoice.app.views.LineItemView
      */

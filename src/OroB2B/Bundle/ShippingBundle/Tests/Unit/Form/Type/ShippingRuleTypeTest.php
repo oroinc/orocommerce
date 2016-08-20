@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,20 +21,19 @@ use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
-use OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
-use OroB2B\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
-use OroB2B\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use OroB2B\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\SubscriberProxy;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
-use OroB2B\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use OroB2B\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
+use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\SubscriberProxy;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
 
 class ShippingRuleTypeTest extends FormIntegrationTestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\ImportExport\Event;
+namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductNormalizerEvent extends Event
 {

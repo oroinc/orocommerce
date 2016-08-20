@@ -4,7 +4,7 @@
 {% set entityId = entity.id %}
 {% set parentPageId = entity.parentPage ? entity.parentPage.id : null %}
 
-{% oro_title_set({params : {"%title%": entity.title, '%entityName%': 'orob2b.cms.page.entity_label'|trans} }) %}
+{% oro_title_set({params : {"%title%": entity.title, '%entityName%': 'oro.cms.page.entity_label'|trans} }) %}
 
 {% set formAction = entityId ? path('orob2b_cms_page_update', { 'id': entityId }) : path('orob2b_cms_page_create', { 'id': parentPageId })  %}
 
@@ -15,8 +15,8 @@
                 'path' : path('orob2b_cms_page_create', { 'id': entityId }),
                 'iCss': 'icon-book',
                 'aCss': 'btn-primary',
-                'label': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.child_page.entity_label'|trans}),
-                'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.child_page.entity_label'|trans})
+                'label': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans}),
+                'title': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans})
             }) }}
         {% endif %}
     {% endif %}
@@ -36,12 +36,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('orob2b_cms_page_index'),
-            'indexLabel': 'orob2b.cms.page.entity_plural_label'|trans,
+            'indexLabel': 'oro.cms.page.entity_plural_label'|trans,
             'entityTitle': entity.title|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.cms.page.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.page.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -57,7 +57,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.cms.sections.general'|trans,
+            'title': 'oro.cms.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
@@ -69,7 +69,7 @@
             }]
         },
         {
-            'title': 'orob2b.cms.sections.content'|trans,
+            'title': 'oro.cms.sections.content'|trans,
             'subblocks': [{
                 'title': '',
                 'data': [pageContent]
@@ -94,7 +94,7 @@
                 'reloadWidget': 'page-info-widget'
             } %}
             <div
-                data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                data-page-component-module="orocms/js/app/components/tree-manage-component"
                 data-page-component-options="{{ treeOptions|json_encode }}"
             ></div>
         </div>
@@ -107,7 +107,7 @@
             'modeName': 'orob2b_cms_page[slug][mode]'
         } %}
         <div
-            data-page-component-module="orob2bcms/js/app/components/slugify-component"
+            data-page-component-module="orocms/js/app/components/slugify-component"
             data-page-component-options="{{ options|json_encode }}"
         ></div>
     </div>

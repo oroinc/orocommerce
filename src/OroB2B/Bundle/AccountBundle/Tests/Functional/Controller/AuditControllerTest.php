@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
  * @dbIsolation
@@ -41,21 +40,21 @@ class AuditControllerTest extends WebTestCase
     public function testAuditHistory()
     {
         if (!$this->client->getContainer()->hasParameter('orob2b_account.entity.account_user.class')) {
-            $this->markTestSkipped('OroB2BAccountBundle is not installed');
+            $this->markTestSkipped('OroAccountBundle is not installed');
         }
 
         $this->createUser();
 
         /** @var AccountUser $user */
         $user = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUser')
-            ->getRepository('OroB2BAccountBundle:AccountUser')
+            ->getManagerForClass('OroAccountBundle:AccountUser')
+            ->getRepository('OroAccountBundle:AccountUser')
             ->findOneBy(['email' => $this->userData['email']]);
 
         $response = $this->client->requestGrid(
             'frontend-audit-history-grid',
             [
-                'frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',
+                'frontend-audit-history-grid[object_class]' => 'Oro_Bundle_AccountBundle_Entity_AccountUser',
                 'frontend-audit-history-grid[object_id]'    => $user->getId()
             ]
         );

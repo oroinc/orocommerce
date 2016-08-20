@@ -1,10 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-
-use OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionArgsParser;
+use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionArgsParser;
 
 class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
 {

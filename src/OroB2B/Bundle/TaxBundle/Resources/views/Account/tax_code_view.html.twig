@@ -11,8 +11,8 @@
         {% if isGranted %}<a href="{{ path('orob2b_tax_account_tax_code_view', {'id': groupAccountTaxCode.id}) }}">{% endif %}
         {{ groupAccountTaxCode.code }}
         {% if isGranted %}</a>{% endif %}
-        ({{ 'orob2b.tax.accounttaxcode.account_group.view.label'|trans }})
+        ({{ 'oro.tax.accounttaxcode.account_group.view.label'|trans }})
     {% endif %}
 {% endset %}
 
-{{ UI.renderHtmlProperty('orob2b.tax.taxcode.label'|trans, taxCode) }}
+{{ UI.renderHtmlProperty('oro.tax.taxcode.label'|trans, taxCode) }}

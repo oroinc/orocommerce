@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Storage;
+namespace Oro\Bundle\ProductBundle\Storage;
 
 abstract class AbstractDataStorage
 {

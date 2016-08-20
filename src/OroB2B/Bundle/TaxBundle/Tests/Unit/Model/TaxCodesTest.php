@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxCode;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
-use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Bundle\TaxBundle\Model\TaxCode;
+use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class TaxCodesTest extends \PHPUnit_Framework_TestCase
 {

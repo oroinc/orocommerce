@@ -7,4 +7,4 @@ layout:
             options:
                 visible: '=data["acl"].isGranted("orob2b_sale_quote_frontend_index")'
                 route_name: orob2b_sale_quote_frontend_index
-                text: orob2b.frontend.sale.quote.entity_plural_label
+                text: oro.frontend.sale.quote.entity_plural_label

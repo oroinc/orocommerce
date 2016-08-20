@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -45,11 +45,11 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         /** @var Website $website */
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserManager $userManager */
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
 
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
+        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -114,8 +114,8 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     protected function getAccountUserRole($roleLabel)
     {
         return $this->container->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole')
+            ->getManagerForClass('OroAccountBundle:AccountUserRole')
+            ->getRepository('OroAccountBundle:AccountUserRole')
             ->findOneBy(['label' => $roleLabel]);
     }
 }

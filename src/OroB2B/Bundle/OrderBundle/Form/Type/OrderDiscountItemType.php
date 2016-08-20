@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
@@ -12,9 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Range;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemType extends AbstractType
 {
@@ -54,7 +54,7 @@ class OrderDiscountItemType extends AbstractType
         $resolver->setDefault(
             'page_component_options',
             [
-                'view' => 'orob2border/js/app/views/discount-item-view',
+                'view' => 'oroorder/js/app/views/discount-item-view',
                 'percentTypeValue' => OrderDiscount::TYPE_PERCENT,
                 'totalType' => LineItemSubtotalProvider::TYPE,
                 'discountType' => DiscountSubtotalProvider::TYPE,
@@ -82,7 +82,7 @@ class OrderDiscountItemType extends AbstractType
                 [
                     'choices' => [
                         OrderDiscount::TYPE_AMOUNT => $options['currency'],
-                        OrderDiscount::TYPE_PERCENT => 'orob2b.order.orderdiscountitem.types.percent',
+                        OrderDiscount::TYPE_PERCENT => 'oro.order.orderdiscountitem.types.percent',
                     ]
                 ]
             )
@@ -105,7 +105,7 @@ class OrderDiscountItemType extends AbstractType
                             [
                                 'min' => PHP_INT_MAX * (-1), //use some big negative number
                                 'max' => $options['total'],
-                                'maxMessage' => 'orob2b.order.discounts.item.error.label'
+                                'maxMessage' => 'oro.order.discounts.item.error.label'
                             ]
                         ),
                         new Type(['type' => 'numeric'])

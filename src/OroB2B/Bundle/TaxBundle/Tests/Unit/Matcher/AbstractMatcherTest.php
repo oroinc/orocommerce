@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\AbstractMatcher;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Matcher\AbstractMatcher;
 
 abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const TAX_RULE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxRule';
+    const TAX_RULE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxRule';
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -33,7 +32,7 @@ abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->taxRuleRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository')
+            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -60,6 +59,6 @@ abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTaxRule($id)
     {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxRule', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\TaxRule', ['id' => $id]);
     }
 }

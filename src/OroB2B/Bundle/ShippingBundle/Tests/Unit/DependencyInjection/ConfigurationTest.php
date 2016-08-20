@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Bundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\ShippingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ShippingBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

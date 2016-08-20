@@ -1,16 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Component\Action\Model\ContextAccessor;
-
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BuildWebsiteCacheActionTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +30,7 @@ class BuildWebsiteCacheActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
         $this->cacheBuilder = $this->getMock(
-            'OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface'
+            'Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface'
         );
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
@@ -72,7 +71,7 @@ class BuildWebsiteCacheActionTest extends \PHPUnit_Framework_TestCase
         }
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->with('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($entityManager);
 
         $this->action->initialize([]);

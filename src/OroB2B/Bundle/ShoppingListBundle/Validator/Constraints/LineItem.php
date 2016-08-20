@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Validator\Constraints;
+namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
 class LineItem extends Constraint
 {
-    public $message = 'orob2b.shoppinglist.lineitem.already_exists';
+    public $message = 'oro.shoppinglist.lineitem.already_exists';
 
     /**
      * {@inheritDoc}

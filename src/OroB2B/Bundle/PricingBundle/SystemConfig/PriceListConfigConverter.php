@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\SystemConfig;
+namespace Oro\Bundle\PricingBundle\SystemConfig;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListConfigConverter
 {
@@ -69,7 +69,7 @@ class PriceListConfigConverter
 
         if (0 !== count($ids)) {
             $priceLists = $this->getManagerForPriceList()
-                ->getRepository('OroB2BPricingBundle:PriceList')
+                ->getRepository('OroPricingBundle:PriceList')
                 ->findBy(['id' => $ids]) ?: [];
             foreach ($configs as $config) {
                 $result[] = $this->createPriceListConfig($config, $priceLists);

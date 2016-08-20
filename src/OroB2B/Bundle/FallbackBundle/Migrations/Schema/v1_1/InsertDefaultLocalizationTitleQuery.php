@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_1;
+namespace Oro\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Entity;
+namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,14 +11,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
-
-use OroB2B\Bundle\CMSBundle\Model\ExtendPage;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Component\Tree\Entity\TreeTrait;
+use Oro\Bundle\CMSBundle\Model\ExtendPage;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      routeName="orob2b_cms_page_index",
@@ -89,7 +88,7 @@ class Page extends ExtendPage
     /**
      * @var Slug
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
@@ -166,7 +165,7 @@ class Page extends ExtendPage
      * @var Collection|Slug[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug",
+     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )

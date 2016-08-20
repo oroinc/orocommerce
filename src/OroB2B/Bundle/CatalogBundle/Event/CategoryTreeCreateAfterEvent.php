@@ -1,12 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Event;
+namespace Oro\Bundle\CatalogBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryTreeCreateAfterEvent extends Event
 {

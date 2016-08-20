@@ -12,7 +12,7 @@
             'dataRedirect': path('orob2b_payment_term_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
-            'entity_label': 'orob2b.payment.paymentterm.entity_label'|trans,
+            'entity_label': 'oro.payment.paymentterm.entity_label'|trans,
             'dataMessage': get_payment_term_delete_message(entity)
         }) }}
     {% endif %}
@@ -24,7 +24,7 @@
     {% set breadcrumbs = {
         'entity':      entity,
         'indexPath':   path('orob2b_payment_term_index'),
-        'indexLabel':  'orob2b.payment.paymentterm.entity_plural_label'|trans,
+        'indexLabel':  'oro.payment.paymentterm.entity_plural_label'|trans,
         'entityTitle': entity.label,
     } %}
     {{ parent() }}
@@ -40,7 +40,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.payment.sections.general_information'|trans,
+            'title': 'oro.payment.sections.general_information'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [paymentTermInformationWidget]}
@@ -50,7 +50,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.account.entity_plural_label'|trans,
+            'title' : 'oro.account.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
@@ -63,7 +63,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.account.accountgroup.entity_plural_label'|trans,
+            'title' : 'oro.account.accountgroup.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',

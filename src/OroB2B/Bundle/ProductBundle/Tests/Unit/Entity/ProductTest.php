@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

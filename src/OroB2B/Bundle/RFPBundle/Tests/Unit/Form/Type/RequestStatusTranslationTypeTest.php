@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType;
 
 class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
 {

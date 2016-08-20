@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -8,15 +8,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    const LINE_ITEM_SHORTCUT = 'OroB2BShoppingListBundle:LineItem';
+    const LINE_ITEM_SHORTCUT = 'OroShoppingListBundle:LineItem';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
@@ -59,12 +59,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->shoppingListManager =
-            $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+            $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
-        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->lineItem = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
+        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
 
         $this->lineItem->expects($this->any())
             ->method('getShoppingList')
