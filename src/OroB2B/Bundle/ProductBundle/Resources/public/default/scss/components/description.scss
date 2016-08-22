@@ -309,6 +309,14 @@
     @media (max-width: $screen-sm) {
       display: none;
     }
+
+    .product-item--compact & {
+      display: inline-block;
+
+      @media (max-width: $screen-sm) {
+        display: none;
+      }
+    }
   }
 
   &_no-image-view2 {
@@ -482,6 +490,11 @@
     
     &.product__specification_delivery {
       display: none;
+    }
+    .product-item--compact & {
+      width: 100%;
+      display: inline-block;
+      margin-bottom: 0 !important;
     }
   }
 
