@@ -1,0 +1,12 @@
+{% block orob2b_frontend_theme_select_widget %}
+    <div
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'orofrontend/js/app/views/theme-select-view',
+            metadata: form.vars['themes-metadata']
+        }|json_encode }}"
+    >
+        {{ form_widget(form) }}
+        <div class="description-container" style="display: none;"></div>
+    </div>
+{% endblock %}

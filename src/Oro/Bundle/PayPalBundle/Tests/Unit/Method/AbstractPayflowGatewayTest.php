@@ -15,10 +15,9 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -7,9 +7,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-
-use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 
 class RedirectListener
 {

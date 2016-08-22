@@ -1,5 +1,0 @@
-orob2b:
-    rfp:
-        request:
-            actions:
-                delete_frp_confirm: Are you sure you want to expire this Request For Quote?

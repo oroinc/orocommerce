@@ -5,8 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-
-use OroB2B\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 
 class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentConfig implements
     PayflowExpressCheckoutConfigInterface

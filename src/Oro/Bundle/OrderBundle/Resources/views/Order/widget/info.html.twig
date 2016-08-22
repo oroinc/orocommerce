@@ -1,0 +1,68 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
+
+{% set sourceEntityBlock %}
+  {% set sourceDocumenttitle = order.sourceEntityClass|orob2b_order_format_source_document(
+    order.sourceEntityId,
+    order.sourceEntityIdentifier
+  ) %}
+
+  <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
+  {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
+      <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
+          {{ sourceDocumenttitle }}
+      </a>
+  {% else %}
+      {{ sourceDocumenttitle|default('N/A') }}
+  {% endif %}
+{% endset %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('oro.order.identifier.label'|trans, order.identifier) }}
+            {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber) }}
+            {{ UI.renderProperty('oro.order.currency.label'|trans, order.currency) }}
+            {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
+
+            {% if resource_granted('VIEW', order.account) %}
+                {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}
+            {% else %}
+                {% set accountView = order.account|oro_format_name|trim %}
+            {% endif %}
+            {{ UI.renderHtmlProperty('oro.order.account.label'|trans, accountView) }}
+
+            {% set accountUserView = '' %}
+            {% if order.accountUser is not empty %}
+                {% if resource_granted('VIEW', order.accountUser) %}
+                    {% set accountUserView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': order.accountUser.id}), order.accountUser|oro_format_name|default('oro.ui.empty'|trans)) %}
+                {% else %}
+                    {% set accountUserView = order.accountUser|oro_format_name|trim %}
+                {% endif %}
+            {% endif %}
+            {{ UI.renderHtmlProperty('oro.order.account_user.label'|trans, accountUserView) }}
+
+            {% if order.paymentTerm is not empty %}
+                {% if resource_granted('VIEW', order.paymentTerm) %}
+                    {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': order.paymentTerm.id}), order.paymentTerm.label) %}
+                {% else %}
+                    {% set paymentTermView = order.paymentTerm.label|escape %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('oro.order.payment_term.label'|trans, paymentTermView) }}
+            {% endif %}
+
+            {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+            {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
+        </div>
+
+        <div class="responsive-block">
+            {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
+            {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(order) }}
+        </div>
+    </div>
+</div>
