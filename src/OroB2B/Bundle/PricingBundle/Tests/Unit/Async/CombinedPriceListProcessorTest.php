@@ -128,11 +128,12 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->triggerFactory->method('createFromMessage')->willReturn($trigger);
+        $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
@@ -187,6 +188,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
@@ -200,7 +202,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListChangeTrigger();
         $trigger->setWebsite($website)
             ->setAccount($account);
-        $this->triggerFactory->method('createFromMessage')->willReturn($trigger);
+        $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
     }
@@ -246,6 +248,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
@@ -259,7 +262,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListChangeTrigger();
         $trigger->setWebsite($website)
             ->setAccountGroup($accountGroup);
-        $this->triggerFactory->method('createFromMessage')->willReturn($trigger);
+        $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
     }
@@ -304,6 +307,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
@@ -313,7 +317,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $trigger = new PriceListChangeTrigger();
         $trigger->setWebsite($website);
-        $this->triggerFactory->method('createFromMessage')->willReturn($trigger);
+        $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
     }
@@ -353,12 +357,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
         $trigger = new PriceListChangeTrigger();
-        $this->triggerFactory->method('createFromMessage')->willReturn($trigger);
+        $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
     }

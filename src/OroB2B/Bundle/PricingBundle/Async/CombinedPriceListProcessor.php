@@ -6,6 +6,7 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
@@ -92,7 +93,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         try {
             $this->logger->debug('orob2b_pricing.async.combined_price_list_processor ' . $message->getMessageId());
             $this->resetCache();
-            $trigger = $this->triggerFactory->createFromMessage($message);
+            $messageData = JSON::decode($message->getBody());
+            $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListChangeTrigger($trigger);
             $this->dispatchChangeAssociationEvents();
         } catch (\Exception $e) {
