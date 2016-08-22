@@ -7,7 +7,7 @@ use OroB2B\Bundle\CheckoutBundle\WorkflowState\Condition\CheckCheckoutStates;
 
 class CheckCheckoutStatesTest extends \PHPUnit_Framework_TestCase
 {
-    /**  @var CheckoutStateDiffManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutStateDiffManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $diffManager;
 
     /** @var CheckCheckoutStates */

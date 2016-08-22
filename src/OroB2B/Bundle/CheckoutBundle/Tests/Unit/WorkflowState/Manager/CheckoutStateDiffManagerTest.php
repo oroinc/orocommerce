@@ -266,7 +266,6 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
     public function testIsStatesEqualNullState($state1, $state2)
     {
         $object = new \stdClass();
-
         $mapper = $this->getBaseMapperMock('mapperName');
 
         $mapper

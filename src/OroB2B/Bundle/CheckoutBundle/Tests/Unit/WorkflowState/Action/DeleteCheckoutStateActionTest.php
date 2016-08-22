@@ -20,12 +20,11 @@ class DeleteCheckoutStateActionTest extends \PHPUnit_Framework_TestCase
     /** @var DeleteCheckoutStateAction */
     protected $action;
 
-    /**  @var EventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     protected function setUp()
     {
-
         $this->contextAccessor = $this->getMock(ContextAccessor::class);
         $this->diffStorage = $this->getMock(CheckoutDiffStorageInterface::class);
         $this->action = new DeleteCheckoutStateAction($this->contextAccessor, $this->diffStorage);

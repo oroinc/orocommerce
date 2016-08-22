@@ -28,7 +28,6 @@ class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
         unset($this->workflowAwareManager);
     }
 
-
     public function testGetName()
     {
         $this->assertEquals('workflow_step', $this->mapper->getName());

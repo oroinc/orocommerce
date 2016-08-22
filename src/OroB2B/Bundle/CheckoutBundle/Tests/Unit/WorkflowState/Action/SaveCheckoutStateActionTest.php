@@ -21,7 +21,7 @@ class SaveCheckoutStateActionTest extends \PHPUnit_Framework_TestCase
     /** @var SaveCheckoutStateAction */
     protected $action;
 
-    /**  @var EventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     protected function setUp()

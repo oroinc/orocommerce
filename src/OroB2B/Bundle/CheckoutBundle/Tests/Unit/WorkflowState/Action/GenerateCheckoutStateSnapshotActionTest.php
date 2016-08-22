@@ -21,12 +21,11 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit_Framework_TestCas
     /** @var GenerateCheckoutStateSnapshotAction */
     protected $action;
 
-    /**  @var EventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     protected function setUp()
     {
-
         $this->contextAccessor = $this->getMock(ContextAccessor::class);
         $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
             ->disableOriginalConstructor()
