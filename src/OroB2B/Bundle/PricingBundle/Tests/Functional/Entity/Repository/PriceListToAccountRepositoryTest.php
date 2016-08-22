@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Tests\Common\DataFixtures\LoaderTest;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -237,7 +235,6 @@ class PriceListToAccountRepositoryTest extends WebTestCase
             ],
         ];
     }
-
 
     public function testGetAccountWebsitePairsByAccountGroupIterator()
     {
