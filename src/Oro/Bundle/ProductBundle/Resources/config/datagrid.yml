@@ -179,16 +179,16 @@ datagrid:
             search_index: website
         columns:
             sku:
-                label:         orob2b.product.sku.label
+                label:         oro.product.sku.label
             productName:
-                label:         orob2b.product.names.label
+                label:         oro.product.names.label
             inventoryStatus:
-                label:         orob2b.product.inventory_status.label
+                label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
             status:
-                label:         orob2b.product.status.label
+                label:         orobproduct.status.label
                 frontend_type: select
                 choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
