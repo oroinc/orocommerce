@@ -173,7 +173,7 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
 
-   frontend-product-search-grid:
+    frontend-product-search-grid:
         source:
             type: search
             search_index: website
