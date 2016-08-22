@@ -36,7 +36,6 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
      */
     public function addState($entity, array $data, $options = [])
     {
-        // @todo check $entity is object
         /** @var CheckoutWorkflowState $storageEntity */
         $storageEntity = new $this->checkoutWorkflowStateEntity;
         $storageEntity->setStateData($data);
