@@ -53,3 +53,12 @@ OrderBundle:
 - Removed `OroB2B\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `OroB2B\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `OroB2B\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
+
+PricingBundle:
+-------------
+
+- Removed `getWebsiteIdsByAccountGroup` method from `PriceListToAccountGroupRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Changed arguments of `PriceListChangeTriggerHandler` constructor

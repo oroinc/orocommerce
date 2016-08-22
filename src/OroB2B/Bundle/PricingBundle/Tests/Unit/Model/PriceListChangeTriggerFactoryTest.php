@@ -30,19 +30,8 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory = new PriceListChangeTriggerFactory($this->registry);
     }
 
-    public function testCreateFromMessage()
+    public function testCreateFromArray()
     {
-        $body = json_encode([
-            'website' => 1,
-            'account' => 1,
-            'accountGroup' => 1,
-            'force' => false,
-        ]);
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
-        $message->method('getBody')->willReturn($body);
-
         $website = new Website();
         $account = new Account();
         $accountGroup = new AccountGroup();
@@ -76,10 +65,16 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->setAccount($account)
             ->setAccountGroup($accountGroup);
 
-        $this->assertEquals($expected, $this->factory->createFromMessage($message));
+        $data = [
+            'website' => 1,
+            'account' => 1,
+            'accountGroup' => 1,
+            'force' => false,
+        ];
+        $this->assertEquals($expected, $this->factory->createFromArray($data));
     }
 
-    public function testCreateFromEmptyMessage()
+    public function testCreateFromEmptyArray()
     {
         $body = json_encode([]);
 
@@ -87,6 +82,6 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $message = $this->getMock(MessageInterface::class);
         $message->method('getBody')->willReturn($body);
 
-        $this->assertEquals(new PriceListChangeTrigger(), $this->factory->createFromMessage($message));
+        $this->assertEquals(new PriceListChangeTrigger(), $this->factory->createFromArray([]));
     }
 }
