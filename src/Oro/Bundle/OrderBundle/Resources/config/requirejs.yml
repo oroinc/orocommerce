@@ -1,0 +1,17 @@
+config:
+    paths:
+        'oroorder/js/app/components/notes-component': 'bundles/oroorder/js/app/components/notes-component.js'
+        'oroorder/js/app/components/related-data-component': 'bundles/oroorder/js/app/components/related-data-component.js'
+        'oroorder/js/app/components/entry-point-component': 'bundles/oroorder/js/app/components/entry-point-component.js'
+        'oroorder/js/app/components/totals-component': 'bundles/oroorder/js/app/components/totals-component.js'
+        'oroorder/js/app/components/products-prices-component': 'bundles/oroorder/js/app/components/products-prices-component.js'
+        'oroorder/js/app/components/data-load-component': 'bundles/oroorder/js/app/components/data-load-component.js'
+        'oroorder/js/app/views/address-view': 'bundles/oroorder/js/app/views/address-view.js'
+        'oroorder/js/app/views/frontend-line-item-view': 'bundles/oroorder/js/app/views/frontend-line-item-view.js'
+        'oroorder/js/app/views/line-item-view': 'bundles/oroorder/js/app/views/line-item-view.js'
+        'oroorder/js/app/views/line-item-abstract-view': 'bundles/oroorder/js/app/views/line-item-abstract-view.js'
+        'oroorder/js/app/views/line-items-view': 'bundles/oroorder/js/app/views/line-items-view.js'
+        'oroorder/js/app/views/payment-term-view': 'bundles/oroorder/js/app/views/payment-term-view.js'
+        'oroorder/js/app/views/shipping-cost-view': 'bundles/oroorder/js/app/views/shipping-cost-view.js'
+        'oroorder/js/app/views/discount-items-view': 'bundles/oroorder/js/app/views/discount-items-view.js'
+        'oroorder/js/app/views/discount-item-view': 'bundles/oroorder/js/app/views/discount-item-view.js'

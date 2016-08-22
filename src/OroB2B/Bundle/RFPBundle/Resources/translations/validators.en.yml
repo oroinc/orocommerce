@@ -1,7 +1,0 @@
-orob2b:
-    rfp:
-        requestproduct:
-            product:
-                blank: 'Product cannot be empty.'
-            request_product_items:
-                blank: 'Please add one or more requests.'

@@ -1,7 +1,0 @@
-orob2b:
-    shipping:
-        delete_shipping_rule_window:
-            content: "Warning: Removing the shipping rule will delete all related data"
-            button_ok: Yes, Delete
-            title: Delete Confirmation
-            success: Shipping rule and all related data were deleted

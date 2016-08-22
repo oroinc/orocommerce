@@ -1,0 +1,302 @@
+{% block _quote_view_controls_list_widget %}
+    <ul class="oro-order__controls-list">
+        <li><a href="#"><i class="cf-reply"></i>Share</a></li>
+        <li><a href="#"><i class="cf-print"></i>Print</a></li>
+        <li><a href="#"><i class="cf-insert_drive_file"></i>Save PDF</a></li>
+    </ul>
+{% endblock %}
+
+{% block _quote_view_information_widget %}
+    <div class="account-oq-container">
+        <div class="account-oq__item__head">
+            <div class="account-oq__item account-oq__item_full mb0-sm">
+                <h2 class="account-oq__item__title">
+                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+                </h2>
+            </div>
+        </div>
+        <div class="account-oq__item__body">
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless mobile-table">
+                        <tbody>
+                        {% if quote.assignedUsers | length %}
+                            <tr>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td>
+                                    {% set assigned_users = [] %}
+                                    {% for entity in quote.assignedUsers %}
+                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                    {% endfor %}
+                                    {{ assigned_users|join(', ') }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        </tr>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless  mobile-table">
+                        <tbody>
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                                <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                            </tr>
+                            {% if quote.shippingEstimate is not empty %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                            </tr>
+                            {% endif %}
+                            {{ block_widget(block) }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_line_items_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set expandTextOptions = {
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
+        maxLength: 80
+    }|json_encode() %}
+    <!-- START ITEMS ORDERED DESKTOP -->
+    <div class="account-oq-container hidden-sm hidden-xs">
+        <div class="account-oq__item account-oq__item_full">
+            <div class="account-oq__item__head">
+                <h2 class="account-oq__item__title">
+                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
+                </h2>
+            </div>
+            <div class="account-oq__item__body">
+
+                <table class="oro-grid-table oro-grid-table__orders">
+                    <thead>
+                    <tr>
+                        <th colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
+                        <th>{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
+                        <th class="text-right">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for quoteProduct in quoteProducts %}
+                        {% for productOffer in quoteProduct.quoteProductOffers %}
+                            <tr class="borderless">
+                                {% if loop.first %}
+                                    <td class="va-t_md" colspan="2" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
+                                        <h3 class="oro-grid-table__title">
+                                            {% if (quoteProduct.product.id is defined) %}
+                                                {{ UI.link({
+                                                    path: path('orob2b_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                                                    label : quoteProduct.product.names|localized_value,
+                                                }) }}
+                                            {% else %}
+                                                {{ quoteProduct.productName }}
+                                            {% endif %}
+                                        </h3>
+                                        <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    {{ productOffer.quantity|orob2b_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% if productOffer.allowIncrements %}
+                                        {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-right">{{ productOffer.price|oro_format_price }}</td>
+                            </tr>
+                        {% endfor %}
+
+                        {% if (quoteProduct.commentAccount is not empty) %}
+                            <tr class="borderless">
+                                <td colspan="4">
+                                    <div class="account-oq__order-item-more">
+                                         <div class="expand-text"
+                                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                              data-page-component-options="{{ expandTextOptions }}"
+                                         >
+                                            {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                        {% if (quoteProduct.comment is not empty) %}
+                            <tr class="borderless">
+                                <td colspan="4">
+                                    <div class="account-oq__order-item-more">
+                                        <div class="expand-text"
+                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                             data-page-component-options="{{ expandTextOptions }}"
+                                        >
+                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                        <tr>
+                            <td colspan="4">
+                                <div class="decor-row"></div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="order-checkout-widget order-checkout-widget_block text-right">
+                    <div class="order-builder-clear-btn">
+                        <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END ITEMS ORDERED DESKTOP -->
+{% endblock %}
+
+{% block _quote_view_line_items_mobile_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set expandTextOptions = {
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
+        maxLength: 100
+    }|json_encode() %}
+    <!-- START ITEMS ORDERED MOBILE -->
+    <div class="account-oq-container hidden-lg hidden-md">
+        <div class="account-oq__item account-oq__item_full">
+            <div class="account-oq__item__head">
+                <h2 class="account-oq__item__title styled">
+                    {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
+                </h2>
+            </div>
+            <div class="account-oq__item__body">
+                <table class="oro-grid-table  oro-grid-table-properties oro-grid-table__orders_order-details">
+                    <tbody>
+                    {% for quoteProduct in quoteProducts %}
+                        <tr>
+                            <td class="va-t_sm">
+                                <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                    {% if (quoteProduct.product.id is defined) %}
+                                        {{ UI.link({
+                                            path: path('orob2b_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                                            label : quoteProduct.product.names|localized_value,
+                                        }) }}
+                                    {% else %}
+                                        {{ quoteProduct.productName }}
+                                    {% endif %}
+                                </h3>
+                                <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
+
+                                <table class="oro-grid-table oro-grid-table-properties">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-lef titlet">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</td>
+                                            <td class="text-left title">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</td>
+                                        </tr>
+                                        {% for productOffer in quoteProduct.quoteProductOffers %}
+                                            <tr>
+                                                <td class="text-left">{{ productOffer.quantity|orob2b_format_product_unit_code(productOffer.productUnit) }}</td>
+                                                <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        {% if (quoteProduct.commentAccount is not empty) %}
+                                            <tr class="borderless t_paddingless">
+                                                <td colspan="2">
+                                                    <div class="account-oq__order-item-more">
+                                                        <div class="expand-text"
+                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                                             data-page-component-options="{{ expandTextOptions }}"
+                                                        >
+                                                            {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if (quoteProduct.comment is not empty) %}
+                                            <tr class="borderless t_paddingless">
+                                                <td colspan="2">
+                                                    <div class="account-oq__order-item-more">
+                                                        <div class="expand-text"
+                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                                             data-page-component-options="{{ expandTextOptions }}"
+                                                        >
+                                                            {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="decor-row"></div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+            </div>
+        </div>
+    </div>
+    <!-- END ITEMS ORDERED MOBILE -->
+{% endblock %}
+
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_accept_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_accept_button_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block address_widget %}
+    {% if address %}
+        {{ address|oro_format_address|escape|nl2br }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr class="account-oq__order-info__control">
+            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+            <td>{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
+{% endblock %}
