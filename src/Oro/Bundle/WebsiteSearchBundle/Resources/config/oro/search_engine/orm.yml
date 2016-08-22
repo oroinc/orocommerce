@@ -1,0 +1,7 @@
+parameters:
+    #TODO: Replace to real implemantation of Indexer
+    oro_website_search.indexer.class: Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Command\OrmIndexerStub
+
+services:
+    oro_website_search.indexer:
+        class: %oro_website_search.indexer.class%
