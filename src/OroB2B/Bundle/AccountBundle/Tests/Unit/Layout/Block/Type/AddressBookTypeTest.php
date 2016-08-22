@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -121,7 +122,11 @@ class AddressBookTypeTest extends BaseBlockTypeTestCase
         $rootView = new BlockView();
         $view = new BlockView($rootView);
 
-        $type->finishView($view, $this->getMock('Oro\Component\Layout\BlockInterface'), ['entity' => new \stdClass()]);
+        $type->finishView(
+            $view,
+            $this->getMock('Oro\Component\Layout\BlockInterface'),
+            new Options(['entity' => new \stdClass()])
+        );
     }
 
     public function testFinishView()
@@ -132,7 +137,7 @@ class AddressBookTypeTest extends BaseBlockTypeTestCase
         $view = new BlockView($rootView);
 
         $entity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]);
-        $options = [
+        $options = new Options([
             'entity' => $entity,
             'addressListRouteName' => 'address_list_test_route_name',
             'addressCreateRouteName' => 'address_create_test_route_name',
@@ -140,7 +145,7 @@ class AddressBookTypeTest extends BaseBlockTypeTestCase
             'addressCreateAclResource' => 'address_create_test_acl',
             'addressUpdateAclResource' => 'address_update_test_acl',
             'useFormDialog' => true
-        ];
+        ]);
 
         $this->router->expects($this->exactly(2))
             ->method('generate')

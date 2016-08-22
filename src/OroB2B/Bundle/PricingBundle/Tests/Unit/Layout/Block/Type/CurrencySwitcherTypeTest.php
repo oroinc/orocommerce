@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -43,7 +44,7 @@ class CurrencySwitcherTypeTest extends \PHPUnit_Framework_TestCase
         /** @var BlockInterface|\PHPUnit_Framework_MockObject_MockObject $block **/
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
 
-        $options = ['currencies' => ['USD', 'EUR'], 'selected_currency' => 'USD'];
+        $options = new Options(['currencies' => ['USD', 'EUR'], 'selected_currency' => 'USD']);
         $this->currencySwitcherType->finishView($view, $block, $options);
 
         $this->assertArrayHasKey('currencies', $view->vars);

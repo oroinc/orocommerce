@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -30,7 +31,7 @@ class CurrencySwitcherType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function finishView(BlockView $view, BlockInterface $block, array $options)
+    public function finishView(BlockView $view, BlockInterface $block, Options $options)
     {
         $view->vars['currencies'] = $options['currencies'];
         $view->vars['selected_currency'] = $options['selected_currency'];

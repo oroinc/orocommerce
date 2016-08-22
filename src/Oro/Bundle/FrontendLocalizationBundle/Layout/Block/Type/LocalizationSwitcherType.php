@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -30,7 +31,7 @@ class LocalizationSwitcherType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function finishView(BlockView $view, BlockInterface $block, array $options)
+    public function finishView(BlockView $view, BlockInterface $block, Options $options)
     {
         $view->vars['localizations'] = $options['localizations'];
         $view->vars['selected_localization'] = $options['selected_localization'];

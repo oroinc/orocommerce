@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -47,7 +48,7 @@ class LocalizationSwitcherTypeTest extends \PHPUnit_Framework_TestCase
         /* @var $block BlockInterface|\PHPUnit_Framework_MockObject_MockObject */
         $block = $this->getMock(BlockInterface::class);
 
-        $options = ['localizations' => ['L1', 'L2'], 'selected_localization' => 'L1'];
+        $options = new Options(['localizations' => ['L1', 'L2'], 'selected_localization' => 'L1']);
         $this->type->finishView($view, $block, $options);
 
         $this->assertArrayHasKey('localizations', $view->vars);

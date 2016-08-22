@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 use Oro\Component\Layout\Tests\Unit\BaseBlockTypeTestCase;
@@ -117,12 +118,12 @@ class MenuTypeTest extends BaseBlockTypeTestCase
         $view = new BlockView($rootView);
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $menu = $this->getMock('Knp\Menu\ItemInterface');
-        $options = [
+        $options = new Options([
             'menu' => $menuName,
             'child_attr' => [],
             'link_attr' => [],
             'label_attr' => [],
-        ];
+        ]);
 
         $this->provider->expects($this->once())
             ->method('has')
@@ -157,7 +158,7 @@ class MenuTypeTest extends BaseBlockTypeTestCase
             ->with($menuName)
             ->willReturn(false);
 
-        $type->finishView($view, $block, ['menu' => $menuName]);
+        $type->finishView($view, $block, new Options(['menu' => $menuName]));
     }
 
     public function testGetName()

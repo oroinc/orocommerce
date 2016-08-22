@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\Block\Type;
 
+use Oro\Component\Layout\Block\Type\Options;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -64,7 +65,7 @@ class AddressBookType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function finishView(BlockView $view, BlockInterface $block, array $options)
+    public function finishView(BlockView $view, BlockInterface $block, Options $options)
     {
         $entity = $options['entity'];
 
@@ -86,10 +87,10 @@ class AddressBookType extends AbstractType
 
     /**
      * @param Account|AccountUser $entity
-     * @param array $options
+     * @param Options $options
      * @return array
      */
-    protected function getAddressBookOptions($entity, array $options)
+    protected function getAddressBookOptions($entity, Options $options)
     {
         $addressListUrl = $this->router->generate($options['addressListRouteName'], ['entityId' => $entity->getId()]);
         $addressCreateUrl = $this->router->generate(
