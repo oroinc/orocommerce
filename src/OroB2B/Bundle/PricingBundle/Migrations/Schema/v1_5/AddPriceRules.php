@@ -16,12 +16,10 @@ class AddPriceRules implements Migration
     {
         /** Tables generation **/
         $this->createOroB2BPriceRuleTable($schema);
-        $this->createOroB2BPriceRuleChTriggerTable($schema);
         $this->createOroB2BPriceRuleLexemeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BPriceRuleForeignKeys($schema);
-        $this->addOroB2BPriceRuleChTriggerForeignKeys($schema);
         $this->addOroB2BPriceRuleLexemeForeignKeys($schema);
 
         $this->updateProductPriceTable($schema);
@@ -44,20 +42,6 @@ class AddPriceRules implements Migration
         $table->addColumn('rule_condition', 'text', ['notnull' => false]);
         $table->addColumn('rule', 'text', ['notnull' => true]);
         $table->addColumn('priority', 'integer', []);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create orob2b_price_rule_ch_trigger table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BPriceRuleChTriggerTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_price_rule_ch_trigger');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('price_list_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -91,28 +75,6 @@ class AddPriceRules implements Migration
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add orob2b_price_rule_ch_trigger foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BPriceRuleChTriggerForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_price_rule_ch_trigger');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),

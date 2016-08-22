@@ -265,6 +265,20 @@ class Order extends ExtendOrder implements
     protected $lineItems;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", length=255, nullable=true)
+     */
+    protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", length=255, nullable=true)
+     */
+    protected $shippingMethodType;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="shipping_cost_amount", type="money", nullable=true)
@@ -916,6 +930,44 @@ class Order extends ExtendOrder implements
     public function resetLineItems()
     {
         $this->lineItems = new ArrayCollection();
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethod()
+    {
+        return $this->shippingMethod;
+    }
+
+    /**
+     * @param string $shippingMethod
+     * @return $this
+     */
+    public function setShippingMethod($shippingMethod)
+    {
+        $this->shippingMethod = $shippingMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
 
         return $this;
     }
