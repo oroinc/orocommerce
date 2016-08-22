@@ -8,7 +8,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 
@@ -51,7 +50,6 @@ class Configuration implements ConfigurationInterface
                 self::PRECISION => ['value' => PriceRoundingService::FALLBACK_PRECISION],
                 self::COMBINED_PRICE_LIST => ['value' => null],
                 self::FULL_COMBINED_PRICE_LIST => ['value' => null],
-                self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME],
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],

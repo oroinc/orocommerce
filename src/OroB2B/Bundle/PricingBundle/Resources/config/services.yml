@@ -198,16 +198,6 @@ services:
         calls:
             - [setWebsiteCombinedPriceListBuilder,  ['@orob2b_pricing.builder.website_combined_price_list_builder']]
 
-    orob2b_pricing.builder.queue_consumer:
-        class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer'
-        arguments:
-            - '@doctrine'
-            - '@orob2b_pricing.builder.combined_price_list_builder'
-            - '@orob2b_pricing.builder.website_combined_price_list_builder'
-            - '@orob2b_pricing.builder.account_group_combined_price_list_builder'
-            - '@orob2b_pricing.builder.account_combined_price_list_builder'
-            - '@event_dispatcher'
-
     orob2b_pricing.builder.combined_product_price_queue_consumer:
         class: 'OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer'
         calls:
@@ -307,7 +297,6 @@ services:
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: 'OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'
         arguments:
-            - '@orob2b_pricing.builder.queue_consumer'
             - '@orob2b_pricing.builder.combined_product_price_queue_consumer'
             - '@oro_config.global'
         tags:
@@ -868,5 +857,18 @@ services:
             - '@orob2b_pricing.builder.price_list_product_assignment_builder'
             - '@orob2b_pricing.builder.product_price_builder'
             - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    orob2b_pricing.async.combined_price_list_processor:
+        class: 'OroB2B\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
+        arguments:
+            - '@orob2b_pricing.builder.combined_price_list_builder'
+            - '@orob2b_pricing.builder.website_combined_price_list_builder'
+            - '@orob2b_pricing.builder.account_group_combined_price_list_builder'
+            - '@orob2b_pricing.builder.account_combined_price_list_builder'
+            - '@event_dispatcher'
+            - '@logger'
+            - '@orob2b_pricing.price_list_change_trigger_factory'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }

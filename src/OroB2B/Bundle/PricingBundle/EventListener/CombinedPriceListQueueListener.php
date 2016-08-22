@@ -47,27 +47,19 @@ class CombinedPriceListQueueListener
     protected $isRealTimeMode;
 
     /**
-     * @param CombinedPriceListQueueConsumer $priceListQueueConsumer
      * @param CombinedProductPriceQueueConsumer $productPriceQueueConsumer
      * @param ConfigManager $configManager
      */
     public function __construct(
-        CombinedPriceListQueueConsumer $priceListQueueConsumer,
         CombinedProductPriceQueueConsumer $productPriceQueueConsumer,
         ConfigManager $configManager
     ) {
-        $this->priceListQueueConsumer = $priceListQueueConsumer;
         $this->productPriceQueueConsumer = $productPriceQueueConsumer;
         $this->configManager = $configManager;
     }
 
     public function onTerminate()
     {
-        if ($this->hasCollectionChanges) {
-            if ($this->isRealTimeMode()) {
-                $this->priceListQueueConsumer->process();
-            }
-        }
         if ($this->hasProductPriceChanges) {
             if ($this->isRealTimeMode()) {
                 $this->productPriceQueueConsumer->process();

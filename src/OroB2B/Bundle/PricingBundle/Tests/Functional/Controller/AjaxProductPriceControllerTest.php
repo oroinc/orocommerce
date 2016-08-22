@@ -7,8 +7,6 @@ use Symfony\Component\DomCrawler\Form;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 /**
  * @dbIsolation
@@ -56,8 +54,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $productPrice = $this->getReference('product_price.3');
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-
-        $this->disableRealTimeModeCalculate();
 
         $crawler = $this->client->request(
             'GET',
@@ -190,20 +186,5 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             ],
 
         ];
-    }
-
-    /**
-     * Disable realtime price calculate mode
-     */
-    protected function disableRealTimeModeCalculate()
-    {
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $configManager->set(
-            Configuration::getConfigKeyByName(
-                Configuration::PRICE_LISTS_UPDATE_MODE
-            ),
-            CombinedPriceListQueueConsumer::MODE_SCHEDULED
-        );
-        $configManager->flush();
     }
 }
