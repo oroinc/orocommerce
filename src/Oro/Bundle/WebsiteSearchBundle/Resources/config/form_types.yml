@@ -1,8 +1,0 @@
-services:
-    oro_website_search.form.type.search_engines:
-        class: Oro\Bundle\WebsiteSearchBundle\Form\Type\SearchEnginesType
-        public: true
-        arguments:
-            - '@oro_website_search.provider.search_engines_provider'
-        tags:
-            - { name: form.type, alias: oro_website_search_engines_type }

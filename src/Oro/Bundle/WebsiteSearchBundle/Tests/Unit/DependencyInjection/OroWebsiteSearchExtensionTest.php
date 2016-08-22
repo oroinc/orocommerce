@@ -12,8 +12,7 @@ class OroWebsiteSearchExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroWebsiteSearchExtension());
 
         $expectedDefinitions = [
-            'oro_website_search.provider.search_engines_provider',
-            'oro_website_search.form.type.search_engines'
+            'oro_website_search.provider.search_engine_config_provider'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

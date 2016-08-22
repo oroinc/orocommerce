@@ -7,8 +7,8 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 
-    oro_website_search.provider.search_engines_provider:
-        class: Oro\Bundle\WebsiteSearchBundle\Provider\SearchEnginesProvider
+    oro_website_search.provider.search_engine_config_provider:
+        class: Oro\Bundle\WebsiteSearchBundle\Provider\SearchEngineConfigProvider
         public: true
         arguments:
             - '@service_container'

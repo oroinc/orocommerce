@@ -2,41 +2,74 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\WebsiteSearchBundle\Provider\SearchEnginesProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\SearchEngineConfigProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class SearchEnginesProviderTest extends \PHPUnit_Framework_TestCase
+class SearchEngineConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getEnginesDataProvider
      *
-     * @param bool $esExists
+     * @param string $method
+     * @param string $key
+     * @param string $value
      * @param array $expected
      */
-    public function testGetEngines($esExists, $expected)
+    public function testGetEngines($method, $key, $value, $expected)
     {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects($this->once())
-            ->method('has')
-            ->willReturn($esExists);
+        $container->expects($this->any())
+            ->method('get')
+            ->with($key)
+            ->willReturn($value);
 
-        $provider = new SearchEnginesProvider($container);
+        $provider = new SearchEngineConfigProvider($container);
+        $result = call_user_func([$provider, $method]);
 
-        $this->assertEquals($expected, $provider->getEngines());
+        $this->assertEquals($expected, $result);
     }
 
     public function getEnginesDataProvider()
     {
         return [
-            'ORM only' => [
-                'esExists' => false,
-                'expected' => [SearchEnginesProvider::SEARCH_ENGINE_ORM]
+            'name' => [
+                'method' => 'getEngineName',
+                'key' => 'search_engine_name',
+                'value' => 'ORM',
+                'expected' => 'ORM'
             ],
-            'ORM and ES' => [
-                'esExists' => true,
-                'expected' => [SearchEnginesProvider::SEARCH_ENGINE_ORM, SearchEnginesProvider::SEARCH_ENGINE_ES]
+            'host' => [
+                'method' => 'getHost',
+                'key' => 'search_engine_host',
+                'value' => 'localhost',
+                'expected' => 'localhost'
+            ],
+            'port' => [
+                'method' => 'getPort',
+                'key' => 'search_engine_port',
+                'value' => '9000',
+                'expected' => '9000'
+            ],
+            'username' => [
+                'method' => 'getUsername',
+                'key' => 'search_engine_username',
+                'value' => 'username',
+                'expected' => 'username'
+            ],
+            'password' => [
+                'method' => 'getPassword',
+                'key' => 'search_engine_password',
+                'value' => 'password',
+                'expected' => 'password'
+            ],
+            'auth_type' => [
+                'method' => 'getAuthType',
+                'key' => 'search_engine_auth_type',
+                'value' => 'basic',
+                'expected' => 'basic'
             ]
         ];
     }
