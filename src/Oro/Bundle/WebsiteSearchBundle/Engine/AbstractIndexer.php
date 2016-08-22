@@ -28,9 +28,6 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var Mapper */
     protected $mapper;
 
-    /** @var array */
-    protected $processedEntityAliases = [];
-
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
@@ -125,9 +122,6 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $entityAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
         $entityAliasTemp = $this->generateTemporaryAlias($entityAlias);
-
-        // @todo: need to purge this anywhere
-        $this->processedEntityAliases[$entityAlias] = $entityAliasTemp;
 
         $entityManager = $this->doctrineHelper->getEntityManagerForClass($entityClass);
         $entityRepository = $entityManager->getRepository($entityClass);
