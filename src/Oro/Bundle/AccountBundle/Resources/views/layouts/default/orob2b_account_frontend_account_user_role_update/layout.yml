@@ -1,0 +1,41 @@
+layout:
+    imports:
+        -
+            id: orob2b_account_user_role_form
+            root: content
+        - orob2b_account_menu
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.role.entity_plural_label'
+                - 'oro.account.frontend.title.account_user_role.edit'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.account.frontend.title.page.account_user_role.edit'
+        - '@setOption':
+            id: account_user_role_form_fields
+            optionName: vars
+            optionValue:
+                entity: '=data["entity"]'
+        - '@add':
+            id: account_user_role_form_privileges
+            blockType: datagrid
+            parentId: account_user_role_container
+            siblingId: account_user_role_form_fields
+            options:
+                grid_name: frontend-account-user-role-permission-grid
+                grid_parameters:
+                    role: '=data["entity"]'
+                grid_render_parameters:
+                    cssClass: 'inner-permissions-grid'
+                vars:
+                    options:
+                        tabsOptions: '=data["orob2b_account_fronted_account_user_role_options"].getTabsOptions()'
+                        capabilitySetOptions: '=data["orob2b_account_fronted_account_user_role_options"].getCapabilitySetOptions(data["entity"])'

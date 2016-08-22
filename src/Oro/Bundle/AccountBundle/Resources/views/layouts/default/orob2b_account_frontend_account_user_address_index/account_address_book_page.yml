@@ -1,0 +1,29 @@
+layout:
+    imports:
+        - orob2b_account_menu
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.address.label'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.account.frontend.account_user.address.label'
+
+        - '@addTree':
+            items:
+                account_address_book_page:
+                    blockType: container
+                account_address_book_addresses:
+                    blockType: container
+                account_address_book_user_addresses:
+                    blockType: container
+            tree:
+                content:
+                    account_address_book_page:
+                        account_address_book_addresses: ~
+                        account_address_book_user_addresses: ~

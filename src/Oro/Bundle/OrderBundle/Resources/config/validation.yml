@@ -1,0 +1,112 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
+        - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
+    properties:
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
+        currency:
+            - Currency: ~
+        total:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999
+                minMessage: 'oro.order.total.min.error.label'
+                maxMessage: 'oro.order.total.max.error.label'
+        subtotal:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999
+                minMessage: 'oro.order.subtotal.min.error.label'
+                maxMessage: 'oro.order.subtotal.max.error.label'
+        account:
+            - NotBlank: ~
+        website:
+            - NotBlank: ~
+        lineItems:
+            - Count:
+                min: 1
+                minMessage: 'oro.order.orderlineitem.count'
+            - Valid: ~
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    constraints:
+        - Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+    properties:
+        order:
+            - NotBlank: ~
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+            - Length:
+                max: 255
+                groups: [ Import ]
+        quantity:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - NotBlank: ~
+            - Valid: ~
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    properties:
+        street:
+            - NotBlank:
+                groups: [ Frontend ]
+        city:
+            - NotBlank:
+                groups: [ Frontend ]
+        postalCode:
+            - NotBlank:
+                groups: [ Frontend ]
+        country:
+            - NotBlank:
+                groups: [ Frontend ]
+        region:
+            - NotBlank:
+                groups: [ Frontend ]
+        firstName:
+            - NotBlank:
+                groups: [ PersonInfo ]
+        lastName:
+            - NotBlank:
+                groups: [ PersonInfo ]
+        phone:
+            - Length:
+                max: 255
+
+Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    properties:
+        percent:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+            - Range:
+                min: -100
+                max: 100
+        amount:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999

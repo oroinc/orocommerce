@@ -1,0 +1,29 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% block form %}
+    <form id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}"
+          data-collect="true"
+          class="form-dialog"
+          data-page-component-module="oroproduct/js/app/components/product-unit-component"
+    >
+        <fieldset class="form-horizontal">
+            {{ form_row(form.price.product, { 'attr': {'class': 'product-product'} }) }}
+            {{ form_row(form.price.quantity, { 'attr': {'class': 'product-quantity'} }) }}
+            {{ form_row(form.price.unit, { 'attr': {'class': 'product-unit'} }) }}
+            {{ form_row(form.price.price) }}
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'oro.pricing.productprice.action.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'oro.pricing.productprice.action.save'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+{% endblock %}
