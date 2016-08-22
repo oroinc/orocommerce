@@ -43,6 +43,8 @@ class PaymentMethodEnabledMapper implements CheckoutStateDiffMapperInterface
     /** {@inheritdoc} */
     public function getCurrentState($entity)
     {
+        // This mapper doesn't generate current state
+        // Availability of payment method is calculated by `isStatesEqual` on fly
         return '';
     }
 
