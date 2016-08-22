@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
@@ -14,6 +16,23 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
      * @var Inflector
      */
     private $inflector;
+
+    /**
+     * @var CacheProvider
+     */
+    private $queryResultCache;
+
+    /**
+     * @return CacheProvider
+     */
+    private function getQueryResultCache()
+    {
+        if (!$this->queryResultCache) {
+            $this->queryResultCache = new ArrayCache();
+        }
+
+        return $this->queryResultCache;
+    }
 
     /**
      * @param array $codes
@@ -44,27 +63,42 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
 
     /**
      * @param string $type
+     * @param integer $id
+     * @return \Doctrine\ORM\Query
+     */
+    protected function getFindOneByEntityQuery($type, $id)
+    {
+        $type = (string)$type;
+
+        $alias = sprintf('%sTaxCode', $type);
+        $field = $this->getInflector()->camelize($this->getInflector()->pluralize($type));
+
+        $queryBuilder = $this->createQueryBuilder($alias);
+
+        return $queryBuilder
+            ->where($queryBuilder->expr()->isMemberOf(sprintf(':%s', $type), sprintf('%s.%s', $alias, $field)))
+            ->setParameter($type, $id)
+            ->setMaxResults(1)
+            ->getQuery();
+    }
+
+    /**
+     * @param string $type
      * @param object $object
      *
      * @return AbstractTaxCode|null
      */
     public function findOneByEntity($type, $object)
     {
-        $type = (string)$type;
         $ids = $this->getEntityManager()->getClassMetadata(ClassUtils::getClass($object))->getIdentifierValues($object);
 
         if (!$ids) {
             return null;
         }
 
-        $alias = sprintf('%sTaxCode', $type);
-        $field = $this->getInflector()->camelize($this->getInflector()->pluralize($type));
-
-        return $this->createQueryBuilder($alias)
-            ->where(sprintf(':%s MEMBER OF %s.%s', $type, $alias, $field))
-            ->setParameter($type, reset($ids))
-            ->setMaxResults(1)
-            ->getQuery()
+        return $this->getFindOneByEntityQuery($type, reset($ids))
+            ->setResultCacheDriver($this->getQueryResultCache())
+            ->useResultCache(true)
             ->getOneOrNullResult();
     }
 }

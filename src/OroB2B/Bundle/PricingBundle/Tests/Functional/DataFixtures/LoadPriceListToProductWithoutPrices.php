@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadPriceListToProductWithoutPrices extends AbstractFixture implements DependentFixtureInterface
 {
@@ -52,8 +53,8 @@ class LoadPriceListToProductWithoutPrices extends AbstractFixture implements Dep
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            LoadPriceLists::class,
+            LoadProductData::class,
         ];
     }
 }

@@ -17,6 +17,19 @@
 {% endmacro %}
 
 {% block menu_widget %}
+    {% set options ={
+        depth: depth,
+        matchingDepth: matchingDepth,
+        currentAsLink: currentAsLink,
+        ancestorClass: ancestorClass,
+        firstClass: firstClass,
+        lastClass: lastClass,
+        allow_safe_labels: allow_safe_labels,
+        clear_matcher: clear_matcher,
+        leaf_class: leaf_class,
+        branch_class: branch_class
+    } %}
+
     {% set listAttributes = item.childrenAttributes|merge(attr) %}
 
     {% if options.rootClass is defined %}
@@ -64,9 +77,9 @@
     {% set displayable = item.extras.isAllowed or showNonAuthorized %}
     {% if item.displayed and displayable %}
         {# building the class of the item #}
-        {%- if matcher.isCurrent(item) %}
+        {%- if orob2b_menu_is_current(item) %}
             {%- set classes = classes|merge([options.currentClass]) %}
-        {%- elseif matcher.isAncestor(item, options.depth) %}
+        {%- elseif orob2b_menu_is_ancestor(item, options.depth) %}
             {%- set classes = classes|merge([options.ancestorClass]) %}
         {%- endif %}
         {%- if item.actsLikeFirst %}
@@ -89,7 +102,7 @@
 {% block item_content %}
     {%- set linkAttributes = item.linkAttributes|merge(link_attr) %}
     {%- set labelAttributes = item.labelAttributes|merge(label_attr) %}
-    {%- if item.uri is not empty and (not matcher.isCurrent(item) or options.currentAsLink) %}
+    {%- if item.uri is not empty and (not orob2b_menu_is_current(item) or options.currentAsLink) %}
         {{ block('linkElement') }}
     {%- else %}
         {{ block('spanElement') }}

@@ -209,10 +209,10 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param $product
-     * @param $productUnit
+     * @param Product$product
+     * @param ProductUnit $productUnit
      */
-    protected function prepareEntityManager($product, $productUnit)
+    protected function prepareEntityManager(Product $product, ProductUnit $productUnit)
     {
         /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -230,12 +230,12 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param $value
-     * @param $identifier
+     * @param float $value
+     * @param string $identifier
      */
     protected function preparePrice($value, $identifier)
     {
-        /** @var Price $price */
+        /** @var Price|\PHPUnit_Framework_MockObject_MockObject $price */
         $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
             ->disableOriginalConstructor()
             ->getMock();

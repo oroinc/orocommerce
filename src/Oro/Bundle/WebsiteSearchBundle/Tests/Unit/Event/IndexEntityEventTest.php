@@ -11,7 +11,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
     {
         $event = new IndexEntityEvent('EntityName', [], []);
 
-        $this->assertEquals('EntityName', $event->getEntityName());
+        $this->assertEquals('EntityName', $event->getEntityClass());
     }
 
     public function testGetEntityIds()

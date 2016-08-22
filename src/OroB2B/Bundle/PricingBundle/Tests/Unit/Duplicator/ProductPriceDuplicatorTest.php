@@ -65,34 +65,27 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
         $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice';
         $this->priceDuplicator->setPriceListClass($priceListClass);
 
-        if ($targetPriceList->getPrices()->isEmpty()) {
-            $this->manager->expects($this->once())
-                ->method('getRepository')
-                ->with($priceListClass)
-                ->willReturn($this->repository);
-            $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
-            $this->repository->expects($this->once())
-                ->method('copyPrices')
-                ->with($sourcePriceList, $targetPriceList, $this->insertExecutor);
-        } else {
-            $this->manager->expects($this->never())
-                ->method('getRepository')
-                ->with($priceListClass);
-        }
+        $this->manager->expects($this->once())
+            ->method('getRepository')
+            ->with($priceListClass)
+            ->willReturn($this->repository);
+        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($this->manager);
+        $this->repository->expects($this->once())
+            ->method('copyPrices')
+            ->with($sourcePriceList, $targetPriceList, $this->insertExecutor);
 
         $this->priceDuplicator->duplicate($sourcePriceList, $targetPriceList);
     }
 
+    /**
+     * @return array
+     */
     public function duplicateDataProvider()
     {
         return [
             'target price list without prices' => [
                 'sourcePriceList' => new PriceList(),
                 'targetPriceList' => new PriceList()
-            ],
-            'target price list with prices' => [
-                'sourcePriceList' => new PriceList(),
-                'targetPriceList' => (new PriceList())->addPrice(new ProductPrice())
             ],
         ];
     }

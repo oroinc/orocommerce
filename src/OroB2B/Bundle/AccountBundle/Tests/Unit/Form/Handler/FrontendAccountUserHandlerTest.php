@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class FrontendAccountUserHandlerTest extends FormHandlerTestCase
 {
@@ -74,6 +75,12 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
             ->method('getId')
             ->will($this->returnValue(null));
         $this->request->setMethod('POST');
+
+        $website = new Website();
+        $this->request->attributes->set('current_website', $website);
+        $this->entity->expects($this->once())
+            ->method('setWebsite')
+            ->with($website);
 
         $this->form->expects($this->once())
             ->method('submit')

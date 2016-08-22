@@ -20,7 +20,7 @@ class AccountUserRegisterController extends Controller
      * Create account user form
      *
      * @Route("/register", name="orob2b_account_frontend_account_user_register")
-     * @Layout(action="orob2b_account_frontend_account_user_security")
+     * @Layout()
      * @param Request $request
      * @return array|RedirectResponse
      */
@@ -51,7 +51,9 @@ class AccountUserRegisterController extends Controller
      */
     protected function handleForm(Request $request)
     {
-        $form = $this->get('orob2b_account.provider.frontend_account_user_registration_form')->getForm();
+        $form = $this->get('orob2b_account.provider.frontend_account_user_registration_form')
+            ->getRegisterForm()
+            ->getForm();
         $userManager = $this->get('orob2b_account_user.manager');
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 

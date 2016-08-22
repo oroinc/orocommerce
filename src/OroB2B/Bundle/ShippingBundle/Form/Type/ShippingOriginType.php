@@ -3,9 +3,13 @@
 namespace OroB2B\Bundle\ShippingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
 class ShippingOriginType extends AbstractType
@@ -43,7 +47,7 @@ class ShippingOriginType extends AbstractType
         $builder
             ->add(
                 'country',
-                'oro_country',
+                CountryType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.country.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_country']
@@ -51,7 +55,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'region',
-                'oro_region',
+                RegionType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.region.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_region']
@@ -59,7 +63,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'postalCode',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.postal_code.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.postal_code.label']
@@ -67,7 +71,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'city',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.city.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.city.label']
@@ -75,7 +79,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'street',
-                'text',
+                TextType::class,
                 [
                     'label' => 'orob2b.shipping.shipping_origin.street.label',
                     'attr' => ['placeholder' => 'orob2b.shipping.shipping_origin.street.label']
@@ -83,7 +87,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'street2',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'label' => 'orob2b.shipping.shipping_origin.street2.label',
@@ -92,7 +96,7 @@ class ShippingOriginType extends AbstractType
             )
             ->add(
                 'region_text',
-                'hidden',
+                HiddenType::class,
                 [
                     'required' => false,
                     'random_id' => true,
@@ -110,17 +114,9 @@ class ShippingOriginType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'shipping_origin'
+                'csrf_token_id' => 'shipping_origin'
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

@@ -26,7 +26,7 @@ use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
  *          @ORM\UniqueConstraint(name="orob2b_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
  * @Config(
  *       mode="hidden",
  *       defaultValues={
