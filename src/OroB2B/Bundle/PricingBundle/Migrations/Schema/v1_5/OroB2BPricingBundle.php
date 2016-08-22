@@ -33,7 +33,7 @@ class OroB2BPricingBundle implements Migration, DatabasePlatformAwareInterface
     protected function alterOroB2BPriceAttributeTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_attribute_pl');
-        $table->addColumn('field_name', 'string', ['length' => 255]);
+        $table->addColumn('field_name', 'string', ['length' => 255, 'notnull' => false]);
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
                 'UPDATE orob2b_price_attribute_pl SET field_name = LOWER(name)'
