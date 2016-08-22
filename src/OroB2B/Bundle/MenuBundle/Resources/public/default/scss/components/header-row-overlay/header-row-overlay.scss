@@ -10,3 +10,15 @@
 
     opacity: 0;
 }
+
+@include breakpoint('desktop') {
+    %hidden-on-desktop {
+        &.hidden-on-desktop {
+            display: none;
+        }
+    }
+
+    .header-row-overlay {
+        @extend %hidden-on-desktop;
+    }
+}

@@ -60,7 +60,7 @@
 @include breakpoint('desktop') {
     %hidden-on-desktop {
         &.hidden-on-desktop {
-            display: none;
+            display: none !important;
         }
     }
 
