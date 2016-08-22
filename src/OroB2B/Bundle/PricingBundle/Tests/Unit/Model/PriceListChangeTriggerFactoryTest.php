@@ -78,4 +78,15 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $this->factory->createFromMessage($message));
     }
+
+    public function testCreateFromEmptyMessage()
+    {
+        $body = json_encode([]);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn($body);
+
+        $this->assertEquals(new PriceListChangeTrigger(), $this->factory->createFromMessage($message));
+    }
 }
