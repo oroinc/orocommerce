@@ -53,10 +53,14 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
        unit: '@item'
        precision: '1'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+
 OroB2B\Bundle\ProductBundle\Entity\Product:
    product1:
        sku: 'AA1'
        primaryUnitPrecision: '@precision1'
+       addName: ['@locvalue1']
 
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
@@ -70,6 +74,7 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
        unit: '@item'
        accountUser: '@amanda'
        shoppingList: '@shoppinglist1'
+       organization: '@organization'
 
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
    shoppinglisttotal:
@@ -79,20 +84,21 @@ OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        subtotalValue: '10.1'
        valid: 'true'
 
-OroB2B\Bundle\PricingBundle\Entity\PriceList:
-   pricelist1:
-       default: 'true'
-       name: 'PriceList 1'
+#OroB2B\Bundle\PricingBundle\Entity\PriceList:
+#   pricelist1:
+#       default: 'true'
+#       name: 'PriceList 1'
+#       active: 'true'
 
-OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
-   productprice1:
-       priceList: '@pricelist1'
-       quantity: 1
-       unit: '@item'
-       value: '10'
-       currency: 'EUR'
-       product: '@product1'
-       productSku: 'AA1'
+#OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+#   productprice1:
+#       priceList: '@pricelist1'
+#       quantity: 1
+#       unit: '@item'
+#       value: '10'
+#       currency: 'EUR'
+#       product: '@product1'
+#       productSku: 'AA1'
 
 OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
     address1:
@@ -107,21 +113,90 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
         lastName: 'Cole'
         frontendOwner: '@amanda'
         owner: '@admin'
-        type: ['@shippingType', '@billingType']
+        setDefaults: ['@shippingType', '@billingType']
         organization: '@organization'
-
-#OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
-#    billing:
-#         address: '@address1'
-#         type: '@billingType'
-#         default: false
-#    shipping:
-#         address: '@address1'
-#         type: '@shippingType'
-#         default: false
+        primary: true
 
 
+OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount:
+    priceListToAccount1:
+        account: '@account1'
+        pricelist: '@pricelist1'
+        website: '@website1'
+        priority: 200
+
+OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    priceAttributePriceList1:
+        name: 'priceAttributePriceList'
+
+
+OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency:  'EUR'
+
+OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'EUR'
+
+#OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+#    priceListAttributePrice1:
+#        product: '@product1'
+#        productSku: 'AA1'
+#        pricelist: '@priceAttributePriceList1'
+#        quantity: 1
+#        unit: '@item'
+#        value: 10
+#        currency: 'EUR'
+
+OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
+    combinedPriceListToAccount1:
+        pricelist: '@combinedPriceList'
+        account: '@account1'
+        website: '@website1'
+
+OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite1:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
+
+OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings:
+    accountUserSetting1:
+        accountUser: '@amanda'
+        __construct: ['@website1']
+        currency: 'EUR'
+
+#Oro\Bundle\ConfigBundle\Entity\ConfigValue:
+#    config1:
+#        name: 'enabled_currencies'
+#        section: 'oro_b2b_pricing'
+#        arrayValue: 'EUR'
+#        type: 'array'
+
+
+OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+    billing:
+         address: '@address1'
+         type: '@billingType'
+         default: true
+    shipping:
+         address: '@address1'
+         type: '@shippingType'
+         default: true
 
 
 
+
+  #https://github.com/laboro/dev/blob/42ab942e4bda8ff566c0c6b229a688ab60d59fb8/package/commerce/src/Oro/Bundle/CurrencyBundle/Migrations/Data/Demo/ORM/LoadAdditionalCurrencies.php#L36
 

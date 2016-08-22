@@ -1,4 +1,5 @@
 @fixture-ShippingRule.yml
+  @ProductUnit11.yml
 Feature: Applying shipping rules applying
   In order to decrease shipping cost
   As administrator
@@ -11,7 +12,8 @@ Feature: Applying shipping rules applying
 #    And Shopping Rule Flat Rate Handling Fee = 1.5
 
   Scenario Outline: "SHIPPING” > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
-    Given I login as AmandaRCole@example.org
+    Given there is EUR currency in the system configuration exist
+    And I login as AmandaRCole@example.org
 #    Given Admin User created Flat Rate Shipping Rule #1 with next data:
 #      | Country       | Germany |
 #      | Rule Currency | EUR     |
@@ -29,16 +31,16 @@ Feature: Applying shipping rules applying
       | Flat Rate 5.00 EUR | 23         | 28            |
       | Flat Rate 7.00 EUR | 4          | 11            |
 
-  Scenario: "SHIPPING" > EDIT AND DISABLE SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - MAJOR
-    Given Admin User edited "Flat Rate Shipping Rule #1" with next data:
-      | Country       | Germany  |
-      | Rule Currency | EUR      |
-      | Rule Status   | Disabled |
-    And Buyer created order with:
-      | Shipping Address | Berlin,Germany,10115 |
-      | Currency         | EUR                  |
-    When Buyer is on Shipping Method Checkout step on Shopping List 1
-    Then There is no shipping method available for this order
+#  Scenario: "SHIPPING" > EDIT AND DISABLE SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - MAJOR
+#    Given Admin User edited "Flat Rate Shipping Rule #1" with next data:
+#      | Country       | Germany  |
+#      | Rule Currency | EUR      |
+#      | Rule Status   | Disabled |
+#    And Buyer created order with:
+#      | Shipping Address | Berlin,Germany,10115 |
+#      | Currency         | EUR                  |
+#    When Buyer is on Shipping Method Checkout step on Shopping List 1
+#    Then There is no shipping method available for this order
 #
 #  Scenario: "SHIPPING" > DIFFERENT CURRENCIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
 #    Given Admin User edited "Flat Rate Shipping Rule #1" with next data:
