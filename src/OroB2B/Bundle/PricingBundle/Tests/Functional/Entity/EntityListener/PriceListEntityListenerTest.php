@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Async\Topics;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
@@ -29,18 +30,29 @@ class PriceListEntityListenerTest extends WebTestCase
 
     public function testPreRemove()
     {
+        $this->cleanQueueMessageTraces();
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repository = $em->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
         $em->remove($priceList);
-        $em->flush();
 
-        $actual = $repository->findBy(['force' => true]);
-
-        $this->assertCount(1, $actual);
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => null,
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
+                        PriceListChangeTrigger::FORCE => true,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->getMessageProducer()->getTraces()
+        );
     }
 
     public function testPreUpdate()

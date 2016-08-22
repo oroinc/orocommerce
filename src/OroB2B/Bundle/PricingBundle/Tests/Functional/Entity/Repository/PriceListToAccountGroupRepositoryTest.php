@@ -67,26 +67,26 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             [
                 'priceList' => 'price_list_1',
                 'expectedAccountGroups' => [
-                    'account_group.group1'
-                ]
+                    'account_group.group1',
+                ],
             ],
             [
                 'priceList' => 'price_list_2',
-                'expectedAccountGroups' => []
+                'expectedAccountGroups' => [],
             ],
             [
                 'priceList' => 'price_list_4',
                 'expectedAccountGroups' => [
-                    'account_group.group2'
-                ]
+                    'account_group.group2',
+                ],
             ],
             [
                 'priceList' => 'price_list_5',
                 'expectedAccountGroups' => [
                     'account_group.group1',
-                    'account_group.group3'
-                ]
-            ]
+                    'account_group.group3',
+                ],
+            ],
         ];
     }
 
@@ -145,22 +145,22 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                 'website' => 'US',
                 'expectedPriceLists' => [
                     'priceList5',
-                    'priceList1'
-                ]
+                    'priceList1',
+                ],
             ],
             [
                 'account' => 'account_group.group2',
                 'website' => 'US',
                 'expectedPriceLists' => [
-                    'priceList4'
-                ]
+                    'priceList4',
+                ],
             ],
             [
                 'account' => 'account_group.group3',
                 'website' => 'Canada',
                 'expectedPriceLists' => [
-                    'priceList5'
-                ]
+                    'priceList5',
+                ],
             ],
         ];
     }
@@ -168,7 +168,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     /**
      * @dataProvider getPriceListIteratorDataProvider
      * @param string $website
-     * @param int|null$fallback
+     * @param int|null $fallback
      * @param array $expectedAccountGroups
      */
     public function testGetAccountGroupIteratorByFallback($website, $fallback, $expectedAccountGroups)
@@ -195,15 +195,15 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             'with fallback' => [
                 'website' => 'US',
                 'fallback' => PriceListAccountGroupFallback::WEBSITE,
-                'expectedAccountGroups' => ['account_group.group1']
+                'expectedAccountGroups' => ['account_group.group1'],
             ],
             'without fallback' => [
                 'website' => 'US',
                 'fallback' => null,
                 'expectedAccountGroups' => [
                     'account_group.group1',
-                    'account_group.group2'
-                ]
+                    'account_group.group2',
+                ],
             ],
         ];
     }
@@ -221,15 +221,19 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'accountGroup'  => $this->getReference(LoadGroups::GROUP1)->getId(),
-                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                    'accountGroup' => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                 ],
                 [
-                    'accountGroup'  => $this->getReference(LoadGroups::GROUP3)->getId(),
-                    'website' => $this->getReference(LoadWebsiteData::WEBSITE2)->getId()
-                ]
+                    'accountGroup' => $this->getReference(LoadGroups::GROUP3)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                ],
             ],
-            $result
+            $result,
+            "Iterator should return proper values",
+            $delta = 0.0,
+            $maxDepth = 10,
+            $canonicalize = true
         );
     }
 
@@ -245,13 +249,16 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             $accountsObjects[] = $this->getReference($accountGroup);
         }
         $relations = $this->getRepository()->getRelationsByHolders($accountsObjects);
-        $relations = array_map(function (PriceListToAccountGroup $relation) {
-            return [
-                $relation->getAccountGroup()->getName(),
-                $relation->getWebsite()->getName(),
-                $relation->getPriceList()->getName()
-            ];
-        }, $relations);
+        $relations = array_map(
+            function (PriceListToAccountGroup $relation) {
+                return [
+                    $relation->getAccountGroup()->getName(),
+                    $relation->getWebsite()->getName(),
+                    $relation->getPriceList()->getName(),
+                ];
+            },
+            $relations
+        );
         $this->assertEquals($expectsResult, $relations);
     }
 

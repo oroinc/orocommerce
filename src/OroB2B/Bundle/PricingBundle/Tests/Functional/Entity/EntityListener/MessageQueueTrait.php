@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,7 +23,7 @@ trait MessageQueueTrait
     }
 
     /**
-     * @return PriceRuleChangeTrigger[]
+     * @return array
      */
     protected function getQueueMessageTraces()
     {
