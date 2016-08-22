@@ -74,20 +74,6 @@ oro:
             type.label: Type
             method.label: Method
             rule.label: Rule
-        flatrateruleconfiguration:
-            entity_label: Flat Rate Rule Configuraiton
-            entity_plural_label: Flat Rate Rule Configuraitons
-            id.label: Id
-            enabled.label: Enabled
-            processing_type:
-                label: Type
-                per_item.label: Per Item
-                per_order.label: Per Order
-            type.label: Type
-            method.label: Method
-            value.label: Price
-            rule.label: Rule
-            handling_fee_value.label: Handling Fee
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'

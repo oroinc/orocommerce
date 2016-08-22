@@ -32,10 +32,8 @@ workflows:
             shipping_method_type:
                 property_path: checkout.shippingMethodType
             shipping_rule_config:
-                type: entity
+                type: int
                 label: Shipping Rule Configuration
-                options:
-                    class: Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             request_approval_notes:
                 type: string
                 label: Notes
