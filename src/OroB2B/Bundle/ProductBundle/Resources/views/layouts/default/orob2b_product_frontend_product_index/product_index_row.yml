@@ -90,7 +90,7 @@ layout:
                 line_item_buttons:
                     blockType: container
             tree:
-                scripts_before:
+                product_grid_container:
                     product_grid_row_template:
                         product_grid_row_image_holder:
                             product_grid_row_quick_view: ~
