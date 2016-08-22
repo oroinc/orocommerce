@@ -1,0 +1,12 @@
+oro_permissions:
+    CREATE:
+        exclude_entities:
+            - Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
+
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
+
+    ASSIGN:
+        exclude_entities:
+            - Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel

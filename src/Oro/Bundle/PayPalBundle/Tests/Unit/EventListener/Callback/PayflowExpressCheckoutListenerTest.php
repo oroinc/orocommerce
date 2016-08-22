@@ -7,11 +7,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,7 +80,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with('complete', $transaction);
@@ -156,7 +155,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('complete')
             ->setReference('token');
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());

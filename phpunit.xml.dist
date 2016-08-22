@@ -15,10 +15,10 @@
 >
     <testsuites>
         <testsuite name="Project Unit Tests">
-            <directory suffix="Test.php">src/OroB2B/*/*/Tests/Unit</directory>
+            <directory suffix="Test.php">src/Oro/*/*/Tests/Unit</directory>
         </testsuite>
         <testsuite name="Project Functional Tests">
-            <directory suffix="Test.php">src/OroB2B/*/*/Tests/Functional</directory>
+            <directory suffix="Test.php">src/Oro/*/*/Tests/Functional</directory>
         </testsuite>
     </testsuites>
 
@@ -32,10 +32,10 @@
             <directory>src</directory>
             <exclude>
                 <directory>vendor</directory>
-                <directory>src/OroB2B/Bundle/*Bundle/DataFixtures</directory>
-                <directory>src/OroB2B/Bundle/*Bundle/Resources</directory>
-                <directory>src/OroB2B/Bundle/*Bundle/Tests</directory>
-                <directory>src/OroB2B/Bundle/*Bundle/vendor</directory>
+                <directory>src/Oro/Bundle/*Bundle/DataFixtures</directory>
+                <directory>src/Oro/Bundle/*Bundle/Resources</directory>
+                <directory>src/Oro/Bundle/*Bundle/Tests</directory>
+                <directory>src/Oro/Bundle/*Bundle/vendor</directory>
             </exclude>
         </whitelist>
     </filter>

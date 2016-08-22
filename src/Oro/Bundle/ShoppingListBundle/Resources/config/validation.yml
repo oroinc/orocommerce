@@ -1,0 +1,27 @@
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    constraints:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
+            groups: [update]
+    properties:
+        product:
+            - NotBlank:
+                groups: [create, update, add_product]
+        quantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                groups: [create, update, add_product]
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                value: 0
+                groups: [create, update, add_product]
+            - NotBlank:
+                groups: [create, update, add_product]
+        unit:
+            - NotBlank:
+                groups: [create, update, add_product]
+        shoppingList:
+            - NotBlank:
+                groups: [create, update]
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    properties:
+        label:
+            - NotBlank: ~

@@ -1,3 +1,0 @@
-orob2b_catalog_api:
-    resource: "@OroB2BCatalogBundle/Controller/Api/Rest/CategoryController.php"
-    type:     rest
