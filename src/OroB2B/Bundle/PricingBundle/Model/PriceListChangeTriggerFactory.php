@@ -25,20 +25,11 @@ class PriceListChangeTriggerFactory
     }
 
     /**
-     * @param array $data
      * @return PriceListChangeTrigger
      */
-    public function create(array $data = [])
+    public function create()
     {
-        $data = $this->normalizeArrayData($data);
-
-        $priceListChangeTrigger = new PriceListChangeTrigger();
-        $priceListChangeTrigger->setAccount($data[PriceListChangeTrigger::ACCOUNT])
-            ->setAccountGroup($data[PriceListChangeTrigger::ACCOUNT_GROUP])
-            ->setWebsite($data[PriceListChangeTrigger::WEBSITE])
-            ->setForce($data[PriceListChangeTrigger::FORCE]);
-
-        return $priceListChangeTrigger;
+        return new PriceListChangeTrigger();
     }
 
     /**
@@ -49,20 +40,23 @@ class PriceListChangeTriggerFactory
     {
         $data = $message->getBody() ? json_decode($message->getBody(), true) : [];
         $data = $this->normalizeArrayData($data);
-        if ($data[PriceListChangeTrigger::ACCOUNT]) {
-            $data[PriceListChangeTrigger::ACCOUNT] = $this->registry->getRepository(Account::class)
-                ->find($data[PriceListChangeTrigger::ACCOUNT]);
-        }
-        if ($data[PriceListChangeTrigger::ACCOUNT_GROUP]) {
-            $data[PriceListChangeTrigger::ACCOUNT_GROUP] = $this->registry->getRepository(AccountGroup::class)
-                ->find($data[PriceListChangeTrigger::ACCOUNT_GROUP]);
-        }
-        if ($data[PriceListChangeTrigger::WEBSITE]) {
-            $data[PriceListChangeTrigger::WEBSITE] = $this->registry->getRepository(Website::class)
-                ->find($data[PriceListChangeTrigger::WEBSITE]);
-        }
 
         $priceListChangeTrigger = new PriceListChangeTrigger();
+        if ($data[PriceListChangeTrigger::ACCOUNT]) {
+            $account = $this->registry->getRepository(Account::class)
+                ->find($data[PriceListChangeTrigger::ACCOUNT]);
+            $priceListChangeTrigger->setAccount($account);
+        }
+        if ($data[PriceListChangeTrigger::ACCOUNT_GROUP]) {
+            $accountGroup = $this->registry->getRepository(AccountGroup::class)
+                ->find($data[PriceListChangeTrigger::ACCOUNT_GROUP]);
+            $priceListChangeTrigger->setAccountGroup($accountGroup);
+        }
+        if ($data[PriceListChangeTrigger::WEBSITE]) {
+            $website = $this->registry->getRepository(Website::class)
+                ->find($data[PriceListChangeTrigger::WEBSITE]);
+            $priceListChangeTrigger->setWebsite($website);
+        }
 
         return $priceListChangeTrigger;
     }
