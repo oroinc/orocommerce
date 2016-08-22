@@ -1,4 +1,3 @@
 styles:
     inputs:
         - 'bundles/orob2baccount/default/scss/styles.scss'
-    output: 'css/layout/blank/styles.css'
