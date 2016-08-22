@@ -1,18 +1,18 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
+use Oro\Bundle\UPSBundle\DependencyInjection\OroUPSExtension;
 
-class OroCheckoutExtensionTest extends ExtensionTestCase
+class OroUPSExtensionTest extends ExtensionTestCase
 {
-    /** @var OroCheckoutExtension */
+    /** @var OroUPSExtension */
     protected $extension;
 
     protected function setUp()
     {
-        $this->extension = new OroCheckoutExtension();
+        $this->extension = new OroUPSExtension();
     }
 
     protected function tearDown()
@@ -25,18 +25,8 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
-            'orob2b_checkout.layout.data_provider.shipping_methods',
-            'orob2b_checkout.shipping_cost.calculator',
-            'orob2b_checkout.condition.has_applicable_shipping_methods',
-            'orob2b_checkout.condition.shipping_method_supports'
+            'oro_ups.provider.channel'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
-
-        $this->assertExtensionConfigsLoaded([OroCheckoutExtension::ALIAS]);
-    }
-
-    public function testGetAlias()
-    {
-        $this->assertEquals(OroCheckoutExtension::ALIAS, $this->extension->getAlias());
     }
 }
