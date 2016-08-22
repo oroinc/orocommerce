@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
@@ -11,9 +11,9 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractWebsiteSearchEngine;
 class ORMEngine extends AbstractWebsiteSearchEngine
 {
     /**
-     * @var ObjectManager
+     * @var Registry
      */
-    private $em;
+    private $doctrine;
 
     /**
      * {@inheritdoc}
@@ -26,17 +26,17 @@ class ORMEngine extends AbstractWebsiteSearchEngine
 
         return [
             'results'       => [
-                new Item($this->em, 'testEntity', '1', 'testTitle', 'testUrl', [])
+                new Item($this->doctrine->getManager(), 'testEntity', '1', 'testTitle', 'testUrl', [])
             ],
             'records_count' => 1
         ];
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param Registry $doctrine
      */
-    public function setEntityManager(ObjectManager $manager)
+    public function setDoctrine(Registry $doctrine)
     {
-        $this->em = $manager;
+        $this->doctrine = $doctrine;
     }
 }

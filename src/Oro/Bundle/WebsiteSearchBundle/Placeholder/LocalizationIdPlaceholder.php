@@ -2,9 +2,24 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+
 class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
 {
     const NAME = 'LOCALIZATION_ID';
+
+    /**
+     * @var UserLocalizationManager
+     */
+    private $localizationManager;
+
+    /**
+     * @param UserLocalizationManager $localizationManager
+     */
+    public function __construct(UserLocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
+    }
 
     /**
      * {@inheritdoc}
@@ -19,9 +34,8 @@ class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
      */
     public function getValue()
     {
-        /**
-         * TODO: Should be done in BB-7045
-         */
-        return '';
+        $localization = $this->localizationManager->getCurrentLocalization();
+
+        return (string) $localization->getId();
     }
 }

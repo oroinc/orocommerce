@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\PlaceholderResolver;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
 abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
 {
@@ -17,18 +17,20 @@ abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
     private $eventDispatcher;
 
     /**
-     * @var PlaceholderResolver
+     * @var QueryPlaceholderResolver
      */
-    private $placeholderResolver;
+    private $queryPlaceholderResolver;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param PlaceholderResolver $placeholderResolver
+     * @param QueryPlaceholderResolver $queryPlaceholderResolver
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, PlaceholderResolver $placeholderResolver)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        QueryPlaceholderResolver $queryPlaceholderResolver
+    ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->placeholderResolver = $placeholderResolver;
+        $this->queryPlaceholderResolver = $queryPlaceholderResolver;
     }
 
     /**
@@ -47,7 +49,7 @@ abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
 
         $query = $event->getQuery();
-        $query = $this->placeholderResolver->replace($query, $context);
+        $query = $this->queryPlaceholderResolver->replace($query, $context);
 
         return $this->doSearch($query, $context);
     }

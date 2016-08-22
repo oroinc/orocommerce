@@ -18,7 +18,7 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
         parent: 'oro_website_search.search.engine'
         calls:
-            - [setEntityManager, ['@doctrine.orm.entity_manager']]
+            - [setDoctrine, ['@doctrine']]
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
@@ -33,6 +33,8 @@ services:
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_search.event_listener.orm.fulltext_index_listener:
         class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
