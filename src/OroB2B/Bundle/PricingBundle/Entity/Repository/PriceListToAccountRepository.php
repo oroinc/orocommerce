@@ -7,15 +7,15 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -67,7 +67,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->from('OroB2BAccountBundle:Account', 'account');
 
         $qb->innerJoin(
-            'OroB2BPricingBundle:PriceListToAccount',
+            PriceListToAccount::class,
             'plToAccount',
             Join::WITH,
             $qb->expr()->andX(
@@ -77,7 +77,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         );
 
         $qb->leftJoin(
-            'OroB2BPricingBundle:PriceListAccountFallback',
+            PriceListAccountFallback::class,
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
@@ -117,7 +117,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         )
             ->innerJoin('PriceListToAccount.account', 'acc')
             ->innerJoin(
-                'OroB2BPricingBundle:PriceListToAccountGroup',
+                PriceListToAccountGroup::class,
                 'PriceListToAccountGroup',
                 Join::WITH,
                 $qb->expr()->andX(

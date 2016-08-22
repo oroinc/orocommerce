@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Component\MessageQueue\Transport\MessageInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
@@ -33,12 +32,11 @@ class PriceListChangeTriggerFactory
     }
 
     /**
-     * @param MessageInterface $message
+     * @param array $data
      * @return PriceListChangeTrigger
      */
-    public function createFromMessage(MessageInterface $message)
+    public function createFromArray($data = [])
     {
-        $data = $message->getBody() ? json_decode($message->getBody(), true) : [];
         $data = $this->normalizeArrayData($data);
 
         $priceListChangeTrigger = new PriceListChangeTrigger();

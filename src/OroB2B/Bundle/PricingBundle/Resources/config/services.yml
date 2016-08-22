@@ -278,7 +278,7 @@ services:
             - '@doctrine'
             - '@orob2b_pricing.price_list_change_trigger_factory'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_config.global'
+            - '@oro_config.manager'
 
     orob2b_pricing.price_rule_trigger_factory:
         class: 'OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory'

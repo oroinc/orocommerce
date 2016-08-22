@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
@@ -11,6 +10,8 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -25,8 +26,8 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                LoadPriceListRelations::class,
+                LoadPriceListFallbackSettings::class,
             ]
         );
     }
@@ -40,8 +41,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         $alias = 'account_group';
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
-            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->getRepository(AccountGroup::class)
             ->createQueryBuilder($alias);
 
         /** @var BasePriceList $priceList */
@@ -67,26 +67,26 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             [
                 'priceList' => 'price_list_1',
                 'expectedAccountGroups' => [
-                    'account_group.group1',
-                ],
+                    'account_group.group1'
+                ]
             ],
             [
                 'priceList' => 'price_list_2',
-                'expectedAccountGroups' => [],
+                'expectedAccountGroups' => []
             ],
             [
                 'priceList' => 'price_list_4',
                 'expectedAccountGroups' => [
-                    'account_group.group2',
-                ],
+                    'account_group.group2'
+                ]
             ],
             [
                 'priceList' => 'price_list_5',
                 'expectedAccountGroups' => [
                     'account_group.group1',
-                    'account_group.group3',
-                ],
-            ],
+                    'account_group.group3'
+                ]
+            ]
         ];
     }
 
@@ -145,22 +145,22 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                 'website' => 'US',
                 'expectedPriceLists' => [
                     'priceList5',
-                    'priceList1',
-                ],
+                    'priceList1'
+                ]
             ],
             [
                 'account' => 'account_group.group2',
                 'website' => 'US',
                 'expectedPriceLists' => [
-                    'priceList4',
-                ],
+                    'priceList4'
+                ]
             ],
             [
                 'account' => 'account_group.group3',
                 'website' => 'Canada',
                 'expectedPriceLists' => [
-                    'priceList5',
-                ],
+                    'priceList5'
+                ]
             ],
         ];
     }
@@ -195,15 +195,15 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
             'with fallback' => [
                 'website' => 'US',
                 'fallback' => PriceListAccountGroupFallback::WEBSITE,
-                'expectedAccountGroups' => ['account_group.group1'],
+                'expectedAccountGroups' => ['account_group.group1']
             ],
             'without fallback' => [
                 'website' => 'US',
                 'fallback' => null,
                 'expectedAccountGroups' => [
                     'account_group.group1',
-                    'account_group.group2',
-                ],
+                    'account_group.group2'
+                ]
             ],
         ];
     }
