@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use OroB2B\Bundle\PricingBundle\Async\Topics;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -19,7 +20,6 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class PriceListChangeTriggerHandlerTest extends WebTestCase
 {
-    const TOPIC = 'test';
     /**
      * @var PriceListChangeTriggerHandler
      */
@@ -57,7 +57,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $website->getId(),
                         PriceListChangeTrigger::ACCOUNT => null,
@@ -83,7 +83,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $website->getId(),
                         PriceListChangeTrigger::ACCOUNT => $account->getId(),
@@ -104,7 +104,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => null,
                         PriceListChangeTrigger::ACCOUNT => null,
@@ -129,7 +129,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $website->getId(),
                         PriceListChangeTrigger::ACCOUNT => null,
@@ -152,7 +152,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListChangeTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
@@ -161,7 +161,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListChangeTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
@@ -169,7 +169,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                     ],
@@ -187,7 +187,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => null,
                         PriceListChangeTrigger::ACCOUNT => null,
@@ -210,7 +210,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => self::TOPIC,
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
                         PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListChangeTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),

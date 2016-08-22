@@ -7,6 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Async\Topics;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
@@ -16,7 +17,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListChangeTriggerHandler
 {
-    const TOPIC = 'test';
     /**
      * @var ManagerRegistry
      */
@@ -67,7 +67,7 @@ class PriceListChangeTriggerHandler
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setWebsite($website);
-        $this->producer->send(self::TOPIC, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -80,13 +80,13 @@ class PriceListChangeTriggerHandler
         $trigger->setAccount($account)
             ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
-        $this->producer->send(self::TOPIC, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     public function handleConfigChange()
     {
         $trigger = $this->triggerFactory->create();
-        $this->producer->send(self::TOPIC, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -98,7 +98,7 @@ class PriceListChangeTriggerHandler
         $trigger = $this->triggerFactory->create();
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
-        $this->producer->send(self::TOPIC, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -119,17 +119,17 @@ class PriceListChangeTriggerHandler
 
         $priceListToAccountRepository = $this->registry->getRepository(PriceListToAccount::class);
         foreach ($priceListToAccountRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(self::TOPIC, $item);
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
         }
 
         $priceListToAccountGroupRepository = $this->registry->getRepository(PriceListToAccountGroup::class);
         foreach ($priceListToAccountGroupRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(self::TOPIC, $item);
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
         }
 
         $priceListToWebsiteRepository = $this->registry->getRepository(PriceListToWebsite::class);
         foreach ($priceListToWebsiteRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(self::TOPIC, $item);
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
         }
     }
 
@@ -141,7 +141,7 @@ class PriceListChangeTriggerHandler
         $iterator = $this->registry->getRepository(PriceListToAccount::class)
             ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
         foreach ($iterator as $item) {
-            $this->producer->send(self::TOPIC, $item);
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
         }
     }
 
@@ -149,6 +149,6 @@ class PriceListChangeTriggerHandler
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setForce(true);
-        $this->producer->send(self::TOPIC, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 }
