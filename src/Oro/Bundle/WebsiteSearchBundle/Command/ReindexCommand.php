@@ -54,7 +54,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $context = [];
 
-        if ($websiteId && is_int($websiteId)) {
+        if ($websiteId) {
             $placeholder .= ' and WEBSITE ID:' . $websiteId;
             $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
         }
