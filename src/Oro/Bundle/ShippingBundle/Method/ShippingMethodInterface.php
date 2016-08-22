@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Method\Type\ShippingMethodTypeInterface;
 interface ShippingMethodInterface
 {
     /**
-     * return bool
+     * @return bool
      */
     public function isGrouped();
 
