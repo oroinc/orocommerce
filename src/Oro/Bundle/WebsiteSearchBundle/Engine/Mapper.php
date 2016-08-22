@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-class MapperStub
+class Mapper
 {
     /**
      * @return array

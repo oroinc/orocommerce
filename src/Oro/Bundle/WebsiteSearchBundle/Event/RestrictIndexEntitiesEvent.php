@@ -12,20 +12,20 @@ class RestrictIndexEntitiesEvent
     protected $queryBuilder;
 
     /** @var string */
-    protected $entityClassname;
+    protected $entityClass;
 
     /** @var array */
     protected $context;
 
     /**
      * @param QueryBuilder $qb
-     * @param string $entityClassname
+     * @param string $entityClass
      * @param array $context
      */
-    public function __construct(QueryBuilder $qb, $entityClassname, array $context)
+    public function __construct(QueryBuilder $qb, $entityClass, array $context)
     {
         $this->queryBuilder = $qb;
-        $this->entityClassname = $entityClassname;
+        $this->entityClass = $entityClass;
         $this->context = $context;
     }
 
@@ -48,9 +48,9 @@ class RestrictIndexEntitiesEvent
     /**
      * @return string
      */
-    public function getEntityClassname()
+    public function getEntityClass()
     {
-        return $this->entityClassname;
+        return $this->entityClass;
     }
 
     /**
