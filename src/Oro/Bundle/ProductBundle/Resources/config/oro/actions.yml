@@ -1,0 +1,55 @@
+operations:
+    orob2b_product_duplicate:
+        label: oro.product.ui.duplicate
+        applications: [backend]
+        routes:
+            - orob2b_product_view
+        datagrids:
+            - products-grid
+        acl_resource: orob2b_product_create
+        order: 10
+        button_options:
+            icon: icon-copy
+        actions:
+            - '@run_action_group':
+                results:
+                    product_copy_id: $.productCopy.id
+                action_group: orob2b_product_duplicate
+                parameters_mapping:
+                    data: $.data
+            - '@call_service_method':
+                attribute: $.hasSuccessMessage
+                service: session.flash_bag
+                method: has
+                method_parameters: ['success']
+            - '@flash_message':
+                conditions:
+                    '@equal': [$.hasSuccessMessage, false]
+                parameters:
+                    message: oro.product.controller.product.duplicated.message
+                    type: 'success'
+            - '@redirect':
+                route: orob2b_product_view
+                route_parameters:
+                    id: $.product_copy_id
+    UPDATE:
+        exclude_datagrids:
+            - products-select-grid
+            - frontend-products-grid
+    DELETE:
+        exclude_datagrids:
+            - products-select-grid
+            - frontend-products-grid
+
+action_groups:
+    orob2b_product_duplicate:
+        parameters:
+            data:
+                type: Oro\Bundle\ProductBundle\Entity\Product
+        acl_resource: orob2b_product_create
+        actions:
+            - '@call_service_method':
+                service: orob2b_product.service.duplicator
+                method: duplicate
+                method_parameters: [$.data]
+                attribute: $.productCopy

@@ -1,0 +1,30 @@
+method: getTax
+reference: simple_order
+configuration: {}
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
+            billingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+            shippingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 5 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 6 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+expectedResult:
+    total:
+        includingTax: '113.25'
+        excludingTax: '113.25'
+        taxAmount: '0'
+        adjustment: '0'
+        currency: 'USD'
+    taxes: []

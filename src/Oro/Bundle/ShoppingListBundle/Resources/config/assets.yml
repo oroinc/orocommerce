@@ -1,0 +1,3 @@
+css:
+    'oroshoppinglist':
+        - 'bundles/oroshoppinglist/css/less/style.less'

@@ -1,0 +1,57 @@
+twig:
+    globals:
+        commerce:
+            layout: OroFrontendBundle::base.html.twig
+
+security:
+    firewalls:
+        assets:
+            pattern:                        ^/(css|images|js)/
+            security:                       false
+
+        install:
+            pattern:                        ^/installer
+            security:                       false
+            anonymous:                      true
+
+        # override pattern
+        wsse_secured:
+            pattern:                        ^%web_backend_prefix%/api/(rest|soap).*
+
+        # override pattern
+        api_wsse_secured:
+            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest|soap))($|.*)
+
+        # override pattern
+        login:
+            pattern:                        ^%web_backend_prefix%/user/(login|reset-request|send-email|check-email)$
+
+        # override pattern
+        reset_password:
+            pattern:                        ^%web_backend_prefix%/user/reset/*
+
+        # override pattern
+        embedded_form:
+            pattern:                        ^%web_backend_prefix%/embedded-form/(submit|success)
+
+        # override pattern
+        tracking_data:
+            pattern:                        ^%web_backend_prefix%/tracking/data/create
+
+        # override pattern and config
+        main:
+            pattern:                        ^%web_backend_prefix%/
+            organization-form-login:
+                default_target_path:        oro_default
+            logout:
+                invalidate_session:         false
+                target:                     oro_default
+oro_layout:
+    active_theme: default
+
+assetic:
+    filters:
+        scssphp:
+            file: %kernel.root_dir%/../vendor/leafo/scssphp/scss.inc.php
+            apply_to: "\.scss$"
+            import_paths: ["%kernel.root_dir%/../web/bundles"]

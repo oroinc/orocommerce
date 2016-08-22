@@ -1,0 +1,47 @@
+orob2b_frontend:
+    resource:     "@OroFrontendBundle/Controller/FrontendController.php"
+    type:         annotation
+    options:
+        frontend: true
+
+orob2b_installer:
+    resource: "@OroInstallerBundle/Resources/config/oro/routing.yml"
+    options:
+        frontend: true
+
+orob2b_frontend_datagrid_index:
+    path: /datagrid/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:get }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
+
+orob2b_frontend_datagrid_widget:
+    path: /datagrid/widget/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:widget }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
+
+orob2b_frontend_action:
+    resource: "@OroFrontendBundle/Resources/config/oro/routing_action.yml"
+
+oro_filtered_attachment:
+    path: "media/cache/attachment/resize/{id}/{filter}/{filename}"
+    defaults: { _controller: OroAttachmentBundle:File:getFilteredImage}
+    requirements:
+        id: '\d+'
+    options:
+        frontend: true
+
+oro_resize_attachment:
+    path: "media/cache/attachment/resize/{id}/{width}/{height}/{filename}"
+    defaults: { _controller: OroAttachmentBundle:File:getResizedAttachmentImage}
+    requirements:
+        id: '\d+'
+        width: '\d+'
+        height: '\d+'
+    options:
+        frontend: true
