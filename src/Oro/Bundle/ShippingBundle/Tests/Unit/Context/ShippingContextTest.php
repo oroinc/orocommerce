@@ -244,7 +244,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
      * @param array $inputData
      * @param array $expectedData
      *
-     * @dataProvider getFreightClassesProvider
+     * @dataProvider getDataProvider
      */
     public function testSetLineItems(array $inputData, array $expectedData)
     {
@@ -256,7 +256,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getFreightClassesProvider()
+    public function getDataProvider()
     {
         return [
             'no data'            => [
