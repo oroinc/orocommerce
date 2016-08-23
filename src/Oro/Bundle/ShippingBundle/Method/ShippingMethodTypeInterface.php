@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 interface ShippingMethodTypeInterface
 {
@@ -28,9 +28,9 @@ interface ShippingMethodTypeInterface
     public function getOptionsConfigurationFormType();
 
     /**
-     * @param ShippingContextAwareInterface $context
+     * @param ShippingContextInterface $context
      * @param array $options
      * @return null|Price
      */
-    public function calculatePrice(ShippingContextAwareInterface $context, array $options);
+    public function calculatePrice(ShippingContextInterface $context, array $options);
 }
