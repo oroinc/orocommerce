@@ -215,10 +215,10 @@ datagrid:
         sorters:
             columns:
                 sku:
-                    data_name: product.sku
+                    data_name: sku
                     type: string
             default:
-                sku: ASC
+                sku: DESC
 
 
     orob2b_product-product_variants:

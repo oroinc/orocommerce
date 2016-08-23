@@ -38,6 +38,9 @@ class ExampleMockEngine implements EngineV2Interface
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
 
+        // order rows by ordering specified in query
+        $result = $this->getOrderedData($query, $result);
+
         return new Result($query, $result);
     }
 
@@ -48,20 +51,51 @@ class ExampleMockEngine implements EngineV2Interface
     {
         return [
             [
-                'id'            => 1,
-                'sku'           => '01C82',
-                'name'          => 'Canon 5D EOS',
-                'defaultName'   => 'Canon 5D EOS Camera',
-                'descriptions'  => 'Small description of another good product from our shop.',
-                'minimum_price' => '1299.00',
-                'product_units' => [
-                    'item' => 'item'
-                ],
-                'prices'        => [
-                    'item_1' => '1299.00'
-                ],
-                'image'         => null
+                [
+                    'id'               => 1,
+                    'sku'              => '01C82',
+                    'name'             => 'Canon 5D EOS',
+                    'shortDescription' => 'Small description of another good product from our shop.',
+                    'minimum_price'    => '1299.00',
+                    'product_units'    => [
+                        'item' => 'item'
+                    ],
+                    'prices'           => [
+                        'item_1' => '1299.00'
+                    ],
+                    'image'            => null
 
+                ],
+                [
+                    'id'               => 2,
+                    'sku'              => '6VC22',
+                    'name'             => 'Bluetooth Barcode Scanner',
+                    'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission to...',
+                    'minimum_price'    => '340.00',
+                    'product_units'    => [
+                        'item' => 'item'
+                    ],
+                    'prices'           => [
+                        'item_1' => '340.00'
+                    ],
+                    'image'            => null
+
+                ],
+                [
+                    'id'               => 3,
+                    'sku'              => '5GE27',
+                    'name'             => 'Pricing Labeler',
+                    'shortDescription' => 'This pricing labeler is easy to use and comes with...',
+                    'minimum_price'    => '165.00',
+                    'product_units'    => [
+                        'item' => 'item'
+                    ],
+                    'prices'           => [
+                        'item_1' => '165.00'
+                    ],
+                    'image'            => null
+
+                ],
             ],
         ];
     }
@@ -104,4 +138,30 @@ class ExampleMockEngine implements EngineV2Interface
 
         return $result;
     }
+
+    /**
+     * @param Query $query
+     * @param array $data
+     * @return array
+     */
+    private function getOrderedData(Query $query, array $data) {
+        foreach($query->getCriteria()->getOrderings() as $field => $sort) {
+            if (strpos($field, 'text.') === 0) {
+                $key = substr($field, 5);
+
+                usort($data, function($a, $b) use ($key, $sort) {
+                    if ($sort === SearchSorterExtension::DIRECTION_DESC) {
+                        $result = strcmp($b[$key], $a[$key]);
+                    } else {
+                        $result = strcmp($a[$key], $b[$key]);
+                    }
+                    return $result;
+
+                });
+            }
+        }
+
+        return $data;
+    }
+
 }
