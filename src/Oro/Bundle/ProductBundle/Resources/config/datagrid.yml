@@ -216,7 +216,6 @@ datagrid:
             columns:
                 sku:
                     data_name: sku
-                    type: string
             default:
                 sku: DESC
 
