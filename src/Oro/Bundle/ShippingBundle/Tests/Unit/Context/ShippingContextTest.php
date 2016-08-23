@@ -23,12 +23,61 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var ShippingContext */
+    /**
+     * @var ShippingContext
+     */
     protected $model;
+
+
+    /**
+     * @var Product
+     */
+    protected $product;
+
+    /**
+     * @var ProductUnit
+     */
+    private $productUnit;
+
+    /**
+     * @var Price
+     */
+    private $price;
+
+    /**
+     * @var Weight
+     */
+    private $weight;
+
+    /**
+     * @var integer
+     */
+    private $entityIdentifier;
+
+    /**
+     * @var Dimensions
+     */
+    private $dimensions;
+
+    /**
+     * @var integer
+     */
+    private $quantity;
+
 
     protected function setUp()
     {
         $this->model = new ShippingContext();
+
+        $this->entityIdentifier = 2;
+        $this->product = new Product();
+        $this->product->setSku('test sku');
+        $this->productUnit = new ProductUnit();
+        $this->productUnit->setCode('kg')->setDefaultPrecision(3);
+        $this->price = new Price();
+        $this->weight = new Weight();
+        $this->dimensions = new Dimensions();
+        $this->quantity = 1;
     }
 
     protected function tearDown()
@@ -52,6 +101,145 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSetLineItemsWithShippingContextInterface()
+    {
+        $mockItem = $this->getMockBuilder(ShippingLineItemInterface::class)->getMock();
+        $mockItem->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $mockItem->expects($this->any())
+            ->method('getProductUnit')
+            ->willReturn($this->productUnit);
+        $mockItem->expects($this->any())
+            ->method('getEntityIdentifier')
+            ->willReturn($this->entityIdentifier);
+        $mockItem->expects($this->once())
+            ->method('getDimensions')
+            ->willReturn($this->dimensions);
+        $mockItem->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($this->quantity);
+        $mockItem->expects($this->once())
+            ->method('getPrice')
+            ->willReturn($this->price);
+        $mockItem->expects($this->once())
+            ->method('getWeight')
+            ->willReturn($this->weight);
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setProduct($this->product)
+            ->setProductUnit($this->productUnit)
+            ->setEntityIdentifier($this->entityIdentifier)
+            ->setDimensions($this->dimensions)
+            ->setQuantity($this->quantity)
+            ->setPrice($this->price)
+            ->setWeight($this->weight);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
+    public function testSetLineItemsWithProductUnitHolderInterface()
+    {
+        $mockItem = $this->getMockBuilder(ProductUnitHolderInterface::class)->getMock();
+        $mockItem->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($this->productUnit);
+        $mockItem->expects($this->once())
+            ->method('getEntityIdentifier')
+            ->willReturn($this->entityIdentifier);
+
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setProductUnit($this->productUnit)
+            ->setEntityIdentifier($this->entityIdentifier);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
+    public function testSetLineItemsWithProductHolderInterface()
+    {
+        $mockItem = $this->getMockBuilder(ProductHolderInterface::class)->getMock();
+        $mockItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $mockItem->expects($this->once())
+            ->method('getEntityIdentifier')
+            ->willReturn($this->entityIdentifier);
+
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setProduct($this->product)
+            ->setEntityIdentifier($this->entityIdentifier);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
+    public function testSetLineItemsWithProductShippingOptionsInterface()
+    {
+        $mockItem = $this->getMockBuilder(ProductShippingOptionsInterface::class)->getMock();
+        $mockItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $mockItem->expects($this->once())
+            ->method('getProductUnit')
+            ->willReturn($this->productUnit);
+        $mockItem->expects($this->once())
+            ->method('getWeight')
+            ->willReturn($this->weight);
+        $mockItem->expects($this->once())
+            ->method('getDimensions')
+            ->willReturn($this->dimensions);
+
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setProduct($this->product)
+            ->setProductUnit($this->productUnit)
+            ->setWeight($this->weight)
+            ->setDimensions($this->dimensions);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
+    public function testSetLineItemsWithQuantityAwareInterface()
+    {
+        $mockItem = $this->getMockBuilder(QuantityAwareInterface::class)->getMock();
+        $mockItem->expects($this->once())
+            ->method('getQuantity')
+            ->willReturn($this->quantity);
+
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setQuantity($this->quantity);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
+    public function testSetLineItemsWithPriceAwareInterface()
+    {
+        $mockItem = $this->getMockBuilder(PriceAwareInterface::class)->getMock();
+        $mockItem->expects($this->once())
+            ->method('getPrice')
+            ->willReturn($this->price);
+
+
+        $this->model->setLineItems([$mockItem]);
+
+        $shippingLineItem = (new ShippingLineItem())
+            ->setPrice($this->price);
+
+        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
+    }
+
     /**
      * @param array $inputData
      * @param array $expectedData
@@ -66,163 +254,25 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function getFreightClassesProvider()
     {
-        $entityIdentifier = 2;
-        $product = new Product();
-        $product->setSku('test sku');
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('kg')->setDefaultPrecision(3);
-        $price = new Price();
-        $weight = new Weight();
-        $dimensions = new Dimensions();
-        $quantity = 1;
-
-        $shippingLineItem = $this->getMockBuilder(ShippingLineItemInterface::class)->getMock();
-        $shippingLineItem->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $shippingLineItem->expects($this->any())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $shippingLineItem->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn($entityIdentifier);
-        $shippingLineItem->expects($this->once())
-            ->method('getDimensions')
-            ->willReturn($dimensions);
-        $shippingLineItem->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($quantity);
-        $shippingLineItem->expects($this->once())
-            ->method('getPrice')
-            ->willReturn($price);
-        $shippingLineItem->expects($this->once())
-            ->method('getWeight')
-            ->willReturn($weight);
-
-        $productUnitHolder = $this->getMockBuilder(ProductUnitHolderInterface::class)->getMock();
-        $productUnitHolder->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $productUnitHolder->expects($this->once())
-            ->method('getEntityIdentifier')
-            ->willReturn($entityIdentifier);
-
-        $productHolder = $this->getMockBuilder(ProductHolderInterface::class)->getMock();
-        $productHolder->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
-        $productHolder->expects($this->once())
-            ->method('getEntityIdentifier')
-            ->willReturn($entityIdentifier);
-
-        $productShippingOptions = $this->getMockBuilder(ProductShippingOptionsInterface::class)->getMock();
-        $productShippingOptions->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
-        $productShippingOptions->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $productShippingOptions->expects($this->once())
-            ->method('getWeight')
-            ->willReturn($weight);
-        $productShippingOptions->expects($this->once())
-            ->method('getDimensions')
-            ->willReturn($dimensions);
-
-        $quantityAware = $this->getMockBuilder(QuantityAwareInterface::class)->getMock();
-        $quantityAware->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($quantity);
-        $priceAware = $this->getMockBuilder(PriceAwareInterface::class)->getMock();
-        $priceAware->expects($this->once())
-            ->method('getPrice')
-            ->willReturn($price);
-
         return [
-            'no data' => [
-                'input' => [
+            'no data'            => [
+                'input'    => [
                 ],
                 'expected' => [
                 ],
             ],
             'without interfaces' => [
-                'input' => [
+                'input'    => [
                     'no data'
                 ],
                 'expected' => [
                     new ShippingLineItem()
                 ],
-            ],
-            'ShippingContextInterface' => [
-                'input' => [
-                    $shippingLineItem
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setEntityIdentifier($entityIdentifier)
-                        ->setDimensions($dimensions)
-                        ->setQuantity($quantity)
-                        ->setPrice($price)
-                        ->setWeight($weight)
-                ],
-            ],
-            'ProductUnitHolder' => [
-                'input' => [
-                    $productUnitHolder
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setProductUnit($productUnit)
-                        ->setEntityIdentifier($entityIdentifier)
-                ],
-            ],
-            'ProductHolderInterface' => [
-                'input' => [
-                    $productHolder
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setProduct($product)
-                        ->setEntityIdentifier($entityIdentifier)
-                ],
-            ],
-            'ProductShippingOptions' => [
-                'input' => [
-                    $productShippingOptions
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setWeight($weight)
-                        ->setDimensions($dimensions)
-                ],
-            ],
-            '$quantityAware' => [
-                'input' => [
-                    $quantityAware
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setQuantity($quantity)
-                ],
-            ],
-            'PriceAwareInterface' => [
-                'input' => [
-                    $priceAware
-                ],
-                'expected' => [
-                    (new ShippingLineItem())
-                        ->setPrice($price)
-                ],
-            ],
+            ]
         ];
     }
 }
