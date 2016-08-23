@@ -81,15 +81,15 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBeforeTotalCalculateProvider()
     {
         return [
-            'application frontend' => [
-                'application' => 'frontend',
+            'application commerce' => [
+                'application' => 'commerce',
                 'expected' => [
                     'resetDiscounts' => false
                 ]
 
             ],
-            'application backend' => [
-                'application' => 'backend',
+            'application default' => [
+                'application' => 'default',
                 'expected' => [
                     'resetDiscounts' => true
                 ]

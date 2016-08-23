@@ -1,7 +1,7 @@
 operations:
     orob2b_account_accountuser_disable:
         label: oro.account.action.account_user.disable
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_account_account_user_view
         datagrids:
@@ -24,7 +24,7 @@ operations:
 
     orob2b_account_accountuser_enable:
         label: oro.account.action.account_user.enable
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_account_account_user_view
         datagrids:
@@ -47,7 +47,7 @@ operations:
 
     orob2b_account_frontend_accountuser_disable:
         label: oro.account.action.account_user.disable
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_view
         order: 10
@@ -86,7 +86,7 @@ operations:
 
     orob2b_account_frontend_accountuser_enable:
         label: oro.account.action.account_user.enable
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_view
         order: 10
@@ -167,7 +167,7 @@ operations:
 
     orob2b_account_frontend_create:
         label: oro.account.action.account_user.create
-        applications: [frontend]
+        applications: [commerce]
         routes:
            - orob2b_account_frontend_account_user_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUser]
@@ -179,7 +179,7 @@ operations:
 
     orob2b_account_frontend_create_role:
         label: oro.account.action.account_user_role.create
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_role_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
@@ -191,7 +191,7 @@ operations:
 
     orob2b_account_frontend_delete_user:
         label: oro.account.action.account_user.delete
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_view
             - orob2b_account_frontend_account_user_update
@@ -222,7 +222,7 @@ operations:
 
     orob2b_account_frontend_edit_user:
         label: oro.account.action.account_user.edit
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_view
         acl_resource: [EDIT, $.data]
@@ -238,7 +238,7 @@ operations:
 
     orob2b_account_frontend_profile_user:
         label: oro.account.action.account_user.edit
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_profile
         acl_resource: [EDIT, $.data]
@@ -252,7 +252,7 @@ operations:
 
     orob2b_account_frontend_edit_role:
         label: oro.account.frontend.action.account_user_role.edit
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_role_view
         acl_resource: [EDIT, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
@@ -268,7 +268,7 @@ operations:
 
     orob2b_account_frontend_delete_role:
         label: oro.account.action.account_user_role.delete
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_account_frontend_account_user_role_view
             - orob2b_account_frontend_account_user_role_update
