@@ -491,9 +491,10 @@
     &.product__specification_delivery {
       display: none;
     }
+    
     .product-item--compact & {
-      width: 100%;
       display: inline-block;
+      width: 100%;
       margin-bottom: 0 !important;
     }
   }

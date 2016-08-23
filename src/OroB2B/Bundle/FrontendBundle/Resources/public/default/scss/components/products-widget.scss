@@ -253,8 +253,10 @@
         float: none;
         width: 100%;
       }
+
       .product-item--compact & {
         width: 50%;
+
         @media (max-width: $screen-sm) {
           width: 100%;
         }
@@ -344,9 +346,10 @@
         + .product-item__secondary-half_no-image-view {
           width: 65%;
         }
+        
         .product-item--compact & {
-          width: auto;
           float: right;
+          width: auto;
         }
       }
 
