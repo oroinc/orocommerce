@@ -19,9 +19,7 @@ class QueryFactory implements QueryFactoryInterface
     /** @var QueryFactory */
     protected $parent;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     /**
