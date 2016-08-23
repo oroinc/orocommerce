@@ -21,7 +21,7 @@ operations:
                     options:
                         required: true
                 request_note:
-                    form_type: orob2b_rich_text
+                    form_type: oro_rich_text
             attribute_default_values:
                 request_status: $status
         button_options:
@@ -59,7 +59,7 @@ operations:
         form_options:
             attribute_fields:
                 cancellation_reason:
-                    form_type: orob2b_rich_text
+                    form_type: oro_rich_text
         button_options:
             icon: icon-ban-circle
         frontend_options:
