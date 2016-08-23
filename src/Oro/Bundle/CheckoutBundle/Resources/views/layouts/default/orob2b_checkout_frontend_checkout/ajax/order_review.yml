@@ -27,7 +27,6 @@ layout:
             id: payment_additional_data
             parentId: checkout_information
             blockType: payment_additional_data
-            prepend: true
             options:
                 block_name: '=data["orob2b_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
                 options:
