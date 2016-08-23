@@ -62,7 +62,7 @@ oro:
         payflow_express_checkout:
             redirect_to_paypal: 'You will be redirected to PayPal website to complete your purchase after the order review step.'
 
-orob2b:
+oro:
     payment:
         admin:
             paypal_payments_pro.label: 'PayPal Payments Pro'

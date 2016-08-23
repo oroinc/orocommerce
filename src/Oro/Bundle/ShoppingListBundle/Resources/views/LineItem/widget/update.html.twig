@@ -1,0 +1,35 @@
+{% set pageComponentOptions = {
+    '_wid': app.request.get('_wid'),
+    'savedId': savedId|default(null)
+} %}
+<div class="widget-content"
+     data-page-component-module="orofrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.shoppinglist.line_item_save.flash.success'})|json_encode }}"
+>
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-error">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
+          data-page-component-module="oroproduct/js/app/components/product-unit-component">
+        <fieldset class="form-horizontal">
+            {{ form_row(form.product, { 'attr': {'class': 'product-product'} }) }}
+            {{ form_row(form.quantity, { 'attr': {'class': 'product-quantity'} }) }}
+            {{ form_row(form.unit, { 'attr': {'class': 'product-unit'} }) }}
+            {{ form_row(form.notes) }}
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'oro.shoppinglist.lineitem.action.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'oro.shoppinglist.lineitem.action.save'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+</div>

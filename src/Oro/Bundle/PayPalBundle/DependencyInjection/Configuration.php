@@ -9,9 +9,8 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency;
-
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 
 class Configuration implements ConfigurationInterface
 {

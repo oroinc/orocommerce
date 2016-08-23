@@ -9,11 +9,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +34,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentMethodRegistry = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,7 +57,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with('complete', $paymentTransaction);
@@ -89,7 +88,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
