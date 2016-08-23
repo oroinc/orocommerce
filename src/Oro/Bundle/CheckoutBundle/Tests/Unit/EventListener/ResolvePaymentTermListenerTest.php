@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use OroB2B\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener;
-use OroB2B\Bundle\CheckoutBundle\Provider\CheckoutProvider;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
 {

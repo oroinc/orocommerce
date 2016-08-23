@@ -420,7 +420,7 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'ship_until',
                         ],
                         [
-                            'label' => 'orob2b.sale.quote.payment_term.label',
+                            'label' => 'oro.sale.quote.payment_term.label',
                             'property' => 'payment_term.label',
                         ],
                     ],

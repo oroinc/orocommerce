@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use OroB2B\Bundle\CheckoutBundle\Provider\CheckoutProvider;
-use OroB2B\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutProvider;
+use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class ResolvePaymentTermListener
 {

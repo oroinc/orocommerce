@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use OroB2B\Bundle\CheckoutBundle\Provider\CheckoutProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutProvider;
 
 class CheckoutProviderTest extends \PHPUnit_Framework_TestCase
 {

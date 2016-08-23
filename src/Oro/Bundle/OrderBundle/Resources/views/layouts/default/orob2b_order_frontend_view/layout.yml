@@ -142,7 +142,7 @@ layout:
                     options:
                         visible: '=data["order"].getPaymentTerm()!=null'
                         text: '=data["order"].getPaymentTerm()'
-                        label: 'orob2b.order.payment_term.label'
+                        label: 'oro.order.payment_term.label'
                         block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text

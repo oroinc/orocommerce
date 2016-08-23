@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Provider;
+namespace Oro\Bundle\CheckoutBundle\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 
 class CheckoutProvider
 {

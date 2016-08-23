@@ -202,7 +202,7 @@ datagrid:
                 label: oro.sale.quote.account.label
                 order: 3
             paymentTermLabel:
-                label:      orob2b.sale.quote.payment_term.label
+                label:      oro.sale.quote.payment_term.label
                 order:      8
                 renderable: false
         sorters:

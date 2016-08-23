@@ -182,7 +182,7 @@ class QuoteType extends AbstractType
                     'paymentTerm',
                     PaymentTermSelectType::NAME,
                     [
-                        'label' => 'orob2b.sale.quote.payment_term.label',
+                        'label' => 'oro.sale.quote.payment_term.label',
                         'required' => false,
                         'attr' => [
                             'data-account-payment-term' => $this->getAccountPaymentTermId($quote),

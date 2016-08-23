@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
 
 class ResolvePaymentTermEventTest extends \PHPUnit_Framework_TestCase
 {
