@@ -32,10 +32,8 @@ workflows:
             shipping_method_type:
                 property_path: checkout.shippingMethodType
             shipping_rule_config:
-                type: entity
+                type: int
                 label: Shipping Rule Configuration
-                options:
-                    class: Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping

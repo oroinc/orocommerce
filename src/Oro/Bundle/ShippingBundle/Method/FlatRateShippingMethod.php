@@ -14,6 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 class FlatRateShippingMethod implements ShippingMethodInterface
 {
     const NAME = 'flat_rate';
+    const DEFAULT_TYPE = 'flat_rate';
 
     /**
      * {@inheritdoc}
