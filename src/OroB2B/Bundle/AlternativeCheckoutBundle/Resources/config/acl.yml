@@ -1,4 +1,0 @@
-orob2b_alternativecheckout_checkout_approve:
-    label: orob2b.alternativecheckout.security.permission.checkout_approve
-    type: action
-    group_name: "commerce"

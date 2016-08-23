@@ -1,0 +1,265 @@
+datagrid:
+    payment-terms-grid:
+        acl_resource: orob2b_payment_term_view
+        extended_entity_name: %orob2b_payment.entity.payment_term.class%
+        options:
+            entityHint:        payment_term
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - paymentTerm.id
+                    - paymentTerm.label
+                from:
+                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
+        columns:
+            label:
+                label: oro.payment.paymentterm.label.label
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_payment_term_view
+                params:
+                    - id
+            update_link:
+                type: url
+                route: orob2b_payment_term_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_delete_paymentterm
+                params: [ id ]
+            payment_delete_message:
+                type: twig
+                template: 'OroPaymentBundle:PaymentTerm:deleteMessageDatagrid.html.twig'
+        sorters:
+            columns:
+                label:
+                    data_name: paymentTerm.label
+            default:
+                label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type:      string
+                    data_name: paymentTerm.label
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_payment_term_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_payment_term_update
+            delete:
+                type:          payment-delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_payment_term_delete
+
+    payment-terms-select-grid:
+        acl_resource: orob2b_payment_term_view
+        options:
+            entityHint:        payment_term
+        source:
+            type:         orm
+            query:
+                select:
+                    - paymentTerm.id
+                    - paymentTerm.label
+                from:
+                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
+        columns:
+            label:
+                label: oro.payment.paymentterm.label.label
+        properties:
+            id: ~
+        sorters:
+            columns:
+                label:
+                    data_name: paymentTerm.label
+            default:
+                label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type:      string
+                    data_name: paymentTerm.label
+
+    base-payment-term-relations-grid:
+        acl_resource: orob2b_payment_term_view
+        options:
+            entity_pagination: true
+        source:
+            type: orm
+            query:
+                select:
+                    - relatedEntity.id
+                    - relatedEntity.name
+                where:
+                    and:
+                        - paymentTerm.id = :payment_term_id
+            bind_parameters:
+                - payment_term_id
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: relatedEntity.name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: relatedEntity.name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                rowAction:    true
+
+    payment-term-accounts-grid:
+        extends: base-payment-term-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm}
+                join:
+                    inner:
+                        - { join: paymentTerm.accounts, alias: relatedEntity }
+        columns:
+            name:
+                label: oro.account.name.label
+        properties:
+            view_link:
+                route:  orob2b_account_group_view
+        actions:
+            view:
+                acl_resource: orob2b_account_group_view
+
+    payment-term-account-groups-grid:
+        extends: base-payment-term-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm}
+                join:
+                    inner:
+                        - { join: paymentTerm.accountGroups, alias: relatedEntity }
+        columns:
+            name:
+                label: oro.account.accountgroup.name.label
+        properties:
+            view_link:
+                route: orob2b_account_view
+        actions:
+            view:
+                acl_resource: orob2b_account_view
+
+    base-payment-term-select-relations-grid:
+        acl_resource: orob2b_payment_term_update
+        source:
+            type: orm
+            query:
+                select:
+                    - relatedEntity.id
+                    - relatedEntity.name
+                    - >
+                      (CASE WHEN (:payment_term_id IS NOT NULL) THEN
+                        CASE WHEN (:payment_term_id = paymentTerm.id OR relatedEntity.id IN (:data_in)) AND relatedEntity.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN relatedEntity.id IN (:data_in) AND relatedEntity.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_payment_term
+            bind_parameters:
+                - payment_term_id
+        columns:
+            has_payment_term:
+                label:          oro.payment.paymentterm.has_payment_term.label
+                editable:       true
+                frontend_type:  boolean
+        filters:
+            columns:
+                has_payment_term:
+                    type:       boolean
+                    data_name:  has_payment_term
+                name:
+                    type:       string
+                    data_name:  relatedEntity.name
+        sorters:
+            multiple_sorting:   true
+            columns:
+                has_payment_term:
+                    data_name:  has_payment_term
+                name:
+                    data_name:  relatedEntity.name
+            default:
+                has_payment_term: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField:      id
+                columnName:     has_payment_term
+
+    payment-term-select-account-groups-grid:
+        extends: base-payment-term-select-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account_group.class%, alias: relatedEntity }
+                join:
+                    left:
+                        -
+                            join: %orob2b_payment.entity.payment_term.class%
+                            alias: paymentTerm
+                            conditionType: 'WITH'
+                            condition: 'relatedEntity MEMBER OF paymentTerm.accountGroups'
+        columns:
+            name:
+                label: oro.account.accountgroup.name.label
+        options:
+            rowSelection:
+                selectors:
+                    included:   '#paymentTermAppendAccountGroups'
+                    excluded:   '#paymentTermRemoveAccountGroups'
+
+    payment-term-select-accounts-grid:
+        extends: base-payment-term-select-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_account.entity.account.class%, alias: relatedEntity }
+                join:
+                    left:
+                        -
+                            join: %orob2b_payment.entity.payment_term.class%
+                            alias: paymentTerm
+                            conditionType: 'WITH'
+                            condition: 'relatedEntity MEMBER OF paymentTerm.accounts'
+        columns:
+            name:
+                label: oro.account.name.label
+        options:
+            rowSelection:
+                selectors:
+                    included:   '#paymentTermAppendAccounts'
+                    excluded:   '#paymentTermRemoveAccounts'

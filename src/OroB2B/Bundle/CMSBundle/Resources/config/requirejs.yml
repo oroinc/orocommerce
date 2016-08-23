@@ -1,4 +1,0 @@
-config:
-    paths:
-        'orob2bcms/js/app/components/slugify-component': 'bundles/orob2bcms/js/app/components/slugify-component.js'
-        'orob2bcms/js/app/components/tree-manage-component': 'bundles/orob2bcms/js/app/components/tree-manage-component.js'

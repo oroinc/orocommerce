@@ -1,0 +1,92 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+    properties:
+        owner:
+            - NotBlank: ~
+        qid:
+            - NotBlank:
+                groups: [ Import ]
+        organization:
+            - NotBlank:
+                groups: [ Import ]
+        validUntil:
+            - NotBlank:
+                groups: [ Import ]
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
+        quoteProducts:
+            - Valid: ~
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    constraints:
+        - Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
+    properties:
+        quote:
+            - NotBlank: ~
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+        type:
+            - NotBlank: ~
+        quoteProductRequests:
+            - Valid: ~
+        quoteProductOffers:
+            - Count:
+                min: 1
+                minMessage: 'oro.sale.quoteproduct.quote_product_items.blank'
+            - Valid: ~
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    properties:
+        quoteProduct:
+            - NotBlank: ~
+        quantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - Valid: ~
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    properties:
+        quoteProduct:
+            - NotBlank: ~
+        quantity:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - NotBlank: ~
+            - Valid: ~
+
+Oro\Bundle\SaleBundle\Entity\QuoteAddress:
+    properties:
+        phone:
+            - Length:
+                max: 255
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
+    constraints:
+        - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+    properties:
+        quantity:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        quoteProductOffer:
+            - NotBlank: ~

@@ -1,0 +1,14 @@
+config:
+    paths:
+        'orovalidation/js/app/modules/validator-constraints-module': 'bundles/orovalidation/js/app/modules/validator-constraints-module.js'
+        'orovalidation/js/validator/letters': 'bundles/orovalidation/js/validator/letters.js'
+        'orovalidation/js/validator/alphanumeric': 'bundles/orovalidation/js/validator/alphanumeric.js'
+        'orovalidation/js/validator/alphanumeric-dash-underscore': 'bundles/orovalidation/js/validator/alphanumeric-dash-underscore.js'
+        'orovalidation/js/validator/url-safe': 'bundles/orovalidation/js/validator/url-safe.js'
+        'orovalidation/js/validator/decimal': 'bundles/orovalidation/js/validator/decimal.js'
+        'orovalidation/js/validator/integer': 'bundles/orovalidation/js/validator/integer.js'
+        'orovalidation/js/validator/greater-than-zero': 'bundles/orovalidation/js/validator/greater-than-zero.js'
+        'orovalidation/js/validator/url': 'bundles/orovalidation/js/validator/url.js'
+        'orovalidation/js/validator/email': 'bundles/orovalidation/js/validator/email.js'
+    appmodules:
+        - orovalidation/js/app/modules/validator-constraints-module

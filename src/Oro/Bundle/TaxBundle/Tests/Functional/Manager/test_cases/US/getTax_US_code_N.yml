@@ -1,0 +1,76 @@
+method: getTax
+reference: simple_order
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\AccountBundle\Entity\Account':
+        account.TAX3:
+            name: { property_value: account.TAX3 }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { reference: account.TAX3 }
+            currency: 'USD'
+            billingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+            shippingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 5 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '20.00', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
+        us_any_state_jurisdiction_code:
+            code: { property_value: us_any_state_jurisdiction_code }
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+    'Oro\Bundle\TaxBundle\Entity\AccountTaxCode':
+        account_tax_code.TAX3:
+            code: { property_value: 'TAX3' }
+            description: { property_value: 'TAX3 account tax code description' }
+            accounts:
+                property_value:
+                    - { reference: account.TAX3 }
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule.TAX3:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: { reference: us_any_state_jurisdiction_code }
+            productTaxCode: { reference: product_tax_code.TAX1 }
+            accountTaxCode: { reference: account_tax_code.TAX3 }
+        tax_rule.TAX4:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
+            taxJurisdiction: { reference: us_any_state_jurisdiction_code }
+            productTaxCode: { reference: product_tax_code.TAX1 }
+expectedResult:
+    total:
+        includingTax: '110'
+        excludingTax: '100' # 5 * 20
+        taxAmount: '10'     # 100 * 0.1
+        adjustment: '0'
+        currency: 'USD'
+    items:
+        -
+            unit:
+                includingTax: '22' # 20 + 2
+                excludingTax: '20'
+                taxAmount: '2'     # 20 * 0.1
+                adjustment: '0'
+                currency: 'USD'
+            row:
+                includingTax: '110' # 100 + 10
+                excludingTax: '100' # 20 * 5
+                taxAmount: '10'     # 100 * 0.1
+                adjustment: '0'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10', currency: 'USD' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10', currency: 'USD' }
