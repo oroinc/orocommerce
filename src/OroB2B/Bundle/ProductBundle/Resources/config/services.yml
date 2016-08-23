@@ -398,3 +398,11 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    orob2b.product.provider.custom_image_filter:
+        class: 'OroB2B\Bundle\ProductBundle\Provider\CustomImageFilterProvider'
+        arguments:
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: layout.image_filter.provider }

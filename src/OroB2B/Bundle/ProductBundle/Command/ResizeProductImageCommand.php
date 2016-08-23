@@ -56,7 +56,7 @@ class ResizeProductImageCommand extends ContainerAwareCommand
             throw new \InvalidArgumentException('ProductImage doesn\'t exists');
         }
 
-        $container->get('oro_layout.provider.image_filter')->load();
+        $container->get('oro_layout.loader.image_filter')->load();
         $image  = $productImage->getImage();
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {

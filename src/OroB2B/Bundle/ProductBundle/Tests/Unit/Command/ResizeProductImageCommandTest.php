@@ -16,7 +16,7 @@ use Oro\Bundle\CronBundle\Tests\Unit\Stub\MemoryOutput;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\LayoutBundle\Provider\ImageFilterProvider;
+use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
 use OroB2B\Bundle\ProductBundle\Command\ResizeProductImageCommand;
@@ -41,9 +41,9 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var ImageFilterProvider
+     * @var ImageFilterLoader
      */
-    protected $imageFilterProvider;
+    protected $imageFilterLoader;
 
     /**
      * @var ImageResizer
@@ -68,7 +68,7 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->imageTypeProvider = $this->prophesize(ImageTypeProvider::class);
-        $this->imageFilterProvider = $this->prophesize(ImageFilterProvider::class);
+        $this->imageFilterLoader = $this->prophesize(ImageFilterLoader::class);
         $this->imageResizer = $this->prophesize(ImageResizer::class);
 
         $this->productImageRepository = $this->prophesize(ProductImageRepository::class);
@@ -81,7 +81,7 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);
-        $container->get('oro_layout.provider.image_filter')->willReturn($this->imageFilterProvider);
+        $container->get('oro_layout.loader.image_filter')->willReturn($this->imageFilterLoader);
         $container->get('oro_attachment.image_resizer')->willReturn($this->imageResizer);
         $container->get('oro_layout.provider.image_type')->willReturn($this->imageTypeProvider);
         $container->getParameter('orob2b_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
@@ -122,7 +122,7 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
             'additional' => new ThemeImageType('name3', 'label3', [])
         ]);
 
-        $this->imageFilterProvider->load()->shouldBeCalled();
+        $this->imageFilterLoader->load()->shouldBeCalled();
         $this->productImageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
 
         $this->imageResizer->resizeImage($image, 'original', self::FORCE_OPTION)->willReturn(true);
