@@ -8,8 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
+use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 
 class MigratePayPalSettings implements Migration
 {

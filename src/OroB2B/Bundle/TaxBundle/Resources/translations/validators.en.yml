@@ -1,5 +1,0 @@
-orob2b.tax.validator.constraints:
-    single_or_range: "Zip code has to have only code or range"
-    range_start_and_end_required: "Zip code range has to have start and end"
-    only_numeric_ranges_supported: "Ranges are supported only for numeric postal codes"
-    zip_code_can_not_be_empty: "Zip code can't be empty"

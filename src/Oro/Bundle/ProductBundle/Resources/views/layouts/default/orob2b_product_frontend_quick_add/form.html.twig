@@ -1,0 +1,97 @@
+{% block orob2b_product_row_widget %}
+    {% set name = form.vars.full_name %}
+    {% set disabled = form.parent.vars.disabled %}
+    {% set allow_delete = form.parent.vars.allow_delete %}
+
+    <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
+        <fieldset class="{{ class_prefix }}__form__row fields-row">
+            <div class="clearfix">
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
+                    {{ form_widget(form.productSku, {attr: {
+                        placeholder: "oro.product.sku.placeholder"
+                    }}) }}
+                </div>
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
+                    {{ form_widget(form.productQuantity, {attr: {placeholder: "oro.product.quantity.placeholder"}}) }}
+                </div>
+                {% if allow_delete %}
+                    <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="icon-remove"></i></span>
+                {% endif %}
+            </div>
+            <div class="fields-row-error">{# Dinamic content #}</div>
+            <div class="fields-row-error-autocomplite">
+                {{ form_errors(form.productQuantity) }}
+                <div class="product-autocomplete-error" style="display: none;">
+                    <span class="validation-failed">SKU not found</span>
+                </div>
+                <div class="product-autocomplete-name validation-passed" style="display: none">
+                    <i class="cf-check_box cf--base-line"></i><span></span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+{% endblock %}
+
+{% block orob2b_product_row_collection_widget %}
+    {% spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = form_widget(form.vars.prototype) %}
+        {% endif %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~  'grid-container' }) %}
+        {% set id = id ~ '_collection' %}
+        {% set prototype_name = form.vars.prototype_name %}
+        <div {{ block('widget_container_attributes') }}>
+            <div class="grid">
+                <fieldset class="{{ class_prefix }}__form__row {{ class_prefix }}__form__row__head">
+                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
+                        <label>{{ 'oro.product.item_number.label'|trans }}</label>
+                    </div>
+                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
+                        <label>{{ 'oro.product.quantity.label'|trans }}</label>
+                    </div>
+                </fieldset>
+
+                <div class="oro-item-collection" data-last-index="{{ form.children|length }}" data-row-count-add="{{ form.vars.row_count_add }}"
+                     data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                    {% if form.children|length %}
+                        {% for child in form.children %}
+                            {{ form_widget(child) }}
+                        {% endfor %}
+                    {% elseif show_form_when_empty and prototype_html is defined %}
+                        {% for i in 0..(form.vars.row_count_initial - 1) %}
+                            {{ prototype_html|replace({(prototype_name): i})|raw }}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if allow_add %}
+            <fieldset class="{{ class_prefix }}__form__row">
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_full">
+                    <a href="#" class="add-more-rows-btn add-list-item" data-container=".oro-item-collection"
+                       href="javascript: void(0);">
+                        <i class="cf-add_circle fs18 blue"></i>
+                        <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
+                    </a>
+                </div>
+            </fieldset>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_product_quick_add_copy_paste_widget %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            <fieldset class="{{ class_prefix }}__form__row fields-row">
+                <div class="{{ class_prefix }}__form__col form__col_x12">
+                    {% set copyPasteAttr = form.copyPaste.vars.attr|merge({'class': (form.copyPaste.vars.attr.class is defined ? form.copyPaste.vars.attr.class ~ ' ' : '') ~ 'form-field-copyPaste' }) %}
+                    {{ form_widget(form.copyPaste, {'attr': copyPasteAttr}) }}
+                    <div class="fields-row-error">
+                        {{ form_errors(form.copyPaste) }}
+                    </div>
+                </div>
+            </fieldset>
+            {{ form_rest(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock %}
