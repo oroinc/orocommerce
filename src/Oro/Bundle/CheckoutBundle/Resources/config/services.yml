@@ -1,6 +1,7 @@
 parameters:
     orob2b_checkout.entity.checkout.class: Oro\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: Oro\Bundle\CheckoutBundle\Entity\CheckoutSource
+    orob2b_checkout.entity.checkout_workflow_state.class: Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState
 
 services:
     # Data Providers
@@ -188,6 +189,127 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -80 }
+
+    orob2b_checkout.workflow_state.storage.checkout_state_diff_storage:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
+        pablic: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_checkout.entity.checkout_workflow_state.class%'
+
+    orob2b_checkout.workflow_state.manager.checkout_state_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager'
+        arguments:
+            - '@orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff'
+
+    orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry'
+        public: false
+
+    orob2b_checkout.workflow_state.mapper.workflow_step:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\WorkflowStepMapper'
+        arguments:
+            - '@orob2b_checkout.workflow.manager.b2b_flow_checkout'
+        public: false
+        tags:
+            - { name: checkout.workflow_state.mapper, priority: 5 }
+
+    orob2b_checkout.workflow_state.mapper.ship_to_billing_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipToBillingDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 10 }
+
+    orob2b_checkout.workflow_state.mapper.billing_address_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\BillingAddressDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 20 }
+
+    orob2b_checkout.workflow_state.mapper.shipping_address_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingAddressDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 30 }
+
+    orob2b_checkout.workflow_state.mapper.payment_method_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 40 }
+
+    orob2b_checkout.workflow_state.mapper.total_amount_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\TotalAmountDiffMapper'
+        arguments:
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 50 }
+
+    orob2b_checkout.workflow_state.mapper.ship_until_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShipUntilDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 60 }
+
+    orob2b_checkout.workflow_state.mapper.po_number_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PoNumberDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 70 }
+
+    orob2b_checkout.workflow_state.mapper.customer_notes_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CustomerNotesDiffMapper'
+        public: false
+        tags:
+             - { name: checkout.workflow_state.mapper, priority: 80 }
+
+    orob2b_checkout.action.get_checkout_state:
+        class: 'Oro\Bundle\CheckoutBundle\Action\GetCheckoutStateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: oro_workflow.action, alias: get_checkout_state }
+
+    orob2b_checkout.action.save_checkout_state:
+        class: 'Oro\Bundle\CheckoutBundle\Action\SaveCheckoutStateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: oro_workflow.action, alias: save_checkout_state }
+
+    orob2b_checkout.action.delete_checkout_state:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DeleteCheckoutStateAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: oro_workflow.action, alias: delete_checkout_state }
+
+    orob2b_checkout.action.generate_checkout_state_snapshot:
+        class: 'Oro\Bundle\CheckoutBundle\Action\GenerateCheckoutStateSnapshotAction'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
+        tags:
+            - { name: oro_workflow.action, alias: generate_checkout_state_snapshot }
+
+    orob2b_checkout.condition.check_checkout_states:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\CheckCheckoutStates'
+        arguments:
+            - '@orob2b_checkout.workflow_state.manager.checkout_state_diff'
+        tags:
+            - { name: oro_workflow.condition, alias: check_checkout_states }
+            - { name: oro_action.condition, alias: check_checkout_states }
+
+    orob2b_checkout.workflow.manager.b2b_flow_checkout:
+        parent: oro_workflow.abstract.workflow_aware_manager
+        calls:
+            - ['setWorkflowName', ['b2b_flow_checkout']]
 
     orob2b_checkout.shipping_cost.calculator:
         class: 'Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'

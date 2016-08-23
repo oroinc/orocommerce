@@ -9,3 +9,10 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType'
         tags:
             - { name: form.type, alias: orob2b_ship_to_billing_address }
+
+    orob2b_checkout.form.extension.checkout_workflow:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutWorkflowExtension'
+        arguments:
+            - '@session.flash_bag'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }
