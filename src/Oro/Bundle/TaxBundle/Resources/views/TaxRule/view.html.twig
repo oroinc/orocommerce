@@ -1,0 +1,38 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%id%": entity.id } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_tax_rule_index'),
+        'indexLabel': 'oro.tax.taxrule.entity_plural_label'|trans,
+        'entityTitle': entity.id|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set taxRuleInfo %}
+        {{ UI.renderProperty('oro.tax.taxrule.account_tax_code.label'|trans, entity.accountTaxCode) }}
+        {{ UI.renderProperty('oro.tax.taxrule.product_tax_code.label'|trans, entity.productTaxCode) }}
+        {{ UI.renderProperty('oro.tax.taxrule.tax_jurisdiction.label'|trans, entity.taxJurisdiction) }}
+        {{ UI.renderProperty('oro.tax.taxrule.tax.label'|trans, entity.tax) }}
+        {{ UI.renderProperty('oro.tax.taxrule.description.label'|trans, entity.description) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'oro.tax.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [taxRuleInfo]},
+        ]
+    }] %}
+
+    {% set id = 'tax-tax-rule-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

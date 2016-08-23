@@ -1,0 +1,3 @@
+css:
+    'oroaccount':
+        - 'bundles/oroaccount/css/less/style.less'

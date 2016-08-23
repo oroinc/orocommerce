@@ -1,0 +1,4 @@
+config:
+    paths:
+        'oroinvoice/js/app/views/invoice-line-items-view': 'bundles/oroinvoice/js/app/views/invoice-line-items-view.js'
+        'oroinvoice/js/app/views/invoice-line-item-view': 'bundles/oroinvoice/js/app/views/invoice-line-item-view.js'

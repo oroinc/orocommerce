@@ -1,0 +1,21 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div id ="priceLists">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {% if priceLists is defined %}
+                {% set entities = priceLists %}
+                {% include 'OroPricingBundle:PriceList/partial:list.html.twig'
+                    with {
+                        'fallback': fallback,
+                        'entities': entities
+                    }
+                %}
+            {% else %}
+                <div class="no-data">
+                    <span>{{ "oro.pricing.no_price_lists"|trans }}</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
