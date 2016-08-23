@@ -2,29 +2,27 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use OroB2B\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
+use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
+use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use OroB2B\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -35,26 +33,32 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
      */
     protected $manager;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListsBuilder
      */
     protected $cplBuilder;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|WebsiteCombinedPriceListsBuilder
      */
     protected $cplWebsiteBuilder;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|AccountGroupCombinedPriceListsBuilder
      */
     protected $cplAccountGroupBuilder;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|AccountCombinedPriceListsBuilder
      */
     protected $cplAccountBuilder;
+
     /**
      * @var CombinedPriceListProcessor
      */
