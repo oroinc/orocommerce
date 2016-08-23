@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_3;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
@@ -14,7 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
+class OroPricingBundle implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -29,24 +29,24 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroB2BPriceListScheduleTable($schema);
-        $this->createOroB2BCplActivationRuleTable($schema);
+        $this->createOroPriceListScheduleTable($schema);
+        $this->createOroCplActivationRuleTable($schema);
         $this->createOrob2BPriceProductMinimalTable($schema);
 
         $this->addOrob2BPriceListScheduleForeignKeys($schema);
         $this->addOrob2BCplActivationRuleForeignKeys($schema);
         $this->addOrob2BPriceProductMinimalForeignKeys($schema);
 
-        $this->createOroB2BCmbPriceListToAccTable($schema);
-        $this->createOroB2BCmbPriceListToAccGrTable($schema);
-        $this->createOroB2BCmbPriceListToWsTable($schema);
+        $this->createOroCmbPriceListToAccTable($schema);
+        $this->createOroCmbPriceListToAccGrTable($schema);
+        $this->createOroCmbPriceListToWsTable($schema);
 
         $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema);
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
 
-        $this->alterOroB2BPriceListTable($schema, $queries);
-        $this->alterOroB2BPriceListCombinedTable($schema, $queries);
+        $this->alterOroPriceListTable($schema, $queries);
+        $this->alterOroPriceListCombinedTable($schema, $queries);
 
         $this->updatePriceListChangeTriggerTable($schema);
 
@@ -63,7 +63,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceListScheduleTable(Schema $schema)
+    protected function createOroPriceListScheduleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_schedule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -79,7 +79,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCplActivationRuleTable(Schema $schema)
+    protected function createOroCplActivationRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cpl_activation_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -145,7 +145,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCmbPriceListToAccTable(Schema $schema)
+    protected function createOroCmbPriceListToAccTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_price_list_to_acc');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -162,7 +162,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCmbPriceListToAccGrTable(Schema $schema)
+    protected function createOroCmbPriceListToAccGrTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_plist_to_acc_gr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -179,7 +179,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCmbPriceListToWsTable(Schema $schema)
+    protected function createOroCmbPriceListToWsTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cmb_price_list_to_ws');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -291,7 +291,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function alterOroB2BPriceListTable(Schema $schema, QueryBag $queries)
+    protected function alterOroPriceListTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_list');
         $table->addColumn('contain_schedule', 'boolean', ['notnull' => false]);
@@ -314,7 +314,7 @@ class OroB2BPricingBundle implements Migration, OrderedMigrationInterface
      * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function alterOroB2BPriceListCombinedTable(Schema $schema, QueryBag $queries)
+    protected function alterOroPriceListCombinedTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_list_combined');
         $table->addColumn('is_prices_calculated', 'boolean', ['notnull' => false]);

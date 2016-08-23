@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use OroB2B\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use OroB2B\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
@@ -64,7 +64,7 @@ abstract class AbstractRuleEntityListener
     /**
      * @param array $updatedFields
      * @param null|int $relationId
-     * @return array|\OroB2B\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
+     * @return array|\Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
      */
     protected function findEntityLexemes(array $updatedFields = [], $relationId = null)
     {

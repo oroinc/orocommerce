@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Async;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\PricingBundle\Async\PriceRuleProcessor;
-use OroB2B\Bundle\PricingBundle\Async\Topics;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
-use OroB2B\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Psr\Log\LoggerInterface;
 
 class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase

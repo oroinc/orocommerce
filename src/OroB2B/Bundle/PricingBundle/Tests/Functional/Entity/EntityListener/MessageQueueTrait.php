@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

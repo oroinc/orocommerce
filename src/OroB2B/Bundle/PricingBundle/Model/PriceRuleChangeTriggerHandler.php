@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use OroB2B\Bundle\PricingBundle\Async\Topics;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Event\PriceRuleChange;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Event\PriceRuleChange;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

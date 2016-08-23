@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase

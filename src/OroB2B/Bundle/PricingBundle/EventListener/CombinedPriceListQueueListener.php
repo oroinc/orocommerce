@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 
 class CombinedPriceListQueueListener
 {
@@ -83,7 +82,7 @@ class CombinedPriceListQueueListener
     protected function isRealTimeMode()
     {
         if ($this->isRealTimeMode === null) {
-            $key = OroB2BPricingExtension::ALIAS
+            $key = OroPricingExtension::ALIAS
                 . ConfigManager::SECTION_MODEL_SEPARATOR
                 . Configuration::PRICE_LISTS_UPDATE_MODE;
             $this->isRealTimeMode = $this->configManager->get($key) === CombinedPriceListQueueConsumer::MODE_REAL_TIME;

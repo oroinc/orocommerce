@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 
 class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 {

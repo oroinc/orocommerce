@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -38,9 +38,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
@@ -48,7 +48,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testUpdate()
     {
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.3');
@@ -84,7 +84,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testUpdateDuplicateEntry()
     {
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.3');
@@ -113,7 +113,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             ]
         );
 
-        $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
+        $this->assertSubmitError($form, 'oro.pricing.validators.product_price.unique_entity.message');
     }
 
     /**

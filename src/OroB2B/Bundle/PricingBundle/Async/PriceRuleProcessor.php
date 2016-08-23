@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Async;
+namespace Oro\Bundle\PricingBundle\Async;
 
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
-use OroB2B\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use OroB2B\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use OroB2B\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use OroB2B\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Psr\Log\LoggerInterface;
 
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface

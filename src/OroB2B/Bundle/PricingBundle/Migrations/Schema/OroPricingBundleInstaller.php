@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -14,7 +14,7 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
     /** @var NoteExtension */
     protected $noteExtension;
@@ -60,16 +60,16 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BCmbPriceListToAccGrTable($schema);
         $this->createOrob2BCmbPriceListToWsTable($schema);
         $this->createOrob2BCmbPlToPlTable($schema);
-        $this->createOroB2BPriceListChangeTriggerTable($schema);
-        $this->createOroB2BProductPriceChangeTriggerTable($schema);
-        $this->createOroB2BPriceListScheduleTable($schema);
-        $this->createOroB2BCplActivationRuleTable($schema);
-        $this->createOroB2BPriceAttributeTable($schema);
-        $this->createOroB2BPriceAttributeCurrencyTable($schema);
-        $this->createOroB2BPriceAttributeProductPriceTable($schema);
-        $this->createOroB2BriceListToProductTable($schema);
-        $this->createOroB2BPriceRuleTable($schema);
-        $this->createOroB2BPriceRuleLexemeTable($schema);
+        $this->createOroPriceListChangeTriggerTable($schema);
+        $this->createOroProductPriceChangeTriggerTable($schema);
+        $this->createOroPriceListScheduleTable($schema);
+        $this->createOroCplActivationRuleTable($schema);
+        $this->createOroPriceAttributeTable($schema);
+        $this->createOroPriceAttributeCurrencyTable($schema);
+        $this->createOroPriceAttributeProductPriceTable($schema);
+        $this->createOroriceListToProductTable($schema);
+        $this->createOroPriceRuleTable($schema);
+        $this->createOroPriceRuleLexemeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
@@ -88,14 +88,14 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
         $this->addOrob2BPriceListChangeTriggerForeignKeys($schema);
-        $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
-        $this->addOroB2BPriceListScheduleForeignKeys($schema);
-        $this->addOroB2BCplActivationRuleForeignKeys($schema);
-        $this->addOroB2BPriceAttributeCurrencyForeignKeys($schema);
-        $this->addOroB2BPriceAttributeProductPriceForeignKeys($schema);
-        $this->addOroB2BriceListToProductForeignKeys($schema);
-        $this->addOroB2BPriceRuleForeignKeys($schema);
-        $this->addOroB2BPriceRuleLexemeForeignKeys($schema);
+        $this->addOroProductPriceChangeTriggerForeignKeys($schema);
+        $this->addOroPriceListScheduleForeignKeys($schema);
+        $this->addOroCplActivationRuleForeignKeys($schema);
+        $this->addOroPriceAttributeCurrencyForeignKeys($schema);
+        $this->addOroPriceAttributeProductPriceForeignKeys($schema);
+        $this->addOroriceListToProductForeignKeys($schema);
+        $this->addOroPriceRuleForeignKeys($schema);
+        $this->addOroPriceRuleLexemeForeignKeys($schema);
     }
 
     /**
@@ -411,7 +411,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BProductPriceChangeTriggerTable(Schema $schema)
+    protected function createOroProductPriceChangeTriggerTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_prod_price_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -426,7 +426,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceListScheduleTable(Schema $schema)
+    protected function createOroPriceListScheduleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_schedule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -442,7 +442,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCplActivationRuleTable(Schema $schema)
+    protected function createOroCplActivationRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cpl_activation_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -461,7 +461,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceListChangeTriggerTable(Schema $schema)
+    protected function createOroPriceListChangeTriggerTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -475,7 +475,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function createOroB2BPriceAttributeTable(Schema $schema)
+    protected function createOroPriceAttributeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_attribute_pl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -489,7 +489,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function createOroB2BPriceAttributeCurrencyTable(Schema $schema)
+    protected function createOroPriceAttributeCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_product_attr_currency');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -501,7 +501,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function createOroB2BPriceAttributeProductPriceTable(Schema $schema)
+    protected function createOroPriceAttributeProductPriceTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_attribute_price');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -524,7 +524,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BriceListToProductTable(Schema $schema)
+    protected function createOroriceListToProductTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_to_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -946,7 +946,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BProductPriceChangeTriggerForeignKeys(Schema $schema)
+    protected function addOroProductPriceChangeTriggerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_prod_price_ch_trigger');
         $table->addForeignKeyConstraint(
@@ -968,7 +968,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceListScheduleForeignKeys(Schema $schema)
+    protected function addOroPriceListScheduleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_schedule');
         $table->addForeignKeyConstraint(
@@ -984,7 +984,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BCplActivationRuleForeignKeys(Schema $schema)
+    protected function addOroCplActivationRuleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cpl_activation_rule');
         $table->addForeignKeyConstraint(
@@ -1004,7 +1004,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function addOroB2BPriceAttributeCurrencyForeignKeys(Schema $schema)
+    protected function addOroPriceAttributeCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_product_attr_currency');
         $table->addForeignKeyConstraint(
@@ -1018,7 +1018,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function addOroB2BPriceAttributeProductPriceForeignKeys(Schema $schema)
+    protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_attribute_price');
         $table->addForeignKeyConstraint(
@@ -1046,7 +1046,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BriceListToProductForeignKeys(Schema $schema)
+    protected function addOroriceListToProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_product');
         $table->addForeignKeyConstraint(
@@ -1068,7 +1068,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceRuleTable(Schema $schema)
+    protected function createOroPriceRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -1087,7 +1087,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function createOroB2BPriceRuleLexemeTable(Schema $schema)
+    protected function createOroPriceRuleLexemeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_rule_lexeme');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -1104,7 +1104,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceRuleForeignKeys(Schema $schema)
+    protected function addOroPriceRuleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_rule');
         $table->addForeignKeyConstraint(
@@ -1126,7 +1126,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
      *
      * @param Schema $schema
      */
-    protected function addOroB2BPriceRuleLexemeForeignKeys(Schema $schema)
+    protected function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_rule_lexeme');
         $table->addForeignKeyConstraint(

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Async;
+namespace Oro\Bundle\PricingBundle\Async;
 
 class Topics
 {

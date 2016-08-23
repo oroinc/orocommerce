@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -27,7 +26,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
+                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
             ]
         );
     }
@@ -213,7 +212,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $getAccountConnection = function (Website $website, Account $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
-                'OroB2BPricingBundle:CombinedPriceListToAccount',
+                'OroPricingBundle:CombinedPriceListToAccount',
                 $website,
                 ['account' => $targetEntity]
             );
@@ -222,7 +221,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $getAccountGroupConnection = function (Website $website, AccountGroup $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
-                'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+                'OroPricingBundle:CombinedPriceListToAccountGroup',
                 $website,
                 ['accountGroup' => $targetEntity]
             );
@@ -231,7 +230,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $getWebsiteConnection = function (Website $website) use ($getConnection) {
             return call_user_func(
                 $getConnection,
-                'OroB2BPricingBundle:CombinedPriceListToWebsite',
+                'OroPricingBundle:CombinedPriceListToWebsite',
                 $website
             );
         };
@@ -381,7 +380,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:CombinedPriceList');
+        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:CombinedPriceList');
     }
 
     /**
@@ -389,6 +388,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
      */
     protected function getManager()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:CombinedPriceList');
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:CombinedPriceList');
     }
 }

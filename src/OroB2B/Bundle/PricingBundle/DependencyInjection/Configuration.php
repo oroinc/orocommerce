@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\DependencyInjection;
+namespace Oro\Bundle\PricingBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
-
-use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
@@ -40,7 +39,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root(OroB2BPricingExtension::ALIAS);
+        $rootNode = $treeBuilder->root(OroPricingExtension::ALIAS);
 
         SettingsBuilder::append(
             $rootNode,
@@ -91,6 +90,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode('.', [OroB2BPricingExtension::ALIAS, $key]);
+        return implode('.', [OroPricingExtension::ALIAS, $key]);
     }
 }

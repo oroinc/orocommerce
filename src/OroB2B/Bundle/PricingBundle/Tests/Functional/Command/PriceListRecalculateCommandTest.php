@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Command;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
-use OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -135,7 +134,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
     protected function assertCombinedPriceCount($expectedCount)
     {
         $combinedPrices = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
+            ->getRepository('OroPricingBundle:CombinedProductPrice')
             ->createQueryBuilder('a')->getQuery()->getResult();
 
         $this->assertCount($expectedCount, $combinedPrices);
@@ -144,10 +143,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
     protected function clearCombinedPrices()
     {
         $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
-            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
+            ->getManagerForClass('OroPricingBundle:CombinedProductPrice')
+            ->getRepository('OroPricingBundle:CombinedProductPrice')
             ->createQueryBuilder('combinedProductPrice')
-            ->delete('OroB2BPricingBundle:CombinedProductPrice', 'combinedProductPrice')
+            ->delete('OroPricingBundle:CombinedProductPrice', 'combinedProductPrice')
             ->getQuery()
             ->execute();
     }

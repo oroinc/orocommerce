@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Model\DTO;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use OroB2B\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceRuleTriggerFactory
 {
