@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
 
 class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,9 +26,9 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
     protected $cache;
 
     /**
-     * @var PriceRuleTriggerFiller|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleChangeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleChangeTriggerHandler;
 
     /**
      * @var PriceListEntityListener
@@ -41,13 +41,13 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->cache = $this->getMock(Cache::class);
-        $this->priceRuleTriggersFiller = $this->getMockBuilder(PriceRuleTriggerFiller::class)
+        $this->priceRuleChangeTriggerHandler = $this->getMockBuilder(PriceRuleChangeTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->listener = new PriceListEntityListener(
             $this->triggerHandler,
             $this->cache,
-            $this->priceRuleTriggersFiller
+            $this->priceRuleChangeTriggerHandler
         );
     }
 
@@ -58,7 +58,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->once())
             ->method('delete')
             ->with('ar_42');
-        $this->priceRuleTriggersFiller->expects($this->once())
+        $this->priceRuleChangeTriggerHandler->expects($this->once())
             ->method('addTriggersForPriceList')
             ->with($priceList);
 
@@ -79,7 +79,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $this->cache->expects($this->never())
             ->method('delete');
-        $this->priceRuleTriggersFiller->expects($this->never())
+        $this->priceRuleChangeTriggerHandler->expects($this->never())
             ->method('addTriggersForPriceList');
 
         /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */

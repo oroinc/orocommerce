@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
 /**
@@ -14,6 +14,8 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
  */
 class PriceListEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -23,27 +25,39 @@ class PriceListEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadProductPrices::class
         ]);
+        $this->topic = Topics::CALCULATE_RULE;
     }
 
     public function testPreRemove()
     {
+        $this->cleanQueueMessageTraces();
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repository = $em->getRepository('OroPricingBundle:PriceListChangeTrigger');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
         $em->remove($priceList);
-        $em->flush();
 
-        $actual = $repository->findBy(['force' => true]);
-
-        $this->assertCount(1, $actual);
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => null,
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
+                        PriceListChangeTrigger::FORCE => true,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->getMessageProducer()->getTraces()
+        );
     }
 
     public function testPreUpdate()
     {
-        $this->cleanTriggers();
+        $this->cleanQueueMessageTraces();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -54,15 +68,14 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        /** @var PriceRuleChangeTrigger[] $triggers */
-        $triggers = $em->getRepository(PriceRuleChangeTrigger::class)->findAll();
-        $this->assertCount(1, $triggers);
-        $this->assertEquals($priceList->getId(), $triggers[0]->getPriceList()->getId());
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
     }
 
     public function testPreUpdateAssignmentNotChanged()
     {
-        $this->cleanTriggers();
+        $this->cleanQueueMessageTraces();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -73,18 +86,6 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        /** @var PriceRuleChangeTrigger[] $triggers */
-        $triggers = $em->getRepository(PriceRuleChangeTrigger::class)->findAll();
-        $this->assertEmpty($triggers);
-    }
-
-    protected function cleanTriggers()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
-        $em->createQueryBuilder()
-            ->delete(PriceRuleChangeTrigger::class)
-            ->getQuery()
-            ->execute();
+        $this->assertEmpty($this->getQueueMessageTraces());
     }
 }

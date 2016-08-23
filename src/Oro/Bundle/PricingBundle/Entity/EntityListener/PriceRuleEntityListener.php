@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 use Doctrine\Common\Cache\Cache;
 
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
 
 class PriceRuleEntityListener
 {
@@ -15,18 +15,18 @@ class PriceRuleEntityListener
     protected $cache;
 
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceRuleChangeTriggerHandler
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleChangeTriggerHandler;
 
     /**
      * @param Cache $cache
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
      */
-    public function __construct(Cache $cache, PriceRuleTriggerFiller $priceRuleTriggersFiller)
+    public function __construct(Cache $cache, PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler)
     {
         $this->cache = $cache;
-        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
+        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
     }
 
     /**
@@ -36,7 +36,7 @@ class PriceRuleEntityListener
      */
     public function postPersist(PriceRule $priceRule)
     {
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList($priceRule->getPriceList());
     }
 
     /**
@@ -47,7 +47,7 @@ class PriceRuleEntityListener
     public function preUpdate(PriceRule $priceRule)
     {
         $this->clearCache($priceRule);
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList($priceRule->getPriceList());
     }
 
     /**
@@ -58,7 +58,7 @@ class PriceRuleEntityListener
     public function preRemove(PriceRule $priceRule)
     {
         $this->clearCache($priceRule);
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList($priceRule->getPriceList());
     }
 
     /**

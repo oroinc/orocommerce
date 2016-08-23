@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListChangeTriggerHandler
 {
@@ -24,36 +22,36 @@ class PriceListChangeTriggerHandler
     protected $registry;
 
     /**
-     * @var EventDispatcherInterface
+     * @var PriceListChangeTriggerFactory
      */
-    protected $eventDispatcher;
+    protected $triggerFactory;
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var MessageProducerInterface
      */
-    protected $insertFromSelectQueryExecutor;
+    protected $producer;
 
     /**
-     * @var ScopeRecalculateTriggersFiller
+     * @var ConfigManager
      */
-    protected $triggersFiller;
+    protected $configManager;
 
     /**
      * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
-     * @param ScopeRecalculateTriggersFiller $triggersFiller
+     * @param PriceListChangeTriggerFactory $triggerFactory
+     * @param MessageProducerInterface $producer
+     * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        EventDispatcherInterface $eventDispatcher,
-        InsertFromSelectQueryExecutor $insertFromSelectExecutor,
-        ScopeRecalculateTriggersFiller $triggersFiller
+        PriceListChangeTriggerFactory $triggerFactory,
+        MessageProducerInterface $producer,
+        ConfigManager $configManager
     ) {
         $this->registry = $registry;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectExecutor;
-        $this->triggersFiller = $triggersFiller;
+        $this->triggerFactory = $triggerFactory;
+        $this->producer = $producer;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -61,10 +59,9 @@ class PriceListChangeTriggerHandler
      */
     public function handleWebsiteChange(Website $website)
     {
-        $trigger = $this->createTrigger();
+        $trigger = $this->triggerFactory->create();
         $trigger->setWebsite($website);
-        $this->getManager()->persist($trigger);
-        $this->dispatchQueueChange();
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -73,25 +70,17 @@ class PriceListChangeTriggerHandler
      */
     public function handleAccountChange(Account $account, Website $website)
     {
-        $trigger = $this->createTrigger();
+        $trigger = $this->triggerFactory->create();
         $trigger->setAccount($account)
             ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
-        $this->getManager()->persist($trigger);
-        $this->dispatchQueueChange();
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
-    /**
-     * @param bool|true $andFlush
-     */
-    public function handleConfigChange($andFlush = true)
+    public function handleConfigChange()
     {
-        $trigger = $this->createTrigger();
-        $this->getManager()->persist($trigger);
-        if ($andFlush) {
-            $this->getManager()->flush();
-        }
-        $this->dispatchQueueChange();
+        $trigger = $this->triggerFactory->create();
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -100,11 +89,10 @@ class PriceListChangeTriggerHandler
      */
     public function handleAccountGroupChange(AccountGroup $accountGroup, Website $website)
     {
-        $trigger = $this->createTrigger();
+        $trigger = $this->triggerFactory->create();
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
-        $this->getManager()->persist($trigger);
-        $this->dispatchQueueChange();
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 
     /**
@@ -112,8 +100,31 @@ class PriceListChangeTriggerHandler
      */
     public function handlePriceListStatusChange(PriceList $priceList)
     {
-        $this->triggersFiller->fillTriggersByPriceList($priceList);
-        $this->dispatchQueueChange();
+        $configPriceListIds = array_map(
+            function ($priceList) {
+                return $priceList['priceList'];
+            },
+            $this->configManager->get('oro_b2b_pricing.default_price_lists')
+        );
+
+        if (in_array($priceList->getId(), $configPriceListIds)) {
+            $this->handleFullRebuild();
+        }
+
+        $priceListToAccountRepository = $this->registry->getRepository(PriceListToAccount::class);
+        foreach ($priceListToAccountRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+        }
+
+        $priceListToAccountGroupRepository = $this->registry->getRepository(PriceListToAccountGroup::class);
+        foreach ($priceListToAccountGroupRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+        }
+
+        $priceListToWebsiteRepository = $this->registry->getRepository(PriceListToWebsite::class);
+        foreach ($priceListToWebsiteRepository->getIteratorByPriceList($priceList) as $item) {
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+        }
     }
 
     /**
@@ -121,57 +132,17 @@ class PriceListChangeTriggerHandler
      */
     public function handleAccountGroupRemove(AccountGroup $accountGroup)
     {
-        $websiteIds = $this->registry
-            ->getManagerForClass('OroPricingBundle:PriceListToAccountGroup')
-            ->getRepository('OroPricingBundle:PriceListToAccountGroup')
-            ->getWebsiteIdsByAccountGroup($accountGroup);
-
-        if ($websiteIds) {
-            $this->getManager()
-                ->getRepository('OroPricingBundle:PriceListChangeTrigger')
-                ->insertAccountWebsitePairsByAccountGroup(
-                    $accountGroup,
-                    $websiteIds,
-                    $this->insertFromSelectQueryExecutor
-                );
-            $this->dispatchQueueChange();
+        $iterator = $this->registry->getRepository(PriceListToAccount::class)
+            ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        foreach ($iterator as $item) {
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
         }
     }
 
-    /**
-     * @param bool|true $andFlush
-     */
-    public function handleFullRebuild($andFlush = true)
+    public function handleFullRebuild()
     {
-        $trigger = $this->createTrigger();
+        $trigger = $this->triggerFactory->create();
         $trigger->setForce(true);
-        $this->getManager()->persist($trigger);
-        if ($andFlush) {
-            $this->getManager()->flush();
-        }
-        $this->dispatchQueueChange();
-    }
-
-    protected function dispatchQueueChange()
-    {
-        $event = new PriceListQueueChangeEvent();
-        $this->eventDispatcher->dispatch(PriceListQueueChangeEvent::BEFORE_CHANGE, $event);
-    }
-
-    /**
-     * @return PriceListChangeTrigger
-     */
-    protected function createTrigger()
-    {
-        return new PriceListChangeTrigger();
-    }
-
-    /**
-     * @return ObjectManager|null
-     */
-    protected function getManager()
-    {
-        return $this->registry
-            ->getManagerForClass('OroPricingBundle:PriceListChangeTrigger');
+        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
     }
 }

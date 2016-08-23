@@ -329,6 +329,17 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetCombinedPriceListsByPriceLists()
+    {
+        /** @var PriceList $priceList */
+        $priceLists[] = $this->getReference('price_list_1');
+        $priceLists[] = $this->getReference('price_list_3');
+        $priceLists[] = $this->getReference('price_list_4');
+
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceLists($priceLists);
+        $this->assertCount(7, $cPriceLists);
+    }
+
     /**
      * @dataProvider getCPLsForPriceCollectByTimeOffsetDataProvider
      * @param $offsetHours

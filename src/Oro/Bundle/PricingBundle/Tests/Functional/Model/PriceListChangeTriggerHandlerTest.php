@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
-use Doctrine\ORM\UnitOfWork;
-
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
+use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use Oro\Bundle\PricingBundle\Tests\Functional\Model\Stub\CombinedPriceListQueueListenerStub;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -24,29 +21,14 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class PriceListChangeTriggerHandlerTest extends WebTestCase
 {
     /**
-     * @var Website
-     */
-    protected $website;
-
-    /**
-     * @var Account
-     */
-    protected $account;
-
-    /**
-     * @var CombinedPriceListQueueListenerStub
-     */
-    protected $listener;
-
-    /**
-     * @var ScopeRecalculateTriggersFiller|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $triggersFiller;
-
-    /**
      * @var PriceListChangeTriggerHandler
      */
     protected $handler;
+
+    /**
+     * @var TraceableMessageProducer
+     */
+    protected $messageProducer;
 
     /**
      * {@inheritdoc}
@@ -57,133 +39,186 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations'
+                LoadPriceListRelations::class,
             ]
         );
 
-        $this->account = $this->getReference('account.level_1.2');
-        $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
-
-        $this->listener = new CombinedPriceListQueueListenerStub();
-        $dispatcher = new EventDispatcher();
-        $dispatcher->addListener(PriceListQueueChangeEvent::BEFORE_CHANGE, [$this->listener, 'onQueueChanged']);
-
-        $this->triggersFiller = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->handler = new PriceListChangeTriggerHandler(
-            $this->getContainer()->get('doctrine'),
-            $dispatcher,
-            $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
-            $this->triggersFiller
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        $registry = $this->getContainer()->get('doctrine');
-        $registry->getManager()->clear();
-        parent::tearDown();
+        $this->handler = $this->getContainer()->get('orob2b_pricing.price_list_change_trigger_handler');
+        $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
+        $this->messageProducer->clearTraces();
     }
 
     public function testHandleWebsiteChange()
     {
-        $this->handler->handleWebsiteChange($this->website);
-        $expected = (new PriceListChangeTrigger())->setWebsite($this->website);
-        $this->assertTriggerWasPersisted($expected);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $this->handler->handleWebsiteChange($website);
+
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $website->getId(),
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
+                        PriceListChangeTrigger::FORCE => false,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandleAccountChange()
     {
-        $this->handler->handleAccountChange($this->account, $this->website);
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1');
 
-        $expected = (new PriceListChangeTrigger())
-            ->setWebsite($this->website)
-            ->setAccount($this->account)
-            ->setAccountGroup($this->account->getGroup());
-        $this->assertTriggerWasPersisted($expected);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+        $this->handler->handleAccountChange($account, $website);
+
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $website->getId(),
+                        PriceListChangeTrigger::ACCOUNT => $account->getId(),
+                        PriceListChangeTrigger::ACCOUNT_GROUP => $account->getGroup()->getId(),
+                        PriceListChangeTrigger::FORCE => false,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandleConfigChange()
     {
-        $this->handler->handleConfigChange(false);
-        $expected = (new PriceListChangeTrigger());
-        $this->assertTriggerWasPersisted($expected);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+        $this->handler->handleConfigChange();
+
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => null,
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
+                        PriceListChangeTrigger::FORCE => false,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandleAccountGroupChange()
     {
-        $this->handler->handleAccountGroupChange($this->account->getGroup(), $this->website);
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->handler->handleAccountGroupChange($accountGroup, $website);
 
-        $expected = (new PriceListChangeTrigger())
-            ->setWebsite($this->website)
-            ->setAccountGroup($this->account->getGroup());
-        $this->assertTriggerWasPersisted($expected);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $website->getId(),
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => $accountGroup->getId(),
+                        PriceListChangeTrigger::FORCE => false,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandlePriceListStatusChange()
     {
-        $priceList = new PriceList();
-        $this->triggersFiller->expects($this->once())
-            ->method('fillTriggersByPriceList')
-            ->with($priceList);
-
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_6');
         $this->handler->handlePriceListStatusChange($priceList);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListChangeTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
+                        PriceListChangeTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListChangeTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandleFullRebuild()
     {
-        $this->handler->handleFullRebuild(false);
-        $expected = (new PriceListChangeTrigger())->setForce(true);
-        $this->assertTriggerWasPersisted($expected);
-        $this->assertRealTimeCPLQueueListenerDispatched();
+        $this->handler->handleFullRebuild();
+
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => null,
+                        PriceListChangeTrigger::ACCOUNT => null,
+                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
+                        PriceListChangeTrigger::FORCE => true,
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 
     public function testHandleAccountGroupRemove()
     {
-        /** @var PriceListChangeTriggerRepository $triggerRepository */
-        $triggerRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:PriceListChangeTrigger')
-            ->getRepository('OroPricingBundle:PriceListChangeTrigger');
-        $existingTriggers = $triggerRepository->findAll();
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->handler->handleAccountGroupRemove($accountGroup);
 
-        $this->handler->handleAccountGroupRemove($this->account->getGroup());
-
-        // get list of added triggers
-        $addedTriggers = array_filter($triggerRepository->findAll(), function ($trigger) use ($existingTriggers) {
-            return !in_array($trigger, $existingTriggers);
-        });
-
-        $this->assertCount(1, $addedTriggers);
-        $this->assertNotNull(current($addedTriggers)->getAccount());
-        $this->assertRealTimeCPLQueueListenerDispatched();
-    }
-
-    /**
-     * @param PriceListChangeTrigger $expected
-     */
-    protected function assertTriggerWasPersisted(PriceListChangeTrigger $expected)
-    {
-        /** @var UnitOfWork $uow */
-        $uow = $this->getContainer()->get('doctrine')->getManager()->getUnitOfWork();
-        $scheduledForInsert = $uow->getScheduledEntityInsertions();
-
-        $this->assertCount(1, $scheduledForInsert);
-        $this->assertEquals($expected, current($scheduledForInsert));
-    }
-
-    protected function assertRealTimeCPLQueueListenerDispatched()
-    {
-        $this->assertTrue($this->listener->hasCollectionChanges(), 'CPL Queue Listener was not dispatched');
+        $this->assertEquals(
+            [
+                [
+                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'message' => [
+                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListChangeTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),
+                    ],
+                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                ],
+            ],
+            $this->messageProducer->getTraces()
+        );
     }
 }
