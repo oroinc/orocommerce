@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
-
-class FlatRateShippingConfigurationType extends AbstractType
+class FlatRateShippingMethodTypeOptionsType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_flat_rate_rule_config';
+    const BLOCK_PREFIX = 'oro_shipping_flat_rate_type_options';
 
     /**
      * @var RoundingServiceInterface
@@ -41,22 +40,23 @@ class FlatRateShippingConfigurationType extends AbstractType
         ];
 
         $builder
-            ->add('value', NumberType::class, array_merge([
+            ->add(FlatRateShippingMethodType::PRICE_OPTION, NumberType::class, array_merge([
                 'required' => true,
-                'label' => 'oro.shipping.flatrateruleconfiguration.value.label',
+                'label' => 'oro.shipping.method.flat_rate.price.label',
                 'constraints' => [new NotBlank(['groups' => ['Enabled']])]
             ], $priceOptions))
-            ->add('handlingFeeValue', NumberType::class, array_merge([
-                'label' => 'oro.shipping.flatrateruleconfiguration.handling_fee_value.label',
+            ->add(FlatRateShippingMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
+                'label' => 'oro.shipping.method.flat_rate.handling_fee.label',
             ], $priceOptions))
-            ->add('processingType', ChoiceType::class, [
+            ->add(FlatRateShippingMethodType::TYPE_OPTION, ChoiceType::class, [
+                'required' => true,
                 'choices' => [
-                    FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM
-                    => 'oro.shipping.flatrateruleconfiguration.processing_type.per_item.label',
-                    FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER
-                    => 'oro.shipping.flatrateruleconfiguration.processing_type.per_order.label',
+                    FlatRateShippingMethodType::PER_ITEM_TYPE
+                    => 'oro.shipping.method.flat_rate.processing_type.per_item.label',
+                    FlatRateShippingMethodType::PER_ORDER_TYPE
+                    => 'oro.shipping.method.flat_rate.processing_type.per_order.label',
                 ],
-                'label' => 'oro.shipping.flatrateruleconfiguration.processing_type.label',
+                'label' => 'oro.shipping.method.flat_rate.processing_type.label',
             ]);
     }
 
@@ -66,17 +66,8 @@ class FlatRateShippingConfigurationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => FlatRateRuleConfiguration::class,
-            'label' => 'oro.shipping.form.orob2b_shipping_flat_rate_rule_config.label',
+            'label' => 'oro.shipping.form.oro_shipping_flat_rate_type_options.label',
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getParent()
-    {
-        return ShippingRuleConfigurationType::class;
     }
 
     /**
@@ -84,6 +75,6 @@ class FlatRateShippingConfigurationType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
     }
 }
