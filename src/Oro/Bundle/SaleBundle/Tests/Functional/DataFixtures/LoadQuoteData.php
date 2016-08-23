@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -139,7 +139,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
             'products'      => [],
-            'paymentTerm'   => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'paymentTerm'   => LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX
+                . LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
     ];
 

@@ -2,21 +2,33 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutProvider;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class ResolvePaymentTermListener
 {
-    /** @var CheckoutProvider  */
-    protected $checkoutProvider;
+    const CHECKOUT_ROUTE = 'orob2b_checkout_frontend_checkout';
+
+    /** @var RequestStack */
+    protected $requestStack;
+
+    /** @var  EventDispatcherInterface */
+    protected $eventDispatcher;
 
     /**
-     * @param CheckoutProvider $checkoutProvider
+     * @param RequestStack $requestStack
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(CheckoutProvider $checkoutProvider)
+    public function __construct(RequestStack $requestStack, EventDispatcherInterface $eventDispatcher)
     {
-        $this->checkoutProvider = $checkoutProvider;
+        $this->requestStack = $requestStack;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -24,7 +36,7 @@ class ResolvePaymentTermListener
      */
     public function onResolvePaymentTerm(ResolvePaymentTermEvent $event)
     {
-        $checkout = $this->checkoutProvider->getCurrent();
+        $checkout = $this->getCurrentCheckout();
         if (!$checkout) {
             return;
         }
@@ -33,5 +45,22 @@ class ResolvePaymentTermListener
         if ($source && $source instanceof QuoteDemand && $source->getQuote()->getPaymentTerm()) {
             $event->setPaymentTerm($source->getQuote()->getPaymentTerm());
         }
+    }
+
+    /**
+     * @return null|CheckoutInterface
+     */
+    protected function getCurrentCheckout()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request && $request->attributes->get('_route') == self::CHECKOUT_ROUTE) {
+            $event = new CheckoutEntityEvent();
+            $event->setCheckoutId($request->attributes->get('id'));
+            $this->eventDispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+
+            return $event->getCheckoutEntity();
+        }
+
+        return null;
     }
 }

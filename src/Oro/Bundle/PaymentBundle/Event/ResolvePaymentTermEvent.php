@@ -10,8 +10,16 @@ class ResolvePaymentTermEvent extends Event
 {
     const NAME = 'orob2b_payment.resolve.payment_term';
 
-    /** @var PaymentTerm */
+    /** @var null|PaymentTerm */
     protected $paymentTerm;
+
+    /**
+     * @param PaymentTerm $paymentTerm
+     */
+    public function __construct(PaymentTerm $paymentTerm = null)
+    {
+        $this->paymentTerm = $paymentTerm;
+    }
 
     /**
      * @return null|PaymentTerm

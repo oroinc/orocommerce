@@ -123,7 +123,8 @@ services:
     orob2b_checkout.event_listener.resolve_payment_term:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'
         arguments:
-            - '@orob2b_checkout.checkout.provider'
+            - '@request_stack'
+            - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.resolve.payment_term, method: onResolvePaymentTerm }
 
@@ -190,12 +191,6 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
-
-    orob2b_checkout.checkout.provider:
-        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutProvider'
-        arguments:
-            - '@request_stack'
-            - '@event_dispatcher'
 
     orob2b_checkout.migration.post_up.listener:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'

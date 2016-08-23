@@ -42,6 +42,11 @@ class DatagridListener
         $this->addPaymentTermRelationForAccountGroup($event->getConfig());
     }
 
+    public function onBuildBeforeQuotes(BuildBefore $event)
+    {
+        $this->addPaymentTermRelationForQuotes($event->getConfig());
+    }
+
     /**
      * @param DatagridConfiguration $config
      */
@@ -138,6 +143,49 @@ class DatagridListener
                     'multiple' => true
                 ]
             ]
+        ];
+        $this->addConfigElement($config, '[filters][columns]', $filter, static::PAYMENT_TERM_LABEL_ALIAS);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addPaymentTermRelationForQuotes(DatagridConfiguration $config)
+    {
+        $select = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
+        $this->addConfigElement($config, '[source][query][select]', $select);
+
+        $leftJoin = [
+            'join' => 'quote.paymentTerm',
+            'alias' => static::PAYMENT_TERM_ALIAS,
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        // column
+        $column = [
+            'label' => 'oro.payment.paymentterm.entity_label',
+            'order' => 8,
+            'renderable' => false,
+        ];
+        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
+
+        // sorter
+        $sorter = ['data_name' => static::PAYMENT_TERM_LABEL_ALIAS];
+        $this->addConfigElement($config, '[sorters][columns]', $sorter, static::PAYMENT_TERM_LABEL_ALIAS);
+
+        // filter
+        $filter = [
+            'type' => 'entity',
+            'data_name' => static::PAYMENT_TERM_ALIAS . '.id',
+            'options' => [
+                'field_type' => 'entity',
+                'field_options' => [
+                    'class' => $this->paymentTermEntityClass,
+                    'property' => 'label',
+                    'multiple' => true
+                ]
+            ],
+            'enabled' => false,
         ];
         $this->addConfigElement($config, '[filters][columns]', $filter, static::PAYMENT_TERM_LABEL_ALIAS);
     }

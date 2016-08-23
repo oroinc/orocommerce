@@ -74,21 +74,17 @@ class PaymentTermProvider
      */
     public function getCurrentPaymentTerm()
     {
-        $resolvePaymentTermEvent = new ResolvePaymentTermEvent();
-        $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $resolvePaymentTermEvent);
-        $paymentTerm = $resolvePaymentTermEvent->getPaymentTerm();
-        if ($paymentTerm) {
-            return $paymentTerm;
-        }
-
         $token = $this->tokenStorage->getToken();
 
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            return $this->getPaymentTerm($user->getAccount());
+            $paymentTermEvent = new ResolvePaymentTermEvent($this->getPaymentTerm($user->getAccount()));
         }
 
-        return null;
+        $paymentTermEvent = isset($paymentTermEvent) ? $paymentTermEvent : new ResolvePaymentTermEvent();
+        $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $paymentTermEvent);
+
+        return $paymentTermEvent->getPaymentTerm();
     }
 
     /**

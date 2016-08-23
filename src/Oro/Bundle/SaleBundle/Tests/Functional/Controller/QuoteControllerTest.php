@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -158,7 +158,8 @@ class QuoteControllerTest extends WebTestCase
         $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
         $owner      = $this->getUser(LoadUserData::USER2);
         /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->getReference(LoadPaymentTermData::PAYMENT_TERM_NET_10);
+        $paymentTerm = $this
+            ->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();

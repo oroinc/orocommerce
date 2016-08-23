@@ -61,7 +61,7 @@
                             {% if quote.paymentTerm is not empty %}
                                 <tr class="account-oq__order-info__control">
                                     <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.payment_term.label'|trans }}</td>
-                                    <td>{{ quote.paymentTerm|escape }}</td>
+                                    <td>{{ quote.paymentTerm.label|escape }}</td>
                                 </tr>
                             {% endif %}
                             {{ block_widget(block) }}
