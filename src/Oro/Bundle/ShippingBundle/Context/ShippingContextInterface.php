@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Checkout;
+namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
@@ -41,5 +41,4 @@ interface ShippingContextInterface
      * @return Price
      */
     public function getSubtotal();
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Checkout;
+namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,12 +11,10 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class ShippingLineItem implements ShippingLineItemInterface
 {
-
     /**
      * @var Product
      */
     private $product;
-
 
     /**
      * @var integer

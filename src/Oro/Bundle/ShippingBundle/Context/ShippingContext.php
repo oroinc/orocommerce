@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Checkout;
+namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
@@ -15,7 +15,7 @@ class ShippingContext implements ShippingContextInterface
     /**
      * @var ShippingLineItemInterface[]
      */
-    private $lineItems;
+    private $lineItems = [];
 
     /**
      * @var AddressInterface
@@ -194,6 +194,7 @@ class ShippingContext implements ShippingContextInterface
 
         return $this;
     }
+
     /**
      * @return Price
      */
