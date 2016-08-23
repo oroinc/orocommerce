@@ -1,8 +1,10 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Provider;
+namespace Oro\Bundle\ShippingBundle\Method;
 
-interface IntegrationAwareShippingMethodInterface
+use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+
+interface PricesAwareShippingMethodInterface
 {
     /**
      * @param ShippingContextAwareInterface $context

@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
-use Oro\Bundle\ShippingBundle\Method\Type\ShippingMethodTypeInterface;
-
 interface ShippingMethodInterface
 {
     /**

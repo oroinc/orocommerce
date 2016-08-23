@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\Type;
+namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
