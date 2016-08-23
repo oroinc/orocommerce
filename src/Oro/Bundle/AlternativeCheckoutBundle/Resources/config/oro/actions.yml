@@ -1,14 +1,14 @@
 operations:
-    oro_accept_quote:
+    orob2b_accept_quote:
         label: oro.alternativecheckout.actions.accept_quote
         enabled: true
         applications: [commerce]
         routes:
-            - oro_sale_quote_frontend_view
+            - orob2b_sale_quote_frontend_view
         order: 10
         button_options:
             icon: icon-time
-        acl_resource: oro_alternativecheckout_checkout_approve
+        acl_resource: orob2b_alternativecheckout_checkout_approve
         preactions:
             - '@alternative_checkout_to_quote':
                 quote: $.data
@@ -19,7 +19,7 @@ operations:
                 actions:
                     - '@call_service_method':
                         attribute: $.workflowItems
-                        service: oro_workflow.manager
+                        service: orob2b_workflow.manager
                         method: getWorkflowItemsByEntity
                         method_parameters: [$.checkout]
                     - '@count':
@@ -44,6 +44,6 @@ operations:
                 - '@equal': [$.workflowItem.data.requested_for_approve, true]
         actions:
             - '@redirect':
-                route: 'oro_checkout_frontend_checkout'
+                route: 'orob2b_checkout_frontend_checkout'
                 route_parameters:
                     id: $.checkout.id

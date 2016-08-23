@@ -1,12 +1,12 @@
 operations:
-    oro_product_duplicate:
+    orob2b_product_duplicate:
         label: oro.product.ui.duplicate
         applications: [default]
         routes:
-            - oro_product_view
+            - orob2b_product_view
         datagrids:
             - products-grid
-        acl_resource: oro_product_create
+        acl_resource: orob2b_product_create
         order: 10
         button_options:
             icon: icon-copy
@@ -14,7 +14,7 @@ operations:
             - '@run_action_group':
                 results:
                     product_copy_id: $.productCopy.id
-                action_group: oro_product_duplicate
+                action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
             - '@call_service_method':
@@ -29,7 +29,7 @@ operations:
                     message: oro.product.controller.product.duplicated.message
                     type: 'success'
             - '@redirect':
-                route: oro_product_view
+                route: orob2b_product_view
                 route_parameters:
                     id: $.product_copy_id
     UPDATE:
@@ -42,14 +42,14 @@ operations:
             - frontend-products-grid
 
 action_groups:
-    oro_product_duplicate:
+    orob2b_product_duplicate:
         parameters:
             data:
                 type: Oro\Bundle\ProductBundle\Entity\Product
-        acl_resource: oro_product_create
+        acl_resource: orob2b_product_create
         actions:
             - '@call_service_method':
-                service: oro_product.service.duplicator
+                service: orob2b_product.service.duplicator
                 method: duplicate
                 method_parameters: [$.data]
                 attribute: $.productCopy

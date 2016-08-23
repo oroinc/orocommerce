@@ -1,8 +1,8 @@
 operations:
-    oro_pricing_add_product_price:
+    orob2b_pricing_add_product_price:
         label: oro.pricing.add_product_price
         applications: [default]
-        routes: [oro_pricing_price_list_view]
+        routes: [orob2b_pricing_price_list_view]
         order: 10
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
 
@@ -28,7 +28,7 @@ operations:
         form_options:
             attribute_fields:
                 price:
-                    form_type: oro_pricing_price_list_product_price
+                    form_type: orob2b_pricing_price_list_product_price
                     options:
                         required: true
             attribute_default_values:
@@ -42,7 +42,7 @@ operations:
 
         actions:
             - '@run_action_group':
-                action_group: oro_pricing_add_product_price
+                action_group: orob2b_pricing_add_product_price
                 parameters_mapping:
                     data: $.data
                     price: $.price
@@ -64,9 +64,9 @@ operations:
             - pricing-price-list-select-grid
             - product-prices-grid
 
-    oro_pricing_price_list_set_active:
+    orob2b_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
-        routes: [oro_pricing_price_list_view]
+        routes: [orob2b_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -85,13 +85,13 @@ operations:
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
             - '@call_service_method':
-                service: oro_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_change_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
-    oro_pricing_price_list_disable:
+    orob2b_pricing_price_list_disable:
         label: oro.pricing.pricelist.status.disable
-        routes: [oro_pricing_price_list_view]
+        routes: [orob2b_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -110,13 +110,13 @@ operations:
                 message: oro.pricing.pricelist.status.message.disabled
                 type: 'success'
             - '@call_service_method':
-                service: oro_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_change_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
-    oro_pricing_price_list_duplicate:
+    orob2b_pricing_price_list_duplicate:
         label: oro.pricing.pricelist.duplicate.label
-        routes: [oro_pricing_price_list_view]
+        routes: [orob2b_pricing_price_list_view]
         order: 10
         button_options:
             icon: icon-copy
@@ -141,27 +141,27 @@ operations:
             - '@assign_value': [$.newPriceList.active, false]
             - '@assign_value': [$.newPriceList.default, false]
             - '@call_service_method':
-                service: oro_pricing.duplicator.schedule
+                service: orob2b_pricing.duplicator.schedule
                 method: duplicateSchedule
                 method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@call_service_method':
-                service: oro_pricing.duplicator.price_list_to_product_duplicator
+                service: orob2b_pricing.duplicator.price_list_to_product_duplicator
                 method: duplicate
                 method_parameters: [$.entity, $.newPriceList]
             - '@call_service_method':
-                service: oro_pricing.duplicator.product_price_duplicator
+                service: orob2b_pricing.duplicator.product_price_duplicator
                 method: duplicate
                 method_parameters: [$.entity, $.newPriceList]
             - '@flash_message':
                 message: oro.pricing.pricelist.duplicate.message
                 type: 'success'
             - '@redirect':
-                route: 'oro_pricing_price_list_view'
+                route: 'orob2b_pricing_price_list_view'
                 route_parameters:
                     id: $.newPriceList.id
 
-    oro_pricing_delete_product_price:
+    orob2b_pricing_delete_product_price:
         extends: DELETE
         replace:
             - for_all_datagrids
@@ -172,19 +172,19 @@ operations:
         datagrids:
             - price-list-product-prices-grid
 
-    oro_pricing_recalculate_price_list:
+    orob2b_pricing_recalculate_price_list:
         label: oro.pricing.pricelist.recalculate.label
-        routes: [oro_pricing_price_list_view]
+        routes: [orob2b_pricing_price_list_view]
         order: 10
         button_options:
             icon: icon-money
         actions:
             - '@call_service_method':
-                service: 'oro_pricing.builder.price_list_product_assignment_builder'
+                service: 'orob2b_pricing.builder.price_list_product_assignment_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@call_service_method':
-                service: 'oro_pricing.builder.product_price_builder'
+                service: 'orob2b_pricing.builder.product_price_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@flash_message':
@@ -192,7 +192,7 @@ operations:
                 type: 'success'
 
 action_groups:
-    oro_pricing_add_product_price:
+    orob2b_pricing_add_product_price:
         parameters:
             data:
                 type: Oro\Bundle\PricingBundle\Entity\PriceList

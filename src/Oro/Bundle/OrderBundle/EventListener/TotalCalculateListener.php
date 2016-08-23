@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener;
+namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Form;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;

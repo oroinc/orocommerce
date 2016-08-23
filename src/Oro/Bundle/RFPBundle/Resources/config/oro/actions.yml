@@ -1,9 +1,9 @@
 operations:
-    oro_rfp_change_status:
+    orob2b_rfp_change_status:
         label: oro.rfp.btn.change_status
         applications: [default]
         routes:
-            - oro_rfp_request_view
+            - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
         order: 10
@@ -17,11 +17,11 @@ operations:
         form_options:
             attribute_fields:
                 request_status:
-                    form_type: oro_rfp_request_status_select
+                    form_type: orob2b_rfp_request_status_select
                     options:
                         required: true
                 request_note:
-                    form_type: oro_rich_text
+                    form_type: orob2b_rich_text
             attribute_default_values:
                 request_status: $status
         button_options:
@@ -33,7 +33,7 @@ operations:
                 width: 550
         actions:
             - '@run_action_group':
-                action_group: oro_rfp_change_status
+                action_group: orob2b_rfp_change_status
                 parameters_mapping:
                     data: $.data
                     request_status: $.request_status
@@ -42,12 +42,12 @@ operations:
                 message: oro.rfp.message.request_status_changed
                 type: 'info'
 
-    oro_rfp_cancel:
+    orob2b_rfp_cancel:
         label: oro.rfp.request.cancel.label
         enabled: true
         applications: [default]
         routes:
-            - oro_rfp_request_view
+            - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
         order: 90
@@ -59,7 +59,7 @@ operations:
         form_options:
             attribute_fields:
                 cancellation_reason:
-                    form_type: oro_rich_text
+                    form_type: orob2b_rich_text
         button_options:
             icon: icon-ban-circle
         frontend_options:
@@ -81,7 +81,7 @@ operations:
                 - '@not_equal': [$status.name, $.deletedStatusName]
         actions:
             - '@run_action_group':
-                action_group: oro_rfp_cancel
+                action_group: orob2b_rfp_cancel
                 parameters_mapping:
                     data: $.data
                     cancellation_reason: $.cancellation_reason
@@ -91,12 +91,12 @@ operations:
                 message: 'oro.rfp.request.cancellation_success.label'
                 type: 'info'
 
-    oro_rfp_create_quote:
+    orob2b_rfp_create_quote:
         label: oro.rfp.btn.create_quote
         applications: [default]
         routes:
-            - oro_rfp_request_view
-        acl_resource: oro_sale_quote_create
+            - orob2b_rfp_request_view
+        acl_resource: orob2b_sale_quote_create
         order: 20
         button_options:
             icon: icon-file-text
@@ -105,40 +105,40 @@ operations:
             '@equal': [$status.draft, false]
         actions:
             - '@call_service_method':
-                service: oro_rfp.service.request_to_quote_data_storage
+                service: orob2b_rfp.service.request_to_quote_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
             - '@redirect':
                 parameters:
-                    route: oro_sale_quote_create
+                    route: orob2b_sale_quote_create
                     route_parameters: {'storage': true}
 
-    oro_rfp_frontend_request_a_quote:
+    orob2b_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp
         applications: [commerce]
         routes:
-            - oro_product_frontend_quick_add
-            - oro_product_frontend_quick_add_copy_paste
-            - oro_product_frontend_quick_add_import
+            - orob2b_product_frontend_quick_add
+            - orob2b_product_frontend_quick_add_copy_paste
+            - orob2b_product_frontend_quick_add_import
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
             icon: icon-file-text
             data:
-                component_name: oro_rfp_quick_add_processor
+                component_name: orob2b_rfp_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
         preactions:
             - '@call_service_method':
-                service: oro_rfp.processor.quick_add
+                service: orob2b_rfp.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
             '@equal': [true, $.isAllowed]
 
-    oro_rfp_base_edit:
+    orob2b_rfp_base_edit:
         label: ' '
         applications: [default]
         attributes:
@@ -150,22 +150,22 @@ operations:
         form_options:
             attribute_fields:
                 request:
-                    form_type: oro_rfp_request
+                    form_type: orob2b_rfp_request
             attribute_default_values:
                 request:
                     $.data
 
-#    oro_rfp_edit:
-#        extends: oro_rfp_base_edit
+#    orob2b_rfp_edit:
+#        extends: orob2b_rfp_base_edit
 #        label: oro.rfp.btn.edit
 #        routes:
-#            - oro_rfp_request_view
+#            - orob2b_rfp_request_view
 #        datagrids:
 #            - rfp-requests-grid
 #        order: 70
 #        button_options:
 #            icon: icon-edit
-#        acl_resource: oro_rfp_request_update
+#        acl_resource: orob2b_rfp_request_update
 #        frontend_options:
 #            template: OroRFPBundle:Action:rfpEditForm.html.twig
 #            show_dialog: false
@@ -174,22 +174,22 @@ operations:
 #                message: oro.rfp.action.request.updated.message
 #                type: 'success'
 #            - @redirect:
-#                route: 'oro_rfp_request_view'
+#                route: 'orob2b_rfp_request_view'
 #                route_parameters:
 #                    id: $.data.id
 
-    oro_rfp_resubmit:
-        extends: oro_rfp_base_edit
+    orob2b_rfp_resubmit:
+        extends: orob2b_rfp_base_edit
         label: oro.rfp.btn.resubmit
         applications: [default]
         routes:
-            - oro_rfp_request_view
+            - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
         order: 80
         button_options:
             icon: icon-share
-        acl_resource: oro_rfp_request_update
+        acl_resource: orob2b_rfp_request_update
         frontend_options:
             template: OroRFPBundle:Action:rfpResubmitForm.html.twig
             show_dialog: false
@@ -208,8 +208,8 @@ operations:
                   - [[keep], [propertyName, [accountUser]]]
                   - [[keep], [propertyName, [account]]]
                   - [[keep], [propertyName, [organization]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+                  - [[keep], [property, ["%orob2b_rfp.entity.request_product.class%", product]]]
+                  - [[keep], [property, ["%orob2b_rfp.entity.request_product_item.class%", productUnit]]]
             - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
             - '@find_entity':
@@ -224,16 +224,16 @@ operations:
                 message: oro.rfp.action.request.resubmited.message
                 type: 'success'
             - '@redirect':
-                route: 'oro_rfp_request_view'
+                route: 'orob2b_rfp_request_view'
                 route_parameters:
                     id: $id
 
-    oro_rfp_delete:
+    orob2b_rfp_delete:
         label: oro.rfp.btn.delete
         enabled: true
         applications: [default]
         routes:
-            - oro_rfp_request_view
+            - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
         order: 100
@@ -251,29 +251,29 @@ operations:
                 - '@not_equal': [$status.name, $.deleted_status_name]
         actions:
             - '@run_action_group':
-                action_group: oro_rfp_delete
+                action_group: orob2b_rfp_delete
                 parameters_mapping:
                     data: $.data
                     deleted_status_name: $.deleted_status_name
 
-    oro_rfp_frontend_request_create:
+    orob2b_rfp_frontend_request_create:
         label: oro.frontend.rfp.request.create.label
         enabled: true
         applications: [commerce]
         routes:
-            - oro_rfp_frontend_request_index
+            - orob2b_rfp_frontend_request_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_rfp_frontend_request_create
+                    route: orob2b_rfp_frontend_request_create
 
-    oro_rfp_frontend_request_edit:
+    orob2b_rfp_frontend_request_edit:
         label: oro.frontend.rfp.action.request.edit
         applications: [commerce]
         routes:
-            - oro_rfp_frontend_request_view
+            - orob2b_rfp_frontend_request_view
         acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
@@ -281,7 +281,7 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_rfp_frontend_request_update
+                    route: orob2b_rfp_frontend_request_update
                     route_parameters:
                         id: $id
 
@@ -293,7 +293,7 @@ operations:
             - rfp-requests-grid
 
 action_groups:
-    oro_rfp_change_status:
+    orob2b_rfp_change_status:
         parameters:
             data:
                 type: Oro\Bundle\RFPBundle\Entity\Request
@@ -319,7 +319,7 @@ action_groups:
                     message: $.message
                 flush: true
 
-    oro_rfp_cancel:
+    orob2b_rfp_cancel:
         parameters:
             data:
                 type: Oro\Bundle\RFPBundle\Entity\Request
@@ -343,7 +343,7 @@ action_groups:
             - '@assign_value': [$.data.cancellationReason, $.cancellation_reason]
             - '@flush_entity': $.data
 
-    oro_rfp_delete:
+    orob2b_rfp_delete:
         parameters:
             data:
                 type: Oro\Bundle\RFPBundle\Entity\Request

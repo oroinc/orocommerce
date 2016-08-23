@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FrontendBundle\Helper;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper extends ApplicationsHelper
@@ -23,7 +22,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getWidgetRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_buttons' : parent::getWidgetRoute();
+        return $this->isFrontend() ? 'orob2b_frontend_action_widget_buttons' : parent::getWidgetRoute();
     }
 
     /**
@@ -31,7 +30,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getDialogRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_form' : parent::getDialogRoute();
+        return $this->isFrontend() ? 'orob2b_frontend_action_widget_form' : parent::getDialogRoute();
     }
 
     /**
@@ -39,7 +38,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getExecutionRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_operation_execute' : parent::getExecutionRoute();
+        return $this->isFrontend() ? 'orob2b_frontend_action_operation_execute' : parent::getExecutionRoute();
     }
 
     /**

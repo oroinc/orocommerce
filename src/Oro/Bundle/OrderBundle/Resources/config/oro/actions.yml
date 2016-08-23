@@ -1,6 +1,6 @@
 operations:
     orob2b_order_capture:
-        label: orob2b.payment.capture
+        label: oro.payment.capture
         button_options:
             icon: icon-credit-card
         applications: [default]
