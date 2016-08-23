@@ -1,0 +1,64 @@
+{% extends 'OroActionBundle:Operation:page.html.twig' %}
+
+{% block pageHeader %}
+    {% if entity %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   fromUrl,
+            'indexLabel':  entityLabel,
+            'entityTitle': entity|default('N/A'|trans)
+        } %}
+
+        {{ parent() }}
+    {% else %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: operation.definition.label|trans } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set lineItems %}
+        {{ form_widget(form.request.requestProducts) }}
+        {{ form_errors(form.request.requestProducts) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.rfp.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [
+                    form_row(form.request.firstName),
+                    form_row(form.request.lastName),
+                    form_row(form.request.email),
+                    form_row(form.request.phone),
+                    form_row(form.request.company),
+                    form_row(form.request.role),
+                    form_row(form.request.account),
+                    form_row(form.request.accountUser),
+                    form_row(form.request.status),
+                    form_row(form.request.note),
+                    form_row(form.request.poNumber),
+                    form_row(form.request.shipUntil),
+                    form_row(form.request.assignedUsers),
+                    form_row(form.request.assignedAccountUsers)
+                ]
+            }]
+        },
+        {
+            'title': 'oro.rfp.sections.request_products'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    lineItems
+                ]
+            }]
+        }
+    ] %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

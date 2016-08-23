@@ -6,8 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\PayPalBundle\EventListener\Config\PayPalSelectedCountriesListener;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 
 class PayPalSelectedCountriesListenerTest extends \PHPUnit_Framework_TestCase
 {

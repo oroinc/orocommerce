@@ -1,2 +1,0 @@
-bundles:
-    - { name: OroB2B\Bundle\FrontendBundle\OroB2BFrontendBundle }
