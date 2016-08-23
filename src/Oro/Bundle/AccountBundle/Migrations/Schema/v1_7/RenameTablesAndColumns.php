@@ -47,6 +47,61 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         $this->updateAttachments($schema, $queries);
         $this->updateNotes($schema, $queries);
+
+        // entity tables
+        $extension->renameTable($schema, $queries, 'orob2b_account', 'oro_account');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user', 'oro_account_user');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_user_access_role', 'oro_acc_user_access_role');
+        $extension->renameTable($schema, $queries, 'orob2b_account_group', 'oro_account_group');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_org', 'oro_account_user_org');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_role', 'oro_account_user_role');
+        $extension->renameTable($schema, $queries, 'orob2b_account_role_to_website', 'oro_account_role_to_website');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_settings', 'oro_account_user_settings');
+
+        $extension->renameTable($schema, $queries, 'orob2b_acc_navigation_history', 'oro_acc_navigation_history');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_navigation_item', 'oro_acc_navigation_item');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_nav_item_pinbar', 'oro_acc_nav_item_pinbar');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_sdbar_st', 'oro_account_user_sdbar_st');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_sdbar_wdg', 'oro_account_user_sdbar_wdg');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_pagestate', 'oro_acc_pagestate');
+        $extension->renameTable($schema, $queries, 'orob2b_windows_state', 'oro_account_windows_state');
+
+        $extension->renameTable($schema, $queries, 'orob2b_account_address', 'oro_account_address');
+        $extension->renameTable($schema, $queries, 'orob2b_account_adr_adr_type', 'oro_account_adr_adr_type');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_address', 'oro_account_user_address');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_usr_adr_to_adr_type', 'oro_acc_usr_adr_to_adr_type');
+
+        $extension->renameTable($schema, $queries, 'orob2b_category_visibility', 'oro_category_visibility');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_category_visibility', 'oro_acc_category_visibility');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_ctgr_visibility', 'oro_acc_grp_ctgr_visibility');
+        $extension->renameTable($schema, $queries, 'orob2b_product_visibility', 'oro_product_visibility');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_product_visibility', 'oro_acc_product_visibility');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_prod_visibility', 'oro_acc_grp_prod_visibility');
+
+        $extension->renameTable($schema, $queries, 'orob2b_prod_vsb_resolv', 'oro_prod_vsb_resolv');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_prod_vsb_resolv', 'oro_acc_grp_prod_vsb_resolv');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_prod_vsb_resolv', 'oro_acc_prod_vsb_resolv');
+        $extension->renameTable($schema, $queries, 'orob2b_ctgr_vsb_resolv', 'oro_ctgr_vsb_resolv');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_ctgr_vsb_resolv', 'oro_acc_grp_ctgr_vsb_resolv');
+        $extension->renameTable($schema, $queries, 'orob2b_acc_ctgr_vsb_resolv', 'oro_acc_ctgr_vsb_resolv');
+
+        $extension->renameTable($schema, $queries, 'orob2b_account_sales_reps', 'oro_account_sales_reps');
+        $extension->renameTable($schema, $queries, 'orob2b_account_user_sales_reps', 'oro_account_user_sales_reps');
+
+        // indexes
+        $schema->getTable('orob2b_account')->dropIndex('orob2b_account_name_idx');
+        $schema->getTable('orob2b_account_group')->dropIndex('orob2b_account_group_name_idx');
+        $schema->getTable('orob2b_account_user_role')->dropIndex('orob2b_account_user_role_account_id_label_idx');
+
+        $extension->addIndex($schema, $queries, 'oro_account', ['name'], 'oro_account_name_idx');
+        $extension->addIndex($schema, $queries, 'oro_account_group', ['name'], 'oro_account_group_name_idx');
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_account_group',
+            ['account_id', 'label'],
+            'oro_account_user_role_account_id_label_idx'
+        );
     }
 
     /**

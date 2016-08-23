@@ -29,47 +29,47 @@ class OroAccountBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
-    const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
-    const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
-    const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
-    const ORO_B2B_ACCOUNT_GROUP_TABLE_NAME = 'orob2b_account_group';
-    const ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME = 'orob2b_account_user_org';
-    const ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME = 'orob2b_account_user_role';
-    const ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'orob2b_account_role_to_website';
-    const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
+    const ORO_ACCOUNT_TABLE_NAME = 'oro_account';
+    const ORO_ACCOUNT_USER_TABLE_NAME = 'oro_account_user';
+    const ORO_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'oro_acc_user_access_role';
+    const ORO_ACCOUNT_GROUP_TABLE_NAME = 'oro_account_group';
+    const ORO_ACCOUNT_USER_ORG_TABLE_NAME = 'oro_account_user_org';
+    const ORO_ACCOUNT_USER_ROLE_TABLE_NAME = 'oro_account_user_role';
+    const ORO_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'oro_account_role_to_website';
+    const ORO_WEBSITE_TABLE_NAME = 'oro_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
-    const ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME = 'orob2b_account_address';
-    const ORO_B2B_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME = 'orob2b_account_adr_adr_type';
+    const ORO_ACCOUNT_ADDRESS_TABLE_NAME = 'oro_account_address';
+    const ORO_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME = 'oro_account_adr_adr_type';
     const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
     const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
     const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
     const ORO_EMAIL = 'oro_email';
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
-    const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';
-    const ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'orob2b_acc_usr_adr_to_adr_type';
+    const ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'oro_account_user_address';
+    const ORO_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'oro_acc_usr_adr_to_adr_type';
 
-    const ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_category_visibility';
-    const ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_acc_category_visibility';
-    const ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_acc_grp_ctgr_visibility';
-    const ORO_B2B_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
+    const ORO_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_category_visibility';
+    const ORO_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_acc_category_visibility';
+    const ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_acc_grp_ctgr_visibility';
+    const ORO_CATEGORY_TABLE_NAME = 'oro_catalog_category';
 
-    const ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_product_visibility';
-    const ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_acc_product_visibility';
-    const ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_acc_grp_prod_visibility';
-    const ORO_B2B_PRODUCT_TABLE_NAME = 'orob2b_product';
+    const ORO_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_product_visibility';
+    const ORO_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_acc_product_visibility';
+    const ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_acc_grp_prod_visibility';
+    const ORO_PRODUCT_TABLE_NAME = 'oro_product';
 
-    const ORO_B2B_PRODUCT_VISIBILITY_RESOLVED = 'orob2b_prod_vsb_resolv';
-    const ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED = 'orob2b_acc_grp_prod_vsb_resolv';
-    const ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED = 'orob2b_acc_prod_vsb_resolv';
+    const ORO_PRODUCT_VISIBILITY_RESOLVED = 'oro_prod_vsb_resolv';
+    const ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED = 'oro_acc_grp_prod_vsb_resolv';
+    const ORO_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED = 'oro_acc_prod_vsb_resolv';
 
-    const ORO_B2B_CATEGORY_VISIBILITY_RESOLVED = 'orob2b_ctgr_vsb_resolv';
-    const ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED = 'orob2b_acc_grp_ctgr_vsb_resolv';
-    const ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED = 'orob2b_acc_ctgr_vsb_resolv';
+    const ORO_CATEGORY_VISIBILITY_RESOLVED = 'oro_ctgr_vsb_resolv';
+    const ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED = 'oro_acc_grp_ctgr_vsb_resolv';
+    const ORO_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED = 'oro_acc_ctgr_vsb_resolv';
 
     const ORO_USER_TABLE_NAME = 'oro_user';
-    const ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_sales_reps';
-    const ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_user_sales_reps';
-    const ORO_B2B_ACCOUNT_USER_SETTINGS = 'orob2b_account_user_settings';
+    const ORO_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME = 'oro_account_sales_reps';
+    const ORO_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME = 'oro_account_user_sales_reps';
+    const ORO_ACCOUNT_USER_SETTINGS = 'oro_account_user_settings';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -165,7 +165,7 @@ class OroAccountBundleInstaller implements
         $this->createOroAccountProductVisibilityTable($schema);
         $this->createOroAccountGroupProductVisibilityTable($schema);
 
-        $this->createOrob2BWindowsStateTable($schema);
+        $this->createOroAccountWindowsStateTable($schema);
         $this->createOroProductVisibilityResolvedTable($schema);
         $this->createOroAccountGroupProductVisibilityResolvedTable($schema);
         $this->createOroAccountProductVisibilityResolvedTable($schema);
@@ -200,7 +200,7 @@ class OroAccountBundleInstaller implements
         $this->addOroAccountProductVisibilityForeignKeys($schema);
         $this->addOroAccountGroupProductVisibilityForeignKeys($schema);
 
-        $this->addOrob2BWindowsStateForeignKeys($schema);
+        $this->addOroAccountWindowsStateForeignKeys($schema);
         $this->addOroProductVisibilityResolvedForeignKeys($schema);
         $this->addOroAccountGroupProductVisibilityResolvedForeignKeys($schema);
         $this->addOroAccountProductVisibilityResolvedForeignKeys($schema);
@@ -218,13 +218,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user table
+     * Create oro_account_user table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_USER_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
@@ -258,7 +258,7 @@ class OroAccountBundleInstaller implements
 
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
-            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME,
+            static::ORO_ACCOUNT_USER_TABLE_NAME,
             [
                 'image/*',
                 'application/pdf',
@@ -273,28 +273,28 @@ class OroAccountBundleInstaller implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_USER_TABLE_NAME);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
             static::ORO_EMAIL,
-            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME
+            static::ORO_ACCOUNT_USER_TABLE_NAME
         );
         $this->activityExtension->addActivityAssociation(
             $schema,
             static::ORO_CALENDAR_EVENT,
-            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME
+            static::ORO_ACCOUNT_USER_TABLE_NAME
         );
     }
 
     /**
-     * Create orob2b_account table
+     * Create oro_account table
      *
      * @param Schema $schema
      */
     protected function createOroAccountTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
@@ -305,11 +305,11 @@ class OroAccountBundleInstaller implements
 
         $table->setPrimaryKey(['id']);
 
-        $table->addIndex(['name'], 'orob2b_account_name_idx', []);
+        $table->addIndex(['name'], 'oro_account_name_idx', []);
 
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
-            static::ORO_B2B_ACCOUNT_TABLE_NAME,
+            static::ORO_ACCOUNT_TABLE_NAME,
             [
                 'image/*',
                 'application/pdf',
@@ -324,10 +324,10 @@ class OroAccountBundleInstaller implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_TABLE_NAME);
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_TABLE_NAME);
         $this->extendExtension->addEnumField(
             $schema,
-            static::ORO_B2B_ACCOUNT_TABLE_NAME,
+            static::ORO_ACCOUNT_TABLE_NAME,
             'internal_rating',
             Account::INTERNAL_RATING_CODE,
             false,
@@ -337,13 +337,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_access_user_role table
+     * Create oro_account_user_access_user_role table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserAccessAccountUserRoleTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACC_USER_ACCESS_ROLE_TABLE_NAME);
 
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('account_user_role_id', 'integer', []);
@@ -352,26 +352,26 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_group table
+     * Create oro_account_group table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_GROUP_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
 
         $table->setPrimaryKey(['id']);
 
-        $table->addIndex(['name'], 'orob2b_account_group_name_idx', []);
+        $table->addIndex(['name'], 'oro_account_group_name_idx', []);
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME);
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_GROUP_TABLE_NAME);
     }
 
     /**
-     * Create orob2b_audit table
+     * Create oro_audit table
      *
      * @param Schema $schema
      */
@@ -381,7 +381,7 @@ class OroAccountBundleInstaller implements
         $auditTable->addColumn('account_user_id', 'integer', ['notnull' => false]);
 
         $auditTable->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -389,13 +389,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_organization table
+     * Create oro_account_user_organization table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserOrganizationTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_USER_ORG_TABLE_NAME);
 
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('organization_id', 'integer', []);
@@ -404,13 +404,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_role table
+     * Create oro_account_user_role table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserRoleTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
@@ -420,19 +420,19 @@ class OroAccountBundleInstaller implements
         $table->addColumn('public', 'boolean', ['notnull' => true, 'default' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
-        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
+        $table->addUniqueIndex(['account_id', 'label'], 'oro_account_user_role_account_id_label_idx');
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME);
     }
 
     /**
-     * Create orob2b_account_role_to_website table
+     * Create oro_account_role_to_website table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserRoleToWebsiteTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
         $table->addColumn('account_user_role_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['account_user_role_id', 'website_id']);
@@ -440,13 +440,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_address table
+     * Create oro_account_address table
      *
      * @param Schema $schema
      */
     protected function createOroAccountAddressTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
@@ -473,29 +473,29 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_adr_adr_type table
+     * Create oro_account_adr_adr_type table
      *
      * @param Schema $schema
      */
     protected function createOroAccountAdrAdrTypeTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('type_name', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_address_id', 'type_name'], 'orob2b_account_adr_id_type_name_idx');
+        $table->addUniqueIndex(['account_address_id', 'type_name'], 'oro_account_adr_id_type_name_idx');
     }
 
     /**
-     * Create orob2b_navigation_history table
+     * Create oro_navigation_history table
      *
      * @param Schema $schema
      */
     protected function createOroNavigationHistoryTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_acc_navigation_history');
+        $table = $schema->createTable('oro_acc_navigation_history');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', []);
@@ -507,18 +507,18 @@ class OroAccountBundleInstaller implements
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['route'], 'orob2b_navigation_history_route_idx');
-        $table->addIndex(['entity_id'], 'orob2b_navigation_history_entity_id_idx');
+        $table->addIndex(['route'], 'oro_navigation_history_route_idx');
+        $table->addIndex(['entity_id'], 'oro_navigation_history_entity_id_idx');
     }
 
     /**
-     * Create orob2b_navigation_item table
+     * Create oro_navigation_item table
      *
      * @param Schema $schema
      */
     protected function createOroNavigationItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_acc_navigation_item');
+        $table = $schema->createTable('oro_acc_navigation_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', []);
@@ -529,17 +529,17 @@ class OroAccountBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['account_user_id', 'position'], 'oro_b2b_sorted_items_idx', []);
+        $table->addIndex(['account_user_id', 'position'], 'ORO_sorted_items_idx', []);
     }
 
     /**
-     * Create orob2b_acc_nav_item_pinbar table
+     * Create oro_acc_nav_item_pinbar table
      *
      * @param Schema $schema
      */
     protected function createOroNavigationItemPinbarTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_acc_nav_item_pinbar');
+        $table = $schema->createTable('oro_acc_nav_item_pinbar');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('maximized', 'datetime', ['notnull' => false]);
@@ -548,13 +548,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_sdbar_st table
+     * Create oro_account_user_sdbar_st table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserSdbarStTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_sdbar_st');
+        $table = $schema->createTable('oro_account_user_sdbar_st');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('position', 'string', ['length' => 13]);
@@ -564,13 +564,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_sdbar_wdg table
+     * Create oro_account_user_sdbar_wdg table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserSdbarWdgTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_sdbar_wdg');
+        $table = $schema->createTable('oro_account_user_sdbar_wdg');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', []);
@@ -585,13 +585,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_pagestate table
+     * Create oro_acc_pagestate table
      *
      * @param Schema $schema
      */
     protected function createOroAccNavigationPagestateTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_acc_pagestate');
+        $table = $schema->createTable('oro_acc_pagestate');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('page_id', 'string', ['length' => 4000]);
@@ -604,13 +604,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_prod_vsb_resolv table
+     * Create oro_prod_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroProductVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_PRODUCT_VISIBILITY_RESOLVED);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
@@ -621,13 +621,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_grp_prod_vsb_resolv table
+     * Create oro_acc_grp_prod_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupProductVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED);
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
@@ -639,13 +639,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_prod_vsb_resolv table
+     * Create oro_acc_prod_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroAccountProductVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED);
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
@@ -657,39 +657,39 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_sales_representatives table
+     * Create oro_account_sales_representatives table
      *
      * @param Schema $schema
      */
     protected function createOroAccountSalesRepresentativesTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addColumn('account_id', 'integer');
         $table->addColumn('user_id', 'integer');
         $table->setPrimaryKey(['account_id', 'user_id']);
     }
 
     /**
-     * Create orob2b_account_user_sales_representatives table
+     * Create oro_account_user_sales_representatives table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserSalesRepresentativesTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addColumn('account_user_id', 'integer');
         $table->addColumn('user_id', 'integer');
         $table->setPrimaryKey(['account_user_id', 'user_id']);
     }
 
     /**
-     * Create orob2b_ctgr_vsb_resolv table
+     * Create oro_ctgr_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroCategoryVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_CATEGORY_VISIBILITY_RESOLVED);
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -698,13 +698,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_grp_ctgr_vsb_resolv table
+     * Create oro_acc_grp_ctgr_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupCategoryVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED);
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
@@ -714,13 +714,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_ctgr_vsb_resolv table
+     * Create oro_acc_ctgr_vsb_resolv table
      *
      * @param Schema $schema
      */
     protected function createOroAccountCategoryVisibilityResolvedTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED);
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
@@ -734,7 +734,7 @@ class OroAccountBundleInstaller implements
      */
     protected function createOroAccountUserSettingsTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_SETTINGS);
+        $table = $schema->createTable(self::ORO_ACCOUNT_USER_SETTINGS);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_user_id', 'integer');
@@ -746,13 +746,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user foreign keys.
+     * Add oro_account_user foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_USER_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_user'),
             ['owner_id'],
@@ -766,13 +766,13 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -780,21 +780,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_access_user_role foreign keys.
+     * Add oro_account_user_access_user_role foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserAccessAccountUserRoleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACC_USER_ACCESS_ROLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME),
             ['account_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_TABLE_NAME),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -802,15 +802,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account foreign keys.
+     * Add oro_account foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_GROUP_TABLE_NAME),
             ['group_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -836,15 +836,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_organization foreign keys.
+     * Add oro_account_user_organization foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserOrganizationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_USER_ORG_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_TABLE_NAME),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -858,13 +858,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_role foreign keys.
+     * Add oro_account_user_role foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserRoleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
             ['organization_id'],
@@ -872,7 +872,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -880,21 +880,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_role_to_website foreign keys.
+     * Add oro_account_role_to_website foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserRoleToWebsiteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_WEBSITE_TABLE_NAME),
+            $schema->getTable(static::ORO_WEBSITE_TABLE_NAME),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME),
             ['account_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -902,15 +902,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_address foreign keys.
+     * Add oro_account_address foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME),
             ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -942,13 +942,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_adr_adr_type foreign keys.
+     * Add oro_account_adr_adr_type foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountAdrAdrTypeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
             ['type_name'],
@@ -956,7 +956,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME),
             ['account_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -964,13 +964,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_user_address table
+     * Create oro_account_user_address table
      *
      * @param Schema $schema
      */
     protected function createOroAccountUserAddressTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
@@ -997,13 +997,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_address foreign keys.
+     * Add oro_account_user_address foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_DICTIONARY_REGION_TABLE_NAME),
             ['region_code'],
@@ -1011,7 +1011,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_TABLE_NAME),
             ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1037,29 +1037,29 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_adr_to_adr_type table
+     * Create oro_account_adr_to_adr_type table
      *
      * @param Schema $schema
      */
     protected function createOroAccUsrAdrToAdrTypeTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('type_name', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_user_address_id', 'type_name'], 'orob2b_account_user_adr_id_type_name_idx');
+        $table->addUniqueIndex(['account_user_address_id', 'type_name'], 'oro_account_user_adr_id_type_name_idx');
     }
 
     /**
-     * Add orob2b_account_adr_to_adr_type foreign keys.
+     * Add oro_account_adr_to_adr_type foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccUsrAdrToAdrTypeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
             ['type_name'],
@@ -1067,7 +1067,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME),
+            $schema->getTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME),
             ['account_user_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1075,13 +1075,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_navigation_history foreign keys.
+     * Add oro_navigation_history foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroNavigationHistoryForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_acc_navigation_history');
+        $table = $schema->getTable('oro_acc_navigation_history');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -1089,7 +1089,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1097,13 +1097,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_navigation_item foreign keys.
+     * Add oro_navigation_item foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroNavigationItemForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_acc_navigation_item');
+        $table = $schema->getTable('oro_acc_navigation_item');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -1111,7 +1111,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1119,15 +1119,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_nav_item_pinbar foreign keys.
+     * Add oro_acc_nav_item_pinbar foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroNavigationItemPinbarForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_acc_nav_item_pinbar');
+        $table = $schema->getTable('oro_acc_nav_item_pinbar');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_acc_navigation_item'),
+            $schema->getTable('oro_acc_navigation_item'),
             ['item_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1135,15 +1135,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_sdbar_st foreign keys.
+     * Add oro_account_user_sdbar_st foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserSdbarStForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_user_sdbar_st');
+        $table = $schema->getTable('oro_account_user_sdbar_st');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -1151,13 +1151,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_sdbar_wdg foreign keys.
+     * Add oro_account_user_sdbar_wdg foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserSdbarWdgForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_user_sdbar_wdg');
+        $table = $schema->getTable('oro_account_user_sdbar_wdg');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -1165,7 +1165,7 @@ class OroAccountBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -1173,15 +1173,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_navigation_pagestate foreign keys.
+     * Add oro_acc_navigation_pagestate foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccNavigationPagestateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_acc_pagestate');
+        $table = $schema->getTable('oro_acc_pagestate');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1189,129 +1189,129 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_category_visibility table
+     * Create oro_category_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroCategoryVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id'], 'orob2b_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id'], 'oro_ctgr_vis_uidx');
     }
 
     /**
-     * Create orob2b_acc_category_visibility table
+     * Create oro_acc_category_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroAccountCategoryVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id', 'account_id'], 'orob2b_acc_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id', 'account_id'], 'oro_acc_ctgr_vis_uidx');
     }
 
     /**
-     * Create orob2b_acc_grp_ctgr_visibility table
+     * Create oro_acc_grp_ctgr_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupCategoryVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id', 'account_group_id'], 'orob2b_acc_grp_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id', 'account_group_id'], 'oro_acc_grp_ctgr_vis_uidx');
     }
 
     /**
-     * Create orob2b_product_visibility table
+     * Create oro_product_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroProductVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id'], 'orob2b_prod_vis_uidx');
+        $table->addUniqueIndex(['website_id', 'product_id'], 'oro_prod_vis_uidx');
     }
 
     /**
-     * Create orob2b_acc_product_visibility table
+     * Create oro_acc_product_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroAccountProductVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id', 'account_id'], 'orob2b_acc_prod_vis_uidx');
+        $table->addUniqueIndex(['website_id', 'product_id', 'account_id'], 'oro_acc_prod_vis_uidx');
     }
 
     /**
-     * Create orob2b_acc_grp_prod_visibility table
+     * Create oro_acc_grp_prod_visibility table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupProductVisibilityTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id', 'account_group_id'], 'orob2b_acc_grp_prod_vis_uidx');
+        $table->addUniqueIndex(['website_id', 'product_id', 'account_group_id'], 'oro_acc_grp_prod_vis_uidx');
     }
 
     /**
-     * Create orob2b_windows_state table
+     * Create oro_windows_state table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BWindowsStateTable(Schema $schema)
+    protected function createOroAccountWindowsStateTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_windows_state');
+        $table = $schema->createTable('oro_account_windows_state');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('data', Type::JSON_ARRAY, ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['customer_user_id'], 'orob2b_windows_state_acu_idx', []);
+        $table->addIndex(['customer_user_id'], 'oro_windows_state_acu_idx', []);
         $table->setPrimaryKey(['id']);
     }
 
     /**
-     * Add orob2b_category_visibility foreign keys.
+     * Add oro_category_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCategoryVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_TABLE_NAME),
+            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1319,21 +1319,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_category_visibility foreign keys.
+     * Add oro_acc_category_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountCategoryVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_TABLE_NAME),
+            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_TABLE_NAME),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1341,21 +1341,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_grp_ctgr_visibility foreign keys.
+     * Add oro_acc_grp_ctgr_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountGroupCategoryVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_TABLE_NAME),
+            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_GROUP_TABLE_NAME),
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1363,21 +1363,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_product_visibility foreign keys.
+     * Add oro_product_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroProductVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            $schema->getTable(self::ORO_WEBSITE_TABLE_NAME),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1385,27 +1385,27 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_product_visibility foreign keys.
+     * Add oro_acc_product_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountProductVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            $schema->getTable(self::ORO_WEBSITE_TABLE_NAME),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_TABLE_NAME),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1413,27 +1413,27 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_grp_prod_visibility foreign keys.
+     * Add oro_acc_grp_prod_visibility foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountGroupProductVisibilityForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            $schema->getTable(self::ORO_WEBSITE_TABLE_NAME),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_GROUP_TABLE_NAME),
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1441,15 +1441,15 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_windows_state foreign keys.
+     * Add oro_windows_state foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BWindowsStateForeignKeys(Schema $schema)
+    protected function addOroAccountWindowsStateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_windows_state');
+        $table = $schema->getTable('oro_windows_state');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -1457,33 +1457,33 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_prod_vsb_resolv foreign keys.
+     * Add oro_prod_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroProductVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_PRODUCT_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_visibility'),
+            $schema->getTable('oro_product_visibility'),
             ['source_product_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1491,39 +1491,39 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_grp_prod_vsb_resolv foreign keys.
+     * Add oro_acc_grp_prod_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountGroupProductVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_acc_grp_prod_visibility'),
+            $schema->getTable('oro_acc_grp_prod_visibility'),
             ['source_product_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_group'),
+            $schema->getTable('oro_account_group'),
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1531,39 +1531,39 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_prod_vsb_resolv foreign keys.
+     * Add oro_acc_prod_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountProductVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_acc_product_visibility'),
+            $schema->getTable('oro_acc_product_visibility'),
             ['source_product_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1571,13 +1571,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_sales_representatives foreign keys.
+     * Add oro_account_sales_representatives foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountSalesRepresentativesForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_USER_TABLE_NAME),
             ['user_id'],
@@ -1585,7 +1585,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_TABLE_NAME),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1593,13 +1593,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_account_user_sales_representatives foreign keys.
+     * Add oro_account_user_sales_representatives foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserSalesRepresentativesForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_USER_TABLE_NAME),
             ['user_id'],
@@ -1607,7 +1607,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
+            $schema->getTable(self::ORO_ACCOUNT_USER_TABLE_NAME),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1615,21 +1615,21 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_ctgr_vsb_resolv foreign keys.
+     * Add oro_ctgr_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_CATEGORY_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_category_visibility'),
+            $schema->getTable('oro_category_visibility'),
             ['source_category_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1637,27 +1637,27 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_grp_ctgr_vsb_resolv foreign keys.
+     * Add oro_acc_grp_ctgr_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountGroupCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_acc_grp_ctgr_visibility'),
+            $schema->getTable('oro_acc_grp_ctgr_visibility'),
             ['source_category_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_group'),
+            $schema->getTable('oro_account_group'),
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1665,27 +1665,27 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_acc_ctgr_vsb_resolv foreign keys.
+     * Add oro_acc_ctgr_vsb_resolv foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountCategoryVisibilityResolvedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_acc_category_visibility'),
+            $schema->getTable('oro_acc_category_visibility'),
             ['source_category_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -1697,10 +1697,10 @@ class OroAccountBundleInstaller implements
      */
     protected function addOroAccountUserSettingsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_SETTINGS);
+        $table = $schema->getTable(self::ORO_ACCOUNT_USER_SETTINGS);
 
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE'],
@@ -1708,7 +1708,7 @@ class OroAccountBundleInstaller implements
         );
 
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE'],

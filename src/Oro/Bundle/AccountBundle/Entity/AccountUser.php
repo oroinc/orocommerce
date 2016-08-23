@@ -17,13 +17,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_account_user")
+ * @ORM\Table(name="oro_account_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="organizations",
  *          joinTable=@ORM\JoinTable(
- *              name="orob2b_account_user_org",
+ *              name="oro_account_user_org",
  *              joinColumns={
  *                  @ORM\JoinColumn(
  *                      name="account_user_id",
@@ -86,7 +86,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
-     *      name="orob2b_acc_user_access_role",
+     *      name="oro_acc_user_access_role",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -285,7 +285,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="orob2b_account_user_sales_reps",
+     *      name="oro_account_user_sales_reps",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
