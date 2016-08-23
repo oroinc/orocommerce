@@ -1,0 +1,364 @@
+operations:
+    oro_rfp_change_status:
+        label: oro.rfp.btn.change_status
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 10
+        attributes:
+            request_status:
+                property_path: entity.status
+            request_note:
+                property_path: entity.note
+                label: oro.note.entity_label
+                type: string
+        form_options:
+            attribute_fields:
+                request_status:
+                    form_type: oro_rfp_request_status_select
+                    options:
+                        required: true
+                request_note:
+                    form_type: oro_rich_text
+            attribute_default_values:
+                request_status: $status
+        button_options:
+            icon: icon-edit
+        frontend_options:
+            template: OroRFPBundle:Action:changeStatusForm.html.twig
+            title: oro.rfp.widget.change_status_title
+            options:
+                width: 550
+        actions:
+            - '@run_action_group':
+                action_group: oro_rfp_change_status
+                parameters_mapping:
+                    data: $.data
+                    request_status: $.request_status
+                    request_note: $.request_note
+            - '@flash_message':
+                message: oro.rfp.message.request_status_changed
+                type: 'info'
+
+    oro_rfp_cancel:
+        label: oro.rfp.request.cancel.label
+        enabled: true
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 90
+        attributes:
+            cancellation_reason:
+                property_path: entity.cancellationReason
+                label: oro.rfp.request.cancellation_reason.label
+                type: string
+        form_options:
+            attribute_fields:
+                cancellation_reason:
+                    form_type: oro_rich_text
+        button_options:
+            icon: icon-ban-circle
+        frontend_options:
+            template: OroRFPBundle:Action:cancelForm.html.twig
+            title: oro.rfp.widget.cancel_title
+            options:
+                width: 550
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.cancelledStatusName
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::CANCELED
+            - '@assign_constant_value':
+                attribute: $.deletedStatusName
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::DELETED
+        preconditions:
+            '@and':
+                - '@not_empty': $status
+                - '@not_equal': [$status.name, $.cancelledStatusName]
+                - '@not_equal': [$status.name, $.deletedStatusName]
+        actions:
+            - '@run_action_group':
+                action_group: oro_rfp_cancel
+                parameters_mapping:
+                    data: $.data
+                    cancellation_reason: $.cancellation_reason
+                    cancelled_status_name: $.cancelledStatusName
+                    deleted_status_name: $.deletedStatusName
+            - '@flash_message':
+                message: 'oro.rfp.request.cancellation_success.label'
+                type: 'info'
+
+    oro_rfp_create_quote:
+        label: oro.rfp.btn.create_quote
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        acl_resource: oro_sale_quote_create
+        order: 20
+        button_options:
+            icon: icon-file-text
+            class: icons-holder-text no-hash btn
+        preconditions:
+            '@equal': [$status.draft, false]
+        actions:
+            - '@call_service_method':
+                service: oro_rfp.service.request_to_quote_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - '@redirect':
+                parameters:
+                    route: oro_sale_quote_create
+                    route_parameters: {'storage': true}
+
+    oro_rfp_frontend_request_a_quote:
+        label: oro.rfp.btn.add_to_rfp
+        applications: [commerce]
+        routes:
+            - oro_product_frontend_quick_add
+            - oro_product_frontend_quick_add_copy_paste
+            - oro_product_frontend_quick_add_import
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        button_options:
+            icon: icon-file-text
+            data:
+                component_name: oro_rfp_quick_add_processor
+            page_component_module: oroproduct/js/app/components/quick-add-form-button-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+                component_additional: '[name$="[additional]"]'
+        preactions:
+            - '@call_service_method':
+                service: oro_rfp.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            '@equal': [true, $.isAllowed]
+
+    oro_rfp_base_edit:
+        label: ' '
+        applications: [default]
+        attributes:
+            request:
+                label: ' '
+                type: entity
+                options:
+                    class: Oro\Bundle\RFPBundle\Entity\Request
+        form_options:
+            attribute_fields:
+                request:
+                    form_type: oro_rfp_request
+            attribute_default_values:
+                request:
+                    $.data
+
+#    oro_rfp_edit:
+#        extends: oro_rfp_base_edit
+#        label: oro.rfp.btn.edit
+#        routes:
+#            - oro_rfp_request_view
+#        datagrids:
+#            - rfp-requests-grid
+#        order: 70
+#        button_options:
+#            icon: icon-edit
+#        acl_resource: oro_rfp_request_update
+#        frontend_options:
+#            template: OroRFPBundle:Action:rfpEditForm.html.twig
+#            show_dialog: false
+#        actions:
+#            - @flash_message:
+#                message: oro.rfp.action.request.updated.message
+#                type: 'success'
+#            - @redirect:
+#                route: 'oro_rfp_request_view'
+#                route_parameters:
+#                    id: $.data.id
+
+    oro_rfp_resubmit:
+        extends: oro_rfp_base_edit
+        label: oro.rfp.btn.resubmit
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 80
+        button_options:
+            icon: icon-share
+        acl_resource: oro_rfp_request_update
+        frontend_options:
+            template: OroRFPBundle:Action:rfpResubmitForm.html.twig
+            show_dialog: false
+        form_init:
+            - '@assign_constant_value':
+                attribute: $.openStatusName
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::OPEN
+            - '@create_datetime':
+                attribute: $.currentDatetime
+            - '@duplicate':
+                attribute: $.entityCopy
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                  - [[setNull], [propertyName, [status]]]
+                  - [[keep], [propertyName, [accountUser]]]
+                  - [[keep], [propertyName, [account]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+            - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
+            - '@find_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.entityCopy.status
+                where:
+                    name: $.openStatusName
+            - '@assign_value': [$.data, $.entityCopy]
+        actions:
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.rfp.action.request.resubmited.message
+                type: 'success'
+            - '@redirect':
+                route: 'oro_rfp_request_view'
+                route_parameters:
+                    id: $id
+
+    oro_rfp_delete:
+        label: oro.rfp.btn.delete
+        enabled: true
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 100
+        button_options:
+            icon: icon-trash
+        frontend_options:
+            confirmation: oro.rfp.request.actions.delete_frp_confirm
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.deleted_status_name
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::DELETED
+        preconditions:
+            '@and':
+                - '@not_empty': $status
+                - '@not_equal': [$status.name, $.deleted_status_name]
+        actions:
+            - '@run_action_group':
+                action_group: oro_rfp_delete
+                parameters_mapping:
+                    data: $.data
+                    deleted_status_name: $.deleted_status_name
+
+    oro_rfp_frontend_request_create:
+        label: oro.frontend.rfp.request.create.label
+        enabled: true
+        applications: [commerce]
+        routes:
+            - oro_rfp_frontend_request_index
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_rfp_frontend_request_create
+
+    oro_rfp_frontend_request_edit:
+        label: oro.frontend.rfp.action.request.edit
+        applications: [commerce]
+        routes:
+            - oro_rfp_frontend_request_view
+        acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        button_options:
+            icon: icon-pencil
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_rfp_frontend_request_update
+                    route_parameters:
+                        id: $id
+
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\RFPBundle\Entity\Request
+            - Oro\Bundle\RFPBundle\Entity\RequestStatus
+        exclude_datagrids:
+            - rfp-requests-grid
+
+action_groups:
+    oro_rfp_change_status:
+        parameters:
+            data:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            request_status:
+                type: Oro\Bundle\RFPBundle\Entity\RequestStatus
+            request_note:
+                type: string
+                default: ''
+        actions:
+            - '@assign_value': [$.data.status, $.request_status]
+            - '@flush_entity': $.data
+            - '@format_string':
+                attribute: $.message
+                string: 'New status: %%status%% <p></p> %%note%%'
+                arguments:
+                    status: $.request_status.label
+                    note: $.request_note
+            - '@create_entity':
+                class: Oro\Bundle\NoteBundle\Entity\Note
+                attribute: $.note
+                data:
+                    target: $.data
+                    message: $.message
+                flush: true
+
+    oro_rfp_cancel:
+        parameters:
+            data:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            cancellation_reason:
+                type: string
+            cancelled_status_name:
+                type: string
+            deleted_status_name:
+                type: string
+        conditions:
+            '@and':
+                - '@not_empty': $.data.status
+                - '@not_equal': [$.data.status.name, $.cancelled_status_name]
+                - '@not_equal': [$.data.status.name, $.deleted_status_name]
+        actions:
+            - '@find_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.data.status
+                where:
+                    name: $.cancelled_status_name
+            - '@assign_value': [$.data.cancellationReason, $.cancellation_reason]
+            - '@flush_entity': $.data
+
+    oro_rfp_delete:
+        parameters:
+            data:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            deleted_status_name:
+                type: string
+        conditions:
+            '@and':
+                - '@not_empty': $.data.status
+                - '@not_equal': [$.data.status.name, $.deleted_status_name]
+        actions:
+            - '@find_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.data.status
+                where:
+                    name: $.deleted_status_name
+            - '@create_datetime':
+                attribute: $.data.deletedAt
+            - '@flush_entity': $.data

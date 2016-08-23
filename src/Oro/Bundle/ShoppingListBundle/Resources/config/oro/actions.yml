@@ -1,0 +1,298 @@
+operations:
+    oro_shoppinglist_createorder:
+        label: oro.shoppinglist.btn.create_order
+        applications: [default]
+        routes:
+            - oro_shopping_list_view
+        acl_resource: oro_order_create
+        order: 10
+        button_options:
+            icon: icon-briefcase
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - '@redirect':
+                parameters:
+                    route: oro_order_create
+                    route_parameters: {'storage': true}
+
+    oro_shoppinglist_frontend_createorder:
+        label: oro.frontend.shoppinglist.btn.create_order
+        applications: [commerce]
+        routes:
+            - oro_shopping_list_frontend_view
+        acl_resource: oro_order_frontend_create
+        order: 10
+        button_options:
+            icon: icon-briefcase
+        preconditions:
+            '@has_elements': $lineItems
+        actions:
+            - '@assign_url':
+                attribute: $.editLink
+                route: oro_shopping_list_frontend_view
+                route_parameters: { 'id': $.data.id }
+            - '@translate':
+                attribute: $.sourceRemoveLabel
+                id: oro.frontend.shoppinglist.workflow.remove_source.label
+            - '@start_checkout':
+                source_name: 'shoppingList'
+                source_entity: $.data
+                settings:
+                    allow_manual_source_remove: true
+                    remove_source: true
+                    source_remove_label: $.sourceRemoveLabel
+                    edit_order_link: $.editLink
+
+    oro_shoppinglist_frontend_products_add_to_shoppinglist_base:
+        label: oro.shoppinglist.product.add_to_shopping_list.label
+        applications: [commerce]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        order: 30
+        button_options:
+            template: OroShoppingListBundle:Action:buttons.html.twig
+        preactions:
+            - '@call_service_method':
+                service: oro_shopping_list.shopping_list.manager
+                method: getShoppingLists
+                attribute: $.shoppingLists
+            - '@call_service_method':
+                service: oro_shopping_list.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            '@equal': [true, $.isAllowed]
+
+    oro_shoppinglist_frontend_products_add_to_shoppinglist:
+        extends: oro_shoppinglist_frontend_products_add_to_shoppinglist_base
+        routes:
+            - oro_product_frontend_quick_add
+
+    oro_shoppinglist_frontend_quick_add_import_to_shoppinglist:
+        extends: oro_shoppinglist_frontend_products_add_to_shoppinglist_base
+        routes:
+            - oro_product_frontend_quick_add_import
+            - oro_product_frontend_quick_add_copy_paste
+        button_options:
+            page_component_options:
+                quickAddComponentPrefix: 'quick-add-import'
+
+    oro_shoppinglist_frontend_products_quick_add_to_checkout:
+        label: oro.order.btn.create_order
+        applications: [commerce]
+        routes:
+            - oro_product_frontend_quick_add
+            - oro_product_frontend_quick_add_copy_paste
+            - oro_product_frontend_quick_add_import
+        order: 20
+        button_options:
+            icon: icon-briefcase
+            data:
+                component_name: oro_shopping_list_to_checkout_quick_add_processor
+            page_component_module: oroproduct/js/app/components/quick-add-form-button-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+        preactions:
+            - '@call_service_method':
+                service: oro_shopping_list.processor.quick_add_to_checkout
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            '@equal': [true, $.isAllowed]
+
+    oro_shoppinglist_frontend_addlineitem:
+        extends: oro_shoppinglist_lineitem_base
+        label: oro.shoppinglist.product.add_to_shopping_list.label
+        applications: [commerce]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids: [frontend-products-grid]
+        datagrid_options:
+            mass_action_provider: oro_shopping_list_add_products
+        button_options:
+            icon: icon-shopping-cart
+            page_component_module: oroshoppinglist/js/app/components/add-product-component
+        frontend_options:
+            template: OroShoppingListBundle:Action:lineItem.html.twig
+            title: oro.shoppinglist.lineitem.add_line_item
+        form_options:
+            attribute_fields:
+                lineItem:
+                    form_type: oro_shopping_list_frontend_line_item_widget
+        form_init:
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
+                service: oro_shopping_list.handler.shopping_list_line_item
+                method: prepareLineItemWithProduct
+                method_parameters: [$.currentUser, $.data]
+                attribute: $.lineItem
+        actions:
+            - '@run_action_group':
+                results:
+                    success_message: $.successMessage
+                action_group: oro_shoppinglist_frontend_addlineitem
+                parameters_mapping:
+                    line_item: $.lineItem
+                    form: $.form
+            - '@flash_message: { message: $.success_message, type': success }
+            - '@refresh_grid': frontend-products-grid
+
+    oro_shoppinglist_lineitem_base:
+        label: ' '
+        frontend_options:
+            template: OroShoppingListBundle:Action:lineItem.html.twig
+            title: oro.shoppinglist.lineitem.add_line_item
+            options:
+                width: 460
+        attributes:
+            lineItem:
+                label: lineItem
+                type: entity
+                options:
+                    class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+        form_options:
+            attribute_fields:
+                lineItem:
+                    form_type: oro_shopping_list_line_item
+                    options:
+                        required: true
+            attribute_default_values:
+                lineItem:
+                    $.lineItem
+
+    oro_shoppinglist_addlineitem:
+        extends: oro_shoppinglist_lineitem_base
+        label: oro.shoppinglist.lineitem.add_line_item
+        routes:
+            - oro_shopping_list_view
+        acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        button_options:
+            icon: icon-plus
+            page_component_module: oroproduct/js/app/components/product-unit-component
+        frontend_options:
+            options:
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+        form_init:
+            - '@create_object':
+                class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                attribute: $.lineItem
+            - '@assign_value': [$.lineItem.shoppingList, $.data]
+            - '@assign_value': [$.lineItem.accountUser, $.data.accountUser]
+            - '@assign_value': [$.lineItem.organization, $.data.organization]
+        actions:
+            - '@run_action_group':
+                action_group: oro_shoppinglist_addlineitem
+                parameters_mapping:
+                    data: $.data
+                    line_item: $.lineItem
+            - '@refresh_grid': shopping-list-line-items-grid
+            - '@flash_message':
+                message: oro.shoppinglist.lineitem.flash.added
+                type: 'success'
+
+    oro_shoppinglist_updatelineitem:
+        extends: oro_shoppinglist_lineitem_base
+        label: oro.shoppinglist.lineitem.edit_line_item
+        acl_resource: [EDIT, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids:
+            - shopping-list-line-items-grid
+        button_options:
+            icon: icon-edit
+        frontend_options:
+            options:
+                modal: true
+        form_init:
+            - '@assign_value': [$.lineItem, $.data]
+            - '@assign_value': [$.lineItem.shoppingList, $.data.shoppingList]
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
+            - '@flash_message':
+                message: oro.shoppinglist.lineitem.flash.updated
+                type: 'success'
+            - '@refresh_grid': shopping-list-line-items-grid
+
+    oro_shoppinglist_frontend_request_quote:
+        label: oro.frontend.shoppinglist.btn.request_quote_create_rfp
+        applications: [commerce]
+        routes:
+            - oro_shopping_list_frontend_view
+        acl_resource: oro_rfp_frontend_request_create
+        order: 20
+        button_options:
+            icon: icon-briefcase
+        preconditions:
+            '@and':
+                - '@has_elements': $lineItems
+                - '@equal': [$.data.isAllowedRFP, true]
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - '@redirect':
+                parameters:
+                    route: oro_rfp_frontend_request_create
+                    route_parameters: {'storage': true}
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        exclude_datagrids:
+            - shopping-list-grid
+
+    oro_shoppinglist_delete_line_item:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - shopping-list-line-items-grid
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.manager.shopping_list_total
+                method: recalculateTotals
+                method_parameters: [$.data.shoppingList, true]
+
+action_groups:
+    oro_shoppinglist_frontend_addlineitem:
+        parameters:
+            line_item:
+                type: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+            form:
+                type: Symfony\Component\Form\FormInterface
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.handler.shopping_list_line_item
+                method: processLineItem
+                method_parameters: [$.line_item, $.form]
+            - '@call_service_method':
+                service: oro_shopping_list.service.message_generator
+                method: getSuccessMessage
+                method_parameters: [$.line_item.shoppingList.id, 1, oro.shoppinglist.lineitem.flash.added]
+                attribute: $.successMessage
+
+    oro_shoppinglist_addlineitem:
+        parameters:
+            data:
+                type: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            line_item:
+                type: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+        acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        actions:
+            - '@call_service_method':
+                service: oro_shopping_list.shopping_list.manager
+                method: addLineItem
+                method_parameters: [$.line_item, $.data, true, true]

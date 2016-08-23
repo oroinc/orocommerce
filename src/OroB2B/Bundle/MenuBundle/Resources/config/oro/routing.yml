@@ -1,9 +1,0 @@
-orob2b_menu_item_ajax:
-    resource:     "@OroB2BMenuBundle/Controller/AjaxMenuItemController.php"
-    type:         annotation
-    prefix:       /menuitem/ajax
-
-orob2b_menu_item:
-    resource:     "@OroB2BMenuBundle/Controller/MenuItemController.php"
-    type:         annotation
-    prefix:       /menuitem

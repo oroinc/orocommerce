@@ -8,10 +8,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayflowGatewayView;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +35,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->getMock();
 
         $this->paymentTransactionProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
