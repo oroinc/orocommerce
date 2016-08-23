@@ -506,10 +506,8 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@not':
-                            - '@payment_method_supports':
-                                payment_method: $payment_method
-                                action: 'validate'
+                        - '@require_payment_redirect':
+                            payment_method: $payment_method
                         - '@not':
                             - '@check_request':
                                 is_ajax: true
