@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper;
+namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodEnabledMapper implements CheckoutStateDiffMapperInterface
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodEnabledMapper;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentContextProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodEnabledMapper;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 {

@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'payment_method';
+    const DATA_NAME = 'paymentMethod';
 
     /**
      * {@inheritdoc}
@@ -25,8 +25,8 @@ class PaymentMethodDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
+     * {@inheritdoc}
      * @param Checkout $checkout
-     * @return string
      */
     public function getCurrentState($checkout)
     {
