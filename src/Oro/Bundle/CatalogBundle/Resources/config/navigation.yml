@@ -1,0 +1,30 @@
+oro_menu_config:
+    items:
+        master_catalog:
+            label:           'oro.catalog.menu.master_catalog.label'
+            route:           'orob2b_catalog_category_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_catalog_category/']
+                description: 'oro.catalog.menu.master_catalog.description'
+
+        shortcut_master_catalog:
+            label:           'oro.catalog.menu.master_catalog.label'
+            route:           'orob2b_catalog_category_index'
+            extras:
+                description: 'oro.catalog.menu.shortcut_master_catalog.description'
+
+    tree:
+        application_menu:
+            children:
+                products_tab:
+                    children:
+                        master_catalog: ~
+        shortcuts:
+            children:
+                shortcut_master_catalog: ~
+
+oro_titles:
+    orob2b_catalog_category_index:  ~
+    orob2b_catalog_category_update: '%%title%% - Edit'
+    orob2b_catalog_category_create: 'Create Category'

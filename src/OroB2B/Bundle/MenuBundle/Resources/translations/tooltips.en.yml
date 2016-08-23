@@ -1,7 +1,0 @@
-orob2b.menu:
-    form:
-        tooltip:
-            menu_item_condition: |
-                Available functions - is_logged_in() to limit visibility to logged in users only
-                and config_value('some_identifier') to show only if the specified config value
-                is toggled on in the system configuration.
