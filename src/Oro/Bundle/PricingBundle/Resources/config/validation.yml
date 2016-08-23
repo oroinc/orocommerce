@@ -1,0 +1,122 @@
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        currencies:
+            - NotBlank: ~
+            - Valid: ~
+        schedules:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
+            - Valid: ~
+        priceRules:
+            - Valid: ~
+        productAssignmentRule:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        fieldName:
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_]+$/'
+                htmlPattern: '/^[a-zA-Z0-9_]+$/'
+                message: 'oro.pricing.validators.price_attrirute_price_list.fieldName.message'
+            - NotBlank: ~
+            - Length:
+                max: 255
+        currencies:
+            - NotBlank: ~
+            - Valid: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+            chain:
+                activeAt: 'Active At'
+                deactivateAt: 'Deactivate At'
+
+Oro\Bundle\PricingBundle\Entity\PriceRule:
+    properties:
+        currency:
+            - NotBlank: ~
+            - Currency: ~
+        quantity:
+            - NotBlank:
+                message: 'oro.pricing.validators.product_price.quantity.blank'
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        ruleCondition:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+        rule:
+            - NotBlank: ~
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                numericOnly: true
+                withRelations: true
+        priority:
+            - NotBlank: ~
+            - Type:
+                type: integer
+
+Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
+    properties:
+        priceList:
+            - NotBlank: ~
+        currency:
+            - NotBlank: ~
+            - Currency: ~
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, quantity, unit, currency ]
+            message: oro.pricing.validators.product_price.unique_entity.message
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        quantity:
+            - NotBlank:
+                message: 'oro.pricing.validators.product_price.quantity.blank'
+            - Range:
+                min: 0
+        price:
+            - NotBlank: ~
+            - Valid: ~
+        unit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+
+Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
+    properties:
+        priority:
+            - NotBlank: ~
+            - Type:
+                type: integer
+        priceList:
+            - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    properties:
+        unitPrecisions:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~

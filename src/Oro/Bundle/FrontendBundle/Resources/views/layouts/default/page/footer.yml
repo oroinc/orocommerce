@@ -1,0 +1,21 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroFrontendBundle:layouts:default/page/footer.html.twig'
+        - '@addTree':
+            items:
+                footer:
+                    blockType: container
+                footer_copyright:
+                    blockType: text
+                    options:
+                        text: 'orob2b_frontend.copyright'
+                        escape: false
+            tree:
+                wrapper:
+                    footer:
+                        footer_copyright: ~
+        - '@move':
+            id: footer
+            parentId: wrapper
+            siblingId: main

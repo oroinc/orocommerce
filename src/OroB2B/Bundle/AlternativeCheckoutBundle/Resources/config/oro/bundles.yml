@@ -1,2 +1,0 @@
-bundles:
-    - { name: OroB2B\Bundle\AlternativeCheckoutBundle\OroB2BAlternativeCheckoutBundle, priority: 60 }

@@ -1,0 +1,13 @@
+{% block _checkout_form_fields_widget -%}
+    <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
+        {{ transitionData.transition.message|raw }}
+    </div>
+
+    <fieldset class="checkout__form__row">
+        <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+            {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+        </div>
+    </fieldset>
+
+    {{ block_widget(block) }}
+{%- endblock %}

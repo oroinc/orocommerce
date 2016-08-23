@@ -1,0 +1,67 @@
+operations:
+    orob2b_order_capture:
+        label: oro.payment.capture
+        button_options:
+            icon: icon-credit-card
+        applications: [backend]
+        routes:
+            - orob2b_order_view
+        acl_resource: orob2b_payment_transaction
+        order: 20
+        preactions:
+            - '@call_service_method':
+                service: orob2b_payment.provider.payment_transaction
+                method: getActiveAuthorizePaymentTransaction
+                method_parameters: [$.data, $.data.total, $.data.currency]
+                attribute: $.authorizePaymentTransaction
+        preconditions:
+            '@and':
+                - '@not_empty': [$.authorizePaymentTransaction]
+                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
+        actions:
+            - '@payment_capture':
+                attribute: $.result
+                object: $.data
+                amount: $.data.total
+                currency: $.data.currency
+                paymentMethod: $.authorizePaymentTransaction.paymentMethod
+                transactionOptions: []
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', true]
+                message: '$.result[message]'
+                type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@not_empty': ['$.result[message]']
+                        - '@equal': ['$.result[successful]', false]
+                message: '$.result[message]'
+                type: 'error'
+    DELETE:
+        exclude_datagrids:
+            - order-line-items-grid
+
+    orob2b_order_update_order:
+        extends: UPDATE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - account-user-orders-grid
+
+    orob2b_order_delete_order:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - account-user-orders-grid

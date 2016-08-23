@@ -1,4 +1,0 @@
-css:
-    'orob2bcatalog':
-        - 'bundles/orob2bcatalog/css/less/categories.less'
-        - 'bundles/orob2bcatalog/css/less/product-grid-sidebar.less'
