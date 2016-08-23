@@ -66,18 +66,18 @@ class ShippingContext implements ShippingContextInterface
         $shippingLineItem = new ShippingLineItem();
 
         if ($item instanceof ProductUnitHolderInterface) {
+            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
             $shippingLineItem->setProductUnit($item->getProductUnit());
         }
 
-        if ($item instanceof ProductUnitHolderInterface || $item instanceof ProductHolderInterface) {
+        if ($item instanceof ProductHolderInterface) {
             $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-        }
-
-        if ($item instanceof ProductShippingOptionsInterface || $item instanceof ProductHolderInterface) {
             $shippingLineItem->setProduct($item->getProduct());
         }
 
         if ($item instanceof ProductShippingOptionsInterface) {
+            $shippingLineItem->setProduct($item->getProduct());
+            $shippingLineItem->setProductUnit($item->getProductUnit());
             $shippingLineItem->setWeight($item->getWeight());
             $shippingLineItem->setDimensions($item->getDimensions());
         }
