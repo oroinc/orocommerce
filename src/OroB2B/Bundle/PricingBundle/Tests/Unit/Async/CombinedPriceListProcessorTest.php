@@ -138,6 +138,20 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
+    public function testProcessWithException()
+    {
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->getMock(MessageInterface::class);
+        $message->method('getBody')->willReturn('');
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->getMock(SessionInterface::class);
+
+        $this->triggerFactory->method('createFromArray')->willThrowException(new \Exception());
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
+
     /**
      * @return array
      */
