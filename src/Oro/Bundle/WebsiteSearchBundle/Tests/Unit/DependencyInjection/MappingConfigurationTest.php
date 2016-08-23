@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Symfony\Component\Config\Definition\Processor;
+
+use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 
 class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
 {
