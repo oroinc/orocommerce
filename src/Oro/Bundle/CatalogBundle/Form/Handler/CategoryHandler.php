@@ -86,7 +86,7 @@ class CategoryHandler
         if ($category->getDefaultProductOptions()) {
             $category->getDefaultProductOptions()->updateUnitPrecision();
         }
-        
+
         $this->manager->persist($category);
         $this->manager->flush();
     }
@@ -110,7 +110,7 @@ class CategoryHandler
 
             if ($productCategory instanceof Category) {
                 // both categories must be updated in the same flush
-                $this->manager->flush([$productCategory, $category]);
+                $this->manager->flush($productCategory);
             }
         }
     }

@@ -82,7 +82,11 @@ class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'cascade' => ['all'],
+                ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
             ]

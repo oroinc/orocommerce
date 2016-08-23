@@ -67,39 +67,5 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'type' => 'textarea',
                 ]
             );
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        $form = $event->getForm();
-
-        if (!$form->isValid()) {
-            return;
-        }
-
-        $entity = $event->getData();
-        $entityManager = $this->registry->getManagerForClass('OroLocaleBundle:LocalizedFallbackValue');
-
-        $this->persistMetaFields($entityManager, $entity->getMetaTitles());
-        $this->persistMetaFields($entityManager, $entity->getMetaDescriptions());
-        $this->persistMetaFields($entityManager, $entity->getMetaKeywords());
-    }
-
-    /**
-     * Loop through list of LocalizedFallbackValue objects for a meta information field
-     *
-     * @param OroEntityManager $entityManager
-     * @param LocalizedFallbackValue[] $metaFields
-     */
-    private function persistMetaFields(OroEntityManager $entityManager, $metaFields = array())
-    {
-        foreach ($metaFields as $field) {
-            $entityManager->persist($field);
-        }
     }
 }
