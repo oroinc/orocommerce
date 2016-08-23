@@ -5,11 +5,10 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-use OroB2B\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
-use OroB2B\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
+use Oro\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
 
 class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatewayConfigInterface
 {

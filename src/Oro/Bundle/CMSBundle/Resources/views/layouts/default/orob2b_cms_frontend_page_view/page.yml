@@ -1,0 +1,22 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCMSBundle:layouts:default/orob2b_cms_frontend_page_view/page.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: '=data["page"].getTitle()'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: '=data["page"].getTitle()'
+        - '@addTree':
+            items:
+                cms_page_content:
+                    blockType: text
+                    options:
+                        text: '=data["page"].getContent()'
+                        escape: false
+            tree:
+                content:
+                    cms_page_content: ~

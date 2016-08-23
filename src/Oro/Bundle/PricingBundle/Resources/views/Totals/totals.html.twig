@@ -1,0 +1,9 @@
+{% placeholder orob2b_pricing_totals_before %}
+
+{% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}
+<div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
+    <div class="totals-container" data-totals-container></div>
+    {% placeholder orob2b_pricing_totals %}
+</div>
+
+{% placeholder orob2b_pricing_totals_after %}

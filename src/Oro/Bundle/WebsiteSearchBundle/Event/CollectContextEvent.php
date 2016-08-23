@@ -6,10 +6,21 @@ use Symfony\Component\EventDispatcher\Event;
 
 class CollectContextEvent extends Event
 {
+    const NAME = 'oro_website_search.event.collect_context';
+
     /**
      * @var array
      */
     private $context = [];
+
+    /**
+     *
+     * @param array $context
+     */
+    public function __construct(array $context)
+    {
+        $this->context = $context;
+    }
 
     /**
      * @param string $name

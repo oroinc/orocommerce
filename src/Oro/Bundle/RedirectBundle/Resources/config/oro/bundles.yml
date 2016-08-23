@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\RedirectBundle\OroRedirectBundle, priority: 10 }
