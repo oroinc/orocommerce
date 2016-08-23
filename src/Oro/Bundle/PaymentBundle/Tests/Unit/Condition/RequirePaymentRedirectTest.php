@@ -3,10 +3,11 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;

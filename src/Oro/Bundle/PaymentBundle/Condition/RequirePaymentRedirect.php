@@ -61,7 +61,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     public function initialize(array $options)
     {
         if (empty($options['payment_method'])) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('Parameter "payment_method" is required');
         }
 
         $this->paymentMethod = $options['payment_method'];

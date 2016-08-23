@@ -3,10 +3,8 @@ define(function(require) {
 
     var PayflowExpressCheckoutComponent;
     var _ = require('underscore');
-    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    require('jquery.validate');
 
     PayflowExpressCheckoutComponent = BaseComponent.extend({
         /**
@@ -41,7 +39,7 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed || !this.disposable) {
+            if (this.disposed) {
                 return;
             }
 

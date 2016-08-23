@@ -18,8 +18,8 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_checkout")

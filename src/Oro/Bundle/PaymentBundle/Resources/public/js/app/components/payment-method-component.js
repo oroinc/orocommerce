@@ -51,7 +51,7 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed || !this.disposable) {
+            if (this.disposed) {
                 return;
             }
 
