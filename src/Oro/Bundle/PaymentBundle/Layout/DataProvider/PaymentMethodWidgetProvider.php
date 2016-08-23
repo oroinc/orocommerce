@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
+namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 
 class PaymentMethodWidgetProvider
 {

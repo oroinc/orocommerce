@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Condition;
+namespace Oro\Bundle\PaymentBundle\Condition;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-
-use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 /**
  * Check that the payment method requires method verification after page refresh

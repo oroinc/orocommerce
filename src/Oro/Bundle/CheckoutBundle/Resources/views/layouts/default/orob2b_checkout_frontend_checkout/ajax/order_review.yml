@@ -4,8 +4,8 @@ layout:
             themes:
                 - '../templates/right_buttons.html.twig'
                 - '../templates/order_review.html.twig'
-                - 'OroB2BPaymentBundle:layouts:default/templates/additional_information.html.twig'
-                - 'OroB2BPaymentBundle:layouts:default/templates/order_review.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/order_review.html.twig'
         - '@setFormTheme':
             themes: '../templates/form_theme.html.twig'
         - '@setOption':

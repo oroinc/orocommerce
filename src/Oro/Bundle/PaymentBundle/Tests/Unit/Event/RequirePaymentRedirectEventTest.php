@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class RequirePaymentRedirectEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class RequirePaymentRedirectEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $this->paymentMethod = $this->getMock(PaymentMethodInterface::class);
         $this->event = new RequirePaymentRedirectEvent($this->paymentMethod);
     }
 
@@ -33,9 +33,6 @@ class RequirePaymentRedirectEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethod()
     {
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface',
-            $this->event->getPaymentMethod()
-        );
+        $this->assertInstanceOf(PaymentMethodInterface::class, $this->event->getPaymentMethod());
     }
 }

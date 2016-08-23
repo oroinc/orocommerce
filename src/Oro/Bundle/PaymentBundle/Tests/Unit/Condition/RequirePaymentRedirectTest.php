@@ -1,12 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Condition;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
-use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,8 +26,8 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
-        $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->paymentMethodRegistry = $this->getMock(PaymentMethodRegistry::class);
+        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
         $this->condition = new RequirePaymentRedirect($this->paymentMethodRegistry, $this->dispatcher);
     }
 
@@ -36,7 +39,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     public function testInitialize()
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term'])
         );
     }
@@ -46,17 +49,14 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitializeWithException()
     {
-        $this->assertNotInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([])
-        );
+        $this->assertNotInstanceOf(AbstractCondition::class, $this->condition->initialize([]));
     }
 
     public function testEvaluate()
     {
         $context = new \stdClass();
-        $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
-        $paymentMethod = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $errors = $this->getMockForAbstractClass(Collection::class);
+        $paymentMethod = $this->getMock(PaymentMethodInterface::class);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')

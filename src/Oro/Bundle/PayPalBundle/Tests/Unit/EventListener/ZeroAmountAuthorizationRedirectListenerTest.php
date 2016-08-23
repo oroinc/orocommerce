@@ -4,9 +4,8 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-
-use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_TestCase
 {

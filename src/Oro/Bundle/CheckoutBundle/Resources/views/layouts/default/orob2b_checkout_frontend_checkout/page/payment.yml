@@ -3,8 +3,8 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
-                - 'OroB2BPaymentBundle:layouts:default/templates/additional_information.html.twig'
-                - 'OroB2BPaymentBundle:layouts:default/templates/order_review.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/order_review.html.twig'
                 - 'OroCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
         - '@setOption':
             id: checkout_information

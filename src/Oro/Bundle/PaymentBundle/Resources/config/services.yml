@@ -96,7 +96,7 @@ services:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
     orob2b_payment.provider.method_widget_provider:
-        class: 'OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
 
@@ -238,7 +238,7 @@ services:
             - { name: twig.extension }
 
     orob2b_payment.condition.require_payment_redirect:
-        class: 'OroB2B\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
+        class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
             - '@orob2b_payment.payment_method.registry'
             - '@event_dispatcher'

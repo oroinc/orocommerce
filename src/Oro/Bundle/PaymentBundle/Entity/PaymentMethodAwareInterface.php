@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Entity;
+namespace Oro\Bundle\PaymentBundle\Entity;
 
 interface PaymentMethodAwareInterface
 {

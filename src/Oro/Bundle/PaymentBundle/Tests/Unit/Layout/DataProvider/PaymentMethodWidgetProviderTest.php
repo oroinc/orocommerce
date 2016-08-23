@@ -1,8 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
-use OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
+use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider;
 
 class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethodWidgetName()
     {
-        $entity = $this->getMock('OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface');
+        $entity = $this->getMock(PaymentMethodAwareInterface::class);
         $entity->expects($this->once())
             ->method('getPaymentMethod')
             ->willReturn('payment_method');
@@ -37,7 +38,7 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
     // @codingStandardsIgnoreStart
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Object "stdClass" must implement interface "OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface"
+     * @expectedExceptionMessage Object "stdClass" must implement interface "Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface"
      */
     // @codingStandardsIgnoreEnd
     public function testGetPaymentMethodWidgetNameEmpty()

@@ -19,8 +19,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
