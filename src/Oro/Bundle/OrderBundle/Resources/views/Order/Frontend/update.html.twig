@@ -1,0 +1,183 @@
+{% extends 'OroFrontendBundle:actions:update.html.twig' %}
+
+{% oro_title_set({params : {
+    '%identifier%': entity.identifier|default('N/A'|trans),
+    '%entityName%': 'oro.order.entity_label'|trans
+} }) %}
+
+{% set formAction = entity.id ? path('orob2b_order_frontend_update', { 'id': entity.id }) : path('orob2b_order_frontend_create')  %}
+
+{% form_theme form with ['OroOrderBundle:Form:fields.html.twig'] %}
+
+{% block navButtons %}
+    {{ parent() }}
+
+    {{ UI.cancelButton(path('orob2b_order_frontend_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_order_frontend_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_order_frontend_index'),
+            'indexLabel': 'oro.order.entity_plural_label'|trans,
+            'entityTitle': entity.identifier|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.order.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% set pageComponent = {
+    module: 'oroorder/js/app/components/entry-point-component',
+    options: { route: 'orob2b_order_frontend_entry_point', routeParams: {id: entity.id|default(0)} },
+} %}
+
+{% block content_data %}
+    {% set id = 'frontend-order-edit' %}
+
+    {% set subtotals %}
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+            pageComponent: 'oroorder/js/app/components/totals-component',
+            options: {totals: orderData.totals}
+        } only %}
+    {% endset %}
+
+    {% set lineItems %}
+        <div class="order-line-items"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'oroorder/js/app/views/line-items-view',
+                 tierPrices: orderData.tierPrices|default({}),
+                 matchedPrices: orderData.matchedPrices|default({}),
+                 currency: form.vars.value.currency
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.lineItems) }}
+            {{ form_errors(form.lineItems) }}
+        </div>
+        <div
+                data-page-component-module="oroorder/js/app/components/data-load-component"
+                data-page-component-options="{{ orderData|json_encode }}"></div>
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.order.sections.order_line_items'|trans,
+            'content_attr': {'class': 'order-line-items-content'},
+            'subblocks': [{
+            'title': '',
+                'data': [
+                    lineItems
+                ]
+            }]
+        }
+    ] %}
+
+    {% if isBillingAddressGranted %}
+        {% set billingAddress %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'oroorder/js/app/views/address-view',
+                    type: 'billing',
+                    selectors: {
+                        address: '#' ~ form.billingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
+                        '#' ~ form.billingAddress.country.vars.id,
+                        '#' ~ form.billingAddress.street.vars.id,
+                        '#' ~ form.billingAddress.street2.vars.id,
+                        '#' ~ form.billingAddress.city.vars.id,
+                        '#' ~ form.billingAddress.region.vars.id,
+                        '#' ~ form.billingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.billingAddress) }}
+            </div>
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.billing_address.label'|trans,
+            'subblocks': [{
+                'data': [billingAddress]
+            }]
+        }]) %}
+    {% endif %}
+
+    {% if isShippingAddressGranted %}
+        {% set shippingAddress %}
+            {% if form.shippingAddress.accountAddress is defined %}
+                {% set idAddressBlock = '#' ~ form.shippingAddress.accountAddress.vars.id %}
+            {% else %}
+                {% set idAddressBlock = null %}
+            {% endif %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'oroorder/js/app/views/address-view',
+                    type: 'shipping',
+                    selectors: {
+                        address: idAddressBlock,
+                        subtotalsFields: [
+                        '#' ~ form.shippingAddress.country.vars.id,
+                        '#' ~ form.shippingAddress.street.vars.id,
+                        '#' ~ form.shippingAddress.street2.vars.id,
+                        '#' ~ form.shippingAddress.city.vars.id,
+                        '#' ~ form.shippingAddress.region.vars.id,
+                        '#' ~ form.shippingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.shippingAddress) }}
+            </div>
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.shipping_address.label'|trans,
+            'subblocks': [{
+                'data': [shippingAddress]
+            }]
+        }]) %}
+    {% endif %}
+
+    {% set additionalData = [
+        form_row(form.poNumber),
+        form_row(form.shipUntil),
+        form_row(form.customerNotes)
+    ] %}
+
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    {% if additionalData is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.order.sections.subtotals'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [subtotals]
+        }]
+    }]) %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

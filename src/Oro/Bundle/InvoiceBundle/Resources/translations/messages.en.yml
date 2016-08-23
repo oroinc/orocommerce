@@ -1,0 +1,64 @@
+oro:
+    invoice:
+        entity_label: 'Invoice'
+        entity_plural_label: 'Invoices'
+        id.label: 'ID'
+        invoice_date.label: 'Invoice date'
+        invoice_number.label: 'Invoice Number'
+        po_number.label: 'PO Number'
+        owner.label: 'Owner'
+        account.label: 'Account'
+        website.label: 'Website'
+        account_user.label: 'Account User'
+        organization.label: 'Organization'
+        line_items.label: 'Line Items'
+        currency.label: 'Currency'
+        payment_due_date.label: 'Payment Due Date'
+        subtotal.label: 'Subtotal'
+
+        validation:
+            payment_due_date_error.label: 'Payment due date should be greater that invoice date'
+
+        sections:
+            general: 'General information'
+            invoice_line_items: 'Invoice items'
+            totals: 'Totals'
+
+        widgets:
+            invoice_information: 'Invoice Information'
+        navigation:
+            view: 'Invoice #%identifier%'
+            sections:
+                general: 'General'
+                invoice_line_items: 'Invoice items'
+        controller:
+            invoice:
+                saved.message: 'Invoice saved'
+
+        invoicelineitem:
+            entity_label: 'Invoice Item'
+            entity_plural_label: 'Invoice Items'
+            id.label: 'ID'
+            free_form_product.label: 'Product (free-form)'
+            code.label: 'Code'
+            product.label: 'Product'
+            product_sku.label: 'Product SKU'
+            product_unit_code.label: 'Product Unit Code'
+            quantity.label: 'Invoiced Quantity'
+            invoice.label: 'Invoice'
+            product.label: 'Product'
+            product_unit.label: 'Product Unit'
+            price.label: 'Price'
+            price_type.label: 'Price Type'
+            price_total.label: 'Line Total'
+            value.label: 'Price Value'
+            price.value.label: 'Price Value'
+            currency.label: 'Price Currency'
+            sort_order.label: 'Sort Order'
+            price.currency.label: 'Price Currency'
+            add_label: 'Add line item'
+
+            select:
+                product: 'Select product'
+                free_form: 'Free form entry'
+

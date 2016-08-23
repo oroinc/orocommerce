@@ -1,0 +1,11 @@
+oro_entity:
+    virtual_relations:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            category:
+                relation_type: manyToOne
+                related_entity_name: Oro\Bundle\CatalogBundle\Entity\Category
+                label: oro.catalog.category.entity_label
+                query:
+                    join:
+                        left:
+                            - { join: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: category, conditionType: 'WITH', condition: 'entity MEMBER OF category.products' }
