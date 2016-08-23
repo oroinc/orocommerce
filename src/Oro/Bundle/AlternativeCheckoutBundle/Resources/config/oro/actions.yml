@@ -19,7 +19,7 @@ operations:
                 actions:
                     - '@call_service_method':
                         attribute: $.workflowItems
-                        service: orob2b_workflow.manager
+                        service: oro_workflow.manager
                         method: getWorkflowItemsByEntity
                         method_parameters: [$.checkout]
                     - '@count':

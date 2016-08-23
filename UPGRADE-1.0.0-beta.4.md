@@ -1,14 +1,13 @@
 Upgrade from beta.3
 ===================
 
-<<<<<<< HEAD
-FrontendBundle
-- Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
-=======
 General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
->>>>>>> remotes/origin/master
+
+FrontendBundle
+--------------
+- Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
 
 CheckoutBundle:
 ---------------

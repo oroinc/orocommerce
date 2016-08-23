@@ -35,7 +35,7 @@ operations:
         routes:
             - orob2b_sale_quote_view
         order: 20
-        acl_resource: orob2b_email_email_create
+        acl_resource: oro_email_email_create
 
         button_options:
             icon: icon-envelope
@@ -61,7 +61,7 @@ operations:
         form_options:
             attribute_fields:
                 email:
-                    form_type: orob2b_email_email
+                    form_type: oro_email_email
 
         form_init:
             - '@call_service_method':
@@ -71,9 +71,9 @@ operations:
                 method_parameters: [$.data]
             - '@call_service_method':
                 attribute: $.appendSignature
-                service: orob2b_config.manager
+                service: oro_config.manager
                 method: get
-                method_parameters: ['orob2b_email.append_signature']
+                method_parameters: ['oro_email.append_signature']
 
         actions:
             - '@run_action_group':
@@ -134,7 +134,7 @@ action_groups:
                 type: Oro\Bundle\SaleBundle\Entity\Quote
             email:
                 type: Oro\Bundle\EmailBundle\Form\Model\Email
-        acl_resource: orob2b_email_email_create
+        acl_resource: oro_email_email_create
         actions:
             - '@call_service_method':
                 service: orob2b_sale.helper.notification
