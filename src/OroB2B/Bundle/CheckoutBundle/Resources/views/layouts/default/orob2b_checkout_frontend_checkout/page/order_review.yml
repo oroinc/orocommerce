@@ -1,13 +1,13 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/order_review.html.twig'
-        - '@setBlockTheme':
-            themes: '../templates/right_buttons.html.twig'
+            themes:
+                - '../templates/right_buttons.html.twig'
+                - '../templates/order_review.html.twig'
+                - 'OroB2BPaymentBundle:layouts:default/templates/additional_information.html.twig'
+                - 'OroB2BPaymentBundle:layouts:default/templates/order_review.html.twig'
         - '@setFormTheme':
             themes: '../templates/form_theme.html.twig'
-        - '@setBlockTheme':
-            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
@@ -30,7 +30,8 @@ layout:
             prepend: true
             options:
                 block_name: '=data["orob2b_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
-                payment_method: '=data["checkout"].getPaymentMethod()'
+                options:
+                    payment_method: '=data["checkout"].getPaymentMethod()'
         - '@addTree':
             items:
                 checkout_button_continue_right:
@@ -48,4 +49,3 @@ layout:
                     checkout_button_continue_right: ~
                     checkout_button_back_right: ~
     conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'
-

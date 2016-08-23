@@ -12,7 +12,7 @@ use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 /**
- * Check payment method requires verification after checkout page refreshed
+ * Check that the payment method requires method verification after page refresh
  * Usage:
  * @require_payment_redirect:
  *      payment_method: 'payment_term'
@@ -75,7 +75,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
      */
     protected function isConditionAllowed($context)
     {
-        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
+        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod);
         $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
 
         $event = new RequirePaymentRedirectEvent($paymentMethod);
@@ -85,7 +85,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
             $event
         );
 
-        return $event->isRedirectNeeded();
+        return $event->isRedirectRequired();
     }
 
     /**

@@ -57,7 +57,7 @@ define(function(require) {
 
             mediator.off('checkout:place-order:response', this.handleSubmit, this);
 
-            PaymentTermComponent.__super__.dispose.call(this);
+            PaymentMethodComponent.__super__.dispose.call(this);
         }
     });
 

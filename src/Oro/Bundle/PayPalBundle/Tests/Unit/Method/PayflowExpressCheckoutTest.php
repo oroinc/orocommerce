@@ -774,9 +774,4 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getCredentials')
             ->willReturn($this->getCredentials());
     }
-
-    public function testRequiresVerification()
-    {
-        $this->assertFalse($this->expressCheckout->requiresVerification());
-    }
 }

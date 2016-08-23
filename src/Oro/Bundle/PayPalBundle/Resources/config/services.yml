@@ -39,14 +39,14 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     oro_paypal.event_listener.payflow_require_payment_redirect:
-        class: 'Oro\Bundle\PayPalBundle\EventListener\PayflowRequirePaymentRedirectListener'
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
         arguments:
             - '@oro_paypal.payment_method.payflow_gateway.config'
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.require_payment_redirect.payflow_gateway, method: onRequirePaymentRedirect }
 
     oro_paypal.event_listener.paypal_payments_pro_require_payment_redirect:
-        class: 'Oro\Bundle\PayPalBundle\EventListener\PayflowRequirePaymentRedirectListener'
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
         arguments:
             - '@oro_paypal.payment_method.paypal_payments_pro.config'
         tags:

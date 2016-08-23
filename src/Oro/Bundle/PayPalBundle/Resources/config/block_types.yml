@@ -7,7 +7,7 @@ services:
                 -
                     -
                         block_name: {required: true}
-                        payment_method: {required: true}
+                        options: ~
             - [setName, ['payment_additional_data']]
         tags:
             - { name: layout.block_type, alias: payment_additional_data }

@@ -26,9 +26,9 @@ class RequirePaymentRedirectEventTest extends \PHPUnit_Framework_TestCase
 
     public function testIsRedirectNeeded()
     {
-        $this->assertFalse($this->event->isRedirectNeeded());
-        $this->event->setRedirect(true);
-        $this->assertTrue($this->event->isRedirectNeeded());
+        $this->assertFalse($this->event->isRedirectRequired());
+        $this->event->setRedirectRequired(true);
+        $this->assertTrue($this->event->isRedirectRequired());
     }
 
     public function testGetPaymentMethod()

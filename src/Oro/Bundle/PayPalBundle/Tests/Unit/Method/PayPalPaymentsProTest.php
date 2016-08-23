@@ -24,9 +24,4 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
     {
         $this->assertEquals('paypal_payments_pro', $this->method->getType());
     }
-
-    public function testRequiresVerification()
-    {
-        $this->assertTrue($this->method->requiresVerification());
-    }
 }

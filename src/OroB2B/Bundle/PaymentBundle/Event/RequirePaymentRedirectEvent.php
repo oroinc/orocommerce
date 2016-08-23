@@ -18,7 +18,7 @@ class RequirePaymentRedirectEvent extends Event
     /**
      * @var bool
      */
-    private $redirect;
+    private $redirectRequired;
 
     /**
      * @param PaymentMethodInterface $paymentMethod
@@ -26,23 +26,23 @@ class RequirePaymentRedirectEvent extends Event
     public function __construct(PaymentMethodInterface $paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
-        $this->redirect = false;
+        $this->redirectRequired = false;
     }
 
     /**
      * @return bool
      */
-    public function isRedirectNeeded()
+    public function isRedirectRequired()
     {
-        return $this->redirect;
+        return $this->redirectRequired;
     }
 
     /**
      * @param bool $value
      */
-    public function setRedirect($value)
+    public function setRedirectRequired($value)
     {
-        $this->redirect = $value;
+        $this->redirectRequired = (bool)$value;
     }
 
     /**

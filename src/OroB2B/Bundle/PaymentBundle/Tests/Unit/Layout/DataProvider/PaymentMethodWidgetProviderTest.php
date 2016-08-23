@@ -19,11 +19,6 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->provider);
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertSame('orob2b_payment_method_widget_provider', $this->provider->getIdentifier());
-    }
-
     public function testGetPaymentMethodWidgetName()
     {
         $entity = $this->getMock('OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface');
@@ -39,11 +34,17 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    // @codingStandardsIgnoreStart
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Object "stdClass" must implement interface "OroB2B\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface"
+     */
+    // @codingStandardsIgnoreEnd
     public function testGetPaymentMethodWidgetNameEmpty()
     {
         $entity = new \stdClass();
         $prefix = 'test_prefix';
 
-        $this->assertSame('', $this->provider->getPaymentMethodWidgetName($entity, $prefix));
+        $this->provider->getPaymentMethodWidgetName($entity, $prefix);
     }
 }

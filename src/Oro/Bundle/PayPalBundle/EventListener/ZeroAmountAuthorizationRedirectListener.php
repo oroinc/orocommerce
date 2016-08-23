@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 
 use OroB2B\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 
-class PayflowRequirePaymentRedirectListener
+class ZeroAmountAuthorizationRedirectListener
 {
     /**
      * @var PayflowGatewayConfigInterface
@@ -26,6 +26,6 @@ class PayflowRequirePaymentRedirectListener
      */
     public function onRequirePaymentRedirect(RequirePaymentRedirectEvent $event)
     {
-        $event->setRedirect(!$this->config->isZeroAmountAuthorizationEnabled());
+        $event->setRedirectRequired(!$this->config->isZeroAmountAuthorizationEnabled());
     }
 }

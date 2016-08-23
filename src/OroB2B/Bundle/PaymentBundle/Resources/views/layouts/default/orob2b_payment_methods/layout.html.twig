@@ -26,17 +26,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block _payment_methods_payment_term_widget %}
-    <div class="{{ class_prefix }}__form__payment-methods"
-         data-page-component-module="orob2bpayment/js/app/components/payment-method-component"
-         data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
-        {{ view.options.value }}
-    </div>
-{% endblock %}
-
-{% block _payment_additional_data_widget %}
-    {% if block_name %}
-        {{ block(block_name) }}
-    {% endif %}
-{% endblock %}
