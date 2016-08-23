@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
 
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,11 +53,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptionsConfigurationFormType()
     {
-        static::markTestIncomplete('Implement in BB-4287');
-        static::assertEquals(
-            FlatRateShippingMethodOptionsType::class,
-            $this->flatRate->getOptionsConfigurationFormType()
-        );
+        static::assertEquals(HiddenType::class, $this->flatRate->getOptionsConfigurationFormType());
     }
 
     public function testGetSortOrder()

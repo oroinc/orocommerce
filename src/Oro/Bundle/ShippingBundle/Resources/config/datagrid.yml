@@ -34,7 +34,7 @@ datagrid:
             conditions:
                 label:         oro.shipping.shippingrule.conditions.label
             configurations:
-                label:         oro.shipping.shippingrule.configurations.label
+                label:         oro.shipping.shippingrule.method_configs.label
                 type:          twig
                 frontend_type: html
                 template:      OroShippingBundle:ShippingRule:Datagrid/configurations.html.twig
