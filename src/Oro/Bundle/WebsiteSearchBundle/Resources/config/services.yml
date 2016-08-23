@@ -1,14 +1,19 @@
 parameters:
-    oro_website_search.mock.class: Oro\Bundle\WebsiteSearchBundle\Engine\MockEngine
+    oro_website_search.mock.class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
     oro_website_search.query_factory.class: Oro\Bundle\WebsiteSearchBundle\Factory\QueryFactory
+    oro_website_search.select_data.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
 
 services:
     oro_website_search.mock.engine:
         class: %oro_website_search.mock.class%
-
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
         class: %oro_website_search.query_factory.class%
         arguments:
             - '@oro_website_search.query_factory.inner'
+            - '@event_dispatcher'
             - '@oro_website_search.mock.engine'
+    oro_website_search.select_data.listener:
+        class: %oro_website_search.select_data.listener.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }

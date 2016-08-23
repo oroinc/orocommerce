@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Factory;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\SearchBundle\Datasource\YamlSearchConverter;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -19,15 +22,23 @@ class QueryFactory implements QueryFactoryInterface
     protected $parent;
 
     /**
-     * @param QueryFactoryInterface $parentQueryFactory
-     * @param EngineV2Interface     $engine
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @param QueryFactoryInterface    $parentQueryFactory
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param EngineV2Interface        $engine
      */
     public function __construct(
         QueryFactoryInterface $parentQueryFactory,
+        EventDispatcherInterface $eventDispatcher,
         EngineV2Interface $engine
     ) {
-        $this->parent = $parentQueryFactory;
-        $this->engine = $engine;
+        $this->parent     = $parentQueryFactory;
+        $this->dispatcher = $eventDispatcher;
+        $this->engine     = $engine;
     }
 
     /**
@@ -35,10 +46,24 @@ class QueryFactory implements QueryFactoryInterface
      */
     public function create(DatagridInterface $grid, array $config)
     {
-        if (isset($config['search_index']) && $config['search_index'] === 'website') {
-            return new WebsiteSearchQuery($this->engine, new Query());
+        if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
+            return $this->parent->create($grid, $config);
         }
+        $query = new WebsiteSearchQuery($this->engine, $this->dispatcher, new Query());
+        $this->configureQuery($config, $query);
 
-        return $this->parent->create($grid, $config);
+        return $query;
+    }
+
+    /**
+     * @param array $config
+     * @param       $query
+     */
+    private function configureQuery(array $config, $query)
+    {
+        $builder = new YamlSearchConverter();
+
+        $queryConfig = ['query' => $config['query']];
+        $builder->process($query, $queryConfig);
     }
 }

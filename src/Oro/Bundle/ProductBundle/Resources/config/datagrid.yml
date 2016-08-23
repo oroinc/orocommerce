@@ -177,6 +177,12 @@ datagrid:
         source:
             type: search
             search_index: website
+            query:
+                select:
+                    - text.sku
+                    - text.name
+                from:
+                    - { table: %orob2b_product.entity.product.class%, alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
