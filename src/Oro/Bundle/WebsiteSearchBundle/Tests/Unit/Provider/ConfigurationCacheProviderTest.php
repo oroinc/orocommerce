@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Cache\CacheProvider;
 
-use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
@@ -122,6 +122,8 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $bundles
+     * @param string $resourceFile
      * @return CumulativeResourceInfo[]
      */
     private function getBundlesResources(array $bundles, $resourceFile)
@@ -248,5 +250,46 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
             ));
 
         $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+    }
+
+    public function testClearCache()
+    {
+        $this->initProvider(false);
+
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('deleteAll');
+
+        $this->provider->clearCache();
+    }
+
+    public function testWarmUpCache()
+    {
+        $this->initProvider(false);
+
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('deleteAll');
+
+        $this->configurationProvider
+            ->expects($this->once())
+            ->method('getConfiguration')
+            ->willReturn(self::$configuration);
+
+        $hashValue = 'some_hash';
+        $this->hashProvider
+            ->expects($this->once())
+            ->method('getHash')
+            ->willReturn($hashValue);
+
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('saveMultiple')
+            ->with([
+                'cache_key_hash' => $hashValue,
+                'cache_key_configuration' => serialize(self::$configuration)
+            ]);
+
+        $this->provider->warmUpCache();
     }
 }

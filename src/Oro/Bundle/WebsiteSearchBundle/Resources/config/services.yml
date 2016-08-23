@@ -1,5 +1,6 @@
 parameters:
     oro_website_search.cache.configuration_cache_clearer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheClearer
+    oro_website_search.cache.configuration_cache_warmer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheWarmer
     oro_website_search.loader.mapping_configuration_loader.class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader
     oro_website_search.provider.configuration_cache_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider
     oro_website_search.provider.resources_hash_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider
@@ -16,9 +17,11 @@ services:
             - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
 
     oro_website_search.provider.resources_hash_provider:
+        public: false
         class: '%oro_website_search.provider.resources_hash_provider.class%'
 
     oro_website_search.provider.configuration_cache_provider:
+        public: false
         class: '%oro_website_search.provider.configuration_cache_provider.class%'
         arguments:
             - '@oro_website_search.mapping_configuration.cache'
@@ -30,6 +33,14 @@ services:
         public: false
         class: '%oro_website_search.cache.configuration_cache_clearer.class%'
         arguments:
-            - '@oro_website_search.mapping_configuration.cache'
+            - '@oro_website_search.provider.configuration_cache_provider'
         tags:
             - { name: kernel.cache_clearer }
+
+    oro_website_search.cache.configuration_cache_warmer:
+        public: false
+        class: '%oro_website_search.cache.configuration_cache_warmer.class%'
+        arguments:
+            - '@oro_website_search.provider.configuration_cache_provider'
+        tags:
+            - { name: kernel.cache_warmer }

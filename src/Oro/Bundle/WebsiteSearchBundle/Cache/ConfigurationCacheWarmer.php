@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Cache;
 
-use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 use Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider;
 
-class ConfigurationCacheClearer implements CacheClearerInterface
+class ConfigurationCacheWarmer implements CacheWarmerInterface
 {
     /**
      * @var ConfigurationCacheProvider
@@ -21,11 +21,16 @@ class ConfigurationCacheClearer implements CacheClearerInterface
         $this->provider = $provider;
     }
 
+    public function warmUp($cacheDir)
+    {
+        $this->provider->warmUpCache();
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function clear($cacheDir)
+    public function isOptional()
     {
-        $this->provider->clearCache();
+        return false;
     }
 }

@@ -20,10 +20,10 @@ class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
             $productBundleResource
         ];
 
-        $orderedPathsAndTimes = $pageBundleResource->path.filemtime($pageBundleResource->path)
+        $pathsAndTimes = $pageBundleResource->path.filemtime($pageBundleResource->path)
             .'_'.$productBundleResource->path.filemtime($productBundleResource->path);
 
-        $expectedHash = md5($orderedPathsAndTimes);
+        $expectedHash = md5($pathsAndTimes);
 
         $hashProvider = new ResourcesHashProvider();
         $this->assertEquals($expectedHash, $hashProvider->getHash($resources));
@@ -32,7 +32,7 @@ class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $bundle
      * @param string $resourceFile
-     * @return CumulativeResourceInfo
+     * @return CumulativeResourceInfo|\PHPUnit_Framework_MockObject_MockObject
      */
     private function createResource($bundle, $resourceFile)
     {
