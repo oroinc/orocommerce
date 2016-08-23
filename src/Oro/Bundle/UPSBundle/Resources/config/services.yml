@@ -1,0 +1,6 @@
+services:
+    # Providers
+    oro_ups.provider.channel:
+        class: 'Oro\Bundle\UPSBundle\Provider\ChannelType'
+        tags:
+            - { name: oro_integration.channel, type: ups }

@@ -53,38 +53,53 @@ class ShippingContext implements ShippingContextInterface
     public function setLineItems($items)
     {
         foreach ($items as $item) {
-            $shippingLineItem = new ShippingLineItem();
+            $this->lineItems[] = $this->createLineItem($item);
+        }
+    }
 
-            if ($item instanceof ProductUnitHolderInterface || $item instanceof ProductHolderInterface) {
-                $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-                $shippingLineItem->setProductUnit($item->getProductUnit());
-            }
+    /**
+     * @param mixed $item
+     * @return ShippingLineItem
+     */
+    private function createLineItem($item)
+    {
+        $shippingLineItem = new ShippingLineItem();
 
-            if ($item instanceof ProductShippingOptionsInterface) {
-                $shippingLineItem->setProduct($item->getProduct());
-                $shippingLineItem->setWeight($item->getWeight());
-                $shippingLineItem->setDimensions($item->getDimensions());
-            }
-
-            if ($item instanceof QuantityAwareInterface) {
-                $shippingLineItem->setQuantity($item->getQuantity());
-            }
-
-            if ($item instanceof PriceAwareInterface) {
-                $shippingLineItem->setPrice($item->getPrice());
-            }
-
-            $this->lineItems[] = $shippingLineItem;
+        if ($item instanceof ProductUnitHolderInterface) {
+            $shippingLineItem->setProductUnit($item->getProductUnit());
         }
 
+        if ($item instanceof ProductUnitHolderInterface || $item instanceof ProductHolderInterface) {
+            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
+        }
+
+        if ($item instanceof ProductShippingOptionsInterface || $item instanceof ProductHolderInterface) {
+            $shippingLineItem->setProduct($item->getProduct());
+        }
+
+        if ($item instanceof ProductShippingOptionsInterface) {
+            $shippingLineItem->setWeight($item->getWeight());
+            $shippingLineItem->setDimensions($item->getDimensions());
+        }
+
+        if ($item instanceof QuantityAwareInterface) {
+            $shippingLineItem->setQuantity($item->getQuantity());
+        }
+
+        if ($item instanceof PriceAwareInterface) {
+            $shippingLineItem->setPrice($item->getPrice());
+        }
+
+        return $shippingLineItem;
     }
+
 
     /**
      * @return ShippingLineItemInterface[]
      */
     public function getLineItems()
     {
-        $this->lineItems;
+        return $this->lineItems;
     }
 
     /**
