@@ -23,7 +23,8 @@ class LoadShippingRuleDemoData extends AbstractFixture
             ->setOptions([]);
 
         $methodConfig = new ShippingRuleMethodConfig();
-        $methodConfig->setMethod(FlatRateShippingMethod::NAME);
+        $methodConfig->setMethod(FlatRateShippingMethod::NAME)
+            ->addTypeConfig($typeConfig);
 
         $shippingRule = new ShippingRule();
         $shippingRule->setName('Default')

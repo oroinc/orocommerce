@@ -152,7 +152,7 @@ class OroShippingBundleInstaller implements Installation
         $table->addColumn('priority', 'integer', []);
         $table->addColumn('conditions', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('stop_processing', 'boolean', ['default' => true]);
+        $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
     }

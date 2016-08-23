@@ -62,18 +62,24 @@ oro:
             conditions.label: Conditions
             destinations.label: Destinations
             address.label: Address
-            configurations.label: Configurations
+            method_configs.label: Configurations
             currency.label: Сurrency
             stop_processing.label: Stop Further Rule Processing
-        shippingruleconfiguration:
-            entity_label: Shipping Rule Configuration
-            entity_plural_label: Shipping Rule Configurations
+        shippingrulemethodconfig:
+            entity_label: Shipping Rule Method Config
+            entity_plural_label: Shipping Rule Methods Configs
             id.label: Id
-            currency.label: Currency
-            enabled.label: Enabled
-            type.label: Type
             method.label: Method
+            options.label: Options
             rule.label: Rule
+            type_configs.label: Types
+        shippingrulemethodtypeconfig:
+            entity_label: Shipping Rule Method Type Config
+            entity_plural_label: Shipping Rule Method Types Configs
+            id.label: Id
+            type.label: Type
+            options.label: Options
+            method_config.label: Method Config
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'
