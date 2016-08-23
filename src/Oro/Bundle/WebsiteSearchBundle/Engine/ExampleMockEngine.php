@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -51,51 +52,49 @@ class ExampleMockEngine implements EngineV2Interface
     {
         return [
             [
-                [
-                    'id'               => 1,
-                    'sku'              => '01C82',
-                    'name'             => 'Canon 5D EOS',
-                    'shortDescription' => 'Small description of another good product from our shop.',
-                    'minimum_price'    => '1299.00',
-                    'product_units'    => [
-                        'item' => 'item'
-                    ],
-                    'prices'           => [
-                        'item_1' => '1299.00'
-                    ],
-                    'image'            => null
-
+                'id'               => 1,
+                'sku'              => '01C82',
+                'name'             => 'Canon 5D EOS',
+                'shortDescription' => 'Small description of another good product from our shop.',
+                'minimum_price'    => '1299.00',
+                'product_units'    => [
+                    'item' => 'item'
                 ],
-                [
-                    'id'               => 2,
-                    'sku'              => '6VC22',
-                    'name'             => 'Bluetooth Barcode Scanner',
-                    'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission to...',
-                    'minimum_price'    => '340.00',
-                    'product_units'    => [
-                        'item' => 'item'
-                    ],
-                    'prices'           => [
-                        'item_1' => '340.00'
-                    ],
-                    'image'            => null
-
+                'prices'           => [
+                    'item_1' => '1299.00'
                 ],
-                [
-                    'id'               => 3,
-                    'sku'              => '5GE27',
-                    'name'             => 'Pricing Labeler',
-                    'shortDescription' => 'This pricing labeler is easy to use and comes with...',
-                    'minimum_price'    => '165.00',
-                    'product_units'    => [
-                        'item' => 'item'
-                    ],
-                    'prices'           => [
-                        'item_1' => '165.00'
-                    ],
-                    'image'            => null
+                'image'            => null
 
+            ],
+            [
+                'id'               => 2,
+                'sku'              => '6VC22',
+                'name'             => 'Bluetooth Barcode Scanner',
+                'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission...',
+                'minimum_price'    => '340.00',
+                'product_units'    => [
+                    'item' => 'item'
                 ],
+                'prices'           => [
+                    'item_1' => '340.00'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 3,
+                'sku'              => '5GE27',
+                'name'             => 'Pricing Labeler',
+                'shortDescription' => 'This pricing labeler is easy to use and comes with...',
+                'minimum_price'    => '165.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '165.00'
+                ],
+                'image'            => null
+
             ],
         ];
     }
