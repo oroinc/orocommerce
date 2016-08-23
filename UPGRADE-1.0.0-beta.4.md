@@ -5,8 +5,8 @@ General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
 
-FrontendBundle
---------------
+FrontendBundle:
+---------------
 - Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
 
 CheckoutBundle:
