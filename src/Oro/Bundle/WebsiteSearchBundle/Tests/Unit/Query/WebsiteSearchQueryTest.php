@@ -1,34 +1,27 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\SelectDataFromSearchIndexEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
-use Oro\Bundle\WebsiteSearchBundle\Datagrid\WebsiteSearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
 class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var WebsiteSearchQuery
-     */
-    protected $testable;
+    /** @var WebsiteSearchQuery */
+    protected $websiteSearchQuery;
 
-    /**
-     * @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockObject */
     protected $engine;
 
-    /**
-     * @var Query|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var Query|\PHPUnit_Framework_MockObject_MockObject */
     protected $query;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
 
     public function setUp()
@@ -42,7 +35,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
 
-        $this->testable = new WebsiteSearchQuery(
+        $this->websiteSearchQuery = new WebsiteSearchQuery(
             $this->engine,
             $this->dispatcher,
             $this->query
@@ -58,7 +51,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->method('addSelect')
             ->with($name, $type);
 
-        $this->testable->addSelect($name, $type);
+        $this->websiteSearchQuery->addSelect($name, $type);
     }
 
     public function testFrom()
@@ -69,10 +62,10 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->method('from')
             ->with($alias);
 
-        $this->testable->from($alias);
+        $this->websiteSearchQuery->from($alias);
     }
 
-    public function testExecuteShouldCallEngine()
+    public function testWebsiteQueryExecute()
     {
         $result = $this->getMockBuilder(Result::class)
             ->disableOriginalConstructor()
@@ -85,7 +78,11 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($selectedData);
 
         $this->dispatcher->expects($this->once())
-            ->method('dispatch');
+            ->method('dispatch')
+            ->with(
+                SelectDataFromSearchIndexEvent::EVENT_NAME,
+                $this->isInstanceOf(SelectDataFromSearchIndexEvent::class)
+            );
 
         $this->query->expects($this->at(1))
             ->method('select')
@@ -99,6 +96,6 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->with($this->query)
             ->willReturn($result);
 
-        $this->testable->execute();
+        $this->websiteSearchQuery->execute();
     }
 }

@@ -1,35 +1,27 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Factory;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query\Factory;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
-use Oro\Bundle\SearchBundle\Factory\QueryFactoryInterface;
-use Oro\Bundle\WebsiteSearchBundle\Datagrid\WebsiteSearchQuery;
-use Oro\Bundle\WebsiteSearchBundle\Factory\QueryFactory;
+use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory;
 
 class QueryFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $queryFactory;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockBuilder
-     */
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $eventDispatcher;
 
-    /**
-     * @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder
-     */
+    /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $engine;
 
-    /**
-     * @var DatagridInterface|\PHPUnit_Framework_MockObject_MockBuilder
-     */
+    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $grid;
 
     public function setUp()

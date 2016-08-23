@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Datagrid;
+namespace Oro\Bundle\WebsiteSearchBundle\Query;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -11,14 +11,10 @@ use Oro\Bundle\SearchBundle\Query\Query;
 
 class WebsiteSearchQuery extends AbstractSearchQuery
 {
-    /**
-     * @var EngineV2Interface
-     */
+    /** @var EngineV2Interface */
     protected $engine;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     /**
