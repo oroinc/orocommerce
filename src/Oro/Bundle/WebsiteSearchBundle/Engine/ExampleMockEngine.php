@@ -96,6 +96,110 @@ class ExampleMockEngine implements EngineV2Interface
                 'image'            => null
 
             ],
+            [
+                'id'               => 4,
+                'sku'              => '9GQ28',
+                'name'             => 'NFC Credit Card Reader',
+                'shortDescription' => 'This NFC credit card reader accepts PIN-based...',
+                'minimum_price'    => '240.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '240.00'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 5,
+                'sku'              => '8BC37',
+                'name'             => 'Colorful Floral Women’s Scrub Top',
+                'shortDescription' => 'This bright, colorful women’s scrub top is not only...',
+                'minimum_price'    => '14.95',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '14.95'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 6,
+                'sku'              => '5TJ23',
+                'name'             => '17-inch POS Touch Screen Monitor with Card Reader',
+                'shortDescription' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
+                'minimum_price'    => '290.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '290.00'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 7,
+                'sku'              => '4PJ19',
+                'name'             => 'Handheld Laser Barcode Scanner',
+                'shortDescription' => 'This lightweight laser handheld barcode scanner offers high performace...',
+                'minimum_price'    => '190.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '190.00'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 8,
+                'sku'              => '7NQ22',
+                'name'             => 'Storage Combination with Doors',
+                'shortDescription' => 'Store and display your favorite items with this storage-display cabinet.',
+                'minimum_price'    => '789.99',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '789.99'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 9,
+                'sku'              => '5GF68',
+                'name'             => '300-Watt Floodlight',
+                'shortDescription' => 'This 300-watt flood light provides bright and focused illumination.',
+                'minimum_price'    => '35.99',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '35.99'
+                ],
+                'image'            => null
+
+            ],
+            [
+                'id'               => 10,
+                'sku'              => '8DO33',
+                'name'             => 'Receipt Printer',
+                'shortDescription' => 'This receipt printer uses a ribbon to transfer ink to paper',
+                'minimum_price'    => '240.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '240.00'
+                ],
+                'image'            => null
+            ],
         ];
     }
 
@@ -145,8 +249,9 @@ class ExampleMockEngine implements EngineV2Interface
      */
     private function getOrderedData(Query $query, array $data) {
         foreach($query->getCriteria()->getOrderings() as $field => $sort) {
-            if (strpos($field, 'text.') === 0) {
-                $key = substr($field, 5);
+            $matches = [];
+            if (preg_match('/^[a-zA-Z]+\.(.+)$/', $field, $matches)) {
+                $key = substr($field, strpos($field, '.') + 1);
 
                 usort($data, function($a, $b) use ($key, $sort) {
                     if ($sort === SearchSorterExtension::DIRECTION_DESC) {
