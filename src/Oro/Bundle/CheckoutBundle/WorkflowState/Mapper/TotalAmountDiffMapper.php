@@ -44,6 +44,8 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
+        /** TODO: remove clearCache after BB-4305  */
+        $this->totalProcessorProvider->clearCache();
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
         return [
