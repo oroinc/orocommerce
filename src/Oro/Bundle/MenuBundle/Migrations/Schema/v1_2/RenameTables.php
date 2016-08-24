@@ -25,7 +25,6 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
 
         $extension->renameTable($schema, $queries, 'orob2b_menu_item', 'oro_menu_item');
         $extension->renameTable($schema, $queries, 'orob2b_menu_item_title', 'oro_menu_item_title');
-
     }
 
     /**

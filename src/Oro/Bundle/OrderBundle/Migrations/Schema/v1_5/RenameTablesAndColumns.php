@@ -89,6 +89,16 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'order_50627d4f',
             RelationType::MANY_TO_ONE
         ));
+
+        // entity tables
+        $extension->renameTable($schema, $queries, 'orob2b_order', 'oro_order');
+        $extension->renameTable($schema, $queries, 'orob2b_order_address', 'oro_order_address');
+        $extension->renameTable($schema, $queries, 'orob2b_order_discount', 'oro_order_discount');
+        $extension->renameTable($schema, $queries, 'orob2b_order_line_item', 'oro_order_line_item');
+
+        // indexes
+        $schema->getTable('orob2b_order')->dropIndex('orob2b_order_created_at_index');
+        $extension->addIndex($schema, $queries, 'oro_order', ['created_at'], 'oro_order_created_at_index');
     }
 
     /**
