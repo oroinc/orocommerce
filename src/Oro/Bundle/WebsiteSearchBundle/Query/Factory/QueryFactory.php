@@ -1,29 +1,25 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Factory;
+namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\SearchBundle\Datasource\YamlSearchConverter;
+use Oro\Bundle\SearchBundle\Datasource\YamlToSearchQueryConverter;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
-use Oro\Bundle\SearchBundle\Factory\QueryFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\WebsiteSearchBundle\Datagrid\WebsiteSearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
 class QueryFactory implements QueryFactoryInterface
 {
-    /**
-     * @var EngineV2Interface
-     */
+    /** @var EngineV2Interface */
     protected $engine;
 
     /** @var QueryFactory */
     protected $parent;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     /**
@@ -61,7 +57,7 @@ class QueryFactory implements QueryFactoryInterface
      */
     private function configureQuery(array $config, $query)
     {
-        $builder = new YamlSearchConverter();
+        $builder = new YamlToSearchQueryConverter();
 
         $queryConfig = ['query' => $config['query']];
         $builder->process($query, $queryConfig);
