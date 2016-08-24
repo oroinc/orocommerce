@@ -2,6 +2,10 @@
     & .embedded-list {
         margin: 0 42px;
     }
+
+    & .embedded-list__item {
+        width: 25%;
+    }
 }
 
 @include breakpoint('mobile') {
@@ -18,6 +22,10 @@
             left: 0;
 
             width: 16px;
+        }
+
+        & .embedded-list__item {
+            width: 50%;
         }
     }
 }
