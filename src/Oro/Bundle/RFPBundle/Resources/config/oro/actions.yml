@@ -1,7 +1,7 @@
 operations:
     orob2b_rfp_change_status:
         label: oro.rfp.btn.change_status
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_rfp_request_view
         datagrids:
@@ -45,7 +45,7 @@ operations:
     orob2b_rfp_cancel:
         label: oro.rfp.request.cancel.label
         enabled: true
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_rfp_request_view
         datagrids:
@@ -93,7 +93,7 @@ operations:
 
     orob2b_rfp_create_quote:
         label: oro.rfp.btn.create_quote
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_rfp_request_view
         acl_resource: orob2b_sale_quote_create
@@ -115,7 +115,7 @@ operations:
 
     orob2b_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_product_frontend_quick_add
             - orob2b_product_frontend_quick_add_copy_paste
@@ -140,7 +140,7 @@ operations:
 
     orob2b_rfp_base_edit:
         label: ' '
-        applications: [backend]
+        applications: [default]
         attributes:
             request:
                 label: ' '
@@ -181,7 +181,7 @@ operations:
     orob2b_rfp_resubmit:
         extends: orob2b_rfp_base_edit
         label: oro.rfp.btn.resubmit
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_rfp_request_view
         datagrids:
@@ -231,7 +231,7 @@ operations:
     orob2b_rfp_delete:
         label: oro.rfp.btn.delete
         enabled: true
-        applications: [backend]
+        applications: [default]
         routes:
             - orob2b_rfp_request_view
         datagrids:
@@ -259,7 +259,7 @@ operations:
     orob2b_rfp_frontend_request_create:
         label: oro.frontend.rfp.request.create.label
         enabled: true
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_rfp_frontend_request_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
@@ -271,7 +271,7 @@ operations:
 
     orob2b_rfp_frontend_request_edit:
         label: oro.frontend.rfp.action.request.edit
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_rfp_frontend_request_view
         acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]

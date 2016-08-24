@@ -94,6 +94,17 @@
     line-height: 40px;
   }
 
+  &.theme-btn_xlg {
+    vertical-align: middle;
+    padding: 0;
+
+    line-height: 80px;
+    > a,
+    > span {
+      display: block;
+    }
+  }
+
   &.btn_min-auto {
     min-width: inherit;
   }
