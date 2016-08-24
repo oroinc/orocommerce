@@ -14,6 +14,15 @@
 {% endblock %}
 
 {% block _header_widget %}
+    {% if isMobileVersion() %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~data-sticky': {
+                isSticky: true,
+                toggleClass: 'header-row--float'
+            }
+        }) %}
+    {% endif %}
+
     <header{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </header>
