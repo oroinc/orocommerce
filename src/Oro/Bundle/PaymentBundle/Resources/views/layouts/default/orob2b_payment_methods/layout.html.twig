@@ -26,11 +26,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block _payment_methods_payment_term_widget %}
-    <div class="{{ class_prefix }}__form__payment-methods"
-         data-page-component-module="oropayment/js/app/components/payment-method-component"
-         data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
-        {{ view.options.value }}
-    </div>
-{% endblock %}

@@ -2,7 +2,7 @@ operations:
     orob2b_accept_quote:
         label: oro.alternativecheckout.actions.accept_quote
         enabled: true
-        applications: [frontend]
+        applications: [commerce]
         routes:
             - orob2b_sale_quote_frontend_view
         order: 10
