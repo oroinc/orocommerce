@@ -76,7 +76,7 @@ oro_system_configuration:
 
         orob2b_product.product_image_watermark_size:
             data_type: integer
-            type: integer
+            type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_size.label
@@ -89,7 +89,7 @@ oro_system_configuration:
 
         orob2b_product.product_image_watermark_position:
             data_type: string
-            type: choice
+`            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label

@@ -17,6 +17,8 @@ use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 
 class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const PRODUCT_IMAGE_CLASS = 'ProductImage';
+
     /**
      * @var ProductImageListener
      */
@@ -40,7 +42,7 @@ class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
-        $this->listener = new ProductImageListener($this->eventDispatcher);
+        $this->listener = new ProductImageListener($this->eventDispatcher, self::PRODUCT_IMAGE_CLASS);
 
         $this->productImage1 = $this->getMock(ProductImage::class);
         $this->productImage1->expects($this->once())
@@ -99,7 +101,7 @@ class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $em->expects($this->once())
             ->method('getRepository')
-            ->with(ProductImage::class)
+            ->with(self::PRODUCT_IMAGE_CLASS)
             ->willReturn($repository);
 
         $updateArgs = $this->getMockBuilder(LifecycleEventArgs::class)

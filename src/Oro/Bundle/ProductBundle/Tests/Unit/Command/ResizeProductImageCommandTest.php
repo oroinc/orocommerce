@@ -55,11 +55,6 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
     protected $productImageRepository;
 
     /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
      * @var ImageTypeProvider
      */
     protected $imageTypeProvider;
@@ -72,11 +67,10 @@ class ResizeProductImageCommandTest extends \PHPUnit_Framework_TestCase
 
         $this->productImageRepository = $this->prophesize(ProductImageRepository::class);
 
-        $this->em= $this->prophesize(EntityManager::class);
-        $this->em->getRepository(self::PRODUCT_IMAGE_CLASS)->willReturn($this->productImageRepository);
-
         $this->doctrineHelper = $this->prophesize(DoctrineHelper::class);
-        $this->doctrineHelper->getEntityManagerForClass(self::PRODUCT_IMAGE_CLASS)->willReturn($this->em);
+        $this->doctrineHelper
+            ->getEntityRepositoryForClass(self::PRODUCT_IMAGE_CLASS)
+            ->willReturn($this->productImageRepository);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);

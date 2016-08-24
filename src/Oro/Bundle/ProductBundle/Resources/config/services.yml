@@ -376,9 +376,9 @@ services:
 
     orob2b_product.event_listener.product_image_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
-        public: false
         arguments:
             - '@event_dispatcher'
+            - '%orob2b_product.entity.product_image.class%'
         tags:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: postUpdate }

@@ -22,7 +22,10 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
         $this
             ->setName(self::COMMAND_NAME)
             ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
-            ->setDescription('Resize All Product Images (async)');
+            ->setDescription(<<<DESC
+Resize All Product Images (the command only adds jobs to a queue, ensure the daemon is running to get images resized)
+DESC
+            );
     }
 
     /**
@@ -38,8 +41,7 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
         /** @var ProductImage[] $productImages */
         $productImages = $container
             ->get('oro_entity.doctrine_helper')
-            ->getEntityManagerForClass($productImageClass)
-            ->getRepository($productImageClass)
+            ->getEntityRepositoryForClass($productImageClass)
             ->findAll();
 
         if (!$productImageCount = count($productImages)) {

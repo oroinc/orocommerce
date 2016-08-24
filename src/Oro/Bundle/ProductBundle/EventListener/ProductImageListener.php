@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductImageRepository;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
 class ProductImageListener
@@ -25,11 +26,18 @@ class ProductImageListener
     protected $productImagesForResize = [];
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var string
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    private $productImageClass;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string $productImageClass
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher, $productImageClass)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->productImageClass = $productImageClass;
     }
 
     /**
@@ -53,8 +61,10 @@ class ProductImageListener
     {
         $file = $args->getEntity();
         if ($file instanceof File) {
+            /** @var ProductImageRepository $productImageRepository */
+            $productImageRepository = $args->getEntityManager()->getRepository($this->productImageClass);
             /** @var ProductImage $productImage */
-            $productImage = $args->getEntityManager()->getRepository(ProductImage::class)->findOneByImage($file);
+            $productImage = $productImageRepository->findOneByImage($file);
             if ($productImage && $productImage->getTypes()) {
                 $this->addProductImageForResize($productImage, $forceOption = true);
             }
@@ -68,20 +78,11 @@ class ProductImageListener
     {
         foreach ($this->productImagesForResize as $key => $data) {
             unset($this->productImagesForResize[$key]);
-            $this->sendProductImageResizeEvent($data['productImage'], $data['forceOption']);
+            $this->eventDispatcher->dispatch(
+                ProductImageResizeEvent::NAME,
+                new ProductImageResizeEvent($data['productImage'], $data['forceOption'])
+            );
         }
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @param bool $forceOption
-     */
-    protected function sendProductImageResizeEvent(ProductImage $productImage, $forceOption)
-    {
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption)
-        );
     }
 
     /**

@@ -10,13 +10,19 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class CustomImageFilterProvider implements CustomImageFilterProviderInterface
 {
-    /** @var ConfigManager  */
+    /**
+     * @var ConfigManager
+     */
     protected $configManager;
 
-    /** @var DoctrineHelper  */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $attachmentDir;
 
     /**

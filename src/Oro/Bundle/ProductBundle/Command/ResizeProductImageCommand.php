@@ -39,7 +39,6 @@ class ResizeProductImageCommand extends ContainerAwareCommand
         $force = (bool) $input->getOption(self::OPTION_FORCE);
 
         $container         = $this->getContainer();
-        $productImage      = null;
         $productImageId    = (int) $input->getArgument('productImageId');
         $productImageClass = $container->getParameter('orob2b_product.entity.product_image.class');
 
@@ -47,8 +46,7 @@ class ResizeProductImageCommand extends ContainerAwareCommand
         $productImage = $this
             ->getContainer()
             ->get('oro_entity.doctrine_helper')
-            ->getEntityManagerForClass($productImageClass)
-            ->getRepository($productImageClass)
+            ->getEntityRepositoryForClass($productImageClass)
             ->find($productImageId);
 
         if (!$productImage) {
@@ -69,7 +67,7 @@ class ResizeProductImageCommand extends ContainerAwareCommand
      * @param bool $force
      * @param OutputInterface $output
      */
-    private function resizeImage(File $image, $filterName, $force, $output)
+    private function resizeImage(File $image, $filterName, $force, OutputInterface $output)
     {
         $resizer = $this->getContainer()->get('oro_attachment.image_resizer');
 
