@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,8 +37,6 @@ class LoadCombinedPriceListDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->container->get('orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler')
-            ->fillTriggersForRecalculate([], [], []);
         $this->container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
     }
 

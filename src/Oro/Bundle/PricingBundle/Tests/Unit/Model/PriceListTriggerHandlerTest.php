@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\TriggersFiller;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -12,7 +12,7 @@ use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 

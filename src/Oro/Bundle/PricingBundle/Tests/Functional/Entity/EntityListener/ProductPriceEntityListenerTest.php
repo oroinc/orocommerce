@@ -31,11 +31,6 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->getRepository('OroPricingBundle:ProductPriceChangeTrigger')
-            ->createQueryBuilder('cpp')
-            ->delete()
-            ->getQuery()
-            ->execute();
 
         $em->getRepository('OroPricingBundle:PriceListToProduct')
             ->createQueryBuilder('pltp')
