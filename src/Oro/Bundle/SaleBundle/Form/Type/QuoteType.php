@@ -6,19 +6,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 class QuoteType extends AbstractType
 {

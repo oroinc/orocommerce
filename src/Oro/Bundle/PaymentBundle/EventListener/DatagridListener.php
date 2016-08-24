@@ -42,6 +42,9 @@ class DatagridListener
         $this->addPaymentTermRelationForAccountGroup($event->getConfig());
     }
 
+    /**
+     * @param BuildBefore $event
+     */
     public function onBuildBeforeQuotes(BuildBefore $event)
     {
         $this->addPaymentTermRelationForQuotes($event->getConfig());
@@ -164,7 +167,6 @@ class DatagridListener
         // column
         $column = [
             'label' => 'oro.payment.paymentterm.entity_label',
-            'order' => 8,
             'renderable' => false,
         ];
         $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
