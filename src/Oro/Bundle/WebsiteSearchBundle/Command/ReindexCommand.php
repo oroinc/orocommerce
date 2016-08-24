@@ -25,7 +25,7 @@ class ReindexCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Full or compact class name of entity which should be reindexed' .
-                '(f.e. Oro\Bundle\UserBundle\Entity\User or OroUserBundle:User)'
+                '(e.g. Oro\Bundle\UserBundle\Entity\User or OroUserBundle:User)'
             )
             ->addOption(
                 'website_id',
@@ -49,13 +49,13 @@ class ReindexCommand extends ContainerAwareCommand
             // convert from short format to FQСN
             $class = $this->getContainer()->get('doctrine')
                 ->getManagerForClass($class)->getClassMetadata($class)->getName();
-            $placeholder = $class . '" entity';
+            $placeholder = '"' . $class . '" entity';
         }
 
         $context = [];
 
         if ($websiteId) {
-            $placeholder .= ' and WEBSITE ID:' . $websiteId;
+            $placeholder .= ' and website id ' . $websiteId;
             $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
         }
 

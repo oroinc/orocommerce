@@ -9,6 +9,7 @@ class ReindexCommandTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        //TODO: remove after services.yml will be loaded by dependency injection extension
         $this->getContainer()->set('oro_website_search.indexer', new OrmIndexerStub());
     }
 
@@ -21,6 +22,13 @@ class ReindexCommandTest extends WebTestCase
                 '--class' => 'OroUserBundle:User'
             ]
         );
-        $this->assertContains('Total indexed items: 12', $result);
+
+        $expectedOutput = <<<COUT
+Starting reindex task for "Oro\Bundle\UserBundle\Entity\User" entity and website id 123
+Total indexed items: 12
+
+COUT;
+
+        $this->assertEquals($expectedOutput, $result);
     }
 }
