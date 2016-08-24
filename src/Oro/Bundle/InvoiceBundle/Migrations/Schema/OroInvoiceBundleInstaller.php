@@ -27,22 +27,22 @@ class OroInvoiceBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BInvoiceTable($schema);
-        $this->createOrob2BInvoiceLineItemTable($schema);
+        $this->createOroInvoiceTable($schema);
+        $this->createOroInvoiceLineItemTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BInvoiceForeignKeys($schema);
-        $this->addOrob2BInvoiceLineItemForeignKeys($schema);
+        $this->addOroInvoiceForeignKeys($schema);
+        $this->addOroInvoiceLineItemForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_invoice table
+     * Create oro_invoice table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BInvoiceTable(Schema $schema)
+    protected function createOroInvoiceTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_invoice');
+        $table = $schema->createTable('oro_invoice');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
@@ -63,17 +63,17 @@ class OroInvoiceBundleInstaller implements Installation
         $table->addColumn('payment_due_date', 'date');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
-        $table->addIndex(['created_at'], 'orob2b_invoice_created_at_index', []);
+        $table->addIndex(['created_at'], 'oro_invoice_created_at_index', []);
     }
 
     /**
-     * Create orob2b_invoice_line_item table
+     * Create oro_invoice_line_item table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BInvoiceLineItemTable(Schema $schema)
+    protected function createOroInvoiceLineItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_invoice_line_item');
+        $table = $schema->createTable('oro_invoice_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('invoice_id', 'integer', ['notnull' => false]);
@@ -94,13 +94,13 @@ class OroInvoiceBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_invoice foreign keys.
+     * Add oro_invoice foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BInvoiceForeignKeys(Schema $schema)
+    protected function addOroInvoiceForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_invoice');
+        $table = $schema->getTable('oro_invoice');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -108,7 +108,7 @@ class OroInvoiceBundleInstaller implements Installation
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -120,13 +120,13 @@ class OroInvoiceBundleInstaller implements Installation
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -134,27 +134,27 @@ class OroInvoiceBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_invoice_line_item foreign keys.
+     * Add oro_invoice_line_item foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BInvoiceLineItemForeignKeys(Schema $schema)
+    protected function addOroInvoiceLineItemForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_invoice_line_item');
+        $table = $schema->getTable('oro_invoice_line_item');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_invoice'),
+            $schema->getTable('oro_invoice'),
             ['invoice_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
