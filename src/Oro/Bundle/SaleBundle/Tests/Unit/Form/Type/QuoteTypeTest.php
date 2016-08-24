@@ -4,40 +4,42 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -328,6 +330,75 @@ class QuoteTypeTest extends AbstractTest
                 ]
             ],
         ];
+    }
+
+    public function testBuildFormWithPaymetTerm()
+    {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMock(FormBuilderInterface::class);
+        $quote = new Quote();
+        $accountPaymentTerm = $this->getMock(PaymentTerm::class);
+        $accountGroupPaymentTerm = $this->getMock(PaymentTerm::class);
+        $accountGroup = new AccountGroup();
+        $account = new Account();
+        $account->setGroup($accountGroup);
+        $quote->setAccount($account);
+        $options = [
+            'label' => 'oro.sale.quote.payment_term.label',
+            'required' => false,
+            'attr' => [
+                'data-account-payment-term' => 10,
+                'data-account-group-payment-term' => 100,
+            ],
+        ];
+
+        $this
+            ->securityFacade
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('orob2b_quote_payment_term_account_can_override')
+            ->willReturn(true);
+        $accountPaymentTerm->expects($this->once())->method('getId')->willReturn(10);
+        $accountGroupPaymentTerm->expects($this->once())->method('getId')->willReturn(100);
+        $this
+            ->paymentTermProvider
+            ->expects($this->once())
+            ->method('getAccountPaymentTerm')
+            ->with($account)
+            ->willReturn($accountPaymentTerm);
+        $this
+            ->paymentTermProvider
+            ->expects($this->once())
+            ->method('getAccountGroupPaymentTerm')
+            ->with($accountGroup)
+            ->willReturn($accountGroupPaymentTerm);
+        $builder->expects($this->atMost(13))->method('add')->willReturn($builder);
+        $builder
+            ->expects($this->at(12))
+            ->method('add')
+            ->with('paymentTerm', PaymentTermSelectType::NAME, $options)
+            ->willReturn($builder);
+
+        $this->formType->buildForm($builder, ['data' => $quote]);
+    }
+
+    public function testBuildFormWithNoPaymetTerm()
+    {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMock(FormBuilderInterface::class);
+        $quote = new Quote();
+
+        $this
+            ->securityFacade
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('orob2b_quote_payment_term_account_can_override')
+            ->willReturn(false);
+        $this->paymentTermProvider->expects($this->never())->method('getAccountPaymentTerm');
+        $this->paymentTermProvider->expects($this->never())->method('getAccountGroupPaymentTerm');
+        $builder->expects($this->atMost(12))->method('add')->willReturn($builder);
+
+        $this->formType->buildForm($builder, ['data' => $quote]);
     }
 
     /**
