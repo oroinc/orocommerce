@@ -89,7 +89,7 @@ oro_system_configuration:
 
         orob2b_product.product_image_watermark_position:
             data_type: string
-`            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
