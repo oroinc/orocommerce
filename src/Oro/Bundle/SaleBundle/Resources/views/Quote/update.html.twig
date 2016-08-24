@@ -98,15 +98,6 @@
                     lineItems
                 ]
             }]
-        },
-        {
-            'title': 'oro.sale.quote.sections.shipping_information'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.shippingEstimate),
-                ]
-            }]
         }
     ]
     %}
@@ -134,13 +125,20 @@
             </div>
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.order.shipping_address.label'|trans+
-        ,
+            'title': 'oro.order.shipping_address.label'|trans,
             'subblocks': [{
                 'data': [shippingAddress]
             }]
         }]) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.sale.quote.sections.shipping_information'|trans,
+        'subblocks': [{
+            'title': '',
+            'data': [form_row(form.shippingEstimate)]
+        }]
+    }]) %}
 
     {% if form.paymentTerm is defined %}
         {% set paymentTerm %}

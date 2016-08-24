@@ -43,15 +43,6 @@
             {% endif %}
             {{ UI.renderHtmlProperty('oro.order.account_user.label'|trans, accountUserView) }}
 
-            {% if order.paymentTerm is not empty %}
-                {% if resource_granted('VIEW', order.paymentTerm) %}
-                    {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': order.paymentTerm.id}), order.paymentTerm.label) %}
-                {% else %}
-                    {% set paymentTermView = order.paymentTerm.label|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('oro.order.payment_term.label'|trans, paymentTermView) }}
-            {% endif %}
-
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
         </div>

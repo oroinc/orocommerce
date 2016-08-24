@@ -25,15 +25,6 @@
             {% if entity.assignedAccountUsers | length %}
                 {{ UI.renderHtmlProperty('oro.sale.quote.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_account_user_view')) }}
             {% endif %}
-
-            {% if entity.paymentTerm is not empty %}
-                {% if resource_granted('VIEW', entity.paymentTerm) %}
-                    {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
-                {% else %}
-                    {% set paymentTermView = entity.paymentTerm.label|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('oro.sale.quote.payment_term.label'|trans, paymentTermView) }}
-            {% endif %}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
