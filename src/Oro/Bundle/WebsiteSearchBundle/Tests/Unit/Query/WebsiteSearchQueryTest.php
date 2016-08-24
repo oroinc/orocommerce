@@ -65,7 +65,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
         $this->websiteSearchQuery->from($alias);
     }
 
-    public function testWebsiteQueryExecute()
+    public function testWebsiteQueryExecutionAndEventDispatch()
     {
         $result = $this->getMockBuilder(Result::class)
             ->disableOriginalConstructor()
