@@ -46,6 +46,32 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'payment_term_3dd15035',
             RelationType::MANY_TO_ONE
         ));
+
+        // entity tables
+        $extension->renameTable($schema, $queries, 'orob2b_payment_status', 'oro_payment_status');
+        $extension->renameTable($schema, $queries, 'orob2b_payment_term', 'oro_payment_term');
+        $extension->renameTable($schema, $queries, 'orob2b_payment_term_to_acc_grp', 'oro_payment_term_to_acc_grp');
+        $extension->renameTable($schema, $queries, 'orob2b_payment_term_to_account', 'oro_payment_term_to_account');
+        $extension->renameTable($schema, $queries, 'orob2b_payment_transaction', 'oro_payment_transaction');
+
+        // indexes
+        $schema->getTable('orob2b_payment_status')->dropIndex('orob2b_payment_status_unique');
+        $schema->getTable('orob2b_payment_transaction')->dropIndex('orob2b_pay_trans_access_uidx');
+
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_payment_status',
+            ['entity_class', 'entity_identifier'],
+            'oro_payment_status_unique'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_payment_transaction',
+            ['access_identifier', 'access_token'],
+            'oro_pay_trans_access_uidx'
+        );
     }
 
     /**
