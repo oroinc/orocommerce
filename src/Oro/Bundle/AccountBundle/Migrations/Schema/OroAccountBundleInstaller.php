@@ -529,7 +529,7 @@ class OroAccountBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['account_user_id', 'position'], 'ORO_sorted_items_idx', []);
+        $table->addIndex(['account_user_id', 'position'], 'oro_sorted_items_idx', []);
     }
 
     /**
@@ -559,7 +559,7 @@ class OroAccountBundleInstaller implements
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('position', 'string', ['length' => 13]);
         $table->addColumn('state', 'string', ['length' => 17]);
-        $table->addUniqueIndex(['account_user_id', 'position'], 'b2b_sdbar_st_unq_idx');
+        $table->addUniqueIndex(['account_user_id', 'position'], 'oro_acc_sdbar_st_unq_idx');
         $table->setPrimaryKey(['id']);
     }
 
@@ -580,8 +580,8 @@ class OroAccountBundleInstaller implements
         $table->addColumn('settings', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('state', 'string', ['length' => 22]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['position'], 'b2b_sdar_wdgs_pos_idx', []);
-        $table->addIndex(['account_user_id', 'placement'], 'b2b_sdbr_wdgs_usr_place_idx', []);
+        $table->addIndex(['position'], 'oro_acc_sdar_wdgs_pos_idx', []);
+        $table->addIndex(['account_user_id', 'placement'], 'oro_acc_sdbr_wdgs_usr_place_idx', []);
     }
 
     /**

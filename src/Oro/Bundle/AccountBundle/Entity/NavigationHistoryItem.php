@@ -13,10 +13,10 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  * @ORM\Entity(repositoryClass="Oro\Bundle\NavigationBundle\Entity\Repository\HistoryItemRepository")
  * @ORM\HasLifecycleCallbacks
  * @ORM\Table(
- *      name="orob2b_acc_navigation_history",
+ *      name="oro_acc_navigation_history",
  *      indexes={
- *          @ORM\Index(name="orob2b_navigation_history_route_idx", columns={"route"}),
- *          @ORM\Index(name="orob2b_navigation_history_entity_id_idx", columns={"entity_id"}),
+ *          @ORM\Index(name="oro_navigation_history_route_idx", columns={"route"}),
+ *          @ORM\Index(name="oro_navigation_history_entity_id_idx", columns={"entity_id"}),
  *      }
  * )
  */

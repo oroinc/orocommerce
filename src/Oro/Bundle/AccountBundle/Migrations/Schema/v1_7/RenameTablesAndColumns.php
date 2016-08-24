@@ -23,32 +23,22 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $extension = $this->renameExtension;
-
-        // email to account user association
-        $extension->renameTable($schema, $queries, 'oro_rel_26535370a6adb604a9b8e1', 'oro_rel_26535370a6adb604aeb863');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\EmailBundle\Entity\Email',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
-            'account_user_489123cf',
-            'account_user_795f990e',
-            RelationType::MANY_TO_MANY
-        ));
-
-        // calendar event to account user association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604a9b8e1', 'oro_rel_46a29d19a6adb604aeb863');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
-            'account_user_489123cf',
-            'account_user_795f990e',
-            RelationType::MANY_TO_MANY
-        ));
-
+        $this->renameActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
         $this->updateNotes($schema, $queries);
 
-        // entity tables
+        $this->renameEntityTables($schema, $queries);
+        $this->renameIndexes($schema, $queries);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameEntityTables(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
         $extension->renameTable($schema, $queries, 'orob2b_account', 'oro_account');
         $extension->renameTable($schema, $queries, 'orob2b_account_user', 'oro_account_user');
         $extension->renameTable($schema, $queries, 'orob2b_acc_user_access_role', 'oro_acc_user_access_role');
@@ -87,11 +77,66 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 
         $extension->renameTable($schema, $queries, 'orob2b_account_sales_reps', 'oro_account_sales_reps');
         $extension->renameTable($schema, $queries, 'orob2b_account_user_sales_reps', 'oro_account_user_sales_reps');
+    }
 
-        // indexes
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameActivityTables(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
+        // email to account user association
+        $extension->renameTable($schema, $queries, 'oro_rel_26535370a6adb604a9b8e1', 'oro_rel_26535370a6adb604aeb863');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\EmailBundle\Entity\Email',
+            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'account_user_489123cf',
+            'account_user_795f990e',
+            RelationType::MANY_TO_MANY
+        ));
+
+        // calendar event to account user association
+        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604a9b8e1', 'oro_rel_46a29d19a6adb604aeb863');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'account_user_489123cf',
+            'account_user_795f990e',
+            RelationType::MANY_TO_MANY
+        ));
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    private function renameIndexes(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
         $schema->getTable('orob2b_account')->dropIndex('orob2b_account_name_idx');
         $schema->getTable('orob2b_account_group')->dropIndex('orob2b_account_group_name_idx');
         $schema->getTable('orob2b_account_user_role')->dropIndex('orob2b_account_user_role_account_id_label_idx');
+        $schema->getTable('orob2b_acc_navigation_history')->dropIndex('orob2b_navigation_history_route_idx');
+        $schema->getTable('orob2b_acc_navigation_history')->dropIndex('orob2b_navigation_history_entity_id_idx');
+        $schema->getTable('orob2b_acc_navigation_item')->dropIndex('oro_b2b_sorted_items_idx');
+        $schema->getTable('orob2b_account_user_sdbar_st')->dropIndex('b2b_sdbar_st_unq_idx');
+        $schema->getTable('orob2b_account_user_sdbar_wdg')->dropIndex('b2b_sdbr_wdgs_usr_place_idx');
+        $schema->getTable('orob2b_account_user_sdbar_wdg')->dropIndex('b2b_sdar_wdgs_pos_idx');
+        $schema->getTable('orob2b_windows_state')->dropIndex('orob2b_windows_state_acu_idx');
+        $schema->getTable('orob2b_windows_state')->dropIndex('orob2b_windows_state_acu_idx');
+        $schema->getTable('orob2b_account_adr_adr_type')->dropIndex('orob2b_account_adr_id_type_name_idx');
+        $schema->getTable('orob2b_acc_usr_adr_to_adr_type')->dropIndex('orob2b_account_user_adr_id_type_name_idx');
+        $schema->getTable('orob2b_category_visibility')->dropIndex('orob2b_ctgr_vis_uidx');
+        $schema->getTable('orob2b_acc_category_visibility')->dropIndex('orob2b_acc_ctgr_vis_uidx');
+        $schema->getTable('orob2b_acc_grp_ctgr_visibility')->dropIndex('orob2b_acc_grp_ctgr_vis_uidx');
+        $schema->getTable('orob2b_product_visibility')->dropIndex('orob2b_prod_vis_uidx');
+        $schema->getTable('orob2b_acc_product_visibility')->dropIndex('orob2b_acc_prod_vis_uidx');
+        $schema->getTable('orob2b_acc_grp_prod_visibility')->dropIndex('orob2b_acc_grp_prod_vis_uidx');
 
         $extension->addIndex($schema, $queries, 'oro_account', ['name'], 'oro_account_name_idx');
         $extension->addIndex($schema, $queries, 'oro_account_group', ['name'], 'oro_account_group_name_idx');
@@ -101,6 +146,99 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'oro_account_group',
             ['account_id', 'label'],
             'oro_account_user_role_account_id_label_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['route'],
+            'oro_navigation_history_route_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['entity_id'],
+            'oro_navigation_history_entity_id_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_item',
+            ['account_user_id', 'position'],
+            'oro_sorted_items_idx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_account_user_sdbar_st',
+            ['account_user_id', 'position'],
+            'oro_acc_sdbar_st_unq_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_account_user_sdbar_wdg',
+            ['position'],
+            'oro_acc_sdar_wdgs_pos_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_account_user_sdbar_wdg',
+            ['account_user_id', 'placement'],
+            'oro_acc_sdbr_wdgs_usr_place_idx'
+        );
+        $extension->addIndex($schema, $queries, 'oro_windows_state', ['customer_user_id'], 'oro_windows_state_acu_idx');
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_account_adr_adr_type',
+            ['account_address_id', 'type_name'],
+            'oro_account_adr_id_type_name_idx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_acc_usr_adr_to_adr_type',
+            ['account_user_address_id', 'type_name'],
+            'oro_account_user_adr_id_type_name_idx'
+        );
+        $extension->addUniqueIndex($schema, $queries, 'oro_category_visibility', ['category_id'], 'oro_ctgr_vis_uidx');
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_acc_category_visibility',
+            ['category_id', 'account_id'],
+            'oro_acc_ctgr_vis_uidx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_acc_grp_ctgr_visibility',
+            ['category_id', 'account_group_id'],
+            'oro_acc_grp_ctgr_vis_uidx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_product_visibility',
+            ['website_id', 'product_id'],
+            'oro_prod_vis_uidx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_acc_product_visibility',
+            ['website_id', 'product_id', 'account_id'],
+            'oro_acc_prod_vis_uidx'
+        );
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_acc_grp_prod_visibility',
+            ['website_id', 'product_id', 'account_group_id'],
+            'oro_acc_grp_prod_vis_uidx'
         );
     }
 
