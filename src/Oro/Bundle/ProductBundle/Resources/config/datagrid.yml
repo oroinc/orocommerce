@@ -207,7 +207,7 @@ datagrid:
             columns:
                 sku:
                     type:      string
-                    data_name: product.sku
+                    data_name: sku
                 name:
                     type:      string
                     data_name: name
