@@ -53,6 +53,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->handler->handleWebsiteChange($website);
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -79,6 +80,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $account = $this->getReference('account.level_1');
 
         $this->handler->handleAccountChange($account, $website);
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -100,6 +102,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     public function testHandleConfigChange()
     {
         $this->handler->handleConfigChange();
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -125,6 +128,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->handler->handleAccountGroupChange($accountGroup, $website);
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -148,6 +152,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_6');
         $this->handler->handlePriceListStatusChange($priceList);
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -183,6 +188,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     public function testHandleFullRebuild()
     {
         $this->handler->handleFullRebuild();
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [
@@ -206,6 +212,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->handler->handleAccountGroupRemove($accountGroup);
+        $this->handler->sendScheduledTriggers();
 
         $this->assertEquals(
             [

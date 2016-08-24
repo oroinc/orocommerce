@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -37,6 +38,11 @@ class PriceListRelationTriggerHandler
     protected $configManager;
 
     /**
+     * @var array|PriceListRelationTrigger[]
+     */
+    protected $scheduledTriggers = [];
+
+    /**
      * @param ManagerRegistry $registry
      * @param PriceListRelationTriggerFactory $triggerFactory
      * @param MessageProducerInterface $producer
@@ -61,7 +67,7 @@ class PriceListRelationTriggerHandler
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setWebsite($website);
-        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
+        $this->scheduledTriggers[] = $trigger->toArray();
     }
 
     /**
@@ -74,13 +80,13 @@ class PriceListRelationTriggerHandler
         $trigger->setAccount($account)
             ->setAccountGroup($account->getGroup())
             ->setWebsite($website);
-        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
+        $this->scheduledTriggers[] = $trigger->toArray();
     }
 
     public function handleConfigChange()
     {
         $trigger = $this->triggerFactory->create();
-        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
+        $this->scheduledTriggers[] = $trigger->toArray();
     }
 
     /**
@@ -92,7 +98,7 @@ class PriceListRelationTriggerHandler
         $trigger = $this->triggerFactory->create();
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
-        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
+        $this->scheduledTriggers[] = $trigger->toArray();
     }
 
     /**
@@ -113,18 +119,26 @@ class PriceListRelationTriggerHandler
 
         $priceListToAccountRepository = $this->registry->getRepository(PriceListToAccount::class);
         foreach ($priceListToAccountRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+            $this->scheduledTriggers[] = $item;
         }
 
         $priceListToAccountGroupRepository = $this->registry->getRepository(PriceListToAccountGroup::class);
         foreach ($priceListToAccountGroupRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+            $this->scheduledTriggers[] = $item;
         }
 
         $priceListToWebsiteRepository = $this->registry->getRepository(PriceListToWebsite::class);
         foreach ($priceListToWebsiteRepository->getIteratorByPriceList($priceList) as $item) {
-            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+            $this->scheduledTriggers[] = $item;
         }
+    }
+
+    public function sendScheduledTriggers()
+    {
+        foreach ($this->scheduledTriggers as $triggerArray) {
+            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $triggerArray);
+        }
+        $this->scheduledTriggers = [];
     }
 
     /**
@@ -135,7 +149,7 @@ class PriceListRelationTriggerHandler
         $iterator = $this->registry->getRepository(PriceListToAccount::class)
             ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
         foreach ($iterator as $item) {
-            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $item);
+            $this->scheduledTriggers[] = $item;
         }
     }
 

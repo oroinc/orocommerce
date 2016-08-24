@@ -269,6 +269,8 @@ services:
             - '@orob2b_pricing.price_list_change_trigger_factory'
             - '@oro_message_queue.client.message_producer'
             - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
 
     orob2b_pricing.price_list_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
