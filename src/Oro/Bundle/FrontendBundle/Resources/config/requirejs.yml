@@ -19,7 +19,6 @@ config:
         'orofrontend/js/app/components/empty-items-component': 'bundles/orofrontend/js/app/components/empty-items-component.js'
         'orofrontend/js/app/components/delete-confirmation': 'bundles/orofrontend/js/app/components/delete-confirmation.js'
         'orofrontend/default/js/widgets/expand-text-widget': 'bundles/orofrontend/default/js/widgets/expand-text-widget.js'
-        'orofrontend/default/js/widgets/collapse-widget': 'bundles/orofrontend/default/js/widgets/collapse-widget.js'
         'orofrontend/default/js/app/views/footer-align-view': 'orofrontend/default/js/app/views/footer-align-view.js'
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
 

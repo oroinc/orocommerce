@@ -97,6 +97,11 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
+    orob2b_payment.provider.method_widget_provider:
+        class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
+
     orob2b_payment.event.callback_handler:
         class: 'Oro\Bundle\PaymentBundle\Event\CallbackHandler'
         lazy: true
@@ -233,3 +238,12 @@ services:
             - "@orob2b_payment.formatter.payment_status_label"
         tags:
             - { name: twig.extension }
+
+    orob2b_payment.condition.require_payment_redirect:
+        class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+            - '@event_dispatcher'
+        tags:
+            - { name: oro_workflow.condition, alias: 'require_payment_redirect' }
+            - { name: oro_action.condition, alias: 'require_payment_redirect' }

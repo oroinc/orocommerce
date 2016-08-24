@@ -111,7 +111,6 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener'
         lazy: true
         arguments:
-            - '@oro_workflow.manager'
             - '@doctrine'
             - '@orob2b_pricing.user_currency_manager'
         calls:

@@ -7,14 +7,14 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper extends ApplicationsHelper
 {
-    const FRONTEND = 'frontend';
+    const COMMERCE_APPLICATION = 'commerce';
 
     /**
      * @return string|null
      */
     public function getCurrentApplication()
     {
-        return $this->isFrontend() ? self::FRONTEND : parent::getCurrentApplication();
+        return $this->isFrontend() ? self::COMMERCE_APPLICATION : parent::getCurrentApplication();
     }
 
     /**

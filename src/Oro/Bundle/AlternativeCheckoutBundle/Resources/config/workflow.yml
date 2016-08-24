@@ -8,6 +8,10 @@ workflows:
 
         defaults:
             active: true
+        exclusive_record_groups:
+            - b2b_checkout_flow
+        priority: 200
+
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
