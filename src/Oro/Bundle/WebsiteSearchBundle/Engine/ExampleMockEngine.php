@@ -15,6 +15,8 @@ use Oro\Bundle\SearchBundle\Query\Result;
  */
 class ExampleMockEngine implements EngineV2Interface
 {
+    const TOTAL_COUNT = 5;
+
     /**
      * @param Query $query
      * @param array $context
@@ -38,7 +40,7 @@ class ExampleMockEngine implements EngineV2Interface
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
 
-        return new Result($query, $result);
+        return new Result($query, $result, self::TOTAL_COUNT);
     }
 
     /**

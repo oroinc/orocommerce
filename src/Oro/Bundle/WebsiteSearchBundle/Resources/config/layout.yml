@@ -1,8 +1,5 @@
 services:
-    orob2b_catalog.layout.block_type.category_tree:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{categories: {required: true}, max_size: {default: null}}]]
-            - [setName, ['product_grid_navigation']]
+    oro_website_search.layout.block_type.navigation:
+        class: Oro\Bundle\WebsiteSearchBundle\Layout\Block\Type\SearchResultsNavigationBlockType
         tags:
-            - { name: layout.block_type, alias: category_list }
+            - { name: layout.block_type, alias: website_search_product_grid_navigation }

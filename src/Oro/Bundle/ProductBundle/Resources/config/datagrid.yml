@@ -212,6 +212,14 @@ datagrid:
                 type:  url
                 route: orob2b_product_frontend_product_view
                 params: [ id ]
+        filters:
+            columns:
+                sku:
+                    type:      text
+                    data_name: product.sku
+                name:
+                    type:      text
+                    data_name: name
 
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view
