@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @ORM\Table(name="orob2b_price_rule_ch_trigger")
+ * @ORM\Table(name="oro_price_rule_ch_trigger")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleChangeTriggerRepository")
  */
 class PriceRuleChangeTrigger

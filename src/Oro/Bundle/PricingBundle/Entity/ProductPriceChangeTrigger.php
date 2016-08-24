@@ -8,9 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @ORM\Table(
- *      name="orob2b_prod_price_ch_trigger",
+ *      name="oro_prod_price_ch_trigger",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_changed_product_price_list_unq", columns={
+ *          @ORM\UniqueConstraint(name="oro_changed_product_price_list_unq", columns={
  *              "product_id",
  *              "price_list_id"
  *          })

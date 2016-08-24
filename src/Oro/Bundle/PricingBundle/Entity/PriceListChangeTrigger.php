@@ -9,7 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_price_list_ch_trigger")
+ * @ORM\Table(name="oro_price_list_ch_trigger")
  * @ORM\Entity(
  * repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository")
  */

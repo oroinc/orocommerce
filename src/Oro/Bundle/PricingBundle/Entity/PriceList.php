@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
- * @ORM\Table(name="orob2b_price_list")
+ * @ORM\Table(name="oro_price_list")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
