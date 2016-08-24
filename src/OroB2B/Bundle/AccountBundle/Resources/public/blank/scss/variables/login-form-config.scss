@@ -1,3 +1,4 @@
 $login-form-bg: get-color('additional', 'base') !default;
-$login-form-offset: 55px 45px !default;
+$login-form-offset-inner: 55px 45px !default;
+$login-form-offset-outer: 0 auto;
 $login-form-width: 400px !default;

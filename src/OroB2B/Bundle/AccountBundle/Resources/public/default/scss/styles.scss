@@ -2,8 +2,6 @@
 @import 'orob2bfrontend/default/scss/shared/_mixins';
 @import 'orob2bfrontend/default/scss/components/commerce/partials/mixins';
 
-@import 'oroui/blank/scss/_global-settings';
-
 @import './components/account-user-role-edit';
 @import './components/capabilities';
 @import './components/check-email';
@@ -17,5 +15,3 @@
 
 @import 'components/map-wrapper';
 @import 'components/list-with-map';
-
-@import 'redefined-components/redefined-components';
