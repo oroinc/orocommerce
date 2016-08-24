@@ -28,6 +28,7 @@ oro_system_configuration:
             type: oro_config_checkbox
             options:
                 label: oro.tax.system_configuration.fields.tax_enable.label
+                required: false
 
         orob2b_tax.tax_provider:
             data_type: string
@@ -64,6 +65,7 @@ oro_system_configuration:
             type: oro_config_checkbox
             options:
                 label: oro.tax.system_configuration.fields.product_prices_include_tax.label
+                required: false
 
         orob2b_tax.use_as_base_by_default:
             data_type: string

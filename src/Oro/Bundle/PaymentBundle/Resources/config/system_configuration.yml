@@ -26,6 +26,7 @@ oro_system_configuration:
             priority: 100
             options:
                 label: oro.payment.system_configuration.fields.enabled.label
+                required: false
 
         orob2b_payment.payment_term_label:
             data_type: string

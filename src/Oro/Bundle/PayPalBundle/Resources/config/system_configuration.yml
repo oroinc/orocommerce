@@ -34,6 +34,7 @@ oro_system_configuration:
             priority: 100
             options:
                 label: oro.payment.system_configuration.fields.enabled.label
+                required: false
 
         oro_paypal.paypal_payments_pro_label:
             data_type: string
@@ -150,6 +151,7 @@ oro_system_configuration:
             priority: 60
             options:
                 label: oro.paypal.system_configuration.fields.test_mode.label
+                required: false
 
         oro_paypal.paypal_payments_pro_payment_action:
             data_type: string
@@ -169,6 +171,7 @@ oro_system_configuration:
             priority: 90
             options:
                 label: oro.paypal.system_configuration.fields.debug_mode.label
+                required: false
 
         oro_paypal.paypal_payments_pro_require_cvv:
             data_type: boolean
@@ -176,6 +179,7 @@ oro_system_configuration:
             priority: 80
             options:
                 label: oro.paypal.system_configuration.fields.require_cvv.label
+                required: false
 
         oro_paypal.paypal_payments_pro_zero_amount_authorization:
             data_type: boolean
@@ -184,6 +188,7 @@ oro_system_configuration:
             options:
                 label: oro.paypal.system_configuration.fields.zero_amount_authorization.label
                 tooltip: oro.paypal.system_configuration.fields.zero_amount_authorization.tooltip
+                required: false
 
         oro_paypal.paypal_payments_pro_authorization_for_required_amount:
             data_type: boolean
@@ -191,6 +196,7 @@ oro_system_configuration:
             priority: 60
             options:
                 label: oro.paypal.system_configuration.fields.authorization_for_required_amount.label
+                required: false
 
         oro_paypal.paypal_payments_pro_use_proxy:
             data_type: boolean
@@ -198,6 +204,7 @@ oro_system_configuration:
             priority: 100
             options:
                 label: oro.paypal.system_configuration.fields.use_proxy.label
+                required: false
 
         oro_paypal.paypal_payments_pro_proxy_host:
             data_type: string
@@ -225,6 +232,7 @@ oro_system_configuration:
             priority: 70
             options:
                 label: oro.paypal.system_configuration.fields.enable_ssl_verification.label
+                required: false
 
         # PayPal Payments Pro Express Checkout
         oro_paypal.paypal_payments_pro_express_checkout_enabled:
@@ -413,6 +421,7 @@ oro_system_configuration:
             priority: 90
             options:
                 label: oro.paypal.system_configuration.fields.debug_mode.label
+                required: false
 
         oro_paypal.payflow_gateway_require_cvv:
             data_type: boolean
@@ -420,6 +429,7 @@ oro_system_configuration:
             priority: 80
             options:
                 label: oro.paypal.system_configuration.fields.require_cvv.label
+                required: false
 
         oro_paypal.payflow_gateway_zero_amount_authorization:
             data_type: boolean
@@ -428,6 +438,7 @@ oro_system_configuration:
             options:
                 label: oro.paypal.system_configuration.fields.zero_amount_authorization.label
                 tooltip: oro.paypal.system_configuration.fields.zero_amount_authorization.tooltip
+                required: false
 
         oro_paypal.payflow_gateway_authorization_for_required_amount:
             data_type: boolean
@@ -435,6 +446,7 @@ oro_system_configuration:
             priority: 60
             options:
                 label: oro.paypal.system_configuration.fields.authorization_for_required_amount.label
+                required: false
 
         oro_paypal.payflow_gateway_use_proxy:
             data_type: boolean
@@ -442,6 +454,7 @@ oro_system_configuration:
             priority: 100
             options:
                 label: oro.paypal.system_configuration.fields.use_proxy.label
+                required: false
 
         oro_paypal.payflow_gateway_proxy_host:
             data_type: string

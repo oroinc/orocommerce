@@ -11,6 +11,7 @@ oro_system_configuration:
             priority: 100
             options:
                 label: oro.money_order.system_configuration.fields.enabled.label
+                required: false
 
         orob2b_money_order.money_order_label:
             data_type: string
