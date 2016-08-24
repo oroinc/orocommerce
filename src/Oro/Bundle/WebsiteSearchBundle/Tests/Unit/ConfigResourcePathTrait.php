@@ -12,6 +12,7 @@ trait ConfigResourcePathTrait
     protected function getBundleConfigResourcePath($bundleName, $resourceFileName)
     {
         $ds = DIRECTORY_SEPARATOR;
+
         return __DIR__.$ds.'Fixture'.$ds.'Bundle'.$ds.$bundleName.$ds.'Resources'.$ds.'config'.$ds.$resourceFileName;
     }
 }

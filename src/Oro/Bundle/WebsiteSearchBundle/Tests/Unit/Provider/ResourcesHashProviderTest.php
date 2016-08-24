@@ -36,6 +36,7 @@ class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createResource($bundle, $resourceFile)
     {
+        /** @var CumulativeResourceInfo|\PHPUnit_Framework_MockObject_MockObject $resource */
         $resource = $this->getMockBuilder(CumulativeResourceInfo::class)
             ->disableOriginalConstructor()
             ->getMock();

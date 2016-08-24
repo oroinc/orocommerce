@@ -21,6 +21,9 @@ class ConfigurationCacheWarmer implements CacheWarmerInterface
         $this->provider = $provider;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function warmUp($cacheDir)
     {
         $this->provider->warmUpCache();

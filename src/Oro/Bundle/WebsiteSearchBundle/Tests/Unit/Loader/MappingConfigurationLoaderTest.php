@@ -36,6 +36,11 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new MappingConfigurationLoader();
     }
 
+    protected function tearDown()
+    {
+        unset($this->provider);
+    }
+
     public function testGetResources()
     {
         $resourcesPaths = array_map(function (CumulativeResourceInfo $resource) {
