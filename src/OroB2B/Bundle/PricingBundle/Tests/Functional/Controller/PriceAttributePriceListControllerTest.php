@@ -15,7 +15,9 @@ use Symfony\Component\Intl\Intl;
 class PriceAttributePriceListControllerTest extends WebTestCase
 {
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME = 'MSRP';
+    const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME = 'msrp';
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT = 'MAP';
+    const PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT = 'map';
 
     protected function setUp()
     {
@@ -54,11 +56,10 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME,
-            ]
-        );
+        $form = $crawler->selectButton('Save and Close')->form([
+            'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME,
+            'orob2b_pricing_price_attribute_price_list[fieldName]' => self::PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME,
+        ]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -107,6 +108,8 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT,
+                'orob2b_pricing_price_attribute_price_list[fieldName]'
+                    => self::PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT,
                 'orob2b_pricing_price_attribute_price_list[currencies]' => 'CAD',
             ]
         );

@@ -37,8 +37,11 @@ layout:
                     blockType: action_line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll()'
-                        entity: '=data["entity"]'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
                 rfp_request_view_controls_list:
                     blockType: block
                     options:

@@ -2,21 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
-
-use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToProduct;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceEntityListener
 {
@@ -36,34 +34,40 @@ class ProductPriceEntityListener
     protected $eventDispatcher;
 
     /**
+     * @var RegistryInterface
+     */
+    protected $registry;
+
+    /**
      * @param ExtraActionEntityStorageInterface $extraActionsStorage
      * @param EventDispatcherInterface $eventDispatcher
+     * @param RegistryInterface $registry
      */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        RegistryInterface $registry
     ) {
         $this->extraActionsStorage = $extraActionsStorage;
         $this->eventDispatcher = $eventDispatcher;
+        $this->registry = $registry;
     }
 
     /**
      * @param ProductPrice $productPrice
-     * @param LifecycleEventArgs $event
      */
-    public function prePersist(ProductPrice $productPrice, LifecycleEventArgs $event)
+    public function prePersist(ProductPrice $productPrice)
     {
-        $this->handleChanges($productPrice, $event);
-        $this->addPriceListToProductRelation($productPrice, $event->getEntityManager());
+        $this->handleChanges($productPrice);
+        $this->addPriceListToProductRelation($productPrice);
     }
 
     /**
      * @param ProductPrice $productPrice
-     * @param LifecycleEventArgs $event
      */
-    public function preRemove(ProductPrice $productPrice, LifecycleEventArgs $event)
+    public function preRemove(ProductPrice $productPrice)
     {
-        $this->handleChanges($productPrice, $event);
+        $this->handleChanges($productPrice);
     }
 
     /**
@@ -72,33 +76,47 @@ class ProductPriceEntityListener
      */
     public function preUpdate(ProductPrice $productPrice, PreUpdateEventArgs $event)
     {
-        $entityManager = $event->getEntityManager();
-        $changeSet = $entityManager->getUnitOfWork()->getEntityChangeSet($productPrice);
-        if ($this->isProductChanged($changeSet) || $this->isPriceListChanged($changeSet)) {
-            $this->addPriceListToProductRelation($productPrice, $entityManager);
+        if ($event->hasChangedField('product') || $event->hasChangedField('priceList')) {
+            $this->addPriceListToProductRelation($productPrice);
         }
 
-        $this->handleChanges($productPrice, $event);
+        $this->handleChanges($productPrice);
     }
 
     /**
      * @param ProductPrice $productPrice
-     * @param LifecycleEventArgs $event
      */
-    protected function handleChanges(ProductPrice $productPrice, LifecycleEventArgs $event)
+    protected function handleChanges(ProductPrice $productPrice)
     {
         $trigger = $this->createProductPriceChangeTrigger($productPrice);
 
-        $em = $event->getEntityManager();
-        if (null === $trigger
-            || $this->extraActionsStorage->isScheduledForInsert($trigger)
-            || $this->getRepository($em)->isExisting($trigger)
-        ) {
+        if (null === $trigger || $this->isExistingTrigger($trigger)) {
             return;
         }
 
         $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
         $this->extraActionsStorage->scheduleForExtraInsert($trigger);
+    }
+
+    /**
+     * @param ProductPriceChangeTrigger $trigger
+     * @return bool
+     */
+    protected function isExistingTrigger(ProductPriceChangeTrigger $trigger)
+    {
+        /** @var ProductPriceChangeTrigger[] $scheduledForInsert */
+        $scheduledForInsert = $this->extraActionsStorage
+            ->getScheduledForInsert(DoctrineClassUtils::getClass($trigger));
+
+        foreach ($scheduledForInsert as $scheduledTrigger) {
+            if ($scheduledTrigger->getPriceList()->getId() === $trigger->getPriceList()->getId()
+                && $scheduledTrigger->getProduct()->getId() === $trigger->getProduct()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return $this->getRepository()->isExisting($trigger);
     }
 
     /**
@@ -119,77 +137,79 @@ class ProductPriceEntityListener
     }
 
     /**
-     * @param EntityManagerInterface $em
      * @return ProductPriceChangeTriggerRepository
      */
-    protected function getRepository(EntityManagerInterface $em)
+    protected function getRepository()
     {
         if (!$this->repository) {
-            $this->repository = $em->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+            $this->repository = $this->registry
+                ->getManagerForClass(ProductPriceChangeTrigger::class)
+                ->getRepository(ProductPriceChangeTrigger::class);
         }
 
         return $this->repository;
     }
 
     /**
-     * @param array $changeSet
-     * @return bool
-     */
-    protected function isProductChanged(array $changeSet)
-    {
-        return array_key_exists('product', $changeSet) && $changeSet['product'][0] !== $changeSet['product'][1];
-    }
-
-    /**
-     * @param array $changeSet
-     * @return bool
-     */
-    protected function isPriceListChanged(array $changeSet)
-    {
-        return array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0] !== $changeSet['priceList'][1];
-    }
-
-    /**
      * @param ProductPrice $productPrice
-     * @param EntityManagerInterface $entityManager
      */
-    protected function addPriceListToProductRelation(ProductPrice $productPrice, EntityManagerInterface $entityManager)
+    protected function addPriceListToProductRelation(ProductPrice $productPrice)
     {
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        $relation = $entityManager->getRepository('OroB2BPricingBundle:PriceListToProduct')
-            ->findOneBy([
-                'product' => $product,
-                'priceList' => $priceList
-            ]);
+        if ($this->isPriceListToProductScheduled($priceList, $product)) {
+            return;
+        }
 
-        if (null === $relation) {
+        if (null === $this->findRelation($product, $priceList)) {
             $relation = new PriceListToProduct();
             $relation->setPriceList($priceList)
                 ->setProduct($product);
-            if (!$this->isPriceListToProductScheduled($relation)) {
-                $this->extraActionsStorage->scheduleForExtraInsert($relation);
-            }
+            $this->extraActionsStorage->scheduleForExtraInsert($relation);
         }
     }
 
     /**
-     * @param PriceListToProduct $priceListToProduct
+     * @param PriceList $priceList
+     * @param Product $product
      * @return bool
      */
-    protected function isPriceListToProductScheduled(PriceListToProduct $priceListToProduct)
+    protected function isPriceListToProductScheduled(PriceList $priceList, Product $product)
     {
-        foreach ($this->extraActionsStorage->getScheduledForInsert() as $scheduled) {
-            if ($scheduled instanceof PriceListToProduct
-                && $scheduled->getProduct() === $priceListToProduct->getProduct()
-                && $scheduled->getPriceList() === $priceListToProduct->getPriceList()
+        /** @var PriceListToProduct[] $scheduledForInsert */
+        $scheduledForInsert = $this->extraActionsStorage->getScheduledForInsert(
+            PriceListToProduct::class
+        );
+
+        foreach ($scheduledForInsert as $scheduled) {
+            if ($scheduled->getProduct()->getId() === $product->getId()
+                && $scheduled->getPriceList()->getId() === $priceList->getId()
             ) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param Product $product
+     * @param PriceList $priceList
+     * @return null|PriceListToProduct
+     */
+    protected function findRelation(Product $product, PriceList $priceList)
+    {
+        $relation = $this->registry->getManagerForClass(PriceListToProduct::class)
+            ->getRepository(PriceListToProduct::class)
+            ->findOneBy(
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                ]
+            );
+
+        return $relation;
     }
 }

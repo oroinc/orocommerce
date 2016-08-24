@@ -67,6 +67,10 @@ class EntityTaxListener
             $uow = $event->getEntityManager()->getUnitOfWork();
             $uow->propertyChanged($taxValue, 'entityId', null, $id);
             $uow->scheduleExtraUpdate($taxValue, ['entityId' => [null, $id]]);
+            $uow->recomputeSingleEntityChangeSet(
+                $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($taxValue)),
+                $taxValue
+            );
 
             unset($this->taxValues[$key]);
         }

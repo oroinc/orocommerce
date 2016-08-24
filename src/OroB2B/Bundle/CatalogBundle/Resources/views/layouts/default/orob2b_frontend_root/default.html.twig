@@ -60,20 +60,44 @@
 {% endblock %}
 
 {% block _featured_category_widget %}
-    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category'
     }) %}
-
     <a {{ block('block_attributes') }}
-        href="{{ path('orob2b_product_frontend_product_index', {'categoryId': item.id, 'includeSubcategories': true}) }}">
-        <img class="featured-category__image"
-            src="{{ Image.url(item.largeImage, 'product_large') }}"
-            alt="{{ item.defaultTitle }}">
-        <dl class="featured-category__desc">
-            <dt class="featured-category__name">{{ item.defaultTitle }}</dt>
-            <dd class="featured-category__qty">{{ 'orob2b.catalog.featured_categories.view.items.label'|transchoice(item.products|length) }}</dd>
-        </dl>
+        href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+        {{ block_widget(block) }}
     </a>
+{% endblock %}
+
+{% block _featured_category_image_widget %}
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__image',
+        src: Image.url(category.largeImage, 'product_large'),
+        alt: category.defaultTitle
+    }) %}
+    <img {{ block('block_attributes') }}>
+{% endblock %}
+
+{% block _featured_category_desc_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__desc'
+    }) %}
+    <dl {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </dl>
+{% endblock %}
+
+{% block _featured_category_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__name'
+    }) %}
+    <dt {{ block('block_attributes') }}>{{ category.defaultTitle }}</dt>
+{% endblock %}
+
+{% block _featured_category_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__qty'
+    }) %}
+    <dd {{ block('block_attributes') }}>{{ 'orob2b.catalog.featured_categories.view.items.label'|transchoice(categoryProductsCount) }}</dd>
 {% endblock %}

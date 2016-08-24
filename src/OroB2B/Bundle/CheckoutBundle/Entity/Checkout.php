@@ -19,6 +19,7 @@ use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_checkout")
@@ -86,9 +87,18 @@ class Checkout implements
     protected $website;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
      */
     protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
 
     /**
      * @var string
@@ -211,7 +221,7 @@ class Checkout implements
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getShippingMethod()
     {
@@ -227,6 +237,25 @@ class Checkout implements
         $this->shippingMethod = $shippingMethod;
 
         return $this;
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
     }
 
     /**
@@ -268,7 +297,7 @@ class Checkout implements
     }
 
     /**
-     * @return object|null
+     * @return CheckoutSourceEntityInterface|null
      */
     public function getSourceEntity()
     {

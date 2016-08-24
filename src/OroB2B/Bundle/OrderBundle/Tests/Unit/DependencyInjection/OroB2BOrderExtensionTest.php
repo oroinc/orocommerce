@@ -23,7 +23,8 @@ class OroB2BOrderExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'orob2b_order.form.type.order',
-            'orob2b_order.order.manager.api'
+            'orob2b_order.order.manager.api',
+            'orob2b_order.layout.provider.order_shipping_method',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

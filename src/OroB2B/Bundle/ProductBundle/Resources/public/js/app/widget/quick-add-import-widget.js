@@ -3,23 +3,23 @@ define(function(require) {
 
     var QuickAddImportWidget;
     var DialogWidget = require('oro/dialog-widget');
+    var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
+    var mediator = require('oroui/js/mediator');
 
     QuickAddImportWidget = DialogWidget.extend({
         initialize: function(options) {
-            this.options.stateEnabled = false;
-            this.options.incrementalPosition = false;
-            this.options.title = __('orob2b.product.frontend.quick_add.import_validation.title');
-
-            options.dialogOptions = {
-                'modal': true,
-                'resizable': false,
-                'width': 820,
-                'autoResize': true,
-                'dialogClass': 'ui-dialog-no-scroll'
-            };
-
+            this.options = _.defaults(options || {}, this.options);
             QuickAddImportWidget.__super__.initialize.apply(this, arguments);
+        },
+
+        _onContentLoad: function(content) {
+            if (_.has(content, 'redirectUrl')) {
+                mediator.execute('redirectTo', {url: content.redirectUrl}, {redirect: true});
+                return;
+            }
+
+            QuickAddImportWidget.__super__._onContentLoad.apply(this, arguments);
         }
     });
 

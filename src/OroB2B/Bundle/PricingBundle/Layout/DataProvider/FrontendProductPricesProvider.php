@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -14,12 +11,12 @@ use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
+class FrontendProductPricesProvider
 {
     /**
      * @var array
      */
-    protected $data = [];
+    protected $productPrices = [];
 
     /**
      * @var DoctrineHelper
@@ -63,9 +60,13 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
 
         $this->setProductsPrices([$product]);
 
-        return $this->data[$product->getId()];
+        return $this->productPrices[$product->getId()];
     }
 
+    /**
+     * @param Product[] $products
+     * @return array
+     */
     public function getByProducts($products)
     {
         $this->setProductsPrices($products);
@@ -73,25 +74,28 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
 
         foreach ($products as $product) {
             $productId = $product->getId();
-            if ($this->data[$productId]) {
-                $productsUnits[$productId] = $this->data[$productId];
+            if ($this->productPrices[$productId]) {
+                $productsUnits[$productId] = $this->productPrices[$productId];
             }
         }
 
         return $productsUnits;
     }
 
+    /**
+     * @param Product[] $products
+     */
     protected function setProductsPrices($products)
     {
-        $products = array_filter($products, function ($product) {
-            return !array_key_exists($product->getId(), $this->data);
+        $products = array_filter($products, function (Product $product) {
+            return !array_key_exists($product->getId(), $this->productPrices);
         });
         if (!$products) {
             return;
         }
 
         $priceList = $this->priceListRequestHandler->getPriceListByAccount();
-        $productsIds = array_map(function ($product) {
+        $productsIds = array_map(function (Product $product) {
             return $product->getId();
         }, $products);
 
@@ -111,7 +115,6 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
         );
 
         $productsPrices = [];
-
         foreach ($prices as $price) {
             $productsPrices[$price->getProduct()->getId()][] = $price;
         }
@@ -124,7 +127,7 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                 $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
             }
 
-            $this->data[$product->getId()] = array_filter(
+            $this->productPrices[$product->getId()] = array_filter(
                 isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
                 function (CombinedProductPrice $price) use ($unitsToSell) {
                     return !empty($unitsToSell[$price->getProductUnitCode()]);

@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -60,17 +58,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Undefined data item index: product.
-     */
-    public function testGetDataWithEmptyContext()
-    {
-        $context = new LayoutContext();
-        $this->provider->getData($context);
-    }
-
-    public function testGetData()
+    public function testGetByProduct()
     {
         $priceListId = 23;
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
@@ -96,8 +84,6 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
         $prices = [$productPrice1, $productPrice2];
 
         $priceSorting = ['unit' => 'ASC', 'currency' => 'DESC', 'quantity' => 'ASC'];
-        $context = new LayoutContext();
-        $context->data()->set('product', null, $product);
 
         $repo = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
@@ -120,7 +106,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getUserCurrency')
             ->willReturn('EUR');
 
-        $actual = $this->provider->getData($context);
+        $actual = $this->provider->getByProduct($product);
         $this->assertCount(1, $actual);
         $this->assertEquals('each', current($actual)->getUnit());
     }

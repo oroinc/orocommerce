@@ -12,7 +12,7 @@ layout:
                 featured_products:
                     blockType: embedded_list
                     options:
-                        items: '=data["featured_products"]'
+                        items: '=data["featured_products"].getAll()'
                         label: featured_products
                         item_key: product
                         use_slider: true

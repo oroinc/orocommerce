@@ -3,11 +3,10 @@
         '~class': " product-item__price_mobile product-item__price_mobile_{{ class_prefix }}"
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set prices = products_prices[product.id]|default(null) %}
-        {% if prices %}
+        {% if productPrices %}
             {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
             <div class="product-item__price_block">
-                {% for price in prices %}
+                {% for price in productPrices %}
                     <div>
                         <span class="fs16 blue">{{ price.price|oro_format_price }}</span> /
                         {{ price.unit.code|orob2b_format_product_unit_label }}
