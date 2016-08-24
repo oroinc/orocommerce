@@ -404,5 +404,6 @@ services:
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
+            - '%oro_attachment.attachments_dir%'
         tags:
             - { name: layout.image_filter.provider }

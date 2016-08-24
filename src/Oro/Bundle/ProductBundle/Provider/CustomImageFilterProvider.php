@@ -10,24 +10,25 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class CustomImageFilterProvider implements CustomImageFilterProviderInterface
 {
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager  */
     protected $configManager;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper  */
     protected $doctrineHelper;
+
+    /** @var string */
+    protected $attachmentDir;
 
     /**
      * @param ConfigManager $configManager
      * @param DoctrineHelper $doctrineHelper
+     * @param string $attachmentDir
      */
-    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper)
+    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper, $attachmentDir)
     {
         $this->configManager = $configManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->attachmentDir = $attachmentDir;
     }
 
     /**
@@ -44,10 +45,9 @@ class CustomImageFilterProvider implements CustomImageFilterProviderInterface
         $size = $this->configManager->get($sizeConfigKey);
         $position = $this->configManager->get($positionConfigKey);
 
-        if ($imageId) {
+        if ($imageId && $image = $this->doctrineHelper->getEntityRepositoryForClass(File::class)->find($imageId)) {
             /** @var File $image */
-            $image = $this->doctrineHelper->getEntityRepositoryForClass(File::class)->find($imageId);
-            $filePath = 'attachment/' . $image->getFilename();
+            $filePath = $this->attachmentDir . '/' . $image->getFilename();
 
             $config = [
                 'filters' => [

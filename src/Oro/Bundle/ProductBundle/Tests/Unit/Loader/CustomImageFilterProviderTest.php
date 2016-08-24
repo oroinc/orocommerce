@@ -16,6 +16,7 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
     const SIZE = 50;
     const POSITION = 'center';
     const FILENAME = 'file.jpg';
+    const ATTACHMENT_DIR = 'attachment';
 
     /**
      * @var CustomImageFilterProvider
@@ -39,7 +40,8 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = new CustomImageFilterProvider(
             $this->configManager->reveal(),
-            $this->doctrineHelper->reveal()
+            $this->doctrineHelper->reveal(),
+            self::ATTACHMENT_DIR
         );
     }
 
@@ -62,7 +64,7 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
         $expectedConfig = [
             'filters' => [
                 'watermark' => [
-                    'image' => 'attachment/' . self::FILENAME,
+                    'image' => self::ATTACHMENT_DIR . '/' . self::FILENAME,
                     'size' => round(self::SIZE/ 100, 2),
                     'position' => self::POSITION
                 ]
@@ -79,6 +81,7 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager->get($fileConfigKey)->willReturn(null);
         $this->configManager->get($sizeConfigKey)->willReturn(null);
         $this->configManager->get($positionConfigKey)->willReturn(null);
+        $this->doctrineHelper->getEntityRepositoryForClass(File::class)->shouldNotBeCalled();
 
         $this->assertEquals([], $this->provider->getFilterConfig());
     }
