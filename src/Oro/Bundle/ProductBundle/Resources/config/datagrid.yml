@@ -220,6 +220,16 @@ datagrid:
                 type:  url
                 route: orob2b_product_frontend_product_view
                 params: [ id ]
+        sorters:
+            columns:
+                sku:
+                    data_name: sku
+                    # data type in search index, possible values are text, integer, datetime and decimal
+                    # default is text
+                    type: text
+            default:
+                sku: DESC
+
 
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view
