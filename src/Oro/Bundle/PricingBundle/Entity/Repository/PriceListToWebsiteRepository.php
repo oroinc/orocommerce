@@ -5,12 +5,11 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -75,13 +74,13 @@ class PriceListToWebsiteRepository extends EntityRepository
                     $qb->expr()->eq('priceListFallBack.website', 'website')
                 )
             )
-            ->where(
-                $qb->expr()->orX(
-                    $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback'),
-                    $qb->expr()->isNull('priceListFallBack.fallback')
+                ->where(
+                    $qb->expr()->orX(
+                        $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback'),
+                        $qb->expr()->isNull('priceListFallBack.fallback')
+                    )
                 )
-            )
-            ->setParameter('websiteFallback', $fallback);
+                ->setParameter('websiteFallback', $fallback);
         }
 
         return new BufferedQueryResultIterator($qb->getQuery());
@@ -96,7 +95,7 @@ class PriceListToWebsiteRepository extends EntityRepository
         $qb = $this->createQueryBuilder('priceListToWebsite');
 
         $qb->select(
-            sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListChangeTrigger::WEBSITE)
+            sprintf('IDENTITY(priceListToWebsite.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
             ->where('priceListToWebsite.priceList = :priceList')
             ->groupBy('priceListToWebsite.website')

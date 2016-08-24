@@ -198,16 +198,6 @@ services:
         calls:
             - [setWebsiteCombinedPriceListBuilder,  ['@orob2b_pricing.builder.website_combined_price_list_builder']]
 
-    orob2b_pricing.builder.combined_product_price_queue_consumer:
-        class: 'Oro\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer'
-        calls:
-            - [setProductPriceChangeTriggerClass, ['%orob2b_pricing.entity.product_price_change_trigger.class%']]
-            - [setCombinedPriceListClass, ['%orob2b_pricing.entity.combined_price_list.class%']]
-        arguments:
-            - '@doctrine'
-            - '@orob2b_pricing.resolver.combined_product_price_resolver'
-            - '@event_dispatcher'
-
     orob2b_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
         public: false
@@ -268,41 +258,31 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
     orob2b_pricing.price_list_change_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory'
+        class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory'
         arguments:
             - '@doctrine'
 
-    orob2b_pricing.price_list_change_trigger_handler:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler'
+    orob2b_pricing.price_list_relation_trigger_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler'
         arguments:
             - '@doctrine'
             - '@orob2b_pricing.price_list_change_trigger_factory'
             - '@oro_message_queue.client.message_producer'
             - '@oro_config.manager'
 
-    orob2b_pricing.price_rule_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory'
+    orob2b_pricing.price_list_trigger_factory:
+        class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
         arguments:
             - '@doctrine'
 
-    orob2b_pricing.price_rule_change_trigger_handler:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler'
+    orob2b_pricing.price_list_trigger_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler'
         arguments:
-            - '@orob2b_pricing.price_rule_trigger_factory'
+            - '@orob2b_pricing.price_list_trigger_factory'
             - '@oro_message_queue.client.message_producer'
             - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
-
-    orob2b_pricing.event_listener.combined_price_list_queue:
-        class: 'Oro\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener'
-        arguments:
-            - '@orob2b_pricing.builder.combined_product_price_queue_consumer'
-            - '@oro_config.global'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
-            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
-            - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener'
@@ -512,7 +492,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber'
         arguments:
             - '@orob2b_pricing.system_config_converter'
-            - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
@@ -523,7 +503,7 @@ services:
         lazy: true
         arguments:
             - '@orob2b_pricing.builder.combined_price_list_activation_plan_builder'
-            - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.price_list_relation_trigger_handler'
             - '@orob2b_pricing.hander.price_rule_lexeme_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.orob2b_pricing_price_list, method: beforeSubmit }
@@ -554,8 +534,8 @@ services:
         public: false
         arguments:
             - '@oro_b2bentity.extra_insert_entity_storage'
-            - '@event_dispatcher'
             - '@doctrine'
+            - '@orob2b_pricing.price_list_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.product_price.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.product_price.class%', event: preRemove }
@@ -565,9 +545,9 @@ services:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener'
         public: false
         arguments:
-            - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.price_list_relation_trigger_handler'
             - '@orob2b_pricing.cache.rule_cache'
-            - '@orob2b_pricing.price_rule_change_trigger_handler'
+            - '@orob2b_pricing.price_list_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_list.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_list.class%', event: preRemove }
@@ -577,7 +557,7 @@ services:
         public: false
         arguments:
             - '@orob2b_pricing.cache.rule_cache'
-            - '@orob2b_pricing.price_rule_change_trigger_handler'
+            - '@orob2b_pricing.price_list_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_pricing.entity.price_rule.class%', event: preRemove }
@@ -587,7 +567,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener'
         abstract: true
         arguments:
-            - '@orob2b_pricing.price_rule_change_trigger_handler'
+            - '@orob2b_pricing.price_list_trigger_handler'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
             - '@doctrine'
 
@@ -682,7 +662,7 @@ services:
         arguments:
             - '@orob2b_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
-            - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: orob2b_account.account_group.before_flush, method: onPostSubmit }
             - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
@@ -692,7 +672,7 @@ services:
         arguments:
             - '@orob2b_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
-            - '@orob2b_pricing.price_list_change_trigger_handler'
+            - '@orob2b_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_account_type, method: onPostSubmit }
             - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onAccountGroupChange }
@@ -758,7 +738,7 @@ services:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@orob2b_pricing.compiler.price_list_rule_compiler'
-            - '@orob2b_pricing.triggers_filler.scope_recalculate_triggers_filler'
+            - '@orob2b_pricing.price_list_trigger_handler'
 
     orob2b_pricing.builder.price_list_product_assignment_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
@@ -850,10 +830,10 @@ services:
         calls:
             - [setEntityName, ['%orob2b_pricing.entity.price_list_to_product.class%']]
 
-    orob2b_pricing.async.price_rule_processor:
+    orob2b_pricing.async.price_list_rule_processor:
         class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
         arguments:
-            - '@orob2b_pricing.price_rule_trigger_factory'
+            - '@orob2b_pricing.price_list_trigger_factory'
             - '@orob2b_pricing.builder.price_list_product_assignment_builder'
             - '@orob2b_pricing.builder.product_price_builder'
             - '@logger'
@@ -870,5 +850,16 @@ services:
             - '@event_dispatcher'
             - '@logger'
             - '@orob2b_pricing.price_list_change_trigger_factory'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    orob2b_bundle_pricing.async.price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
+        arguments:
+            - '@orob2b_pricing.price_list_trigger_factory'
+            - '@doctrine'
+            - '@orob2b_pricing.resolver.combined_product_price_resolver'
+            - '@event_dispatcher'
+            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }

@@ -3,18 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class PriceListChangeTriggerHandler
+class PriceListRelationTriggerHandler
 {
     /**
      * @var ManagerRegistry
@@ -22,7 +22,7 @@ class PriceListChangeTriggerHandler
     protected $registry;
 
     /**
-     * @var PriceListChangeTriggerFactory
+     * @var PriceListRelationTriggerFactory
      */
     protected $triggerFactory;
 
@@ -38,13 +38,13 @@ class PriceListChangeTriggerHandler
 
     /**
      * @param ManagerRegistry $registry
-     * @param PriceListChangeTriggerFactory $triggerFactory
+     * @param PriceListRelationTriggerFactory $triggerFactory
      * @param MessageProducerInterface $producer
      * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        PriceListChangeTriggerFactory $triggerFactory,
+        PriceListRelationTriggerFactory $triggerFactory,
         MessageProducerInterface $producer,
         ConfigManager $configManager
     ) {

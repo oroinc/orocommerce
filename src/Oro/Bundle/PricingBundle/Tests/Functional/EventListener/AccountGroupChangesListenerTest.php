@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 
 /**
  * @dbIsolation
@@ -65,8 +65,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
                     [
                         'topic' => Topics::REBUILD_PRICE_LISTS,
                         'message' => [
-                            PriceListChangeTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                            PriceListChangeTrigger::ACCOUNT => 'account.level_1.3',
+                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
+                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
                         ],
                         'priority' => 'oro.message_queue.client.normal_message_priority',
                     ],
@@ -78,8 +78,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
                     [
                         'topic' => Topics::REBUILD_PRICE_LISTS,
                         'message' => [
-                            PriceListChangeTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                            PriceListChangeTrigger::ACCOUNT => 'account.level_1.2',
+                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
+                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',
                         ],
                         'priority' => 'oro.message_queue.client.normal_message_priority',
                     ],
@@ -100,19 +100,19 @@ class AccountGroupChangesListenerTest extends WebTestCase
         $expectedMessages = array_map(
             function ($data) {
                 $message = [];
-                if (!empty($data['message'][PriceListChangeTrigger::ACCOUNT])) {
-                    $message[PriceListChangeTrigger::ACCOUNT] = $this->getReference(
-                        $data['message'][PriceListChangeTrigger::ACCOUNT]
+                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT])) {
+                    $message[PriceListRelationTrigger::ACCOUNT] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::ACCOUNT]
                     )->getId();
                 }
-                if (!empty($data['message'][PriceListChangeTrigger::ACCOUNT_GROUP])) {
-                    $message[PriceListChangeTrigger::ACCOUNT_GROUP] = $this->getReference(
-                        $data['message'][PriceListChangeTrigger::ACCOUNT_GROUP]
+                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT_GROUP])) {
+                    $message[PriceListRelationTrigger::ACCOUNT_GROUP] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::ACCOUNT_GROUP]
                     )->getId();
                 }
-                if (!empty($data['message'][PriceListChangeTrigger::WEBSITE])) {
-                    $message[PriceListChangeTrigger::WEBSITE] = $this->getReference(
-                        $data['message'][PriceListChangeTrigger::WEBSITE]
+                if (!empty($data['message'][PriceListRelationTrigger::WEBSITE])) {
+                    $message[PriceListRelationTrigger::WEBSITE] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::WEBSITE]
                     )->getId();
                 }
                 $data['message'] = $message;

@@ -5,10 +5,10 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListChangeTriggerFactory
+class PriceListRelationTriggerFactory
 {
     /**
      * @var ManagerRegistry
@@ -24,35 +24,35 @@ class PriceListChangeTriggerFactory
     }
 
     /**
-     * @return PriceListChangeTrigger
+     * @return PriceListRelationTrigger
      */
     public function create()
     {
-        return new PriceListChangeTrigger();
+        return new PriceListRelationTrigger();
     }
 
     /**
      * @param array $data
-     * @return PriceListChangeTrigger
+     * @return PriceListRelationTrigger
      */
     public function createFromArray($data = [])
     {
         $data = $this->normalizeArrayData($data);
 
-        $priceListChangeTrigger = new PriceListChangeTrigger();
-        if ($data[PriceListChangeTrigger::ACCOUNT]) {
+        $priceListChangeTrigger = new PriceListRelationTrigger();
+        if ($data[PriceListRelationTrigger::ACCOUNT]) {
             $account = $this->registry->getRepository(Account::class)
-                ->find($data[PriceListChangeTrigger::ACCOUNT]);
+                ->find($data[PriceListRelationTrigger::ACCOUNT]);
             $priceListChangeTrigger->setAccount($account);
         }
-        if ($data[PriceListChangeTrigger::ACCOUNT_GROUP]) {
+        if ($data[PriceListRelationTrigger::ACCOUNT_GROUP]) {
             $accountGroup = $this->registry->getRepository(AccountGroup::class)
-                ->find($data[PriceListChangeTrigger::ACCOUNT_GROUP]);
+                ->find($data[PriceListRelationTrigger::ACCOUNT_GROUP]);
             $priceListChangeTrigger->setAccountGroup($accountGroup);
         }
-        if ($data[PriceListChangeTrigger::WEBSITE]) {
+        if ($data[PriceListRelationTrigger::WEBSITE]) {
             $website = $this->registry->getRepository(Website::class)
-                ->find($data[PriceListChangeTrigger::WEBSITE]);
+                ->find($data[PriceListRelationTrigger::WEBSITE]);
             $priceListChangeTrigger->setWebsite($website);
         }
 
@@ -67,10 +67,10 @@ class PriceListChangeTriggerFactory
     {
         return array_replace(
             [
-                PriceListChangeTrigger::ACCOUNT => null,
-                PriceListChangeTrigger::ACCOUNT_GROUP => null,
-                PriceListChangeTrigger::WEBSITE => null,
-                PriceListChangeTrigger::FORCE => false,
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                PriceListRelationTrigger::WEBSITE => null,
+                PriceListRelationTrigger::FORCE => false,
             ],
             $data
         );

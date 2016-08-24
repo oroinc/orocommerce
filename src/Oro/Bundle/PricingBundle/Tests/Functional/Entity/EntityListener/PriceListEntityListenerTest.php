@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -43,10 +43,10 @@ class PriceListEntityListenerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => null,
-                        PriceListChangeTrigger::ACCOUNT => null,
-                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
-                        PriceListChangeTrigger::FORCE => true,
+                        PriceListRelationTrigger::WEBSITE => null,
+                        PriceListRelationTrigger::ACCOUNT => null,
+                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                        PriceListRelationTrigger::FORCE => true,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],

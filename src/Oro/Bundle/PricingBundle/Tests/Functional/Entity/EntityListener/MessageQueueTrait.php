@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,7 +39,7 @@ trait MessageQueueTrait
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('orob2b_pricing.price_rule_change_trigger_handler')
+        self::getContainer()->get('orob2b_pricing.price_list_trigger_handler')
             ->sendScheduledTriggers();
     }
 
@@ -57,7 +57,7 @@ trait MessageQueueTrait
      */
     protected function getPriceListIdFromTrace(array $trace)
     {
-        return $trace['message'][PriceRuleTriggerFactory::PRICE_LIST];
+        return $trace['message'][PriceListTriggerFactory::PRICE_LIST];
     }
 
     /**
@@ -66,6 +66,6 @@ trait MessageQueueTrait
      */
     protected function getProductIdFromTrace(array $trace)
     {
-        return $trace['message'][PriceRuleTriggerFactory::PRODUCT];
+        return $trace['message'][PriceListTriggerFactory::PRODUCT];
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Model\DTO;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class PriceRuleTrigger
+class PriceListTrigger
 {
     /**
      * @var PriceList

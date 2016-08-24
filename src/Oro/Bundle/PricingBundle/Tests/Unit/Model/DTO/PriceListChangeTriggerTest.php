@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceListChangeTriggerTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class PriceListChangeTriggerTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         $this->assertPropertyAccessors(
-            new PriceListChangeTrigger(),
+            new PriceListRelationTrigger(),
             [
                 ['website', new Website()],
                 ['account', new Account()],
@@ -36,7 +36,7 @@ class PriceListChangeTriggerTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroup|\PHPUnit_Framework_MockObject_MockObject $accountGroup */
         $accountGroup = $this->getMock(AccountGroup::class);
         $accountGroup->method('getId')->willReturn(1);
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
             ->setAccount($account)
             ->setAccountGroup($accountGroup);

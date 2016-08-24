@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var PriceRuleChangeTriggerHandler
+     * @var PriceListTriggerHandler
      */
     protected $priceRuleChangeTriggerHandler;
 
@@ -26,12 +27,12 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler,
+        PriceListTriggerHandler $priceRuleChangeTriggerHandler,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {
@@ -58,7 +59,7 @@ abstract class AbstractRuleEntityListener
             $priceLists[$priceList->getId()] = $priceList;
         }
 
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists($priceLists, $product);
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
     }
 
     /**

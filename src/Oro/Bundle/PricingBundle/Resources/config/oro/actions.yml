@@ -85,7 +85,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
@@ -110,7 +110,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.disabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 

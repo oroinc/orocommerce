@@ -2,23 +2,27 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
-use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
+class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -28,14 +32,14 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
     protected $triggerFactory;
 
     /**
-     * @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $assignmentBuilder;
+    protected $priceResolver;
 
     /**
-     * @var ProductPriceBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceBuilder;
+    protected $eventDispatcher;
 
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -47,23 +51,44 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceRuleProcessor;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
+
     protected function setUp()
     {
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
+        $this->priceResolver = $this->getMockBuilder(CombinedProductPriceResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceBuilder = $this->getMockBuilder(ProductPriceBuilder::class)
+        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMock(LoggerInterface::class);
 
-        $this->priceRuleProcessor = new PriceRuleProcessor(
+        $this->repository = $this->getMockBuilder(CombinedPriceListRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager = $this->getMock(ObjectManager::class);
+        $manager->method('getRepository')->willReturn($this->repository);
+
+        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry->method('getManagerForClass')->willReturn($manager);
+
+        $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
-            $this->assignmentBuilder,
-            $this->priceBuilder,
+            $this->registry,
+            $this->priceResolver,
+            $this->eventDispatcher,
             $this->logger
         );
     }
@@ -125,19 +150,28 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willReturn($trigger);
 
-        $this->assignmentBuilder->expects($this->once())
-            ->method('buildByPriceList')
-            ->with($priceList);
+        $cplId = 1;
+        $cpl = $this->getMock(CombinedPriceList::class);
+        $cpl->method('getId')->willReturn($cplId);
 
-        $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
-            ->with($priceList, $product);
+        $this->repository->method('getCombinedPriceListsByPriceList')
+            ->with($priceList, true)
+            ->willReturn([$cpl]);
+
+        $this->priceResolver->expects($this->once())
+            ->method('combinePrices')
+            ->with($cpl, $product);
+
+        $event = new CombinedPriceListsUpdateEvent([$cplId]);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(CombinedPriceListsUpdateEvent::NAME, $event);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
     }
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::CALCULATE_RULE], $this->priceRuleProcessor->getSubscribedTopics());
+        $this->assertEquals([Topics::PRICE_LIST_CHANGE], $this->priceRuleProcessor->getSubscribedTopics());
     }
 }

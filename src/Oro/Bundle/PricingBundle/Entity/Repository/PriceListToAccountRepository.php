@@ -7,16 +7,16 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -112,8 +112,8 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
         $qb->select(
-            sprintf('IDENTITY(PriceListToAccount.account) as %s', PriceListChangeTrigger::ACCOUNT),
-            sprintf('IDENTITY(PriceListToAccount.website) as %s', PriceListChangeTrigger::WEBSITE)
+            sprintf('IDENTITY(PriceListToAccount.account) as %s', PriceListRelationTrigger::ACCOUNT),
+            sprintf('IDENTITY(PriceListToAccount.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
             ->innerJoin('PriceListToAccount.account', 'acc')
             ->innerJoin(
@@ -141,9 +141,9 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $qb = $this->createQueryBuilder('priceListToAccount');
 
         $qb->select(
-            sprintf('IDENTITY(priceListToAccount.account) as %s', PriceListChangeTrigger::ACCOUNT),
-            sprintf('IDENTITY(acc.group) as %s', PriceListChangeTrigger::ACCOUNT_GROUP),
-            sprintf('IDENTITY(priceListToAccount.website) as %s', PriceListChangeTrigger::WEBSITE)
+            sprintf('IDENTITY(priceListToAccount.account) as %s', PriceListRelationTrigger::ACCOUNT),
+            sprintf('IDENTITY(acc.group) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(priceListToAccount.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
             ->leftJoin('priceListToAccount.account', 'acc')
             ->where('priceListToAccount.priceList = :priceList')

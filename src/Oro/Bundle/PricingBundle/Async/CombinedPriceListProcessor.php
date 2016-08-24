@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
-use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -48,7 +48,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $dispatcher;
 
     /**
-     * @var PriceListChangeTriggerFactory
+     * @var PriceListRelationTriggerFactory
      */
     protected $triggerFactory;
 
@@ -64,7 +64,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      * @param AccountCombinedPriceListsBuilder $accountPriceListsBuilder
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
-     * @param PriceListChangeTriggerFactory $triggerFactory
+     * @param PriceListRelationTriggerFactory $triggerFactory
      */
     public function __construct(
         CombinedPriceListsBuilder $commonPriceListsBuilder,
@@ -73,7 +73,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         AccountCombinedPriceListsBuilder $accountPriceListsBuilder,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
-        PriceListChangeTriggerFactory $triggerFactory
+        PriceListRelationTriggerFactory $triggerFactory
     ) {
         $this->commonPriceListsBuilder = $commonPriceListsBuilder;
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
@@ -90,11 +90,10 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $this->logger->debug('orob2b_pricing.async.combined_price_list_processor ' . $message->getMessageId());
             $this->resetCache();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
-            $this->handlePriceListChangeTrigger($trigger);
+            $this->handlePriceListRelationTrigger($trigger);
             $this->dispatchChangeAssociationEvents();
         } catch (\Exception $e) {
             $this->logger->error(
@@ -112,9 +111,9 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     }
 
     /**
-     * @param PriceListChangeTrigger $trigger
+     * @param PriceListRelationTrigger $trigger
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger)
+    protected function handlePriceListRelationTrigger(PriceListRelationTrigger $trigger)
     {
         switch (true) {
             case !is_null($trigger->getAccount()):

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceRuleTriggerTest extends \PHPUnit_Framework_TestCase
@@ -19,7 +19,7 @@ class PriceRuleTriggerTest extends \PHPUnit_Framework_TestCase
     protected $product;
 
     /**
-     * @var PriceRuleTrigger
+     * @var PriceListTrigger
      */
     protected $priceRuleTrigger;
 
@@ -27,7 +27,7 @@ class PriceRuleTriggerTest extends \PHPUnit_Framework_TestCase
     {
         $this->priceList = $this->getMock(PriceList::class);
         $this->product = $this->getMock(Product::class);
-        $this->priceRuleTrigger = new PriceRuleTrigger($this->priceList, $this->product);
+        $this->priceRuleTrigger = new PriceListTrigger($this->priceList, $this->product);
     }
 
     public function testGetPriceList()

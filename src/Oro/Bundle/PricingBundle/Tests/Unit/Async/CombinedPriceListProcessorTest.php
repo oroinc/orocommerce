@@ -4,9 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Transport\MessageInterface;
-use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
@@ -18,9 +15,12 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -75,7 +75,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListChangeTriggerFactory
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRelationTriggerFactory
      */
     protected $triggerFactory;
 
@@ -109,7 +109,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->logger = $this->getMock(LoggerInterface::class);
-        $this->triggerFactory = $this->getMockBuilder(PriceListChangeTriggerFactory::class)
+        $this->triggerFactory = $this->getMockBuilder(PriceListRelationTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -126,9 +126,9 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider processDataProvider
-     * @param PriceListChangeTrigger $trigger
+     * @param PriceListRelationTrigger $trigger
      */
-    public function testProcess(PriceListChangeTrigger $trigger)
+    public function testProcess(PriceListRelationTrigger $trigger)
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
@@ -169,7 +169,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         return [
             [
                 'trigger' => $trigger,
@@ -217,7 +217,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);
 
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
             ->setAccount($account);
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
@@ -277,7 +277,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);
 
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
             ->setAccountGroup($accountGroup);
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
@@ -333,7 +333,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);
 
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website);
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
@@ -380,7 +380,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $trigger = new PriceListChangeTrigger();
+        $trigger = new PriceListRelationTrigger();
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);

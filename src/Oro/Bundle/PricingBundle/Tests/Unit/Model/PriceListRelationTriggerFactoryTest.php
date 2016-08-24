@@ -3,18 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
+class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PriceListChangeTriggerFactory
+     * @var PriceListRelationTriggerFactory
      */
     private $factory;
 
@@ -27,7 +27,7 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock(RegistryInterface::class);
 
-        $this->factory = new PriceListChangeTriggerFactory($this->registry);
+        $this->factory = new PriceListRelationTriggerFactory($this->registry);
     }
 
     public function testCreateFromArray()
@@ -60,7 +60,7 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->with(Website::class)
             ->willReturn($accountRepository);
 
-        $expected = (new PriceListChangeTrigger())
+        $expected = (new PriceListRelationTrigger())
             ->setWebsite($website)
             ->setAccount($account)
             ->setAccountGroup($accountGroup);
@@ -82,6 +82,6 @@ class PriceListChangeTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $message = $this->getMock(MessageInterface::class);
         $message->method('getBody')->willReturn($body);
 
-        $this->assertEquals(new PriceListChangeTrigger(), $this->factory->createFromArray([]));
+        $this->assertEquals(new PriceListRelationTrigger(), $this->factory->createFromArray([]));
     }
 }

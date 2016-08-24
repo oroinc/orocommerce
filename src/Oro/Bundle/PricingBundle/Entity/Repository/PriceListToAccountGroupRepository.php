@@ -6,13 +6,12 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -105,8 +104,8 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
         $qb = $this->createQueryBuilder('PriceListToAccountGroup');
 
         $qb->select(
-            sprintf('IDENTITY(PriceListToAccountGroup.accountGroup) as %s', PriceListChangeTrigger::ACCOUNT_GROUP),
-            sprintf('IDENTITY(PriceListToAccountGroup.website) as %s', PriceListChangeTrigger::WEBSITE)
+            sprintf('IDENTITY(PriceListToAccountGroup.accountGroup) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(PriceListToAccountGroup.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
             ->where('PriceListToAccountGroup.priceList = :priceList')
             ->groupBy('PriceListToAccountGroup.accountGroup', 'PriceListToAccountGroup.website')

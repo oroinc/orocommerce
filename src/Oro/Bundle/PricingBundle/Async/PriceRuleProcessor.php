@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
-use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
 use Psr\Log\LoggerInterface;
 
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
-     * @var PriceRuleTriggerFactory
+     * @var PriceListTriggerFactory
      */
     protected $triggerFactory;
 
@@ -36,13 +36,13 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $priceBuilder;
 
     /**
-     * @param PriceRuleTriggerFactory $triggerFactory
+     * @param PriceListTriggerFactory $triggerFactory
      * @param PriceListProductAssignmentBuilder $assignmentBuilder
      * @param ProductPriceBuilder $priceBuilder
      * @param LoggerInterface $logger
      */
     public function __construct(
-        PriceRuleTriggerFactory $triggerFactory,
+        PriceListTriggerFactory $triggerFactory,
         PriceListProductAssignmentBuilder $assignmentBuilder,
         ProductPriceBuilder $priceBuilder,
         LoggerInterface $logger

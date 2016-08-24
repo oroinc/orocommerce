@@ -2,26 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
-use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListChangeTrigger;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 
 /**
  * @dbIsolation
  */
-class PriceListChangeTriggerHandlerTest extends WebTestCase
+class PriceListRelationTriggerHandlerTest extends WebTestCase
 {
     /**
-     * @var PriceListChangeTriggerHandler
+     * @var PriceListRelationTriggerHandler
      */
     protected $handler;
 
@@ -43,7 +43,7 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
             ]
         );
 
-        $this->handler = $this->getContainer()->get('orob2b_pricing.price_list_change_trigger_handler');
+        $this->handler = $this->getContainer()->get('orob2b_pricing.price_list_relation_trigger_handler');
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
         $this->messageProducer->clearTraces();
     }
@@ -59,10 +59,10 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $website->getId(),
-                        PriceListChangeTrigger::ACCOUNT => null,
-                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
-                        PriceListChangeTrigger::FORCE => false,
+                        PriceListRelationTrigger::WEBSITE => $website->getId(),
+                        PriceListRelationTrigger::ACCOUNT => null,
+                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                        PriceListRelationTrigger::FORCE => false,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -85,10 +85,10 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $website->getId(),
-                        PriceListChangeTrigger::ACCOUNT => $account->getId(),
-                        PriceListChangeTrigger::ACCOUNT_GROUP => $account->getGroup()->getId(),
-                        PriceListChangeTrigger::FORCE => false,
+                        PriceListRelationTrigger::WEBSITE => $website->getId(),
+                        PriceListRelationTrigger::ACCOUNT => $account->getId(),
+                        PriceListRelationTrigger::ACCOUNT_GROUP => $account->getGroup()->getId(),
+                        PriceListRelationTrigger::FORCE => false,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -106,10 +106,10 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => null,
-                        PriceListChangeTrigger::ACCOUNT => null,
-                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
-                        PriceListChangeTrigger::FORCE => false,
+                        PriceListRelationTrigger::WEBSITE => null,
+                        PriceListRelationTrigger::ACCOUNT => null,
+                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                        PriceListRelationTrigger::FORCE => false,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -131,10 +131,10 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $website->getId(),
-                        PriceListChangeTrigger::ACCOUNT => null,
-                        PriceListChangeTrigger::ACCOUNT_GROUP => $accountGroup->getId(),
-                        PriceListChangeTrigger::FORCE => false,
+                        PriceListRelationTrigger::WEBSITE => $website->getId(),
+                        PriceListRelationTrigger::ACCOUNT => null,
+                        PriceListRelationTrigger::ACCOUNT_GROUP => $accountGroup->getId(),
+                        PriceListRelationTrigger::FORCE => false,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -154,24 +154,24 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                        PriceListChangeTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
-                        PriceListChangeTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
+                        PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListRelationTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
+                        PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                        PriceListChangeTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
+                        PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -189,10 +189,10 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => null,
-                        PriceListChangeTrigger::ACCOUNT => null,
-                        PriceListChangeTrigger::ACCOUNT_GROUP => null,
-                        PriceListChangeTrigger::FORCE => true,
+                        PriceListRelationTrigger::WEBSITE => null,
+                        PriceListRelationTrigger::ACCOUNT => null,
+                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                        PriceListRelationTrigger::FORCE => true,
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],
@@ -212,8 +212,8 @@ class PriceListChangeTriggerHandlerTest extends WebTestCase
                 [
                     'topic' => Topics::REBUILD_PRICE_LISTS,
                     'message' => [
-                        PriceListChangeTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                        PriceListChangeTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),
+                        PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),
                     ],
                     'priority' => 'oro.message_queue.client.normal_message_priority',
                 ],

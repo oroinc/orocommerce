@@ -4,17 +4,17 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
 class PriceListEntityListener
 {
     const FIELD_PRODUCT_ASSIGNMENT_RULES = 'productAssignmentRule';
 
     /**
-     * @var PriceListChangeTriggerHandler
+     * @var PriceListRelationTriggerHandler
      */
     protected $triggerHandler;
 
@@ -24,19 +24,19 @@ class PriceListEntityListener
     protected $cache;
 
     /**
-     * @var PriceRuleChangeTriggerHandler
+     * @var PriceListTriggerHandler
      */
     protected $priceRuleChangeTriggerHandler;
 
     /**
-     * @param PriceListChangeTriggerHandler $triggerHandler
+     * @param PriceListRelationTriggerHandler $triggerHandler
      * @param Cache $cache
-     * @param PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
      */
     public function __construct(
-        PriceListChangeTriggerHandler $triggerHandler,
+        PriceListRelationTriggerHandler $triggerHandler,
         Cache $cache,
-        PriceRuleChangeTriggerHandler $priceRuleChangeTriggerHandler
+        PriceListTriggerHandler $priceRuleChangeTriggerHandler
     ) {
         $this->triggerHandler = $triggerHandler;
         $this->cache = $cache;
@@ -53,7 +53,7 @@ class PriceListEntityListener
     {
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULES)) {
             $this->clearCache($priceList);
-            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList($priceList);
+            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
         }
     }
 

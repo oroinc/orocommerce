@@ -6,7 +6,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListChangeTrigger
+class PriceListRelationTrigger
 {
     const WEBSITE = 'website';
     const ACCOUNT = 'account';

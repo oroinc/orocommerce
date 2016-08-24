@@ -2,25 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\TriggersFiller;
 
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Event\PriceRuleChange;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
-use Oro\Bundle\PricingBundle\Model\PriceRuleChangeTriggerHandler;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceRuleTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $triggerFactory;
 
@@ -30,26 +27,19 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     protected $messageProducer;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $dispatcher;
-
-    /**
-     * @var PriceRuleChangeTriggerHandler
+     * @var PriceListTriggerHandler
      */
     protected $handler;
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->getMockBuilder(PriceRuleTriggerFactory::class)
+        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->messageProducer = $this->getMock(MessageProducerInterface::class);
-        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
-        $this->handler = new PriceRuleChangeTriggerHandler(
+        $this->handler = new PriceListTriggerHandler(
             $this->triggerFactory,
-            $this->messageProducer,
-            $this->dispatcher
+            $this->messageProducer
         );
     }
 
@@ -58,18 +48,14 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $product = new Product();
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $this->triggerFactory->expects($this->once())
             ->method('create')
             ->with($priceList, $product)
             ->willReturn($trigger);
 
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(PriceRuleChange::NAME, new GenericEvent($trigger));
-
-        $this->handler->addTriggersForPriceList($priceList, $product);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -78,18 +64,14 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $product = new Product();
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $this->triggerFactory->expects($this->once())
             ->method('create')
             ->with($priceList, $product)
             ->willReturn($trigger);
 
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(PriceRuleChange::NAME, new GenericEvent($trigger));
-
-        $this->handler->addTriggersForPriceLists([$priceList], $product);
+        $this->handler->addTriggersForPriceLists(Topics::CALCULATE_RULE, [$priceList], $product);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -97,18 +79,14 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $trigger = new PriceRuleTrigger($priceList);
+        $trigger = new PriceListTrigger($priceList);
 
         $this->triggerFactory->expects($this->once())
             ->method('create')
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(PriceRuleChange::NAME, new GenericEvent($trigger));
-
-        $this->handler->addTriggersForPriceList($priceList);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -116,18 +94,14 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $trigger = new PriceRuleTrigger($priceList);
+        $trigger = new PriceListTrigger($priceList);
 
         $this->triggerFactory->expects($this->once())
             ->method('create')
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(PriceRuleChange::NAME, new GenericEvent($trigger));
-
-        $this->handler->addTriggersForPriceLists([$priceList]);
+        $this->handler->addTriggersForPriceLists(Topics::CALCULATE_RULE, [$priceList]);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -136,19 +110,15 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $this->triggerFactory->expects($this->exactly(2))
             ->method('create')
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->dispatcher->expects($this->exactly(2))
-            ->method('dispatch')
-            ->with(PriceRuleChange::NAME, new GenericEvent($trigger));
-
-        $this->handler->addTriggersForPriceList($priceList, $product);
-        $this->handler->addTriggersForPriceList($priceList, $product);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
@@ -159,8 +129,8 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
-        $triggerWider = new PriceRuleTrigger($priceList);
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $triggerWider = new PriceListTrigger($priceList);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $this->triggerFactory->expects($this->exactly(2))
             ->method('create')
@@ -171,11 +141,8 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->dispatcher->expects($this->exactly(2))
-            ->method('dispatch');
-
-        $this->handler->addTriggersForPriceList($priceList);
-        $this->handler->addTriggersForPriceList($priceList, $product);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
@@ -186,8 +153,8 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
-        $triggerWider = new PriceRuleTrigger($priceList);
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $triggerWider = new PriceListTrigger($priceList);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $this->triggerFactory->expects($this->exactly(2))
             ->method('create')
@@ -198,13 +165,10 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->dispatcher->expects($this->exactly(2))
-            ->method('dispatch');
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
 
-        $this->handler->addTriggersForPriceList($priceList, $product);
-        $this->handler->addTriggersForPriceList($priceList);
-
-        $this->assertAttributeCount(2, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
     public function testAddTriggersDifferentProducts()
@@ -215,8 +179,8 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
         /** @var Product $product2 */
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger1 = new PriceRuleTrigger($priceList, $product1);
-        $trigger2 = new PriceRuleTrigger($priceList, $product2);
+        $trigger1 = new PriceListTrigger($priceList, $product1);
+        $trigger2 = new PriceListTrigger($priceList, $product2);
 
         $this->triggerFactory->expects($this->exactly(2))
             ->method('create')
@@ -227,13 +191,18 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->dispatcher->expects($this->exactly(2))
-            ->method('dispatch');
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product1);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product2);
 
-        $this->handler->addTriggersForPriceList($priceList, $product1);
-        $this->handler->addTriggersForPriceList($priceList, $product2);
+        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
+        $this->messageProducer->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [Topics::CALCULATE_RULE, null, MessagePriority::NORMAL],
+                [Topics::CALCULATE_RULE, null, MessagePriority::NORMAL]
+            );
 
-        $this->assertAttributeCount(2, 'scheduledTriggers', $this->handler);
+        $this->handler->sendScheduledTriggers();
     }
 
     public function testIgnoreDisabledPriceList()
@@ -244,7 +213,7 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->triggerFactory->expects($this->never())->method('create');
 
-        $this->handler->addTriggersForPriceList($priceList);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
         $this->assertAttributeEmpty('scheduledTriggers', $this->handler);
     }
 
@@ -260,9 +229,9 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var Product $product2 */
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
-        $trigger1 = new PriceRuleTrigger($priceList1);
-        $trigger2 = new PriceRuleTrigger($priceList1, $product1);
-        $trigger3 = new PriceRuleTrigger($priceList2, $product2);
+        $trigger1 = new PriceListTrigger($priceList1);
+        $trigger2 = new PriceListTrigger($priceList1, $product1);
+        $trigger3 = new PriceListTrigger($priceList2, $product2);
 
         $this->triggerFactory->expects($this->exactly(3))
             ->method('create')
@@ -274,14 +243,11 @@ class PriceRuleChangeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->dispatcher->expects($this->exactly(3))
-            ->method('dispatch');
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList1, $product1);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList1);
+        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList2, $product2);
 
-        $this->handler->addTriggersForPriceList($priceList1, $product1);
-        $this->handler->addTriggersForPriceList($priceList1);
-        $this->handler->addTriggersForPriceList($priceList2, $product2);
-
-        $this->assertAttributeCount(3, 'scheduledTriggers', $this->handler);
+        $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
 
         $trigger1Data = ['data' => 1];
         $trigger3Data = ['data' => 3];

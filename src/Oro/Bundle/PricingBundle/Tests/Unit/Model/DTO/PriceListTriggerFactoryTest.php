@@ -1,18 +1,17 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTrigger;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceRuleTriggerFactory;
+use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
+class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -22,14 +21,14 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var PriceRuleTriggerFactory
+     * @var PriceListTriggerFactory
      */
     protected $priceRuleTriggerFactory;
 
     protected function setUp()
     {
         $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->priceRuleTriggerFactory = new PriceRuleTriggerFactory($this->registry);
+        $this->priceRuleTriggerFactory = new PriceListTriggerFactory($this->registry);
     }
 
     public function testCreate()
@@ -41,7 +40,7 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $product = $this->getMock(Product::class);
 
         $trigger = $this->priceRuleTriggerFactory->create($priceList, $product);
-        $this->assertInstanceOf(PriceRuleTrigger::class, $trigger);
+        $this->assertInstanceOf(PriceListTrigger::class, $trigger);
         $this->assertSame($priceList, $trigger->getPriceList());
         $this->assertSame($product, $trigger->getProduct());
     }
@@ -52,11 +51,11 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
-        $trigger = new PriceRuleTrigger($priceList, $product);
+        $trigger = new PriceListTrigger($priceList, $product);
 
         $expected = [
-            PriceRuleTriggerFactory::PRICE_LIST => 1,
-            PriceRuleTriggerFactory::PRODUCT => 2
+            PriceListTriggerFactory::PRICE_LIST => 1,
+            PriceListTriggerFactory::PRODUCT => 2
         ];
         $this->assertSame($expected, $this->priceRuleTriggerFactory->triggerToArray($trigger));
     }
@@ -64,8 +63,8 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateFromArray()
     {
         $data = [
-            PriceRuleTriggerFactory::PRICE_LIST => 1,
-            PriceRuleTriggerFactory::PRODUCT => 2
+            PriceListTriggerFactory::PRICE_LIST => 1,
+            PriceListTriggerFactory::PRODUCT => 2
         ];
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -91,7 +90,7 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $trigger = $this->priceRuleTriggerFactory->createFromArray($data);
-        $this->assertInstanceOf(PriceRuleTrigger::class, $trigger);
+        $this->assertInstanceOf(PriceListTrigger::class, $trigger);
         $this->assertSame($priceList, $trigger->getPriceList());
         $this->assertSame($product, $trigger->getProduct());
     }
@@ -107,8 +106,8 @@ class PriceRuleTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(InvalidArgumentException::class, 'Price List is required.');
 
         $data = [
-            PriceRuleTriggerFactory::PRICE_LIST => 1,
-            PriceRuleTriggerFactory::PRODUCT => 2
+            PriceListTriggerFactory::PRICE_LIST => 1,
+            PriceListTriggerFactory::PRODUCT => 2
         ];
 
         $em = $this->getMock(EntityManagerInterface::class);
