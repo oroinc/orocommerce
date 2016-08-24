@@ -68,10 +68,6 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'localization' => 'en',
                 'expectedResult' => ['success' => true] ,
             ],
-            [
-                'localization' => 'en_US',
-                'expectedResult' => ['success' => true] ,
-            ],
         ];
     }
 
