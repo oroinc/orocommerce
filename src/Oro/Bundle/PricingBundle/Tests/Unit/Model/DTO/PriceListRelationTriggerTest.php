@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceListChangeTriggerTest extends \PHPUnit_Framework_TestCase
+class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 

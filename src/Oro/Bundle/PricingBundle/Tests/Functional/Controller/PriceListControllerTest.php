@@ -2,29 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Intl\Intl;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\Intl\Intl;
 
 /**
  * @dbIsolation
@@ -247,10 +244,6 @@ class PriceListControllerTest extends WebTestCase
             ->buildByPriceList($priceList);
         $container->get('orob2b_pricing.builder.product_price_builder')
             ->buildByPriceList($priceList);
-
-        //Combine prices
-        $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
-        $priceListCollectionConsumer->process();
 
         //Get combined price list which would be used at frontend
         $cpl = $container->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
