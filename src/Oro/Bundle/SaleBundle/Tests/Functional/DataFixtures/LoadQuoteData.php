@@ -139,8 +139,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
             'products'      => [],
-            'paymentTerm'   => LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX
-                . LoadPaymentTermData::TERM_LABEL_NET_10,
+            'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
     ];
 
@@ -203,7 +202,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             }
 
             if (!empty($item['paymentTerm'])) {
-                $quote->setPaymentTerm($this->getReference($item['paymentTerm']));
+                $quote->setPaymentTerm(
+                    $this->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX. $item['paymentTerm'])
+                );
             }
 
             foreach ($item['products'] as $sku => $items) {
