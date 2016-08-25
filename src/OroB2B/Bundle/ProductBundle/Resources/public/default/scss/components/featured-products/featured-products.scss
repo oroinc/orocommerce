@@ -3,6 +3,11 @@
         margin: 0 42px;
     }
 
+    & .embedded-list__label {
+        margin-left: -42px;
+        margin-right: -42px;
+    }
+
     & .embedded-list__item {
         width: 25%;
     }
@@ -12,6 +17,11 @@
     .featured-products {
         & .embedded-list {
             margin: 0;
+        }
+
+        & .embedded-list__label {
+            margin-left: 0;
+            margin-right: 0;
         }
 
         & .embedded-list__container--slider {
