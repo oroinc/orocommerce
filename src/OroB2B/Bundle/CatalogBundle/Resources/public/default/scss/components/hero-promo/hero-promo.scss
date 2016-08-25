@@ -1,0 +1,9 @@
+.hero-promo {
+    & .embedded-list__container--slider {
+        margin-left: 0;
+    }
+
+    & .embedded-list__container--slider::before {
+        display: none;
+    }
+}

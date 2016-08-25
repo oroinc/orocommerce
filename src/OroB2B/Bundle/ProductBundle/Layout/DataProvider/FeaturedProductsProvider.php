@@ -39,8 +39,7 @@ class FeaturedProductsProvider
             ->setMaxResults(10)
             ->orderBy('product.id', 'ASC');
         $this->productRepository->selectImages($queryBuilder);
-        $products = $this->productManager
-            ->restrictQueryBuilder($queryBuilder, [])->getQuery()->getResult();
-        return $products;
+        $this->productManager->restrictQueryBuilder($queryBuilder, []);
+        return $queryBuilder->getQuery()->getResult();
     }
 }

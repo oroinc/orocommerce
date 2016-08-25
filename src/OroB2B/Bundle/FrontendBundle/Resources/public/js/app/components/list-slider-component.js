@@ -18,7 +18,8 @@ define(function(require) {
             autoplay: false,
             autoplaySpeed: 2000,
             arrows: true,
-            dots: false
+            dots: false,
+            infinite: false
         },
 
         /**
@@ -29,7 +30,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             if (this.options.mobileEnabled) {
-                //$(this.options._sourceElement).slick(this.options);
+                $(this.options._sourceElement).slick(this.options);
             }
         }
     });

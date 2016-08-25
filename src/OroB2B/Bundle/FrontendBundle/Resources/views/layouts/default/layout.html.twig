@@ -129,10 +129,16 @@
                 },
                 '~class': ' embedded-list__container--slider'
             }) %}
+        {% else %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' embedded-list__container--tiles'
+            }) %}
         {% endif %}
 
         {% if label is defined %}
-            <h2 class="embedded-list__label">{{ label }}</h2>
+            <h2 class="embedded-list__label">
+                <span class="embedded-list__label-inner">{{ label|trans }}</span>
+            </h2>
         {% endif %}
 
         <div {{ block('block_attributes') }}>
