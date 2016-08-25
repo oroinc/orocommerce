@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as Pr
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductRepositoryTest extends WebTestCase
 {
@@ -29,6 +30,11 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('orob2b_product.entity.product.class')
         );
+    }
+
+    protected function tearDown()
+    {
+        unset($this->repository);
     }
 
     public function testFindOneBySku()
@@ -315,5 +321,27 @@ class ProductRepositoryTest extends WebTestCase
         return array_map(function ($reference) {
             return $this->getReference($reference);
         }, $references);
+    }
+
+    public function testGetProductsByIds()
+    {
+        $product1 = $this->getProduct(ProductFixture::PRODUCT_1);
+        $product2 = $this->getProduct(ProductFixture::PRODUCT_2);
+        $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
+
+        $this->assertEquals(
+            [
+                $product1,
+                $product2,
+                $product3,
+            ],
+            $this->getRepository()->getProductsByIds(
+                [
+                    $product1->getId(),
+                    $product2->getId(),
+                    $product3->getId(),
+                ]
+            )
+        );
     }
 }
