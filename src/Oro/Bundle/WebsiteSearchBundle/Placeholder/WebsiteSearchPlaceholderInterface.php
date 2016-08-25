@@ -5,14 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 interface WebsiteSearchPlaceholderInterface
 {
     /**
-     * Return placeholder name like 'WEBSITE_ID'
+     * Return placeholder name
+     * ex.: WEBSITE_ID
      *
      * @return string
      */
     public function getPlaceholder();
 
     /**
-     * Return value for this placeholder
+     * Return value of the placeholder
      *
      * @return string
      */
