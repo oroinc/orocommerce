@@ -110,9 +110,8 @@
 
             &::before {
                 display: block;
-                width: 16px;
-                height: 16px;
-                margin-top: 6px;
+                width: 12px;
+                height: 12px;
 
                 content: '';
             }
@@ -122,10 +121,14 @@
             left: -16px;
 
             &::before {
-                margin-left: 1px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
 
                 background: url('components/embedded-list/__arrow/embedded-list__arrow--prev.svg') 0 0 no-repeat;
                 background-size: cover;
+
+                transform: translate(-50%, -50%);
             }
         }
 
@@ -133,10 +136,14 @@
             right: -42px;
 
             &::before {
-                margin-left: 3px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
 
                 background: url('components/embedded-list/__arrow/embedded-list__arrow--next.svg') 0 0 no-repeat;
                 background-size: cover;
+
+                transform: translate(-50%, -50%);
             }
         }
 
