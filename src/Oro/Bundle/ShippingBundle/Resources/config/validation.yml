@@ -55,9 +55,8 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
             - NotBlank: ~
         destinations:
             - Valid: ~
-        configurations:
+        methodConfigs:
             - Valid: ~
-            - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup: ~
         currency:
             - Currency: ~
             - NotBlank: ~
@@ -70,12 +69,14 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
         region:
             - Valid: ~
 
-Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
     properties:
-        value:
-            - NotBlank:
-                groups: ['Enabled']
-        type:
-            - NotBlank: ~
         method:
+            - NotBlank: ~
+        typeConfigs:
+            - Valid: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+    properties:
+        type:
             - NotBlank: ~

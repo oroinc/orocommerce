@@ -69,7 +69,7 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.destinations, {'attr': {'class': 'orob2b-shipping-destination-collection row-oro'}}),
+                        form_widget(form.destinations, {'attr': {'class': 'orob2b-shipping-rule-collection orob2b-shipping-rule-destinations-collection row-oro'}}),
                     ]
                 }
             ]
@@ -89,8 +89,8 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.configurations),
-                        form_errors(form.configurations),
+                        form_widget(form.methodConfigs, {'attr': {'class': 'orob2b-shipping-rule-collection row-oro'}}),
+                        form_errors(form.methodConfigs),
                     ]
                 }
             ]
@@ -102,5 +102,7 @@
         'dataBlocks': dataBlocks
     } %}
 
+<div data-validation-ignore="">
     {{ parent() }}
+</div>
 {% endblock %}

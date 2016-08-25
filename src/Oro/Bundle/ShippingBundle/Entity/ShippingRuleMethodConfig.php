@@ -79,10 +79,21 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
      */
     protected $rule;
 
+    /**
+     * Construct
+     */
     public function __construct()
     {
         parent::__construct();
         $this->typeConfigs = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getMethod();
     }
 
     /**

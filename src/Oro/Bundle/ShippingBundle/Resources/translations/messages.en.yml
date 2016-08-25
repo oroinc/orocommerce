@@ -97,6 +97,8 @@ oro:
                 freight_class.label: Select freight class
         method:
             flat_rate:
+                label: Flat Rate
+                type.label: Flat Rate
                 price.label: Price
                 handling_fee.label: Handling Fee
                 processing_type:

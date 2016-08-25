@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule';
+    const BLOCK_PREFIX = 'oro_shipping_rule';
 
     /**
      * {@inheritdoc}
@@ -38,10 +38,9 @@ class ShippingRuleType extends AbstractType
                 'required' => false,
                 'label' => 'oro.shipping.shippingrule.conditions.label',
             ])
-            ->add('configurations', ShippingRuleConfigurationCollectionType::class, [
+            ->add('methodConfigs', CollectionType::class, [
                 'required' => false,
-                'entry_type' => ShippingRuleConfigurationType::class,
-                'label' => 'oro.shipping.shippingrule.configurations.label',
+                'entry_type' => ShippingRuleMethodConfigType::class,
             ])
             ->add('stopProcessing', CheckboxType::class, [
                 'required' => false,
@@ -64,6 +63,6 @@ class ShippingRuleType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
     }
 }

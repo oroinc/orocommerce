@@ -8,7 +8,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType;
 
 class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
 {
@@ -76,7 +76,7 @@ class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ShippingRuleConfigurationType::NAME => new ShippingRuleConfigurationType()
+                    ShippingRuleMethodConfigType::NAME => new ShippingRuleMethodConfigType()
                 ],
                 []
             ),

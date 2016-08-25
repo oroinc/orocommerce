@@ -65,17 +65,16 @@ table.shipping-options-result-grid {
   }
 }
 
-.orob2b-shipping-destination-collection.oro-item-collection {
+.orob2b-shipping-rule-collection.oro-item-collection {
   &>div {
     position: relative;
     padding: 15px 15px 0 0;
-    margin: 0 0 20px;
+    margin: 0 60% 20px 0;
     border: 1px solid #e6e6e6;
     background: #f8f8f8;
     border-radius: 4px;
   }
   div[data-validation-optional-group=""] {
-    display: inline-block;
     .oro-multiselect-holder {
       padding-right: 50px !important;
     }
@@ -100,5 +99,14 @@ table.shipping-options-result-grid {
     .control-group-choice {
       float: left;
     }
+  }
+  .selector.input-widget-select {
+    margin-left: 0;
+  }
+}
+
+.orob2b-shipping-rule-destinations-collection.oro-item-collection {
+  & > div {
+    margin: 0 70% 20px 0;
   }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateShippingMethod implements ShippingMethodInterface
 {
@@ -13,6 +14,9 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     protected $type;
 
+    /**
+     * Construct
+     */
     public function __construct()
     {
         $this->type = new FlatRateShippingMethodType();
@@ -66,8 +70,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getOptionsConfigurationFormType()
     {
-        // TODO: Implement in BB-4287
-        return null;
+        return HiddenType::class;
     }
 
     /**

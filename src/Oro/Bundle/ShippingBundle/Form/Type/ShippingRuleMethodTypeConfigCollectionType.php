@@ -2,24 +2,25 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
-
-class ShippingRuleConfigurationCollectionType extends AbstractType
+class ShippingRuleMethodTypeConfigCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule_config_collection';
+    const NAME = 'oro_shipping_rule_method_type_config_collection';
 
-    /** @var RuleConfigurationSubscriber */
+    /** @var RuleMethodTypeConfigCollectionSubscriber */
     protected $subscriber;
 
     /**
-     * @param RuleConfigurationSubscriber $subscriber
+     * @param RuleMethodTypeConfigCollectionSubscriber $subscriber
      */
-    public function __construct(RuleConfigurationSubscriber $subscriber)
+    public function __construct(RuleMethodTypeConfigCollectionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;
     }
@@ -38,8 +39,21 @@ class ShippingRuleConfigurationCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'entry_type' => ShippingRuleConfigurationType::NAME,
+            'type' => ShippingRuleMethodTypeConfigType::class,
+            'is_grouped' => false,
+            'allow_add' => true,
+            'allow_delete' => true,
         ]);
+    }
+
+    /**
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['is_grouped'] = $options['is_grouped'];
     }
 
     /**
