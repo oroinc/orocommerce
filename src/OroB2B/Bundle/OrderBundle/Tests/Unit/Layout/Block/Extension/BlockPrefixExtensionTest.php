@@ -45,7 +45,7 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->finishView($view, $block, new Options(['block_prefixes' => ['test_prefix']]));
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], ['test_prefix']);
+        $this->assertEquals($view->vars['block_prefixes']->toArray(), ['test_prefix']);
     }
 
     public function testFinishViewWithoutOption()
@@ -57,7 +57,7 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->finishView($view, $block, new Options([]));
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], []);
+        $this->assertEquals($view->vars['block_prefixes']->toArray(), []);
     }
 
     public function testFinishViewWithDefinedPrefixes()
@@ -70,6 +70,6 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->finishView($view, $block, new Options([]));
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], ['_prefix']);
+        $this->assertEquals($view->vars['block_prefixes']->toArray(), ['_prefix']);
     }
 }

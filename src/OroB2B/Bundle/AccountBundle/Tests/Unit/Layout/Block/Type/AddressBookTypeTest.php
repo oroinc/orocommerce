@@ -175,14 +175,14 @@ class AddressBookTypeTest extends BaseBlockTypeTestCase
         $this->assertEquals($options['addressCreateAclResource'], $view->vars['addressCreateAclResource']);
         $this->assertEquals($options['addressUpdateAclResource'], $view->vars['addressUpdateAclResource']);
         $this->assertEquals(
-            [
+            new Options([
                 'entityId' => 42,
                 'addressListUrl' => '/address/list/test/url',
                 'addressCreateUrl' => '/address/create/test/url',
                 'addressUpdateRouteName' => 'address_update_test_route_name',
                 'currentAddresses' => ['data'],
                 'useFormDialog' => true,
-            ],
+            ]),
             $view->vars['componentOptions']
         );
     }

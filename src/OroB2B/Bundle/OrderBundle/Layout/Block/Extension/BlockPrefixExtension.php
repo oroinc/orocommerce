@@ -22,11 +22,11 @@ class BlockPrefixExtension extends AbstractBlockTypeExtension
     {
         $blockPrefixes = [];
         if ($view->vars->offsetExists('block_prefixes')) {
-            $blockPrefixes = (array)$view->vars['block_prefixes'];
+            $blockPrefixes = $view->vars['block_prefixes']->toArray();
         }
 
         if ($options->offsetExists('block_prefixes')) {
-            $blockPrefixes = array_merge($blockPrefixes, $options['block_prefixes']);
+            $blockPrefixes = array_merge($blockPrefixes, $options['block_prefixes']->toArray());
         }
 
         $view->vars['block_prefixes'] = $blockPrefixes;
