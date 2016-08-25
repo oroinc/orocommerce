@@ -73,8 +73,7 @@
 {% endblock %}
 
 {% block item_renderer %}
-    {% set showNonAuthorized = item.extras.showNonAuthorized is defined and item.extras.showNonAuthorized %}
-    {% set displayable = item.extras.isAllowed or showNonAuthorized %}
+    {% set displayable = item.extras.isAllowed %}
     {% if item.displayed and displayable %}
         {# building the class of the item #}
         {%- if orob2b_menu_is_current(item) %}
