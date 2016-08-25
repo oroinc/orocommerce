@@ -1,4 +1,4 @@
-{% block _product_grid_row_template_widget %}
+{% block _product_grid_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
@@ -8,7 +8,7 @@
     }) %}
     <script id="template-grid-row" type="text/template">
         <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
+            {% for child in block -%}{{ block_widget(child) }}{%- endfor %}
         </div>
     </script>
 {% endblock %}
@@ -36,13 +36,15 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_title_widget %}
+{% block _product_grid_cell_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__title product-item__title_<%= themeOptions.currentRowView %>"
     }) %}
-    <h3 {{ block('block_attributes') }}>
-        <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
-    </h3>
+    <h3 {{ block('block_attributes') }}>{% for child in block -%}{{ block_widget(child) }}{%- endfor %}</h3>
+{% endblock %}
+
+{% block _product_grid_cell_name_value_widget %}
+    <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
 {% endblock %}
 
 {% block _product_grid_row_primary_content_container_widget %}
@@ -81,10 +83,12 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_sku_widget %}
-    <div>
-        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
-    </div>
+{% block _product_grid_cell_sku_widget %}
+    <div {{ block('block_attributes') }}>{% for child in block -%}{{ block_widget(child) }}{%- endfor %}</div>
+{% endblock %}
+
+{% block _product_grid_cell_sku_value_widget %}
+    {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
 {% endblock %}
 
 {% block _product_grid_row_mfg_widget %}

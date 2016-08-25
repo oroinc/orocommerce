@@ -4,8 +4,6 @@ layout:
             themes: 'product_index_row.html.twig'
         - '@addTree':
             items:
-                product_grid_row_template:
-                    blockType: container
                 product_grid_row_image_holder:
                     blockType: container
                     options:
@@ -14,10 +12,6 @@ layout:
                     blockType: block
                     options:
                         visible: '=false'
-                product_grid_row_title:
-                    blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
                 product_grid_row_primary_content_container:
                     blockType: container
                     options:
@@ -32,10 +26,6 @@ layout:
                         attr_renderer: 'block_attributes_underscore'
                 product_grid_row_sku_container:
                     blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
-                product_grid_row_sku:
-                    blockType: block
                     options:
                         attr_renderer: 'block_attributes_underscore'
                 product_grid_row_mfg:
@@ -90,26 +80,59 @@ layout:
                 line_item_buttons:
                     blockType: container
             tree:
-                product_grid_container:
-                    product_grid_row_template:
-                        product_grid_row_image_holder:
-                            product_grid_row_quick_view: ~
-                        product_grid_row_title: ~
-                        product_grid_row_primary_content_container:
-                            product_grid_row_number: ~
-                            product_grid_row_specification:
-                                product_grid_row_sku_container:
-                                    product_grid_row_sku: ~
-                                    product_grid_row_mfg: ~
-                            product_grid_row_short_description: ~
-                            product_grid_row_details: ~
-                        product_grid_row_secondary_content_container:
-                            product_grid_row_secondary_content_first_container:
-                                product_grid_row_specification_delivery: ~
-                            product_grid_row_secondary_content_second_container:
-                                product_grid_row_more_info: ~
-                                line_item_form:
-                                    line_item_form_start: ~
-                                    line_item_form_fields: ~
-                                    line_item_buttons: ~
-                                    line_item_form_end: ~
+                product_grid_row:
+                    product_grid_row_image_holder:
+                        product_grid_row_quick_view: ~
+                    product_grid_row_primary_content_container:
+                        product_grid_row_number: ~
+                        product_grid_row_specification:
+                            product_grid_row_sku_container:
+                                product_grid_row_mfg: ~
+                        product_grid_row_short_description: ~
+                        product_grid_row_details: ~
+                    product_grid_row_secondary_content_container:
+                        product_grid_row_secondary_content_first_container:
+                            product_grid_row_specification_delivery: ~
+                        product_grid_row_secondary_content_second_container:
+                            product_grid_row_more_info: ~
+                            line_item_form:
+                                line_item_form_start: ~
+                                line_item_form_fields: ~
+                                line_item_buttons: ~
+                                line_item_form_end: ~
+
+        - '@setOption':
+            id: product_grid_cell_name
+            optionName: attr_renderer
+            optionValue: 'block_attributes_underscore'
+
+        - '@setOption':
+            id: product_grid_cell_name_value
+            optionName: attr_renderer
+            optionValue: 'block_attributes_underscore'
+
+        - '@move':
+            id: product_grid_row_secondary_content_container
+            siblingId: product_grid_cell_name
+
+        - '@move':
+            id: product_grid_row_primary_content_container
+            siblingId: product_grid_cell_name
+
+        - '@move':
+            id: product_grid_cell_sku
+            parentId: product_grid_row_sku_container
+
+        - '@move':
+            id: product_grid_row_mfg
+            siblingId: product_grid_cell_sku
+
+        - '@setOption':
+            id: product_grid_cell_sku
+            optionName: attr_renderer
+            optionValue: 'block_attributes_underscore'
+
+        - '@setOption':
+            id: product_grid_cell_sku_value
+            optionName: attr_renderer
+            optionValue: 'block_attributes_underscore'

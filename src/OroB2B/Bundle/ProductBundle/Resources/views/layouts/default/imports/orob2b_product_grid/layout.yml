@@ -15,6 +15,7 @@ layout:
                     options:
                         grid_name: frontend-products-grid
                         current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"].getDataGridTheme()'
+                        split_to_cells: true
             tree:
                 __root:
                     __grid: ~
