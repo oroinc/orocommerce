@@ -10,34 +10,28 @@ use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class RestrictIndexProductsEventListener
 {
+    /** @var ConfigManager */
+    protected $configManager;
+
     /** @var ProductVisibilityQueryBuilderModifier */
     protected $modifier;
 
     /** @var string */
     protected $configPath;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
     /**
-     * @param ProductVisibilityQueryBuilderModifier $modifier
      * @param ConfigManager $configManager
+     * @param ProductVisibilityQueryBuilderModifier $modifier
+     * @param string $configPath
      */
-    public function __construct(ProductVisibilityQueryBuilderModifier $modifier, ConfigManager $configManager)
-    {
-        $this->modifier = $modifier;
+    public function __construct(
+        ConfigManager $configManager,
+        ProductVisibilityQueryBuilderModifier $modifier,
+        $configPath
+    ) {
         $this->configManager = $configManager;
-    }
-
-    /**
-     * @param string $configurationPath
-     * @return $this
-     */
-    public function setSystemConfigurationPath($configurationPath)
-    {
-        $this->configPath = $configurationPath;
-
-        return $this;
+        $this->modifier = $modifier;
+        $this->configPath = $configPath;
     }
 
     /**
@@ -46,15 +40,12 @@ class RestrictIndexProductsEventListener
      */
     public function onRestrictIndexEntitiesEvent(RestrictIndexEntitiesEvent $event)
     {
-        if ($event->getEntityClass() == Product::class) {
-            if (!$this->configPath) {
-                throw
-                new \LogicException('SystemConfigurationPath not configured for RestrictIndexProductsEventListener');
-            }
-
-            $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
-            $inventoryStatuses = $this->configManager->get($this->configPath);
-            $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
+        if ($event->getEntityClass() !== Product::class) {
+            return;
         }
+
+        $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
+        $inventoryStatuses = $this->configManager->get($this->configPath);
+        $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
 }

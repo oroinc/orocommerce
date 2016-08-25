@@ -33,7 +33,7 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->configManagerMock = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
 
         $this->queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->listener = new RestrictIndexProductsEventListener($this->modifierMock, $this->configManagerMock);
+        $this->listener = new RestrictIndexProductsEventListener($this->configManagerMock, $this->modifierMock);
     }
 
     public function testOnRestrictIndexEntitiesEvent()
