@@ -8,7 +8,7 @@ class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('shipUntil', $this->mapper->getName());
+        $this->assertEquals('ship_until', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

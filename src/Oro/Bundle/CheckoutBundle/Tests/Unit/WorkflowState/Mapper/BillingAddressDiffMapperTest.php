@@ -8,7 +8,7 @@ class BillingAddressDiffMapperTest extends AbstractAddressDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('billingAddress', $this->mapper->getName());
+        $this->assertEquals('billing_address', $this->mapper->getName());
     }
 
     /** {@inheritdoc} */

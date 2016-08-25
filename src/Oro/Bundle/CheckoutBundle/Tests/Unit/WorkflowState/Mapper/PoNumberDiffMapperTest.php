@@ -8,7 +8,7 @@ class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('poNumber', $this->mapper->getName());
+        $this->assertEquals('po_number', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

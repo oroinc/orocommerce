@@ -31,7 +31,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testGetName()
     {
-        $this->assertEquals('totalAmount', $this->mapper->getName());
+        $this->assertEquals('total_amount', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

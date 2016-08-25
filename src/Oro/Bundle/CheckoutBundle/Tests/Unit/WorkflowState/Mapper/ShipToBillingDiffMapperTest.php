@@ -8,7 +8,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('shipToBillingAddress', $this->mapper->getName());
+        $this->assertEquals('ship_to_billing_address', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

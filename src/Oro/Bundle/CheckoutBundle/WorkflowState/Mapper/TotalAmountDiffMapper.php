@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'totalAmount';
+    const DATA_NAME = 'total_amount';
 
     /**
      * @var TotalProcessorProvider
@@ -44,6 +44,8 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
+        /** TODO: remove clearCache after BB-4305  */
+        $this->totalProcessorProvider->clearCache();
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
         return [

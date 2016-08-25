@@ -8,7 +8,7 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('customerNotes', $this->mapper->getName());
+        $this->assertEquals('customer_notes', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

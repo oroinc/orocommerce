@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodEnabledMapper;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
@@ -20,8 +19,6 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -30,9 +27,7 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->checkout = new Checkout();
-
-        $this->mapper = new PaymentMethodEnabledMapper($this->paymentMethodRegistry, $this->paymentContextProvider);
+        parent::setUp();
     }
 
     protected function tearDown()
@@ -159,5 +154,13 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
             ->willReturn(true);
 
         $this->assertTrue($this->mapper->isStatesEqual($this->checkout, [], []));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMapper()
+    {
+        return new PaymentMethodEnabledMapper($this->paymentMethodRegistry, $this->paymentContextProvider);
     }
 }
