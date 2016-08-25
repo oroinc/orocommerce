@@ -53,14 +53,14 @@ class ResolvePaymentTermListener
     protected function getCurrentCheckout()
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request && $request->attributes->get('_route') == self::CHECKOUT_ROUTE) {
-            $event = new CheckoutEntityEvent();
-            $event->setCheckoutId($request->attributes->get('id'));
-            $this->eventDispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-
-            return $event->getCheckoutEntity();
+        if (!$request || $request->attributes->get('_route') != self::CHECKOUT_ROUTE) {
+            return null;
         }
 
-        return null;
+        $event = new CheckoutEntityEvent();
+        $event->setCheckoutId($request->attributes->get('id'));
+        $this->eventDispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+
+        return $event->getCheckoutEntity();
     }
 }

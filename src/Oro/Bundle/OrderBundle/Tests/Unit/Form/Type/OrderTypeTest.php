@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +20,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
