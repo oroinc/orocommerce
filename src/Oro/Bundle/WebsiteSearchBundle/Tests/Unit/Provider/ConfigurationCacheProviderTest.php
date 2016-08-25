@@ -91,7 +91,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $resourcesPaths
+     * @param string[] $resourcesPaths
      * @return CumulativeResourceInfo[]
      */
     private function generateResourcesByPaths(array $resourcesPaths)
@@ -127,7 +127,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $bundles
+     * @param string[] $bundles
      * @param string $resourceFile
      * @return CumulativeResourceInfo[]
      */
@@ -244,6 +244,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($someHash);
 
         $this->cacheProvider
+            ->expects($this->exactly(2))
             ->method('fetch')
             ->withConsecutive(
                 ['cache_key_hash'],

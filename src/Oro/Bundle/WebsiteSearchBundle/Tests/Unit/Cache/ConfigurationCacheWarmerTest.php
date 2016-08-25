@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider;
 class ConfigurationCacheWarmerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ConfigurationCacheProvider|\PHPUnit_Framework_MockObject_MockObject $configurationCacheProvider
+     * @var ConfigurationCacheProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configurationCacheProvider;
 
@@ -18,11 +18,6 @@ class ConfigurationCacheWarmerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(ConfigurationCacheProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->configurationCacheProvider);
     }
 
     public function testWarmUpCache()
