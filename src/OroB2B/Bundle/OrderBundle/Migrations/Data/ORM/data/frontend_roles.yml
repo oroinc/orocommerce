@@ -1,3 +1,0 @@
-BUYER:
-    permissions:
-        entity|OroB2B\Bundle\OrderBundle\Entity\Order: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC, DELETE_BASIC]

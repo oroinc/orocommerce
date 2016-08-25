@@ -1,9 +1,0 @@
-{% set result = form.vars.result|default({}) %}
-<div data-page-component-module="orob2btax/js/app/components/order-line-item-item-component"
-     data-page-component-options="{{ {type: 'row', value: 'includingTax'}|json_encode }}">
-    <span data-value-container>
-        {% if result.row is defined and result.row.includingTax is defined %}
-            {{ result.row.includingTax|oro_format_currency({currency: result.row.currency}) }}
-        {% endif %}
-    </span>
-</div>

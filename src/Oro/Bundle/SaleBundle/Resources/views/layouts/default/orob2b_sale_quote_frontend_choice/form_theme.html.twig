@@ -1,0 +1,154 @@
+{% block orob2b_sale_quote_product_demand_widget %}
+    {% set expandTextOptions = {
+        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
+        maxLength: 60
+    }|json_encode() %}
+    {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
+    {% set isQuantityValid = form.quantity.vars.valid %}
+    {% set selectedOffer = form.quoteProductOffer.vars.data %}
+    {% set defaultUnitCode = selectedOffer.productUnit.code|orob2b_format_product_unit_label(true) %}
+    {% if isQuantityValid %}
+        {% set defaultPriceValue = selectedOffer.price|oro_format_price %}
+    {% else %}
+        {% set defaultPriceValue = 'oro.frontend.sale.quoteproductoffer.not_available.message'|trans %}
+    {% endif %}
+
+    {% set componentOptions = {
+        offerSelector: '[name="%s"]'|format(form.quoteProductOffer.vars.full_name),
+        quantitySelector: '[name="%s"]'|format(form.quantity.vars.full_name),
+        unitInputSelector: '[name="%s"]'|format(form.unit.vars.full_name),
+        unitSelector: '[data-role="unit-view"]',
+        unitPriceSelector: '[data-role="price-view"]',
+        quoteProductId: quoteProduct.id,
+        calculatingMessage: 'oro.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
+        notAvailableMessage: 'oro.frontend.sale.quoteproductoffer.not_available.message'|trans,
+        currentLineItemSelector: '#' ~ id
+    } %}
+    <tr id="{{ id }}"
+        class="borderless quote-line-items"
+        data-page-component-module="orosale/js/app/components/quote-product-to-order-component"
+        data-page-component-options="{{ componentOptions|json_encode }}">
+        <td class="va-t_md">
+            <h3 class="oro-grid-table__title">
+                {{ quoteProduct.productName }}
+            </h3>
+            <div>
+                {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
+                <span class="red">
+                    {% if quoteProduct.isTypeNotAvailable %}
+                        {{ quoteProduct.productReplacementSku }}
+                    {% else %}
+                        {{ quoteProduct.productSku }}
+                    {% endif %}
+                </span>
+            </div>
+        </td>
+        <td class="va-t_md offset-top-s">
+            {{ form_widget(form.quoteProductOffer) }}
+            {{ form_errors(form.quoteProductOffer) }}
+        </td>
+        <td class="va-t_md">
+            <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
+                <div class="product__qty-input__count-option">
+                    {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
+                </div>
+            </div>
+            <div class="product__select inline va-m_md" style="margin-left: 10px">
+                {{ form_widget(form.unit) }}
+                <span data-role="unit-view">{{ defaultUnitCode }}</span>
+            </div>
+            {{ form_errors(form.quantity) }}
+            {{ form_errors(form.unit) }}
+        </td>
+        <td class="text-right va-t_md">
+            <span data-role="price-view">{{ defaultPriceValue }}</span>
+        </td>
+    </tr>
+    {% if (quoteProduct.commentAccount is not empty) %}
+        <tr class="borderless">
+            <td colspan="4">
+                <div class="account-oq__order-item-more">
+                    <span class="expand-text"
+                         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                         data-page-component-options="{{ expandTextOptions }}"
+                    >
+                         {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                    </span>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+
+    {% if (quoteProduct.comment is not empty) %}
+        <tr class="borderless">
+            <td colspan="4">
+                <div class="account-oq__order-item-more">
+                    <span class="expand-text"
+                               data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                               data-page-component-options="{{ expandTextOptions }}"
+                    >
+                        {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                    </span>
+                </>
+            </td>
+        </tr>
+    {% endif %}
+
+    <tr>
+        <td colspan="4">
+            <div class="decor-row"></div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block orob2b_sale_quote_product_demand_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            <table class="oro-grid-table oro-grid-table__orders">
+                <thead>
+                <tr>
+                    <th>{{ 'oro.frontend.sale.quoteproduct.product_name.label'|trans }}</th>
+                    <th>{{ 'oro.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</th>
+                    <th>{{ 'oro.frontend.sale.quoteproductoffer.quantity_to_order.label'|trans }}</th>
+                    <th class="text-right">{{ 'oro.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for child in form.children %}
+                    {% if (child.vars.unique_block_prefix) == form.vars.unique_block_prefix ~ '_entry' %}
+                        {{ form_widget(child) }}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {{ form_rest(form) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_sale_quote_product_demand_offer_choice_widget %}
+    <table>
+        <tbody>
+            {% for child in form %}
+                {% set choice = choices[child.vars.value] %}
+                {% set offer = choice.data %}
+                <tr {% if loop.first %}class="t_paddingless"{% endif %}>
+                    <td class="quote-product-offer-select-offer-choice " >
+                        {{ form_widget(child, {'attr': {
+                            'data-value': offer.id,
+                            'data-unit': offer.productUnitCode,
+                            'data-formatted-unit': offer.productUnit.code|orob2b_format_product_unit_label(true),
+                            'data-quantity': offer.quantity,
+                            'data-price': offer.price|oro_format_price
+                        }}) }}
+                    </td>
+                    <td class="quote-product-offer-select-offer-price">
+                        {{ offer.price|oro_format_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
