@@ -43,6 +43,10 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
             return null;
         }
 
+        if (!$workflowItem->getCurrentStep()) {
+            return null;
+        }
+
         return $workflowItem->getCurrentStep()->getName();
     }
 

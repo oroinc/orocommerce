@@ -55,7 +55,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $this->prepareEntityClass('stdClass');
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('\Doctrine\ORM\EntityManagerInterface');
+        $em = $this->getMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManager')
@@ -74,6 +74,39 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
             }));
 
         $this->assertNotEmpty($this->storage->addState($entity, $data));
+    }
+
+    public function testAddStateWithToken()
+    {
+        $entity = new \stdClass();
+        $entityId = 7;
+        $data = ['someKey' => 'someValue'];
+
+        $this->prepareSingleEntityIdentifier($entityId);
+        $this->prepareEntityClass('stdClass');
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $em->expects($this->once())
+            ->method('persist')
+            ->with($this->callback(function (CheckoutWorkflowState $entity) {
+                return $this->assertStorageEntity($entity);
+            }));
+
+        $em->expects($this->once())
+            ->method('flush')
+            ->with($this->callback(function (CheckoutWorkflowState $entity) {
+                return $this->assertStorageEntity($entity);
+            }));
+
+        $expectedToken = 'expectedToken';
+
+        $this->assertEquals($expectedToken, $this->storage->addState($entity, $data, ['token' => $expectedToken]));
     }
 
     public function testReadStateWhenDataExists()

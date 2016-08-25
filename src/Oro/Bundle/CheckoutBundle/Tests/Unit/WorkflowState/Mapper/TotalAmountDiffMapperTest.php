@@ -15,15 +15,11 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->totalProcessorProvider = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
-        )
+        $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mapper = new TotalAmountDiffMapper($this->totalProcessorProvider);
+        parent::setUp();
     }
 
     protected function tearDown()
@@ -67,26 +63,16 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
     public function testIsStatesEqualTrue()
     {
         $state1 = [
-            'parameter1' => 10,
-            'totalAmount' => [
-                'amount' => 1234,
-                'currency' => 'EUR'
-            ],
-            'parameter3' => 'green',
+            'amount' => 1234,
+            'currency' => 'EUR',
         ];
 
         $state2 = [
-            'parameter1' => 10,
-            'totalAmount' => [
-                'amount' => 1234,
-                'currency' => 'EUR'
-            ],
-            'parameter3' => 'green',
+            'amount' => 1234,
+            'currency' => 'EUR',
         ];
 
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertTrue($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
     }
 
     /**
@@ -96,9 +82,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     public function testIsStatesEqualFalse($state1, $state2)
     {
-        $entity = new \stdClass();
-
-        $this->assertEquals(false, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        $this->assertFalse($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
     }
 
     /**
@@ -109,100 +93,78 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         return [
             'with different currency and amount' => [
                 'state1' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 1234,
-                        'currency' => 'EUR'
-                    ],
-                    'parameter3' => 'green'
+                    'amount' => 1000,
+                    'currency' => 'EUR',
                 ],
                 'state2' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 12,
-                        'currency' => 'USD'
-                    ],
-                    'parameter3' => 'green'
-                ]
+                    'amount' => 2000,
+                    'currency' => 'USD',
+                ],
             ],
             'with different currency' => [
                 'state1' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 1234,
-                        'currency' => 'EUR'
-                    ],
-                    'parameter3' => 'green'
+                    'amount' => 1000,
+                    'currency' => 'EUR',
                 ],
                 'state2' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 1234,
-                        'currency' => 'USD'
-                    ],
-                    'parameter3' => 'green'
-                ]
+                    'amount' => 1000,
+                    'currency' => 'USD',
+                ],
             ],
-            'with different mount' => [
+            'with different amount' => [
                 'state1' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 1234,
-                        'currency' => 'EUR'
-                    ],
-                    'parameter3' => 'green'
+                    'amount' => 1000,
+                    'currency' => 'EUR',
                 ],
                 'state2' => [
-                    'parameter1' => 10,
-                    'totalAmount' => [
-                        'amount' => 11,
-                        'currency' => 'EUR'
-                    ],
-                    'parameter3' => 'green'
-                ]
-            ]
-        ];
-    }
-
-    public function testIsStatesEqualParameterNotExistInState1()
-    {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'totalAmount' => [
-                'amount' => 1234,
-                'currency' => 'EUR'
+                    'amount' => 2000,
+                    'currency' => 'EUR',
+                ],
             ],
-            'parameter3' => 'green',
+            'state1 without amount' => [
+                'state1' => [
+                    'currency' => 'EUR',
+                ],
+                'state2' => [
+                    'amount' => 2000,
+                    'currency' => 'EUR',
+                ],
+            ],
+            'state2 without amount' => [
+                'state1' => [
+                    'amount' => 2000,
+                    'currency' => 'EUR',
+                ],
+                'state2' => [
+                    'currency' => 'EUR',
+                ],
+            ],
+            'state1 without currency' => [
+                'state1' => [
+                    'amount' => 2000,
+                ],
+                'state2' => [
+                    'amount' => 2000,
+                    'currency' => 'EUR',
+                ],
+            ],
+            'state2 without currency' => [
+                'state1' => [
+                    'amount' => 2000,
+                    'currency' => 'EUR',
+                ],
+                'state2' => [
+                    'amount' => 2000,
+                ],
+            ],
         ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
     }
 
-    public function testIsStatesEqualParameterNotExistInState2()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMapper()
     {
-        $state1 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-            'totalAmount' => [
-                'amount' => 1234,
-                'currency' => 'EUR'
-            ]
-        ];
-
-        $state2 = [
-            'parameter1' => 10,
-            'parameter3' => 'green',
-        ];
-
-        $entity = new \stdClass();
-
-        $this->assertEquals(true, $this->mapper->isStatesEqual($entity, $state1, $state2));
+        return new TotalAmountDiffMapper($this->totalProcessorProvider);
     }
 }

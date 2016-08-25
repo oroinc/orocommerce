@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    const DATA_NAME = 'total_amount';
+    const DATA_NAME = 'totalAmount';
 
     /**
      * @var TotalProcessorProvider
@@ -44,8 +44,6 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      */
     public function getCurrentState($checkout)
     {
-        /** TODO: remove clearCache after BB-4305  */
-        $this->totalProcessorProvider->clearCache();
         $total = $this->totalProcessorProvider->getTotal($checkout);
 
         return [
@@ -63,13 +61,19 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
     public function isStatesEqual($entity, $state1, $state2)
     {
         foreach (['amount', 'currency'] as $field) {
-            if ($this->getValue($state1, $field) === null || $this->getValue($state2, $field) === null) {
-                return true;
+            $state1Value = $this->getValue($state1, $field);
+            $state2Value = $this->getValue($state2, $field);
+
+            if ($state1Value === null || $state2Value === null) {
+                return false;
+            }
+
+            if ($state1Value !== $state2Value) {
+                return false;
             }
         }
 
-        return $state1['amount'] === $state2['amount'] &&
-            $state1['currency'] === $state2['currency'];
+        return true;
     }
 
     /**

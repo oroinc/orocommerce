@@ -37,9 +37,9 @@ class CheckoutWorkflowStateRepositoryTest extends WebTestCase
         $this->assertEquals(
             $stateEntity,
             $this->getRepository()->getEntityByToken(
-                $stateData['token'],
                 $stateData['entityId'],
-                $stateData['entityClass']
+                $stateData['entityClass'],
+                $stateData['token']
             )
         );
     }
