@@ -1,0 +1,192 @@
+.embedded-list {
+    position: relative;
+
+    &__label {
+        position: relative;
+
+        margin-left: -42px;
+        margin-right: -42px;
+        margin-top: 52px;
+
+        line-height: 20px;
+        text-align: center;
+
+        &::before {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            z-index: 1;
+
+            height: 1px;
+
+            content: '';
+
+            background: $theme-lighter-gray-color;
+        }
+    }
+
+    &__label-inner {
+        position: relative;
+        z-index: 2;
+
+        display: inline-block;
+        padding: 0 16px;
+
+        font-size: 18px;
+        text-transform: uppercase;
+        vertical-align: top;
+
+        background: $base-white-color;
+    }
+
+    &__container--tiles {
+        display: flex;
+        flex-wrap: wrap;
+
+        font-size: 0;
+
+        & .embedded-list__item {
+            display: inline-block;
+
+            font-size: $base-font-size;
+        }
+    }
+
+    &__container--slider {
+        // Hide content before slick slider is inited
+        overflow: hidden;
+        margin: 0 0 0 -26px;
+
+        font-size: 0;
+
+        white-space: nowrap;
+
+        & .embedded-list__item {
+            display: inline-block;
+
+            font-size: $base-font-size;
+            vertical-align: top;
+
+            white-space: normal;
+        }
+
+        &::before {
+            position: absolute;
+            left: -16px;
+            z-index: 2;
+
+            display: none;
+            width: 40px;
+            height: 100%;
+
+            content: '';
+            background: $base-white-color;
+        }
+
+        &.slick-initialized {
+            // Show content after slick slider is inited
+            overflow: visible;
+
+            &::before {
+                display: block;
+            }
+        }
+
+        & .slick-arrow {
+            overflow: hidden;
+
+            position: absolute;
+            top: 25%;
+            z-index: 4;
+
+            width: 32px;
+            height: 32px;
+
+            font-size: 300px;
+
+            color: $base-white-color;
+            border: 0;
+            background: $base-font-color-lightest;
+            border-radius: 16px;
+
+            &::before {
+                display: block;
+                width: 16px;
+                height: 16px;
+                margin-top: 6px;
+
+                content: '';
+            }
+        }
+
+        & .slick-prev {
+            left: -16px;
+
+            &::before {
+                margin-left: 1px;
+
+                background: url('components/embedded-list/__arrow/embedded-list__arrow--prev.svg') 0 0 no-repeat;
+                background-size: cover;
+            }
+        }
+
+        & .slick-next {
+            right: -42px;
+
+            &::before {
+                margin-left: 3px;
+
+                background: url('components/embedded-list/__arrow/embedded-list__arrow--next.svg') 0 0 no-repeat;
+                background-size: cover;
+            }
+        }
+
+        & .slick-dots {
+            @include list-normalize();
+
+            position: absolute;
+            bottom: 0;
+
+            display: flex;
+            justify-content: center;
+            width: 63.46%;
+            margin: 0 auto 20px;
+        }
+
+        & .slick-dots li button {
+            display: block;
+            height: 10px;
+            width: 10px;
+            margin-left: 8px;
+            padding: 0;
+
+            font-size: 0;
+
+            border-radius: 5px;
+            border: 1px solid $base-white-color;
+            background: transparent;
+        }
+
+        & .slick-dots li:first-child button {
+            margin-left: 0;
+        }
+
+        & .slick-dots .slick-active button {
+            background: $base-white-color;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .embedded-list {
+        &__label {
+            margin: 0;
+            margin-top: 20px;
+        }
+
+        &__label-inner {
+            font-size: $base-font-size;
+        }
+    }
+}

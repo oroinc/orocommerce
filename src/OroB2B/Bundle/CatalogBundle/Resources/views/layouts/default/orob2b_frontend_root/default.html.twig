@@ -11,13 +11,16 @@
 {% block _hero_promo_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~data-page-component-options': {
+            autoplay: true,
             autoplaySpeed: 4000,
             arrows: false,
             dots: true
         }
     }) %}
 
-    {{ block_widget(block, {attr: attr}) }}
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
 {% endblock %}
 
 {% block _hero_promo_item_widget %}
@@ -28,12 +31,12 @@
     <div {{ block('block_attributes') }}>
         <div class="hero-promo-item__picture">
             <img class="hero-promo-item__img"
-                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
+                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
                 alt="Ololo">
         </div>
         <div class="hero-promo-item__info">
             <img class="hero-promo-item__img"
-                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/commerce/blocks/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
+                src="{% image '@OroB2BCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
                 alt="Ololo">
             <div class="hero-promo-item__cover">
                 <div class="hero-promo-item__desc">

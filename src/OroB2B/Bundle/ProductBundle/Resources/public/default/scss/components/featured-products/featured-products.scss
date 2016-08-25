@@ -1,0 +1,31 @@
+.featured-products {
+    & .embedded-list {
+        margin: 0 42px;
+    }
+
+    & .embedded-list__item {
+        width: 25%;
+    }
+}
+
+@include breakpoint('mobile') {
+    .featured-products {
+        & .embedded-list {
+            margin: 0;
+        }
+
+        & .embedded-list__container--slider {
+            margin: 0 0 0 -16px;
+        }
+
+        & .embedded-list__container--slider::before {
+            left: 0;
+
+            width: 16px;
+        }
+
+        & .embedded-list__item {
+            width: 50%;
+        }
+    }
+}

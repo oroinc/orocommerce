@@ -11,63 +11,73 @@
         "~class": " product-item__price product-item__price_{{ class_prefix }} mb1-md mb1-sm"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div data-name="price">
-            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
-            <div class="product-item__price_block"
-                 data-name="prices-hint"
-                 data-placement="bottom"
-                 data-close="false"
-                 data-trigger="hover"
-                 data-container="body"
-                 data-class="prices-hint-content">
-                {% set firstPrice = productPrices[0]|default(null) %}
-                <div>
-                    <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.price|oro_format_price }}</span>
-                    / <span data-name="unit">{{ firstPrice ? firstPrice.unit.code|orob2b_format_product_unit_label }}</span>
-                </div>
-            </div>
-        </div>
-        <div data-name="prices-hint-content" class="hidden">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th class="text-uppercase">qty</th>
-                    <th >Unit Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% set shownUnit = '' %}
-                    {% for price in productPrices %}
-                        {% if shownUnit != price.unit.code %}
-                            {% set shownUnit = price.unit.code %}
-                            <tr>
-                                <td colspan="2" class="text-center">
-                                    {% if loop.index > 1 %}<br/>{% endif %}
-                                    <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
-                                </td>
-                            </tr>
-                        {% endif %}
-                        <tr>
-                            <td>
-                                {{ price.quantity }}
-                            </td>
-                            <td>
-                                {{ price.price|oro_format_price }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div data-name="price-not-found">
-            {% if productPrices %}
-                {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
-            {% else %}
-                {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
-            {% endif %}
-        </div>
+        {{ block_widget(block) }}
     </div>
     {% endif %}
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_value_widget %}
+    <div data-name="price">
+        {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
+        <div class="product-item__price_block"
+             data-name="prices-hint"
+             data-placement="bottom"
+             data-close="false"
+             data-trigger="hover"
+             data-container="body"
+             data-class="prices-hint-content">
+            {% set firstPrice = productPrices|first %}
+            <div>
+                <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_not_found_widget %}
+    <div data-name="price-not-found">
+        {% if productPrices %}
+            {{ 'orob2b.pricing.frontend.product_prices.price_not_found'|trans }}
+        {% else %}
+            {{ 'orob2b.pricing.frontend.product_prices.empty_prices'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_hint_widget %}
+    <div data-name="prices-hint-content" class="hidden">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-uppercase">qty</th>
+                <th >Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set shownUnit = '' %}
+            {% for price in productPrices %}
+                {% if shownUnit != price.unit %}
+                    {% set shownUnit = price.unit %}
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            {% if loop.index > 1 %}<br/>{% endif %}
+                            <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        {{ price.quantity }}
+                    </td>
+                    <td>
+                        {{ price.formatted_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_listed_price_widget %}
@@ -80,7 +90,7 @@
             <div class="product-item__price_block">
                 {% set pricesPerUnits = [] %}
                 {% for price in productPrices %}
-                    {% set unit = price.unit.code %}
+                    {% set unit = price.unit %}
                     {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
                         {% set pricesPerUnits = pricesPerUnits|merge({
                             (unit): price
@@ -89,8 +99,8 @@
                 {% endfor %}
                 {% for price in pricesPerUnits %}
                     <div title="{{ 'orob2b.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
-                        <span>{{ price.price|oro_format_price }}</span> /
-                        {{ price.unit.code|orob2b_format_product_unit_label }}
+                        <span>{{ price.formatted_price }}</span> /
+                        {{ price.formatted_unit}}
                     </div>
                 {% endfor %}
             </div>

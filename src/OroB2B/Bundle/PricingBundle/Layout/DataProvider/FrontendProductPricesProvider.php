@@ -10,6 +10,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 
 class FrontendProductPricesProvider
 {
@@ -41,11 +42,13 @@ class FrontendProductPricesProvider
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRequestHandler $priceListRequestHandler,
-        UserCurrencyManager $userCurrencyManager
+        UserCurrencyManager $userCurrencyManager,
+        ProductPriceFormatter $productPriceFormatter
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
+        $this->productPriceFormatter = $productPriceFormatter;
     }
 
     /**
@@ -116,12 +119,16 @@ class FrontendProductPricesProvider
 
         $productsPrices = [];
         foreach ($prices as $price) {
-            $productsPrices[$price->getProduct()->getId()][] = $price;
+            $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
+                'qty' => $price->getQuantity(),
+                'price' => $price->getPrice()->getValue(),
+                'currency' => $price->getPrice()->getCurrency(),
+            ];
         }
+        $productsPrices = $this->productPriceFormatter->formatProducts($productsPrices);
 
         foreach ($products as $product) {
             $unitPrecisions = $product->getUnitPrecisions();
-
             $unitsToSell = [];
             foreach ($unitPrecisions as $unitPrecision) {
                 $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
@@ -129,8 +136,8 @@ class FrontendProductPricesProvider
 
             $this->productPrices[$product->getId()] = array_filter(
                 isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
-                function (CombinedProductPrice $price) use ($unitsToSell) {
-                    return !empty($unitsToSell[$price->getProductUnitCode()]);
+                function ($price) use ($unitsToSell) {
+                    return !empty($unitsToSell[$price['unit']]);
                 }
             );
         }

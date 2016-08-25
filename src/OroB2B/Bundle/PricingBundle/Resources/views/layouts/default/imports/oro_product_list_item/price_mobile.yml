@@ -1,5 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'price_mobile.html.twig'
+        - '@remove':
+            id: __product_price_hint
     conditions: 'context["user_agent"]["mobile"]==true'

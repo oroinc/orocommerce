@@ -1,5 +1,6 @@
 .hero-promo-item {
     display: flex;
+    margin-top: 26px;
 
     font-size: 0;
 
@@ -59,7 +60,7 @@
 
     &__pretitle {
         display: block;
-        margin: 0 0 5px;
+        margin: 0 0 6px;
 
         font: italic 700 22px serif;
         text-align: center;
@@ -70,7 +71,7 @@
     &__title {
         margin: 0 0 10px;
 
-        font-size: 49px;
+        font-size: 48px;
         line-height: 64px;
         text-align: center;
 
@@ -81,8 +82,12 @@
         text-transform: uppercase;
         text-align: center;
     }
+}
 
-    @include breakpoint-old($phone-width) {
+@include breakpoint('mobile') {
+    .hero-promo-item {
+        margin-top: 0;
+
         &__pretitle {
             font-size: 10px;
         }
@@ -93,10 +98,10 @@
         }
 
         &__view-btn.btn.theme-btn {
-            padding: 0 5px;
+            padding: 0 6px;
 
             font-size: 10px;
-            line-height: 25px;
+            line-height: 26px;
         }
     }
 }
