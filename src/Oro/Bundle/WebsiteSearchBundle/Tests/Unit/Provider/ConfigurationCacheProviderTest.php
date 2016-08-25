@@ -32,7 +32,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ConfigurationCacheProvider
      */
-    private $provider;
+    private $configurationCacheProvider;
 
     /**
      * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -61,12 +61,17 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
+    protected function tearDown()
+    {
+        unset($this->configurationCacheProvider, $this->cacheProvider, $this->configurationProvider, $this->hashProvider);
+    }
+
     /**
      * @param bool $debug
      */
-    private function initProvider($debug)
+    private function initConfigurationCacheProvider($debug)
     {
-        $this->provider = new ConfigurationCacheProvider(
+        $this->configurationCacheProvider = new ConfigurationCacheProvider(
             $this->cacheProvider,
             $this->configurationProvider,
             $this->hashProvider,
@@ -146,16 +151,16 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->setConfigurationProviderConfiguration();
 
-        $this->initProvider(false);
+        $this->initConfigurationCacheProvider(false);
 
-        $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+        $this->assertEquals(self::$configuration, $this->configurationCacheProvider->getConfiguration());
     }
 
     public function testGetConfigurationDataWhenDebugIsOffAndCacheExists()
     {
         $this->setCacheExists(true);
 
-        $this->initProvider(false);
+        $this->initConfigurationCacheProvider(false);
 
         $this->cacheProvider
             ->expects($this->once())
@@ -163,7 +168,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
             ->with('cache_key_configuration')
             ->willReturn(serialize(self::$configuration));
 
-        $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+        $this->assertEquals(self::$configuration, $this->configurationCacheProvider->getConfiguration());
     }
 
     public function testGetConfigurationDataWhenDebugIsOnAndNoCacheExists()
@@ -175,7 +180,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->setConfigurationProviderConfiguration();
 
-        $this->initProvider(true);
+        $this->initConfigurationCacheProvider(true);
 
         $someHashString = 'some_hash_string';
 
@@ -193,7 +198,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
                 'cache_key_configuration' => serialize(self::$configuration)
             ]);
 
-        $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+        $this->assertEquals(self::$configuration, $this->configurationCacheProvider->getConfiguration());
     }
 
     public function testGetConfigurationDataWhenDebugIsOnAndCacheExistsAndHashNotMatchStoredHash()
@@ -204,7 +209,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
         $this->setConfigurationProviderResources($resources);
         $this->setConfigurationProviderConfiguration();
 
-        $this->initProvider(true);
+        $this->initConfigurationCacheProvider(true);
 
         $this->hashProvider
             ->expects($this->exactly(2))
@@ -218,7 +223,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive(['cache_key_hash'], ['cache_key_configuration'])
             ->will($this->onConsecutiveCalls('stored_hash', serialize([])));
 
-        $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+        $this->assertEquals(self::$configuration, $this->configurationCacheProvider->getConfiguration());
     }
 
     public function testGetConfigurationDataWhenDebugIsOnAndCacheExistsAndHashMatches()
@@ -229,7 +234,7 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->setConfigurationProviderResources($storedResources);
 
-        $this->initProvider(true);
+        $this->initConfigurationCacheProvider(true);
 
         $someHash = 'some_hash';
         $this->hashProvider
@@ -249,23 +254,23 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
                 serialize(self::$configuration)
             ));
 
-        $this->assertEquals(self::$configuration, $this->provider->getConfiguration());
+        $this->assertEquals(self::$configuration, $this->configurationCacheProvider->getConfiguration());
     }
 
     public function testClearCache()
     {
-        $this->initProvider(false);
+        $this->initConfigurationCacheProvider(false);
 
         $this->cacheProvider
             ->expects($this->once())
             ->method('deleteAll');
 
-        $this->provider->clearCache();
+        $this->configurationCacheProvider->clearCache();
     }
 
     public function testWarmUpCache()
     {
-        $this->initProvider(false);
+        $this->initConfigurationCacheProvider(false);
 
         $this->cacheProvider
             ->expects($this->once())
@@ -290,6 +295,6 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
                 'cache_key_configuration' => serialize(self::$configuration)
             ]);
 
-        $this->provider->warmUpCache();
+        $this->configurationCacheProvider->warmUpCache();
     }
 }
