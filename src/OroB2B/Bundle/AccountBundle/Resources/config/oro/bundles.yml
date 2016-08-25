@@ -1,2 +1,0 @@
-bundles:
-    - { name: OroB2B\Bundle\AccountBundle\OroB2BAccountBundle, priority: 25 }

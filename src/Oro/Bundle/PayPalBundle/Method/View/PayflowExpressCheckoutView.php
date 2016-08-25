@@ -6,9 +6,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class PayflowExpressCheckoutView implements PaymentMethodViewInterface
 {

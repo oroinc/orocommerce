@@ -1,4 +1,0 @@
-ROLE_SALES_MANAGER:
-    permissions:
-        entity|OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
-        entity|OroB2B\Bundle\ShoppingListBundle\Entity\LineItem: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

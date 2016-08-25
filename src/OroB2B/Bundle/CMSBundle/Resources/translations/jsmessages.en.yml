@@ -1,5 +1,0 @@
-orob2b:
-    cms:
-        slugify_error: "Impossible slug generation for {{ string }}"
-        jstree:
-            move_root_page_warning: "You can not change order of root nodes"

@@ -10,7 +10,7 @@ class Mapper
     public function getMappingConfig()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Entity\Product' => [
+            'Oro\Bundle\ProductBundle\Entity\Product' => [
                 'alias' => 'orob2b_product_WEBSITE_ID',
                 'fields' => [
                     [

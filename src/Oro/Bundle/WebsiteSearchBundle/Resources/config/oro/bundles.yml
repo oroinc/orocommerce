@@ -1,2 +1,2 @@
 bundles:
-    - Oro\Bundle\WebsiteSearchBundle\WebsiteSearchBundle
+    - Oro\Bundle\WebsiteSearchBundle\OroWebsiteSearchBundle
