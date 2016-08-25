@@ -21,7 +21,7 @@ class ORMEngine extends AbstractWebsiteSearchEngine
     public function doSearch(Query $query, array $context = [])
     {
         /**
-         * TODO: It's only mock. Should be done in next tasks.
+         * TODO: Real implementation should be done in scope of BB-4314
          */
 
         return [
