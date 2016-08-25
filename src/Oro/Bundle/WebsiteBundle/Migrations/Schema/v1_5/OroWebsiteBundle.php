@@ -61,7 +61,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
 
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE orob2b_website SET is_default = :is_default',
+                'UPDATE oro_website SET is_default = :is_default',
                 ['is_default' => false],
                 ['is_default' => Type::BOOLEAN]
             )
@@ -70,7 +70,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         if ($this->platform instanceof MySqlPlatform) {
             $queries->addQuery(
                 new ParametrizedSqlMigrationQuery(
-                    'UPDATE orob2b_website SET is_default = :is_default ORDER BY id ASC LIMIT 1',
+                    'UPDATE oro_website SET is_default = :is_default ORDER BY id ASC LIMIT 1',
                     ['is_default' => true],
                     ['is_default' => Type::BOOLEAN]
                 )
@@ -78,7 +78,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         } else {
             $queries->addQuery(
                 new ParametrizedSqlMigrationQuery(
-                    'UPDATE orob2b_website SET is_default = :is_default WHERE id =(SELECT MIN(id) FROM orob2b_website)',
+                    'UPDATE oro_website SET is_default = :is_default WHERE id =(SELECT MIN(id) FROM oro_website)',
                     ['is_default' => true],
                     ['is_default' => Type::BOOLEAN]
                 )
@@ -126,7 +126,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         $queries->addPreQuery(
             new ParametrizedSqlMigrationQuery(
                 "INSERT INTO oro_config (entity, record_id)
-            SELECT :entity_name, id FROM orob2b_website w
+            SELECT :entity_name, id FROM oro_website w
             WHERE NOT exists(SELECT record_id FROM oro_config oc WHERE oc.record_id = w.id AND oc.entity = 'website');",
                 ['entity_name' => 'website'],
                 ['entity_name' => Type::STRING]
@@ -157,7 +157,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                   :created_at,
                   :updated_at
                 FROM oro_config oc
-                JOIN orob2b_website w ON w.id = oc.record_id
+                JOIN oro_website w ON w.id = oc.record_id
                 WHERE entity = :entity;',
             [
                 'name' => $name,

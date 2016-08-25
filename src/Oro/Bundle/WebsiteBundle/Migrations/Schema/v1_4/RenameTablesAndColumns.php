@@ -46,6 +46,17 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'website_eb2ef553',
             RelationType::MANY_TO_ONE
         ));
+
+        // rename tables
+        $extension->renameTable($schema, $queries, 'orob2b_related_website', 'oro_related_website');
+        $extension->renameTable($schema, $queries, 'orob2b_website', 'oro_website');
+
+        // rename indexes
+        $schema->getTable('orob2b_website')->dropIndex('idx_orob2b_website_created_at');
+        $schema->getTable('orob2b_website')->dropIndex('idx_orob2b_website_updated_at');
+
+        $extension->addIndex($schema, $queries, 'oro_website', ['created_at'], 'idx_oro_website_created_at');
+        $extension->addIndex($schema, $queries, 'oro_website', ['updated_at'], 'idx_oro_website_updated_at');
     }
 
     /**
