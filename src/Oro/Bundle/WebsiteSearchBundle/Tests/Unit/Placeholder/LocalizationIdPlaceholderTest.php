@@ -51,4 +51,18 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $value);
         $this->assertEquals('1', $value);
     }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Can't get current localization
+     */
+    public function testGetValueWithUnknownLocalization()
+    {
+
+        $this->localizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn(null);
+
+        $this->placeholder->getValue();
+    }
 }

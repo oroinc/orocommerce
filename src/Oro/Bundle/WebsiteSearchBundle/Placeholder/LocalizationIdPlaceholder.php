@@ -36,6 +36,10 @@ class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
     {
         $localization = $this->localizationManager->getCurrentLocalization();
 
+        if (!$localization) {
+            throw new \RuntimeException('Can\'t get current localization');
+        }
+
         return (string) $localization->getId();
     }
 }

@@ -1,6 +1,6 @@
 services:
-    oro_website_search.placeholder.resolver:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\PlaceholderResolver'
+    oro_website_search.resolver.query_placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
         public: false
         arguments:
             - '@oro_website_search.placeholder.registry'
@@ -9,14 +9,14 @@ services:
         abstract: true
         arguments:
             - '@event_dispatcher'
-            - '@oro_website_search.placeholder.resolver'
+            - '@oro_website_search.resolver.query_placeholder'
 
     oro_website_search.search.indexer:
         abstract: true
 
     oro_website_search.orm.engine:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
-        parent: 'oro_website_search.search.engine'
+        parent: oro_website_search.search.engine
         calls:
             - [setDoctrine, ['@doctrine']]
 

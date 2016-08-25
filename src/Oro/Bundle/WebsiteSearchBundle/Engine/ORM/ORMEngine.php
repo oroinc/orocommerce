@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
@@ -11,14 +11,14 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractWebsiteSearchEngine;
 class ORMEngine extends AbstractWebsiteSearchEngine
 {
     /**
-     * @var Registry
+     * @var RegistryInterface
      */
     private $doctrine;
 
     /**
      * {@inheritdoc}
      */
-    public function doSearch(Query $query, $context = [])
+    public function doSearch(Query $query, array $context = [])
     {
         /**
          * TODO: It's only mock. Should be done in next tasks.
@@ -33,9 +33,9 @@ class ORMEngine extends AbstractWebsiteSearchEngine
     }
 
     /**
-     * @param Registry $doctrine
+     * @param RegistryInterface $doctrine
      */
-    public function setDoctrine(Registry $doctrine)
+    public function setDoctrine(RegistryInterface $doctrine)
     {
         $this->doctrine = $doctrine;
     }

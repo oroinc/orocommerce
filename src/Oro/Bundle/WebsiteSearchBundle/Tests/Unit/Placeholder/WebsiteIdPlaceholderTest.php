@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
     private $websiteManager;
 
@@ -16,7 +19,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -36,13 +39,8 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetValueWithWebsiteId()
     {
-        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Website')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $website->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
+        /** @var Website $website */
+        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')

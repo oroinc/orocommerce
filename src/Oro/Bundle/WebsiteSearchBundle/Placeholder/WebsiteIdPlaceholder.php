@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class WebsiteIdPlaceholder implements WebsiteSearchPlaceholderInterface
 {
@@ -40,6 +40,6 @@ class WebsiteIdPlaceholder implements WebsiteSearchPlaceholderInterface
             throw new \RuntimeException('Current website is not defined.');
         }
 
-        return (string) $website->getId();
+        return (string)$website->getId();
     }
 }

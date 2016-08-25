@@ -40,6 +40,28 @@ class WebsiteSearchPlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['TEST_PLACEHOLDER' => $placeholder2], $this->registry->getPlaceholders());
     }
 
+    public function testGetPlaceholder()
+    {
+        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
+
+        $this->registry->addPlaceholder($placeholder);
+
+        $retrievedPlaceholder = $this->registry->getPlaceholder($placeholder->getPlaceholder());
+        $this->assertSame($placeholder, $retrievedPlaceholder);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Placeholder "UNKNOWN_PLACEHOLDER" does not exist.
+     */
+    public function testGetPlaceholderUnknownName()
+    {
+        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
+        $this->registry->addPlaceholder($placeholder);
+
+        $this->registry->getPlaceholder('UNKNOWN_PLACEHOLDER');
+    }
+
     public function testGetPlaceholders()
     {
         $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
@@ -64,11 +86,9 @@ class WebsiteSearchPlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
      */
     private function preparePlaceholder($placeholderName)
     {
-        $placeholder = $this
-            ->getMockBuilder(WebsiteSearchPlaceholderInterface::class)
-            ->getMock();
+        $placeholder = $this->getMock(WebsiteSearchPlaceholderInterface::class);
 
-        $placeholder->expects($this->once())
+        $placeholder->expects($this->any())
             ->method('getPlaceholder')
             ->willReturn($placeholderName);
 

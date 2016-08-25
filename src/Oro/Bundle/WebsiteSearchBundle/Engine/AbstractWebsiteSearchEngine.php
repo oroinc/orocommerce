@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
@@ -36,14 +37,14 @@ abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
     /**
      * @param Query $query
      * @param array $context
-     * @return mixed
+     * @return array
      */
-    abstract public function doSearch(Query $query, $context = []);
+    abstract protected function doSearch(Query $query, array $context = []);
 
     /**
      * {@inheritdoc}
      */
-    public function search(Query $query, $context = [])
+    public function search(Query $query, array $context = [])
     {
         $event = new BeforeSearchEvent($query, $context);
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
@@ -51,6 +52,8 @@ abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
         $query = $event->getQuery();
         $query = $this->queryPlaceholderResolver->replace($query, $context);
 
-        return $this->doSearch($query, $context);
+        $result = $this->doSearch($query, $context);
+
+        return new Result($query, $result['results'], $result['records_count']);
     }
 }

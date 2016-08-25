@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Resolver;
 
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
@@ -45,17 +44,17 @@ class QueryPlaceholderResolver
      */
     private function replaceInFrom(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
     {
-        $entities = [];
-
+        $newEntities = [];
         $from = $query->getFrom();
+
+        // This check required because getFrom can return false
         if ($from) {
             foreach ($from as $alias) {
-                $alias = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $alias);
-
-                $entities[] = $alias;
+                $newEntities[] = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $alias);
             }
         }
-        return $query->from($entities);
+
+        return $query->from($newEntities);
     }
 
     /**
@@ -64,10 +63,9 @@ class QueryPlaceholderResolver
      */
     private function replaceInCriteria(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
     {
-        /** @var Criteria $criteria */
         $criteria = $query->getCriteria();
-
         $whereExpr = $criteria->getWhereExpression();
+
         if ($whereExpr) {
             $visitor = new PlaceholderExpressionVisitor($placeholder);
             $criteria->where($visitor->dispatch($whereExpr));

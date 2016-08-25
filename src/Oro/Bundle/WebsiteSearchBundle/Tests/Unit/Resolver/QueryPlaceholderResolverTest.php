@@ -24,7 +24,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this
-            ->getMockBuilder('Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry')
+            ->getMockBuilder(WebsiteSearchPlaceholderRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -19,6 +19,19 @@ class WebsiteSearchPlaceholderRegistry
     }
 
     /**
+     * @param string $placeholderName
+     * @return WebsiteSearchPlaceholderInterface
+     */
+    public function getPlaceholder($placeholderName)
+    {
+        if (!isset($this->placeholders[$placeholderName])) {
+            throw new \InvalidArgumentException(sprintf('Placeholder "%s" does not exist.', $placeholderName));
+        }
+
+        return $this->placeholders[$placeholderName];
+    }
+
+    /**
      * @return array
      */
     public function getPlaceholders()
