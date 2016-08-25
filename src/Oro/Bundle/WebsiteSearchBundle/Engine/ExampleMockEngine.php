@@ -39,7 +39,6 @@ class ExampleMockEngine implements EngineV2Interface
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
 
-
         // this applies supported filter functionality to the results
         // and emulates filtering.
         $result = $this->applySKUFilter($result, $query->getCriteria());
@@ -281,20 +280,17 @@ class ExampleMockEngine implements EngineV2Interface
      */
     private function getOrderedData(Query $query, array $data) {
         foreach($query->getCriteria()->getOrderings() as $field => $sort) {
-            $matches = [];
-            if (preg_match('/^[a-zA-Z]+\.(.+)$/', $field, $matches)) {
-                $key = substr($field, strpos($field, '.') + 1);
+            list($type, $key) = Criteria::explodeFieldTypeName($field);
 
-                usort($data, function($a, $b) use ($key, $sort) {
-                    if ($sort === SearchSorterExtension::DIRECTION_DESC) {
-                        $result = strcmp($b[$key], $a[$key]);
-                    } else {
-                        $result = strcmp($a[$key], $b[$key]);
-                    }
-                    return $result;
+            usort($data, function($a, $b) use ($key, $sort) {
+                if ($sort === SearchSorterExtension::DIRECTION_DESC) {
+                    $result = strcmp($b[$key], $a[$key]);
+                } else {
+                    $result = strcmp($a[$key], $b[$key]);
+                }
+                return $result;
 
-                });
-            }
+            });
         }
 
         return $data;

@@ -224,9 +224,7 @@ datagrid:
             columns:
                 sku:
                     data_name: sku
-                    # data type in search index, possible values are text, integer, datetime and decimal
-                    # default is text
-                    type: text
+                    type: string
             default:
                 sku: DESC
 
