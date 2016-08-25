@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Cache\Cache;
+
 use Oro\Bundle\SearchBundle\Tests\Unit\Provider\AbstractSearchMappingProviderTest;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
@@ -13,15 +15,13 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
         parent::setUp();
 
         /** @var ConfigurationLoaderInterface|\PHPUnit_Framework_MockObject_MockObject $mappingConfigurationLoader */
-        $mappingConfigurationLoader = $this->getMock(
-            'Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader'
-        );
+        $mappingConfigurationLoader = $this->getMock(ConfigurationLoaderInterface::class);
         $mappingConfigurationLoader
             ->expects($this->any())
             ->method('getConfiguration')
             ->willReturn($this->testMapping);
 
-        $this->cacheDriver = $this->getMock('Doctrine\Common\Cache\Cache');
+        $this->cacheDriver = $this->getMock(Cache::class);
 
         $this->provider = new WebsiteSearchMappingProvider($this->eventDispatcher, $this->cacheDriver);
         $this->provider->setMappingConfigurationLoader($mappingConfigurationLoader);

@@ -1,5 +1,5 @@
-OroB2B\Bundle\ProductBundle\Entity\Product:
-    alias: orob2b_product_product_WEBSITE_ID
+Oro\Bundle\ProductBundle\Entity\Product:
+    alias: oro_product_product_WEBSITE_ID
     fields:
         -
             name: title_LOCALIZATION_ID
@@ -26,8 +26,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             name: visibility_new
             type: bool
 
-OroB2B\Bundle\CatalogBundle\Entity\Category:
-    alias: orob2b_product_category_WEBSITE_ID
+Oro\Bundle\CatalogBundle\Entity\Category:
+    alias: oro_product_category_WEBSITE_ID
     fields:
         -
             name: title_LOCALIZATION_ID
