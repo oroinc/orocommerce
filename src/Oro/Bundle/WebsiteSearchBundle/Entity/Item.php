@@ -11,7 +11,9 @@ use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 /**
  * @ORM\Table(
  *    name="oro_website_search_item",
- *    uniqueConstraints={@ORM\UniqueConstraint(name="oro_website_search_item_uidx", columns={"entity", "record_id"})},
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="oro_website_search_item_uidx", columns={"entity", "record_id", "alias"})
+ *    },
  *    indexes={
  *      @ORM\Index(name="oro_website_search_item_idxa", columns={"alias"}),
  *      @ORM\Index(name="oro_website_search_item_idxe", columns={"entity"})

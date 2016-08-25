@@ -114,7 +114,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('changed', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['entity', 'record_id'], 'oro_website_search_item_uidx');
+        $table->addUniqueIndex(['entity', 'record_id', 'alias'], 'oro_website_search_item_uidx');
         $table->setPrimaryKey(['id']);
         $table->addIndex(['entity'], 'oro_website_search_item_idxe', []);
         $table->addIndex(['alias'], 'oro_website_search_item_idxa', []);
