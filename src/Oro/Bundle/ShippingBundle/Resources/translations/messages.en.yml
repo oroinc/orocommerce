@@ -89,12 +89,20 @@ oro:
             section:
                 shipping_options: Shipping Options
         form:
-            orob2b_shipping_flat_rate_rule_config:
+            oro_shipping_flat_rate_type_options:
                 label: Flat Rate
             placeholder:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
+        method:
+            flat_rate:
+                price.label: Price
+                handling_fee.label: Handling Fee
+                processing_type:
+                    label: Type
+                    per_item.label: Per Item
+                    per_order.label: Per Order
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'

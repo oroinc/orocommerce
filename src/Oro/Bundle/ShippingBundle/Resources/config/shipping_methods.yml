@@ -4,7 +4,7 @@ services:
         public: false
 
     orob2b_shipping.shipping_method.flat_rate:
-        class: 'Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod'
+        class: 'Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod'
         public: false
         tags:
             - { name: orob2b_shipping_method }
