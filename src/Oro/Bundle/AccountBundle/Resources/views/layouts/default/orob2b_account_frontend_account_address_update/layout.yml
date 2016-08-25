@@ -1,0 +1,18 @@
+layout:
+    imports:
+        -
+            id: orob2b_account_address_form
+            root: content
+        - orob2b_account_menu
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - oro.account.frontend.address.title.edit
+                - oro.account.frontend.address.title.subject
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: oro.account.frontend.address.page_title.edit

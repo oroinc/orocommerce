@@ -1,0 +1,6 @@
+operations:
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\CMSBundle\Entity\LoginPage
+        exclude_datagrids:
+            - cms-login-page-grid

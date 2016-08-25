@@ -4,8 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigWithCountryAndCurrencyTest;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigWithCountryAndCurrencyTest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

@@ -1,0 +1,27 @@
+{% block _add_to_shopping_list_form_button_widget %}
+    {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+    {% set buttonOptions = {
+        dataUrl: 'orob2b_shopping_list_frontend_add_product',
+        dataAttributes: {}
+    } %}
+    {% set removeOptions = buttonOptions|merge({
+        dataUrl: 'orob2b_shopping_list_frontend_remove_product',
+        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans
+    }) %}
+    {% set options = {
+        new: buttonOptions,
+        current: buttonOptions,
+        existing: buttonOptions,
+        shoppingLists: shoppingLists,
+        remove: removeOptions,
+        componentOptions: {
+            defaultClass: 'btn-dark',
+            editClass: 'btn-dark',
+            modelAttr: {
+                shopping_lists: unitsQuantity
+            }
+        },
+        singleButtonACss: 'btn-block btn-orange btn_lg'
+    } %}
+    {{ buttons.getButtonsHtml(options) }}
+{% endblock %}

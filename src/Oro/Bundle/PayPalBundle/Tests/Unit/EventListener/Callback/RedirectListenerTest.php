@@ -10,9 +10,8 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response as PayflowResponse;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 
 class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 {

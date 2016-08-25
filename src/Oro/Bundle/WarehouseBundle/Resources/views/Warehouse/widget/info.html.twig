@@ -1,0 +1,14 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('oro.warehouse.name.label'|trans, warehouse.name) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(warehouse) }}
+        </div>
+    </div>
+</div>
