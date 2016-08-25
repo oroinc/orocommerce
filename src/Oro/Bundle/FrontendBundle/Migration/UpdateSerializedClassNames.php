@@ -62,13 +62,13 @@ class UpdateSerializedClassNames extends ParametrizedMigrationQuery
         while ($entity = $statement->fetch(\PDO::FETCH_ASSOC)) {
             $originalValue = base64_decode($entity[$field]);
 
-            preg_match_all('/\"(Oro.*?)\"/', $originalValue, $matches, PREG_SET_ORDER);
+            preg_match_all('/\"(OroB2B.*?)\"/', $originalValue, $matches, PREG_SET_ORDER);
             if (!empty($matches)) {
                 // set aliases to allow deserialization of not existing classes
                 foreach ($matches as $match) {
                     $oldClassName = $match[1];
                     if (!class_exists($oldClassName)) {
-                        $realClassName = preg_replace('/^Oro/', 'Oro', $oldClassName, 1);
+                        $realClassName = preg_replace('/^OroB2B/', 'Oro', $oldClassName, 1);
                         class_alias($realClassName, $oldClassName);
                     }
                 }

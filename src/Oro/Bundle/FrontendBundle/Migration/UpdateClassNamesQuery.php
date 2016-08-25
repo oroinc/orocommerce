@@ -60,11 +60,11 @@ class UpdateClassNamesQuery extends ParametrizedMigrationQuery
         $table = $this->table;
         $field = $this->field;
 
-        $statement = $this->connection->query("SELECT id, $field FROM $table WHERE $field LIKE 'Oro%'");
+        $statement = $this->connection->query("SELECT id, $field FROM $table WHERE $field LIKE 'OroB2B%'");
 
         while ($entity = $statement->fetch(\PDO::FETCH_ASSOC)) {
             $originalClass = $entity[$field];
-            $class = preg_replace('/^Oro/', 'Oro', $originalClass, 1);
+            $class = preg_replace('/^OroB2B/', 'Oro', $originalClass, 1);
 
             $query = "UPDATE $table SET $field = ? WHERE id = ?";
             $parameters = [$class, $entity['id']];
