@@ -6,10 +6,10 @@ layout:
             items:
                 header_row_shopping:
                     blockType: container
-                main_menu_messages_widget:
+                main_menu_messages:
                     blockType: block
             tree:
                 header_row:
                     header_row_shopping:
-                        # main_menu_messages_widget: ~
+                        # main_menu_messages: ~
     conditions: 'context["logged_user"]!=null'
