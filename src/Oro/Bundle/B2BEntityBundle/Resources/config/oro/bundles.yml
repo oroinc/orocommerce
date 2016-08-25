@@ -1,2 +1,2 @@
 bundles:
-    - Oro\Bundle\B2BEntityBundle\OroB2BEntityBundle
+    - { name: Oro\Bundle\B2BEntityBundle\OroB2BEntityBundle, priority: 5 }

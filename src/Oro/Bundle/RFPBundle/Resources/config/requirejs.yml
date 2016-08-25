@@ -1,0 +1,5 @@
+config:
+    paths:
+        'ororfp/js/app/components/request-status-delete-restore-component': 'bundles/ororfp/js/app/components/request-status-delete-restore-component.js'
+        'ororfp/js/app/components/order-line-item-offers': 'bundles/ororfp/js/app/components/order-line-item-offers.js'
+        'ororfp/js/app/views/line-items-view': 'bundles/ororfp/js/app/views/line-items-view.js'

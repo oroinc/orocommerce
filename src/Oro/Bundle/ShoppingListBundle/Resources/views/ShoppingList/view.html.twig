@@ -1,0 +1,75 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%label%": entity.label }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_shopping_list_index'),
+        'indexLabel': 'oro.shoppinglist.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set shoppingListInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'oro.shoppinglist.widgets.shopping_list_information'|trans,
+            'url': path('orob2b_shopping_list_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
+
+    {% set subtotals %}
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+            options: {
+                route: 'orob2b_pricing_entity_totals',
+                method: 'GET',
+                events: [
+                    'datagrid:doRefresh:shopping-list-line-items-grid',
+                    'datagrid:afterRemoveRow:shopping-list-line-items-grid',
+                    'datagrid:afterMassRemoveRow:shopping-list-line-items-grid'
+                ],
+                entityClassName: oro_class_name(entity, true),
+                entityId: entity.id,
+                data: totals
+            }
+        } only %}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.shoppinglist.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.shoppinglist.lineitem.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'spanClass': 'shopping-list-line-items',
+                    'data' : [dataGrid.renderGrid('shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.shoppinglist.sections.subtotals'|trans,
+        'subblocks': [{'data' : [subtotals]}]
+    }]) %}
+
+    {% set id = 'shopping-list-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
