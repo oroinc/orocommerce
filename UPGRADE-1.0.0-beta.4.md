@@ -61,3 +61,7 @@ OrderBundle:
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
+
+ProductBundle:
+--------------
+- Product images filters config removed from `app.yml`. These filters are now added dynamically based on `images.yml` config.
