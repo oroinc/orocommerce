@@ -159,7 +159,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
         $table->addColumn('sell', 'boolean', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
+        $table->addUniqueIndex(['product_id', 'unit_code'], 'uidx_oro_product_unit_precision');
     }
 
     /**
