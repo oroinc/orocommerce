@@ -265,7 +265,7 @@ class ExampleMockEngine implements EngineV2Interface
         $expression = $criteria->getWhereExpression();
 
         foreach ($data as $row) {
-            $visitor    = new ExampleExpressionVisitor($row);
+            $visitor = new ExampleExpressionVisitor($row);
             if ($visitor->dispatch($expression)) {
                 $result[] = $row;
             }

@@ -7,8 +7,6 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Bundle\WorkflowBundle\Model\Workflow;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
@@ -16,13 +14,6 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class CheckoutEntityListener
 {
-    const START_TRANSITION_DEFINITION = '__start__';
-
-    /**
-     * @var WorkflowManager
-     */
-    protected $workflowManager;
-
     /**
      * @var RegistryInterface
      */
@@ -49,21 +40,11 @@ class CheckoutEntityListener
     protected $userCurrencyManager;
 
     /**
-     * @var array
-     */
-    protected $workflows = [];
-
-    /**
-     * @param WorkflowManager $workflowManager
      * @param RegistryInterface $doctrine
      * @param UserCurrencyManager $userCurrencyManager
      */
-    public function __construct(
-        WorkflowManager $workflowManager,
-        RegistryInterface $doctrine,
-        UserCurrencyManager $userCurrencyManager
-    ) {
-        $this->workflowManager = $workflowManager;
+    public function __construct(RegistryInterface $doctrine, UserCurrencyManager $userCurrencyManager)
+    {
         $this->doctrine = $doctrine;
         $this->userCurrencyManager = $userCurrencyManager;
     }
@@ -156,20 +137,7 @@ class CheckoutEntityListener
         $checkout = $this->createCheckoutEntity();
         $checkout->setSource($event->getSource());
 
-        if (!$this->isStartWorkflowAllowed($checkout)) {
-            return null;
-        }
-
         return $checkout;
-    }
-
-    /**
-     * @param $checkout
-     * @return bool
-     */
-    protected function isStartWorkflowAllowed($checkout)
-    {
-        return null !== $this->getWorkflowName($checkout);
     }
 
     /**
@@ -178,41 +146,6 @@ class CheckoutEntityListener
     protected function getCheckoutClassName()
     {
         return $this->checkoutClassName;
-    }
-
-    /**
-     * @param CheckoutInterface $checkout
-     * @return null|string
-     */
-    protected function getWorkflowName(CheckoutInterface $checkout)
-    {
-        $cacheKey = $checkout->getId();
-        
-        if (!array_key_exists($cacheKey, $this->workflows)) {
-            $workflows = $this->workflowManager->getApplicableWorkflows($checkout);
-            $workflows = array_filter(
-                $workflows,
-                function (Workflow $workflow) use ($checkout) {
-                    return $workflow->isStartTransitionAvailable(
-                        static::START_TRANSITION_DEFINITION,
-                        $checkout
-                    );
-                }
-            );
-
-            if (count($workflows) > 1) {
-                throw new \LogicException(
-                    sprintf('More than one active workflow found for entity "%s".', $this->getCheckoutClassName())
-                );
-            }
-
-            /** @var Workflow $workflow */
-            $workflow = array_shift($workflows);
-            
-            $this->workflows[$cacheKey] = $workflow ? $workflow->getName() : null;
-        }
-
-        return $this->workflows[$cacheKey];
     }
 
     /**
