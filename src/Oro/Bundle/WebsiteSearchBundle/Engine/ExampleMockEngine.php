@@ -15,8 +15,6 @@ use Oro\Bundle\SearchBundle\Query\Result;
  */
 class ExampleMockEngine implements EngineV2Interface
 {
-    const TOTAL_COUNT = 5;
-
     /**
      * @param Query $query
      * @param array $context
@@ -40,7 +38,13 @@ class ExampleMockEngine implements EngineV2Interface
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
 
-        return new Result($query, $result, self::TOTAL_COUNT);
+        // this applies supported filter functionality to the results
+        // and emulates filtering.
+        $result = $this->applySKUFilter($result, $query->getCriteria());
+
+        $count = count($result);
+
+        return new Result($query, $result, $count);
     }
 
     /**
@@ -102,6 +106,31 @@ class ExampleMockEngine implements EngineV2Interface
                 }
             }
             $result[] = $resultRowSet;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $data
+     * @param $criteria
+     * @return array
+     */
+    private function applySKUFilter($data, Criteria $criteria)
+    {
+        $result = [];
+
+        if (!$criteria->getWhereExpression()) {
+            return $data;
+        }
+
+        $expression = $criteria->getWhereExpression();
+
+        foreach ($data as $row) {
+            $visitor = new ExampleExpressionVisitor($row);
+            if ($visitor->dispatch($expression)) {
+                $result[] = $row;
+            }
         }
 
         return $result;
