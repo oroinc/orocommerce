@@ -15,7 +15,7 @@
 }
 
 .header-row {
-    position: relative;
+    // position: relative;
 
     display: flex;
 
@@ -25,7 +25,7 @@
     justify-content: space-between;
 
     &__container {
-        position: relative;
+        // position: relative;
 
         flex-basis: 210px;
 
@@ -126,6 +126,12 @@
             left: 0;
 
             @include header-row-dropdown;
+        }
+
+        &__dropdown-mobile--scroll {
+            top: 0 !important;
+            bottom: 0;
+            overflow-y: scroll;
         }
     }
 }

@@ -14,11 +14,19 @@
 {% endblock %}
 
 {% block _header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orob2bfrontend/default/js/components/header',
+        '~data-page-component-options': {
+            isMobile: isMobileVersion()
+        },
+        '~class': ' header'
+    }) %}
+
     {% if isMobileVersion() %}
         {% set attr = layout_attr_defaults(attr, {
             '~data-sticky': {
                 isSticky: true,
-                toggleClass: 'header-row--float'
+                toggleClass: 'header--fixed'
             }
         }) %}
     {% endif %}

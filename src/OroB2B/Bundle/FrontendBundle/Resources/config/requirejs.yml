@@ -31,5 +31,6 @@ config:
 
         'slick': 'bundles/orob2bfrontend/default/vendors/slick/slick.min.js'
         'orob2bfrontend/js/app/components/list-slider-component': 'bundles/orob2bfrontend/js/app/components/list-slider-component.js'
+        'orob2bfrontend/default/js/components/header': 'bundles/orob2bfrontend/default/js/components/header/header.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module
