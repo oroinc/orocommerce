@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_product_image")
+ * @ORM\Table(name="oro_product_image")
  * @Config
  */
 class ProductImage extends ExtendProductImage
