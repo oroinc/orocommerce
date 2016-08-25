@@ -63,7 +63,12 @@ class ConfigurationCacheProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->configurationCacheProvider, $this->cacheProvider, $this->configurationProvider, $this->hashProvider);
+        unset(
+            $this->configurationCacheProvider,
+            $this->cacheProvider,
+            $this->configurationProvider,
+            $this->hashProvider
+        );
     }
 
     /**

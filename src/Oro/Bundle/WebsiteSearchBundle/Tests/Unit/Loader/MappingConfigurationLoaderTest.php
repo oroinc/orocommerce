@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
-use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
@@ -38,7 +37,7 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->provider);
+        unset($this->loader);
     }
 
     public function testGetResources()
