@@ -12,60 +12,61 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class RestrictIndexProductsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const CONFIG_PATH = 'config.path';
+
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier */
-    protected $modifierMock;
+    protected $modifier;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
-    protected $configManagerMock;
+    protected $configManager;
 
     /** @var RestrictIndexProductsEventListener */
     protected $listener;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder */
-    protected $queryBuilderMock;
+    protected $queryBuilder;
 
     protected function setUp()
     {
-        $this->modifierMock = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
+        $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configManagerMock = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
 
-        $this->queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->listener = new RestrictIndexProductsEventListener($this->configManagerMock, $this->modifierMock);
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+
+        $this->listener = new RestrictIndexProductsEventListener(
+            $this->configManager,
+            $this->modifier,
+            self::CONFIG_PATH
+        );
     }
 
     public function testOnRestrictIndexEntitiesEvent()
     {
-        $path = 'some_config_path';
-        $event = new RestrictIndexEntitiesEvent($this->queryBuilderMock, Product::class, []);
-        $this->modifierMock->expects($this->once())->method('modifyByStatus')->with(
-            $this->queryBuilderMock,
-            [Product::STATUS_ENABLED]
-        );
-        $inventoryStatuses = ['status' => 1];
-        $this->configManagerMock->expects($this->once())->method('get')->with($path)->willReturn($inventoryStatuses);
-        $this->modifierMock->expects($this->once())->method('modifyByInventoryStatus')
-            ->with($this->queryBuilderMock, $inventoryStatuses);
-        $this->listener->setSystemConfigurationPath($path);
-        $this->listener->onRestrictIndexEntitiesEvent($event);
-    }
+        $this->modifier->expects($this->once())
+            ->method('modifyByStatus')
+            ->with($this->queryBuilder, [Product::STATUS_ENABLED]);
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage SystemConfigurationPath not configured for RestrictIndexProductsEventListener
-     */
-    public function testConfigNotPassedExeption()
-    {
-        $event = new RestrictIndexEntitiesEvent($this->queryBuilderMock, Product::class, []);
+        $inventoryStatuses = ['status' => 1];
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(self::CONFIG_PATH)
+            ->willReturn($inventoryStatuses);
+
+        $this->modifier->expects($this->once())
+            ->method('modifyByInventoryStatus')
+            ->with($this->queryBuilder, $inventoryStatuses);
+
+        $event = new RestrictIndexEntitiesEvent($this->queryBuilder, Product::class, []);
         $this->listener->onRestrictIndexEntitiesEvent($event);
     }
 
     public function testOtherEntityPassed()
     {
-        $event = new RestrictIndexEntitiesEvent($this->queryBuilderMock, \stdClass::class, []);
+        $event = new RestrictIndexEntitiesEvent($this->queryBuilder, \stdClass::class, []);
         $this->listener->onRestrictIndexEntitiesEvent($event);
-        $this->modifierMock->expects($this->never())->method('modifyByInventoryStatus');
-        $this->modifierMock->expects($this->never())->method('modifyByStatus');
+        $this->modifier->expects($this->never())->method('modifyByInventoryStatus');
+        $this->modifier->expects($this->never())->method('modifyByStatus');
     }
 }
