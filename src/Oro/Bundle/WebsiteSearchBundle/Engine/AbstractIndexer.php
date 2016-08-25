@@ -45,13 +45,13 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function reindex($class = null, $context = [])
+    public function reindex($class = null, array $context = [])
     {
         $mappingConfig = $this->mapper->getMappingConfig();
 
         if (!$mappingConfig) {
             // @todo: throw exception?
-            return;
+            return 0;
         }
 
         if ($class) {
@@ -65,16 +65,18 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $websitesToIndex = $this->getWebsitesToIndex($context);
 
-        $this->reindexEntities($websitesToIndex, $entitiesToIndex, $context);
+        return $this->reindexEntities($websitesToIndex, $entitiesToIndex, $context);
     }
 
     /**
      * @param array $websiteIdsToIndex
      * @param array $entitiesToIndex
      * @param array $context
+     * @return int
      */
     protected function reindexEntities(array $websiteIdsToIndex, array $entitiesToIndex, array $context)
     {
+        $handledItems = 0;
         foreach ($websiteIdsToIndex as $websiteId) {
             $websiteContext = $context;
             $websiteContext[self::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
@@ -84,9 +86,11 @@ abstract class AbstractIndexer implements IndexerInterface
             $websiteContext = $collectContextEvent->getContext();
 
             foreach ($entitiesToIndex as $entityClass => $entityConfig) {
-                $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
+                $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
             }
         }
+
+        return $handledItems;
     }
 
     /**
@@ -116,6 +120,7 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entityConfig
      * @param array $context
+     * @return int
      */
     protected function reindexSingleEntity($entityClass, array $entityConfig, array $context)
     {
@@ -155,6 +160,8 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         $this->renameIndex($entityAliasTemp, $entityAlias);
+
+        return $itemsCount;
     }
 
     /**

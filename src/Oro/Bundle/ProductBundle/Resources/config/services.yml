@@ -374,6 +374,14 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%orob2b_product.entity.product.class%'}
 
+    orob2b_product.event_listener.website_search_index:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+
     orob2b_product.event_listener.restrict_index_products:
             class: 'Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener'
             arguments:
