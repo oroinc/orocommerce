@@ -11,7 +11,7 @@ layout:
         - '@setOption':
             id: checkout_form_fields
             optionName: transitionData
-            optionValue: '=data["orob2b_checkout_continue_transition"]'
+            optionValue: '=data["orob2b_checkout_transition"].getContinueTransition(data["workflowItem"])'
 
     conditions: 'context["workflowStepName"]=="request_approval" && context["workflowName"]=="b2b_flow_alternative_checkout"'
 
