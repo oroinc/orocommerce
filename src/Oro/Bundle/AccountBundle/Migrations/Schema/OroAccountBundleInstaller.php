@@ -507,8 +507,8 @@ class OroAccountBundleInstaller implements
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['route'], 'oro_navigation_history_route_idx');
-        $table->addIndex(['entity_id'], 'oro_navigation_history_entity_id_idx');
+        $table->addIndex(['route'], 'oro_acc_nav_history_route_idx');
+        $table->addIndex(['entity_id'], 'oro_acc_nav_history_entity_id_idx');
     }
 
     /**
@@ -1286,19 +1286,19 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create oro_windows_state table
+     * Create oro_acc_windows_state table
      *
      * @param Schema $schema
      */
     protected function createOroAccountWindowsStateTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_account_windows_state');
+        $table = $schema->createTable('oro_acc_windows_state');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('data', Type::JSON_ARRAY, ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['customer_user_id'], 'oro_windows_state_acu_idx', []);
+        $table->addIndex(['customer_user_id'], 'oro_acc_windows_state_acu_idx', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -1441,13 +1441,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add oro_windows_state foreign keys.
+     * Add oro_acc_windows_state foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountWindowsStateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_windows_state');
+        $table = $schema->getTable('oro_acc_windows_state');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_account_user'),
             ['customer_user_id'],

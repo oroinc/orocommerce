@@ -152,14 +152,14 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             $queries,
             'oro_acc_navigation_history',
             ['route'],
-            'oro_navigation_history_route_idx'
+            'oro_acc_nav_history_route_idx'
         );
         $extension->addIndex(
             $schema,
             $queries,
             'oro_acc_navigation_history',
             ['entity_id'],
-            'oro_navigation_history_entity_id_idx'
+            'oro_acc_nav_history_entity_id_idx'
         );
         $extension->addIndex(
             $schema,
@@ -189,7 +189,13 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['account_user_id', 'placement'],
             'oro_acc_sdbr_wdgs_usr_place_idx'
         );
-        $extension->addIndex($schema, $queries, 'oro_windows_state', ['customer_user_id'], 'oro_windows_state_acu_idx');
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_windows_state',
+            ['customer_user_id'],
+            'oro_acc_windows_state_acu_idx'
+        );
         $extension->addUniqueIndex(
             $schema,
             $queries,

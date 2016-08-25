@@ -15,8 +15,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  * @ORM\Table(
  *      name="oro_acc_navigation_history",
  *      indexes={
- *          @ORM\Index(name="oro_navigation_history_route_idx", columns={"route"}),
- *          @ORM\Index(name="oro_navigation_history_entity_id_idx", columns={"entity_id"}),
+ *          @ORM\Index(name="oro_acc_nav_history_route_idx", columns={"route"}),
+ *          @ORM\Index(name="oro_acc_nav_history_entity_id_idx", columns={"entity_id"}),
  *      }
  * )
  */
