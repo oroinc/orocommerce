@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Schema;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
@@ -10,10 +14,6 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
