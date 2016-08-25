@@ -1,6 +1,0 @@
-config:
-    paths:
-        'oro/datagrid/action/payment-delete-action': 'bundles/orob2bpayment/js/datagrid/action/payment-delete-action.js'
-        'orob2bpayment/js/app/components/payment-method-selector-component': 'bundles/orob2bpayment/js/app/components/payment-method-selector-component.js'
-        'orob2bpayment/js/app/components/config-hide-fields-component': 'bundles/orob2bpayment/js/app/components/config-hide-fields-component.js'
-        'orob2bpayment/js/app/components/payment-method-component': 'bundles/orob2bpayment/js/app/components/payment-method-component.js'

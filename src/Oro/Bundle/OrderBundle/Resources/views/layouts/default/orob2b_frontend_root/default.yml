@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@addTree':
+            items:
+                top_selling_items_container:
+                    blockType: container
+                top_selling_items:
+                    blockType: embedded_list
+                    options:
+                        items: '=data["top_selling_items"]'
+                        label: oro.order.top_selling_items.label
+                        item_key: product
+                        use_slider: true
+                        slides_count: 4
+                top_selling_item:
+                    blockType: container
+            tree:
+                content:
+                    top_selling_items_container:
+                        top_selling_items:
+                            top_selling_item: ~

@@ -1,0 +1,106 @@
+{% block _hero_promo_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hero-promo'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _hero_promo_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            autoplay: true,
+            autoplaySpeed: 4000,
+            arrows: false,
+            dots: true
+        }
+    }) %}
+
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
+{% endblock %}
+
+{% block _hero_promo_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hero-promo-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="hero-promo-item__picture">
+            <img class="hero-promo-item__img"
+                src="{% image '@OroCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
+                alt="Ololo">
+        </div>
+        <div class="hero-promo-item__info">
+            <img class="hero-promo-item__img"
+                src="{% image '@OroCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
+                alt="Ololo">
+            <div class="hero-promo-item__cover">
+                <div class="hero-promo-item__desc">
+                    <span class="hero-promo-item__pretitle">New items in stock</span>
+                    <h2 class="hero-promo-item__title">For Kitchen Professionals</h2>
+                    <a href="#" class="btn theme-btn btn-dark hero-promo-item__view-btn">
+                        View Items
+                        <i class="cf-right-open-mini"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _featured_categories_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_category_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category'
+    }) %}
+    <a {{ block('block_attributes') }}
+        href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block _featured_category_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__image',
+        src: Image.url(category.largeImage, 'product_large'),
+        alt: category.defaultTitle
+    }) %}
+    <img {{ block('block_attributes') }}>
+{% endblock %}
+
+{% block _featured_category_desc_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__desc'
+    }) %}
+    <dl {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </dl>
+{% endblock %}
+
+{% block _featured_category_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__name'
+    }) %}
+    <dt {{ block('block_attributes') }}>{{ category.defaultTitle }}</dt>
+{% endblock %}
+
+{% block _featured_category_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__qty'
+    }) %}
+    <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|transchoice(categoryProductsCount) }}</dd>
+{% endblock %}

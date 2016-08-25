@@ -1,7 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/orob2bfrontend/default/vendors/bootstrap/css/bootstrap.min.css'
-        - 'bundles/orob2bfrontend/default/vendors/fontawesome/css/font-awesome.min.css'
-        - 'bundles/orob2bfrontend/default/vendors/slick/slick.css'
-        - 'bundles/orob2bfrontend/default/scss/styles.scss'
-    output: 'css/layout/default/styles.css'
