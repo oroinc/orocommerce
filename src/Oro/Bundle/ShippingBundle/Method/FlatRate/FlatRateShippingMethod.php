@@ -14,6 +14,9 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     protected $type;
 
+    /**
+     * Construct
+     */
     public function __construct()
     {
         $this->type = new FlatRateShippingMethodType();
