@@ -15,6 +15,11 @@
 {% endblock %}
 
 {% block _product_grid_widget %}
+    {% set compact_view = '' %}
+    {% set buttonsId = 'datagrid_row_product_line_item_form_buttons' %}
+    {% if blocks[buttonsId] is not defined or blocks[buttonsId].children is empty %}
+        {% set compact_view = ' product-item--compact' %}
+    {% endif %}
     {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
     {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
         'tagName': 'div',
@@ -23,7 +28,7 @@
         'rowActionSelector': '.view-product',
         'currentRowView': current_row_view,
         'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
-        'rowClassName': 'grid-row product-item product-item_' ~ current_row_view,
+        'rowClassName': 'grid-row product-item product-item_' ~ current_row_view ~ compact_view,
         'rowAttributes': {
             'data-layout': 'separate',
             'data-layout-model': 'productModel'

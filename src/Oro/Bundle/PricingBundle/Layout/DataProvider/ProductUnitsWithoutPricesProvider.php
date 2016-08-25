@@ -39,7 +39,7 @@ class ProductUnitsWithoutPricesProvider
 
             $unitWithPrices = [];
             foreach ($prices as $price) {
-                $unitWithPrices[] = $price->getUnit();
+                $unitWithPrices[] = $price['unit'];
             }
             $units = $product->getUnitPrecisions()->map(
                 function (ProductUnitPrecision $unitPrecision) {

@@ -138,10 +138,13 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_secondary_content_second_container_widget %}
+    {% set buttonsId = id|replace({'_secondary_content_second_container': ''}) ~ '_line_item_form_buttons' %}
+    {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__secondary-half product-item__secondary-half_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_more_info_widget %}
