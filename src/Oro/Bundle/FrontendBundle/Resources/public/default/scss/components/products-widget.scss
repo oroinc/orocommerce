@@ -595,6 +595,14 @@
     }
   }
 
+  &__price-wrap {
+    display: inline-block;
+
+    &_gallery-view, &_list-view {
+      margin-bottom: 10px;
+    }
+  }
+
   &__price {
     span {
       font-size: 16px;

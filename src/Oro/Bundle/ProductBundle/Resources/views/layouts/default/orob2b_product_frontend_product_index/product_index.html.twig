@@ -15,6 +15,10 @@
 {% endblock %}
 
 {% block _product_grid_widget %}
+    {% set compact_view = '' %}
+    {% if blocks.line_item_buttons.children is not defined or blocks.line_item_buttons.children is empty %}
+        {% set compact_view = ' product-item--compact' %}
+    {% endif %}
     {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
     {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
         'tagName': 'div',
@@ -23,7 +27,7 @@
         'rowActionSelector': '.view-product',
         'currentRowView': current_row_view,
         'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
-        'rowClassName': 'grid-row product-item product-item_' ~ current_row_view,
+        'rowClassName': 'grid-row product-item product-item_' ~ current_row_view ~ compact_view,
         'rowAttributes': {
             'data-layout': 'separate',
             'data-layout-model': 'productModel'
@@ -55,7 +59,7 @@
                   <i class="cf-view_list cf--large"></i>
                 </span>
             </a>
-            {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
+            {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
                 class="btn btn_transparent btn_bordered btn_squared {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
                 <span class="catalog-view-option">
