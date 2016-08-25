@@ -9,9 +9,6 @@ class ReindexCommandTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
-        // TODO: remove after services.yml will be loaded by dependency injection extension
-        $this->getContainer()->set('oro_website_search.indexer', new OrmIndexerStub());
     }
 
     public function testCommand()

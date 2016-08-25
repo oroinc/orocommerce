@@ -46,16 +46,14 @@ class ReindexCommand extends ContainerAwareCommand
         $class = $class ? $this->getFQCN($class) : null;
 
         $context = [];
-
         if ($websiteId !== null) {
             $websiteId = (int)$websiteId;
-            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = (int)$websiteId;
+            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
         }
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
-
         $recordsCount = $indexer->reindex($class, $context);
 
         $output->writeln(sprintf('Total indexed items: %u', $recordsCount));
