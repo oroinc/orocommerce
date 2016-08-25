@@ -6,4 +6,4 @@ layout:
             id: featured_products
             optionName: slides_count
             optionValue: 2
-    conditions: 'context["user_agent"]["mobile"]==true'
+    conditions: 'context["is_mobile"]'

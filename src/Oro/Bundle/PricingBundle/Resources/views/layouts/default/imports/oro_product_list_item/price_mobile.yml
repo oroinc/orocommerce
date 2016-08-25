@@ -2,4 +2,4 @@ layout:
     actions:
         - '@remove':
             id: __product_price_hint
-    conditions: 'context["user_agent"]["mobile"]==true'
+    conditions: 'context["is_mobile"]'
