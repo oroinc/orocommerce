@@ -35,7 +35,6 @@ class RestrictIndexProductsEventListener
 
     /**
      * @param RestrictIndexEntitiesEvent $event
-     * @throws \LogicException
      */
     public function onRestrictIndexEntitiesEvent(RestrictIndexEntitiesEvent $event)
     {
