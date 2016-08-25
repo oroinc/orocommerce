@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+
 class ReindexCommand extends ContainerAwareCommand
 {
-    const COMMAND_NAME = 'oro:website_search:reindex';
+    const COMMAND_NAME = 'oro:website-search:reindex';
 
     /**
      * {@inheritdoc}
@@ -28,10 +27,10 @@ class ReindexCommand extends ContainerAwareCommand
                 '(e.g. Oro\Bundle\UserBundle\Entity\User or OroUserBundle:User)'
             )
             ->addOption(
-                'website_id',
+                'website-id',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'INTEGER. Website ID need to reindex '
+                'INTEGER. Website ID needs to reindex'
             )
             ->setDescription('Rebuild search index for certain website/entity type or all mapped entities');
     }
@@ -42,30 +41,53 @@ class ReindexCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $class = $input->getOption('class');
-        $websiteId = $input->getOption('website_id');
+        $websiteId = $input->getOption('website-id');
 
-        $placeholder = 'all mapped entities';
-        if ($class) {
-            // convert from short format to FQСN
-            $class = $this->getContainer()->get('doctrine')
-                ->getManagerForClass($class)->getClassMetadata($class)->getName();
-            $placeholder = '"' . $class . '" entity';
-        }
+        $class = $class ? $this->getFQCN($class) : null;
 
         $context = [];
 
-        if ($websiteId) {
-            $placeholder .= ' and website id ' . $websiteId;
-            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+        if ($websiteId !== null) {
+            $websiteId = (int)$websiteId;
+            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = (int)$websiteId;
         }
 
-        $output->writeln('Starting reindex task for ' . $placeholder);
+        $output->writeln($this->getStartingMessage($class, $websiteId));
 
-        /** @var $searchEngine IndexerInterface */
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
 
         $recordsCount = $indexer->reindex($class, $context);
 
         $output->writeln(sprintf('Total indexed items: %u', $recordsCount));
+    }
+
+    /**
+     * @param string|null $class
+     * @param $websiteId
+     * @return string
+     */
+    private function getStartingMessage($class, $websiteId)
+    {
+
+        $websitePlaceholder = $websiteId ? sprintf(' and website id %d', $websiteId) : '';
+
+        return sprintf(
+            'Starting reindex task for "%s"%s',
+            $class ?: 'all mapped entities',
+            $websitePlaceholder
+        );
+    }
+
+    /**
+     * @param string $class
+     * @return mixed
+     */
+    private function getFQCN($class)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass($class)
+            ->getClassMetadata($class)
+            ->getName();
     }
 }
