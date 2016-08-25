@@ -150,13 +150,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_sale_quote table
+     * Create oro_sale_quote table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote');
+        $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
@@ -185,13 +185,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_quote_address table
+     * Create oro_quote_address table
      *
      * @param Schema $schema
      */
     protected function createOroQuoteAddressTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_quote_address');
+        $table = $schema->createTable('oro_quote_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
@@ -216,13 +216,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_sale_quote_prod_offer table
+     * Create oro_sale_quote_prod_offer table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteProdOfferTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_prod_offer');
+        $table = $schema->createTable('oro_sale_quote_prod_offer');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
@@ -241,13 +241,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_sale_quote_prod_request table
+     * Create oro_sale_quote_prod_request table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteProdRequestTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_prod_request');
+        $table = $schema->createTable('oro_sale_quote_prod_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('request_product_item_id', 'integer', ['notnull' => false]);
@@ -265,13 +265,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_sale_quote_product table
+     * Create oro_sale_quote_product table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteProductTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_product');
+        $table = $schema->createTable('oro_sale_quote_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_replacement_id', 'integer', ['notnull' => false]);
@@ -295,13 +295,13 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_quote_assigned_acc_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote'),
+            $schema->getTable('oro_sale_quote'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -323,7 +323,7 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote'),
+            $schema->getTable('oro_sale_quote'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -331,15 +331,15 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_quote foreign keys.
+     * Add oro_sale_quote foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote');
+        $table = $schema->getTable('oro_sale_quote');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -351,13 +351,13 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request'),
+            $schema->getTable('oro_rfp_request'),
             ['request_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -369,13 +369,13 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_quote_address'),
+            $schema->getTable('oro_quote_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -383,21 +383,21 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_quote_prod_offer foreign keys.
+     * Add oro_sale_quote_prod_offer foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteProdOfferForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_prod_offer');
+        $table = $schema->getTable('oro_sale_quote_prod_offer');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_product'),
+            $schema->getTable('oro_sale_quote_product'),
             ['quote_product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -405,27 +405,27 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_quote_prod_request foreign keys.
+     * Add oro_sale_quote_prod_request foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_prod_request');
+        $table = $schema->getTable('oro_sale_quote_prod_request');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request_prod_item'),
+            $schema->getTable('oro_rfp_request_prod_item'),
             ['request_product_item_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_product'),
+            $schema->getTable('oro_sale_quote_product'),
             ['quote_product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -433,27 +433,27 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_quote_product foreign keys.
+     * Add oro_sale_quote_product foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteProductForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_product');
+        $table = $schema->getTable('oro_sale_quote_product');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_replacement_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote'),
+            $schema->getTable('oro_sale_quote'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -468,7 +468,7 @@ class OroSaleBundleInstaller implements
      */
     protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
     {
-        $noteExtension->addNoteAssociation($schema, 'orob2b_sale_quote');
+        $noteExtension->addNoteAssociation($schema, 'oro_sale_quote');
     }
 
     /**
@@ -481,7 +481,7 @@ class OroSaleBundleInstaller implements
     {
         $attachmentExtension->addAttachmentAssociation(
             $schema,
-            'orob2b_sale_quote',
+            'oro_sale_quote',
             [
                 'image/*',
                 'application/pdf',
@@ -506,26 +506,26 @@ class OroSaleBundleInstaller implements
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_sale_quote');
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_sale_quote', true);
+        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'oro_sale_quote');
+        $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
     }
 
     /**
-     * Add orob2b_quote_address foreign keys.
+     * Add oro_quote_address foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroQuoteAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_quote_address');
+        $table = $schema->getTable('oro_quote_address');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_address'),
+            $schema->getTable('oro_account_address'),
             ['account_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_address'),
+            $schema->getTable('oro_account_user_address'),
             ['account_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -552,9 +552,9 @@ class OroSaleBundleInstaller implements
         if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
             $this->extendExtension->addManyToOneRelation(
                 $schema,
-                'orob2b_checkout_source',
+                'oro_checkout_source',
                 'quoteDemand',
-                'orob2b_quote_demand',
+                'oro_quote_demand',
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
@@ -578,13 +578,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_quote_demand table
+     * Create oro_quote_demand table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteDemandTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_quote_demand');
+        $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
@@ -602,13 +602,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_quote_product_demand table
+     * Create oro_quote_product_demand table
      *
      * @param Schema $schema
      */
     protected function createOroSaleQuoteProductDemandTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_quote_product_demand');
+        $table = $schema->createTable('oro_quote_product_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_product_offer_id', 'integer', ['notnull' => false]);
@@ -617,21 +617,21 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_quote_product_demand foreign keys.
+     * Add oro_quote_product_demand foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteProductDemandForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_quote_product_demand');
+        $table = $schema->getTable('oro_quote_product_demand');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_quote_demand'),
+            $schema->getTable('oro_quote_demand'),
             ['quote_demand_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_prod_offer'),
+            $schema->getTable('oro_sale_quote_prod_offer'),
             ['quote_product_offer_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -639,15 +639,15 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_quote_demand foreign keys.
+     * Add oro_quote_demand foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_quote_demand');
+        $table = $schema->getTable('oro_quote_demand');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote'),
+            $schema->getTable('oro_sale_quote'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
- * @ORM\Table(name="orob2b_sale_quote_product")
+ * @ORM\Table(name="oro_sale_quote_product")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(
