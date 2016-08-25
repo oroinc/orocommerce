@@ -203,6 +203,14 @@ datagrid:
             updatedAt:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
+        filters:
+            columns:
+                sku:
+                    type:      string
+                    data_name: sku
+                name:
+                    type:      string
+                    data_name: name
         properties:
             id: ~
             name:

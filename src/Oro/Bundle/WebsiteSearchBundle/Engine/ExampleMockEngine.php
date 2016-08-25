@@ -39,10 +39,16 @@ class ExampleMockEngine implements EngineV2Interface
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
 
+        // this applies supported filter functionality to the results
+        // and emulates filtering.
+        $result = $this->applySKUFilter($result, $query->getCriteria());
+
         // order rows by ordering specified in query
         $result = $this->getOrderedData($query, $result);
 
-        return new Result($query, $result);
+        $count = count($result);
+
+        return new Result($query, $result, $count);
     }
 
     /**
@@ -237,6 +243,30 @@ class ExampleMockEngine implements EngineV2Interface
                 }
             }
             $result[] = $resultRowSet;
+        }
+
+        return $result;
+    }
+
+    /** @param $data
+    * @param $criteria
+    * @return array
+    */
+    private function applySKUFilter($data, Criteria $criteria)
+    {
+        $result = [];
+
+        if (!$criteria->getWhereExpression()) {
+            return $data;
+        }
+
+        $expression = $criteria->getWhereExpression();
+
+        foreach ($data as $row) {
+            $visitor = new ExampleExpressionVisitor($row);
+            if ($visitor->dispatch($expression)) {
+                $result[] = $row;
+            }
         }
 
         return $result;
