@@ -1,19 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
-use OroB2B\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
+use Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener;
 
 class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const CHECKOUT_WORKFLOW_STATE_CLASS = 'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState';
+    const CHECKOUT_WORKFLOW_STATE_CLASS = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState';
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -66,7 +65,7 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit_Framework_TestCa
             ->method('deleteEntityStates')
             ->with(
                 1,
-                'OroB2B\Bundle\CheckoutBundle\Entity\Checkout'
+                'Oro\Bundle\CheckoutBundle\Entity\Checkout'
             );
 
         $this->listener->preRemove($checkout);

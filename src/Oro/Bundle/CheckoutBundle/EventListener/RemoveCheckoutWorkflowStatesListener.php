@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 
 class RemoveCheckoutWorkflowStatesListener
 {
