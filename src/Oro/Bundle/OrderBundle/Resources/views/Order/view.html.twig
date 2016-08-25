@@ -1,0 +1,93 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_order_index'),
+        'indexLabel': 'oro.order.entity_plural_label'|trans,
+        'entityTitle': 'oro.order.navigation.view'|trans({
+            '%identifier%': entity.identifier|default('N/A'|trans)
+        })
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set orderInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'oro.order.widgets.order_information'|trans,
+            'url': path('orob2b_order_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [
+        {'data' : [
+            placeholder('view_general_section_before', {'entity':  entity}),
+            orderInformationWidget,
+            placeholder('view_general_section_after', {'entity':  entity})
+        ]}
+    ] %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.order.sections.general'|trans,
+            'class': 'active',
+            'priority': -200,
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% set orderTotals %}
+        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+            pageComponent: 'oroorder/js/app/components/totals-component',
+            options: {totals: totals}
+        } only %}
+    {% endset %}
+
+    {% set shippingInformation %}
+        {%- if entity.shippingMethod is not null -%}
+            {% if entity.shippingMethodType is not null %}
+                {% set methodType = ', ' ~ get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType) %}
+            {% else %}
+                {% set methodType = null %}
+            {% endif %}
+            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans,
+            get_shipping_method_label(entity.shippingMethod) ~ methodType) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+        {% if entity.shippingCost is not null %}
+            {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans,
+                    entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.order.sections.order_line_items'|trans,
+        'priority': -150,
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })], spanClass: 'order-line-items'}]
+    }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.order.sections.shipping_information'|trans,
+        'priority': -100,
+        'subblocks': [{'data' : [shippingInformation]}]
+    }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.order.sections.order_totals'|trans,
+        'priority': -50,
+        'subblocks': [{'data' : [orderTotals]}]
+    }]) %}
+
+    {% set id = 'order-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

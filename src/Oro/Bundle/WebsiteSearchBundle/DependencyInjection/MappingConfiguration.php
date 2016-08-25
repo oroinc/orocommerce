@@ -22,7 +22,7 @@ class MappingConfiguration implements ConfigurationInterface
     /**
      * Website search mapping configuration structure
      *
-     * @return TreeBuilder
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {

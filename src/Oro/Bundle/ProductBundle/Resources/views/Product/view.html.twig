@@ -1,0 +1,75 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_product_index'),
+        'indexLabel': 'oro.product.entity_plural_label'|trans,
+        'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if not entity.status %}
+            {# status not defined #}
+        {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
+        {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
+{% block content_data %}
+    {% set productInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_product_info', {id: entity.id})
+        }) }}
+    {% endset %}
+    {% set productDescription %}
+        {{ UI.renderHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription) }}
+    {% endset %}
+    {% set productShortDescription %}
+        {{ UI.renderHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.product.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [productInformationWidget]},
+                {'data' : [productDescription, productShortDescription]}
+            ]
+        }
+    ] %}
+
+    {% if entity.getHasVariants %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'oro.product.sections.productVariants'|trans,
+            'subblocks': [{
+                'title' : null,
+                'useSpan': false,
+                'data' : [
+                    dataGrid.renderGrid(
+                        'orob2b_product-product_variants-product_view',
+                        {'parentProduct': entity.id},
+                        { cssClass: 'inner-grid' }
+                    )
+                ]
+            }]
+        }] ) %}
+    {% endif %}
+
+    {% set id = 'product-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

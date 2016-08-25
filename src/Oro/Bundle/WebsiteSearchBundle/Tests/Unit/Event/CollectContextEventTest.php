@@ -6,9 +6,11 @@ use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 
 class CollectContextEventTest extends \PHPUnit_Framework_TestCase
 {
+
     public function testAddContextValue()
     {
-        $event = new CollectContextEvent();
+        $context['website_id'] = 1;
+        $event = new CollectContextEvent($context);
         $stdClass = new \stdClass();
         $array = ['key' => 'value'];
 
@@ -20,6 +22,7 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'some_string_name' => 'some_string_value',
             'some_integer_name' => 1,
+            'website_id' => 1,
             'some_object_name' => $stdClass,
             'some_array_name' => $array
         ], $event->getContext());
@@ -48,7 +51,8 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddContextValueWhenNameIsNotString($name)
     {
-        $event = new CollectContextEvent();
+        $context['website_id'] = 1;
+        $event = new CollectContextEvent($context);
         $event->addContextValue($name, 'some value');
     }
 
@@ -59,7 +63,8 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddContextValueWhenNameIsEmptyString()
     {
-        $event = new CollectContextEvent();
+        $context['website_id'] = 1;
+        $event = new CollectContextEvent($context);
         $event->addContextValue('', 'some_value');
     }
 }

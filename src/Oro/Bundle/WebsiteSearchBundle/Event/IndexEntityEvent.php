@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Oro\Bundle\SearchBundle\Query\Query;
-
 use Symfony\Component\EventDispatcher\Event;
+
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class IndexEntityEvent extends Event
 {
+    const NAME = 'oro_website_search.event.index_entity';
+    
     /**
      * @var array
      */
@@ -21,7 +23,7 @@ class IndexEntityEvent extends Event
     /**
      * @var string
      */
-    private $entityName;
+    private $entityClass;
 
     /**
      * @var array
@@ -39,23 +41,23 @@ class IndexEntityEvent extends Event
     private $entitiesData = [];
 
     /**
-     * @param string $entityName
+     * @param string $entityClass
      * @param array $entityIds
      * @param array $context
      */
-    public function __construct($entityName, array $entityIds, array $context)
+    public function __construct($entityClass, array $entityIds, array $context)
     {
         $this->context = $context;
         $this->entityIds = array_combine($entityIds, $entityIds);
-        $this->entityName = $entityName;
+        $this->entityClass = $entityClass;
     }
 
     /**
      * @return string
      */
-    public function getEntityName()
+    public function getEntityClass()
     {
-        return $this->entityName;
+        return $this->entityClass;
     }
 
     /**
@@ -63,6 +65,7 @@ class IndexEntityEvent extends Event
      */
     public function getEntityIds()
     {
+        // @todo: check performance and optimize it
         return array_values($this->entityIds);
     }
 

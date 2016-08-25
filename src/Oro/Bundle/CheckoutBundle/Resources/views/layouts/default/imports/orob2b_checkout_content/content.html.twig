@@ -1,0 +1,212 @@
+{% block __orob2b_checkout_content__checkout_content_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
+    <h1 class="page-title page-title--decreased">{{ 'oro.checkout.entity_label'|trans }}</h1>
+    <div {{ block('block_attributes') }}
+            data-role="checkout-content"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orocheckout/js/app/views/checkout-content-view',
+            }|json_encode }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_information_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout"}) %}
+    <div{{ block('block_attributes') }}>
+        <div class="checkout__head">
+            <h2 class="checkout__title">
+                <span class="badge badge_md badge_circle badge_orange">{{ stepOrder }}</span>
+                {{ workflowStep.label }}
+            </h2>
+        </div>
+        <div class="checkout__body">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_form_widget -%}
+    {% if form %}
+        {{ form_errors(form) }}
+        {{ form_start(form, {
+            'method': 'post',
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
+            'attr' : {
+                'class': 'checkout__form',
+                'data-nohash': 'true',
+                'id': form.vars.id
+            }})
+        }}
+        <div class="hidden">
+            {{ form_widget(form._token) }}
+        </div>
+        {{ block_widget(block) }}
+        </form>
+        {{ oro_form_js_validation(form) }}
+    {% else %}
+        <form method="post" class="checkout__form" action="">
+            {{ block_widget(block) }}
+        </form>
+    {% endif %}
+{%- endblock %}
+
+{% block __orob2b_checkout_content__checkout_order_summary_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
+    <div{{ block('block_attributes') }}>
+        <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
+             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+             data-page-component-options="{{ {
+                 widgetModule: 'orofrontend/default/js/widgets/collapse-widget',
+                 animationSpeed: 0
+             }|json_encode() }}"
+        >
+            <div class="checkout-order-summary__header">
+                <div data-collapse-trigger>
+                    <div class="checkout-order-summary__header__icon-group">
+                        <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
+                          <i class="cf-basket"></i>
+                        </span>
+                        <span class="collapse-view__trigger">
+                            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+                        </span>
+                    </div>
+                    <h3 class="checkout-order-summary__header__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
+                    <div class="checkout-order-summary__header__desc">
+                        <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
+                        <span>{{ 'oro.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
+                    </div>
+                </div>
+                {% set editLink = workflowItem.data.get('edit_order_link') %}
+                {% if editLink %}
+                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
+                        <i class="cf-pencil"></i>
+                        {{ 'oro.checkout.order_summary.edit_order'|trans }}
+                    </a>
+                {% endif %}
+            </div>
+            <div class="collapse-view__container" data-collapse-container>
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_order_summary_table_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__tab__content"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_order_summary_line_items_widget %}
+    <table class="oro-grid-table table-scrollable" 
+           data-page-component-module="oroui/js/app/components/view-component" 
+           data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
+        <thead class="hidden-xs">
+        <tr data-scrollable-content-head>
+            <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
+            <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+            <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td colspan="3">
+                <div data-scrollable-content class="scrollable-content">
+                    <table data-scrollable-inner-content class="scrollable-content__table">
+                        {% for lineItem in lineItemsWithTotals %}
+                            {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
+                            {% set productSku = lineItem.productSku %}
+                            {% if lineItem.product is not null %}
+                                {% set productSku = lineItem.product.sku %}
+                            {% endif %}
+                            <tr data-scrollable-content-body>
+                                <td class="va-t_md">
+                                    <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                        {% if lineItem.product is not null %}
+                                            <a href="{{ path('orob2b_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
+                                        {% else %}
+                                            {{ lineItem.freeFormProduct }}
+                                        {% endif %}
+                                    </h3>
+                                    <div>{{ 'oro.checkout.order_summary.item'|trans }} #: <span
+                                                class="red">{{ productSku }}</span></div>
+                                </td>
+                                {% set quantity = lineItem.quantity %}
+                                <td class="text-center va-t_md">{{ quantity ? quantity|orob2b_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="va-t_md text-right">
+                                    <div class="checkout-order-summary__price-table">
+                                        <table class="table">
+                                            <tbody>
+                                            <tr>
+                                                <td>{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
+                                                <td data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
+                                                </td>
+                                                <td data-scrollable-item-has-offset>
+                                                    <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            {% set editLink = workflowItem.data.get('edit_order_link') %}
+            {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
+            {% if hasEditList %}
+                <td class="va-t_md hidden-xs">
+                    <a href="{{ editLink }}">
+                        <i class="cf-pencil"></i>
+                        {{ 'oro.checkout.order_summary.edit_order'|trans }}
+                    </a>
+                </td>
+            {% endif %}
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_order_summary_totals_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " order-checkout-widget__container-wrapper checkout-total-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{%- endblock %}
+
+{% block __orob2b_checkout_content__checkout_button_continue_widget -%}
+    {% if transitionData is defined and transitionData %}
+        <fieldset class="checkout__form__row">
+            <fieldset class="checkout__form__row">
+                <div class="create-account__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
+                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+                </div>
+            </fieldset>
+            <div class="create-account__form__col form__col_x12">
+                {{ block_widget(block) }}
+            </div>
+        </fieldset>
+    {% endif %}
+{% endblock %}
+
+{% block __orob2b_checkout_content__checkout_button_back_widget -%}
+    <div class="checkout__form__back">
+        {{ block_widget(block) }}
+    </div>
+{%- endblock %}

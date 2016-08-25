@@ -1,0 +1,47 @@
+method: getTax
+reference: order_line_item_1
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
+            billingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+            shippingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 6 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 6 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
+expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
+    row:
+        includingTax: '105.53' # 17.589 * 6 = 105.534 (105.54 if count bi items)
+        excludingTax: '95.94'  # 15.99 * 6
+        taxAmount: '9.59'      # 1.599 * 6 = 9.594
+        adjustment: '0.004'    # -0.001 * 6
+        currency: 'USD'
+    unit:
+        includingTax: '17.59'  # 15.99 + 1.599 = 17.589
+        excludingTax: '15.99'
+        taxAmount: '1.6'       # 15.99 * 0.1 = 1.599
+        adjustment: '-0.001'   # 1.599 - 1.6
+        currency: 'USD'
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '95.94', taxAmount: '9.59', currency: 'USD' }

@@ -17,8 +17,6 @@ class ResourcesHashProvider
             $modificationTimes[] = $resource->path.filemtime($resource->path);
         }
 
-        sort($modificationTimes);
-
         return md5(implode('_', $modificationTimes));
     }
 }

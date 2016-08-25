@@ -45,7 +45,7 @@ class ConfigurationCacheProvider
     /**
      * @param CacheProvider $cacheProvider
      * @param ConfigurationLoaderInterface $configurationProvider
-     * @param ResourcesHashProvider $hashProvider,
+     * @param ResourcesHashProvider $hashProvider
      * @param bool $debug
      */
     public function __construct(
@@ -100,14 +100,31 @@ class ConfigurationCacheProvider
             if ($this->isFresh()) {
                 $this->configuration = unserialize($this->cacheProvider->fetch(self::CACHE_KEY_CONFIGURATION));
             } else {
-                $this->configuration = $this->configurationProvider->getConfiguration();
-                $this->cacheProvider->saveMultiple([
-                    self::CACHE_KEY_HASH => $this->hashProvider->getHash($this->getResources()),
-                    self::CACHE_KEY_CONFIGURATION => serialize($this->configuration),
-                ]);
+                $this->generateCache();
             }
         }
 
         return $this->configuration;
+    }
+
+    protected function generateCache()
+    {
+        $this->configuration = $this->configurationProvider->getConfiguration();
+
+        $this->cacheProvider->saveMultiple([
+            self::CACHE_KEY_HASH => $this->hashProvider->getHash($this->getResources()),
+            self::CACHE_KEY_CONFIGURATION => serialize($this->configuration),
+        ]);
+    }
+
+    public function clearCache()
+    {
+        $this->cacheProvider->deleteAll();
+    }
+
+    public function warmUpCache()
+    {
+        $this->clearCache();
+        $this->generateCache();
     }
 }

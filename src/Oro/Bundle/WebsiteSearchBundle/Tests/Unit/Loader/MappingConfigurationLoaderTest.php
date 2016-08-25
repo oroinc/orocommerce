@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
-use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
@@ -17,7 +16,7 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var MappingConfigurationLoader
      */
-    protected $provider;
+    protected $loader;
 
     protected function setUp()
     {
@@ -33,14 +32,22 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
                 $customBundle->getName() => get_class($customBundle)
             ]);
 
-        $this->provider = new MappingConfigurationLoader();
+        $this->loader = new MappingConfigurationLoader();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->loader);
     }
 
     public function testGetResources()
     {
-        $resourcesPaths = array_map(function (CumulativeResourceInfo $resource) {
-            return $resource->path;
-        }, $this->provider->getResources());
+        $resources = $this->loader->getResources();
+        $resourcesPaths = [
+            $resources[0]->path,
+            $resources[1]->path,
+            $resources[2]->path
+        ];
 
         $expectedResources = [
             $this->getBundleConfigResourcePath('TestPageBundle', 'website_search.yml'),
@@ -82,6 +89,6 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $this->assertEquals($expectedConfiguration, $this->provider->getConfiguration());
+        $this->assertEquals($expectedConfiguration, $this->loader->getConfiguration());
     }
 }

@@ -1,7 +1,88 @@
 parameters:
+    oro_website_search.cache.configuration_cache_clearer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheClearer
+    oro_website_search.cache.configuration_cache_warmer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheWarmer
+    oro_website_search.loader.mapping_configuration_loader.class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader
+    oro_website_search.provider.configuration_cache_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider
+    oro_website_search.provider.resources_hash_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider
     oro_website_search.provider.search_mapping.class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
 
 services:
+    oro_website_search.resolver.query_placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
+        public: false
+        arguments:
+            - '@oro_website_search.placeholder.registry'
+
+    oro_website_search.search.engine:
+        abstract: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_website_search.resolver.query_placeholder'
+
+    oro_website_search.search.indexer:
+        abstract: true
+
+    oro_website_search.orm.engine:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
+        parent: oro_website_search.search.engine
+        calls:
+            - [setDoctrine, ['@doctrine']]
+
+    oro_website_search.placeholder.registry:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
+        calls:
+            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
+            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
+
+    oro_website_search.website_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
+        arguments:
+            - '@orob2b_website.manager'
+
+    oro_website_search.localization_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+
+    oro_website_search.loader.mapping_configuration_loader:
+        public: false
+        class: '%oro_website_search.loader.mapping_configuration_loader.class%'
+
+    oro_website_search.mapping_configuration.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
+
+    oro_website_search.provider.resources_hash_provider:
+        public: false
+        class: '%oro_website_search.provider.resources_hash_provider.class%'
+
+    oro_website_search.provider.configuration_cache_provider:
+        public: false
+        class: '%oro_website_search.provider.configuration_cache_provider.class%'
+        arguments:
+            - '@oro_website_search.mapping_configuration.cache'
+            - '@oro_website_search.loader.mapping_configuration_loader'
+            - '@oro_website_search.provider.resources_hash_provider'
+            - '%kernel.debug%'
+
+    oro_website_search.cache.configuration_cache_clearer:
+        public: false
+        class: '%oro_website_search.cache.configuration_cache_clearer.class%'
+        arguments:
+            - '@oro_website_search.provider.configuration_cache_provider'
+        tags:
+            - { name: kernel.cache_clearer }
+
+    oro_website_search.cache.configuration_cache_warmer:
+        public: false
+        class: '%oro_website_search.cache.configuration_cache_warmer.class%'
+        arguments:
+            - '@oro_website_search.provider.configuration_cache_provider'
+        tags:
+            - { name: kernel.cache_warmer }
+
     oro_search.event_listener.orm.fulltext_index_listener:
         class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
         arguments:

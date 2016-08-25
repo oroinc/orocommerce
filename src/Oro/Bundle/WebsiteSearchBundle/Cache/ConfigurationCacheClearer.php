@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
-
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
+
+use Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider;
 
 class ConfigurationCacheClearer implements CacheClearerInterface
 {
     /**
-     * @var CacheProvider
+     * @var ConfigurationCacheProvider
      */
-    protected $cacheProvider;
+    protected $provider;
 
     /**
-     * @param CacheProvider $cacheProvider
+     * @param ConfigurationCacheProvider $provider
      */
-    public function __construct(CacheProvider $cacheProvider)
+    public function __construct(ConfigurationCacheProvider $provider)
     {
-        $this->cacheProvider = $cacheProvider;
+        $this->provider = $provider;
     }
 
     /**
@@ -26,6 +26,6 @@ class ConfigurationCacheClearer implements CacheClearerInterface
      */
     public function clear($cacheDir)
     {
-        $this->cacheProvider->deleteAll();
+        $this->provider->clearCache();
     }
 }
