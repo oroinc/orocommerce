@@ -1,0 +1,13 @@
+Oro\Bundle\WebsiteBundle\Entity\Website:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 2
+                max: 255
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
