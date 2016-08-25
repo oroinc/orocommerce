@@ -57,6 +57,11 @@ oro_system_configuration:
                     noSaleReps: oro.rfp.system_configuration.fields.notification.account.if_no_sales_reps_assigned
                 constraints:
                     - NotBlank: ~
+        oro_b2b_rfp.feature_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.rfp.system_configuration.fields.feature_enabled.label
 
     tree:
         system_configuration:
@@ -69,6 +74,7 @@ oro_system_configuration:
                                 children:
                                     rfp_requeststatus_settings:
                                         children:
+                                            - oro_b2b_rfp.feature_enabled
                                             - oro_b2b_rfp.default_request_status
                                     notifications:
                                         children:

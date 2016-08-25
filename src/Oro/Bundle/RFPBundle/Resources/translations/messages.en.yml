@@ -90,6 +90,7 @@ oro:
                 requeststatus.title: 'RFQ Status'
                 notifications.title: 'Notifications'
             fields:
+                feature_enabled.label: 'Enable RFQ'
                 requeststatus_default.title: 'Default RFQ Status'
                 backend_product_visibility.title: 'Can Be Added to RFQs'
                 frontend_product_visibility.title: 'Can Be Added to RFQs'
@@ -155,6 +156,9 @@ oro:
                         add: 'Add Line'
                     notes: 'Notes'
                     add: 'Add Product'
+        feature:
+            label: 'Request For Quote'
+            description: 'Request For Quote allows users to place Requests for chosen products'
 
     frontend:
         rfp:
