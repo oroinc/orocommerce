@@ -607,20 +607,20 @@ workflows:
                             parameters:
                                 entity: $checkout
                 conditions:
-                    '@shipping_method_supports':
-                        message: oro.checkout.workflow.condition.shipping_method_supports.message
-                        parameters:
-                            entity: $checkout
-                            shipping_rule_config: $shipping_rule_config
-                conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                    '@and':
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
+                        - '@shipping_method_supports':
+                            message: oro.checkout.workflow.condition.shipping_method_supports.message
                             parameters:
                                 entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                                shipping_rule_config: $shipping_rule_config
                 actions:
                     - '@call_service_method':
                         service: orob2b_checkout.shipping_cost.calculator
