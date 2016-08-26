@@ -1,0 +1,64 @@
+Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+        rate:
+            - NotBlank: ~
+            - Range:
+                min: 0
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    properties:
+        tax:
+            - NotBlank: ~
+        productTaxCode:
+            - NotBlank: ~
+        accountTaxCode:
+            - NotBlank: ~
+        taxJurisdiction:
+            - NotBlank: ~
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+        zipCodes:
+            - Valid: ~
+        country:
+            - NotBlank: ~
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+    constraints:
+        - Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields: ~
+    properties:
+        zipCode:
+            - Length:
+                  max: 255
+        zipRangeStart:
+            - Length:
+                  max: 255
+        zipRangeEnd:
+            - Length:
+                  max: 255

@@ -1,0 +1,3 @@
+css:
+    'oroinvoice':
+        - 'bundles/oroinvoice/css/style.css'

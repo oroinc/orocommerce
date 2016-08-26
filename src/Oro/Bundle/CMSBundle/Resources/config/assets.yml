@@ -1,0 +1,4 @@
+css:
+    'orocms':
+        - 'bundles/orocms/css/less/pages.less'
+        - 'bundles/orocms/css/less/loginPage.less'

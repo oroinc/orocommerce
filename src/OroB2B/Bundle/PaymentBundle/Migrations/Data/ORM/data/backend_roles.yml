@@ -1,3 +1,0 @@
-ROLE_SALES_MANAGER:
-    permissions:
-        entity|OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm: [VIEW_SYSTEM]

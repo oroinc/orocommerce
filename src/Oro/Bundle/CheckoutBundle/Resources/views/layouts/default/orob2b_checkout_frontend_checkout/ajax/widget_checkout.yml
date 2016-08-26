@@ -1,0 +1,31 @@
+layout:
+    actions:
+        - '@addTree':
+            items:
+                head:
+                    blockType: head
+                title:
+                    blockType: title
+                    options:
+                        separator: ' - '
+                        reverse: true
+                        value:
+                            - 'oro.checkout.entity_label'
+                            -
+                                label: 'oro.checkout.title.step.label'
+                                parameters:
+                                    '%step_label%': '=data["workflowStep"].getLabel()'
+                body:
+                    blockType: body
+            tree:
+                root:
+                    head:
+                        title: ~
+                    body: ~
+    imports:
+        -
+            id: orob2b_checkout_content
+            root: body
+        -
+            id: orob2b_checkout_sidebar
+            root: body

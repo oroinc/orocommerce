@@ -9,10 +9,9 @@ use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class PayflowGatewayView implements PaymentMethodViewInterface
 {

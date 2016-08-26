@@ -1,0 +1,20 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="row-fluid form-horizontal">
+    <div class="responsive-block">
+        {% if accountGroupPaymentTerm %}
+            {% if is_granted('VIEW', accountGroupPaymentTerm) %}
+                {% set accountGroupPaymentTermData %}
+                    <a href="{{ path('orob2b_payment_term_view', {id: accountGroupPaymentTerm.id}) }}">
+                        {{ accountGroupPaymentTerm.label }}
+                    </a>
+                {% endset %}
+                {{ UI.renderHtmlProperty('oro.payment.paymentterm.entity_label'|trans, 'oro.payment.account.payment_term_defined_in_group'|trans({'%payment_term%': accountGroupPaymentTermData})) }}
+            {% else %}
+                {{ UI.renderProperty('oro.payment.paymentterm.entity_label'|trans, 'oro.payment.account.payment_term_defined_in_group'|trans({'%payment_term%': accountGroupPaymentTerm.label})) }}
+            {% endif %}
+        {%  else %}
+            {{ UI.renderHtmlProperty('oro.payment.paymentterm.entity_label'|trans, 'oro.payment.account.payment_term_non_defined_in_group'|trans) }}
+        {% endif %}
+    </div>
+</div>

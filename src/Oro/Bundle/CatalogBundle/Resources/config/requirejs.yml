@@ -1,0 +1,5 @@
+config:
+    paths:
+        'orocatalog/js/app/components/tree-form-type-component': 'bundles/orocatalog/js/app/components/tree-form-type-component.js'
+        'orocatalog/js/app/components/tree-manage-component': 'bundles/orocatalog/js/app/components/tree-manage-component.js'
+        'orocatalog/js/app/views/category-unit-limitations-view': 'orocatalog/js/app/views/category-unit-limitations-view.js'
