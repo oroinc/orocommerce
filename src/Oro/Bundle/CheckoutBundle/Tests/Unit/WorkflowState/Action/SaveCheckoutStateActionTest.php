@@ -141,7 +141,6 @@ class SaveCheckoutStateActionTest extends \PHPUnit_Framework_TestCase
     {
         $options = [
             'entity' => new \stdClass(),
-
         ];
 
         $this->action->initialize($options);

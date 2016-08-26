@@ -33,7 +33,6 @@ class CheckCheckoutStatesTest extends \PHPUnit_Framework_TestCase
             'entity' => new \stdClass(),
             'state1' => ['state1'],
             'state2' => ['state2'],
-
         ];
 
         $this->assertInstanceOf(
@@ -50,7 +49,6 @@ class CheckCheckoutStatesTest extends \PHPUnit_Framework_TestCase
     {
         $options = [
             'entity' => new \stdClass(),
-
         ];
 
         $this->condition->initialize($options);
@@ -65,7 +63,6 @@ class CheckCheckoutStatesTest extends \PHPUnit_Framework_TestCase
         $options = [
             'entity' => new \stdClass(),
             'state1' => ['state1'],
-
         ];
 
         $this->condition->initialize($options);
