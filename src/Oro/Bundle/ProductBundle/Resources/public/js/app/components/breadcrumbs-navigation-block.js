@@ -23,6 +23,9 @@ define(function(require) {
             BreadcrumbsNavigationBlock.__super__.initialize.apply(this, arguments);
         },
 
+        /**
+         * {@inheritDoc}
+         */
         dispose: function() {
             if (this.disposed) {
                 return;
@@ -31,6 +34,12 @@ define(function(require) {
             BreadcrumbsNavigationBlock.__super__.dispose.call(this);
         },
 
+        /**
+         * Updates the components inner content,
+         * presenting categories path current filters state.
+         *
+         * @param {object} datagrid
+         */
         updateFiltersInfo: function(datagrid) {
             console.log(datagrid);
             
