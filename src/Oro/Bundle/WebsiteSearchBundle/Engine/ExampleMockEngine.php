@@ -48,6 +48,9 @@ class ExampleMockEngine implements EngineV2Interface
 
         $count = count($result);
 
+        // support pagination
+        $result = $this->getPaginatedData($query, $result);
+
         return new Result($query, $result, $count);
     }
 
@@ -291,21 +294,45 @@ class ExampleMockEngine implements EngineV2Interface
      * @param array $data
      * @return array
      */
-    private function getOrderedData(Query $query, array $data) {
-        foreach($query->getCriteria()->getOrderings() as $field => $sort) {
+    private function getOrderedData(Query $query, array $data)
+    {
+        foreach ($query->getCriteria()->getOrderings() as $field => $sort) {
             list($type, $key) = Criteria::explodeFieldTypeName($field);
 
-            usort($data, function($a, $b) use ($key, $sort) {
-                if ($sort === SearchSorterExtension::DIRECTION_DESC) {
-                    $result = strcmp($b[$key], $a[$key]);
-                } else {
-                    $result = strcmp($a[$key], $b[$key]);
+            usort(
+                $data,
+                function ($a, $b) use ($key, $sort) {
+                    if ($sort === SearchSorterExtension::DIRECTION_DESC) {
+                        $result = strcmp($b[$key], $a[$key]);
+                    } else {
+                        $result = strcmp($a[$key], $b[$key]);
+                    }
+                    return $result;
                 }
-                return $result;
-
-            });
+            );
         }
 
         return $data;
+    }
+
+    /**
+     * @param Query $query
+     * @param       $result
+     * @return array
+     */
+    private function getPaginatedData(Query $query, $result)
+    {
+        $criteria = $query->getCriteria();
+
+        $offset = $criteria->getFirstResult();
+        $limit = $criteria->getMaxResults();
+
+        if (empty($result)) {
+            return $result;
+        }
+
+        $result = array_slice($result, $offset, $limit);
+
+        return $result;
     }
 }
