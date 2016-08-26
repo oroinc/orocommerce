@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -17,6 +18,27 @@ use Oro\Bundle\SearchBundle\Query\Result;
 class ExampleMockEngine implements EngineV2Interface
 {
     /**
+     * Placeholder in column names that has to be replaced by language code of current localization
+     *
+     * @var string
+     */
+    private static $localizationIdPlaceholder = 'LOCALIZATION_ID';
+
+    /**
+     * @var CurrentLocalizationProvider
+     */
+    private $currentLocalizationProvider;
+
+    /**
+     * @param CurrentLocalizationProvider $currentLocalizationProvider
+     */
+    public function __construct(CurrentLocalizationProvider $currentLocalizationProvider)
+    {
+        $this->currentLocalizationProvider = $currentLocalizationProvider;
+    }
+
+
+    /**
      * @param Query $query
      * @param array $context
      * @return Result
@@ -31,6 +53,9 @@ class ExampleMockEngine implements EngineV2Interface
         // the fields (columns) that have been explicitely "selected",
         // using the new Query addSelect() feature.
         $selectedColumns = $query->getSelect();
+
+        // resolve LOCALIZATION_ID references
+        $selectedColumns = $this->resolveLocalizationIds($selectedColumns);
 
         // let's get the keys that we want to have in results
         $selectedColumns = $this->getFieldsToBeSelected($selectedColumns);
@@ -61,6 +86,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 1,
                 'sku'              => '01C82',
                 'name'             => 'Canon 5D EOS',
+                'name_en'          => 'Canon 5D EOS',
                 'shortDescription' => 'Small description of another good product from our shop.',
                 'minimum_price'    => '1299.00',
                 'product_units'    => [
@@ -76,6 +102,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 2,
                 'sku'              => '6VC22',
                 'name'             => 'Bluetooth Barcode Scanner',
+                'name_en'          => '',
                 'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission...',
                 'minimum_price'    => '340.00',
                 'product_units'    => [
@@ -91,6 +118,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 3,
                 'sku'              => '5GE27',
                 'name'             => 'Pricing Labeler',
+                'name_en'          => '',
                 'shortDescription' => 'This pricing labeler is easy to use and comes with...',
                 'minimum_price'    => '165.00',
                 'product_units'    => [
@@ -106,6 +134,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 4,
                 'sku'              => '9GQ28',
                 'name'             => 'NFC Credit Card Reader',
+                'name_en'          => '',
                 'shortDescription' => 'This NFC credit card reader accepts PIN-based...',
                 'minimum_price'    => '240.00',
                 'product_units'    => [
@@ -121,6 +150,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 5,
                 'sku'              => '8BC37',
                 'name'             => 'Colorful Floral Women’s Scrub Top',
+                'name_en'          => '',
                 'shortDescription' => 'This bright, colorful women’s scrub top is not only...',
                 'minimum_price'    => '14.95',
                 'product_units'    => [
@@ -136,6 +166,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 6,
                 'sku'              => '5TJ23',
                 'name'             => '17-inch POS Touch Screen Monitor with Card Reader',
+                'name_en'          => '',
                 'shortDescription' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
                 'minimum_price'    => '290.00',
                 'product_units'    => [
@@ -151,6 +182,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 7,
                 'sku'              => '4PJ19',
                 'name'             => 'Handheld Laser Barcode Scanner',
+                'name_en'          => '',
                 'shortDescription' => 'This lightweight laser handheld barcode scanner offers high performace...',
                 'minimum_price'    => '190.00',
                 'product_units'    => [
@@ -166,6 +198,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 8,
                 'sku'              => '7NQ22',
                 'name'             => 'Storage Combination with Doors',
+                'name_en'          => '',
                 'shortDescription' => 'Store and display your favorite items with this storage-display cabinet.',
                 'minimum_price'    => '789.99',
                 'product_units'    => [
@@ -181,6 +214,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 9,
                 'sku'              => '5GF68',
                 'name'             => '300-Watt Floodlight',
+                'name_en'          => '',
                 'shortDescription' => 'This 300-watt flood light provides bright and focused illumination.',
                 'minimum_price'    => '35.99',
                 'product_units'    => [
@@ -196,6 +230,7 @@ class ExampleMockEngine implements EngineV2Interface
                 'id'               => 10,
                 'sku'              => '8DO33',
                 'name'             => 'Receipt Printer',
+                'name_en'          => '',
                 'shortDescription' => 'This receipt printer uses a ribbon to transfer ink to paper',
                 'minimum_price'    => '240.00',
                 'product_units'    => [
@@ -294,5 +329,20 @@ class ExampleMockEngine implements EngineV2Interface
         }
 
         return $data;
+    }
+
+    /**
+     * @param array $fields
+     * @return array
+     */
+    private function resolveLocalizationIds(array $fields) {
+        $currentLocalization = $this->currentLocalizationProvider->getCurrentLocalization();
+        $languageCode = $currentLocalization->getLanguageCode();
+
+        foreach($fields as &$field) {
+            $field = str_replace(self::$localizationIdPlaceholder, $languageCode, $field);
+        }
+
+        return $fields;
     }
 }
