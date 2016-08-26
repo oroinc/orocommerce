@@ -206,6 +206,20 @@ class ExampleMockEngine implements EngineV2Interface
                 ],
                 'image'            => null
             ],
+            [
+                'id'               => 10,
+                'sku'              => 'SDSDUNC-064G-AN6IN',
+                'name'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
+                'shortDescription' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
+                'minimum_price'    => '250.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '250.00'
+                ],
+                'image'            => 'https://images-na.ssl-images-amazon.com/images/I/51pvrWJX2sL.jpg'
+            ],
         ];
     }
 
