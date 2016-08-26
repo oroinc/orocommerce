@@ -27,16 +27,11 @@ class PaymentContextProvider
     }
 
     /**
-     * @param mixed $context
      * @param mixed $entity
      * @return array
      */
-    public function processContext($context, $entity)
+    public function processContext($entity)
     {
-        if (!$context) {
-            return [];
-        }
-
         if (!$entity) {
             return [];
         }
