@@ -1,23 +1,23 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Layout\Block\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Layout\Block\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\WebsiteSearchBundle\Layout\Block\Type\SearchResultsNavigationBlockType;
+use Oro\Bundle\ProductBundle\Layout\Block\Type\BreadcrumbsNavigationBlockType;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
-class SearchResultsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
+class BreadcrumbsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SearchResultsNavigationBlockType
+     * @var BreadcrumbsNavigationBlockType
      */
     private $blockType;
 
     public function setUp()
     {
-        $this->blockType = new SearchResultsNavigationBlockType();
+        $this->blockType = new BreadcrumbsNavigationBlockType();
     }
 
     /**
@@ -48,6 +48,6 @@ class SearchResultsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('website_search_product_grid_navigation', $this->blockType->getName());
+        $this->assertEquals('product_search_navigation', $this->blockType->getName());
     }
 }
