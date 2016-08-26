@@ -56,7 +56,7 @@
     }|merge(attr)|merge({
         class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
     }) %}
-    {% set label_attr = label_attr|merge({
+    {% set label_attr = label_attr|merge({for: 'userNameSignIn',
         class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
@@ -76,7 +76,7 @@
     }|merge(attr)|merge({
         class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
     }) %}
-    {% set label_attr = label_attr|merge({
+    {% set label_attr = label_attr|merge({for: 'passwordSignIn',
         class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
