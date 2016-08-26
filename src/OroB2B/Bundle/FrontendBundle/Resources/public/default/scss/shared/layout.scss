@@ -62,33 +62,6 @@
   }
 }
 
-.page-title {
-  margin: 0 0 1.5rem;
-
-  font-size: 23px;
-  line-height: 1.1;
-  font-weight: 400;
-
-
-  @media (max-width: $screen-sm) {
-    margin: 0 0 5px;
-  }
-
-  &--decreased {
-    margin: 0 0 15px;
-
-    font-size: 22px;
-
-    @media (max-width: $screen-md) {
-      margin: 0 0 10px;
-    }
-
-    @media (max-width: $screen-sm) {
-      margin: 0 0 5px;
-    }
-  }
-}
-
 .cart__promo {
   text-align: right;
 

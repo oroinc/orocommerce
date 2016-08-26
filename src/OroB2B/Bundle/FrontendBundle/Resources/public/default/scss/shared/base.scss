@@ -1,21 +1,4 @@
-body {
-  @media (max-width: $screen-md) {
-    &.sales-mode {
-      overflow-x: hidden; 
-    }
-  }
-
-  &.loading {
-    height: 100%;
-
-    .loader-mask {
-      position: fixed;
-    }
-  }
-}
-
 .wrapper {
-  
   &.sales-mode {
     padding-top: 11px;
 

@@ -24,9 +24,9 @@
         '~class': ' page-title'
     }) %}
 
-    <h2 {{ block('block_attributes') }}>
+    <h1 {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </h2>
+    </h1>
 {% endblock %}
 
 {% block _login_form_notifications_widget %}
@@ -41,7 +41,7 @@
 
 {% block _login_form_remenber_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-m'
+        '~class': ' grid__row'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -62,7 +62,7 @@
 
 {% block _login_form_forgot_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-m'
+        '~class': ' grid__row'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -92,7 +92,7 @@
         class: label_attr.class|default('') ~ " label"
     }) %}
 
-    <div class="grid__row grid__row--offset-m">
+    <div class="grid__row">
         {{ block_row(block, {
             attr: attr,
             label_attr: label_attr
@@ -112,7 +112,7 @@
         class: label_attr.class|default('') ~ " label"
     }) %}
 
-    <div class="grid__row grid__row--offset-m">
+    <div class="grid__row">
         {{ block_row(block, {
             attr: attr,
             label_attr: label_attr
