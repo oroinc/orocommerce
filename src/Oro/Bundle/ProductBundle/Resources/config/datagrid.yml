@@ -228,6 +228,9 @@ datagrid:
                 name:
                     type:      text
                     data_name: name
+        options:
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
 
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Layout\Block\Type;
+namespace Oro\Bundle\ProductBundle\Layout\Block\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -8,7 +8,7 @@ use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
-class SearchResultsNavigationBlockType extends AbstractType
+class BreadcrumbsNavigationBlockType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -19,6 +19,7 @@ class SearchResultsNavigationBlockType extends AbstractType
 
         $parentCategories = $this->getParentCategories($currentCategory);
 
+        $view->vars['currentCategory'] = $currentCategory;
         $view->vars['parentCategories'] = $parentCategories;
     }
 
@@ -37,7 +38,7 @@ class SearchResultsNavigationBlockType extends AbstractType
      */
     public function getName()
     {
-        return 'website_search_product_grid_navigation';
+        return 'product_search_navigation';
     }
 
     /**

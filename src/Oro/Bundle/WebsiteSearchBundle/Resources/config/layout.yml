@@ -1,5 +1,0 @@
-services:
-    oro_website_search.layout.block_type.navigation:
-        class: Oro\Bundle\WebsiteSearchBundle\Layout\Block\Type\SearchResultsNavigationBlockType
-        tags:
-            - { name: layout.block_type, alias: website_search_product_grid_navigation }
