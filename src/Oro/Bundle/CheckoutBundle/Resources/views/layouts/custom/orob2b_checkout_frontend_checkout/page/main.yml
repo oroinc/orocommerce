@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCheckoutBundle:layouts:custom/orob2b_checkout_frontend_checkout/templates/main.html.twig'
+        - '@add':
+            id: checkout_container
+            blockType: container
+            parentId: content
+            siblingId: checkout_sidebar
+        - '@move':
+            id: checkout_content
+            parentId: checkout_container
+            prepend: true

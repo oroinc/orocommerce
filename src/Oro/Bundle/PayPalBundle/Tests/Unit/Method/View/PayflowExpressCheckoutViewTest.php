@@ -5,8 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView;
-
-use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
 {

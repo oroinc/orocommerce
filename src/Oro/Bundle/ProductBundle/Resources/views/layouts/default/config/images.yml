@@ -1,0 +1,13 @@
+types:
+    main:
+        label: oro.product.productimage.type.main.label
+        dimensions: ~
+        max_number: 1
+    listing:
+        label: oro.product.productimage.type.listing.label
+        dimensions: ~
+        max_number: 1
+    additional:
+        label: oro.product.productimage.type.additional.label
+        dimensions: ~
+        max_number: ~

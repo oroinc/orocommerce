@@ -1,0 +1,37 @@
+orob2b_product:
+    resource:     "@OroProductBundle/Controller/ProductController.php"
+    type:         annotation
+    prefix:       /product
+
+orob2b_product_unit_ajax:
+    resource:     "@OroProductBundle/Controller/AjaxProductUnitController.php"
+    type:         annotation
+    prefix:       /product-unit
+
+orob2b_product_frontend_product:
+    resource: "@OroProductBundle/Controller/Frontend/ProductController.php"
+    type: annotation
+    prefix: /product
+    options:
+        frontend: true
+
+orob2b_product_frontend_ajax:
+    resource:     "@OroProductBundle/Controller/Frontend/AjaxProductController.php"
+    type:         annotation
+    prefix:       /product
+    options:
+        frontend: true
+
+orob2b_product_frontend_unit_ajax:
+    resource:     "@OroProductBundle/Controller/Frontend/AjaxProductUnitController.php"
+    type:         annotation
+    prefix:       /product-unit
+    options:
+        frontend: true
+
+orob2b_product_frontend_quick_add:
+    resource:     "@OroProductBundle/Controller/Frontend/QuickAddController.php"
+    type:         annotation
+    prefix:       /account/product/quick-add
+    options:
+        frontend: true

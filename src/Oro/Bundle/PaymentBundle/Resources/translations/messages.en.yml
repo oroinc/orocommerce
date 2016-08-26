@@ -1,0 +1,79 @@
+oro:
+    payment:
+        menu:
+            payments.label:            Payments
+            payment_terms.label:       Payment terms
+            payment_terms.description: List of payment terms
+
+        paymentterm:
+            entity_label: Payment Term
+            entity_plural_label: Payment Terms
+            entity_description: Represents payment terms
+
+            id.label: ID
+            label.label: Label
+            form.choose: 'Choose a payment term...'
+
+            account_groups.label: 'Account Group'
+            accounts.label: 'Account'
+
+            has_payment_term.label: Has Payment Term
+
+        account:
+            payment_term_defined_in_group: 'Defined for the group ({{ payment_term }})'
+            payment_term_non_defined_in_group: 'Defined for the group'
+
+        controller:
+            paymentterm:
+                saved.message: 'Payment term has been saved'
+                delete.with_two_url.message: 'It is currently being used by some {{ accounts }} and {{ account_groups }}.'
+                delete.with_url.message: ' It is currently being used by some {{ url }}.'
+
+        sections:
+            general_information: General information
+
+        methods:
+            label: "Payment Method"
+            select_method: 'Select a Payment Method'
+            no_method: 'No payment methods are available, Please contact us to complete the order submission.'
+            required_field: 'Required Field'
+            term_method.label: 'Payment Term'
+
+        system_configuration:
+            groups:
+                payment.title: 'Payment'
+                general.title: 'General'
+                merchant_location.title: 'Merchant Location'
+                payment_terms.title: 'Payment Terms'
+            fields:
+                merchant_country.label: 'Merchant Country'
+                enabled.label: 'Enabled'
+                label.label: 'Checkout Label'
+                label.tooltip: 'This label is used on the checkout screens'
+                short_label.label: 'Short Label'
+                short_label.tooltip: 'This label is used in order history'
+                sort_order.label: 'Sort Order'
+                allowed_countries:
+                    label: 'Allowed Countries'
+                    all: 'All'
+                    selected: 'Selected'
+                selected_countries.label: 'Select Allowed Countries'
+
+        result:
+            error: Payment failed
+
+        security.transaction: Work with payments
+        capture: Capture
+        payment_terms:
+            label: 'Terms: %paymentTerm%'
+
+        status:
+            label: Payment Status
+            full: Paid in full
+            authorized: Payment authorized
+            pending: Pending payment
+            declined: Payment declined
+            partially: Paid partially
+
+        admin:
+            payment_term.label: 'Payment Terms'

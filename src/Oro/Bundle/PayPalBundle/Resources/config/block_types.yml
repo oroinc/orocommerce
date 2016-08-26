@@ -1,0 +1,13 @@
+services:
+    oro_paypal.layout.block_type.payment_additional_data:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        block_name: {required: true}
+                        options: ~
+            - [setName, ['payment_additional_data']]
+        tags:
+            - { name: layout.block_type, alias: payment_additional_data }
