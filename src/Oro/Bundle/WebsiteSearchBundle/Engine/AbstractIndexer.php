@@ -142,16 +142,14 @@ abstract class AbstractIndexer implements IndexerInterface
 
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-                $this->saveIndexData($entityClass, $entityIds, $entitiesData, $entityAliasTemp, $context);
-                $entityManager->clear();
+                $this->saveIndexData($entityClass, $entitiesData, $entityAliasTemp);
                 $entityIds = [];
             }
         }
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-            $this->saveIndexData($entityClass, $entityIds, $entitiesData, $entityAliasTemp, $context);
-            $entityManager->clear();
+            $this->saveIndexData($entityClass, $entitiesData, $entityAliasTemp);
         }
 
         $this->renameIndex($entityAliasTemp, $entityAlias);
@@ -190,24 +188,21 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function generateTemporaryAlias($entityAlias)
     {
-        return $entityAlias . '_' . time();
+        return $entityAlias . '_' . uniqid('website_search', true);
     }
 
     /**
      * Saves index data for batch of entities
      *
      * @param string $entityClass
-     * @param array $entityIds
      * @param array $entitiesData
      * @param string $entityAliasTemp
-     * @param array $context
-     * @return
+     * @return int
      */
     abstract protected function saveIndexData(
         $entityClass,
-        array $entityIds,
         array $entitiesData,
-        $entityAliasTemp,
-        array $context
+        $entityAliasTemp
+
     );
 }
