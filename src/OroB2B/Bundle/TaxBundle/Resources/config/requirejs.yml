@@ -1,6 +1,0 @@
-config:
-    paths:
-        'orob2btax/js/formatter/tax': 'bundles/orob2btax/js/formatter/tax.js'
-        'orob2btax/js/app/components/order-line-item-taxes-component': 'bundles/orob2btax/js/app/components/order-line-item-taxes-component.js'
-        'orob2btax/js/app/components/order-line-item-item-component': 'bundles/orob2btax/js/app/components/order-line-item-item-component.js'
-        'orob2btax/js/app/components/order-taxes-component': 'bundles/orob2btax/js/app/components/order-taxes-component.js'

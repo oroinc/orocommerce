@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: featured_products
+            optionName: items_data.productShoppingLists
+            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProducts(items)'
