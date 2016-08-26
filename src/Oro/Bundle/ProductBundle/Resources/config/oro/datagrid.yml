@@ -220,17 +220,21 @@ datagrid:
                 type:  url
                 route: orob2b_product_frontend_product_view
                 params: [ id ]
-        filters:
+        sorters:
+            toolbar_sorting: true
             columns:
                 sku:
-                    type:      text
-                    data_name: product.sku
+                    data_name: sku
+                    type: string
                 name:
-                    type:      text
                     data_name: name
+                    type: string
+            default:
+                sku: DESC
         options:
             requireJSModules:
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+
 
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view
