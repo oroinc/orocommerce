@@ -1,8 +1,15 @@
 @import 'orofrontend/default/scss/shared/_vars.scss';
 @import 'orofrontend/default/scss/shared/_mixins.scss';
+@import 'orofrontend/default/scss/components/commerce/partials/variables.scss';
 @import 'orofrontend/default/scss/components/commerce/partials/mixins.scss';
 
 @import './components/top_nav';
 @import './components/quick_access';
 @import './components/main_menu';
 @import './components/footer_menu';
+
+@import './components/header-row/header-row';
+@import './components/header-row-helper/header-row-helper';
+@import './components/header-row-overlay/header-row-overlay';
+@import './components/main-menu/main-menu';
+@import './components/nav-trigger/nav-trigger';
