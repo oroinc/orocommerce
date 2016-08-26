@@ -85,7 +85,6 @@ class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
-                    'cascade' => ['all'],
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],

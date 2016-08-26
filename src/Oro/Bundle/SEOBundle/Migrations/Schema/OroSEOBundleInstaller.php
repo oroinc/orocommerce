@@ -8,6 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\SEOBundle\Migrations\Schema\v1_1\UpdateCascadeOnMetaFields;
 
 class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
@@ -32,7 +33,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -43,6 +44,8 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
+
+        $queries->addQuery(new UpdateCascadeOnMetaFields());
     }
 
     /**
