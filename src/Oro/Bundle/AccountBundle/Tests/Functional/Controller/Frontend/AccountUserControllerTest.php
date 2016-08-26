@@ -91,14 +91,15 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['orob2b_account_frontend_account_user[roles]'] = [$role->getId()];
 
         $this->client->submit($form);
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $collectedMessages = $collector->getMessages();
 
-        $this->assertCount($emailsCount, $collectedMessages);
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
+
+        $this->assertCount($emailsCount, $emailMessages);
 
         if ($isSendEmail) {
-            $this->assertMessage($email, array_shift($collectedMessages));
+            $this->assertMessage($email, array_shift($emailMessages));
         }
 
         $crawler = $this->client->followRedirect();

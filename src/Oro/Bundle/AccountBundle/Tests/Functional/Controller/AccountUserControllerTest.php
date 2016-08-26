@@ -93,14 +93,14 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->submit($form);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $collectedMessages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
-        $this->assertCount($emailsCount, $collectedMessages);
+        $this->assertCount($emailsCount, $emailMessages);
 
         if ($isSendEmail) {
-            $this->assertMessage($email, array_shift($collectedMessages));
+            $this->assertMessage($email, array_shift($emailMessages));
         }
 
         $crawler = $this->client->followRedirect();
