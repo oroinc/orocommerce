@@ -1,0 +1,40 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans)}}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_warehouse_index'),
+        'indexLabel': 'oro.warehouse.entity_plural_label'|trans,
+        'entityTitle': entity.name |default('N/A'|trans)
+        }
+    %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set warehouseInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'oro.warehouse.widgets.warehouse_information'|trans,
+            'url': path('orob2b_warehouse_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [warehouseInformationWidget]}]%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.warehouse.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+
+    {% set id = 'warehouse-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

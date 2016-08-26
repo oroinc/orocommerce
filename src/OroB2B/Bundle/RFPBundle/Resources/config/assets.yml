@@ -1,4 +1,0 @@
-css:
-    'orob2brfp':
-        - 'bundles/orob2brfp/css/less/rfp.less'
-        - 'bundles/orob2brfp/css/less/order.less'

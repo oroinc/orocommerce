@@ -1,0 +1,26 @@
+layout:
+    imports:
+        -
+            id: product_shopping_lists
+            root: product_grid_row_shopping_lists
+            namespace: product_grid
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_index_row.html.twig'
+        - '@add':
+            id: product_grid_row_shopping_lists
+            parentId: line_item_form
+            blockType: container
+            prepend: true
+        - '@add':
+            id: add_to_shopping_list_form_button
+            blockType: add_to_shopping_list_form_button
+            parentId: line_item_buttons
+            siblingId: ~
+            prepend: true
+            options:
+                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
+                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+
+    conditions: 'context["is_logged_in"]'
+

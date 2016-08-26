@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\B2BEntityBundle\Storage;
 
+use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
+
 class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
 {
     /**
-     * @var ObjectIdentifierAwareInterface|object[]
+     * @var object[]
      */
     protected $entities = [];
 
@@ -14,15 +16,11 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
      */
     public function scheduleForExtraInsert($entity)
     {
-        $this->entities[$this->getObjectIdentifier($entity)] = $entity;
-    }
+        if (! is_object($entity)) {
+            throw new \InvalidArgumentException(sprintf('Expected type is object, %s given', gettype($entity)));
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasScheduledForInsert()
-    {
-        return 0 !== count($this->entities);
+        $this->entities[DoctrineClassUtils::getClass($entity)][] = $entity;
     }
 
     /**
@@ -36,33 +34,12 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getScheduledForInsert()
+    public function getScheduledForInsert($className = null)
     {
+        if ($className) {
+            return array_key_exists($className, $this->entities) ? $this->entities[$className] : [];
+        }
+
         return $this->entities;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isScheduledForInsert($entity)
-    {
-        return array_key_exists($this->getObjectIdentifier($entity), $this->entities);
-    }
-
-    /**
-     * @param ObjectIdentifierAwareInterface|object $entity
-     * @return string
-     */
-    protected function getObjectIdentifier($entity)
-    {
-        if (!is_object($entity)) {
-            throw new \InvalidArgumentException(sprintf('Expected type is object, %s given', gettype($entity)));
-        }
-
-        if ($entity instanceof ObjectIdentifierAwareInterface) {
-            return $entity->getObjectIdentifier();
-        }
-
-        return spl_object_hash($entity);
     }
 }

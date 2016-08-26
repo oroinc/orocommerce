@@ -1,0 +1,26 @@
+config:
+    paths:
+        'oroproduct/js/app/components/product-primary-unit-limitations-component': 'bundles/oroproduct/js/app/components/product-primary-unit-limitations-component.js'
+        'oroproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/oroproduct/js/app/components/product-unit-selection-limitations-component.js'
+        'oroproduct/js/app/components/grid-sidebar-component': 'bundles/oroproduct/js/app/components/grid-sidebar-component.js'
+        'oroproduct/js/app/components/product-unit-component': 'bundles/oroproduct/js/app/components/product-unit-component.js'
+        'oroproduct/js/app/components/product-unit-select-component': 'bundles/oroproduct/js/app/components/product-unit-select-component.js'
+        'oroproduct/js/app/components/quick-add-component': 'bundles/oroproduct/js/app/components/quick-add-component.js'
+        'oroproduct/js/app/components/product-autocomplete-component': 'bundles/oroproduct/js/app/components/product-autocomplete-component.js'
+        'oroproduct/js/app/components/quick-add-form-button-component': 'bundles/oroproduct/js/app/components/quick-add-form-button-component.js'
+        'tinymce/plugins/fullscreen/plugin.min': 'empty:'
+        'oro/quick-add-import-widget': 'bundles/oroproduct/js/app/widget/quick-add-import-widget.js'
+        'oroproduct/js/app/components/quick-add-copy-paste-form-component': 'bundles/oroproduct/js/app/components/quick-add-copy-paste-form-component.js'
+        'oroproduct/js/app/components/quick-add-import-validation-component': 'bundles/oroproduct/js/app/components/quick-add-import-validation-component.js'
+        'oroproduct/js/app/components/redirect-component': 'bundles/oroproduct/js/app/components/redirect-component.js'
+        'oroproduct/js/app/views/product-quantity-editable-view': 'bundles/oroproduct/js/app/views/product-quantity-editable-view.js'
+        'oroproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-display-options-builder.js'
+        'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
+        'oroproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/oroproduct/js/content-processor/product-add-to-dropdown-button.js'
+        'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/oroproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
+        'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
+
+    shim:
+        'tinymce/plugins/fullscreen/plugin.min':
+            deps:
+                - 'tinymce/tinymce.min'
