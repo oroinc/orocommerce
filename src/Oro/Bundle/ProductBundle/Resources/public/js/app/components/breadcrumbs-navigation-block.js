@@ -37,12 +37,12 @@ define(function(require) {
             var currentFilters = [];
             var filterState;
 
-            for (var filterName in datagrid['metadata']['state']['filters']) {
-                if (!datagrid['metadata']['state']['filters'].hasOwnProperty(filterName)) {
+            for (var filterName in datagrid['collection']['state']['filters']) {
+                if (!datagrid['collection']['state']['filters'].hasOwnProperty(filterName)) {
                     continue;
                 }
 
-                filterState = datagrid['metadata']['state']['filters'][filterName];
+                filterState = datagrid['collection']['state']['filters'][filterName];
 
                 datagrid['metadata']['filters'].forEach(function (filterDefinition) {
                     if (filterDefinition['name'] == filterName) {
@@ -71,7 +71,7 @@ define(function(require) {
             }
 
             var buildFilterString = function(filter) {
-                return filter['label'] + ' ' + filter['type'] + filter['value'];
+                return filter['label'] + ' ' + filter['type'] + ' ' + filter['value'];
             };
 
             var filtersStrings = [];
