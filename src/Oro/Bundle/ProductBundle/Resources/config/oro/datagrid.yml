@@ -226,8 +226,8 @@ datagrid:
                 sku:
                     data_name: sku
                     type: string
-                name:
-                    data_name: name
+                productName:
+                    data_name: productName
                     type: string
             default:
                 sku: DESC
