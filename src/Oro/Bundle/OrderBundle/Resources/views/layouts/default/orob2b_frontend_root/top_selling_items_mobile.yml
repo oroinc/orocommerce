@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'default_mobile.html.twig'
         - '@setOption':
             id: featured_products
             optionName: slides_count

@@ -3,7 +3,7 @@ layout:
         -
             id: product_shopping_lists
             root: __product_line_item_form
-            namespace: product
+            namespace: __product
     actions:
         - '@move':
             id: __product_shopping_lists

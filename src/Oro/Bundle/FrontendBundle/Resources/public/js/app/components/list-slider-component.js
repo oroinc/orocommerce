@@ -2,9 +2,10 @@ define(function(require) {
     'use strict';
 
     var ContentSliderComponent;
-    var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var tools = require('oroui/js/tools');
     var $ = require('jquery');
+    var _ = require('underscore');
     require('slick');
 
     ContentSliderComponent = BaseComponent.extend({
@@ -17,7 +18,7 @@ define(function(require) {
             slidesToScroll: 1,
             autoplay: false,
             autoplaySpeed: 2000,
-            arrows: true,
+            arrows: !tools.isMobile(),
             dots: false,
             infinite: false
         },

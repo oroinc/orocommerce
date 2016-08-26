@@ -1,5 +1,7 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_line_item_form.html.twig'
         - '@addTree':
             items:
                 __line_item_form:
@@ -13,7 +15,7 @@ layout:
                     options:
                         preferred_fields: [quantity]
                         form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                        class_prefix: 'line_item_form_fields'
+                        class_prefix: line_item_form_fields
                 __line_item_form_end:
                     blockType: form_end
                     options:

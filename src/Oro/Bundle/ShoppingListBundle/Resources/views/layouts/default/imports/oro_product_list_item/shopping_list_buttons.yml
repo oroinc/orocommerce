@@ -1,14 +1,11 @@
 layout:
+    imports:
+        -
+            id: shopping_list_buttons
+            root: __product_line_item_form_buttons
+            namespace: __product
     actions:
-        - '@setBlockTheme':
-            themes: 'shopping_list_buttons.html.twig'
-        - '@add':
+        - '@move':
             id: __product_line_item_form_buttons_shopping_list
-            blockType: add_to_shopping_list_form_button
             parentId: __product_line_item_form_buttons
-            siblingId: ~
-            prepend: true
-            options:
-                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
-    conditions: 'context["is_logged_in"]'
+
