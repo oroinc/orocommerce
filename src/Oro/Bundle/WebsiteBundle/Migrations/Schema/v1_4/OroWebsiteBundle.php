@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteBundle\Migrations\Schema\v1_5;
+namespace Oro\Bundle\WebsiteBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
@@ -8,36 +8,100 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
+use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\WebsiteBundle\Migrations\Schema\OroWebsiteBundleInstaller;
 
-class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
+class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
 {
     /**
      * @var AbstractPlatform
      */
-    protected $platform;
+    private $platform;
+
+    /**
+     * @var RenameExtension
+     */
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->changeLocalizationRelations($queries);
         $this->updateWebsiteTable($schema, $queries);
+        $this->renameTables($schema, $queries);
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    private function changeLocalizationRelations(QueryBag $queries)
+    {
+        $queries->addPreQuery(
+            new CopyLocalizationReferencesToConfigQuery()
+        );
+
+        $queries->addQuery('DROP TABLE orob2b_websites_localizations');
     }
 
     /**
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    public function updateWebsiteTable(Schema $schema, QueryBag $queries)
+    private function renameTables(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
+        // notes
+        $notes = $schema->getTable('oro_note');
+
+        $notes->removeForeignKey('FK_BA066CE1271A24E0');
+        $extension->renameColumn($schema, $queries, $notes, 'website_63ea35fe_id', 'website_eb2ef553_id');
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_note',
+            'orob2b_website',
+            ['website_eb2ef553_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
+        );
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            'Oro\Bundle\WebsiteBundle\Entity\Website',
+            'website_63ea35fe',
+            'website_eb2ef553',
+            RelationType::MANY_TO_ONE
+        ));
+
+        // rename tables
+        $extension->renameTable($schema, $queries, 'orob2b_related_website', 'oro_related_website');
+        $extension->renameTable($schema, $queries, 'orob2b_website', 'oro_website');
+
+        // rename indexes
+        $schema->getTable('orob2b_website')->dropIndex('idx_orob2b_website_created_at');
+        $schema->getTable('orob2b_website')->dropIndex('idx_orob2b_website_updated_at');
+
+        $extension->addIndex($schema, $queries, 'oro_website', ['created_at'], 'idx_oro_website_created_at');
+        $extension->addIndex($schema, $queries, 'oro_website', ['updated_at'], 'idx_oro_website_updated_at');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function updateWebsiteTable(Schema $schema, QueryBag $queries)
     {
         $this->addIsDefaultColumn($schema, $queries);
         $this->moveUrlToConfigValue($queries);
-        $table = $schema->getTable(OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
+        $table = $schema->getTable('orob2b_website');
         $table->dropColumn('url');
     }
 
@@ -54,14 +118,14 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
      * @param QueryBag $queries
      * @throws SchemaException
      */
-    protected function addIsDefaultColumn(Schema $schema, QueryBag $queries)
+    private function addIsDefaultColumn(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable(OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME);
+        $table = $schema->getTable('orob2b_website');
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
 
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
-                'UPDATE oro_website SET is_default = :is_default',
+                'UPDATE orob2b_website SET is_default = :is_default',
                 ['is_default' => false],
                 ['is_default' => Type::BOOLEAN]
             )
@@ -70,7 +134,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         if ($this->platform instanceof MySqlPlatform) {
             $queries->addQuery(
                 new ParametrizedSqlMigrationQuery(
-                    'UPDATE oro_website SET is_default = :is_default ORDER BY id ASC LIMIT 1',
+                    'UPDATE orob2b_website SET is_default = :is_default ORDER BY id ASC LIMIT 1',
                     ['is_default' => true],
                     ['is_default' => Type::BOOLEAN]
                 )
@@ -78,7 +142,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
         } else {
             $queries->addQuery(
                 new ParametrizedSqlMigrationQuery(
-                    'UPDATE oro_website SET is_default = :is_default WHERE id =(SELECT MIN(id) FROM oro_website)',
+                    'UPDATE orob2b_website SET is_default = :is_default WHERE id =(SELECT MIN(id) FROM orob2b_website)',
                     ['is_default' => true],
                     ['is_default' => Type::BOOLEAN]
                 )
@@ -94,7 +158,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
      * @param Schema $toSchema
      * @return array
      */
-    protected function getSchemaDiff(Schema $schema, Schema $toSchema)
+    private function getSchemaDiff(Schema $schema, Schema $toSchema)
     {
         $comparator = new Comparator();
 
@@ -106,10 +170,10 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
      * @param QueryBag $queries
      * @throws SchemaException
      */
-    protected function doPostUpdateChanges(Schema $schema, QueryBag $queries)
+    private function doPostUpdateChanges(Schema $schema, QueryBag $queries)
     {
         $postSchema = clone $schema;
-        $postSchema->getTable(OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME)
+        $postSchema->getTable('orob2b_website')
             ->changeColumn('is_default', ['notnull' => true]);
         $postQueries = $this->getSchemaDiff($schema, $postSchema);
 
@@ -121,12 +185,12 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
     /**
      * @param QueryBag $queries
      */
-    protected function moveUrlToConfigValue(QueryBag $queries)
+    private function moveUrlToConfigValue(QueryBag $queries)
     {
         $queries->addPreQuery(
             new ParametrizedSqlMigrationQuery(
                 "INSERT INTO oro_config (entity, record_id)
-            SELECT :entity_name, id FROM oro_website w
+            SELECT :entity_name, id FROM orob2b_website w
             WHERE NOT exists(SELECT record_id FROM oro_config oc WHERE oc.record_id = w.id AND oc.entity = 'website');",
                 ['entity_name' => 'website'],
                 ['entity_name' => Type::STRING]
@@ -157,7 +221,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                   :created_at,
                   :updated_at
                 FROM oro_config oc
-                JOIN oro_website w ON w.id = oc.record_id
+                JOIN orob2b_website w ON w.id = oc.record_id
                 WHERE entity = :entity;',
             [
                 'name' => $name,
@@ -184,5 +248,13 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface
                 'new_default_url' => Type::STRING,
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

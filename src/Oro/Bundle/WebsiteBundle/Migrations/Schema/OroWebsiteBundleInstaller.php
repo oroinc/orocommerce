@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -28,7 +29,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_4';
     }
 
     /**
