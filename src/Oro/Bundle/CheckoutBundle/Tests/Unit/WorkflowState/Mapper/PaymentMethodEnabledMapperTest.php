@@ -83,7 +83,7 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         $paymentContext = ['processContext'];
         $this->paymentContextProvider->expects($this->once())
             ->method('processContext')
-            ->with(['entity' => $this->checkout], $this->checkout)
+            ->with($this->checkout)
             ->willReturn($paymentContext);
 
         $paymentMethod->expects($this->any())
@@ -111,7 +111,7 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         $paymentContext = ['processContext'];
         $this->paymentContextProvider->expects($this->once())
             ->method('processContext')
-            ->with(['entity' => $this->checkout], $this->checkout)
+            ->with($this->checkout)
             ->willReturn($paymentContext);
 
         $paymentMethod->expects($this->any())
@@ -141,7 +141,7 @@ class PaymentMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         $paymentContext = ['processContext'];
         $this->paymentContextProvider->expects($this->once())
             ->method('processContext')
-            ->with(['entity' => $this->checkout], $this->checkout)
+            ->with($this->checkout)
             ->willReturn($paymentContext);
 
         $paymentMethod->expects($this->any())

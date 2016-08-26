@@ -8,7 +8,7 @@ class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     public function testGetName()
     {
-        $this->assertEquals('paymentMethod', $this->mapper->getName());
+        $this->assertEquals('payment_method', $this->mapper->getName());
     }
 
     public function testGetCurrentState()

@@ -22,7 +22,7 @@ class SaveCheckoutStateAction extends AbstractAction
     const OPTION_KEY_ENTITY = 'entity';
     const OPTION_KEY_STATE = 'state';
     const OPTION_KEY_ATTRIBUTE = 'attribute';
-    const OPTION_KEY_TOKEN_VALUE = 'token';
+    const OPTION_KEY_TOKEN = 'token';
 
     /** @var array */
     protected $options;
@@ -46,7 +46,7 @@ class SaveCheckoutStateAction extends AbstractAction
         $entityPath = $this->getOption($this->options, self::OPTION_KEY_ENTITY);
         $statePath = $this->getOption($this->options, self::OPTION_KEY_STATE);
         $attributePath = $this->getOption($this->options, self::OPTION_KEY_ATTRIBUTE);
-        $tokenPath = $this->getOption($this->options, self::OPTION_KEY_TOKEN_VALUE);
+        $tokenPath = $this->getOption($this->options, self::OPTION_KEY_TOKEN);
 
         $entity = $this->contextAccessor->getValue($context, $entityPath);
         $state = $this->contextAccessor->getValue($context, $statePath);
