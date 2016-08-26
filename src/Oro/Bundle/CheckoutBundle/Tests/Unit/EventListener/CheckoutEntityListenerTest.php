@@ -4,8 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Bundle\WorkflowBundle\Model\Workflow;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -19,11 +17,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
      * @var CheckoutEntityListener
      */
     protected $listener;
-
-    /**
-     * @var WorkflowManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $workflowManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -40,12 +33,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        parent::setUp();
-
-        $this->workflowManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\WorkflowManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -71,7 +58,7 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new CheckoutEntityListener($this->workflowManager, $registry, $this->userCurrencyManager);
+        $this->listener = new CheckoutEntityListener($registry, $this->userCurrencyManager);
     }
 
     /**
@@ -112,10 +99,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->with($id)
             ->willReturn($found);
-
-        $this->workflowManager->expects($this->any())
-            ->method('getApplicableWorkflows')
-            ->willReturn([]);
 
         $event->setCheckoutId($id);
 
@@ -179,10 +162,6 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with(['source' => $source])
             ->willReturn($found);
 
-        $this->workflowManager->expects($this->any())
-            ->method('getApplicableWorkflows')
-            ->willReturn([]);
-
         $event->setSource($source);
 
         $this->listener->onGetCheckoutEntity($event);
@@ -218,19 +197,14 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onGetCheckoutEntityDataProviderNew
      *
-     * @param array $workflows
      * @param CheckoutSource $source
      * @param CheckoutInterface $expected
      */
     public function testOnGetCheckoutEntityNew(
-        array $workflows = [],
         CheckoutSource $source = null,
         CheckoutInterface $expected = null
     ) {
         $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
-        $this->workflowManager->expects($this->any())
-            ->method('getApplicableWorkflows')
-            ->willReturn($workflows);
 
         $event = new CheckoutEntityEvent();
         $event->setSource($source);
@@ -246,62 +220,15 @@ class CheckoutEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $checkoutSource = (new CheckoutSource())->setId(1);
         return [
-            'new instance with available workflows' => [
-                'workflows' => [$this->getWorkflowMock('test', true)],
-                'source' => $checkoutSource,
-                'expected' => (new Checkout())->setSource($checkoutSource),
-            ],
-            'new instance without available workflows' => [
-                'workflows' => [],
-                'source' => $checkoutSource,
+            'without source' => [
+                'source' => null,
                 'expected' => null,
             ],
-            'new instance start disallowed with available workflows' => [
-                'workflows' => [$this->getWorkflowMock('test', false)],
+            'new instance' => [
                 'source' => $checkoutSource,
-                'expected' => null
-            ],
-            'new instance start disallowed without available workflows' => [
-                'workflows' => [],
-                'source' => $checkoutSource,
-                'expected' => null
+                'expected' => (new Checkout())->setSource($checkoutSource),
             ]
         ];
-    }
-
-    public function testOnCreateCheckoutEntityException()
-    {
-        $this->setExpectedException(
-            'LogicException',
-            'More than one active workflow found for entity "Oro\Bundle\CheckoutBundle\Entity\Checkout"'
-        );
-
-        $this->listener->setCheckoutClassName('Oro\Bundle\CheckoutBundle\Entity\Checkout');
-        $this->workflowManager->expects($this->any())
-            ->method('getApplicableWorkflows')
-            ->willReturn([$this->getWorkflowMock('test1', true), $this->getWorkflowMock('test2', true)]);
-
-        $event = new CheckoutEntityEvent();
-        $event->setSource(new CheckoutSource());
-
-        $this->listener->onCreateCheckoutEntity($event);
-    }
-
-    /**
-     * @param string $name
-     * @param bool $isStartTransitionAvailable
-     * @return Workflow|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getWorkflowMock($name, $isStartTransitionAvailable)
-    {
-        $workflow = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Workflow')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $workflow->expects($this->any())->method('getName')->willReturn($name);
-        $workflow->expects($this->any())
-            ->method('isStartTransitionAvailable')->with($this->anything())->willReturn($isStartTransitionAvailable);
-
-        return $workflow;
     }
 
     /**

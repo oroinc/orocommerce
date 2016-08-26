@@ -5,6 +5,10 @@ General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
 
+FrontendBundle:
+---------------
+- Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
+
 CheckoutBundle:
 ---------------
 - Second argument `$checkoutType = null` of method `Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController::checkoutAction` was removed.

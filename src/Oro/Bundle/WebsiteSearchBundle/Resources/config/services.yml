@@ -5,6 +5,10 @@ parameters:
     oro_website_search.provider.configuration_cache_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider
     oro_website_search.provider.resources_hash_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider
 
+    oro_website_search.mock.class:                  Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+    oro_website_search.query_factory.class:         Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+    oro_website_search.select_data.listener.class:  Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+
 services:
     oro_website_search.resolver.query_placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
@@ -89,3 +93,19 @@ services:
             - 'oro_website_search_index_text'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
+
+    oro_website_search.mock.engine:
+        class: %oro_website_search.mock.class%
+
+    oro_website_search.query_factory:
+        decorates: oro_search.query_factory
+        class: %oro_website_search.query_factory.class%
+        arguments:
+            - '@oro_website_search.query_factory.inner'
+            - '@event_dispatcher'
+            - '@oro_website_search.mock.engine'
+
+    oro_website_search.select_data.listener:
+        class: %oro_website_search.select_data.listener.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
