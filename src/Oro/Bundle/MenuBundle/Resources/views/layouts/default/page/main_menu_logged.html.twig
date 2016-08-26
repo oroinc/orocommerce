@@ -1,0 +1,36 @@
+{% block _header_row_shopping_widget %}
+    <input type="radio" id="header-row-shopping" class="header-row-helper" name="dropdowns" hidden="hidden">
+    <div class="header-row__container">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _header_row_shopping_trigger_widget %}
+    <label class="header-row__trigger" for="header-row-shopping">
+        <div class="nav-trigger">
+            {{ block_widget(block) }}
+        </div>
+    </label>
+{% endblock %}
+
+{% block _header_row_shopping_toggle_widget %}
+    <div class="header-row__toggle hidden-on-desktop">
+        <div class="header-row__dropdown-mobile">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _main_menu_messages_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " main-menu__item main-menu__item--nested"
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <button class="messages-widget__trigger" data-oro-mpa-trigger>
+            <span class="badge badge_xs badge_circle badge_blue messages-widget__badge">3</span>
+            <span class="badge badge_md badge_circle badge_dark"><i class="cf-comment"></i></span>
+            <span class="messages-widget__title text-uppercase">Messages</span>
+            <i class="cf-down-open-mini"></i>
+        </button>
+    </li>
+{% endblock %}

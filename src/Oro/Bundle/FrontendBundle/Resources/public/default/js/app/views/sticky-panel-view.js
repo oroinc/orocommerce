@@ -115,7 +115,8 @@ define(function(require) {
                 var options = _.defaults($element.data('sticky') || {}, {
                     $elementPlaceholder: $elementPlaceholder,
                     placeholderId: '',
-                    toggleClass: ''
+                    toggleClass: '',
+                    isSticky: true
                 });
                 options.$placeholder = options.placeholderId ? $('#' + options.placeholderId) : $placeholder;
                 options.toggleClass += ' ' + this.options.elementClass;
@@ -169,14 +170,16 @@ define(function(require) {
             var options = $element.data('sticky');
             var isEmpty = $element.is(':empty');
 
-            if (options.currentState) {
-                if (isEmpty) {
-                    return false;
-                } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
-                    return false;
+            if (options.isSticky) {
+                if (options.currentState) {
+                    if (isEmpty) {
+                        return false;
+                    } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
+                        return false;
+                    }
+                } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
+                    return true;
                 }
-            } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
-                return true;
             }
 
             return null;

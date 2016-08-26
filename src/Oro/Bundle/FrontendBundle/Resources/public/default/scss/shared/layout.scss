@@ -2,7 +2,6 @@
 .middlebar {
   min-height: 100px;
   padding: 20px 0 19px;
-  border-bottom: 1px solid $theme-lighter-gray-color;
 
   @media (max-width: $screen-md) {
     min-height: initial;

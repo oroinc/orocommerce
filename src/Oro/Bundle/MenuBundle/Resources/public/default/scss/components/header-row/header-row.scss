@@ -1,0 +1,137 @@
+@mixin header-row-dropdown {
+    position: absolute;
+    z-index: z('dropdown');
+    top: 100%;
+
+    min-width: 260px;
+    padding: 0;
+
+    text-align: left;
+
+    border: 1px solid $base-border-color;
+    border-radius: 2px;
+    background: $base-white-color;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+}
+
+.header-row {
+    // position: relative;
+
+    display: flex;
+
+    border: 1px solid $theme-lighter-gray-color;
+    border-width: 1px 0;
+
+    justify-content: space-between;
+
+    &__container {
+        // position: relative;
+
+        flex-basis: 210px;
+
+        &--unstack {
+            flex-grow: 4;
+        }
+    }
+
+    &__trigger {
+        margin: 0;
+        padding: 7px 20px;
+
+        border-right: 1px solid $base-white-color;
+        background-color: $theme-lightest-gray-color;
+
+        &.active,
+        &:hover {
+            & + .header-row__toggle,
+            .header-row__toggle {
+                display: block;
+            }
+        }
+    }
+
+    &__dropdown {
+        right: 0;
+
+        @include header-row-dropdown;
+    }
+}
+
+@include breakpoint('desktop') {
+    %hidden-on-desktop {
+        &.hidden-on-desktop {
+            display: none !important;
+        }
+    }
+
+    .header-row {
+        &__container {
+            @extend %hidden-on-desktop;
+        }
+
+        &__trigger {
+            @extend %hidden-on-desktop;
+
+            padding: 0;
+        }
+
+        &__toggle {
+            @extend %hidden-on-desktop;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .header-row {
+        margin: 0 -15px;
+
+        &__container {
+            position: static;
+
+            flex-grow: 1;
+            flex-basis: auto;
+
+            &--unstack {
+                flex-grow: 1;
+            }
+        }
+
+        &__trigger {
+            position: relative;
+            z-index: 9;
+
+            text-align: center;
+        }
+
+        &__toggle {
+            position: absolute;
+            z-index: 9;
+            right: 0;
+            left: 0;
+
+            visibility: hidden;
+
+            transition: opacity .2s, visibility .2s;
+
+            opacity: 0;
+        }
+
+        &__dropdown {
+            right: 0;
+            left: 0;
+        }
+
+        &__dropdown-mobile {
+            right: 0;
+            left: 0;
+
+            @include header-row-dropdown;
+        }
+
+        &__dropdown-mobile--scroll {
+            top: 0 !important;
+            bottom: 0;
+            overflow-y: scroll;
+        }
+    }
+}
