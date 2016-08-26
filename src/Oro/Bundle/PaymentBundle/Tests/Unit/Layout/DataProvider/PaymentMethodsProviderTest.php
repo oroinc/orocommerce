@@ -111,7 +111,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $context = ['entity' => $entity];
         $this->paymentContextProvider->expects($this->once())
             ->method('processContext')
-            ->with($context, $this->identicalTo($entity))
+            ->with($this->identicalTo($entity))
             ->willReturn($context);
 
         $view = $this->getMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');

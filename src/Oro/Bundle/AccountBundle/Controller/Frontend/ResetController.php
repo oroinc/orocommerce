@@ -73,7 +73,7 @@ class ResetController extends Controller
     /**
      * Reset user password
      *
-     * @Layout(vars={"user"})
+     * @Layout
      * @Route("/reset", name="orob2b_account_frontend_account_user_password_reset")
      * @Method({"GET", "POST"})
      * @return array|RedirectResponse
@@ -124,7 +124,9 @@ class ResetController extends Controller
         }
 
         return [
-            'user' => $user
+            'data' => [
+                'user' => $user
+            ]
         ];
     }
 

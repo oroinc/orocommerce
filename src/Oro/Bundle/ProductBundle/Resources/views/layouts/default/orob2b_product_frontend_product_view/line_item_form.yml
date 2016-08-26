@@ -30,5 +30,5 @@ layout:
                         line_item_buttons: ~
                         line_item_form_end: ~
 
-    conditions: 'context["logged_user"]!=null'
+    conditions: 'context["is_logged_in"]'
 
