@@ -10,7 +10,7 @@ layout:
                     blockType: container
                 main_menu_shopping_lists_wrapper:
                     blockType: container
-                main_menu_shopping_lists_widget:
+                main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
                         shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
@@ -18,7 +18,7 @@ layout:
                     blockType: shopping_lists_awere_container
                     options:
                         shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
-                main_menu_shopping_lists_widget_content:
+                main_menu_shopping_lists_dropdown_content:
                     blockType: container
                 main_menu_shopping_lists_dropdown_container:
                     blockType: shopping_lists_awere_container
@@ -40,8 +40,8 @@ layout:
                 header_row_shopping:
                     header_row_shopping_trigger:
                         main_menu_shopping_lists_wrapper:
-                            main_menu_shopping_lists_widget:
-                                main_menu_shopping_lists_widget_content:
+                            main_menu_shopping_lists_dropdown:
+                                main_menu_shopping_lists_dropdown_content:
                                     main_menu_shopping_lists_dropdown_container:
                                         main_menu_shopping_lists_dropdown_item: ~
                                     main_menu_shopping_lists_dropdown_create: ~
