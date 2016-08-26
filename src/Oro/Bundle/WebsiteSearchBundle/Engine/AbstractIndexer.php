@@ -12,6 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -30,12 +31,12 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
-     * @param Mapper $mapper
+     * @param AbstractSearchMappingProvider $mapper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
-        Mapper $mapper
+        AbstractSearchMappingProvider $mapper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
@@ -95,7 +96,6 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * Rename old index by aliases to new index
-     *
      * @param string $oldAlias
      * @param string $newAlias
      */
@@ -108,7 +108,7 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function getWebsitesToIndex(array $context)
     {
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            return $context[self::CONTEXT_WEBSITE_ID_KEY];
+            return [$context[self::CONTEXT_WEBSITE_ID_KEY]];
         }
 
         /** @var WebsiteRepository $websiteRepository */
@@ -200,7 +200,6 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * Saves index data for batch of entities
-     *
      * @param string $entityClass
      * @param array $entitiesData
      * @param string $entityAliasTemp
