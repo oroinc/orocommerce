@@ -50,7 +50,6 @@ class Checkout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    ContextItemInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
     PaymentMethodAwareInterface
@@ -323,14 +322,6 @@ class Checkout implements
         $this->source = $source;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toString()
-    {
-        return $this->id;
     }
 
     /**
