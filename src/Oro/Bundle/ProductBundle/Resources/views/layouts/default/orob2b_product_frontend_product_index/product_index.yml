@@ -36,6 +36,10 @@ layout:
                     blockType: container
                 product_grid_container:
                     blockType: container
+                product_search_navigation:
+                    blockType: product_search_navigation
+                    options:
+                        currentCategory: '=data["category"].getCurrentCategory()'
                 product_grid:
                     blockType: product_datagrid
                     options:
@@ -45,4 +49,5 @@ layout:
                 content:
                     product_index_page:
                         product_grid_container:
+                            product_search_navigation: ~
                             product_grid: ~

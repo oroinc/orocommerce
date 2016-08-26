@@ -186,7 +186,7 @@ datagrid:
         columns:
             sku:
                 label:         oro.product.sku.label
-            name:
+            productName:
                 label:         oro.product.names.label
             inventoryStatus:
                 label:         oro.product.inventory_status.label
@@ -226,11 +226,14 @@ datagrid:
                 sku:
                     data_name: sku
                     type: string
-                name:
-                    data_name: name
+                productName:
+                    data_name: productName
                     type: string
             default:
                 sku: DESC
+        options:
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
 
 
     orob2b_product-product_variants:
