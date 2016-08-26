@@ -1,0 +1,16 @@
+{% block __oro_product_list__products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'orofrontend/default/js/app/views/footer-align-view',
+            elements: {
+                items: '.embedded-list__item',
+                footer: '.product-item__qty'
+            }
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

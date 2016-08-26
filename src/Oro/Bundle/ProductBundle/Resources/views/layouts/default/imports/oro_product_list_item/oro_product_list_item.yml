@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: oro_product_line_item_form
+            root: __product_secondary_content_second_container
+            namespace: __product
     actions:
         - '@setBlockTheme':
             themes: 'oro_product_list_item.html.twig'
@@ -46,24 +51,6 @@ layout:
                     blockType: block
                     options:
                         visible: '=false'
-                __product_line_item_form:
-                    blockType: container
-                __product_line_item_form_start:
-                    blockType: form_start
-                    options:
-                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                __product_line_item_form_fields:
-                    blockType: form_fields
-                    options:
-                        preferred_fields: [quantity]
-                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                        class_prefix: line_item_form_fields
-                __product_line_item_form_end:
-                    blockType: form_end
-                    options:
-                        form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                __product_line_item_form_buttons:
-                    blockType: container
             tree:
                 __root:
                     __product:
@@ -83,8 +70,3 @@ layout:
                                 __product_specification_delivery: ~
                             __product_secondary_content_second_container:
                                 __product_more_info: ~
-                                __product_line_item_form:
-                                    __product_line_item_form_start: ~
-                                    __product_line_item_form_fields: ~
-                                    __product_line_item_form_buttons: ~
-                                    __product_line_item_form_end: ~

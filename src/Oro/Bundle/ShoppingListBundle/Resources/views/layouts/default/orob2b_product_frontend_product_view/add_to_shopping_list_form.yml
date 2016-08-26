@@ -4,11 +4,17 @@ layout:
             id: product_shopping_lists
             root: line_item_form_shopping_lists
             namespace: product
+        -
+            id: shopping_list_buttons
+            root: line_item_buttons
+            namespace: product
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
         - '@setOption':
             id: product_shopping_lists
+            optionName: productShoppingLists
+            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
+        - '@setOption':
+            id: product_line_item_form_buttons_shopping_list
             optionName: productShoppingLists
             optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
         - '@add':
@@ -17,13 +23,3 @@ layout:
             blockType: container
             siblingId: line_item_buttons
             prepend: true
-        - '@add':
-            id: add_to_shopping_list_form_button
-            blockType: add_to_shopping_list_form_button
-            parentId: line_item_buttons
-            siblingId: ~
-            prepend: true
-            options:
-                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
-                productShoppingLists: '=data["orob2b_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'

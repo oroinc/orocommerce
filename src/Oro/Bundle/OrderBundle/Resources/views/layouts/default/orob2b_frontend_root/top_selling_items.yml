@@ -1,0 +1,21 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: top_selling_items_container
+            namespace: top_selling
+    actions:
+        - '@setBlockTheme':
+            themes: 'top_selling_items.html.twig'
+        - '@setOption':
+            id: top_selling_products
+            optionName: items
+            optionValue: '=data["top_selling_items"].getAll()'
+        - '@setOption':
+            id: top_selling_products
+            optionName: label
+            optionValue: oro.order.top_selling_items.label
+        - '@add':
+            id: top_selling_items_container
+            parentId: content
+            blockType: container
