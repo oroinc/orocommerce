@@ -1,0 +1,36 @@
+{% set pageComponentOptions = {
+    '_wid': app.request.get('_wid'),
+    'savedId': savedId is defined and savedId and form.vars.errors is empty ? savedId : null
+} %}
+<div class="widget-content"
+     data-page-component-module="orofrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.warehouse.warehouse_inventory_level_save.flash.success'})|json_encode }}"
+>
+    {% if form.vars.data is empty and noDataReason is defined %}
+        <div class="no-data">
+            {{ noDataReason }}
+        </div>
+    {% else %}
+        {% if form.vars.errors|length > 0 %}
+            <div class="alert alert-error">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+              method="{{ form.vars.method }}" class="form-horizontal"
+        >
+            {{ form_widget(form) }}
+
+            <div class="hidden">
+                {{ form_rest(form) }}
+            </div>
+
+            <div class="widget-actions">
+                <button type="reset" class="btn">{{ 'oro.warehouse.widgets.actions.cancel'|trans }}</button>
+                <button type="submit" class="btn btn-success">{{ 'oro.warehouse.widgets.actions.save'|trans }}</button>
+            </div>
+        </form>
+        {{ oro_form_js_validation(form) }}
+    {% endif %}
+</div>

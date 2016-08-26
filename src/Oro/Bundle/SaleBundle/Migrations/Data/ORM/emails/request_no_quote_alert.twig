@@ -1,0 +1,7 @@
+@name = request_no_quote_alert
+@entityName = Oro\Bundle\RFPBundle\Entity\Request
+@subject = [Pending] Request for Quote {{ entity.id }}
+@isSystem = 1
+@isEditable = 1
+
+Request for Quote {{ entity.id }} has not been answered since {{ entity.createdAt|oro_format_date }}.

@@ -1,0 +1,61 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('oro.product.sku.label'|trans, product.sku) }}
+            {{ UI.renderProperty('oro.product.names.label'|trans, product.defaultName) }}
+            {{ UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, product.inventoryStatus) }}
+
+            {% if product.images.count %}
+                {{ UI.renderHtmlProperty(
+                'oro.product.images.label'|trans,
+                Image.renderProductImages(product.images, imageTypes)
+                ) }}
+            {% endif %}
+
+            {% set primaryUnitPrecisionElement %}
+                {{ 'oro.product.productunitprecision.representation'|transchoice(
+                product.primaryUnitPrecision.precision,
+                {
+                    '{{ label }}': ('oro.product_unit.'~ product.primaryUnitPrecision.unit.code ~'.label.full')|trans
+                }
+                ) }}
+            {% endset %}
+            {{ UI.renderHtmlProperty('oro.product.primary_unit_precision.label'|trans, primaryUnitPrecisionElement )}}
+
+            {% set productUnitPrecisions = [] %}
+
+            {% if product.additionalUnitPrecisions.count %}
+                {% set titles = ['oro.product.productunitprecision.unit.label'|trans,
+                'oro.product.productunitprecision.precision.label'|trans,
+                'oro.product.productunitprecision.of'|trans ~ ' ' ~('oro.product_unit.'~ product.primaryUnitPrecision.unit.code ~'.label.full')|trans,
+                'oro.product.productunitprecision.sell.label'|trans]
+                %}
+                {% set rows = [] %}
+                {% for unitPrecision in product.additionalUnitPrecisions %}
+                    {% set sell = unitPrecision.sell ?
+                        'oro.product.productunitprecision.sell_yes.label'|trans
+                        :
+                        'oro.product.productunitprecision.sell_not.label'|trans
+                    %}
+                    {% set row = [('oro.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
+                                    unitPrecision.precision,
+                                    unitPrecision.conversionRate,
+                                    sell]
+                    %}
+                    {% set rows = rows|merge([row]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty(
+                    'oro.product.additional_unit_precisions.label'|trans,
+                     UI.renderTable(titles,rows,"grid table-hover table table-bordered unit-table"))
+                 }}
+            {% endif %}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(product) }}
+        </div>
+    </div>
+</div>

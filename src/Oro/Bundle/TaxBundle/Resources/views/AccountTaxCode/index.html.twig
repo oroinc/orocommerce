@@ -1,0 +1,17 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'tax-account-tax-codes-grid' %}
+{% set pageTitle = 'oro.tax.accounttaxcode.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_tax_account_tax_code_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_tax_account_tax_code_create'),
+                'entity_label': 'oro.tax.accounttaxcode.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

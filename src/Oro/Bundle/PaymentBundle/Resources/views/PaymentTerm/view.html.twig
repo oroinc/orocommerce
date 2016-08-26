@@ -1,0 +1,80 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%entityLabel%": entity.label }}) %}
+
+{% block navButtons %}
+    {{ parent() }}
+
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_delete_paymentterm', {'id': entity.id}),
+            'dataRedirect': path('orob2b_payment_term_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'entity_label': 'oro.payment.paymentterm.entity_label'|trans,
+            'dataMessage': get_payment_term_delete_message(entity)
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block stats %}{% endblock %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity':      entity,
+        'indexPath':   path('orob2b_payment_term_index'),
+        'indexLabel':  'oro.payment.paymentterm.entity_plural_label'|trans,
+        'entityTitle': entity.label,
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set paymentTermInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_payment_term_widget_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.payment.sections.general_information'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [paymentTermInformationWidget]}
+            ]
+        },
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.account.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('payment-term-accounts-grid', {payment_term_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.account.accountgroup.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('payment-term-account-groups-grid', {payment_term_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set id = 'payment-term-view' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+    {{ parent() }}
+{% endblock content_data %}
