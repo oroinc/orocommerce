@@ -1,3 +1,3 @@
 CheckoutStep:
-  class: OroB2B\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
+  class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
   selector: 'div[data-role="checkout-content"]'

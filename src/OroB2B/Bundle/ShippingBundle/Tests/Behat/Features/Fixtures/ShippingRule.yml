@@ -1,4 +1,4 @@
-OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
+Oro\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
        enabled: true
@@ -7,7 +7,7 @@ OroB2B\Bundle\ShippingBundle\Entity\ShippingRule:
        currency: 'EUR'
        stopProcessing: 'false'
 
-OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
    germany_destination:
       postalCode: '10115'
       region: '@berlin'
@@ -20,7 +20,7 @@ Oro\Bundle\CurrencyBundle\Entity\Price(local):
        value: '1'
        currency: 'EUR'
 
-OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
    flatrate_configuration:
       currency: 'EUR'
       processingType: 'per_order'
@@ -31,13 +31,13 @@ OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
       handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
 
-OroB2B\Bundle\AccountBundle\Entity\Account:
+Oro\Bundle\AccountBundle\Entity\Account:
    account1:
        name: 'Company A'
        organization: '@organization'
        owner: '@admin'
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUser:
+Oro\Bundle\AccountBundle\Entity\AccountUser:
    amanda:
        email: 'AmandaRCole@example.org'
        username: 'AmandaRCole@example.org'
@@ -50,7 +50,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
        role: ['@buyer']
        owner: '@admin'
 
-OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
    precision1:
        unit: '@item'
        precision: '1'
@@ -58,7 +58,7 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
 
-OroB2B\Bundle\ProductBundle\Entity\Product:
+Oro\Bundle\ProductBundle\Entity\Product:
    product1:
        sku: 'AA1'
        primaryUnitPrecision: '@precision1'
@@ -66,12 +66,12 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
        inventoryStatus: '@enumInventoryStatuses'
        status: 'enabled'
 
-OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
        label: 'Shopping List 1'
        accountUser: '@amanda'
 
-OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
        product: '@product1'
        quantity: '1'
@@ -80,7 +80,7 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
        shoppingList: '@shoppinglist1'
        organization: '@organization'
 
-OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
    shoppinglisttotal:
        __construct: ['@shoppinglist1','EUR']
        shoppingList: '@shoppinglist1'
@@ -88,7 +88,7 @@ OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        subtotalValue: '10.1'
        valid: 'true'
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
+Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'
@@ -107,19 +107,19 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
         primary: true
 
 
-OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount:
+Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
     priceListToAccount1:
         account: '@account1'
         pricelist: '@pricelist1'
         website: '@website1'
         priority: 200
 
-OroB2B\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     priceAttributePriceList1:
         name: 'priceAttributePriceList'
 
 
-OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:
         pricelist: '@pricelist1'
         product: '@product1'
@@ -129,7 +129,7 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
         value: 10
         currency:  'EUR'
 
-OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice:
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice1:
         pricelist: '@combinedPriceList'
         product: '@product1'
@@ -139,24 +139,24 @@ OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice:
         value: 10
         currency: 'EUR'
 
-OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
     combinedPriceListToAccount1:
         pricelist: '@combinedPriceList'
         account: '@account1'
         website: '@website1'
 
-OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
     combinedPriceListToWebsite1:
         pricelist: '@combinedPriceList'
         website: '@website1'
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings:
+Oro\Bundle\AccountBundle\Entity\AccountUserSettings:
     accountUserSetting1:
         accountUser: '@amanda'
         __construct: ['@website1']
         currency: 'EUR'
 
-OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
     billing:
          address: '@address1'
          type: '@billingType'

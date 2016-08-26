@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShippingBundle\Tests\Behat\Context;
+namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
@@ -11,8 +11,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
-use OroB2B\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
-use OroB2B\Bundle\ShippingBundle\Tests\Behat\Elements\ShoppingListWidget;
+use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
+use Oro\Bundle\ShippingBundle\Tests\Behat\Elements\ShoppingListWidget;
 //use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
