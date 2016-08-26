@@ -1,0 +1,20 @@
+services:
+    oro_ups.form.type.transport_setting:
+        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingFormType'
+        arguments:
+            - "@oro_ups.provider.transport"
+        tags:
+            - { name: form.type, alias: oro_ups_transport_setting_form_type }
+
+
+    oro_ups.form.type.shipping_service:
+        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceType'
+        calls:
+            - [setDataClass, ['Oro\Bundle\UPSBundle\Entity\UPSShippingService']]
+        tags:
+            - { name: form.type, alias: oro_ups_shipping_service }
+
+    oro_ups.form.type.shipping_service_collection:
+        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceCollectionType'
+        tags:
+            - { name: form.type, alias: oro_ups_shipping_service_collection }
