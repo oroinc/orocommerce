@@ -22,7 +22,7 @@ class SearchEngineConfigProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects($this->any())
-            ->method('get')
+            ->method('getParameter')
             ->with($key)
             ->willReturn($value);
 
@@ -37,37 +37,37 @@ class SearchEngineConfigProviderTest extends \PHPUnit_Framework_TestCase
         return [
             'name' => [
                 'method' => 'getEngineName',
-                'key' => 'search_engine_name',
-                'value' => 'ORM',
-                'expected' => 'ORM'
+                'key' => 'oro_website_search.engine_name',
+                'value' => 'orm',
+                'expected' => 'orm'
             ],
             'host' => [
                 'method' => 'getHost',
-                'key' => 'search_engine_host',
+                'key' => 'oro_website_search.engine_parameters.host',
                 'value' => 'localhost',
                 'expected' => 'localhost'
             ],
             'port' => [
                 'method' => 'getPort',
-                'key' => 'search_engine_port',
+                'key' => 'oro_website_search.engine_parameters.port',
                 'value' => '9000',
                 'expected' => '9000'
             ],
             'username' => [
                 'method' => 'getUsername',
-                'key' => 'search_engine_username',
+                'key' => 'oro_website_search.engine_parameters.username',
                 'value' => 'username',
                 'expected' => 'username'
             ],
             'password' => [
                 'method' => 'getPassword',
-                'key' => 'search_engine_password',
+                'key' => 'oro_website_search.engine_parameters.password',
                 'value' => 'password',
                 'expected' => 'password'
             ],
             'auth_type' => [
                 'method' => 'getAuthType',
-                'key' => 'search_engine_auth_type',
+                'key' => 'oro_website_search.engine_parameters.auth_type',
                 'value' => 'basic',
                 'expected' => 'basic'
             ]

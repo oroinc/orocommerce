@@ -8,12 +8,12 @@ use Oro\Bundle\WebsiteSearchBundle\WebsiteSearchBundle;
 
 class SearchEngineConfigProvider
 {
-    const SEARCH_ENGINE_NAME      = 'search_engine_name';
-    const SEARCH_ENGINE_HOST      = 'search_engine_host';
-    const SEARCH_ENGINE_PORT      = 'search_engine_port';
-    const SEARCH_ENGINE_USERNAME  = 'search_engine_username';
-    const SEARCH_ENGINE_PASSWORD  = 'search_engine_password';
-    const SEARCH_ENGINE_AUTH_TYPE = 'search_engine_auth_type';
+    const SEARCH_ENGINE_NAME      = 'oro_website_search.engine_name';
+    const SEARCH_ENGINE_HOST      = 'oro_website_search.engine_parameters.host';
+    const SEARCH_ENGINE_PORT      = 'oro_website_search.engine_parameters.port';
+    const SEARCH_ENGINE_USERNAME  = 'oro_website_search.engine_parameters.username';
+    const SEARCH_ENGINE_PASSWORD  = 'oro_website_search.engine_parameters.password';
+    const SEARCH_ENGINE_AUTH_TYPE = 'oro_website_search.engine_parameters.auth_type';
 
     /**
      * @var ContainerInterface
@@ -33,7 +33,7 @@ class SearchEngineConfigProvider
      */
     public function getEngineName()
     {
-        return $this->container->get(self::SEARCH_ENGINE_NAME);
+        return $this->container->getParameter(self::SEARCH_ENGINE_NAME);
     }
 
     /**
@@ -41,7 +41,7 @@ class SearchEngineConfigProvider
      */
     public function getHost()
     {
-        return $this->container->get(self::SEARCH_ENGINE_HOST);
+        return $this->container->getParameter(self::SEARCH_ENGINE_HOST);
     }
 
     /**
@@ -49,7 +49,7 @@ class SearchEngineConfigProvider
      */
     public function getPort()
     {
-        return $this->container->get(self::SEARCH_ENGINE_PORT);
+        return $this->container->getParameter(self::SEARCH_ENGINE_PORT);
     }
 
     /**
@@ -57,7 +57,7 @@ class SearchEngineConfigProvider
      */
     public function getUsername()
     {
-        return $this->container->get(self::SEARCH_ENGINE_USERNAME);
+        return $this->container->getParameter(self::SEARCH_ENGINE_USERNAME);
     }
 
     /**
@@ -65,7 +65,7 @@ class SearchEngineConfigProvider
      */
     public function getPassword()
     {
-        return $this->container->get(self::SEARCH_ENGINE_PASSWORD);
+        return $this->container->getParameter(self::SEARCH_ENGINE_PASSWORD);
     }
 
     /**
@@ -73,6 +73,6 @@ class SearchEngineConfigProvider
      */
     public function getAuthType()
     {
-        return $this->container->get(self::SEARCH_ENGINE_AUTH_TYPE);
+        return $this->container->getParameter(self::SEARCH_ENGINE_AUTH_TYPE);
     }
 }
