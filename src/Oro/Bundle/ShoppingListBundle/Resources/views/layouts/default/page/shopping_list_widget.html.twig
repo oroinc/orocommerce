@@ -41,7 +41,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_container_widget %}
+{% block _main_menu_shopping_lists_dropdown_container_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " widget__container"
     }) %}
@@ -56,7 +56,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_container_new_widget %}
+{% block _main_menu_shopping_lists_dropdown_container_sync_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " widget__container"
     }) %}
@@ -71,7 +71,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_widget %}
+{% block shopping_list_dropdown_item_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " order-widget__item"
     }) %}
@@ -97,48 +97,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_new_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " order-widget__item"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        <div class="order-widget__order-name text-uppercase">
-            <span class="shopping-list-label order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label }}</span>
-        </div>
-        <table class="order-widget__table">
-            <tbody>
-            <tr>
-                <td>{{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
-                <td class="text-right">
-                    {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
-            <span>{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} </span><i class="cf-right-open-mini"></i>
-        </a>
-    </div>
-{% endblock %}
-
-{% block _main_menu_shopping_lists_widget_content_new_item_btn_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.clientLink({
-        'aCss': 'order-widget__create-btn',
-        'iCss': 'cf-add_circle nmmt3-md',
-        'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
-        'widget' : {
-            'type' : 'shopping-list-create',
-            'options': {
-                'createOnly': true
-            }
-        }
-    }) }}
-{% endblock %}
-
-{% block _main_menu_shopping_lists_widget_content_new_item_btn_new_widget %}
+{% block shopping_list_dropdown_create_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {{ UI.clientLink({
         'aCss': 'order-widget__create-btn',
