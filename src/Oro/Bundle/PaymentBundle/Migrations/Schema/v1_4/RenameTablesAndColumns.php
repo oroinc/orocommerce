@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -46,6 +47,9 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'payment_term_3dd15035',
             RelationType::MANY_TO_ONE
         ));
+
+        // fix entity names in DB
+        $queries->addQuery(new UpdateClassNamesQuery('orob2b_payment_transaction', 'entity_class'));
     }
 
     /**
