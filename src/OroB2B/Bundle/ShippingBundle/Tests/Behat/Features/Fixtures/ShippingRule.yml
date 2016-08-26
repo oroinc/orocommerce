@@ -26,7 +26,7 @@ OroB2B\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
       processingType: 'per_order'
       method: 'flat_rate'
       type: 'flat_rate'
-      enabled: 'true'
+      enabled: true
       price: '@price1'
       handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
@@ -35,6 +35,7 @@ OroB2B\Bundle\AccountBundle\Entity\Account:
    account1:
        name: 'Company A'
        organization: '@organization'
+       owner: '@admin'
 
 OroB2B\Bundle\AccountBundle\Entity\AccountUser:
    amanda:
@@ -47,6 +48,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
        account: '@account1'
        organization: ['@organization']
        role: ['@buyer']
+       owner: '@admin'
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
    precision1:
@@ -61,6 +63,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
        sku: 'AA1'
        primaryUnitPrecision: '@precision1'
        addName: ['@locvalue1']
+       inventoryStatus: '@enumInventoryStatuses'
+       status: 'enabled'
 
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
@@ -84,22 +88,6 @@ OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        subtotalValue: '10.1'
        valid: 'true'
 
-#OroB2B\Bundle\PricingBundle\Entity\PriceList:
-#   pricelist1:
-#       default: 'true'
-#       name: 'PriceList 1'
-#       active: 'true'
-
-#OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
-#   productprice1:
-#       priceList: '@pricelist1'
-#       quantity: 1
-#       unit: '@item'
-#       value: '10'
-#       currency: 'EUR'
-#       product: '@product1'
-#       productSku: 'AA1'
-
 OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
     address1:
         country: '@germany'
@@ -107,7 +95,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
         label: 'label'
         street: 'Fifth avenue'
         city: 'Berlin'
-        postalCode: '2222'
+        postalCode: '10115'
         organization: '@organization'
         firstName: 'Amanda'
         lastName: 'Cole'
@@ -115,6 +103,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
         owner: '@admin'
         setDefaults: ['@shippingType', '@billingType']
         organization: '@organization'
+        systemOrganization: '@organization'
         primary: true
 
 
@@ -150,16 +139,6 @@ OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice:
         value: 10
         currency: 'EUR'
 
-#OroB2B\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
-#    priceListAttributePrice1:
-#        product: '@product1'
-#        productSku: 'AA1'
-#        pricelist: '@priceAttributePriceList1'
-#        quantity: 1
-#        unit: '@item'
-#        value: 10
-#        currency: 'EUR'
-
 OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
     combinedPriceListToAccount1:
         pricelist: '@combinedPriceList'
@@ -177,14 +156,6 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserSettings:
         __construct: ['@website1']
         currency: 'EUR'
 
-#Oro\Bundle\ConfigBundle\Entity\ConfigValue:
-#    config1:
-#        name: 'enabled_currencies'
-#        section: 'oro_b2b_pricing'
-#        arrayValue: 'EUR'
-#        type: 'array'
-
-
 OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
     billing:
          address: '@address1'
@@ -194,9 +165,3 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
          address: '@address1'
          type: '@shippingType'
          default: true
-
-
-
-
-  #https://github.com/laboro/dev/blob/42ab942e4bda8ff566c0c6b229a688ab60d59fb8/package/commerce/src/Oro/Bundle/CurrencyBundle/Migrations/Data/Demo/ORM/LoadAdditionalCurrencies.php#L36
-

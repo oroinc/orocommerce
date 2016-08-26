@@ -12,8 +12,8 @@ Feature: Applying shipping rules applying
 #    And Shopping Rule Flat Rate Handling Fee = 1.5
 
   Scenario Outline: "SHIPPING” > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
-    Given there is EUR currency in the system configuration exist
-    And I login as AmandaRCole@example.org
+    Given I login as AmandaRCole@example.org
+    And there is EUR currency in the system configuration
 #    Given Admin User created Flat Rate Shipping Rule #1 with next data:
 #      | Country       | Germany |
 #      | Rule Currency | EUR     |

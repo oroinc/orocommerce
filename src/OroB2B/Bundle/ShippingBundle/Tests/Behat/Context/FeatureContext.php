@@ -13,20 +13,18 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
 use OroB2B\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use OroB2B\Bundle\ShippingBundle\Tests\Behat\Elements\ShoppingListWidget;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+//use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 
 class FeatureContext extends OroFeatureContext implements OroElementFactoryAware, KernelAwareContext
 {
     use ElementFactoryDictionary;
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
 
+    /**
+     * @var KernelInterface
+     */
     protected $kernel;
 
     public function setKernel(KernelInterface $kernelInterface)
@@ -35,30 +33,29 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given there is EUR currency in the system configuration exist
+     * @Given there is EUR currency in the system configuration
      */
-    public function thereIsEurCurrencyInTheSystemConfigurationExist()
+    public function thereIsEurCurrencyInTheSystemConfiguration()
     {
+
         $container = $this->kernel->getContainer();
         $configManager = $container->get('oro_config.global');
+        $configManager->set('oro_currency.allowed_currencies', ['EUR','USD']);
+        $configManager->flush();
+        $configManager = $container->get('oro_config.manager');
         $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR','USD']);
+        $configManager->flush();
 
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * @Given /^I login as (?P<email>\S+)$/
      */
     public function loginAsBuyer($email)
     {
-        $this->visitPath('app_dev.php/account/user/login');
+
+        $this->visitPath('account/user/login');
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
         $table = new TableNode([
@@ -68,10 +65,6 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $form->fill($table);
         $form->pressButton('Sign In');
 
-        $container = $this->kernel->getContainer();
-        $configManager = $container->get('oro_config.global');
-        $currencies = (array)$configManager->get('oro_b2b_pricing.enabled_currencies', []);
-
     }
 
     /**
@@ -79,6 +72,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function buyerIsOnShippingMethodCheckoutStep($checkoutStep, $shoppingListName)
     {
+        $this->getSession()->resizeWindow(1440, 700, 'current');
         $this->getSession()->getDriver()->waitForAjax();
         /** @var ShoppingListWidget $shoppingListWidget */
         $shoppingListWidget = $this->createElement('ShoppingListWidget');
@@ -96,10 +90,10 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getSession()->getPage()->pressButton('Continue');
         $this->getSession()->getDriver()->waitForAjax();
         $checkoutStep->assertTitle('Shipping Information');
-//
-//        $this->getSession()->getPage()->pressButton('Continue');
-//        $this->getSession()->getDriver()->waitForAjax();
-//        $checkoutStep->assertTitle('Shipping Method');
+        $this->getSession()->getPage()->pressButton('Continue');
+        $this->getSession()->getDriver()->waitForAjax();
+        $checkoutStep->assertTitle('Shipping Method');
+        sleep(20);
     }
 
     /**
