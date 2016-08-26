@@ -6,5 +6,8 @@ layout:
             blockType: link
             options:
                 visible: '=data["acl"].isGranted("orob2b_rfp_frontend_request_view")'
+                feature:
+                    resource: orob2b_rfp_frontend_request_index
+                    type: route
                 route_name: orob2b_rfp_frontend_request_index
                 text: oro.frontend.rfp.request.entity_plural_label

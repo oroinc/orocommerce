@@ -26,6 +26,7 @@ features:
             - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
             - 'Oro\Bundle\RFPBundle\Entity\RequestProductItem'
         configuration:
-            - 'rfq'
+            - 'notifications'
+            - 'oro_b2b_rfp.default_request_status'
             - 'oro_b2b_rfp.frontend_product_visibility'
             - 'oro_b2b_rfp.backend_product_visibility'
