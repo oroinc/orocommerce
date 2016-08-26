@@ -3,4 +3,4 @@ doctrine:
         entity_managers:
             search:
                 mappings:
-                    WebsiteSearchBundle: ~
+                    OroWebsiteSearchBundle: ~
