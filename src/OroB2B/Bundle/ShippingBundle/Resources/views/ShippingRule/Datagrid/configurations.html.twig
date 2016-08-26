@@ -1,0 +1,5 @@
+{% spaceless %}
+    {% set configurations = record.getValue('configurations').toArray() %}
+
+    {{ configurations|join('</br>')|raw }}
+{% endspaceless %}

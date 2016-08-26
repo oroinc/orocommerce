@@ -13,6 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRule;
+use OroB2B\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 abstract class CheckoutControllerTestCase extends WebTestCase
@@ -66,6 +68,7 @@ abstract class CheckoutControllerTestCase extends WebTestCase
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
                 'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
+                'OroB2B\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
@@ -158,6 +161,25 @@ abstract class CheckoutControllerTestCase extends WebTestCase
             $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type],
             $address
         );
+
+        return $values;
+    }
+
+    /**
+     * @param array $values
+     * @return array
+     */
+    protected function setShippingRuleFormData(array $values)
+    {
+        /** @var ShippingRule $shippingRule */
+        $shippingRule = $this->getReference('shipping_rule.8');
+        /** @var ShippingRuleConfiguration $shippingRuleConfig */
+        $shippingRuleConfig = $shippingRule->getConfigurations()->first();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = null;
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
+        $values['_widgetContainer'] = 'ajax';
+        $values['_wid'] = 'ajax_checkout';
 
         return $values;
     }

@@ -66,7 +66,7 @@ class ProcessorTest extends AbstractProcessorTest
             $this->buildMessage($this->user->getEmail())
         );
 
-        $this->mailProcessor->sendConfirmationEmail($this->user, $this->user->getConfirmationToken());
+        $this->mailProcessor->sendConfirmationEmail($this->user);
     }
 
     public function testSendResetPasswordEmail()

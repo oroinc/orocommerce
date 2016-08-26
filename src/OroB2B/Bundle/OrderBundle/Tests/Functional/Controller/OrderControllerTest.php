@@ -18,6 +18,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 /**
  * @dbIsolation
  * @group CommunityEdition
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -125,6 +126,18 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('orders-grid', $crawler->html());
         $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
+    }
+
+    public function testBackendOrderGrid()
+    {
+        $response = $this->client->requestGrid('orders-grid');
+
+        $result = static::getJsonResponseContent($response, 200);
+
+        $first = reset($result['data']);
+
+        $this->assertArrayHasKey('shippingMethod', $first);
+        $this->assertEquals('N/A', $first['shippingMethod']);
     }
 
     /**
@@ -394,7 +407,7 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
         self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
@@ -446,7 +459,7 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
         self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();

@@ -43,6 +43,7 @@ services:
         public: false
         arguments:
             - "@orob2b_menu.tree.menu_item_tree_handler"
+            - '@knp_menu.matcher'
         tags:
             - { name: twig.extension }
 
@@ -135,14 +136,6 @@ services:
             - [ setCache, [ "@oro_menu.cache" ] ]
             - [ setHideAllForNotLoggedInUsers, [ false ] ]
 
-    orob2b_menu.layout.block_type.menu:
-        class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType
-        arguments:
-            - "@orob2b_menu.menu_provider"
-            - "@knp_menu.matcher"
-        tags:
-             - { name: layout.block_type, alias: menu }
-
     orob2b_menu.cache.warmer:
         public: false
         class: OroB2B\Bundle\MenuBundle\Cache\CacheWarmer
@@ -153,3 +146,10 @@ services:
             - [setEntityClass, ['%orob2b_menu.entity.menu_item.class%']]
         tags:
             - { name: kernel.cache_warmer }
+
+    orob2b_menu.layout.data_provider.menu:
+        class: 'OroB2B\Bundle\MenuBundle\Layout\DataProvider\MenuProvider'
+        arguments:
+            - "@orob2b_menu.menu_provider"
+        tags:
+            - { name: layout.data_provider, alias: menu }
