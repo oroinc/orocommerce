@@ -210,6 +210,5 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityClass,
         array $entitiesData,
         $entityAliasTemp
-
     );
 }

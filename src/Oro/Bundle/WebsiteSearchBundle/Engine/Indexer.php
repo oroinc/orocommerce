@@ -4,15 +4,24 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
 class Indexer extends AbstractIndexer
 {
     /**
      * {@inheritdoc}
      */
-    public function save($entity, $context = [])
+    public function save($entity, array $context = [])
     {
-        // TODO: Implement save() method.
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClassesForReindex($class = null, array $context = [])
+    {
+        // TODO: Implement getClassesForReindex() method.
     }
 
     /**
@@ -55,43 +64,27 @@ class Indexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function getClassesForReindex($class = null, $context = [])
+    public function delete($entity, array $context = [])
     {
-        // TODO: Implement getClassesForReindex() method.
+        // TODO: will be applied in BB-4083
     }
 
     /**
      * {@inheritdoc}
      */
-    public function delete($entity, $context = [])
+    protected function renameIndex($oldAlias, $newAlias)
     {
-        // TODO: Implement delete() method.
+        /** @var WebsiteSearchIndexRepository $itemRepository */
+        $itemRepository = $this->doctrineHelper->getEntityRepository(Item::class);
+        $itemRepository->removeIndexByAlias($newAlias);
+        $itemRepository->renameTemporaryIndexAlias($oldAlias, $newAlias);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function renameIndex($oldAlias, $newAlias)
+    public function resetIndex($class = null, array $context = [])
     {
-        $em = $this->doctrineHelper->getEntityManager(Item::class);
-        $itemRepository = $em->getRepository(Item::class);
-        $qb = $itemRepository->createQueryBuilder('item');
-        $qb->delete()
-            ->where($qb->expr()->eq('item.alias', $newAlias))
-            ->getQuery()
-            ->execute();
-
-        $qb->update()->set('item.alias', $newAlias)
-            ->where($qb->expr()->eq('item.alias', $oldAlias))
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resetIndex($class = null, $context = [])
-    {
-        // TODO: Implement resetIndex() method.
+        // TODO: will be applied in BB-4083
     }
 }
