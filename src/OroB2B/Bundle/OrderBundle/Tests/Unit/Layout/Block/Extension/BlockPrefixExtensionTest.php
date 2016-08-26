@@ -54,7 +54,7 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $view = new BlockView();
 
-        $this->extension->finishView($view, $block, new Options([]));
+        $this->extension->finishView($view, $block, new Options());
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
         $this->assertEquals($view->vars['block_prefixes']->toArray(), []);
@@ -67,7 +67,7 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $view = new BlockView();
         $view->vars['block_prefixes'] = ['_prefix'];
 
-        $this->extension->finishView($view, $block, new Options([]));
+        $this->extension->finishView($view, $block, new Options());
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
         $this->assertEquals($view->vars['block_prefixes']->toArray(), ['_prefix']);
