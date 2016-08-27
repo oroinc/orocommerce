@@ -318,6 +318,13 @@ services:
         arguments:
             - '%orob2b_product.entity.product.class%'
 
+    orob2b_product.repository.product_image:
+        class: Doctrine\ORM\EntityRepository
+        public: false
+        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        arguments:
+            - '%orob2b_product.entity.product_image.class%'
+
     orob2b_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
         public: false
@@ -387,7 +394,7 @@ services:
     orob2b_product.event_listener.product_image_resize_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_image.resize, method: resizeProductImage }
 
@@ -407,3 +414,13 @@ services:
             - '%oro_attachment.attachments_dir%'
         tags:
             - { name: layout.image_filter.provider }
+
+    orob2b.product.message_processor.image_resize:
+        class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
+        arguments:
+            - '@orob2b_product.repository.product_image'
+            - '@oro_layout.loader.image_filter'
+            - '@oro_layout.provider.image_type'
+            - '@oro_attachment.image_resizer'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }

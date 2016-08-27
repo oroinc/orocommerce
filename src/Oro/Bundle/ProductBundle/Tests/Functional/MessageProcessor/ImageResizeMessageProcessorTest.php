@@ -2,47 +2,47 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
-use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\ProductBundle\Command\ResizeProductImageCommand;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
+use Oro\Component\MessageQueue\Transport\Null\NullSession;
+
 /**
  * @dbIsolation
  */
-class ResizeProductImageCommandTest extends WebTestCase
+class ImageResizeMessageProcessorTest extends WebTestCase
 {
     const EXAMPLE_IMAGE_PATH = '/../DataFixtures/files/example.gif';
     const PRODUCT_LARGE_FILTER = 'product_large';
     const PRODUCT_SMALL_FILTER = 'product_small';
     const PRODUCT_ORIGINAL_FILTER = 'product_original';
 
-    /** @var Application */
-    protected $application;
+    /** @var ImageResizeMessageProcessor */
+    protected $processor;
 
     protected function setUp()
     {
         $this->initClient();
         $this->loadFixtures([LoadProductImageData::class]);
 
-        $kernel = self::getContainer()->get('kernel');
-        $this->application = new Application($kernel);
-        $this->application->add(new ResizeProductImageCommand());
+        $this->processor = self::getContainer()->get('orob2b.product.message_processor.image_resize');
     }
 
     public function testResizeProductImage()
     {
-        $command = $this->application->find(ResizeProductImageCommand::COMMAND_NAME);
-        $commandTester = new CommandTester($command);
         $productImage = $this->createProductImage();
-        
-        $commandTester->execute(['productImageId' => $productImage->getId()]);
+
+        $message = new DbalMessage();
+        $message->setBody(json_encode([$productImage->getId(), $force = true]));
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, new NullSession()));
 
         $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);
         $this->assertValidImage($productImage, self::PRODUCT_SMALL_FILTER);

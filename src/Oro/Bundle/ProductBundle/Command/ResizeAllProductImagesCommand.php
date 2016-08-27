@@ -23,7 +23,8 @@ class ResizeAllProductImagesCommand extends ContainerAwareCommand
             ->setName(self::COMMAND_NAME)
             ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
             ->setDescription(<<<DESC
-Resize All Product Images (the command only adds jobs to a queue, ensure the daemon is running to get images resized)
+Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command 
+is running to get images resized)
 DESC
             );
     }
