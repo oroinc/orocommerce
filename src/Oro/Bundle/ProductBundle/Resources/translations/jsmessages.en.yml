@@ -1,5 +1,14 @@
 oro:
     product:
+        grid:
+            navigation_bar:
+                sorting:
+                    label: sorted by %column% %direction%
+                    asc: ascending
+                    desc: descending
+                pagination:
+                    label: %start%-%end% out of %total%
+
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?
             delete.error.title: Unit of quantity cannot be deleted
