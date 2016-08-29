@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
 
 class AddressExtractorTest extends \PHPUnit_Framework_TestCase
@@ -43,36 +42,16 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
      */
     public function extractDataProvider()
     {
-        $orderAddress = new OrderAddress();
+        $addressStub = new AddressStub();
 
         $stdClass = new \stdClass();
-        $stdClass->customAddress = $orderAddress;
+        $stdClass->customAddress = $addressStub;
 
-        $array = ['address' => $orderAddress];
+        $array = ['address' => $addressStub];
 
         return [
-            'extract from checkout default billing address property' => [
-                $this->getEntity(
-                    'Oro\Bundle\CheckoutBundle\Entity\Checkout',
-                    [
-                        'billingAddress' => $orderAddress,
-                    ]
-                ),
-                AddressExtractor::PROPERTY_PATH,
-                $orderAddress,
-            ],
-            'extract from order default billing address property' => [
-                $this->getEntity(
-                    'Oro\Bundle\OrderBundle\Entity\Order',
-                    [
-                        'billingAddress' => $orderAddress,
-                    ]
-                ),
-                AddressExtractor::PROPERTY_PATH,
-                $orderAddress,
-            ],
-            'extract from custom property' => [$stdClass, 'customAddress', $orderAddress],
-            'extract from array property' => [$array, '[address]', $orderAddress],
+            'extract from custom property' => [$stdClass, 'customAddress', $addressStub],
+            'extract from array property' => [$array, '[address]', $addressStub],
         ];
     }
 
@@ -105,7 +84,7 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
                 'billingAddress',
             ],
             'extract from array' => [
-                ['address' => new OrderAddress()],
+                ['address' => new AddressStub()],
                 '[wrongKey]',
             ],
         ];
@@ -143,17 +122,9 @@ class AddressExtractorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCountryIso2()
     {
-        $iso2code = 'US';
-
         $entity = new \stdClass();
-        $entity->billingAddress = $this->getEntity(
-            'Oro\Bundle\OrderBundle\Entity\OrderAddress',
-            ['country' => new Country($iso2code)]
-        );
+        $entity->billingAddress = new AddressStub();
 
-        $this->assertEquals(
-            $iso2code,
-            $this->extractor->getCountryIso2($entity)
-        );
+        $this->assertEquals('US', $this->extractor->getCountryIso2($entity));
     }
 }
