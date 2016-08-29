@@ -1,0 +1,8 @@
+{% set paymentMethods = record.getValue('paymentMethods') %}
+{%- if paymentMethods is iterable -%}
+    {% for paymentMethod in paymentMethods %}
+        {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{%- else -%}
+    {{ 'oro.ui.empty'|trans }}
+{%- endif -%}

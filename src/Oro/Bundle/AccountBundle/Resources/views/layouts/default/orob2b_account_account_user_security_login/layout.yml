@@ -1,0 +1,14 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
+        - '@remove':
+            id: wrapper
+        - '@setOption':
+            id: login_form_submit
+            optionName: attr.class
+            optionValue: 'button--large'
+    imports:
+        - 'only_content'

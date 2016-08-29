@@ -8,8 +8,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 
 class PayflowExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
 {

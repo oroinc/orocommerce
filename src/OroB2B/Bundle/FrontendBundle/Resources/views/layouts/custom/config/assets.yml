@@ -1,5 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/orob2bfrontend/custom/scss/variables/_input.scss'
-        - 'bundles/orob2bfrontend/custom/scss/styles.scss'
-    output: 'css/layout/custom/styles.css'
