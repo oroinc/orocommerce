@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\ExpressionVisitor;
 use Doctrine\Common\Collections\Expr\Value;
 
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+
 class ExampleExpressionVisitor extends ExpressionVisitor
 {
     /**
@@ -29,15 +31,19 @@ class ExampleExpressionVisitor extends ExpressionVisitor
      */
     public function walkComparison(Comparison $comparison)
     {
-        switch ($comparison->getField()) {
-            case 'text.sku':
-                if ($comparison->getOperator() === Comparison::CONTAINS) {
-                    return strpos($this->data['sku'], $comparison->getValue()->getValue()) !== false;
-                }
-                if ($comparison->getOperator() === Comparison::EQ) {
-                    return strcmp($this->data['sku'], $comparison->getValue()->getValue()) === 0;
-                }
-                break;
+        $field = $comparison->getField();
+
+        list ($type, $value) = Criteria::explodeFieldTypeName($field);
+
+        if (!isset($this->data[$value])) {
+            return true;
+        }
+
+        if ($comparison->getOperator() === Comparison::CONTAINS) {
+            return strpos($this->data[$value], $comparison->getValue()->getValue()) !== false;
+        }
+        if ($comparison->getOperator() === Comparison::EQ) {
+            return strcmp($this->data[$value], $comparison->getValue()->getValue()) === 0;
         }
         return true;
     }
@@ -57,6 +63,14 @@ class ExampleExpressionVisitor extends ExpressionVisitor
      */
     public function walkCompositeExpression(CompositeExpression $expr)
     {
+        $list = $expr->getExpressionList();
+
+        foreach ($list as $expression) {
+            $partial = $expression->visit($this);
+            if (false === $partial) {
+                return false;
+            }
+        }
         return true;
     }
 }
