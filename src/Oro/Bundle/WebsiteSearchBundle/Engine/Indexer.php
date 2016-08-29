@@ -33,7 +33,6 @@ class Indexer extends AbstractIndexer
         $entityAliasTemp
     ) {
         $em = $this->doctrineHelper->getEntityManager(Item::class);
-        $counter = 0;
 
         foreach ($entitiesData as $entityId => $indexData) {
             $item = new Item();
@@ -44,11 +43,11 @@ class Indexer extends AbstractIndexer
                 ->setChanged(false)
                 ->saveItemData($indexData);
             $em->persist($item);
-            $counter++;
         }
         $em->flush();
         $em->clear();
-        return $counter;
+
+        return count($entitiesData);
     }
 
     /**
@@ -58,7 +57,7 @@ class Indexer extends AbstractIndexer
      */
     protected function getEntityTitle(array $indexData)
     {
-        return isset($indexData[SearchQuery::TYPE_TEXT]) ? array_values($indexData[SearchQuery::TYPE_TEXT])[0] : '';
+        return isset($indexData[SearchQuery::TYPE_TEXT]) ? reset($indexData[SearchQuery::TYPE_TEXT]) : '';
     }
 
     /**
@@ -85,6 +84,6 @@ class Indexer extends AbstractIndexer
      */
     public function resetIndex($class = null, array $context = [])
     {
-        // TODO: will be applied in BB-4083
+        // TODO: Implement resetIndex() method.
     }
 }
