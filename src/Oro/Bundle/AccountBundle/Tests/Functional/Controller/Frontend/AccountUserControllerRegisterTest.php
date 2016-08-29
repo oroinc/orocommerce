@@ -94,12 +94,12 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->submitRegisterForm($crawler, $email);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $messages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
         /** @var \Swift_Message $message */
-        $message = reset($messages);
+        $message = reset($emailMessages);
 
         $this->assertInstanceOf('Swift_Message', $message);
         $this->assertEquals($email, key($message->getTo()));
@@ -155,12 +155,12 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->submitRegisterForm($crawler, self::EMAIL);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $messages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
         /** @var \Swift_Message $message */
-        $message = reset($messages);
+        $message = reset($emailMessages);
 
         $this->assertInstanceOf('Swift_Message', $message);
         $this->assertEquals(self::EMAIL, key($message->getTo()));
@@ -391,12 +391,12 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->client->followRedirects(false);
         $this->client->submit($form, $submittedData);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $messages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
         /** @var \Swift_Message $message */
-        $message = reset($messages);
+        $message = reset($emailMessages);
 
         $this->assertInstanceOf('Swift_Message', $message);
         $this->assertEquals(self::EMAIL, key($message->getTo()));

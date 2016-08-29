@@ -3,6 +3,8 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/payment.html.twig'
                 - 'OroCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
         - '@setOption':
             id: checkout_information
@@ -22,4 +24,3 @@ layout:
             parentId: checkout_form
             siblingId: checkout_form_fields
     conditions: 'context["workflowStepName"]=="enter_payment"'
-

@@ -13,7 +13,7 @@ layout:
                 top_nav_left_signed_in_as:
                     blockType: text
                     options:
-                        text: '=context["logged_user"].getFullName()'
+                        text: '=data["current_user"].getCurrentUser().getFullName()'
                 top_nav_left_sign_out:
                     blockType: link
                     options:
@@ -32,4 +32,4 @@ layout:
                     top_nav_left_my_account: ~
                     top_nav_left_sign_out: ~
 
-    conditions: 'context["logged_user"]!=null'
+    conditions: 'context["is_logged_in"]'
