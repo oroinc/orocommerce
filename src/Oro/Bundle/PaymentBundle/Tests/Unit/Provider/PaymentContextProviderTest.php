@@ -39,17 +39,16 @@ class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param mixed $context
-     * @param mixed $entity
-     * @param mixed $expected
+     * @param object|null $entity
+     * @param array $expected
      *
      * @dataProvider processContextDataProvider
      */
-    public function testProcessContext($context, $entity, $expected)
+    public function testProcessContext($entity, $expected)
     {
         $this->extractor->expects($this->any())->method('getCountryIso2')->willReturn('US');
 
-        $this->assertEquals($expected, $this->paymentContextProvider->processContext($context, $entity));
+        $this->assertEquals($expected, $this->paymentContextProvider->processContext($entity));
     }
 
     /**
@@ -58,10 +57,8 @@ class PaymentContextProviderTest extends \PHPUnit_Framework_TestCase
     public function processContextDataProvider()
     {
         return [
-            'empty context' => [[], new \stdClass(), []],
-            'empty entity' => [['context'], null, []],
+            'empty entity' => [null, []],
             'return entity and address' => [
-                ['context'],
                 new \stdClass(),
                 ['entity' => new \stdClass(), 'country' => 'US', 'currency' => null],
             ],
