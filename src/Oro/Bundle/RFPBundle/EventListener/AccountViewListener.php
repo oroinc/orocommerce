@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -29,6 +30,16 @@ class AccountViewListener
     protected $requestStack;
 
     /**
+     * @var FeatureChecker
+     */
+    protected $featureChecker;
+
+    /**
+     * @var string
+     */
+    protected $feature;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param RequestStack $requestStack
@@ -44,10 +55,30 @@ class AccountViewListener
     }
 
     /**
+     * @param FeatureChecker $featureChecker
+     */
+    public function setFeatureChecker(FeatureChecker $featureChecker)
+    {
+        $this->featureChecker = $featureChecker;
+    }
+
+    /**
+     * @param string $feature
+     */
+    public function setFeature($feature)
+    {
+        $this->feature = $feature;
+    }
+
+    /**
      * @param BeforeListRenderEvent $event
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
+        if ($this->featureChecker && !$this->featureChecker->isFeatureEnabled($this->feature)) {
+            return;
+        }
+
         /** @var Account $account */
         $account = $this->getEntityFromRequestId('OroAccountBundle:Account');
         if ($account) {
@@ -69,6 +100,10 @@ class AccountViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
+        if ($this->featureChecker && !$this->featureChecker->isFeatureEnabled($this->feature)) {
+            return;
+        }
+
         /** @var AccountUser $accountUser */
         $accountUser = $this->getEntityFromRequestId('OroAccountBundle:AccountUser');
         if ($accountUser) {
