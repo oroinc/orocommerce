@@ -21,7 +21,7 @@ class ExampleMockEngine implements EngineV2Interface
      * @param array $context
      * @return Result
      */
-    public function search(Query $query, $context = [])
+    public function search(Query $query, array $context = [])
     {
         // a real engine would decompile the Query object, translate
         // it into its own DBMS system query, run it and postprocess results.
