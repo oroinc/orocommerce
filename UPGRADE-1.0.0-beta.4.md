@@ -53,6 +53,8 @@ PaymentBundle
 - Added `Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter` for translating payment status labels and getting all available payment statuses.
 - Added `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension` with twig function `get_payment_status_label` which returns translated payment
 label.
+- Added `Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent`.
+- Added `oropayment\js\app\views\payment-term-view` js component.
 
 OrderBundle:
 ------------
@@ -61,3 +63,7 @@ OrderBundle:
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
+
+SaleBundle:
+-----------
+- Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
