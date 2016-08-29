@@ -2,26 +2,24 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use JMS\JobQueueBundle\Entity\Job;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Command\ResizeProductImageCommand;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ProductImageResizeListener
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    const IMAGE_RESIZE_TOPIC = 'imageResize';
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @var MessageProducerInterface
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    protected $producer;
+
+    /**
+     * @param MessageProducerInterface $producer
+     */
+    public function __construct(MessageProducerInterface $producer)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->producer = $producer;
     }
 
     /**
@@ -29,24 +27,9 @@ class ProductImageResizeListener
      */
     public function resizeProductImage(ProductImageResizeEvent $event)
     {
-        $manager = $this->doctrineHelper->getEntityManagerForClass(Job::class);
-        $job = $this->createJob($event->getProductImage(), $event->getForceOption());
-        $manager->persist($job);
-        $manager->flush($job);
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @param bool $forceOption
-     * @return Job
-     */
-    private function createJob(ProductImage $productImage, $forceOption)
-    {
-        $commandArgs = [$productImage->getId()];
-        if ($forceOption) {
-            $commandArgs[] = sprintf('--%s', ResizeProductImageCommand::OPTION_FORCE);
-        }
-
-        return new Job(ResizeProductImageCommand::COMMAND_NAME, $commandArgs);
+        $this->producer->send(self::IMAGE_RESIZE_TOPIC, [
+            'productImageId' => $event->getProductImage()->getId(),
+            'force' => $event->getForceOption()
+        ]);
     }
 }
