@@ -28,8 +28,8 @@ class ProductImageResizeListener
     public function resizeProductImage(ProductImageResizeEvent $event)
     {
         $this->producer->send(self::IMAGE_RESIZE_TOPIC, [
-            $event->getProductImage()->getId(),
-            $event->getForceOption()
+            'productImageId' => $event->getProductImage()->getId(),
+            'force' => $event->getForceOption()
         ]);
     }
 }

@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 
 class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +45,10 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected static $validData = [self::PRODUCT_IMAGE_ID, self::FORCE_OPTION];
+    protected static $validData = [
+        'productImageId' => self::PRODUCT_IMAGE_ID,
+        'force' => self::FORCE_OPTION
+    ];
 
     /**
      * @var ImageResizeMessageProcessor
@@ -77,7 +81,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessInvalidData()
     {
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process(
-            $this->prepareMessage(json_encode(['abc'])),
+            $this->prepareMessage(JSON::encode(['abc'])),
             $this->prepareSession()
         ));
     }
@@ -152,6 +156,6 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareValidMessage()
     {
-        return $this->prepareMessage(json_encode(self::$validData));
+        return $this->prepareMessage(JSON::encode(self::$validData));
     }
 }

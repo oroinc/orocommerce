@@ -33,7 +33,10 @@ class ProductImageResizeListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->prepareEvent();
         $this->producer->send(
             ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
-            [self::PRODUCT_IMAGE_ID, self::FORCE_OPTION]
+            [
+                'productImageId' => self::PRODUCT_IMAGE_ID,
+                'force' => self::FORCE_OPTION
+            ]
         )->shouldBeCalled();
 
         $this->listener->resizeProductImage($event);

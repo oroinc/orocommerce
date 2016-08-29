@@ -13,6 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\Null\NullSession;
+use Oro\Component\MessageQueue\Util\JSON;
 
 /**
  * @dbIsolation
@@ -40,7 +41,10 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         $productImage = $this->createProductImage();
 
         $message = new DbalMessage();
-        $message->setBody(json_encode([$productImage->getId(), $force = true]));
+        $message->setBody(JSON::encode([
+            'productImageId' => $productImage->getId(),
+            'force' => $force = true
+        ]));
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, new NullSession()));
 

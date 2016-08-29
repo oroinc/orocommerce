@@ -14,6 +14,7 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 
 class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -61,23 +62,28 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $data = json_decode($message->getBody(), true);
-
-        if (!$data || count($data) != 2) {
+        try {
+            $data = array_replace(
+                ['productImageId' => null, 'force' => null],
+                JSON::decode($message->getBody())
+            );
+        } catch (\InvalidArgumentException $e) {
             return self::REJECT;
         }
 
-        list($productImageId, $forceOption) = $data;
+        if (!is_int($data['productImageId']) || !is_bool($data['force'])) {
+            return self::REJECT;
+        }
 
         /** @var ProductImage $productImage */
-        if (!$productImage = $this->imageRepository->find($productImageId)) {
+        if (!$productImage = $this->imageRepository->find($data['productImageId'])) {
             return self::REJECT;
         }
 
         $this->filterLoader->load();
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-            $this->imageResizer->resizeImage($productImage->getImage(), $dimension->getName(), $forceOption);
+            $this->imageResizer->resizeImage($productImage->getImage(), $dimension->getName(), $data['force']);
         }
 
         return self::ACK;
