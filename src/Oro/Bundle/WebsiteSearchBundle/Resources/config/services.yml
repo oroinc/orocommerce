@@ -8,3 +8,6 @@ services:
             - 'oro_website_search_index_text'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
+
+    oro_website_search.engine.mapper:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'

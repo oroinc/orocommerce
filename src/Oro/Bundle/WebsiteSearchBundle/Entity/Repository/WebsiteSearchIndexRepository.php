@@ -3,22 +3,20 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
 use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 class WebsiteSearchIndexRepository extends SearchIndexRepository
 {
     /**
-     * Removes search item entities for entities with given $entityClass and $entityIds.
-     * If $entityAlias is null then all search item entities are deleted,
-     * otherwise only entities with this $entityAlias are deleted.
-     *
      * @param array $entityIds
      * @param string $entityClass
      * @param string|null $entityAlias
+     * @return Item[]
      */
-    public function removeItemEntities(array $entityIds, $entityClass, $entityAlias = null)
+    public function getEntitiesToRemove(array $entityIds, $entityClass, $entityAlias = null)
     {
         if (empty($entityIds)) {
-            return;
+            return [];
         }
 
         $queryBuilder = $this->createQueryBuilder('item');
@@ -28,7 +26,8 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
             ->setParameters([
                 'entityClass' => $entityClass,
                 'entityIds' => $entityIds
-            ]);
+            ])
+            ->orderBy('item.alias, item.recordId');
 
         if (null !== $entityAlias) {
             $queryBuilder
@@ -36,22 +35,15 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
                 ->setParameter('entityAlias', $entityAlias);
         }
 
-        $items = $queryBuilder->getQuery()->getResult();
-
-        $entityManager = $this->getEntityManager();
-        foreach ($items as $item) {
-            $entityManager->remove($item);
-        }
-
-        $entityManager->flush($items);
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCount()
     {
-       return $this->createQueryBuilder('item')
+        return $this->createQueryBuilder('item')
            ->select('count(item)')
            ->getQuery()
            ->getSingleScalarResult();

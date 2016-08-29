@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(
  *    name="oro_website_search_item",
- *    uniqueConstraints={@ORM\UniqueConstraint(name="oro_website_search_item_uidx", columns={"entity", "alias", "record_id"})},
+ *    uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="oro_website_search_item_uidx", columns={"entity", "alias", "record_id"})
+ *    },
  *    indexes={
  *      @ORM\Index(name="oro_website_search_item_idxa", columns={"alias"}),
  *      @ORM\Index(name="oro_website_search_item_idxe", columns={"entity"})

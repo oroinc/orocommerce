@@ -2,35 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
 class OrmIndexer extends AbstractIndexer
 {
-    /**
-     * @var WebsiteSearchIndexRepository
-     */
-    private $indexRepository;
-
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DoctrineHelper $doctrineHelper
-     * @param Mapper $mapper
-     * @param WebsiteSearchIndexRepository $indexRepository
-     */
-    public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        DoctrineHelper $doctrineHelper,
-        Mapper $mapper,
-        WebsiteSearchIndexRepository $indexRepository
-    ) {
-        parent::__construct($eventDispatcher, $doctrineHelper, $mapper);
-
-        $this->indexRepository = $indexRepository;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -51,13 +27,23 @@ class OrmIndexer extends AbstractIndexer
         }
 
         $entityAlias = null;
-        if (isset($context['website_id'])) {
-            $websiteId = $context['website_id'];
+        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+            $websiteId = $context[self::CONTEXT_WEBSITE_ID_KEY];
             $entityAlias = $this->mapper->getEntityAlias($firstEntityClass);
+            //TODO: replace with mapper or other service method call
             $entityAlias = str_replace('WEBSITE_ID', $websiteId, $entityAlias);
         }
 
-        $this->indexRepository->removeItemEntities($entityIds, $firstEntityClass, $entityAlias);
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
+
+        /** @var WebsiteSearchIndexRepository $indexRepository */
+        $indexRepository = $this->doctrineHelper->getEntityRepositoryForClass(Item::class);
+        $items = $indexRepository->getEntitiesToRemove($entityIds, $firstEntityClass, $entityAlias);
+        foreach ($items as $item) {
+            $entityManager->remove($item);
+        }
+
+        $entityManager->flush($items);
     }
 
     /**
@@ -77,8 +63,7 @@ class OrmIndexer extends AbstractIndexer
         array $entitiesData,
         $entityAliasTemp,
         array $context
-    )
-    {
+    ) {
         // TODO: Implement saveIndexData() method.
     }
 

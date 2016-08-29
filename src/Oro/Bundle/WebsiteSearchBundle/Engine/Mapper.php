@@ -21,4 +21,15 @@ class Mapper
             ]
         ];
     }
+
+    /**
+     * @param string $entityClass
+     * @return string
+     */
+    public function getEntityAlias($entityClass)
+    {
+        $mappingConfig = $this->getMappingConfig();
+
+        return $mappingConfig[$entityClass]['alias'];
+    }
 }
