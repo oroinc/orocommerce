@@ -41,8 +41,6 @@ define(function(require) {
          * @param {object} datagrid
          */
         updateFiltersInfo: function(datagrid) {
-            console.log(datagrid);
-            
             var currentFilters = [];
             var filterState;
 
@@ -90,8 +88,6 @@ define(function(require) {
             });
 
             var filtersString = '[' + filtersStrings.join(', ') + ']';
-
-            console.log(filtersString);
 
             $('.filters-info', this.$element).html(filtersString);
         }
