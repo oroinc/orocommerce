@@ -1,0 +1,23 @@
+layout:
+    imports:
+        - orob2b_account_menu
+        -
+            id: orob2b_sale_quote_grid
+            root: content
+            namespace: quotes
+
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.sale.quote.entity_plural_label'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.frontend.sale.quote.entity_plural_label'
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'account'

@@ -1,0 +1,5 @@
+{% extends 'OroRFPBundle:Action:rfpEditForm.html.twig' %}
+
+{% block pageHeader %}
+    {% include 'OroUIBundle::page_title_block.html.twig' with { title: operation.definition.label|trans ~ entity|trans } %}
+{% endblock pageHeader %}

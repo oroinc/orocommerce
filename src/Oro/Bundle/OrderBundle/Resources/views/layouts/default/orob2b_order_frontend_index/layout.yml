@@ -1,0 +1,30 @@
+layout:
+    imports:
+        - orob2b_account_menu
+        -
+            id: orob2b_order_grid
+            root: content
+            namespace: orders
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroOrderBundle:layouts:default/orob2b_order_frontend_index/layout.html.twig'
+
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.order.order_history.label'
+
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'orders'
+
+        - '@add':
+            id: orders_title
+            parentId: content
+            blockType: text
+            options:
+                text: 'oro.frontend.order.past_orders.label'

@@ -1,0 +1,27 @@
+layout:
+    imports:
+        - orob2b_account_menu
+        -
+            id: orob2b_checkout_grid
+            root: content
+            namespace: checkouts
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCheckoutBundle:layouts:default/orob2b_checkout_frontend_open_orders/layout.html.twig'
+
+        - '@add':
+            id: checkouts_title
+            parentId: content
+            blockType: text
+            siblingId: ~
+            prepend: true
+            options:
+                text: 'oro.checkout.entity_plural_label'
+
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.checkout.entity_plural_label'

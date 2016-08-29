@@ -6,9 +6,8 @@ use Psr\Log\LoggerAwareTrait;
 
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
-
-use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PayflowExpressCheckoutListener
 {

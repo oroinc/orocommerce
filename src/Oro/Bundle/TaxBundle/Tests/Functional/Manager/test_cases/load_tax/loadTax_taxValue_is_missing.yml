@@ -1,0 +1,10 @@
+method: loadTax
+reference: empty_order
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        empty_order:
+            poNumber: { property_value: empty_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
+expectedResult: []
