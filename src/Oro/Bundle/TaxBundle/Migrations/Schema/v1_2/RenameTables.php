@@ -49,8 +49,8 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
         );
 
         // fix class names stored in DB
-        $queries->addQuery(new UpdateClassNamesQuery('orob2b_tax_value', 'entity_class'));
-        $queries->addQuery(new UpdateSerializedClassNames('orob2b_tax_value', 'result'));
+        $queries->addQuery(new UpdateClassNamesQuery('oro_tax_value', 'entity_class'));
+        $queries->addQuery(new UpdateSerializedClassNames('oro_tax_value', 'result'));
     }
 
     /**

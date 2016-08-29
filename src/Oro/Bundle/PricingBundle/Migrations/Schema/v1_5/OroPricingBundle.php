@@ -38,8 +38,8 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $this->createOroPriceRuleLexemeTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroPriceRuleForeignKeys($schema);
-        $this->addOroPriceRuleChTriggerForeignKeys($schema);
+        $this->addOroPriceRuleForeignKeys($schema, $queries);
+        $this->addOroPriceRuleChTriggerForeignKeys($schema, $queries);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
 
         $this->updateProductPriceTable($schema);
@@ -74,7 +74,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     }
 
     /**
-     * Create orob2b_price_rule table
+     * Create oro_price_rule table
      *
      * @param Schema $schema
      */
@@ -93,7 +93,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     }
 
     /**
-     * Create orob2b_price_rule_ch_trigger table
+     * Create oro_price_rule_ch_trigger table
      *
      * @param Schema $schema
      */
@@ -107,7 +107,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     }
 
     /**
-     * Create orob2b_price_rule_lexeme table
+     * Create oro_price_rule_lexeme table
      *
      * @param Schema $schema
      */
@@ -124,51 +124,59 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     }
 
     /**
-     * Add orob2b_price_rule foreign keys.
+     * Add oro_price_rule foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroPriceRuleForeignKeys(Schema $schema)
+    protected function addOroPriceRuleForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_price_rule');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_rule',
+            'oro_product_unit',
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
     }
 
     /**
-     * Add orob2b_price_rule_ch_trigger foreign keys.
+     * Add oro_price_rule_ch_trigger foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroPriceRuleChTriggerForeignKeys(Schema $schema)
+    protected function addOroPriceRuleChTriggerForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_price_rule_ch_trigger');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_rule_ch_trigger',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
-     * Add orob2b_price_rule_lexeme foreign keys.
+     * Add oro_price_rule_lexeme foreign keys.
      *
      * @param Schema $schema
      */
@@ -176,7 +184,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     {
         $table = $schema->getTable('oro_price_rule_lexeme');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_rule'),
+            $schema->getTable('oro_price_rule'),
             ['price_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -198,7 +206,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $table = $schema->getTable('orob2b_price_product');
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_rule'),
+            $schema->getTable('oro_price_rule'),
             ['price_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -281,9 +289,6 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $extension->renameTable($schema, $queries, 'orob2b_product_attr_currency', 'oro_product_attr_currency');
         $extension->renameTable($schema, $queries, 'orob2b_price_attribute_price', 'oro_price_attribute_price');
         $extension->renameTable($schema, $queries, 'orob2b_price_list_to_product', 'oro_price_list_to_product');
-        $extension->renameTable($schema, $queries, 'orob2b_price_rule', 'oro_price_rule');
-        $extension->renameTable($schema, $queries, 'orob2b_price_rule_ch_trigger', 'oro_price_rule_ch_trigger');
-        $extension->renameTable($schema, $queries, 'orob2b_price_rule_lexeme', 'oro_price_rule_lexeme');
     }
 
     /**
