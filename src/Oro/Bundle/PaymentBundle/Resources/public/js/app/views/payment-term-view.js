@@ -10,7 +10,7 @@ define(function(require) {
     /**
      * @export oropayment/js/app/views/payment-term-view
      * @extends oroui.app.views.base.View
-     * @class oroorder.app.views.PaymentTermView
+     * @class oropayment.app.views.PaymentTermView
      */
     PaymentTermView = BaseView.extend({
         /**
@@ -52,8 +52,6 @@ define(function(require) {
             this.configureInput();
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
-
-            mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
         },
 
         /**
@@ -110,19 +108,6 @@ define(function(require) {
             }
 
             this.$input.inputWidget('val', paymentTerm);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
-
-            PaymentTermView.__super__.dispose.call(this);
         }
     });
 
