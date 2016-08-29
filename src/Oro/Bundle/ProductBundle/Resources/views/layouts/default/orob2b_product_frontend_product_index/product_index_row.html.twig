@@ -8,7 +8,7 @@
     }) %}
     <script id="template-grid-row" type="text/template">
         <div {{ block('block_attributes') }}>
-            {% for child in block -%}{{ block_widget(child) }}{%- endfor %}
+            {{ block("container_widget") }}
         </div>
     </script>
 {% endblock %}
@@ -40,7 +40,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__title product-item__title_<%= themeOptions.currentRowView %>"
     }) %}
-    <h3 {{ block('block_attributes') }}>{% for child in block -%}{{ block_widget(child) }}{%- endfor %}</h3>
+    <h3 {{ block('block_attributes') }}>{{ block("container_widget") }}</h3>
 {% endblock %}
 
 {% block _product_grid_cell_name_value_widget %}
@@ -84,7 +84,7 @@
 {% endblock %}
 
 {% block _product_grid_cell_sku_widget %}
-    <div {{ block('block_attributes') }}>{% for child in block -%}{{ block_widget(child) }}{%- endfor %}</div>
+    <div {{ block('block_attributes') }}>{{ block("container_widget") }}</div>
 {% endblock %}
 
 {% block _product_grid_cell_sku_value_widget %}

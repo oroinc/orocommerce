@@ -1,10 +1,6 @@
 layout:
     imports:
         -
-            id: datagrid_toolbar
-            root: __root
-
-        -
             id: datagrid
             root: __root
 

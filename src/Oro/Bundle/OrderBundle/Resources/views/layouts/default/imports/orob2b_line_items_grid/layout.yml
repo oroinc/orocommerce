@@ -1,11 +1,6 @@
 layout:
     imports:
         -
-            id: datagrid_toolbar
-            root: __grid_container_body
-            namespace: grid_container
-
-        -
             id: datagrid
             root: __grid_container_body
             namespace: grid_container
