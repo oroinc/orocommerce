@@ -1,12 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var HeaderComponent;
+    var HeaderRowComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var $ = require('jquery');
 
-    HeaderComponent = BaseComponent.extend({
+    HeaderRowComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -41,5 +41,5 @@ define(function(require) {
         }
     });
 
-    return HeaderComponent;
+    return HeaderRowComponent;
 });

@@ -15,21 +15,8 @@
 
 {% block _header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orofrontend/default/js/components/header',
-        '~data-page-component-options': {
-            isMobile: isMobileVersion()
-        },
         '~class': ' header'
     }) %}
-
-    {% if isMobileVersion() %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~data-sticky': {
-                isSticky: true,
-                toggleClass: 'header--fixed'
-            }
-        }) %}
-    {% endif %}
 
     <header{{ block('block_attributes') }}>
         {{ block_widget(block) }}

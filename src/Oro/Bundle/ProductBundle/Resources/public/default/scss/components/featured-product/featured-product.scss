@@ -27,7 +27,7 @@
         & .btn.btn_has-dropdown.btn_has-dropdown_lg > span.direct-link {
             overflow: hidden;
 
-            width: calc(100% - 12px);
+            width: calc(100% - 22px);
             height: 42px;
             padding: 0 4px;
 
@@ -39,7 +39,7 @@
 
         & .btn.btn_has-dropdown.btn_has-dropdown_lg > a.dropdown-toggle,
         & .btn.btn_has-dropdown.btn_has-dropdown_lg > span.dropdown-toggle {
-            width: 10px;
+            width: 20px;
 
             line-height: 42px;
         }

@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setOption':
-            id: featured_products
+            id: top_selling_products
             optionName: slides_count
             optionValue: 2
     conditions: 'context["is_mobile"]'

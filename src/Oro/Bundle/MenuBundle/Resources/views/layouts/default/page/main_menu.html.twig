@@ -1,7 +1,20 @@
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oromenu/default/js/components/header-row',
+        '~data-page-component-options': {
+            isMobile: isMobileVersion()
+        },
         '~class': ' header-row'
     }) %}
+
+    {% if isMobileVersion() %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~data-sticky': {
+                isSticky: true,
+                toggleClass: 'header-row--fixed'
+            }
+        }) %}
+    {% endif %}
 
     <div class="container-fluid">
         <div {{ block('block_attributes') }}>
