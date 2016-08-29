@@ -69,7 +69,8 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
                     'workflow_item' => $workflowItem,
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
-                    'disabled' => false
+                    'disabled' => false,
+                    'allow_extra_fields' => true,
                 ]
             )
             ->will($this->returnValue($form));

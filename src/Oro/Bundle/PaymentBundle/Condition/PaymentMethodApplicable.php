@@ -96,7 +96,7 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
         }
 
         $entity = $this->resolveValue($context, $this->entity, false);
-        $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
+        $paymentContext = $this->paymentContextProvider->processContext($entity);
 
         return $paymentMethod->isApplicable($paymentContext);
     }
