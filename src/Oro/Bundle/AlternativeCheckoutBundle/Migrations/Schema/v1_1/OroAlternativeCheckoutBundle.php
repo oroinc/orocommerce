@@ -5,13 +5,20 @@ namespace Oro\Bundle\AlternatiiveCheckoutBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface
+class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterface, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
+
     /**
      * {@inheritdoc}
      */
@@ -26,7 +33,7 @@ class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterfa
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroAlternativeCheckoutTable($schema);
-        $this->addOroAlternativeCheckoutForeignKeys($schema);
+        $this->addOroAlternativeCheckoutForeignKeys($schema, $queries);
         $this->moveExistingAlternativeCheckoutsToBaseTable($queries);
         $this->moveExistingAlternativeCheckoutsToAdditionalTable($queries);
 
@@ -73,26 +80,34 @@ class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterfa
      * Add orob2b_alternative_checkout foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroAlternativeCheckoutForeignKeys(Schema $schema)
+    protected function addOroAlternativeCheckoutForeignKeys(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('orob2b_alternative_checkout');
-
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_checkout'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_alternative_checkout',
+            'oro_checkout',
             ['id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
-            ['shipping_address_id'],
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_alternative_checkout',
+            'oro_order_address',
+            ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
-            ['billing_address_id'],
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_alternative_checkout',
+            'oro_order_address',
+            ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
@@ -104,7 +119,7 @@ class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterfa
     protected function moveExistingAlternativeCheckoutsToBaseTable(QueryBag $queries)
     {
         $sql = <<<SQL
-    INSERT INTO orob2b_checkout (workflow_step_id,
+    INSERT INTO oro_checkout (workflow_step_id,
         workflow_item_id,
         source_id,
         website_id,
@@ -171,8 +186,17 @@ SQL;
         aco.request_approval_notes,
         aco.requested_for_approve
     FROM orob2b_alt_checkout_old aco
-    LEFT join orob2b_checkout c ON c.workflow_item_id = aco.workflow_item_id
+    LEFT join oro_checkout c ON c.workflow_item_id = aco.workflow_item_id
 SQL;
         $queries->addQuery($sql);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }
