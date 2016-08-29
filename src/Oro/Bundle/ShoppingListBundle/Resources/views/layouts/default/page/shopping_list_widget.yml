@@ -1,0 +1,32 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroShoppingListBundle:layouts:default/page/shopping_list_widget.html.twig'
+        - '@addTree':
+            items:
+                main_menu_shopping_lists_wrapper:
+                    blockType: container
+                main_menu_shopping_lists_widget:
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                main_menu_shopping_lists_widget_content:
+                    blockType: container
+                main_menu_shopping_lists_widget_content_item_container:
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                main_menu_shopping_lists_widget_content_item:
+                    blockType: block
+                main_menu_shopping_lists_widget_content_new_item_btn:
+                    blockType: block
+            tree:
+                main_menu_widgets:
+                    main_menu_shopping_lists_wrapper:
+                        main_menu_shopping_lists_widget:
+                            main_menu_shopping_lists_widget_content:
+                                main_menu_shopping_lists_widget_content_item_container:
+                                    main_menu_shopping_lists_widget_content_item: ~
+                                main_menu_shopping_lists_widget_content_new_item_btn: ~
+
+    conditions: 'context["is_logged_in"]'

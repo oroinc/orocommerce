@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'price.html.twig'
+        - '@addTree':
+            items:
+                product_grid_row_price_container:
+                    blockType: container
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                product_grid_row_listed_price:
+                    blockType: block
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                product_grid_row_msrp:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                product_grid_row_price:
+                    blockType: block
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+            tree:
+                product_grid_row_secondary_content_first_container:
+                    product_grid_row_price_container:
+                        product_grid_row_listed_price: ~
+                        product_grid_row_msrp: ~
+                        product_grid_row_price: ~

@@ -1,0 +1,11 @@
+<div class="category">
+    {% set treeOptions = {
+        'data' : orob2b_category_list('oro.catalog.frontend.category.master_category.label'|trans),
+        'defaultCategoryId': defaultCategoryId
+    } %}
+    <label>{{ 'oro.catalog.category.entity_plural_label'|trans }}</label>
+
+    <div data-page-component-module="orocatalog/js/app/components/frontend-product-sidebar-component"
+         data-page-component-options="{{ treeOptions|json_encode }}"></div>
+    <div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
+</div>

@@ -1,0 +1,4 @@
+css:
+    'oropricing':
+        - 'bundles/oropricing/css/style.less'
+        - 'bundles/oropricing/css/product-prices.less'

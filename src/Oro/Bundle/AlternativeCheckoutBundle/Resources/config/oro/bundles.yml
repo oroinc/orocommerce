@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\AlternativeCheckoutBundle\OroAlternativeCheckoutBundle, priority: 60 }

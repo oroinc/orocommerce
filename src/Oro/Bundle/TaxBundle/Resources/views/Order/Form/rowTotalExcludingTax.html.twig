@@ -1,0 +1,9 @@
+{% set result = form.vars.result|default({}) %}
+<div data-page-component-module="orotax/js/app/components/order-line-item-item-component"
+     data-page-component-options="{{ {type: 'row', value: 'excludingTax'}|json_encode }}">
+    <span data-value-container>
+        {% if result.row is defined and result.row.excludingTax is defined %}
+            {{ result.row.excludingTax|oro_format_currency({currency: result.row.currency}) }}
+        {% endif %}
+    </span>
+</div>

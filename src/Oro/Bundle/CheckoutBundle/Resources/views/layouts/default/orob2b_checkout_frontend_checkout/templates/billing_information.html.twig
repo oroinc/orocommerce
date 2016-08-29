@@ -1,0 +1,51 @@
+{% block _checkout_form_fields_widget -%}
+    {% if workflowItem.data.get('disallow_billing_address_edit') %}
+        {% set billingAddress = checkout.billingAddress %}
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x6">
+                {{ checkout.billingAddress|oro_format_address(null, '<br/>') }}
+            </div>
+        </fieldset>
+    {% else %}
+        {% import 'OroCheckoutBundle:layouts/default/orob2b_checkout_frontend_checkout/templates:address.html.twig' as address %}
+        {% set hasCustomAddress = false %}
+        {% if form.billing_address.id.vars.value %}
+            {% set hasCustomAddress = not form.billing_address.vars.value.accountUserAddress and not form.billing_address.vars.value.accountAddress %}
+        {% endif %}
+        {% set billingAddress = form.billing_address.vars.value %}
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orocheckout/js/app/views/address-view',
+                 selectors: {
+                     address: '#' ~ form.billing_address.accountAddress.vars.id,
+                     region: '#' ~ form.billing_address.region.vars.id,
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
+                     fieldsContainer: '#checkout-address-fields-container'
+                 }
+             }|json_encode }}">
+
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.accountAddress) }}
+            </fieldset>
+
+            {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
+        </div>
+    {% endif %}
+
+    {% set hideShipping = false %}
+    {% if billingAddress %}
+        {% set typedAddress  = billingAddress.accountAddress %}
+        {% if typedAddress is empty %}
+            {% set typedAddress  = billingAddress.accountUserAddress %}
+        {% endif %}
+
+        {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
+    {% endif %}
+
+    {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+        <fieldset class="checkout__form__row {% if hideShipping %}hidden{% endif %}">
+            {{ form_row(form.ship_to_billing_address) }}
+        </fieldset>
+        {{ form_row(form.state_token) }}
+    {% endif %}
+{%- endblock %}

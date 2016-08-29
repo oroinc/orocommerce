@@ -297,7 +297,6 @@
                     <arg line="--no-interaction"/>
                     <arg line="--env=@{iterate}"/>
                     <arg line="--fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures"/>
-                    <arg line="--fixtures src/OroB2B/src/Oro/Component/Testing/Fixtures"/>
                 </exec>
             </sequential>
         </for>
@@ -598,4 +597,11 @@
         </exec>
     </target>
 
+    <!-- Check build on errors and warnings -->
+    <target name="check_php_errors_and_warnings">
+        <exec dir="${confdir}" executable="./check_errors_on_build.sh" failonerror="true">
+            <arg line="-p ${appdir}/logs/prod.log"/>
+        </exec>
+    </target>
+    <!-- End Check build on errors and warnings -->
 </project>

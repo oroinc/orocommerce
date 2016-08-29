@@ -1,0 +1,27 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% block widget_content %}
+    <div class="widget-content quote-to-order-widget">
+        {{ block('widget_content_inner') }}
+    </div>
+{% endblock %}
+
+{% block form %}
+    <form method="POST"
+          data-nohash="true"
+          data-disable-autofocus="true"
+          id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          action="{{ app.request.uri }}"
+          class="form-dialog"
+    >
+        {{ form_widget(form.quote_to_order) }}
+        {{ form_rest(form) }}
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'oro.frontend.sale.quote.submit_to_order.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+{% endblock %}

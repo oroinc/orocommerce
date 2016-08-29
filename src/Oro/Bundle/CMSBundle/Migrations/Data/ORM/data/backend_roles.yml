@@ -1,0 +1,3 @@
+ROLE_ACCOUNT_MANAGER:
+    permissions:
+        entity|Oro\Bundle\CMSBundle\Entity\LoginPage: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

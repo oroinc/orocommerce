@@ -1,0 +1,2 @@
+bundles:
+    - OroOrderBundle:Form:fields.html.twig

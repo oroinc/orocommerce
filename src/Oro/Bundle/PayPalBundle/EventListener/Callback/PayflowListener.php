@@ -9,9 +9,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-
-use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 class PayflowListener
 {
