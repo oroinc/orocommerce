@@ -52,7 +52,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
             $paymentTransaction
                 ->setAmount($order->getTotal())
                 ->setCurrency($order->getCurrency())
-                ->setActive(true);
+                ->setSuccessful(true);
 
             $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
         }
