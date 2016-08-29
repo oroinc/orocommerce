@@ -54,6 +54,6 @@ class SearchCategoryFilteringEventListener
      */
     private function applyCategoryToQuery(WebsiteSearchQuery $query, $categoryId)
     {
-        $query->getQuery()->andWhere('integer.cat_id', '=', $categoryId);
+        $query->getQuery()->andWhere('integer.cat_id', '=', $categoryId, 'integer');
     }
 }

@@ -3,12 +3,14 @@
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ImapBundle\Connector\Search\SearchQuery;
 use Oro\Bundle\SearchBundle\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
 class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,10 +21,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         /**
          * @var RequestProductHandler $requestProductHandler
          */
-        $requestProductHandler = $this->getMock(RequestProductHandler::class);
+        $requestProductHandler = $this->getMockBuilder(RequestProductHandler::class)
+            ->setMethods(['getCategoryId'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $requestProductHandler->expects($this->atLeastOnce())
-            ->method('getCurrentCategoryId')
+            ->method('getCategoryId')
             ->will($this->returnValue($categoryId));
 
         $listener = new SearchCategoryFilteringEventListener(
@@ -32,41 +37,49 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         /**
          * @var BuildAfter $event
          */
-        $event = $this->getMock(BuildAfter::class);
+        $event = $this->getMockBuilder(BuildAfter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /**
          * @var SearchDatasource $searchDataSource
          */
-        $datasource = $this->getMock(SearchDatasource::class);
+        $datasource = $this->getMockBuilder(SearchDatasource::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /**
          * @var SearchQuery $searchQuery
          */
-        $query = $this->getMock(SearchQuery::class);
+        $query = $this->getMockBuilder(Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $event->method('getDatasource')
+        /**
+         * @var WebsiteSearchQuery $websiteSearchQuery
+         */
+        $websiteSearchQuery = $this->getMockBuilder(WebsiteSearchQuery::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteSearchQuery->method('getQuery')
+            ->will($this->returnValue($query));
+
+        $dataGrid = $this->getMock(DatagridInterface::class);
+
+        $event->method('getDatagrid')
+            ->willReturn($dataGrid);
+
+        $dataGrid->method('getDatasource')
             ->willReturn($datasource);
 
         $datasource->method('getQuery')
-            ->willReturn($query);
+            ->willReturn($websiteSearchQuery);
 
         $query->expects($this->once())
             ->method('andWhere')
-            ->with($categoryId);
+            ->with('integer.cat_id', '=', 23, 'integer');
 
         $listener->onBuildAfter($event);
-    }
-
-    /**
-     * @var RequestProductHandler $requestProductHandler
-     */
-    private $requestProductHandler;
-
-    /**
-     * @param RequestProductHandler $requestProductHandler
-     */
-    public function __construct(RequestProductHandler $requestProductHandler)
-    {
-        $this->requestProductHandler = $requestProductHandler;
     }
 }
