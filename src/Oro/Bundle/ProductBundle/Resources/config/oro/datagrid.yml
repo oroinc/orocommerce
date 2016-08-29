@@ -186,7 +186,7 @@ datagrid:
         columns:
             sku:
                 label:         oro.product.sku.label
-            productName:
+            name:
                 label:         oro.product.names.label
             inventoryStatus:
                 label:         oro.product.inventory_status.label
