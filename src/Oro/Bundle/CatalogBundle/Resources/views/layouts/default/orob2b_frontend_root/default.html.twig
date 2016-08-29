@@ -74,11 +74,22 @@
 
 {% block _featured_category_image_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' featured-category__image',
-        src: Image.url(category.largeImage, 'product_large'),
         alt: category.defaultTitle
     }) %}
+
+    {% if category.largeImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: Image.url(category.largeImage, 'product_large')
+        }) %}
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: '/bundles/orocatalog/default/images/no_image.png'
+        }) %}
+    {% endif %}
+
     <img {{ block('block_attributes') }}>
 {% endblock %}
 
