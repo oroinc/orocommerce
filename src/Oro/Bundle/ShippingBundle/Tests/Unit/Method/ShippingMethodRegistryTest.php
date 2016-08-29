@@ -53,7 +53,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistry()
     {
         $this->method->expects($this->any())
-            ->method('getName')
+            ->method('getIdentifier')
             ->willReturn('test_name');
 
         $this->registry->addShippingMethod($this->method);
