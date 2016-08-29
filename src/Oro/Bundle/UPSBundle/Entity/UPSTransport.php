@@ -63,9 +63,9 @@ class UPSTransport extends Transport
     protected $shippingAccountName;
 
     /**
-     * @var Collection|UPSShippingService[]
+     * @var Collection|ShippingService[]
      *
-     * @ORM\OneToMany(targetEntity="UPSShippingService", mappedBy="transport", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="ShippingService", mappedBy="transport", cascade={"ALL"}, orphanRemoval=true)
      * @ORM\OrderBy({"description" = "ASC"})
      */
     protected $applicableShippingServices;
@@ -201,7 +201,7 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @return Collection|UPSShippingService[]
+     * @return Collection|ShippingService[]
      */
     public function getApplicableShippingServices()
     {
@@ -210,7 +210,7 @@ class UPSTransport extends Transport
 
     /**
      * @param string $code
-     * @return UPSShippingService|null
+     * @return ShippingService|null
      */
     public function getApplicableShippingService($code)
     {
@@ -227,10 +227,10 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @param UPSShippingService $service
+     * @param ShippingService $service
      * @return $this
      */
-    public function addApplicableShippingService(UPSShippingService $service)
+    public function addApplicableShippingService(ShippingService $service)
     {
         if ($existingService = $this->getApplicableShippingService($service->getCode())) {
             $existingService
@@ -244,10 +244,10 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @param UPSShippingService $service
+     * @param ShippingService $service
      * @return $this
      */
-    public function removeApplicableShippingService(UPSShippingService $service)
+    public function removeApplicableShippingService(ShippingService $service)
     {
         if ($this->applicableShippingServices->contains($service)) {
             $this->applicableShippingServices->removeElement($service);

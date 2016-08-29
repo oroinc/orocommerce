@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="oro_integration_ups_service")
  * @ORM\Entity
  */
-class UPSShippingService
+class ShippingService
 {
     /**
      * @var string
