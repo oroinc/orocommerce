@@ -100,6 +100,10 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(8, $arr['data']);
     }
 
+    /**
+     * Test if the category id as a parameter in query don't cause any exceptions,
+     * as the SearchCategoryFilteringEventListener is triggered.
+     */
     public function testControllerActionWithCategoryId()
     {
         /** @var Category $secondLevelCategory */
