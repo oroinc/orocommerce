@@ -12,9 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInterface
 {
-    const ALIAS_TEMP = 'some_tmp_alias';
-    const ALIAS_REAL = 'some_real_alias';
-
     /** @var ContainerInterface */
     protected $container;
 
