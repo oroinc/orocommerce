@@ -40,36 +40,6 @@ class SearchEngineConfigProviderTest extends \PHPUnit_Framework_TestCase
                 'key' => 'oro_website_search.engine_name',
                 'value' => 'orm',
                 'expected' => 'orm'
-            ],
-            'host' => [
-                'method' => 'getHost',
-                'key' => 'oro_website_search.engine_parameters.host',
-                'value' => 'localhost',
-                'expected' => 'localhost'
-            ],
-            'port' => [
-                'method' => 'getPort',
-                'key' => 'oro_website_search.engine_parameters.port',
-                'value' => '9000',
-                'expected' => '9000'
-            ],
-            'username' => [
-                'method' => 'getUsername',
-                'key' => 'oro_website_search.engine_parameters.username',
-                'value' => 'username',
-                'expected' => 'username'
-            ],
-            'password' => [
-                'method' => 'getPassword',
-                'key' => 'oro_website_search.engine_parameters.password',
-                'value' => 'password',
-                'expected' => 'password'
-            ],
-            'auth_type' => [
-                'method' => 'getAuthType',
-                'key' => 'oro_website_search.engine_parameters.auth_type',
-                'value' => 'basic',
-                'expected' => 'basic'
             ]
         ];
     }

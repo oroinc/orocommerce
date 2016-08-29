@@ -18,8 +18,8 @@ class OroWebsiteSearchExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $container->setParameter('oro_website_search.engine', $config['engine']);
-        $container->setParameter('oro_website_search.engine_parameters', $config['engine_parameters']);
+        $container->setParameter('oro_website_search.engine', $config['settings']['engine']);
+        $container->setParameter('oro_website_search.engine_parameters', $config['settings']['engine_parameters']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
