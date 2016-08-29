@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\UPSBundle\Entity\UPSShippingService;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -25,7 +25,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ['shippingAccountName', 'some string'],
         ]);
         static::assertPropertyCollections(new UPSTransport(), [
-            ['applicableShippingServices', new UPSShippingService()],
+            ['applicableShippingServices', new ShippingService()],
         ]);
     }
 
@@ -40,7 +40,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 'apiKey' => 'some key',
                 'shippingAccountNumber' => 'some number',
                 'shippingAccountName' => 'some name',
-                'applicableShippingServices' => [new UPSShippingService()]
+                'applicableShippingServices' => [new ShippingService()]
             ]
         );
 

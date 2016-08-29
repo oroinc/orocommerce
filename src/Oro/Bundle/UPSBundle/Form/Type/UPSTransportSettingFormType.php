@@ -93,7 +93,7 @@ class UPSTransportSettingFormType extends AbstractType
         );
         $builder->add(
             'applicableShippingServices',
-            UPSShippingServiceCollectionType::NAME,
+            ShippingServiceCollectionType::NAME,
             [
                 'label' => 'oro.ups.transport.shipping_service.plural_label',
                 'required' => true,

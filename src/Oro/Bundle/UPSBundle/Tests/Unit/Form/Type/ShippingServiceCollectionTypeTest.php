@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceCollectionType;
-use Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceType;
+use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType;
+use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType;
 
-class UPSShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class ShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var UPSShippingServiceCollectionType
+     * @var ShippingServiceCollectionType
      */
     protected $formType;
 
@@ -17,7 +17,7 @@ class UPSShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->formType = new UPSShippingServiceCollectionType();
+        $this->formType = new ShippingServiceCollectionType();
     }
 
     public function testConfigureOptions()
@@ -26,7 +26,7 @@ class UPSShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
-                'type' => UPSShippingServiceType::NAME,
+                'type' => ShippingServiceType::NAME,
                 'show_form_when_empty' => false
             ]);
 
@@ -40,6 +40,6 @@ class UPSShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        static::assertEquals(UPSShippingServiceCollectionType::NAME, $this->formType->getName());
+        static::assertEquals(ShippingServiceCollectionType::NAME, $this->formType->getName());
     }
 }

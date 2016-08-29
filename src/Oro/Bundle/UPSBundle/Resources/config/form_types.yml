@@ -8,13 +8,13 @@ services:
 
 
     oro_ups.form.type.shipping_service:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceType'
+        class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType'
         calls:
-            - [setDataClass, ['Oro\Bundle\UPSBundle\Entity\UPSShippingService']]
+            - [setDataClass, ['Oro\Bundle\UPSBundle\Entity\ShippingService']]
         tags:
             - { name: form.type, alias: oro_ups_shipping_service }
 
     oro_ups.form.type.shipping_service_collection:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceCollectionType'
+        class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType'
         tags:
             - { name: form.type, alias: oro_ups_shipping_service_collection }

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class UPSShippingServiceType extends AbstractType
+class ShippingServiceType extends AbstractType
 {
     const NAME = 'oro_ups_shipping_service';
 

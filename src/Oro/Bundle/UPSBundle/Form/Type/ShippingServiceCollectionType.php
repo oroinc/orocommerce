@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-class UPSShippingServiceCollectionType extends AbstractType
+class ShippingServiceCollectionType extends AbstractType
 {
     const NAME = 'oro_ups_shipping_service_collection';
 
@@ -26,7 +26,7 @@ class UPSShippingServiceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => UPSShippingServiceType::NAME,
+                'type' => ShippingServiceType::NAME,
                 'show_form_when_empty' => false
             ]
         );

@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\UPSBundle\Entity\UPSShippingService;
-use Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceType;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-class UPSShippingServiceTypeTest extends FormIntegrationTestCase
+class ShippingServiceTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\UPSBundle\Entity\UPSShippingService';
+    const DATA_CLASS = 'Oro\Bundle\UPSBundle\Entity\ShippingService';
 
     /**
-     * @var UPSShippingServiceType
+     * @var ShippingServiceType
      */
     protected $formType;
 
@@ -23,7 +23,7 @@ class UPSShippingServiceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new UPSShippingServiceType();
+        $this->formType = new ShippingServiceType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -39,17 +39,17 @@ class UPSShippingServiceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param UPSShippingService $defaultData
-     * @param array|UPSShippingService $submittedData
+     * @param ShippingService $defaultData
+     * @param array|ShippingService $submittedData
      * @param bool $isValid
-     * @param UPSShippingService $expectedData
+     * @param ShippingService $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
-        UPSShippingService $defaultData,
+        ShippingService $defaultData,
         array $submittedData,
         $isValid,
-        UPSShippingService $expectedData
+        ShippingService $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
@@ -67,19 +67,19 @@ class UPSShippingServiceTypeTest extends FormIntegrationTestCase
     {
         return [
             'service without value' => [
-                'defaultData'   => new UPSShippingService(),
+                'defaultData'   => new ShippingService(),
                 'submittedData' => [],
                 'isValid' => false,
-                'expectedData'  => (new UPSShippingService())
+                'expectedData'  => (new ShippingService())
             ],
             'service with value' => [
-                'defaultData'   => new UPSShippingService(),
+                'defaultData'   => new ShippingService(),
                 'submittedData' => [
                     'code' => '03',
                     'description' => 'UPS Ground',
                 ],
                 'isValid' => true,
-                'expectedData'  => (new UPSShippingService())
+                'expectedData'  => (new ShippingService())
                     ->setCode('03')
                     ->setDescription('UPS Ground')
             ]
@@ -91,6 +91,6 @@ class UPSShippingServiceTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        static::assertEquals(UPSShippingServiceType::NAME, $this->formType->getName());
+        static::assertEquals(ShippingServiceType::NAME, $this->formType->getName());
     }
 }

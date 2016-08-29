@@ -4,10 +4,10 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
-use Oro\Bundle\UPSBundle\Entity\UPSShippingService;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceCollectionType;
-use Oro\Bundle\UPSBundle\Form\Type\UPSShippingServiceType;
+use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType;
+use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingFormType;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -45,14 +45,14 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $shippingService = new UPSShippingServiceType();
-        $shippingService->setDataClass('Oro\Bundle\UPSBundle\Entity\UPSShippingService');
+        $shippingService = new ShippingServiceType();
+        $shippingService->setDataClass('Oro\Bundle\UPSBundle\Entity\ShippingService');
         return [
             new PreloadedExtension(
                 [
                     OroCollectionType::NAME => new OroCollectionType(),
-                    UPSShippingServiceCollectionType::NAME => new UPSShippingServiceCollectionType(),
-                    UPSShippingServiceType::NAME => $shippingService,
+                    ShippingServiceCollectionType::NAME => new ShippingServiceCollectionType(),
+                    ShippingServiceType::NAME => $shippingService,
                 ],
                 []
             ),
@@ -119,7 +119,7 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
                     ->setShippingAccountName('name')
                     ->setShippingAccountNumber('number')
                     ->addApplicableShippingService(
-                        (new UPSShippingService())->setCode('03')->setDescription('UPS Ground')
+                        (new ShippingService())->setCode('03')->setDescription('UPS Ground')
                     )
             ]
         ];
