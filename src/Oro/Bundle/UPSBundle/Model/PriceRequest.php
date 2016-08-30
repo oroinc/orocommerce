@@ -252,7 +252,7 @@ class PriceRequest
      * @param string $username
      * @return $this
      */
-    public function setUsername(string $username)
+    public function setUsername($username)
     {
         $this->username = $username;
 
@@ -271,7 +271,7 @@ class PriceRequest
      * @param string $password
      * @return $this
      */
-    public function setPassword(string $password)
+    public function setPassword($password)
     {
         $this->password = $password;
 
@@ -290,7 +290,7 @@ class PriceRequest
      * @param string $accessLicenseNumber
      * @return $this
      */
-    public function setAccessLicenseNumber(string $accessLicenseNumber)
+    public function setAccessLicenseNumber($accessLicenseNumber)
     {
         $this->accessLicenseNumber = $accessLicenseNumber;
 
@@ -309,7 +309,7 @@ class PriceRequest
      * @param string $requestOption
      * @return $this
      */
-    public function setRequestOption(string $requestOption)
+    public function setRequestOption($requestOption)
     {
         $this->requestOption = $requestOption;
 
@@ -328,7 +328,7 @@ class PriceRequest
      * @param string $serviceDescription
      * @return $this
      */
-    public function setServiceDescription(string $serviceDescription)
+    public function setServiceDescription($serviceDescription)
     {
         $this->serviceDescription = $serviceDescription;
 
@@ -347,7 +347,7 @@ class PriceRequest
      * @param string $serviceCode
      * @return $this
      */
-    public function setServiceCode(string $serviceCode)
+    public function setServiceCode($serviceCode)
     {
         $this->serviceCode = $serviceCode;
 
@@ -366,7 +366,7 @@ class PriceRequest
      * @param string $shipperName
      * @return $this
      */
-    public function setShipperName(string $shipperName)
+    public function setShipperName($shipperName)
     {
         $this->shipperName = $shipperName;
 
@@ -385,7 +385,7 @@ class PriceRequest
      * @param string $shipperNumber
      * @return $this
      */
-    public function setShipperNumber(string $shipperNumber)
+    public function setShipperNumber($shipperNumber)
     {
         $this->shipperNumber = $shipperNumber;
 
@@ -423,7 +423,7 @@ class PriceRequest
      * @param string $shipFromName
      * @return $this
      */
-    public function setShipFromName(string $shipFromName)
+    public function setShipFromName($shipFromName)
     {
         $this->shipFromName = $shipFromName;
 
@@ -461,7 +461,7 @@ class PriceRequest
      * @param string $shipToName
      * @return $this
      */
-    public function setShipToName(string $shipToName)
+    public function setShipToName($shipToName)
     {
         $this->shipToName = $shipToName;
 

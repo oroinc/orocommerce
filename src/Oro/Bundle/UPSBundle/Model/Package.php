@@ -85,7 +85,7 @@ class Package
      * @param string $packagingTypeCode
      * @return $this
      */
-    public function setPackagingTypeCode(string $packagingTypeCode)
+    public function setPackagingTypeCode($packagingTypeCode)
     {
         $this->packagingTypeCode = $packagingTypeCode;
 
@@ -104,7 +104,7 @@ class Package
      * @param string $dimensionCode
      * @return $this
      */
-    public function setDimensionCode(string $dimensionCode)
+    public function setDimensionCode($dimensionCode)
     {
         $this->dimensionCode = $dimensionCode;
 
@@ -123,7 +123,7 @@ class Package
      * @param string $dimensionLength
      * @return $this
      */
-    public function setDimensionLength(string $dimensionLength)
+    public function setDimensionLength($dimensionLength)
     {
         $this->dimensionLength = $dimensionLength;
 
@@ -142,7 +142,7 @@ class Package
      * @param string $dimensionWidth
      * @return $this
      */
-    public function setDimensionWidth(string $dimensionWidth)
+    public function setDimensionWidth($dimensionWidth)
     {
         $this->dimensionWidth = $dimensionWidth;
 
@@ -161,7 +161,7 @@ class Package
      * @param string $dimensionHeight
      * @return $this
      */
-    public function setDimensionHeight(string $dimensionHeight)
+    public function setDimensionHeight($dimensionHeight)
     {
         $this->dimensionHeight = $dimensionHeight;
 
@@ -180,7 +180,7 @@ class Package
      * @param string $weightCode
      * @return $this
      */
-    public function setWeightCode(string $weightCode)
+    public function setWeightCode($weightCode)
     {
         $this->weightCode = $weightCode;
 
@@ -199,7 +199,7 @@ class Package
      * @param string $weight
      * @return $this
      */
-    public function setWeight(string $weight)
+    public function setWeight($weight)
     {
         $this->weight = $weight;
 

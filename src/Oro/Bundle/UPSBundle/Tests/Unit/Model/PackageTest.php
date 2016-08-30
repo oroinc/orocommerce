@@ -56,13 +56,13 @@ class PackageTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $this->initPackage();
-        $this->assertEquals($this->resultArray, $this->model->toArray());
+        static::assertEquals($this->resultArray, $this->model->toArray());
     }
 
     public function testToJson()
     {
         $this->initPackage();
-        $this->assertEquals(json_encode($this->resultArray), $this->model->toJson());
+        static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
     }
 
     public function initPackage()

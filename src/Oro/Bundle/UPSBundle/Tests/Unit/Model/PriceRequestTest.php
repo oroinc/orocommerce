@@ -67,7 +67,7 @@ class PriceRequestTest extends \PHPUnit_Framework_TestCase
     public function testToJson()
     {
         $this->initPriceRequest();
-        $this->assertEquals(json_encode($this->resultArray), $this->model->toJson());
+        static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
     }
 
     public function initPriceRequest()
