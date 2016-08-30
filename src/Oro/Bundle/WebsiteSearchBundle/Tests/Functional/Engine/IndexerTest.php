@@ -12,6 +12,8 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Indexer;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -57,61 +59,120 @@ class IndexerTest extends WebTestCase
 
         $this->indexer = new Indexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex'
-            ]
-        );
+        $this->loadFixtures([LoadProductsToIndex::class]);
     }
 
-    protected function setListenerData()
+    /**
+     * @param array $productNames
+     * @return array
+     */
+    protected function getProductIdsByNames(array $productNames)
     {
-        $products = $this->doctrineHelper->getEntityRepository(Product::class)->createQueryBuilder('product')
-            ->select('product.id')->getQuery()->getScalarResult();
-        $productIds = array_column($products, 'id');
+        $qb = $this->doctrineHelper->getEntityRepository(Product::class)->createQueryBuilder('product');
+        $products = $qb->select('product.id')
+            ->where($qb->expr()->in('product.name', ':names'))
+            ->setParameter('names', $productNames)
+            ->getQuery()->getScalarResult();
+
+        return array_column($products, 'id');
+    }
+
+    /**
+     * @param $productIds
+     * @return callable
+     */
+    protected function setListener($productIds)
+    {
+        $listener = function (IndexEntityEvent $event) use ($productIds) {
+            array_map(function ($id) use ($event) {
+                $event->addField(
+                    $id,
+                    Query::TYPE_TEXT,
+                    'name',
+                    "Some product name $id"
+                );
+            }, $productIds);
+        };
 
         $this->dispatcher->addListener(
             IndexEntityEvent::NAME,
-            function (IndexEntityEvent $event) use ($productIds) {
-                array_map(function ($id) use ($event) {
-                    $event->addField(
-                        $id,
-                        Query::TYPE_TEXT,
-                        'name',
-                        'Some product name'
-                    );
-                }, $productIds);
-            },
+            $listener,
             -255
         );
+
+        return $listener;
+    }
+
+    /**
+     * @param $alias
+     * @return array
+     */
+    protected function getItemRecordIds($alias)
+    {
+        $itemRepo = $this->doctrineHelper->getEntityRepository(Item::class);
+        $qb = $itemRepo->createQueryBuilder('item');
+        $items = $qb->select('item.recordId')
+            ->where($qb->expr()->eq('item.alias', ':alias'))
+            ->setParameter('alias', $alias)
+            ->getQuery()->getScalarResult();
+
+        return array_column($items, 'recordId');
     }
 
     public function testReindex()
     {
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
-        $this->setListenerData();
-        $indexedNum = $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 777]);
-        $itemRepo = $this->doctrineHelper->getEntityRepository(Item::class);
-        $items = $itemRepo->findBy(['alias' => 'oro_product_website_777']);
-        $this->assertEquals(3, $indexedNum);
-        $this->assertCount(3, $items);
+        $productIds = $this->getProductIdsByNames(
+            [
+                LoadProductsToIndex::PRODUCT1,
+                LoadProductsToIndex::PRODUCT2,
+                LoadProductsToIndex::RESTRCTED_PRODUCT
+            ]
+        );
+        $listener = $this->setListener($productIds);
+        $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 777]);
+        $recordIds = $this->getItemRecordIds('oro_product_website_777');
+        $this->assertEquals($productIds, $recordIds);
+        //Remove listener to not to interract with other tests
+        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $listener);
     }
 
     public function testIndexWithoutArguments()
     {
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
-        $this->setListenerData();
-        $indexedNum = $this->indexer->reindex();
-        $itemRepo = $this->doctrineHelper->getEntityRepository(Item::class);
+
         $website = $this->doctrineHelper->getEntityRepository(Website::class)->findOneBy([]);
-        $items = $itemRepo->findBy(['alias' => 'oro_product_website_' . $website->getId()]);
-        $this->assertEquals(3, $indexedNum);
-        $this->assertCount(3, $items);
+        $this->dispatcher->addListener(
+            RestrictIndexEntitiesEvent::NAME,
+            function (RestrictIndexEntitiesEvent $event) {
+                $qb = $event->getQueryBuilder();
+                list($rootAlias) = $qb->getRootAliases();
+                $qb->where($qb->expr()->neq($rootAlias . '.name', ':name'))
+                    ->setParameter('name', LoadProductsToIndex::RESTRCTED_PRODUCT);
+            },
+            -255
+        );
+        $productIds = $this->getProductIdsByNames(
+            [
+                LoadProductsToIndex::PRODUCT1,
+                LoadProductsToIndex::PRODUCT2
+            ]
+        );
+        $listener = $this->setListener($productIds);
+        $this->indexer->reindex();
+        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $listener);
+
+        $recordIds = $this->getItemRecordIds('oro_product_website_' . $website->getId());
+        $this->assertCount(2, $recordIds);
     }
 
-    public function testEmptyMappingConfig()
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Mapping config is empty.
+     */
+    public function testEmptyMappingConfigException()
     {
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn([]);

@@ -7,29 +7,29 @@ use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
 class WebsiteSearchIndexRepository extends SearchIndexRepository
 {
     /**
-     * @param string $realAlias
+     * @param string $currentAlias
      */
-    public function removeIndexByAlias($realAlias)
+    public function removeIndexByAlias($currentAlias)
     {
         $qb = $this->createQueryBuilder('item');
         $qb->delete()
-            ->where($qb->expr()->eq('item.alias', ':real_alias'))
+            ->where($qb->expr()->eq('item.alias', ':current_alias'))
             ->getQuery()
-            ->setParameter('real_alias', $realAlias)
+            ->setParameter('current_alias', $currentAlias)
             ->execute();
     }
 
     /**
-     * @param string $tempAlias
-     * @param string $realAlias
+     * @param string $temporaryAlias
+     * @param string $currentAlias
      */
-    public function renameTemporaryIndexAlias($tempAlias, $realAlias)
+    public function renameIndexAlias($temporaryAlias, $currentAlias)
     {
         $qb = $this->createQueryBuilder('item');
-        $qb->update()->set('item.alias', ':real_alias')
-            ->where($qb->expr()->eq('item.alias', ':temp_alias'))
-            ->setParameter('real_alias', $realAlias)
-            ->setParameter('temp_alias', $tempAlias)
+        $qb->update()->set('item.alias', ':current_alias')
+            ->where($qb->expr()->eq('item.alias', ':temporary_alias'))
+            ->setParameter('current_alias', $currentAlias)
+            ->setParameter('temporary_alias', $temporaryAlias)
             ->getQuery()
             ->execute();
     }

@@ -51,8 +51,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $mappingConfig = $this->mapper->getMappingConfig();
 
         if (!$mappingConfig) {
-            // @todo: throw exception?
-            return 0;
+            throw new \LogicException('Mapping config is empty.');
         }
 
         if ($class) {
@@ -96,10 +95,10 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * Rename old index by aliases to new index
-     * @param string $oldAlias
-     * @param string $newAlias
+     * @param string $temporaryAlias
+     * @param string $currentAlias
      */
-    abstract protected function renameIndex($oldAlias, $newAlias);
+    abstract protected function renameIndex($temporaryAlias, $currentAlias);
 
     /**
      * @param array $context
@@ -124,8 +123,8 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function reindexSingleEntity($entityClass, array $entityConfig, array $context)
     {
-        $entityAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
-        $entityAliasTemp = $this->generateTemporaryAlias($entityAlias);
+        $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
+        $temporaryAlias = $this->generateTemporaryAlias($currentAlias);
 
         $entityManager = $this->doctrineHelper->getEntityManagerForClass($entityClass);
         $entityRepository = $entityManager->getRepository($entityClass);
@@ -147,17 +146,17 @@ abstract class AbstractIndexer implements IndexerInterface
 
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $entityAliasTemp);
+                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
             }
         }
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-            $this->saveIndexData($entityClass, $entitiesData, $entityAliasTemp);
+            $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
         }
 
-        $this->renameIndex($entityAliasTemp, $entityAlias);
+        $this->renameIndex($temporaryAlias, $currentAlias);
 
         return $itemsCount;
     }

@@ -33,7 +33,7 @@ class Indexer extends AbstractIndexer
         $entityAliasTemp
     ) {
         $em = $this->doctrineHelper->getEntityManager(Item::class);
-
+        $items = [];
         foreach ($entitiesData as $entityId => $indexData) {
             $item = new Item();
             $item->setEntity($entityClass)
@@ -43,9 +43,10 @@ class Indexer extends AbstractIndexer
                 ->setChanged(false)
                 ->saveItemData($indexData);
             $em->persist($item);
+            $items[] = $item;
         }
-        $em->flush();
-        $em->clear();
+        $em->flush($items);
+        $em->clear($entityClass);
 
         return count($entitiesData);
     }
@@ -76,7 +77,7 @@ class Indexer extends AbstractIndexer
         /** @var WebsiteSearchIndexRepository $itemRepository */
         $itemRepository = $this->doctrineHelper->getEntityRepository(Item::class);
         $itemRepository->removeIndexByAlias($newAlias);
-        $itemRepository->renameTemporaryIndexAlias($oldAlias, $newAlias);
+        $itemRepository->renameIndexAlias($oldAlias, $newAlias);
     }
 
     /**

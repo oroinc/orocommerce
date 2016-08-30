@@ -12,19 +12,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInterface
 {
+    const RESTRCTED_PRODUCT = 'RestrictedProduct';
+    const PRODUCT1 = 'Product 1';
+    const PRODUCT2 = 'Product 2';
+
     /** @var ContainerInterface */
     protected $container;
 
     /** @var array */
     protected $data = [
         'product1' => [
-            'name' => 'Product1'
+            'name' => self::PRODUCT1,
+
         ],
         'product2' => [
-            'name' => 'Product2'
+            'name' => self::PRODUCT2,
+
         ],
         'product3' => [
-            'name' => 'Product3'
+            'name' => self::RESTRCTED_PRODUCT,
         ],
 
     ];

@@ -8,10 +8,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadIndexItems extends AbstractFixture implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const ALIAS_TEMP = 'some_tmp_alias';
     const ALIAS_REAL = 'some_real_alias';
 
@@ -40,14 +43,6 @@ class LoadIndexItems extends AbstractFixture implements ContainerAwareInterface
         ],
 
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}
