@@ -1,7 +1,7 @@
 services:
     #TODO: Replace to real implemantation of Indexer in BB-4082
     oro_website_search.indexer:
-      class: 'Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Command\OrmIndexerStub'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Command\OrmIndexerStub'
 
     oro_website_search.engine.orm_indexer:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer'
