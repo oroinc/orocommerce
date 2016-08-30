@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingServiceTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +15,7 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors(new ShippingService(), [
             ['code', 'some code'],
             ['description', 'some description'],
-            ['transport', new UPSTransport()]
+            ['country', new Country('US')]
         ]);
     }
 }

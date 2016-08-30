@@ -1,0 +1,40 @@
+country,description,code
+US,UPS 2nd Day Air,02
+US,UPS 2nd Day Air A.M.,59
+US,UPS 3 Day Select,12
+US,UPS Ground,03
+US,UPS Next Day Air,01
+US,UPS Next Day Air Early,14
+US,UPS Standard,11
+US,UPS Worldwide Express,07
+US,UPS Worldwide Expedited,08
+US,UPS Worldwide Express Plus,54
+US,UPS Worldwide Saver,65
+US,UPS Next Day Air Saver,13
+CA,UPS Access Point,70
+CA,UPS 3 Day Select,12
+CA,UPS Expedited,08
+CA,UPS Express,01
+CA,UPS 2nd Day Air,02
+CA,UPS Next Day Air Saver,13
+CA,UPS Express Early,14
+CA,UPS Express Saver,65
+CA,UPS Standard,11
+CA,UPS Worldwide Express,07
+CA,UPS Worldwide Express Plus,54
+MX,UPS Access Point,70
+MX,UPS Expedited,08
+MX,UPS Express,07
+MX,UPS Standard,11
+MX,UPS Worldwide Express Plus,54
+MX,UPS Worldwide Saver,65
+PL,UPS Access Point,70
+PL,UPS Today Dedicated Courrier,83
+PL,UPS Today Express,85
+PL,UPS Today Express Saver,86
+PL,UPS Today Standard,82
+PL,UPS Expedited,08
+PL,UPS Express,07
+PL,UPS Express Plus,54
+PL,UPS Express Saver,65
+PL,UPS Standard,11

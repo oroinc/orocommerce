@@ -65,8 +65,20 @@ class UPSTransport extends Transport
     /**
      * @var Collection|ShippingService[]
      *
-     * @ORM\OneToMany(targetEntity="ShippingService", mappedBy="transport", cascade={"ALL"}, orphanRemoval=true)
-     * @ORM\OrderBy({"description" = "ASC"})
+     * @ORM\ManyToMany(
+     *      targetEntity="ShippingService",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_ups_transport_ship_serv",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="ship_service_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
      */
     protected $applicableShippingServices;
 
@@ -232,11 +244,7 @@ class UPSTransport extends Transport
      */
     public function addApplicableShippingService(ShippingService $service)
     {
-        if ($existingService = $this->getApplicableShippingService($service->getCode())) {
-            $existingService
-                ->setDescription($service->getDescription());
-        } else {
-            $service->setTransport($this);
+        if (!$this->applicableShippingServices->contains($service)) {
             $this->applicableShippingServices->add($service);
         }
 

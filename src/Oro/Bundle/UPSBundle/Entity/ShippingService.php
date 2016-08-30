@@ -4,18 +4,27 @@ namespace Oro\Bundle\UPSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
+
 /**
- * @ORM\Table(name="oro_integration_ups_service")
+ * @ORM\Table(name="oro_ups_shipping_service")
  * @ORM\Entity
  */
 class ShippingService
 {
     /**
-     * @var string
+     * @var integer
      *
      * @ORM\Id
-     * @ORM\Column(type="string", length=10)
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=10)
      */
     protected $code;
 
@@ -27,10 +36,20 @@ class ShippingService
     protected $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UPSTransport", inversedBy="applicableShippingServices")
-     * @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
+     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code", nullable=false)
      */
-    protected $transport;
+    protected $country;
+
+    /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return string
@@ -70,20 +89,20 @@ class ShippingService
 
 
     /**
-     * @return UPSTransport
+     * @return Country
      */
-    public function getTransport()
+    public function getCountry()
     {
-        return $this->transport;
+        return $this->country;
     }
 
     /**
-     * @param UPSTransport $transport
+     * @param Country $country
      * @return $this
      */
-    public function setTransport($transport)
+    public function setCountry($country)
     {
-        $this->transport = $transport;
+        $this->country = $country;
         return $this;
     }
 }
