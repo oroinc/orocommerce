@@ -25,7 +25,7 @@ class OrmIndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($entity, array $context = [])
+    public function delete(array $entity, array $context = [])
     {
         throw new \BadMethodCallException('Method not implemented');
     }

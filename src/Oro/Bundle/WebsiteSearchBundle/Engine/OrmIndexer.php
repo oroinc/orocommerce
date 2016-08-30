@@ -37,13 +37,8 @@ class OrmIndexer extends AbstractIndexer
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
 
         /** @var WebsiteSearchIndexRepository $indexRepository */
-        $indexRepository = $this->doctrineHelper->getEntityRepositoryForClass(Item::class);
-        $items = $indexRepository->getEntitiesToRemove($entityIds, $firstEntityClass, $entityAlias);
-        foreach ($items as $item) {
-            $entityManager->remove($item);
-        }
-
-        $entityManager->flush($items);
+        $indexRepository = $entityManager->getRepository(Item::class);
+        $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
     }
 
     /**
@@ -70,7 +65,7 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function resetIndex($class = null, $context = [])
+    public function resetIndex($class = null, array $context = [])
     {
         // TODO: Implement resetIndex() method.
     }
@@ -86,7 +81,7 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function getClassesForReindex($class = null, $context = [])
+    public function getClassesForReindex($class = null, array $context = [])
     {
         // TODO: Implement getClassesForReindex() method.
     }

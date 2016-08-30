@@ -2,19 +2,25 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixtures\Entity\PageEntity;
 
-class LoadItemData extends AbstractFixture
+class LoadItemData extends AbstractFixture implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var string
      */
@@ -93,7 +99,7 @@ class LoadItemData extends AbstractFixture
             ]
         ],
         self::REFERENCE_GREAT_PRODUCT => [
-            'entity' => PageEntity::class,
+            'entity' => Product::class,
             'alias' => 'orob2b_product_3',
             'recordId' => 11,
             'title' => 'Lottery ticket',
@@ -122,19 +128,20 @@ class LoadItemData extends AbstractFixture
             $manager->persist($item);
 
             if (isset($itemData['integerFields'])) {
-                $this->populateFields($manager, $item, new IndexInteger, $itemData['integerFields']);
+                $this->populateFields($item, $item->getIntegerFields(), new IndexInteger, $itemData['integerFields']);
             }
 
             if (isset($itemData['decimalFields'])) {
-                $this->populateFields($manager, $item, new IndexDecimal, $itemData['decimalFields']);
+                $this->populateFields($item, $item->getDecimalFields(), new IndexDecimal, $itemData['decimalFields']);
             }
 
             if (isset($itemData['datetimeFields'])) {
-                $this->populateFields($manager, $item, new IndexDatetime, $itemData['datetimeFields']);
+                $datetimeFieldsData = $itemData['datetimeFields'];
+                $this->populateFields($item, $item->getDatetimeFields(), new IndexDatetime, $datetimeFieldsData);
             }
 
             if (isset($itemData['textFields'])) {
-                $this->populateFields($manager, $item, new IndexText, $itemData['textFields']);
+                $this->populateFields($item, $item->getTextFields(), new IndexText, $itemData['textFields']);
             }
 
             $this->addReference($reference, $item);
@@ -144,13 +151,17 @@ class LoadItemData extends AbstractFixture
     }
 
     /**
-     * @param ObjectManager $manager
      * @param Item $item
+     * @param $collection
      * @param $fieldObject
      * @param array $fieldsData
      */
-    private function populateFields(ObjectManager $manager, Item $item, $fieldObject, array $fieldsData)
-    {
+    private function populateFields(
+        Item $item,
+        Collection $collection,
+        ItemFieldInterface $fieldObject,
+        array $fieldsData
+    ) {
         foreach ($fieldsData as $fieldData) {
             $field = clone $fieldObject;
 
@@ -165,7 +176,7 @@ class LoadItemData extends AbstractFixture
                 ->setField($fieldData['field'])
                 ->setValue($value);
 
-            $manager->persist($field);
+            $collection->add($field);
         }
     }
 }

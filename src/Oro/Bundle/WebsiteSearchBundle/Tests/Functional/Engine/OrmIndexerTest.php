@@ -3,43 +3,69 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
 class OrmIndexerTest extends WebTestCase
 {
+    use SearchTestTrait;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([LoadItemData::class]);
+        $this->loadFixtures([LoadItemData::class], false, 'search');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        $this->truncateIndexTextTable();
     }
 
     public function testCount()
     {
-        $this->assertEquals(5, $this->getItemRepository()->getCount());
+        $this->assertEntityCount(5, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
     public function testRemoveEntitiesWhenNonExistentEntityRemoved()
     {
         $this->getIndexer()->delete([$this->getProductEntity(123456)], ['website_id' => 1]);
 
-        $this->assertEquals(5, $this->getItemRepository()->getCount());
+        $this->assertEntityCount(5, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
     public function testRemoveEntitiesWhenEntityIdsArrayIsEmpty()
     {
         $this->getIndexer()->delete([], ['website_id' => 1]);
 
-        $this->assertEquals(5, $this->getItemRepository()->getCount());
+        $this->assertEntityCount(5, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
     public function testRemoveEntitiesWhenProductEntitiesForSpecificWebsiteRemoved()
@@ -52,7 +78,11 @@ class OrmIndexerTest extends WebTestCase
             ['website_id' => 1]
         );
 
-        $this->assertEquals(3, $this->getItemRepository()->getCount());
+        $this->assertEntityCount(3, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
     public function testRemoveEntitiesWhenProductEntitiesForAllWebsitesRemoved()
@@ -65,7 +95,11 @@ class OrmIndexerTest extends WebTestCase
             []
         );
 
-        $this->assertEquals(1, $this->getItemRepository()->getCount());
+        $this->assertEntityCount(1, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
     }
 
     /**
@@ -74,16 +108,9 @@ class OrmIndexerTest extends WebTestCase
      */
     private function getProductEntity($id)
     {
-        $em = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManagerForClass(Product::class);
-        return $em->getReference(Product::class, $id);
-    }
-
-    /**
-     * @return WebsiteSearchIndexRepository
-     */
-    private function getItemRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(Item::class);
+        return $this->getContainer()
+            ->get('doctrine.orm.default_entity_manager')
+            ->getReference(Product::class, $id);
     }
 
     /**

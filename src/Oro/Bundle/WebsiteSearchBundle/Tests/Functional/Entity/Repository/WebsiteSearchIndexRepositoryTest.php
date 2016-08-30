@@ -3,87 +3,77 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebTestCase;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class WebsiteSearchIndexRepositoryTest extends WebTestCase
 {
+    use SearchTestTrait;
+
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([LoadItemData::class]);
+        $this->loadFixtures([LoadItemData::class], false, 'search');
     }
 
-    public function testCount()
+    protected function tearDown()
     {
-        $this->assertEquals(5, $this->getRepository()->getCount());
+        $this->truncateIndexTextTable();
     }
 
-    public function testGetEntitiesWhenEmptyArrayGiven()
+    public function testLoadedData()
     {
-        $this->assertEquals([], $this->getRepository()->getEntitiesToRemove([], Product::class));
+        $this->assertEntityCount(5, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
-    public function testGetEntitiesForSpeciticWebsite()
+    public function testRemoveEntitiesWhenEmptyIdsArrayGiven()
     {
-        $this->assertItemsEqual(
-            [
-                $this->getReference(LoadItemData::REFERENCE_OTHER_GOOD_PRODUCT),
-                $this->getReference(LoadItemData::REFERENCE_OTHER_BETTER_PRODUCT)
-            ],
-            $this->getRepository()->getEntitiesToRemove([1, 2], Product::class, 'orob2b_product_2')
-        );
+        $this->getItemRepository()->removeEntities([], Product::class);
+
+        $this->assertEntityCount(5, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 
-    public function testGetEntitiesForAllWebsites()
+    public function testRemoveEntitiesForSpecificWebsite()
     {
-        $this->assertItemsEqual(
-            [
-                $this->getReference(LoadItemData::REFERENCE_GOOD_PRODUCT),
-                $this->getReference(LoadItemData::REFERENCE_BETTER_PRODUCT),
-                $this->getReference(LoadItemData::REFERENCE_OTHER_GOOD_PRODUCT),
-                $this->getReference(LoadItemData::REFERENCE_OTHER_BETTER_PRODUCT)
-            ],
-            $this->getRepository()->getEntitiesToRemove([1, 2], Product::class)
-        );
+        $this->getItemRepository()->removeEntities([1, 2], Product::class, 'orob2b_product_2');
+
+        $this->assertEntityCount(3, Item::class);
+        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
     }
 
-    public function testGetNotExistentEntities()
+    public function testRemoveEntitiesForAllWebsites()
     {
-        $this->assertItemsEqual([], $this->getRepository()->getEntitiesToRemove([91, 92], 'SomeClass'));
+        $this->getItemRepository()->removeEntities([1, 2], Product::class);
+
+        $this->assertEntityCount(1, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
     }
 
-    /**
-     * @param Item[] $expectedItems
-     * @param Item[] $actualItems
-     */
-    private function assertItemsEqual($expectedItems, $actualItems)
+    public function testRemoveEntitiesForNonExistentEntities()
     {
-        $expectedIds = [];
-        foreach ($expectedItems as $item) {
-            $expectedIds[] = $item->getId();
-        }
+        $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
 
-        $actualIds = [];
-        foreach ($actualItems as $item) {
-            $actualIds[] = $item->getId();
-        }
-
-        $this->assertEquals($expectedIds, $actualIds);
-    }
-
-    /**
-     * @return WebsiteSearchIndexRepository
-     */
-    private function getRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'Oro\Bundle\WebsiteSearchBundle\Entity\Item'
-        );
+        $this->assertEntityCount(5, Item::class);
     }
 }
