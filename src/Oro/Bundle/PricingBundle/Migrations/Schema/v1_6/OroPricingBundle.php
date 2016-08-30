@@ -14,6 +14,7 @@ class OroPricingBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->dropTriggersTable($schema);
+        $this->updatePriceListTable($schema);
     }
 
     /**
@@ -23,5 +24,14 @@ class OroPricingBundle implements Migration
     {
         $schema->dropTable('orob2b_prod_price_ch_trigger');
         $schema->dropTable('orob2b_price_list_ch_trigger');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updatePriceListTable(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list');
+        $table->addColumn('actual', 'boolean', ['notnull' => true , 'default' => true]);
     }
 }

@@ -36,6 +36,7 @@ class PriceRuleEntityListener
      */
     public function postPersist(PriceRule $priceRule)
     {
+        $priceRule->getPriceList()->setActual(false);
         $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
             Topics::CALCULATE_RULE,
             $priceRule->getPriceList()
@@ -49,6 +50,7 @@ class PriceRuleEntityListener
      */
     public function preUpdate(PriceRule $priceRule)
     {
+        $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
         $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
             Topics::CALCULATE_RULE,
@@ -63,6 +65,7 @@ class PriceRuleEntityListener
      */
     public function preRemove(PriceRule $priceRule)
     {
+        $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
         $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
             Topics::CALCULATE_RULE,

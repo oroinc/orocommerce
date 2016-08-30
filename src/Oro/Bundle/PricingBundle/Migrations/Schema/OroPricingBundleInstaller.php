@@ -105,6 +105,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
+        $table->addColumn('actual', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);
         $table->addColumn('contain_schedule', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);

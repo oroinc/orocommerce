@@ -58,6 +58,8 @@ oro.pricing:
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
+        not_actual:
+            recalculation: This price list is currently being recalculated. You may make further edits, but please allow for additional time to see the updated prices on the store frontend.
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
@@ -73,6 +74,11 @@ class ProductPriceBuilder
         }
         $this->priceListTriggerHandler->addTriggersForPriceList(Topics::PRICE_LIST_CHANGE, $priceList, $product);
         $this->priceListTriggerHandler->sendScheduledTriggers();
+
+        $priceList->setActual(true);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(PriceList::class);
+        $em->flush($priceList);
     }
 
     /**

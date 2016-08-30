@@ -53,6 +53,7 @@ class PriceListEntityListener
     {
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULES)) {
             $this->clearCache($priceList);
+            $priceList->setActual(false);
             $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
         }
     }

@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -60,6 +62,7 @@ abstract class AbstractRuleEntityListener
         }
 
         $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
+        $this->updatePriceListActuality($priceLists);
     }
 
     /**
@@ -81,6 +84,17 @@ abstract class AbstractRuleEntityListener
             ->findBy($criteria);
 
         return $lexemes;
+    }
+
+    /**
+     * @param array|PriceList[] $priceLists
+     */
+    protected function updatePriceListActuality(array $priceLists)
+    {
+        /** @var PriceListRepository $priceListRepository */
+        $priceListRepository = $this->registry->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class);
+        $priceListRepository->updatePriceListsActuality($priceLists, false);
     }
 
     /**
