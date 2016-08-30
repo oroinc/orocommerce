@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -58,6 +59,12 @@ class AjaxCheckoutController extends Controller
         if (!$shippingRuleConfig) {
             return $checkout->getShippingCost();
         }
-        return $this->get('orob2b_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
+
+        $shippingContextProviderFactory = new ShippingContextProviderFactory();
+        return $this->get('orob2b_shipping.shipping_price')->getApplicableMethodTypePrice(
+            $shippingContextProviderFactory->create($checkout),
+            $checkout->getShippingMethod(),
+            $checkout->getShippingMethodType()
+        );
     }
 }

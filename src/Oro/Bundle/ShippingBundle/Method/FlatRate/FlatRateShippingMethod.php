@@ -76,6 +76,14 @@ class FlatRateShippingMethod implements ShippingMethodInterface
     /**
      * {@inheritdoc}
      */
+    public function getOptions()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSortOrder()
     {
         return 10;

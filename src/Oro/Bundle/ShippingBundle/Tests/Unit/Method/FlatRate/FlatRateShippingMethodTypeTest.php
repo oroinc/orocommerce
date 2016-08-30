@@ -60,7 +60,7 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
             $this->getEntity(LineItem::class, ['quantity' => 3]),
         ]);
 
-        $price = $this->flatRateType->calculatePrice($context, $options);
+        $price = $this->flatRateType->calculatePrice($context, [], $options);
 
         static::assertInstanceOf(Price::class, $price);
         static::assertEquals($expectedPrice, $price->getValue());

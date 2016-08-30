@@ -212,3 +212,9 @@ services:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_shipping.shipping_price:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_method.registry'

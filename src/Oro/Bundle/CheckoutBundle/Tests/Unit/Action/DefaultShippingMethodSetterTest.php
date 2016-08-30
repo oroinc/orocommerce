@@ -5,10 +5,10 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
@@ -35,9 +35,9 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     protected $rulesProvider;
 
     /**
-     * @var ShippingCostCalculationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $costCalculationProvider;
+    protected $priceProvider;
 
     public function setUp()
     {
@@ -45,12 +45,12 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $this->rulesProvider = $this->getMockBuilder(ShippingRulesProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->costCalculationProvider = $this->getMockBuilder(ShippingCostCalculationProvider::class)
+        $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
             ->disableOriginalConstructor()->getMock();
         $this->setter = new DefaultShippingMethodSetter(
             $this->contextProviderFactory,
             $this->rulesProvider,
-            $this->costCalculationProvider
+            $this->priceProvider
         );
     }
 
@@ -63,8 +63,8 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->method('create');
         $this->rulesProvider->expects($this->never())
             ->method('getApplicableShippingRules');
-        $this->costCalculationProvider->expects($this->never())
-            ->method('calculatePrice');
+        $this->priceProvider->expects($this->never())
+            ->method('getApplicableMethodTypePrice');
         $this->setter->setDefaultShippingMethod($checkout);
     }
 
@@ -82,8 +82,8 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->method('getApplicableShippingRules')
             ->with($context)
             ->willReturn([]);
-        $this->costCalculationProvider->expects($this->never())
-            ->method('calculatePrice');
+        $this->priceProvider->expects($this->never())
+            ->method('getApplicableMethodTypePrice');
         $this->setter->setDefaultShippingMethod($checkout);
     }
 
@@ -115,9 +115,9 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn([$rule]);
         $price = Price::create(10, 'USD');
-        $this->costCalculationProvider->expects($this->once())
-            ->method('calculatePrice')
-            ->with($checkout, $config)
+        $this->priceProvider->expects($this->once())
+            ->method('getApplicableMethodTypePrice')
+            ->with($context, $checkout->getShippingMethod(), $checkout->getShippingMethodType())
             ->willReturn($price);
         $this->setter->setDefaultShippingMethod($checkout);
 

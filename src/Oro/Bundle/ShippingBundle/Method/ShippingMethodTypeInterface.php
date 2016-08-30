@@ -30,9 +30,15 @@ interface ShippingMethodTypeInterface
     public function getOptionsConfigurationFormType();
 
     /**
+     * @return array
+     */
+    public function getOptions();
+
+    /**
      * @param ShippingContextInterface $context
-     * @param array $options
+     * @param array $methodOptions
+     * @param array $methodTypeOptions
      * @return null|Price
      */
-    public function calculatePrice(ShippingContextInterface $context, array $options);
+    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $methodTypeOptions);
 }
