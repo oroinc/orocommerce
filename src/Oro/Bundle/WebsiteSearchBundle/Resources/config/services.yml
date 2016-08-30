@@ -6,6 +6,8 @@ parameters:
 services:
     oro_website_search.mock.engine:
         class: %oro_website_search.mock.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory

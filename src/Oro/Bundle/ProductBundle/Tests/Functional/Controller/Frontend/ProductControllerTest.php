@@ -62,15 +62,14 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexAction()
     {
-        // TODO - fix the test to work with new data grid source, or bring back the previous datagrid config
-//        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
-//        $result = $this->client->getResponse();
-//        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-//        $content = $result->getContent();
-//        $this->assertNotEmpty($content);
-//        $this->assertContains(LoadProductData::PRODUCT_1, $content);
-//        $this->assertContains(LoadProductData::PRODUCT_2, $content);
-//        $this->assertContains(LoadProductData::PRODUCT_3, $content);
+        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $content = $result->getContent();
+        $this->assertNotEmpty($content);
+        $this->assertContains(LoadProductData::PRODUCT_1, $content);
+        $this->assertContains(LoadProductData::PRODUCT_2, $content);
+        $this->assertContains(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testIndexDatagridViews()

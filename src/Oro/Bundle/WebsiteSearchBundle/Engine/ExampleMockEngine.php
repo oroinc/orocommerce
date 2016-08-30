@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -17,15 +22,94 @@ use Oro\Bundle\SearchBundle\Query\Result;
 class ExampleMockEngine implements EngineV2Interface
 {
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * ExampleMockEngine constructor.
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    private function prepareQueryBuilder()
+    {
+        $queryBuilder = $this->entityManager->getRepository(Product::class)->createQueryBuilder('product');
+
+        $queryBuilder
+            ->addSelect('product.id as id')
+            ->addSelect('product.sku as sku')
+            ->addSelect('names.string as name')
+            ->addSelect('descriptions.text as description')
+            ->leftJoin(ProductPrice::class, 'product_price', 'with', 'product_price.product = product')
+            ->leftJoin('product.names', 'names')
+            ->leftJoin('product.descriptions', 'descriptions')
+        ;
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Criteria $criteria
+     */
+    private function applyFiltersToQueryBuilder(QueryBuilder $queryBuilder, Criteria $criteria)
+    {
+        if (!$criteria->getWhereExpression()) {
+            return;
+        }
+
+        $expression = $criteria->getWhereExpression();
+
+        if ($expression->get
+    }
+
+    /**
      * @param Query $query
      * @param array $context
      * @return Result
      */
     public function search(Query $query, $context = [])
     {
+        $queryBuilder = $this->prepareQueryBuilder();
+
+        $this->applyFiltersToQueryBuilder($queryBuilder, $query->getCriteria());
+
+        $result = $queryBuilder
+            ->getQuery()
+            ->getResult();
+
+
         // a real engine would decompile the Query object, translate
         // it into its own DBMS system query, run it and postprocess results.
         $fullData = $this->getFullDataset();
+
+
+        /*
+         * - join and select all fields that are listed in the mock array (get the same keys)
+         * - narrow the list with `selectedColumns`
+         * - emulate filtering using where clause
+         * - add order by
+         * - paginate
+         *
+         *             [
+                'id'               => 10,
+                'sku'              => 'SDSDUNC-064G-AN6IN',
+                'name'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
+                'shortDescription' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
+                'minimum_price'    => '250.00',
+                'product_units'    => [
+                    'item' => 'item'
+                ],
+                'prices'           => [
+                    'item_1' => '250.00'
+                ],
+                'image'            => 'https://images-na.ssl-images-amazon.com/images/I/51pvrWJX2sL.jpg'
+            ],
+         */
 
         // we are only wanting the results to correspond with
         // the fields (columns) that have been explicitely "selected",
@@ -226,6 +310,30 @@ class ExampleMockEngine implements EngineV2Interface
         ];
     }
 
+    /** @param $data
+     * @param $criteria
+     * @return array
+     */
+    private function applySKUFilter($data, Criteria $criteria)
+    {
+        $result = [];
+
+        if (!$criteria->getWhereExpression()) {
+            return $data;
+        }
+
+        $expression = $criteria->getWhereExpression();
+
+        foreach ($data as $row) {
+            $visitor = new ExampleExpressionVisitor($row);
+            if ($visitor->dispatch($expression)) {
+                $result[] = $row;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param $selectedColumns
      * @return mixed
@@ -265,29 +373,7 @@ class ExampleMockEngine implements EngineV2Interface
         return $result;
     }
 
-    /** @param $data
-    * @param $criteria
-    * @return array
-    */
-    private function applySKUFilter($data, Criteria $criteria)
-    {
-        $result = [];
 
-        if (!$criteria->getWhereExpression()) {
-            return $data;
-        }
-
-        $expression = $criteria->getWhereExpression();
-
-        foreach ($data as $row) {
-            $visitor = new ExampleExpressionVisitor($row);
-            if ($visitor->dispatch($expression)) {
-                $result[] = $row;
-            }
-        }
-
-        return $result;
-    }
 
     /**
      * @param Query $query
