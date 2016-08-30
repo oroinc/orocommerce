@@ -516,6 +516,10 @@ workflows:
                     - '@get_class_name':
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
+                    - '@call_service_method':
+                        service: orob2b_payment.provider.payment_term
+                        method: getCurrentPaymentTerm
+                        attribute: $.result.paymentTerm
                     - '@create_entity':
                         attribute: $.result.order
                         class: Oro\Bundle\OrderBundle\Entity\Order
@@ -535,6 +539,7 @@ workflows:
                             sourceEntityClass: $.result.sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
                             sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
+                            paymentTerm: $.result.paymentTerm
                             shippingMethod: $checkout.shippingMethod
                             shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
