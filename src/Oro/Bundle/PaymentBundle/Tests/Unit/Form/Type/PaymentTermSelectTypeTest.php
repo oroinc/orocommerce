@@ -41,7 +41,7 @@ class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals('orob2b_payment_term', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_payment_term_create', $options['create_form_route']);
                         $this->assertEquals(
-                            ['placeholder' => 'oro.payment.paymentterm.form.choose'],
+                            ['placeholder' => 'oro.payment.paymentterm.form.choose', 'allowClear' => true],
                             $options['configs']
                         );
                         return true;

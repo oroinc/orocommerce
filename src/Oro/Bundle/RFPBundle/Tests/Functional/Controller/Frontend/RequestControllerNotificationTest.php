@@ -157,15 +157,16 @@ class RequestControllerNotificationTest extends WebTestCase
 
     protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)
     {
-        $mailCollector = $this->client->getProfile()->getCollector('swiftmailer');
-        $messages = $mailCollector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
         $i = 0;
         foreach ($usersToSendTo as $userToSendTo) {
-            $toEmails = array_keys($messages[$i]->getTo());
+            $toEmails = array_keys($emailMessages[$i]->getTo());
             $this->assertEquals($userToSendTo->getEmail(), reset($toEmails));
             $i++;
         }
-        $this->assertCount($numberOfMessagesExpected, $messages);
+        $this->assertCount($numberOfMessagesExpected, $emailMessages);
     }
 
     protected function createRequest()

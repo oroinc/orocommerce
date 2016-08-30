@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
 /**
@@ -31,7 +32,7 @@ use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
  * )
  * @ORM\Entity
  */
-class OrderAddress extends ExtendOrderAddress
+class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterface
 {
     /**
      * @var AccountAddress

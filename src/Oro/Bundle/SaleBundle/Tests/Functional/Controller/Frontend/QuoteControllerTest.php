@@ -419,6 +419,10 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
+                        [
+                            'label' => 'oro.sale.quote.payment_term.label',
+                            'property' => 'payment_term.label',
+                        ],
                     ],
                 ],
             ],
