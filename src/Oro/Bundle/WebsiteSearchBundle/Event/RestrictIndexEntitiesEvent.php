@@ -4,7 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
 
-class RestrictIndexEntitiesEvent
+use Symfony\Component\EventDispatcher\Event;
+
+class RestrictIndexEntitiesEvent extends Event
 {
     const NAME = 'oro_website_search.event.restrict_index_entities';
 

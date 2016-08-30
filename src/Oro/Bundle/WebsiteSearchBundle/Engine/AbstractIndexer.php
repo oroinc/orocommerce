@@ -12,6 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -30,12 +31,12 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
-     * @param Mapper $mapper
+     * @param AbstractSearchMappingProvider $mapper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
-        Mapper $mapper
+        AbstractSearchMappingProvider $mapper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
@@ -50,8 +51,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $mappingConfig = $this->mapper->getMappingConfig();
 
         if (!$mappingConfig) {
-            // @todo: throw exception?
-            return 0;
+            throw new \LogicException('Mapping config is empty.');
         }
 
         if ($class) {
@@ -95,11 +95,10 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * Rename old index by aliases to new index
-     *
-     * @param string $oldAlias
-     * @param string $newAlias
+     * @param string $temporaryAlias
+     * @param string $currentAlias
      */
-    abstract protected function renameIndex($oldAlias, $newAlias);
+    abstract protected function renameIndex($temporaryAlias, $currentAlias);
 
     /**
      * @param array $context
@@ -108,7 +107,7 @@ abstract class AbstractIndexer implements IndexerInterface
     protected function getWebsitesToIndex(array $context)
     {
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            return $context[self::CONTEXT_WEBSITE_ID_KEY];
+            return [$context[self::CONTEXT_WEBSITE_ID_KEY]];
         }
 
         /** @var WebsiteRepository $websiteRepository */
@@ -124,8 +123,8 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function reindexSingleEntity($entityClass, array $entityConfig, array $context)
     {
-        $entityAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
-        $entityAliasTemp = $this->generateTemporaryAlias($entityAlias);
+        $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
+        $temporaryAlias = $this->generateTemporaryAlias($currentAlias);
 
         $entityManager = $this->doctrineHelper->getEntityManagerForClass($entityClass);
         $entityRepository = $entityManager->getRepository($entityClass);
@@ -147,19 +146,17 @@ abstract class AbstractIndexer implements IndexerInterface
 
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-                $this->saveIndexData($entityClass, $entityIds, $entitiesData, $entityAliasTemp, $context);
-                $entityManager->clear();
+                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
             }
         }
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-            $this->saveIndexData($entityClass, $entityIds, $entitiesData, $entityAliasTemp, $context);
-            $entityManager->clear();
+            $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
         }
 
-        $this->renameIndex($entityAliasTemp, $entityAlias);
+        $this->renameIndex($temporaryAlias, $currentAlias);
 
         return $itemsCount;
     }
@@ -197,24 +194,19 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function generateTemporaryAlias($entityAlias)
     {
-        return $entityAlias . '_' . time();
+        return $entityAlias . '_' . uniqid('website_search', true);
     }
 
     /**
      * Saves index data for batch of entities
-     *
      * @param string $entityClass
-     * @param array $entityIds
      * @param array $entitiesData
      * @param string $entityAliasTemp
-     * @param array $context
-     * @return
+     * @return int
      */
     abstract protected function saveIndexData(
         $entityClass,
-        array $entityIds,
         array $entitiesData,
-        $entityAliasTemp,
-        array $context
+        $entityAliasTemp
     );
 }
