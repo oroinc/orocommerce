@@ -32,7 +32,7 @@ class ORMEngine extends AbstractEngine
     /**
      * {@inheritdoc}
      */
-    public function doSearch(Query $query, array $context = [])
+    protected function doSearch(Query $query, array $context = [])
     {
         $results = [];
 
