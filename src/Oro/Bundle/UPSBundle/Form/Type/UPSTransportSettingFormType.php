@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Doctrine\ORM\EntityRepository;
 
 class UPSTransportSettingFormType extends AbstractType
 {
@@ -17,6 +20,11 @@ class UPSTransportSettingFormType extends AbstractType
      * @var TransportInterface
      */
     protected $transport;
+    
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
 
     /**
      * @var string
@@ -25,11 +33,14 @@ class UPSTransportSettingFormType extends AbstractType
 
     /**
      * @param TransportInterface $transport
+     * @param ConfigManager $configManager
      */
     public function __construct(
-        TransportInterface $transport
+        TransportInterface $transport,
+        ConfigManager $configManager
     ) {
         $this->transport  = $transport;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -91,13 +102,22 @@ class UPSTransportSettingFormType extends AbstractType
                 'constraints' => [new NotBlank()]
             ]
         );
+        
+        $shippingOrigin = $this->configManager->get('orob2b_shipping.shipping_origin');
         $builder->add(
             'applicableShippingServices',
-            ShippingServiceCollectionType::NAME,
+            'entity',
             [
                 'label' => 'oro.ups.transport.shipping_service.plural_label',
                 'required' => true,
-                'mapped' => true
+                'mapped' => true,
+                'multiple' => true,
+                'class' => 'Oro\Bundle\UPSBundle\Entity\ShippingService',
+                'query_builder' => function (EntityRepository $repository) use ($shippingOrigin) {
+                    return $repository->createQueryBuilder('shippingService')
+                    ->andWhere('shippingService.country = :country')
+                    ->setParameter(':country', $shippingOrigin['country']);
+                }
             ]
         );
     }

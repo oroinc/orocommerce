@@ -105,4 +105,9 @@ class ShippingService
         $this->country = $country;
         return $this;
     }
+
+    public function __toString()
+    {
+        return (string) $this->getCode() . ': ' . $this->getDescription();
+    }
 }

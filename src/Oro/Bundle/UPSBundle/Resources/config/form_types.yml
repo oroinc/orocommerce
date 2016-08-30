@@ -3,6 +3,7 @@ services:
         class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingFormType'
         arguments:
             - "@oro_ups.provider.transport"
+            - "@oro_config.global"
         tags:
             - { name: form.type, alias: oro_ups_transport_setting_form_type }
 

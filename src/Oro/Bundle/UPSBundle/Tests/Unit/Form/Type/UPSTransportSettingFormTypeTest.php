@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType;
-use Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingFormType;
+
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -17,6 +20,8 @@ use Symfony\Component\Validator\Validation;
 
 class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     const DATA_CLASS = 'Oro\Bundle\UPSBundle\Entity\UPSTransport';
 
     /**
@@ -31,11 +36,16 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
+        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->transport = $this->getMock(TransportInterface::class);
         $this->transport->expects(static::any())
             ->method('getSettingsEntityFQCN()')
             ->willReturn(static::DATA_CLASS);
-        $this->formType = new UPSTransportSettingFormType($this->transport);
+        $this->formType = new UPSTransportSettingFormType($this->transport, $configManager);
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -45,14 +55,34 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $shippingService = new ShippingServiceType();
-        $shippingService->setDataClass('Oro\Bundle\UPSBundle\Entity\ShippingService');
+        $country = new Country('US');
+        $entityType = new EntityTypeStub(
+            [
+                1 => $this->getEntity(
+                    'Oro\Bundle\UPSBundle\Entity\ShippingService',
+                    [
+                        'id' => 1,
+                        'code' => '01',
+                        'description' => 'UPS Next Day Air',
+                        'country' => $country
+                    ]
+                ),
+                2 => $this->getEntity(
+                    'Oro\Bundle\UPSBundle\Entity\ShippingService',
+                    [
+                        'id' => 2,
+                        'code' => '03',
+                        'description' => 'UPS Ground',
+                        'country' => $country
+                    ]
+                ),
+            ],
+            'entity'
+        );
         return [
             new PreloadedExtension(
                 [
-                    OroCollectionType::NAME => new OroCollectionType(),
-                    ShippingServiceCollectionType::NAME => new ShippingServiceCollectionType(),
-                    ShippingServiceType::NAME => $shippingService,
+                    'entity' =>$entityType
                 ],
                 []
             ),
@@ -87,6 +117,16 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
+        /** @var ShippingService $expectedShippingService */
+        $expectedShippingService = $this->getEntity(
+            'Oro\Bundle\UPSBundle\Entity\ShippingService',
+            [
+                'id' => 1,
+                'code' => '01',
+                'description' => 'UPS Next Day Air',
+                'country' => new Country('US')
+            ]
+        );
         return [
             'service without value' => [
                 'defaultData'   => new UPSTransport(),
@@ -103,12 +143,7 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
                     'apiKey'=> 'key',
                     'shippingAccountName' => 'name',
                     'shippingAccountNumber' => 'number',
-                    'applicableShippingServices' => [
-                        [
-                            'code' => '03',
-                            'description' => 'UPS Ground'
-                        ]
-                    ]
+                    'applicableShippingServices' => [1]
                 ],
                 'isValid' => true,
                 'expectedData'  => (new UPSTransport())
@@ -118,9 +153,7 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
                     ->setApiKey('key')
                     ->setShippingAccountName('name')
                     ->setShippingAccountNumber('number')
-                    ->addApplicableShippingService(
-                        (new ShippingService())->setCode('03')->setDescription('UPS Ground')
-                    )
+                    ->addApplicableShippingService($expectedShippingService)
             ]
         ];
     }
