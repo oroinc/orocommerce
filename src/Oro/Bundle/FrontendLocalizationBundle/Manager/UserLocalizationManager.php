@@ -5,13 +5,13 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -66,9 +66,11 @@ class UserLocalizationManager
      */
     public function getEnabledLocalizations()
     {
-        return $this->localizationManager->getLocalizations(
-            (array)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
-        );
+        $ids = array_map(function ($id) {
+            return (int)$id;
+        }, (array)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS)));
+
+        return $this->localizationManager->getLocalizations($ids);
     }
 
     /**
@@ -77,7 +79,7 @@ class UserLocalizationManager
     public function getDefaultLocalization()
     {
         $localization = $this->localizationManager->getLocalization(
-            $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
+            (int)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
         );
 
         return $localization ?: $this->localizationManager->getDefaultLocalization();
@@ -85,7 +87,7 @@ class UserLocalizationManager
 
     /**
      * @param Website|null $website
-     * @return Localization
+     * @return Localization|null
      */
     public function getCurrentLocalization(Website $website = null)
     {

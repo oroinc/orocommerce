@@ -202,7 +202,7 @@ class ProductRepository extends EntityRepository
         foreach ($productImages as $productImage) {
             $images[$productImage['product_id']] = $productImage['image'];
         }
-        
+
         return $images;
     }
 
@@ -221,5 +221,14 @@ class ProductRepository extends EntityRepository
             ->setParameter('sku', $sku)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * @param array $ids
+     * @return Product[]
+     */
+    public function getProductsByIds(array $ids)
+    {
+        return $this->getProductsQueryBuilder($ids)->getQuery()->getResult();
     }
 }

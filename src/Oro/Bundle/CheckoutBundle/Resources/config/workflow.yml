@@ -8,6 +8,10 @@ workflows:
 
         defaults:
             active: true
+        exclusive_record_groups:
+            - b2b_checkout_flow
+        priority: 100
+
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -305,11 +309,6 @@ workflows:
 
         transition_definitions:
             __start___definition:
-                preconditions:
-                    '@not':
-                        - '@and':
-                            - '@assert_account': 4
-                            - '@payment_method_enabled': 'payment_term'
                 actions:
                     - '@assign_value': [$payment_save_for_later, true]
             do_nothing:
@@ -506,10 +505,8 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@not':
-                            - '@payment_method_supports':
-                                payment_method: $payment_method
-                                action: 'validate'
+                        - '@require_payment_redirect':
+                            payment_method: $payment_method
                         - '@not':
                             - '@check_request':
                                 is_ajax: true

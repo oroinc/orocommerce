@@ -3,4 +3,4 @@ layout:
         - '@setBlockTheme':
             themes: 'OroPricingBundle:layouts:default/orob2b_product_frontend_product_index/price_mobile.html.twig'
 
-    conditions: 'context["user_agent"]["mobile"]==true'
+    conditions: 'context["is_mobile"]==true'
