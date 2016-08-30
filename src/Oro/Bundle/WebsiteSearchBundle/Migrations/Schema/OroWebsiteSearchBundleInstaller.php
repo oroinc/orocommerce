@@ -2,22 +2,27 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Schema;
 
-use Doctrine\DBAL\Schema\Schema;
-
-use Oro\Bundle\MigrationBundle\Migration\Installation;
-use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+
+use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
+use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInterface
+class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInterface, DatabasePlatformAwareInterface
 {
     use ContainerAwareTrait;
+    use DatabasePlatformAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -44,6 +49,9 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $this->addOroWebsiteSearchIntegerForeignKeys($schema);
         $this->addOroWebsiteSearchDatetimeForeignKeys($schema);
         $this->addOroWebsiteSearchTextForeignKeys($schema);
+
+        $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
+        $queries->addQuery($query);
     }
 
     /**
@@ -106,7 +114,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('changed', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['entity', 'record_id'], 'oro_website_search_item_uidx');
+        $table->addUniqueIndex(['entity', 'record_id', 'alias'], 'oro_website_search_item_uidx');
         $table->setPrimaryKey(['id']);
         $table->addIndex(['entity'], 'oro_website_search_item_idxe', []);
         $table->addIndex(['alias'], 'oro_website_search_item_idxa', []);
@@ -121,7 +129,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_website_search_text');
-        $table->addOption('engine', 'MyISAM');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('field', 'string', ['length' => 250]);
@@ -129,8 +136,9 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addIndex(['item_id']);
         $table->setPrimaryKey(['id']);
 
-        $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
-        $queries->addQuery($query);
+        if ($this->platform->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
+            $table->addOption('engine', PdoMysql::ENGINE_MYISAM);
+        }
     }
 
     /**

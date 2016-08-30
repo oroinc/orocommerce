@@ -1,0 +1,6 @@
+OroB2B\Bundle\TestPageBundle\Entity\Page:
+    alias: page_WEBSITE_ID
+    fields:
+      -
+        name: title_LOCALIZATION_ID
+        type: text

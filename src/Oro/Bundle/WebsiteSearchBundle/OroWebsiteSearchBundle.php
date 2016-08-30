@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension;
 
-class WebsiteSearchBundle extends Bundle
+class OroWebsiteSearchBundle extends Bundle
 {
     /**
      * {@inheritdoc}
