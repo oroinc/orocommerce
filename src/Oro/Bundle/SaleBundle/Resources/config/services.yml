@@ -149,7 +149,7 @@ services:
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
-    orob2b_sale.provider.privilege_category_provider:
+    oro_sale.provider.privilege_category_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}

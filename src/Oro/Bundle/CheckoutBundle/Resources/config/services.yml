@@ -378,7 +378,7 @@ services:
     orob2b_checkout.factory.shipping_context_provider_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'
 
-    orob2b_checkout.provider.privilege_category_provider:
+    oro_checkout.provider.privilege_category_provider:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
