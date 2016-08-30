@@ -47,24 +47,26 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $currency
      * @param array $options
      * @param float $expectedPrice
      *
      * @dataProvider ruleConfigProvider
      */
-    public function testCalculatePrice(array $options, $expectedPrice)
+    public function testCalculatePrice($currency, array $options, $expectedPrice)
     {
         $context = new ShippingContext();
         $context->setLineItems([
             $this->getEntity(LineItem::class, ['quantity' => 2]),
             $this->getEntity(LineItem::class, ['quantity' => 3]),
-        ]);
+        ])
+            ->setCurrency($currency);
 
         $price = $this->flatRateType->calculatePrice($context, [], $options);
 
         static::assertInstanceOf(Price::class, $price);
         static::assertEquals($expectedPrice, $price->getValue());
-        static::assertEquals($options[FlatRateShippingMethodType::CURRENCY_OPTION], $price->getCurrency());
+        static::assertEquals($context->getCurrency(), $price->getCurrency());
     }
 
     /**
@@ -74,20 +76,20 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                'currency' => 'USD',
                 'options' => [
                     FlatRateShippingMethodType::PRICE_OPTION => 25,
                     FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
                     FlatRateShippingMethodType::HANDLING_FEE_OPTION => 5,
-                    FlatRateShippingMethodType::CURRENCY_OPTION => 'USD',
                 ],
                 'expectedPrice' => 30
             ],
             [
+                'currency' => 'EUR',
                 'options' => [
                     FlatRateShippingMethodType::PRICE_OPTION => 15,
                     FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
                     FlatRateShippingMethodType::HANDLING_FEE_OPTION => 3,
-                    FlatRateShippingMethodType::CURRENCY_OPTION => 'EUR',
                 ],
                 'expectedPrice' => 78
             ],

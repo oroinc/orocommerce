@@ -49,12 +49,15 @@ class ShippingContext implements ShippingContextInterface
 
     /**
      * @param array $items
+     * @return $this
      */
-    public function setLineItems($items)
+    public function setLineItems(array $items)
     {
         foreach ($items as $item) {
             $this->lineItems[] = $this->createLineItem($item);
         }
+
+        return $this;
     }
 
     /**

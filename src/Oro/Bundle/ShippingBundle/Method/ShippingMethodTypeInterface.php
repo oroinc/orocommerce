@@ -7,8 +7,6 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 interface ShippingMethodTypeInterface
 {
-    const CURRENCY_OPTION = 'currency';
-
     /**
      * @return string|int
      */
@@ -37,8 +35,8 @@ interface ShippingMethodTypeInterface
     /**
      * @param ShippingContextInterface $context
      * @param array $methodOptions
-     * @param array $methodTypeOptions
+     * @param array $typeOptions
      * @return null|Price
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $methodTypeOptions);
+    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions);
 }
