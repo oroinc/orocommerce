@@ -116,6 +116,7 @@ define(function(require) {
                     $elementPlaceholder: $elementPlaceholder,
                     placeholderId: '',
                     toggleClass: '',
+                    autoWidth: false,
                     isSticky: true
                 });
                 options.$placeholder = options.placeholderId ? $('#' + options.placeholderId) : $placeholder;
@@ -239,7 +240,7 @@ define(function(require) {
         updateElementPlaceholder: function($element) {
             $element.data('sticky').$elementPlaceholder.css({
                 display: $element.css('display'),
-                width: $element.outerWidth(),
+                width: $element.data('sticky').autoWidth ? 'auto' : $element.outerWidth(),
                 height: $element.outerHeight(),
                 margin: $element.css('margin') || 0
             });
