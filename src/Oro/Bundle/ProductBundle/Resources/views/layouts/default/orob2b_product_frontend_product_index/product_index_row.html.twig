@@ -20,8 +20,7 @@
         '~class': " product-item__image-holder product-item__image-holder_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set noImageUrl = Image.url(null, 'product_large') %}
-        <a href="<%= model.view_link %>" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
+        <a href="<%= model.view_link %>" class="view-product" style="background-image: url('<%= model.image %>')"></a>
     </div>
 {% endblock %}
 

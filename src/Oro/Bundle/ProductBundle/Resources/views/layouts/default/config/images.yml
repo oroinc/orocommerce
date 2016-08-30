@@ -4,6 +4,7 @@ types:
         dimensions:
             - product_original
             - product_large
+            - product_medium
             - product_small
         max_number: 1
     listing:
@@ -22,4 +23,5 @@ types:
 dimensions:
     product_original: { width: ~, height: ~ }
     product_large: { width: 378, height: 378 }
+    product_medium: { width: 378, height: 378 }
     product_small: { width: 56, height: 56 }

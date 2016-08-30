@@ -344,6 +344,7 @@ services:
             - '@orob2b_product.datagrid_theme_helper'
             - '@doctrine'
             - '@oro_attachment.manager'
+            - '@liip_imagine.cache.manager'
             - '@orob2b_product.formatter.product_unit_label'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }

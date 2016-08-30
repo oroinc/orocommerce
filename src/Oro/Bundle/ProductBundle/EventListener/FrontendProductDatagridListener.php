@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -19,7 +20,11 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
-    const PRODUCT_IMAGE_FILTER = 'product_large';
+
+    const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
+    const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
+
+    const DEFAULT_IMAGE = '/bundles/oroproduct/default/images/no_image.png';
 
     /**
      * @var DataGridThemeHelper
@@ -37,6 +42,11 @@ class FrontendProductDatagridListener
     protected $attachmentManager;
 
     /**
+     * @var CacheManager
+     */
+    protected $imagineCacheManager;
+
+    /**
      * @var ProductUnitLabelFormatter
      */
     protected $unitFormatter;
@@ -51,11 +61,13 @@ class FrontendProductDatagridListener
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
         AttachmentManager $attachmentManager,
+        CacheManager $imagineCacheManager,
         ProductUnitLabelFormatter $unitFormatter
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
+        $this->imagineCacheManager = $imagineCacheManager;
         $this->unitFormatter = $unitFormatter;
     }
 
@@ -174,24 +186,32 @@ class FrontendProductDatagridListener
     protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
-        $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
-        if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
-            return;
+        $theme = $this->themeHelper->getTheme($gridName);
+        switch($theme) {
+            case DataGridThemeHelper::VIEW_GRID:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
+                break;
+            case DataGridThemeHelper::VIEW_TILES:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
+                break;
+            default:
+                return;
         }
-
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
+        $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
         foreach ($records as $record) {
-            $imageUrl = null;
             $productId = $record->getValue('id');
 
             if (isset($productImages[$productId])) {
                 $imageUrl = $this->attachmentManager->getFilteredImageUrl(
                     $productImages[$productId],
-                    self::PRODUCT_IMAGE_FILTER
+                    $imageFilter
                 );
-                $record->addData(['image' => $imageUrl]);
+            }else {
+                $imageUrl = $defaultImageUrl;
             }
+            $record->addData(['image' => $imageUrl]);
         }
     }
 
