@@ -20,18 +20,12 @@ class OrmIndexerTest extends WebTestCase
 {
     use SearchTestTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->initClient();
         $this->loadFixtures([LoadItemData::class], false, 'search');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown()
     {
         $this->truncateIndexTextTable();

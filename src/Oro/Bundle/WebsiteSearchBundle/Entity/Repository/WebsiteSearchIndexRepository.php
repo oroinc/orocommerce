@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
 
 class WebsiteSearchIndexRepository extends SearchIndexRepository
@@ -64,16 +65,5 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
             array_merge($entityIds, $stringParameters),
             $parameterTypes
         );
-    }
-
-    /**
-     * @return int
-     */
-    public function getCount()
-    {
-        return $this->createQueryBuilder('item')
-           ->select('count(item)')
-           ->getQuery()
-           ->getSingleScalarResult();
     }
 }
