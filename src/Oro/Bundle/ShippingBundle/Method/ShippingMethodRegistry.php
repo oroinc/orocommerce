@@ -14,7 +14,7 @@ class ShippingMethodRegistry
      */
     public function addShippingMethod(ShippingMethodInterface $shippingMethod)
     {
-        $this->shippingMethods[$shippingMethod->getName()] = $shippingMethod;
+        $this->shippingMethods[$shippingMethod->getIdentifier()] = $shippingMethod;
     }
 
     /**

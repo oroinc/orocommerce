@@ -87,8 +87,8 @@ services:
         tags:
             - { name: form.type, alias: orob2b_shipping_rule_configuration }
 
-    orob2b_shipping.form.type.flat_rate_rule_config:
-        class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType
+    orob2b_shipping.form.type.flat_rate_rule__method_type_config:
+        class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType
         arguments:
             - '@orob2b_pricing.rounding.price_rounding_service'
         tags:
