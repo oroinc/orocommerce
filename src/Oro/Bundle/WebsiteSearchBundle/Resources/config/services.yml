@@ -29,7 +29,9 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
         parent: oro_website_search.search.engine
         calls:
-            - [setDoctrine, ['@doctrine']]
+            - [setRegistry, ['@doctrine']]
+            - [setDrivers, ['%oro_search.drivers%']]
+            - [setMapper, ['@oro_search.mapper']]
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'

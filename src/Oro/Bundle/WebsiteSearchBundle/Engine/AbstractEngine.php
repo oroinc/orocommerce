@@ -10,7 +10,7 @@ use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
-abstract class AbstractWebsiteSearchEngine implements EngineV2Interface
+abstract class AbstractEngine implements EngineV2Interface
 {
     /**
      * @var EventDispatcherInterface
