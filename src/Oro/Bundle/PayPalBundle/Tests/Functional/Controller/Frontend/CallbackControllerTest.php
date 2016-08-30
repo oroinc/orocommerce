@@ -4,8 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 /**
  * @dbIsolation
@@ -51,7 +50,7 @@ class CallbackControllerTest extends WebTestCase
         );
 
         $objectManager = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
+            ->getRepository('OroPaymentBundle:PaymentTransaction');
 
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $objectManager->find($paymentTransaction->getId());

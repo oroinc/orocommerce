@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\FallbackBundle\OroFallbackBundle, priority: 10 }

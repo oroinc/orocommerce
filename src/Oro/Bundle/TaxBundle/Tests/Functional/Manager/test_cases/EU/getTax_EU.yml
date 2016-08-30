@@ -1,0 +1,87 @@
+method: getTax
+reference: simple_order
+configuration:
+    use_as_base_by_default: destination
+    origin_address:
+        country: 'DE'
+        region: 'DE-BW'
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
+            billingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
+            shippingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 5 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 6 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
+        europe_germany_jurisdiction_code:
+            code: { property_value: europe_germany_jurisdiction_code }
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'DE' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'DE-BW' } }
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule.TAX5:
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: { reference: europe_germany_jurisdiction_code }
+            productTaxCode: { reference: product_tax_code.TAX1 }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+expectedResult:
+    total:
+        includingTax: '124.57'
+        excludingTax: '113.25'
+        taxAmount: '11.32'
+        adjustment: '-0.005'
+        currency: 'USD'
+    items:
+        -
+            unit:
+                includingTax: '17.59' # 15.99 + 1.6
+                excludingTax: '15.99'
+                taxAmount: '1.6'      # 15.99 * 0.1
+                adjustment: '-0.001' # 1.599 - 1.6
+                currency: 'USD'
+            row:
+                includingTax: '87.95' # 79.95 + 8
+                excludingTax: '79.95' # 15.99 * 5
+                taxAmount: '8'        # 79.95 * 0.1
+                adjustment: '-0.005' # 7.995 - 8
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8', currency: 'USD' }
+        -
+            unit:
+                includingTax: '6.11'  # 5.55 + 0.56
+                excludingTax: '5.55'
+                taxAmount: '0.56'     # 5.55 * 0.1
+                adjustment: '-0.005' # 0.555 - 0.56
+                currency: 'USD'
+            row:
+                includingTax: '36.63' # 33.3 + 3.33
+                excludingTax: '33.3'
+                taxAmount: '3.33'     # 33.3 * 0.1
+                adjustment: '0'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33', currency: 'USD' }
