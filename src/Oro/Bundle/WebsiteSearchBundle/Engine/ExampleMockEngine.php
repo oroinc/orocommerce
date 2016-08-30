@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -310,26 +311,35 @@ class ExampleMockEngine implements EngineV2Interface
      */
     private function filterDataByCategory($data, Query $query)
     {
-        $whereExpression = $query->getCriteria()->getWhereExpression();
+        $whereExpressions = $query->getCriteria()->getWhereExpression();
         $resultData = [];
 
-        if ($whereExpression && (strstr($whereExpression->getField(), 'cat_id'))) {
-            $value = $whereExpression->getValue()->getValue();
-            // For now
-            // not any item will be returned here, as long as we have them stored
-            // in inner array,
-            // when we will convert this mock engine to be querying from database
-            // the actual condition will be tested
-            //
-            // But the current implementation let to test it manually clicking
-            // on categories.
+        $expressions = [];
 
-            foreach ($data as $k => $element) {
-                if ((isset($element['category_id']))
-                    && ($element['category_id'] !== $value)) {
-                    continue;
+        if ($whereExpressions instanceof CompositeExpression) {
+            foreach ($whereExpressions->getExpressionList() as $expression) {
+                $expressions[] = $expression;
+            }
+        } else {
+            $expressions[] = $whereExpressions;
+        }
+
+        foreach ($data as $k => $element) {
+            $allow = true;
+
+            foreach ($expressions as $expression) {
+                if (strstr($expression->getField(), 'cat_id')) {
+                    $value = $expression->getValue()->getValue();
+
+                    if (isset($element['category_id'])
+                        && ($element['category_id'] !== $value)
+                    ) {
+                        $allow = false;
+                    }
                 }
+            }
 
+            if ($allow) {
                 $resultData[$k] = $element;
             }
         }
