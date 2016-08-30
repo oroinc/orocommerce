@@ -14,7 +14,7 @@ layout:
         - '@setOption':
             id: __user_addresses_head_title
             optionName: text
-            optionValue: 'orob2b.account.frontend.account_user_address_book.account_user_addresses'
+            optionValue: 'oro.account.frontend.account_user_address_book.account_user_addresses'
 
         - '@setOption':
             id: __user_addresses_datagrid
@@ -42,6 +42,6 @@ layout:
         - '@setOption':
               id: __user_addresses_create_button
               optionName: text
-              optionValue: 'orob2b.account.address.add'
+              optionValue: 'oro.account.address.add'
 
     conditions: 'context["account_address_count"]>=8'

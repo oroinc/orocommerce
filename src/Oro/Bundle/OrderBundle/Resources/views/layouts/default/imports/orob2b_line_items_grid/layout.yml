@@ -17,7 +17,7 @@ layout:
                 __grid_container_head_title:
                     blockType: text
                     options:
-                        text: 'orob2b.order.frontend.ordered_items.title'
+                        text: 'oro.order.frontend.ordered_items.title'
                 __grid_container_body:
                     blockType: container
                     options:

@@ -11,7 +11,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: orob2b.product.entity_plural_label
+            optionValue: 'oro.product.entity_plural_label'
         - '@addTree':
             items:
                 product_index_page:
