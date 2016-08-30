@@ -4,10 +4,11 @@ namespace Oro\Bundle\UPSBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
+use Oro\Bundle\UPSBundle\Model\PriceRequest;
+
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransport extends AbstractRestTransport
 {
@@ -40,20 +41,6 @@ class UPSTransport extends AbstractRestTransport
      */
     protected function getClientOptions(ParameterBag $parameterBag)
     {
-        $user = $parameterBag->get('api_user');
-        $password = $parameterBag->get('api_password');
-        $token = $parameterBag->get('api_key');
-        return [
-            'UPSSecurity' => [
-                'UsernameToken' => [
-                    'Username' => $user,
-                    'Password' => $password,
-                ],
-                'ServiceAccessToken' => [
-                    'AccessLicenseNumber' => $token
-                ]
-            ]
-        ];
     }
 
     /**
@@ -81,10 +68,10 @@ class UPSTransport extends AbstractRestTransport
     }
 
     /**
-     * @param RateRequestInterface $rateRequest
+     * @param PriceRequest $priceRequest
      * @return array
      */
-    public function getRates(RateRequestInterface $rateRequest)
+    public function getPrices(PriceRequest $priceRequest)
     {
         $repo = $this->registry
             ->getManagerForClass('Oro\Bundle\IntegrationBundle\Entity\Channel')
@@ -96,9 +83,17 @@ class UPSTransport extends AbstractRestTransport
             if ($transportEntity) {
                 $this->client = $this->createRestClient($transportEntity);
 
-                $request = $this->getClientOptions($transportEntity->getSettingsBag());
-                $request['RateRequest'] = $rateRequest->toArray();
-                return $this->client->post(static::API_RATES_PREFIX, $request)->json();
+                $parameterBag = $transportEntity->getSettingsBag();
+                $priceRequest->setSecurity(
+                    $parameterBag->get('api_user'),
+                    $parameterBag->get('api_password'),
+                    $parameterBag->get('api_key')
+                );
+                $priceRequest
+                    ->setShipperName($parameterBag->get('shipping_account_name'))
+                    ->setShipperNumber($parameterBag->get('shipping_account_number'));
+
+                return $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             }
         }
         return null;
