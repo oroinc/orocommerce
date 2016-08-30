@@ -18,6 +18,7 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -39,7 +40,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          }
  *      }
  * )
@@ -49,9 +51,9 @@ class Checkout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    ContextItemInterface,
     ShippingAwareInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    PaymentMethodAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -321,14 +323,6 @@ class Checkout implements
         $this->source = $source;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toString()
-    {
-        return $this->id;
     }
 
     /**

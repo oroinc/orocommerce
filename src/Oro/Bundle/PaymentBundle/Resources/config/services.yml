@@ -70,6 +70,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.quotes-grid, method: onBuildBeforeQuotes }
 
     orob2b_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
@@ -83,6 +84,7 @@ services:
         arguments:
             - '@doctrine'
             - '@security.token_storage'
+            - '@event_dispatcher'
             - '%orob2b_payment.entity.payment_term.class%'
 
     orob2b_payment.provider.methods_provider:
@@ -94,6 +96,11 @@ services:
             - '@orob2b_payment.provider.payment_transaction'
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
+
+    orob2b_payment.provider.method_widget_provider:
+        class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
 
     orob2b_payment.event.callback_handler:
         class: 'Oro\Bundle\PaymentBundle\Event\CallbackHandler'
@@ -231,3 +238,12 @@ services:
             - "@orob2b_payment.formatter.payment_status_label"
         tags:
             - { name: twig.extension }
+
+    orob2b_payment.condition.require_payment_redirect:
+        class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
+        arguments:
+            - '@orob2b_payment.payment_method.registry'
+            - '@event_dispatcher'
+        tags:
+            - { name: oro_workflow.condition, alias: 'require_payment_redirect' }
+            - { name: oro_action.condition, alias: 'require_payment_redirect' }

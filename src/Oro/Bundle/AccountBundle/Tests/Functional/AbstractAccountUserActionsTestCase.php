@@ -25,13 +25,13 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 
         $this->executeOperation($user, 'orob2b_account_accountuser_confirm');
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $collectedMessages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
-        $this->assertCount(1, $collectedMessages);
+        $this->assertCount(1, $emailMessages);
 
-        $message = array_shift($collectedMessages);
+        $message = array_shift($emailMessages);
 
         $this->assertInstanceOf('\Swift_Message', $message);
         $this->assertEquals($user->getEmail(), key($message->getTo()));
@@ -71,12 +71,12 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $messages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
         /** @var \Swift_Message $message */
-        $message = reset($messages);
+        $message = reset($emailMessages);
 
         $this->assertInstanceOf('Swift_Message', $message);
         $this->assertEquals($email, key($message->getTo()));

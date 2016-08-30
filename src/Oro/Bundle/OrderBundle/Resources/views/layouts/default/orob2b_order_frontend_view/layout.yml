@@ -137,6 +137,13 @@ layout:
                         text: '=data["orob2b_payment_methods_provider"].getPaymentMethods(data["order"])'
                         label: 'oro.payment.methods.label'
                         block_prefixes: ['order_body_column_element']
+                order_payment_term:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getPaymentTerm()!=null'
+                        text: '=data["order"].getPaymentTerm().getLabel()'
+                        label: 'oro.order.payment_term.label'
+                        block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text
                     options:
@@ -186,6 +193,7 @@ layout:
                                         order_po_number: ~
                                         order_shipping_method: ~
                                         order_payment_method: ~
+                                        order_payment_term: ~
                                         order_payment_status: ~
                                         order_ship_until: ~
                                         order_po_number: ~
