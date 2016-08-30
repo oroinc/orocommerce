@@ -72,7 +72,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             $this->requestStack
         );
         $this->accountViewListener->setFeatureChecker($this->featureChecker);
-        $this->accountViewListener->setFeature('rfp');
+        $this->accountViewListener->addFeature('rfp');
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequest()

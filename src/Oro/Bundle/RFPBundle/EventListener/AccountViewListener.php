@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-
-class AccountViewListener
+class AccountViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TranslatorInterface
      */
@@ -28,16 +30,6 @@ class AccountViewListener
      * @var RequestStack
      */
     protected $requestStack;
-
-    /**
-     * @var FeatureChecker
-     */
-    protected $featureChecker;
-
-    /**
-     * @var string
-     */
-    protected $feature;
 
     /**
      * @param TranslatorInterface $translator
@@ -55,27 +47,11 @@ class AccountViewListener
     }
 
     /**
-     * @param FeatureChecker $featureChecker
-     */
-    public function setFeatureChecker(FeatureChecker $featureChecker)
-    {
-        $this->featureChecker = $featureChecker;
-    }
-
-    /**
-     * @param string $feature
-     */
-    public function setFeature($feature)
-    {
-        $this->feature = $feature;
-    }
-
-    /**
      * @param BeforeListRenderEvent $event
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
-        if ($this->featureChecker && !$this->featureChecker->isFeatureEnabled($this->feature)) {
+        if (!$this->isFeaturesEnabled()) {
             return;
         }
 
@@ -100,7 +76,7 @@ class AccountViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
-        if ($this->featureChecker && !$this->featureChecker->isFeatureEnabled($this->feature)) {
+        if (!$this->isFeaturesEnabled()) {
             return;
         }
 
