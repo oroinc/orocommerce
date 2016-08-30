@@ -22,6 +22,6 @@ class PrivilegeCategoryProvider implements PrivilegeCategoryProviderInterface
      */
     public function getRolePrivilegeCategory()
     {
-        return new PrivilegeCategory(self::NAME, 'oro.order.privilege.category.orders.label', true, 2);
+        return new PrivilegeCategory(self::NAME, 'oro.order.privilege.category.orders.label', true, 6);
     }
 }
