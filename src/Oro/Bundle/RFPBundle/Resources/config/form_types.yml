@@ -127,6 +127,7 @@ services:
             - "@orob2b_rfp.storage.offers_form_storage"
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }
+            - { name: oro_featuretogle.feature, feature: rfp }
 
     orob2b_rfp.form.type.extension.order_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension'
@@ -138,6 +139,7 @@ services:
             - [setExtendedType, ['orob2b_order_type']]
         tags:
             - { name: form.type_extension, alias: orob2b_order_type }
+            - { name: oro_featuretogle.feature, feature: rfp }
 
     orob2b_rfp.form.type.request_offers:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'

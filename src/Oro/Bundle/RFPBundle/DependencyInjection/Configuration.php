@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'feature_enabled' => ['value' => true],
+                'frontend_feature_enabled' => ['value' => true],
                 'default_request_status' => ['value' => 'open'],
                 'notify_owner_of_account_user_record' => ['value' => 'always'],
                 'notify_assigned_sales_reps_of_the_account' => ['value' => 'always'],

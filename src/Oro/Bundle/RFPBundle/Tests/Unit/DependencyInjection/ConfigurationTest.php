@@ -76,6 +76,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'feature_enabled' => [
                             'value' => true,
                             'scope' => 'app'
+                        ],
+                        'frontend_feature_enabled' => [
+                            'value' => true,
+                            'scope' => 'app'
                         ]
                     ]
                 ]
