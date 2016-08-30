@@ -188,16 +188,17 @@
 {% endblock %}
 
 {% block oro_shipping_rule_method_config_widget %}
-    {{ form_row(form.method) }}
-    {{ form_widget(form.typeConfigs) }}
-    {{ form_widget(form.options) }}
-    {{ form_rest(form) }}
-{% endblock %}
-
-{% block oro_shipping_rule_method_type_config_widget %}
-    {% if form.enabled is defined%}
-        {{ form_row(form.enabled) }}
+    {% if form.method.vars.value %}
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ form_label(form.method) }}
+            </div>
+            <div class="controls">
+                <input type="text" disabled="disabled" value="{{ methods_labels[form.method.vars.value]|trans }}"/>
+            </div>
+        </div>
     {% endif %}
+    {{ form_widget(form.typeConfigs) }}
     {{ form_widget(form.options) }}
     {{ form_rest(form) }}
 {% endblock %}
@@ -221,17 +222,17 @@
     {% endif %}
 {% endblock %}
 
+{% block oro_shipping_rule_method_type_config_widget %}
+    {% if form.enabled is defined%}
+        {{ form_row(form.enabled) }}
+    {% endif %}
+    {{ form_widget(form.options) }}
+    {{ form_rest(form) }}
+{% endblock %}
+
 {% block orob2b_shipping_rule_destination_widget %}
-    <div class="row">
-        <div class="small-row">
-            {{ form_row(form.country) }}
-        </div>
-        <div class="small-row">
-            {{ form_row(form.region) }}
-        </div>
-        <div class="small-row">
-            {{ form_row(form.postalCode) }}
-        </div>
-        {{ form_rest(form) }}
-    </div>
+    {{ form_row(form.country) }}
+    {{ form_row(form.region) }}
+    {{ form_row(form.postalCode) }}
+    {{ form_rest(form) }}
 {% endblock %}

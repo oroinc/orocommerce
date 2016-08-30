@@ -212,3 +212,10 @@ services:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_shipping.form.handler.shipping_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+        scope: request
+        arguments:
+            - '@request'
+            - '@doctrine.orm.entity_manager'

@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 class RuleMethodConfigSubscriber implements EventSubscriberInterface
 {
@@ -53,15 +54,7 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
         if (!$data) {
             return;
         }
-        $form = $event->getForm();
-        $method = $this->methodRegistry->getShippingMethod($data->getMethod());
-        $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
-        $form->add('typeConfigs', ShippingRuleMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
-            'is_grouped' => $method->isGrouped(),
-        ]));
-
-        $oldOptions = $form->get('options')->getConfig()->getOptions();
-        $form->add('options', $method->getOptionsConfigurationFormType(), $oldOptions);
+        $this->recreateDynamicChildren($event->getForm(), $data->getMethod());
     }
 
     /**
@@ -74,13 +67,32 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
         /** @var ShippingRuleMethodConfig $data */
         $data = $form->getData();
 
-        if (!$data || $submittedData['method'] !== $data->getMethod()) {
-            $submittedData['typeConfigs'] = [];
-            $submittedData['options'] = [];
-            $method = $this->methodRegistry->getShippingMethod($submittedData['method']);
-            $oldOptions = $form->get('options')->getConfig()->getOptions();
-            $form->add('options', $method->getOptionsConfigurationFormType(), $oldOptions);
+        if (!$data) {
+            if ($data && $submittedData['method'] !== $data->getMethod()) {
+                $submittedData['typeConfigs'] = [];
+                $submittedData['options'] = [];
+            }
+            $this->recreateDynamicChildren($form, $submittedData['method']);
             $event->setData($submittedData);
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $method
+     */
+    protected function recreateDynamicChildren(FormInterface $form, $method)
+    {
+        $method = $this->methodRegistry->getShippingMethod($method);
+        $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
+        $form->add('typeConfigs', ShippingRuleMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
+            'is_grouped' => $method->isGrouped(),
+        ]));
+
+        $oldOptions = $form->get('options')->getConfig()->getOptions();
+        $child = $this->factory->createNamed('options', $method->getOptionsConfigurationFormType());
+        $form->add('options', $method->getOptionsConfigurationFormType(), array_merge($oldOptions, [
+            'compound' => $child->getConfig()->getOptions()['compound']
+        ]));
     }
 }

@@ -63,7 +63,7 @@ oro:
             destinations.label: Destinations
             address.label: Address
             method_configs.label: Configurations
-            currency.label: Сurrency
+            currency.label: Currency
             stop_processing.label: Stop Further Rule Processing
         shippingrulemethodconfig:
             entity_label: Shipping Rule Method Config

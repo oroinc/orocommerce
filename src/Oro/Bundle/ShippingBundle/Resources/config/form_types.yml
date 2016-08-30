@@ -65,10 +65,12 @@ services:
 
     orob2b_shipping.form.type.rule:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
         tags:
             - { name: form.type, alias: orob2b_shipping_rule }
 
-    orob2b_shipping.form.type.rule_config_collection:
+    orob2b_shipping.form.type.rule_method_type_config_collection:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType
         arguments:
             - '@oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber'
@@ -106,7 +108,6 @@ services:
     oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber:
         class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber'
         arguments:
-            - '@form.factory'
             - '@orob2b_shipping.shipping_method.registry'
 
     oro_shipping.form_event_subscriber.rule_method_config_subscriber:
