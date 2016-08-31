@@ -56,7 +56,7 @@ class ShippingServiceTypeTest extends FormIntegrationTestCase
         static::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        
+
         static::assertEquals($isValid, $form->isValid());
         static::assertEquals($expectedData, $form->getData());
     }

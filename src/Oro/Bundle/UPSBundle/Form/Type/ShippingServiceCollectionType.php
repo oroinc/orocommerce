@@ -25,8 +25,8 @@ class ShippingServiceCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-                'type' => ShippingServiceType::NAME,
-                'show_form_when_empty' => false
+            'type' => ShippingServiceType::NAME,
+            'show_form_when_empty' => false
         ]);
     }
 

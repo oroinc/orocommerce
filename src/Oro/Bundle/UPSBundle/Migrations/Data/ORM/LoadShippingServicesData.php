@@ -85,18 +85,18 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     public function load(ObjectManager $manager)
     {
         $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
-        $this->loadCountryServices($manager);
-        $this->loadEUServices($manager);
-        $this->loadOtherCountriesServices($manager);
+        $this->loadSpecifiedCountryServices($manager);
+        $this->loadEUCountriesServices($manager);
+        $this->loadUnspecifiedCountryServices($manager);
     }
 
     /**
      * @param ObjectManager $manager
      */
-    public function loadCountryServices(ObjectManager $manager)
+    public function loadSpecifiedCountryServices(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/country_services.csv');
+        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/specified_country_services.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -127,10 +127,10 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     /**
      * @param ObjectManager $manager
      */
-    public function loadEUServices(ObjectManager $manager)
+    public function loadEUCountriesServices(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/eu_services.csv');
+        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/eu_countries_services.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -167,10 +167,10 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
     /**
      * @param ObjectManager $manager
      */
-    public function loadOtherCountriesServices(ObjectManager $manager)
+    public function loadUnspecifiedCountryServices(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/other_services.csv');
+        $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/unspecified_country_services.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
