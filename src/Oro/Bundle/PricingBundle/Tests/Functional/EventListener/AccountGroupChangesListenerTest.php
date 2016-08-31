@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 
 /**
  * @dbIsolation
@@ -15,7 +15,7 @@ use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 class AccountGroupChangesListenerTest extends WebTestCase
 {
     /**
-     * @var TraceableMessageProducer
+     * @var MessageCollector
      */
     protected $messageProducer;
 
@@ -30,7 +30,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
             true
         );
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
-        $this->messageProducer->clearTraces();
+        $this->messageProducer->clear();
+        $this->messageProducer->enable();
     }
 
     /**
@@ -68,7 +69,6 @@ class AccountGroupChangesListenerTest extends WebTestCase
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
                         ],
-                        'priority' => 'oro.message_queue.client.normal_message_priority',
                     ],
                 ],
             ],
@@ -81,7 +81,6 @@ class AccountGroupChangesListenerTest extends WebTestCase
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',
                         ],
-                        'priority' => 'oro.message_queue.client.normal_message_priority',
                     ],
                 ],
             ],
@@ -122,7 +121,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
         );
 
 
-        $actual = $this->messageProducer->getTraces();
+        $actual = $this->messageProducer->getSentMessages();
         $this->assertEquals(
             $expectedMessages,
             $actual,
