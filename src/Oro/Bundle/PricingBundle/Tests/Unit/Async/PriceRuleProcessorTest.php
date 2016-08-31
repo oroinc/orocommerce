@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -17,6 +19,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +50,11 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceRuleProcessor;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
     protected function setUp()
     {
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
@@ -59,12 +67,14 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMock(LoggerInterface::class);
+        $this->registry = $this->getMock(RegistryInterface::class);
 
         $this->priceRuleProcessor = new PriceRuleProcessor(
             $this->triggerFactory,
             $this->assignmentBuilder,
             $this->priceBuilder,
-            $this->logger
+            $this->logger,
+            $this->registry
         );
     }
 
@@ -132,6 +142,15 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
             ->with($priceList, $product);
+
+        $manager = $this->getMock(ObjectManager::class);
+        $manager->expects($this->once())->method('refresh');
+        $repository = $this->getMockBuilder(PriceListRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())->method('updatePriceListsActuality');
+        $manager->method('getRepository')->willReturn($repository);
+        $this->registry->method('getManagerForClass')->willReturn($manager);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
     }

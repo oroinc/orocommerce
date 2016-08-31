@@ -161,7 +161,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
             ->with(ProductPrice::class)
             ->willReturn($repo);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(ProductPrice::class)
             ->willReturn($em);

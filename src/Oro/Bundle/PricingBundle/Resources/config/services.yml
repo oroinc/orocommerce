@@ -281,7 +281,6 @@ services:
         arguments:
             - '@orob2b_pricing.price_list_trigger_factory'
             - '@oro_message_queue.client.message_producer'
-            - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
 
@@ -831,6 +830,7 @@ services:
             - '@orob2b_pricing.builder.price_list_product_assignment_builder'
             - '@orob2b_pricing.builder.product_price_builder'
             - '@logger'
+            - '@doctrine'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
