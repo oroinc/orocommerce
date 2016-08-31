@@ -99,6 +99,7 @@ class ORMEngine extends AbstractEngine
 
     /**
      * @return BaseDriver[]
+     * @throws \RuntimeException
      */
     protected function getDrivers()
     {
@@ -119,6 +120,7 @@ class ORMEngine extends AbstractEngine
 
     /**
      * @return ManagerRegistry
+     * @throws \RuntimeException
      */
     protected function getRegistry()
     {
@@ -139,6 +141,7 @@ class ORMEngine extends AbstractEngine
 
     /**
      * @return ObjectMapper
+     * @throws \RuntimeException
      */
     protected function getMapper()
     {
