@@ -249,3 +249,8 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ResolveLineItemOptionsListener'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.resolve_line_item_options, method: onResolveLineItemOptions }
+
+    oro_order.event_listener.resolve_shipping_address_options:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ResolveShippingAddressOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.resolve_shipping_address_options, method: onResolveShippingAddressOptions }

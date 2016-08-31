@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Oro\Bundle\PaymentBundle\Event\ResolveShippingAddressOptionsEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -15,7 +16,6 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -357,22 +357,26 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $propertyAccessor = $this->getPropertyAccessor();
 
         try {
-            /** @var OrderAddress $shippingAddress */
             $shippingAddress = $propertyAccessor->getValue($entity, 'shippingAddress');
         } catch (NoSuchPropertyException $e) {
             return [];
         }
 
-        return [
-            Option\ShippingAddress::SHIPTOFIRSTNAME => (string)$shippingAddress->getFirstName(),
-            Option\ShippingAddress::SHIPTOLASTNAME => (string)$shippingAddress->getLastName(),
-            Option\ShippingAddress::SHIPTOSTREET => (string)$shippingAddress->getStreet(),
-            Option\ShippingAddress::SHIPTOSTREET2 => (string)$shippingAddress->getStreet2(),
-            Option\ShippingAddress::SHIPTOCITY => (string)$shippingAddress->getCity(),
-            Option\ShippingAddress::SHIPTOSTATE => (string)$shippingAddress->getRegionCode(),
-            Option\ShippingAddress::SHIPTOZIP => (string)$shippingAddress->getPostalCode(),
-            Option\ShippingAddress::SHIPTOCOUNTRY => (string)$shippingAddress->getCountryIso2(),
+        $keys = [
+            Option\ShippingAddress::SHIPTOFIRSTNAME,
+            Option\ShippingAddress::SHIPTOLASTNAME,
+            Option\ShippingAddress::SHIPTOSTREET,
+            Option\ShippingAddress::SHIPTOSTREET2,
+            Option\ShippingAddress::SHIPTOCITY,
+            Option\ShippingAddress::SHIPTOSTATE,
+            Option\ShippingAddress::SHIPTOZIP,
+            Option\ShippingAddress::SHIPTOCOUNTRY
         ];
+        $event = new ResolveShippingAddressOptionsEvent($shippingAddress, $keys);
+        $this->dispatcher->dispatch(ResolveShippingAddressOptionsEvent::NAME);
+        $options = $event->getOptions() ?: [];
+
+        return $options;
     }
 
     /**
