@@ -35,30 +35,6 @@ definitions:
 
     # Product visibility update
 
-    product_visibility_change:
-        enabled: true
-        label: 'Update product visibility after product visibility changed'
-        order: 1
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
-        actions_configuration:
-            - '@resolve_product_visibility': ~
-
-    account_group_product_visibility_change:
-        enabled: true
-        label: 'Update product visibility after account group product visibility changed'
-        order: 2
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
-        actions_configuration:
-            - '@resolve_product_visibility': ~
-
-    account_product_visibility_change:
-        enabled: true
-        label: 'Update product visibility after account product visibility changed'
-        order: 3
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
-        actions_configuration:
-            - '@resolve_product_visibility': ~
-
     product_visibility_product_create:
         enabled: true
         label: 'Update product visibility after product created'
@@ -131,26 +107,6 @@ triggers:
             event: update
         -
             event: delete
-
-    product_visibility_change:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
-
-    account_group_product_visibility_change:
-        -
-            event: create
-        -
-            event: update
-
-    account_product_visibility_change:
-        -
-            event: create
-        -
-            event: update
 
     product_visibility_product_create:
         -

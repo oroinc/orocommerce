@@ -716,14 +716,6 @@ services:
         tags:
             - { name: oro_workflow.action, alias: change_category_position }
 
-    orob2b_account.model.action.resolve_product_visibility:
-        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
-        class: 'Oro\Bundle\AccountBundle\Model\Action\ResolveProductVisibility'
-        calls:
-            - [setCacheBuilder, ["@orob2b_account.visibility.cache.product.cache_builder"]]
-        tags:
-            - { name: oro_workflow.action, alias: resolve_product_visibility }
-
     orob2b_account.model.action.change_product_category:
         parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
         class: 'Oro\Bundle\AccountBundle\Model\Action\ChangeProductCategory'
@@ -879,3 +871,40 @@ services:
             - [setUpdateRouteName, ['orob2b_account_frontend_account_user_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
+
+    orob2b_account.visibility_trigger_factory:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityTriggerFactory'
+        arguments:
+            - '@doctrine'
+
+    orob2b_account.product_visibility_trigger_handler:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityTriggerHandler'
+        arguments:
+            - '@orob2b_account.visibility_trigger_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+
+    orob2b_account.entity_listener.product_visibility:
+       class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\ProductVisibilityListener'
+       public: false
+       arguments:
+           - '@orob2b_account.product_visibility_trigger_handler'
+       tags:
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.product_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.product_visibility.class%', event: preRemove }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.product_visibility.class%', event: postPersist }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_product_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_product_visibility.class%', event: postPersist }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: postPersist }
+
+    orob2b_account.async.product_visibility_processor:
+        class: 'Oro\Bundle\AccountBundle\Async\ProductVisibilityProcessor'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_account.visibility_trigger_factory'
+            - '@orob2b_account.visibility.cache.product.cache_builder'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
