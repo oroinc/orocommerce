@@ -11,6 +11,7 @@ class Configuration implements ConfigurationInterface
 {
     const ENGINE_KEY   = 'engine';
     const ENGINE_PARAMETERS_KEY   = 'engine_parameters';
+    const DEFAULT_ENGINE = 'orm';
 
     /**
      * {@inheritdoc}
@@ -18,22 +19,16 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-
         $rootNode = $treeBuilder->root(OroWebsiteSearchExtension::ALIAS);
 
-        SettingsBuilder::append(
-            $rootNode,
-            [
-                self::ENGINE_KEY => [
-                    'type' => 'text',
-                    'value' => 'orm'
-                ],
-                self::ENGINE_PARAMETERS_KEY => [
-                    'type' => 'array',
-                    'value' => []
-                ]
-            ]
-        );
+        $rootNode->children()
+            ->scalarNode('engine')
+                ->cannotBeEmpty()
+                ->defaultValue(self::DEFAULT_ENGINE)
+            ->end()
+            ->arrayNode('engine_parameters')
+                ->prototype('variable')->end()
+            ->end();
 
         return $treeBuilder;
     }
