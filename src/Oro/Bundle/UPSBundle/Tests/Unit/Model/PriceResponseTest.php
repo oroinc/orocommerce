@@ -26,14 +26,6 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
                      "Service": {
                         "Code":"02"
                      },
-                     "TransportationCharges":{
-                        "CurrencyCode":"USD",
-                        "MonetaryValue":"8.60"
-                     },
-                     "ServiceOptionsCharges":{
-                        "CurrencyCode":"USD",
-                        "MonetaryValue":"0.00"
-                     },
                      "TotalCharges":{
                         "CurrencyCode":"USD",
                         "MonetaryValue":"8.60"
@@ -43,15 +35,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
             }'
         );
         $expected = [
-            'TransportationCharges' => [
-                '02' => Price::create('8.60', 'USD'),
-            ],
-            'ServiceOptionsCharges' => [
-                '02' => Price::create('0.00', 'USD'),
-            ],
-            'TotalCharges'          => [
-                '02' => Price::create('8.60', 'USD'),
-            ]
+            '02' => Price::create('8.60', 'USD'),
         ];
         $this->assertEquals($expected, $this->priceResponse->getPricesByServices());
     }
@@ -66,7 +50,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
                          "Service": {
                             "Code":"01"
                          },
-                         "TransportationCharges":{
+                         "TotalCharges":{
                             "CurrencyCode":"USD",
                             "MonetaryValue":"8.60"
                          }
@@ -75,7 +59,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
                          "Service": {
                             "Code":"02"
                          },
-                         "TransportationCharges":{
+                         "TotalCharges":{
                             "CurrencyCode":"EUR",
                             "MonetaryValue":"3.40"
                          }
@@ -84,7 +68,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
                          "Service": {
                             "Code":"03"
                          },
-                         "TransportationCharges":{
+                         "TotalCharges":{
                             "CurrencyCode":"EUR",
                             "WrongMonetaryValue":"3.40"
                          }
@@ -98,14 +82,8 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
             '01' => Price::create('8.60', 'USD'),
             '02' => Price::create('3.40', 'EUR'),
         ];
-        $expected = [
-            'TransportationCharges' => $pricesExpected
-        ];
-        $this->assertEquals($expected, $this->priceResponse->getPricesByServices());
-        $this->assertEquals(
-            $pricesExpected,
-            $this->priceResponse->getPricesByService(PriceResponse::TRANSPORTATION_CHARGES)
-        );
+        $this->assertEquals($pricesExpected, $this->priceResponse->getPricesByServices());
+        $this->assertEquals($pricesExpected['01'], $this->priceResponse->getPriceByService('01'));
     }
 
     /**
@@ -132,6 +110,6 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPricesByService()
     {
-        $this->priceResponse->getPricesByService('fakeService');
+        $this->priceResponse->getPriceByService('fakeService');
     }
 }

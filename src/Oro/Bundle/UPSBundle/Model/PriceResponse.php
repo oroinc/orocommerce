@@ -6,20 +6,12 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class PriceResponse
 {
-    const TRANSPORTATION_CHARGES = 'TransportationCharges';
-    const SERVICE_OPTIONS_CHARGES = 'ServiceOptionsCharges';
     const TOTAL_CHARGES = 'TotalCharges';
 
-    const ALL_SERVICES = [
-        self::TRANSPORTATION_CHARGES,
-        self::SERVICE_OPTIONS_CHARGES,
-        self::TOTAL_CHARGES
-    ];
-
     /**
-     * @var array
+     * @var Price[]
      */
-    protected $pricesByService = [];
+    protected $pricesByServices = [];
 
     /**
      * @param string $string
@@ -36,7 +28,7 @@ class PriceResponse
             throw new \InvalidArgumentException('No price data in provided string');
         }
 
-        $this->pricesByService = [];
+        $this->pricesByServices = [];
         if (is_array($data->RateResponse->RatedShipment)) {
             $this->addRatedShipments($data->RateResponse->RatedShipment);
         } else {
@@ -59,15 +51,13 @@ class PriceResponse
      */
     private function addRatedShipment($rateShipment)
     {
-        foreach (self::ALL_SERVICES as $service) {
-            if (property_exists($rateShipment, $service)) {
-                $price = $this->createPrice($rateShipment->{$service});
-                if ($price
-                    && property_exists($rateShipment, 'Service')
-                    && property_exists($rateShipment->Service, 'Code')
-                ) {
-                    $this->pricesByService[$service][$rateShipment->Service->Code] = $price;
-                }
+        if (property_exists($rateShipment, self::TOTAL_CHARGES)) {
+            $price = $this->createPrice($rateShipment->{self::TOTAL_CHARGES});
+            if ($price
+                && property_exists($rateShipment, 'Service')
+                && property_exists($rateShipment->Service, 'Code')
+            ) {
+                $this->pricesByServices[$rateShipment->Service->Code] = $price;
             }
         }
     }
@@ -86,28 +76,28 @@ class PriceResponse
     }
 
     /**
-     * @return array
+     * @return Price[]
      * @throws \InvalidArgumentException
      */
     public function getPricesByServices()
     {
-        if (!$this->pricesByService) {
+        if (!$this->pricesByServices) {
             throw new \InvalidArgumentException('Response data not loaded');
         }
 
-        return $this->pricesByService;
+        return $this->pricesByServices;
     }
 
     /**
-     * @param string $identifier
-     * @return Price[]
+     * @param string $code
+     * @return Price
      */
-    public function getPricesByService($identifier)
+    public function getPriceByService($code)
     {
-        if (!array_key_exists($identifier, $this->pricesByService)) {
-            throw new \InvalidArgumentException(sprintf('Price data is missing for service %s', $identifier));
+        if (!array_key_exists($code, $this->pricesByServices)) {
+            throw new \InvalidArgumentException(sprintf('Price data is missing for service %s', $code));
         }
 
-        return $this->pricesByService[$identifier];
+        return $this->pricesByServices[$code];
     }
 }
