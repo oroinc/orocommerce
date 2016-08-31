@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
-use Oro\Bundle\PaymentBundle\Event\ResolveShippingAddressOptionsEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -20,6 +19,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Event\ResolveLineItemOptionsEvent;
+use Oro\Bundle\PaymentBundle\Event\ResolveShippingAddressOptionsEvent;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
