@@ -1,5 +1,7 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: '../templates/widget_checkout.html.twig'
         - '@addTree':
             items:
                 head:
@@ -17,11 +19,14 @@ layout:
                                     '%step_label%': '=data["workflowStep"].getLabel()'
                 body:
                     blockType: body
+                raw_notification:
+                    blockType: block
             tree:
                 root:
                     head:
                         title: ~
-                    body: ~
+                    body:
+                        raw_notification: ~
     imports:
         -
             id: orob2b_checkout_content

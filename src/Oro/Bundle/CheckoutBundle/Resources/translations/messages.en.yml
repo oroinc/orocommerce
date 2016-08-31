@@ -161,6 +161,10 @@ oro:
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+            content_of_order_was_changed.message: |-
+                There was a change to the contents of your order.
+                Please review the order information before proceeding to the next step.
+
         order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.
 
         system_configuration:
@@ -168,3 +172,6 @@ oro:
                 frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
             groups:
                 open_orders.title: 'Open Orders'
+
+        privilege:
+            category.checkout.label: 'Checkout'

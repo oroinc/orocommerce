@@ -29,6 +29,7 @@ class OroCheckoutBundleInstaller implements Installation
         /** Tables generation **/
         $this->createOroCheckoutSourceTable($schema);
         $this->createOroCheckoutTable($schema);
+        $this->createCheckoutWorkflowStateTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCheckoutForeignKeys($schema);
@@ -144,5 +145,22 @@ class OroCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createCheckoutWorkflowStateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_checkout_workflow_state');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('token', 'string', ['length' => 255]);
+        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_class', 'string', ['length' => 255]);
+        $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(['entity_id', 'entity_class', 'token'], 'orob2b_checkout_wf_state_uidx');
+        $table->setPrimaryKey(['id']);
     }
 }

@@ -40,7 +40,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          }
  *      }
  * )
@@ -50,7 +51,6 @@ class Checkout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    ContextItemInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
     PaymentMethodAwareInterface
@@ -323,14 +323,6 @@ class Checkout implements
         $this->source = $source;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toString()
-    {
-        return $this->id;
     }
 
     /**
