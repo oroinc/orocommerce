@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -72,7 +71,9 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
             $qb = $this->createQueryBuilder($rule);
             $rootAlias = $this->getRootAlias($qb);
-            $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
+            if (!$rule->getProductUnitExpression()) {
+                $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
+            }
 
             $this->modifySelectPart($qb, $rule, $rootAlias);
             $this->applyRuleConditions($qb, $rule);
@@ -83,6 +84,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
 
         $this->restrictByGivenProduct($qb, $product);
+        $q = $qb->getDQL();
 
         return $qb;
     }
@@ -103,6 +105,15 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $expression = sprintf('%s and (%s) > 0', $ruleCondition, $rule->getRule());
         } else {
             $expression = $rule->getRule();
+        }
+        if ($rule->getCurrencyExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getCurrencyExpression());
+        }
+        if ($rule->getProductUnitExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getProductUnitExpression());
+        }
+        if ($rule->getQuantityExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getQuantityExpression());
         }
 
         $node = $this->expressionParser->parse($expression);

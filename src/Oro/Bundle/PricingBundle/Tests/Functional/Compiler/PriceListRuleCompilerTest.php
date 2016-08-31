@@ -4,12 +4,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Compiler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -19,6 +17,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePro
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -92,6 +91,66 @@ class PriceListRuleCompilerTest extends WebTestCase
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testApplyRuleConditionsWithExpressions()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        /** @var Category $category1 */
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        /** @var ProductUnit $unitLitre */
+        $unitLitre = $this->getReference('product_unit.liter');
+
+        $condition = 'product.category == ' . $category1->getId()
+            . " and product.price_attribute_price_list_1.currency == 'USD'";
+
+        $rule = 'product.price_attribute_price_list_1.value * 10';
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+
+        $priceRule = new PriceRule();
+        $priceRule->setCurrency('EUR')
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setQuantity(1)
+            ->setCurrencyExpression('product.price_attribute_price_list_1.currency')
+            ->setProductUnitExpression('product.unitPrecisions.unit')
+            ->setQuantityExpression('product.quantity')
+            ->setProductUnit($unitLitre)
+            ->setRuleCondition($condition)
+            ->setRule($rule);
+
+        $em = $this->registry->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $expected = [
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                $unitLitre->getCode(),
+                'EUR',
+                1,
+                $product1->getSku(),
+                $priceRule->getId(),
+                100
+            ],
+        ];
+//        $qb = $this->getQueryBuilder($priceRule);
+        $qb = $this->compiler->compile($priceRule);
+        $q = $qb->getQuery()->getSQL();
+//        $this->assertEquals($expected, $actual);
+//
+//        // Check that cache does not affect results
+//        $qb = $this->getQueryBuilder($priceRule);
+//        $actual = $this->getActualResult($qb);
+//        $this->assertEquals($expected, $actual);
     }
 
     public function testRestrictByManualPrices()
