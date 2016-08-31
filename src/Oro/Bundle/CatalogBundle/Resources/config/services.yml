@@ -105,5 +105,6 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener'
         arguments:
             - "@orob2b_catalog.handler.request_product"
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }

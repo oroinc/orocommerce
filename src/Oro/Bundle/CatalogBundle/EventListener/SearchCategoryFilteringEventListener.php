@@ -2,26 +2,34 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\SearchBundle\Datasource\SearchDatasource;
-use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
+use Oro\Bundle\SearchBundle\Extension\SearchQueryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class SearchCategoryFilteringEventListener
 {
-    /**
-     * @var RequestProductHandler $requestProductHandler
-     */
+    /** @var RequestProductHandler $requestProductHandler */
     private $requestProductHandler;
+
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     /**
      * @param RequestProductHandler $requestProductHandler
+     * @param ManagerRegistry       $doctrine
      */
-    public function __construct(RequestProductHandler $requestProductHandler)
-    {
+    public function __construct(
+        RequestProductHandler $requestProductHandler,
+        ManagerRegistry $doctrine
+    ) {
         $this->requestProductHandler = $requestProductHandler;
+        $this->doctrine              = $doctrine;
     }
 
     /**
@@ -32,28 +40,55 @@ class SearchCategoryFilteringEventListener
         $datasource = $event->getDatagrid()->getDatasource();
 
         if ($datasource instanceof SearchDatasource) {
-            $categoryId = $this->getCurrentCategoryId();
+            $categoryId           = $this->requestProductHandler->getCategoryId();
+            $includeSubcategories = $this->requestProductHandler->getIncludeSubcategoriesChoice();
 
-            if ($categoryId > 0) {
-                $this->applyCategoryToQuery($datasource->getQuery(), $categoryId);
+            if (!$categoryId) {
+                return;
             }
+
+            if (!$includeSubcategories) {
+                $this->applyCategoryToQuery($datasource->getQuery(), $categoryId);
+                return;
+            }
+
+            $categoryIds = $this->getSubcategories($categoryId);
+            $this->applyCategoryToQuery($datasource->getQuery(), $categoryIds);
         }
     }
 
     /**
-     * @return int
+     * @param $categoryId
+     * @return array
      */
-    private function getCurrentCategoryId()
+    private function getSubcategories($categoryId)
     {
-        return (int)$this->requestProductHandler->getCategoryId();
+        /** @var CategoryRepository $repo */
+        $repo = $this->doctrine->getRepository(Category::class);
+        /** @var Category $category */
+        $category = $repo->find($categoryId);
+
+        if (!$category) {
+            return [];
+        }
+
+        $result   = $repo->getChildrenIds($category);
+        $result[] = $categoryId;
+
+        return $result;
     }
 
     /**
-     * @param WebsiteSearchQuery $query
-     * @param $categoryId
+     * @param SearchQueryInterface $query
+     * @param                      $categoryId
      */
-    private function applyCategoryToQuery(WebsiteSearchQuery $query, $categoryId)
+    private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
     {
-        $query->getQuery()->andWhere('integer.cat_id', '=', $categoryId, 'integer');
+        $query->getQuery()->andWhere(
+            'cat_id',
+            is_array($categoryId) ? Query::OPERATOR_IN : Query::OPERATOR_EQUALS,
+            $categoryId,
+            'integer'
+        );
     }
 }

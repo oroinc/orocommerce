@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -36,9 +35,6 @@ class ExampleMockEngine implements EngineV2Interface
         // let's get the keys that we want to have in results
         $selectedColumns = $this->getFieldsToBeSelected($selectedColumns);
 
-        // filter the data by a category id
-        $fullData = $this->filterDataByCategory($fullData, $query);
-
         // parsing the full dataset and eliminating all fields
         // that have not been requested.
         $result = $this->extractSelectedFields($fullData, $selectedColumns);
@@ -66,7 +62,7 @@ class ExampleMockEngine implements EngineV2Interface
         return [
             [
                 'id'               => 1,
-                'category_id'      => 427,
+                'cat_id'           => 427,
                 'sku'              => '01C82',
                 'name'             => 'Canon 5D EOS',
                 'shortDescription' => 'Small description of another good product from our shop.',
@@ -82,7 +78,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 2,
-                'category_id'      => 2,
+                'cat_id'           => 2,
                 'sku'              => '6VC22',
                 'name'             => 'Bluetooth Barcode Scanner',
                 'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission...',
@@ -98,7 +94,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 3,
-                'category_id'      => 2,
+                'cat_id'           => 2,
                 'sku'              => '5GE27',
                 'name'             => 'Pricing Labeler',
                 'shortDescription' => 'This pricing labeler is easy to use and comes with...',
@@ -114,7 +110,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 4,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => '9GQ28',
                 'name'             => 'NFC Credit Card Reader',
                 'shortDescription' => 'This NFC credit card reader accepts PIN-based...',
@@ -130,7 +126,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 5,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => '8BC37',
                 'name'             => 'Colorful Floral Women’s Scrub Top',
                 'shortDescription' => 'This bright, colorful women’s scrub top is not only...',
@@ -146,7 +142,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 6,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => '5TJ23',
                 'name'             => '17-inch POS Touch Screen Monitor with Card Reader',
                 'shortDescription' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
@@ -162,7 +158,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 7,
-                'category_id'      => 5,
+                'cat_id'           => 5,
                 'sku'              => '4PJ19',
                 'name'             => 'Handheld Laser Barcode Scanner',
                 'shortDescription' => 'This lightweight laser handheld barcode scanner offers high performace...',
@@ -178,7 +174,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 8,
-                'category_id'      => 5,
+                'cat_id'           => 5,
                 'sku'              => '7NQ22',
                 'name'             => 'Storage Combination with Doors',
                 'shortDescription' => 'Store and display your favorite items with this storage-display cabinet.',
@@ -194,7 +190,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 9,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => '5GF68',
                 'name'             => '300-Watt Floodlight',
                 'shortDescription' => 'This 300-watt flood light provides bright and focused illumination.',
@@ -210,7 +206,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 10,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => '8DO33',
                 'name'             => 'Receipt Printer',
                 'shortDescription' => 'This receipt printer uses a ribbon to transfer ink to paper',
@@ -225,7 +221,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'               => 10,
-                'category_id'      => 4,
+                'cat_id'           => 4,
                 'sku'              => 'SDSDUNC-064G-AN6IN',
                 'name'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
                 'shortDescription' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
@@ -247,7 +243,7 @@ class ExampleMockEngine implements EngineV2Interface
      */
     private function getFieldsToBeSelected($selectedColumns)
     {
-        $result = ['id' => 'integer'];
+        $result = ['id' => 'integer', 'cat_id' => 'integer'];
 
         if (!empty($selectedColumns)) {
             foreach ($selectedColumns as &$selectedColumn) {
@@ -281,9 +277,9 @@ class ExampleMockEngine implements EngineV2Interface
     }
 
     /** @param $data
-    * @param $criteria
-    * @return array
-    */
+     * @param $criteria
+     * @return array
+     */
     private function applySKUFilter($data, Criteria $criteria)
     {
         $result = [];
@@ -302,49 +298,6 @@ class ExampleMockEngine implements EngineV2Interface
         }
 
         return $result;
-    }
-
-    /**
-     * @param $data
-     * @param Query $query
-     * @return array
-     */
-    private function filterDataByCategory($data, Query $query)
-    {
-        $whereExpressions = $query->getCriteria()->getWhereExpression();
-        $resultData = [];
-
-        $expressions = [];
-
-        if ($whereExpressions instanceof CompositeExpression) {
-            foreach ($whereExpressions->getExpressionList() as $expression) {
-                $expressions[] = $expression;
-            }
-        } else {
-            $expressions[] = $whereExpressions;
-        }
-
-        foreach ($data as $k => $element) {
-            $allow = true;
-
-            foreach ($expressions as $expression) {
-                if (strstr($expression->getField(), 'cat_id')) {
-                    $value = $expression->getValue()->getValue();
-
-                    if (isset($element['category_id'])
-                        && ($element['category_id'] !== $value)
-                    ) {
-                        $allow = false;
-                    }
-                }
-            }
-
-            if ($allow) {
-                $resultData[$k] = $element;
-            }
-        }
-
-        return $resultData;
     }
 
     /**
@@ -383,7 +336,7 @@ class ExampleMockEngine implements EngineV2Interface
         $criteria = $query->getCriteria();
 
         $offset = $criteria->getFirstResult();
-        $limit = $criteria->getMaxResults();
+        $limit  = $criteria->getMaxResults();
 
         if (empty($result)) {
             return $result;
