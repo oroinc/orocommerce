@@ -53,7 +53,7 @@ class OroUPSBundle implements Migration
      */
     protected function createOroUPSTransportShipServiceTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_ups_transport_ship_serv');
+        $table = $schema->createTable('oro_ups_transport_ship_service');
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('ship_service_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
