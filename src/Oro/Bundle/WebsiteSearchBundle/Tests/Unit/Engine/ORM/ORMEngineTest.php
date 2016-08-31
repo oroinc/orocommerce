@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\ORM;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SearchBundle\Engine\ObjectMapper;
@@ -12,11 +12,11 @@ use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine;
+use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
-class ORMEngineTest extends \PHPUnit_Framework_TestCase
+class OrmEngineTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Query
@@ -138,16 +138,14 @@ class ORMEngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ORMEngine
+     * @return OrmEngine
      */
     private function getORMEngine()
     {
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher */
         $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
-        $engine = new ORMEngine($eventDispatcher, $this->queryPlaceholderResolver);
-
-        return $engine;
+        return new OrmEngine($eventDispatcher, $this->queryPlaceholderResolver);
     }
 
     public function testSearch()
@@ -178,8 +176,6 @@ class ORMEngineTest extends \PHPUnit_Framework_TestCase
         $engine->setRegistry($this->registry);
         $engine->setDrivers([$this->driver]);
         $engine->setMapper($this->mapper);
-
-        $result = $engine->search($this->query, []);
 
         $expectedResult = new Result(
             $this->query,
@@ -215,7 +211,7 @@ class ORMEngineTest extends \PHPUnit_Framework_TestCase
             3
         );
 
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedResult, $engine->search($this->query, []));
     }
 
     public function testSearchDriversNotSet()

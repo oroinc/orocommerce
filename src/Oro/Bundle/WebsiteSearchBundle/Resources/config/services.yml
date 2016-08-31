@@ -26,7 +26,7 @@ services:
         abstract: true
 
     oro_website_search.orm.engine:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
         parent: oro_website_search.search.engine
         calls:
             - [setRegistry, ['@doctrine']]

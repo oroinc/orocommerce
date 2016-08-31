@@ -12,7 +12,7 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
-class ORMEngine extends AbstractEngine
+class OrmEngine extends AbstractEngine
 {
     /** @var ManagerRegistry */
     protected $registry;
@@ -43,7 +43,7 @@ class ORMEngine extends AbstractEngine
             $results[] = new Item(
                 $this->getRegistry()->getManagerForClass($item['entity']),
                 $item['entity'],
-                $item['id'],
+                $item['recordId'],
                 $item['title'],
                 null,
                 $this->getMapper()->mapSelectedData($query, $searchResult),
@@ -51,11 +51,9 @@ class ORMEngine extends AbstractEngine
             );
         }
 
-        $recordsCount = count($searchResults);
-
         return [
             'results'       => $results,
-            'records_count' => $recordsCount
+            'records_count' => count($searchResults),
         ];
     }
 
