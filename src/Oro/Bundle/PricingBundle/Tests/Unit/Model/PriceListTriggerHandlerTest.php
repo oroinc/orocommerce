@@ -8,7 +8,6 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -198,8 +197,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_RULE, null, MessagePriority::NORMAL],
-                [Topics::CALCULATE_RULE, null, MessagePriority::NORMAL]
+                [Topics::CALCULATE_RULE, null],
+                [Topics::CALCULATE_RULE, null]
             );
 
         $this->handler->sendScheduledTriggers();
@@ -266,8 +265,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_RULE, $trigger1Data, MessagePriority::NORMAL],
-                [Topics::CALCULATE_RULE, $trigger3Data, MessagePriority::NORMAL]
+                [Topics::CALCULATE_RULE, $trigger1Data],
+                [Topics::CALCULATE_RULE, $trigger3Data]
             );
 
         $this->handler->sendScheduledTriggers();
