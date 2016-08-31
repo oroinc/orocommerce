@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransport extends AbstractRestTransport
 {
-
     const API_RATES_PREFIX = 'Rate';
 
     /**
@@ -96,6 +95,7 @@ class UPSTransport extends AbstractRestTransport
                 return $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             }
         }
+
         return null;
     }
 }

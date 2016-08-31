@@ -71,7 +71,7 @@ class UPSTransport extends Transport
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="oro_ups_transport_ship_serv",
+     *      name="oro_ups_transport_ship_service",
      *      joinColumns={
      *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
