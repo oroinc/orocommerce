@@ -15,20 +15,20 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
       regionText: 'Berlin'
       rule: '@shipping_rule1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
-   price1:
-       value: '1'
-       currency: 'EUR'
-
 Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
    flatrate_configuration:
       processingType: 'per_order'
       method: 'flat_rate'
       type: 'flat_rate'
       enabled: true
-      value: '1'
+      value: '1.5'
       handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+   price1:
+       value: '1'
+       currency: 'EUR'
 
 Oro\Bundle\AccountBundle\Entity\Account:
    account1:
@@ -115,11 +115,6 @@ Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
         pricelist: '@pricelist1'
         website: '@website1'
         priority: 200
-
-#Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
-#    priceAttributePriceList1:
-#        name: 'priceAttributePriceList'
-
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:

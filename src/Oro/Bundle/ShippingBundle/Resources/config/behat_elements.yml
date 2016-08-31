@@ -1,0 +1,31 @@
+ShoppingListWidget:
+  selector: 'li.shopping-lists-frontend-widget'
+  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget
+
+ShoppingListItem:
+  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListItem
+
+
+CheckoutTotal:
+  selector: 'td.order-checkout-widget__total'
+  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal
+
+CheckoutForm:
+  selector: 'div.checkout__form'
+  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutForm
+
+Shipping Rule:
+   selector: 'div#container'
+   class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+   options:
+      mapping:
+         Enabled: 'orob2b_shipping_rule[enabled]'
+         Name: 'orob2b_shipping_rule[name]'
+         Sort Order: 'orob2b_shipping_rule[priority]'
+         Currency: 'orob2b_shipping_rule[currency]'
+         Country: 'orob2b_shipping_rule[destinations][0][country]'
+         Country2: 'orob2b_shipping_rule[destinations][2][country]'
+         Congif Enable: 'orob2b_shipping_rule[configurations][0][enabled]'
+         Price: 'orob2b_shipping_rule[configurations][0][value]'
+         HandlingFee: 'orob2b_shipping_rule[configurations][0][handlingFeeValue]'
+         Type:  'orob2b_shipping_rule[configurations][0][processingType]'
