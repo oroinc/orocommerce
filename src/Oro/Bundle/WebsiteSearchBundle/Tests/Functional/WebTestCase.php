@@ -7,12 +7,18 @@ use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader as DataFixturesLoa
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 class WebTestCase extends BaseWebTestCase
 {
+    /**
+     * @var ReferenceRepository
+     */
+    private static $referenceRepository;
+
     /**
      * @param array $classNames
      * @param bool  $force
@@ -87,5 +93,17 @@ class WebTestCase extends BaseWebTestCase
                 $this->loadFixtureClass($loader, $dependency);
             }
         }
+    }
+
+    /**
+     * @return ReferenceRepository|null
+     */
+    protected function getReferenceRepository()
+    {
+        if (false == self::$referenceRepository) {
+            throw new \LogicException('The reference repository is not set. Have you loaded fixtures?');
+        }
+
+        return self::$referenceRepository;
     }
 }
