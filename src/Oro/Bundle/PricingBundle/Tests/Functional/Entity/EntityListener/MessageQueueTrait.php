@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,8 @@ trait MessageQueueTrait
     protected function cleanQueueMessageTraces()
     {
         $this->sendScheduledMessages();
-        $this->getMessageProducer()->clearTraces();
+        $this->getMessageProducer()->enable();
+        $this->getMessageProducer()->clear();
     }
 
     /**
@@ -30,7 +31,7 @@ trait MessageQueueTrait
         $this->sendScheduledMessages();
 
         return array_filter(
-            $this->getMessageProducer()->getTraces(),
+            $this->getMessageProducer()->getSentMessages(),
             function (array $trace) {
                 return $this->topic === $trace['topic'];
             }
@@ -44,7 +45,7 @@ trait MessageQueueTrait
     }
 
     /**
-     * @return TraceableMessageProducer
+     * @return MessageCollector
      */
     protected function getMessageProducer()
     {

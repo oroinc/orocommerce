@@ -40,7 +40,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          }
  *      }
  * )

@@ -47,11 +47,10 @@ class PriceListEntityListenerTest extends WebTestCase
                         PriceListRelationTrigger::ACCOUNT => null,
                         PriceListRelationTrigger::ACCOUNT_GROUP => null,
                         PriceListRelationTrigger::FORCE => true,
-                    ],
-                    'priority' => 'oro.message_queue.client.normal_message_priority',
+                    ]
                 ],
             ],
-            $this->getMessageProducer()->getTraces()
+            $this->getMessageProducer()->getSentMessages()
         );
     }
 
