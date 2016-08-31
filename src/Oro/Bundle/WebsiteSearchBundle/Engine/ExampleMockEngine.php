@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
@@ -52,6 +55,31 @@ class ExampleMockEngine implements EngineV2Interface
         return $queryBuilder;
     }
 
+    private function applyExpressionToQueryBuilder(QueryBuilder $queryBuilder, Expression $expression)
+    {
+        if ($expression instanceof CompositeExpression) {
+            foreach ($expression->getExpressionList() as $expression) {
+                $this->applyFiltersToQueryBuilder($queryBuilder, $expression);
+            }
+
+            return;
+        }
+
+        if ($expression instanceof Comparison) {
+            $fieldName = $expression->getField();
+
+            if (strpos($fieldName, '.') > 0) {
+                $fieldName = explode($fieldName, '.');
+                $fieldName = array_pop($fieldName);
+            }
+
+            // TODO add full text search
+
+            $queryBuilder->andHaving($fieldName.' = :p_'.$fieldName);
+            $queryBuilder->setParameter('p_'.$fieldName, $expression->getValue());
+        }
+    }
+
     /**
      * @param QueryBuilder $queryBuilder
      * @param Criteria $criteria
@@ -64,7 +92,7 @@ class ExampleMockEngine implements EngineV2Interface
 
         $expression = $criteria->getWhereExpression();
 
-        if ($expression->get
+        $this->applyExpressionToQueryBuilder($queryBuilder, $expression);
     }
 
     /**
