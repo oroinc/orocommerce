@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -14,18 +15,16 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Event\ResolveLineItemOptionsEvent;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
     const TYPE = 'payflow_express_checkout';
-
     const COMPLETE = 'complete';
-
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
@@ -44,22 +43,28 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     /** @var PayflowExpressCheckoutConfigInterface */
     protected $config;
 
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
+
     /**
      * @param Gateway $gateway
      * @param PayflowExpressCheckoutConfigInterface $config
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         Gateway $gateway,
         PayflowExpressCheckoutConfigInterface $config,
         RouterInterface $router,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -389,26 +394,24 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             return [];
         }
 
-        $lineItems = $entity->getLineItems();
+        $keys = [
+            Option\LineItems::NAME,
+            Option\LineItems::DESC,
+            Option\LineItems::COST,
+            Option\LineItems::QTY
+        ];
+        $event = new ResolveLineItemOptionsEvent($entity, $keys);
+        $this->dispatcher->dispatch(ResolveLineItemOptionsEvent::NAME, $event);
+        $options = $event->getOptions() ?: [];
 
-        $options = [];
-        foreach ($lineItems as $lineItem) {
-            if (!$lineItem instanceof OrderLineItem) {
-                continue;
-            }
-
-            $product = $lineItem->getProduct();
-
-            if (!$product) {
-                continue;
-            }
-
-            $options[] = [
-                Option\LineItems::NAME => $this->truncateString((string)$product->getDefaultName(), 36),
-                Option\LineItems::DESC => $this->truncateString((string)$product->getDefaultShortDescription(), 35),
-                Option\LineItems::COST => $lineItem->getValue(),
-                Option\LineItems::QTY => (int)$lineItem->getQuantity(),
-            ];
+        if ($options) {
+            array_walk_recursive($options, function (&$value, $key) {
+                if ($key == Option\LineItems::NAME) {
+                    $value = $this->truncateString($value, 36);
+                } elseif ($key == Option\LineItems::DESC) {
+                    $value = $this->truncateString($value, 35);
+                }
+            });
         }
 
         return Option\LineItems::prepareOptions($options);

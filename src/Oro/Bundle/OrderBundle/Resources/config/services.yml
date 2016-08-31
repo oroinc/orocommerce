@@ -244,3 +244,8 @@ services:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_order.event_listener.resolve_line_item_options:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ResolveLineItemOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.resolve_line_item_options, method: onResolveLineItemOptions }
