@@ -195,6 +195,7 @@
             </div>
             <div class="controls">
                 <input type="text" disabled="disabled" value="{{ methods_labels[form.method.vars.value]|trans }}"/>
+                {{ form_widget(form.method) }}
             </div>
         </div>
     {% endif %}

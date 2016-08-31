@@ -67,6 +67,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
+            - '@translator'
         tags:
             - { name: form.type, alias: orob2b_shipping_rule }
 
