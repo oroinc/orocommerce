@@ -272,6 +272,6 @@ class ShippingPriceProvider
             }
         }
 
-        return $method->calculatePrices($context, $optionsByTypes);
+        return $method->calculatePrices($context, $method->getOptions(), $optionsByTypes);
     }
 }

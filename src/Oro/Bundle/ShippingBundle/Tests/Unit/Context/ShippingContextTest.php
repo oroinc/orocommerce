@@ -101,6 +101,19 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetOptions()
+    {
+        $options = $this->model->getOptions();
+
+        $this->assertEquals($this->model->getLineItems(), $options['lineItems']);
+        $this->assertEquals($this->model->getBillingAddress(), $options['billingAddress']);
+        $this->assertEquals($this->model->getShippingAddress(), $options['shippingAddress']);
+        $this->assertEquals($this->model->getShippingOrigin(), $options['shippingOrigin']);
+        $this->assertEquals($this->model->getPaymentMethod(), $options['paymentMethod']);
+        $this->assertEquals($this->model->getCurrency(), $options['currency']);
+        $this->assertEquals($this->model->getSubtotal(), $options['subtotal']);
+    }
+
     public function testSetLineItemsWithShippingContextInterface()
     {
         $mockItem = $this->getMockBuilder(ShippingLineItemInterface::class)->getMock();

@@ -213,7 +213,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
 
-    orob2b_shipping.shipping_price:
+    orob2b_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
