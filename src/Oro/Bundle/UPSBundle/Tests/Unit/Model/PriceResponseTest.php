@@ -19,10 +19,13 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testParseResponsePriceAsObject()
     {
-        $this->priceResponse->setJSON(
+        $this->priceResponse->parseJSON(
             '{
                "RateResponse":{
                   "RatedShipment":{
+                     "Service": {
+                        "Code":"02"
+                     },
                      "TransportationCharges":{
                         "CurrencyCode":"USD",
                         "MonetaryValue":"8.60"
@@ -41,13 +44,13 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         );
         $expected = [
             'TransportationCharges' => [
-                Price::create('8.60', 'USD'),
+                '02' => Price::create('8.60', 'USD'),
             ],
             'ServiceOptionsCharges' => [
-                Price::create('0.00', 'USD'),
+                '02' => Price::create('0.00', 'USD'),
             ],
             'TotalCharges'          => [
-                Price::create('8.60', 'USD'),
+                '02' => Price::create('8.60', 'USD'),
             ]
         ];
         $this->assertEquals($expected, $this->priceResponse->getPricesByServices());
@@ -55,23 +58,32 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testParseResponsePriceAsArray()
     {
-        $this->priceResponse->setJSON(
+        $this->priceResponse->parseJSON(
             '{
                "RateResponse":{
                   "RatedShipment":[
                      {
+                         "Service": {
+                            "Code":"01"
+                         },
                          "TransportationCharges":{
                             "CurrencyCode":"USD",
                             "MonetaryValue":"8.60"
                          }
                      },
                      {
+                         "Service": {
+                            "Code":"02"
+                         },
                          "TransportationCharges":{
                             "CurrencyCode":"EUR",
                             "MonetaryValue":"3.40"
                          }
                      },
                      {
+                         "Service": {
+                            "Code":"03"
+                         },
                          "TransportationCharges":{
                             "CurrencyCode":"EUR",
                             "WrongMonetaryValue":"3.40"
@@ -83,8 +95,8 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         );
 
         $pricesExpected = [
-            Price::create('8.60', 'USD'),
-            Price::create('3.40', 'EUR'),
+            '01' => Price::create('8.60', 'USD'),
+            '02' => Price::create('3.40', 'EUR'),
         ];
         $expected = [
             'TransportationCharges' => $pricesExpected
@@ -102,7 +114,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseEmptyResponse()
     {
-        $this->priceResponse->setJSON('');
+        $this->priceResponse->parseJSON('');
     }
 
     /**

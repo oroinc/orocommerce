@@ -25,7 +25,7 @@ class PriceResponse
      * @param string $string
      * @throws \InvalidArgumentException
      */
-    public function setJSON($string)
+    public function parseJSON($string)
     {
         $data = json_decode($string);
 
@@ -62,8 +62,11 @@ class PriceResponse
         foreach (self::ALL_SERVICES as $service) {
             if (property_exists($rateShipment, $service)) {
                 $price = $this->createPrice($rateShipment->{$service});
-                if ($price) {
-                    $this->pricesByService[$service][] = $price;
+                if ($price
+                    && property_exists($rateShipment, 'Service')
+                    && property_exists($rateShipment->Service, 'Code')
+                ) {
+                    $this->pricesByService[$service][$rateShipment->Service->Code] = $price;
                 }
             }
         }
@@ -97,7 +100,7 @@ class PriceResponse
 
     /**
      * @param string $identifier
-     * @return array
+     * @return Price[]
      */
     public function getPricesByService($identifier)
     {
