@@ -11,7 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class OroSaleBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -23,6 +23,17 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable('orob2b_sale_quote');
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
+        $table->addIndex(['payment_term_id'], 'IDX_4F66B6F617653B16', []);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_payment_term'),
+            ['payment_term_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+
         $extension = $this->renameExtension;
 
         // email to quote association
