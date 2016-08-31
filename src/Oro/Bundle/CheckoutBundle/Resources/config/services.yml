@@ -120,6 +120,14 @@ services:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
             - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
+    orob2b_checkout.event_listener.resolve_payment_term:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'
+        arguments:
+            - '@request_stack'
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.resolve.payment_term, method: onResolvePaymentTerm }
+
     orob2b_checkout.event_listener.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
         public: false
@@ -369,3 +377,8 @@ services:
 
     orob2b_checkout.factory.shipping_context_provider_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'
+
+    oro_checkout.provider.privilege_category_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category}

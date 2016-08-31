@@ -70,6 +70,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.quotes-grid, method: onBuildBeforeQuotes }
 
     orob2b_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
@@ -83,6 +84,7 @@ services:
         arguments:
             - '@doctrine'
             - '@security.token_storage'
+            - '@event_dispatcher'
             - '%orob2b_payment.entity.payment_term.class%'
 
     orob2b_payment.provider.methods_provider:

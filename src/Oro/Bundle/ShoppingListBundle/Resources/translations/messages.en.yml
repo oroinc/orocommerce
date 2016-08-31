@@ -105,6 +105,9 @@ oro:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
 
+        privilege:
+            category.shopping.label: 'Shopping'
+
     frontend:
         shoppinglist:
             quick_order:
