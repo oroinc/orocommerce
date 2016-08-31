@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
@@ -11,6 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
+use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
 
 class PaymentTermProvider
 {
@@ -30,15 +32,26 @@ class PaymentTermProvider
     protected $tokenStorage;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param ManagerRegistry $registry
      * @param TokenStorageInterface $tokenStorage
+     * @param EventDispatcherInterface $eventDispatcher
      * @param string $paymentTermClass
      */
-    public function __construct(ManagerRegistry $registry, TokenStorageInterface $tokenStorage, $paymentTermClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        TokenStorageInterface $tokenStorage,
+        EventDispatcherInterface $eventDispatcher,
+        $paymentTermClass
+    ) {
         $this->registry = $registry;
         $this->paymentTermClass = $paymentTermClass;
         $this->tokenStorage = $tokenStorage;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -65,10 +78,13 @@ class PaymentTermProvider
 
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            return $this->getAccountPaymentTerm($user->getAccount());
+            $paymentTermEvent = new ResolvePaymentTermEvent($this->getPaymentTerm($user->getAccount()));
         }
 
-        return null;
+        $paymentTermEvent = isset($paymentTermEvent) ? $paymentTermEvent : new ResolvePaymentTermEvent();
+        $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $paymentTermEvent);
+
+        return $paymentTermEvent->getPaymentTerm();
     }
 
     /**

@@ -53,6 +53,8 @@ PaymentBundle
 - Added `Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter` for translating payment status labels and getting all available payment statuses.
 - Added `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension` with twig function `get_payment_status_label` which returns translated payment label.
 - Argument `context` of `Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider::processContext` was removed.
+- Added `Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent`.
+- Added `oropayment\js\app\views\payment-term-view` js component.
 
 OrderBundle:
 ------------
@@ -70,3 +72,7 @@ PricingBundle:
 - Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from `PriceListToAccountRepository`
 - Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
 - Changed arguments of `PriceListChangeTriggerHandler` constructor
+
+SaleBundle:
+-----------
+- Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
