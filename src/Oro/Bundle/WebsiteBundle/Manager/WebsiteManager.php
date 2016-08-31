@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteManager
@@ -15,16 +16,23 @@ class WebsiteManager
     protected $managerRegistry;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
      * @var Website
      */
     protected $currentWebsite;
 
     /**
      * @param ManagerRegistry $managerRegistry
+     * @param FrontendHelper $frontendHelper
      */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, FrontendHelper $frontendHelper)
     {
         $this->managerRegistry = $managerRegistry;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -32,13 +40,11 @@ class WebsiteManager
      */
     public function getCurrentWebsite()
     {
-        if (!$this->currentWebsite) {
-            $this->currentWebsite = $this->getEntityManager()
-                ->getRepository(Website::class)
-                ->getDefaultWebsite();
+        if (!$this->frontendHelper->isFrontendRequest()) {
+            return null;
         }
 
-        return $this->currentWebsite;
+        return $this->getResolvedWebsite();
     }
 
     /**
@@ -47,5 +53,19 @@ class WebsiteManager
     protected function getEntityManager()
     {
         return $this->managerRegistry->getManagerForClass(Website::class);
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getResolvedWebsite()
+    {
+        if (!$this->currentWebsite) {
+            $this->currentWebsite = $this->getEntityManager()
+                ->getRepository(Website::class)
+                ->getDefaultWebsite();
+        }
+
+        return $this->currentWebsite;
     }
 }

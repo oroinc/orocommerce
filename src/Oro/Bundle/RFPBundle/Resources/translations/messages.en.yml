@@ -165,6 +165,9 @@ oro:
         feature:
             label: 'Request For Quote (Store Front)'
             description: 'Request For Quote allows users to place Requests for chosen products'
+        product:
+            view:
+                request_a_quote: 'Request a Quote'
         rfp:
             request:
                 create.label: 'Create Request For Quote'

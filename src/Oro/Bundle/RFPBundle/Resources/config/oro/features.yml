@@ -3,7 +3,7 @@ features:
         label: oro.rfp.feature.label
         description: oro.rfp.feature.description
         toggle: oro_b2b_rfp.feature_enabled
-        route:
+        routes:
             - 'orob2b_rfp_request_view'
             - 'orob2b_rfp_request_info'
             - 'orob2b_rfp_request_index'
@@ -14,7 +14,13 @@ features:
             - 'orob2b_rfp_request_status_create'
             - 'orob2b_rfp_request_status_update'
             - 'orob2b_rfp_request_create_order'
-        api:
+        operations:
+            - 'orob2b_rfp_change_status'
+            - 'orob2b_rfp_cancel'
+            - 'orob2b_rfp_create_quote'
+            - 'orob2b_rfp_resubmit'
+            - 'orob2b_rfp_delete'
+        api_resources:
             - 'Oro\Bundle\RFPBundle\Entity\Request'
             - 'Oro\Bundle\RFPBundle\Entity\RequestStatus'
             - 'Oro\Bundle\RFPBundle\Entity\RequestProduct'
@@ -29,11 +35,13 @@ features:
         label: oro.rfp.frontend.feature.label
         description: oro.rfp.forntend.feature.description
         toggle: oro_b2b_rfp.frontend_feature_enabled
-        dependency:
+        dependencies:
             - 'rfp'
-        operation:
+        operations:
             - 'orob2b_rfp_frontend_request_a_quote'
-        route:
+            - 'orob2b_rfp_frontend_request_create'
+            - 'orob2b_rfp_frontend_request_edit'
+        routes:
             - 'orob2b_rfp_frontend_request_view'
             - 'orob2b_rfp_frontend_request_index'
             - 'orob2b_rfp_frontend_request_create'
