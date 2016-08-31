@@ -99,4 +99,26 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $secondLevelCategory->getId());
         $this->assertCount(8, $arr['data']);
     }
+
+    /**
+     * Test if the category id as a parameter in query don't cause any exceptions,
+     * as the SearchCategoryFilteringEventListener is triggered.
+     */
+    public function testControllerActionWithCategoryId()
+    {
+        /** @var Category $secondLevelCategory */
+        $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+
+        $this->client->request('GET', $this->getUrl(
+            'orob2b_product_frontend_product_index',
+            [
+                RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
+            ]
+        ));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $content = $result->getContent();
+        $this->assertNotEmpty($content);
+    }
 }

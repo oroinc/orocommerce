@@ -11,13 +11,10 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 
 class ExampleExpressionVisitor extends ExpressionVisitor
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $data;
 
     /**
-     * ExampleExpressionVisitor constructor.
      * @param $row
      */
     public function __construct($row)
@@ -45,6 +42,10 @@ class ExampleExpressionVisitor extends ExpressionVisitor
         if ($comparison->getOperator() === Comparison::EQ) {
             return strcmp($this->data[$value], $comparison->getValue()->getValue()) === 0;
         }
+        if ($comparison->getOperator() === Comparison::IN) {
+            return in_array($this->data[$value], $comparison->getValue()->getValue(), true);
+        }
+
         return true;
     }
 

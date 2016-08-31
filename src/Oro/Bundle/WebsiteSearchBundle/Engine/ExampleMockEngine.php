@@ -198,6 +198,7 @@ class ExampleMockEngine implements EngineV2Interface
         return [
             [
                 'id'                 => 1,
+                'cat_id'             => 427,
                 'sku'                => '01C82',
                 'name_1'             => 'Canon 5D EOS',
                 'shortDescription_1' => 'Small description of another good product from our shop.',
@@ -214,6 +215,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 2,
+                'cat_id'             => 2,
                 'sku'                => '6VC22',
                 'name_1'             => 'Bluetooth Barcode Scanner',
                 'shortDescription_1' => 'This innovative Bluetooth barcode scanner allows easy bar code...',
@@ -230,6 +232,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 3,
+                'cat_id'             => 2,
                 'sku'                => '5GE27',
                 'name_1'             => 'Pricing Labeler',
                 'shortDescription_1' => 'This pricing labeler is easy to use and comes with...',
@@ -246,6 +249,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 4,
+                'cat_id'             => 4,
                 'sku'                => '9GQ28',
                 'name_1'             => 'NFC Credit Card Reader',
                 'shortDescription_1' => 'This NFC credit card reader accepts PIN-based...',
@@ -262,6 +266,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 5,
+                'cat_id'             => 4,
                 'sku'                => '8BC37',
                 'name_1'             => 'Colorful Floral Women’s Scrub Top',
                 'shortDescription_1' => 'This bright, colorful women’s scrub top is not only...',
@@ -278,6 +283,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 6,
+                'cat_id'             => 4,
                 'sku'                => '5TJ23',
                 'name_1'             => '17-inch POS Touch Screen Monitor with Card Reader',
                 'shortDescription_1' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
@@ -294,6 +300,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 7,
+                'cat_id'             => 5,
                 'sku'                => '4PJ19',
                 'name_1'             => 'Handheld Laser Barcode Scanner',
                 'shortDescription_1' => 'This lightweight laser handheld barcode scanner offers high performace...',
@@ -310,6 +317,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 8,
+                'cat_id'             => 5,
                 'sku'                => '7NQ22',
                 'name_1'             => 'Storage Combination with Doors',
                 'shortDescription_1' => 'Store and display your favorite items with this storage-display cabinet.',
@@ -326,6 +334,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 9,
+                'cat_id'             => 4,
                 'sku'                => '5GF68',
                 'name_1'             => '300-Watt Floodlight',
                 'shortDescription_1' => 'This 300-watt flood light provides bright and focused illumination.',
@@ -342,6 +351,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 10,
+                'cat_id'             => 4,
                 'sku'                => '8DO33',
                 'name_1'             => 'Receipt Printer',
                 'shortDescription_1' => 'This receipt printer uses a ribbon to transfer ink to paper',
@@ -357,6 +367,7 @@ class ExampleMockEngine implements EngineV2Interface
             ],
             [
                 'id'                 => 10,
+                'cat_id'             => 4,
                 'sku'                => 'SDSDUNC-064G-AN6IN',
                 'name_1'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
                 'shortDescription_1' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
@@ -402,7 +413,7 @@ class ExampleMockEngine implements EngineV2Interface
      */
     private function getFieldsToBeSelected($selectedColumns)
     {
-        $result = ['id' => 'integer'];
+        $result = ['id' => 'integer', 'cat_id' => 'integer'];
 
         if (!empty($selectedColumns)) {
             foreach ($selectedColumns as &$selectedColumn) {
