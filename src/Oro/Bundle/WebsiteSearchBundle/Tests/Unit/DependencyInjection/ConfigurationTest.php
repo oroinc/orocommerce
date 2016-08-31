@@ -21,17 +21,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $configuration = new Configuration();
         $processor = new Processor();
         $expected = [
-            'settings' => [
-                'resolved' => true,
-                Configuration::ENGINE_KEY => [
-                    'value' => 'orm',
-                    'scope' => 'app',
-                ],
-                Configuration::ENGINE_PARAMETERS_KEY => [
-                    'value' => [],
-                    'scope' => 'app',
-                ],
-            ],
+            Configuration::ENGINE_KEY => 'orm',
+            Configuration::ENGINE_PARAMETERS_KEY => []
         ];
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
     }
