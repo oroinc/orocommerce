@@ -90,6 +90,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      * Get productSku
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function getProductSku()
     {
@@ -104,6 +105,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      * Get id
      *
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public function getEntityIdentifier()
     {
@@ -160,6 +162,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      * Get productUnitCode
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function getProductUnitCode()
     {
