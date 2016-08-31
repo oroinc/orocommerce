@@ -1,138 +1,138 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'product_index_row.html.twig'
+            themes: 'grid_row.html.twig'
         - '@addTree':
             items:
-                product_grid_row_image_holder:
+                __product_grid_row_image_holder:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_quick_view:
+                __product_grid_row_quick_view:
                     blockType: block
                     options:
                         visible: '=false'
-                product_grid_row_primary_content_container:
+                __product_grid_row_primary_content_container:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_number:
+                __product_grid_row_number:
                     blockType: block
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_specification:
+                __product_grid_row_specification:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_sku_container:
+                __product_grid_row_sku_container:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_mfg:
-                    blockType: block
-                    options:
-                        visible: '=false'
-                product_grid_row_short_description:
-                    blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
-                product_grid_row_details:
-                    blockType: block
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
-                product_grid_row_secondary_content_container:
-                    blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
-                product_grid_row_secondary_content_first_container:
-                    blockType: container
-                    options:
-                        attr_renderer: 'block_attributes_underscore'
-                product_grid_row_specification_delivery:
+                __product_grid_row_mfg:
                     blockType: block
                     options:
                         visible: '=false'
-                product_grid_row_secondary_content_second_container:
+                __product_grid_row_short_description:
+                    blockType: block
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                __product_grid_row_details:
+                    blockType: block
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                __product_grid_row_secondary_content_container:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                product_grid_row_more_info:
+                __product_grid_row_secondary_content_first_container:
+                    blockType: container
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                __product_grid_row_specification_delivery:
                     blockType: block
                     options:
                         visible: '=false'
-                line_item_form:
+                __product_grid_row_secondary_content_second_container:
                     blockType: container
                     options:
                         attr_renderer: 'block_attributes_underscore'
-                line_item_form_start:
+                __product_grid_row_more_info:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                __line_item_form:
+                    blockType: container
+                    options:
+                        attr_renderer: 'block_attributes_underscore'
+                __line_item_form_start:
                     blockType: form_start
                     options:
                         form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                line_item_form_fields:
+                __line_item_form_fields:
                     blockType: form_fields
                     options:
                         preferred_fields: [quantity]
                         form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                line_item_form_end:
+                __line_item_form_end:
                     blockType: form_end
                     options:
                         form: '=data["orob2b_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                line_item_buttons:
+                __line_item_buttons:
                     blockType: container
             tree:
-                product_grid_row:
-                    product_grid_row_image_holder:
-                        product_grid_row_quick_view: ~
-                    product_grid_row_primary_content_container:
-                        product_grid_row_number: ~
-                        product_grid_row_specification:
-                            product_grid_row_sku_container:
-                                product_grid_row_mfg: ~
-                        product_grid_row_short_description: ~
-                        product_grid_row_details: ~
-                    product_grid_row_secondary_content_container:
-                        product_grid_row_secondary_content_first_container:
-                            product_grid_row_specification_delivery: ~
-                        product_grid_row_secondary_content_second_container:
-                            product_grid_row_more_info: ~
-                            line_item_form:
-                                line_item_form_start: ~
-                                line_item_form_fields: ~
-                                line_item_buttons: ~
-                                line_item_form_end: ~
+                __root:
+                    __product_grid_row_image_holder:
+                        __product_grid_row_quick_view: ~
+                    __product_grid_row_primary_content_container:
+                        __product_grid_row_number: ~
+                        __product_grid_row_specification:
+                            __product_grid_row_sku_container:
+                                __product_grid_row_mfg: ~
+                        __product_grid_row_short_description: ~
+                        __product_grid_row_details: ~
+                    __product_grid_row_secondary_content_container:
+                        __product_grid_row_secondary_content_first_container:
+                            __product_grid_row_specification_delivery: ~
+                        __product_grid_row_secondary_content_second_container:
+                            __product_grid_row_more_info: ~
+                            __line_item_form:
+                                __line_item_form_start: ~
+                                __line_item_form_fields: ~
+                                __line_item_buttons: ~
+                                __line_item_form_end: ~
 
         - '@setOption':
-            id: product_grid_cell_name
+            id: __product_grid_cell_name
             optionName: attr_renderer
             optionValue: 'block_attributes_underscore'
 
         - '@setOption':
-            id: product_grid_cell_name_value
+            id: __product_grid_cell_name_value
             optionName: attr_renderer
             optionValue: 'block_attributes_underscore'
 
         - '@move':
-            id: product_grid_row_secondary_content_container
+            id: __product_grid_row_secondary_content_container
             siblingId: product_grid_cell_name
 
         - '@move':
-            id: product_grid_row_primary_content_container
+            id: __product_grid_row_primary_content_container
             siblingId: product_grid_cell_name
 
         - '@move':
-            id: product_grid_cell_sku
+            id: __product_grid_cell_sku
             parentId: product_grid_row_sku_container
 
         - '@move':
-            id: product_grid_row_mfg
+            id: __product_grid_row_mfg
             siblingId: product_grid_cell_sku
 
         - '@setOption':
-            id: product_grid_cell_sku
+            id: __product_grid_cell_sku
             optionName: attr_renderer
             optionValue: 'block_attributes_underscore'
 
         - '@setOption':
-            id: product_grid_cell_sku_value
+            id: __product_grid_cell_sku_value
             optionName: attr_renderer
             optionValue: 'block_attributes_underscore'
