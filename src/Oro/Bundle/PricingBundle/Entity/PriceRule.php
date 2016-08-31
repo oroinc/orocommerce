@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
@@ -31,11 +30,25 @@ class PriceRule
     protected $currency;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="currency_expression", type="string", length=255, nullable=true)
+     */
+    protected $currencyExpression;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="quantity", type="float", nullable=true)
      */
     protected $quantity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="quantity_expression", type="string", length=255, nullable=true)
+     */
+    protected $quantityExpression;
 
     /**
      * @var ProductUnit
@@ -44,6 +57,13 @@ class PriceRule
      * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
      */
     protected $productUnit;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_unit_expression", type="string", length=255, nullable=true)
+     */
+    protected $productUnitExpression;
 
     /**
      * @var string
@@ -274,6 +294,63 @@ class PriceRule
     {
         $this->lexemes->removeElement($lexeme);
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyExpression()
+    {
+        return $this->currencyExpression;
+    }
+
+    /**
+     * @param string $currencyExpression
+     * @return $this
+     */
+    public function setCurrencyExpression($currencyExpression)
+    {
+        $this->currencyExpression = $currencyExpression;
+        
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantityExpression()
+    {
+        return $this->quantityExpression;
+    }
+
+    /**
+     * @param string $quantityExpression
+     * @return $this
+     */
+    public function setQuantityExpression($quantityExpression)
+    {
+        $this->quantityExpression = $quantityExpression;
+        
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductUnitExpression()
+    {
+        return $this->productUnitExpression;
+    }
+
+    /**
+     * @param string $productUnitExpression
+     * @return $this
+     */
+    public function setProductUnitExpression($productUnitExpression)
+    {
+        $this->productUnitExpression = $productUnitExpression;
+        
         return $this;
     }
 }
