@@ -80,7 +80,7 @@ class SearchCategoryFilteringEventListener
 
     /**
      * @param SearchQueryInterface $query
-     * @param                      $categoryId
+     * @param array|int            $categoryId
      */
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
     {
