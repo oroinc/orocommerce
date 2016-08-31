@@ -371,7 +371,8 @@ class ExampleMockEngine implements EngineV2Interface
         $criteria = $query->getCriteria();
 
         $offset = $criteria->getFirstResult();
-        $limit  = $criteria->getMaxResults();
+
+        $limit = $criteria->getMaxResults();
 
         if (empty($result)) {
             return $result;
@@ -453,7 +454,7 @@ class ExampleMockEngine implements EngineV2Interface
                 $row,
                 function ($value, $field) use (&$normalFields) {
                     if (false !== strpos($field, self::$localizationIdPlaceholder)) {
-                        $normalKey = str_replace('_' . self::$localizationIdPlaceholder, '', $field);
+                        $normalKey                = str_replace('_' . self::$localizationIdPlaceholder, '', $field);
                         $normalFields[$normalKey] = $value;
                     }
                 }
