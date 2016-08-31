@@ -71,6 +71,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('productAssignmentRule')
             ->willReturn(true);
         $this->listener->preUpdate($priceList, $event);
+        $this->assertFalse($priceList->isActual());
     }
 
     public function testPreUpdateNoChanges()
@@ -91,6 +92,28 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('productAssignmentRule')
             ->willReturn(false);
         $this->listener->preUpdate($priceList, $event);
+        $this->assertTrue($priceList->isActual());
+    }
+
+    public function testPrePersist()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
+        $priceList->setProductAssignmentRule('product.id == 1');
+        $this->priceRuleChangeTriggerHandler->expects($this->once())
+            ->method('addTriggersForPriceList');
+        $this->listener->prePersist($priceList);
+        $this->assertFalse($priceList->isActual());
+    }
+
+    public function testPrePersistWithoutRule()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
+        $this->priceRuleChangeTriggerHandler->expects($this->never())
+            ->method('addTriggersForPriceList');
+        $this->listener->prePersist($priceList);
+        $this->assertTrue($priceList->isActual());
     }
 
     public function testPreRemove()

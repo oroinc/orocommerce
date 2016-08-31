@@ -72,6 +72,17 @@ class PriceListEntityListener
     /**
      * @param PriceList $priceList
      */
+    public function prePersist(PriceList $priceList)
+    {
+        if ($priceList->getProductAssignmentRule()) {
+            $priceList->setActual(false);
+            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
     protected function clearCache(PriceList $priceList)
     {
         $this->cache->delete('ar_' . $priceList->getId());
