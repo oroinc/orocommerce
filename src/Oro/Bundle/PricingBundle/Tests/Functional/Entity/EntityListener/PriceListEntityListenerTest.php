@@ -87,4 +87,42 @@ class PriceListEntityListenerTest extends WebTestCase
 
         $this->assertEmpty($this->getQueueMessageTraces());
     }
+
+    public function testPrePersistEmptyAssignmentRule()
+    {
+        $this->cleanQueueMessageTraces();
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        /** @var PriceList $priceList */
+        $priceList = new PriceList();
+        $priceList->setName('TEST123');
+        $em->persist($priceList);
+        $em->flush();
+
+        $this->assertTrue($priceList->isActual());
+        $this->assertEmpty($this->getQueueMessageTraces());
+    }
+
+    public function testPrePersistWithAssignmentRule()
+    {
+        $this->cleanQueueMessageTraces();
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        /** @var PriceList $priceList */
+        $priceList = new PriceList();
+        $priceList->setName('TEST123');
+        $priceList->setProductAssignmentRule('TEST123');
+        $em->persist($priceList);
+        $em->flush();
+
+        $this->assertFalse($priceList->isActual());
+
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
+    }
 }
