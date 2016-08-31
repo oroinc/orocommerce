@@ -7,17 +7,20 @@ use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 
 class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
 {
-    const CACHE_KEY = 'oro_website_search.mapping_config';
-
     /**
      * @var ConfigurationLoaderInterface
      */
     private $mappingConfigurationLoader;
 
     /**
+     * @var array
+     */
+    private $configuration;
+
+    /**
      * @param ConfigurationLoaderInterface $mappingConfigurationLoader
      */
-    public function setMappingConfigurationLoader(ConfigurationLoaderInterface $mappingConfigurationLoader)
+    public function __construct(ConfigurationLoaderInterface $mappingConfigurationLoader)
     {
         $this->mappingConfigurationLoader = $mappingConfigurationLoader;
     }
@@ -27,17 +30,10 @@ class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
      */
     public function getMappingConfig()
     {
-        if (!$this->isCollected) {
-            $this->isCollected = true;
-
-            if ($this->cacheDriver->contains(static::CACHE_KEY)) {
-                $this->mappingConfig = $this->cacheDriver->fetch(static::CACHE_KEY);
-            } else {
-                $this->mappingConfig = $this->mappingConfigurationLoader->getConfiguration();
-                $this->cacheDriver->save(static::CACHE_KEY, $this->mappingConfig);
-            }
+        if (!$this->configuration) {
+            $this->configuration = $this->mappingConfigurationLoader->getConfiguration();
         }
 
-        return $this->mappingConfig;
+        return $this->configuration;
     }
 }

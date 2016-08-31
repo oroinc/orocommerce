@@ -1,11 +1,3 @@
-parameters:
-    oro_website_search.cache.configuration_cache_clearer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheClearer
-    oro_website_search.cache.configuration_cache_warmer.class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCacheWarmer
-    oro_website_search.loader.mapping_configuration_loader.class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader
-    oro_website_search.provider.configuration_cache_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ConfigurationCacheProvider
-    oro_website_search.provider.resources_hash_provider.class: Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider
-    oro_website_search.provider.search_mapping.class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
-
 services:
     oro_website_search.resolver.query_placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
@@ -46,7 +38,7 @@ services:
 
     oro_website_search.loader.mapping_configuration_loader:
         public: false
-        class: '%oro_website_search.loader.mapping_configuration_loader.class%'
+        class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader
 
     oro_website_search.mapping_configuration.cache:
         public: false
@@ -54,36 +46,24 @@ services:
         calls:
             - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
 
-    oro_website_search.provider.resources_hash_provider:
+    oro_website_search.loader.mapping_configuration_cached_loader:
         public: false
-        class: '%oro_website_search.provider.resources_hash_provider.class%'
-
-    oro_website_search.provider.configuration_cache_provider:
-        public: false
-        class: '%oro_website_search.provider.configuration_cache_provider.class%'
+        class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCachedLoader
         arguments:
             - '@oro_website_search.mapping_configuration.cache'
             - '@oro_website_search.loader.mapping_configuration_loader'
-            - '@oro_website_search.provider.resources_hash_provider'
             - '%kernel.debug%'
 
-    oro_website_search.cache.configuration_cache_clearer:
+    oro_website_search.cache.configuration_cache:
         public: false
-        class: '%oro_website_search.cache.configuration_cache_clearer.class%'
+        class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCache
         arguments:
-            - '@oro_website_search.provider.configuration_cache_provider'
+            - '@oro_website_search.loader.mapping_configuration_cached_loader'
         tags:
             - { name: kernel.cache_clearer }
-
-    oro_website_search.cache.configuration_cache_warmer:
-        public: false
-        class: '%oro_website_search.cache.configuration_cache_warmer.class%'
-        arguments:
-            - '@oro_website_search.provider.configuration_cache_provider'
-        tags:
             - { name: kernel.cache_warmer }
 
-    oro_search.event_listener.orm.fulltext_index_listener:
+    oro_website_search.event_listener.orm.fulltext_index_listener:
         class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
         arguments:
             - '%database_driver%'
@@ -92,9 +72,6 @@ services:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 
     oro_website_search.provider.search_mapping:
-        class: '%oro_website_search.provider.search_mapping.class%'
+        class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
         arguments:
-            - '@event_dispatcher'
-            - '@doctrine.orm.default_metadata_cache'
-        calls:
-            - [setMappingConfigurationLoader, ['@oro_website_search.loader.mapping_configuration_loader']]
+            - '@oro_website_search.loader.mapping_configuration_cached_loader'
