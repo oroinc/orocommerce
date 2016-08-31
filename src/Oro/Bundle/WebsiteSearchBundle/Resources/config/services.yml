@@ -75,3 +75,19 @@ services:
         class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
         arguments:
             - '@oro_website_search.loader.mapping_configuration_cached_loader'
+
+    oro_website_search.mock.engine:
+        class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+
+    oro_website_search.query_factory:
+        decorates: oro_search.query_factory
+        class: Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+        arguments:
+            - '@oro_website_search.query_factory.inner'
+            - '@event_dispatcher'
+            - '@oro_website_search.mock.engine'
+
+    oro_website_search.select_data.listener:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }

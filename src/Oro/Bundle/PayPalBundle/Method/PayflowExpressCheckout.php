@@ -106,7 +106,11 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     public function supports($actionName)
     {
-        return in_array($actionName, [self::PURCHASE, self::AUTHORIZE, self::CHARGE, self::CAPTURE, self::COMPLETE]);
+        return in_array(
+            $actionName,
+            [self::PURCHASE, self::AUTHORIZE, self::CHARGE, self::CAPTURE, self::COMPLETE],
+            true
+        );
     }
 
     /**
