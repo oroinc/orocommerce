@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Extension\Sorter\SearchSorterExtension;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -30,11 +31,29 @@ class ExampleMockEngine implements EngineV2Interface
     private $entityManager;
 
     /**
+     * Placeholder in column names that has to be replaced by language code of current localization
+     *
+     * @var string
+     */
+    private static $localizationIdPlaceholder = 'LOCALIZATION_ID';
+
+    /**
+     * @var CurrentLocalizationProvider
+     */
+    private $currentLocalizationProvider;
+
+    /**
+     * @var array
+     */
+    private $resolvedFieldsBackArray;
+
+    /**
      * ExampleMockEngine constructor.
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, CurrentLocalizationProvider $currentLocalizationProvider)
     {
+        $this->currentLocalizationProvider = $currentLocalizationProvider;
         $this->entityManager = $entityManager;
     }
 
@@ -74,6 +93,8 @@ class ExampleMockEngine implements EngineV2Interface
             }
 
             // TODO add full text search
+
+            // TODO support localized fields
 
             $queryBuilder->andHaving($fieldName.' = :p_'.$fieldName);
             $queryBuilder->setParameter('p_'.$fieldName, $expression->getValue());
@@ -122,6 +143,7 @@ class ExampleMockEngine implements EngineV2Interface
          * - emulate filtering using where clause
          * - add order by
          * - paginate
+         * - localization fields
          *
          *             [
                 'id'               => 10,
@@ -144,16 +166,18 @@ class ExampleMockEngine implements EngineV2Interface
         // using the new Query addSelect() feature.
         $selectedColumns = $query->getSelect();
 
+        // resolve LOCALIZATION_ID references
+        $selectedColumns = $this->resolveLocalizationPlaceholder($selectedColumns);
+
         // let's get the keys that we want to have in results
         $selectedColumns = $this->getFieldsToBeSelected($selectedColumns);
 
-        // parsing the full dataset and eliminating all fields
-        // that have not been requested.
-        $result = $this->extractSelectedFields($fullData, $selectedColumns);
+        // this essentially duplicates localized fields' values
+        // trimming the _LID suffix
+        $result = $this->copyPlaceholderFieldsToNormal($result);
 
-        // this applies supported filter functionality to the results
-        // and emulates filtering.
-        $result = $this->applySKUFilter($result, $query->getCriteria());
+        // this applies filter functionality to the results.
+        $result = $this->applyFilters($result, $query->getCriteria());
 
         // order rows by ordering specified in query
         $result = $this->getOrderedData($query, $result);
@@ -173,167 +197,177 @@ class ExampleMockEngine implements EngineV2Interface
     {
         return [
             [
-                'id'               => 1,
-                'sku'              => '01C82',
-                'name'             => 'Canon 5D EOS',
-                'shortDescription' => 'Small description of another good product from our shop.',
-                'minimum_price'    => '1299.00',
-                'product_units'    => [
+                'id'                 => 1,
+                'sku'                => '01C82',
+                'name_1'             => 'Canon 5D EOS',
+                'shortDescription_1' => 'Small description of another good product from our shop.',
+                'all_text_1'         => '01C82 canon 5s eos small description of another good product from',
+                'minimum_price'      => '1299.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '1299.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 2,
-                'sku'              => '6VC22',
-                'name'             => 'Bluetooth Barcode Scanner',
-                'shortDescription' => 'This innovative Bluetooth barcode scanner allows easy bar code transmission...',
-                'minimum_price'    => '340.00',
-                'product_units'    => [
+                'id'                 => 2,
+                'sku'                => '6VC22',
+                'name_1'             => 'Bluetooth Barcode Scanner',
+                'shortDescription_1' => 'This innovative Bluetooth barcode scanner allows easy bar code...',
+                'all_text_1'         => '6VC22 bluetooth barcode scanner this innovative bluetooth',
+                'minimum_price'      => '340.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '340.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 3,
-                'sku'              => '5GE27',
-                'name'             => 'Pricing Labeler',
-                'shortDescription' => 'This pricing labeler is easy to use and comes with...',
-                'minimum_price'    => '165.00',
-                'product_units'    => [
+                'id'                 => 3,
+                'sku'                => '5GE27',
+                'name_1'             => 'Pricing Labeler',
+                'shortDescription_1' => 'This pricing labeler is easy to use and comes with...',
+                'all_text_1'         => '5ge27 pricing labeler this pricing labeler',
+                'minimum_price'      => '165.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '165.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 4,
-                'sku'              => '9GQ28',
-                'name'             => 'NFC Credit Card Reader',
-                'shortDescription' => 'This NFC credit card reader accepts PIN-based...',
-                'minimum_price'    => '240.00',
-                'product_units'    => [
+                'id'                 => 4,
+                'sku'                => '9GQ28',
+                'name_1'             => 'NFC Credit Card Reader',
+                'shortDescription_1' => 'This NFC credit card reader accepts PIN-based...',
+                'all_text_1'         => '9GQ28 nfc credit card reader accepts',
+                'minimum_price'      => '240.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '240.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 5,
-                'sku'              => '8BC37',
-                'name'             => 'Colorful Floral Women’s Scrub Top',
-                'shortDescription' => 'This bright, colorful women’s scrub top is not only...',
-                'minimum_price'    => '14.95',
-                'product_units'    => [
+                'id'                 => 5,
+                'sku'                => '8BC37',
+                'name_1'             => 'Colorful Floral Women’s Scrub Top',
+                'shortDescription_1' => 'This bright, colorful women’s scrub top is not only...',
+                'all_text_1'         => '8BC37 colorful floral women scrub top',
+                'minimum_price'      => '14.95',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '14.95'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 6,
-                'sku'              => '5TJ23',
-                'name'             => '17-inch POS Touch Screen Monitor with Card Reader',
-                'shortDescription' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
-                'minimum_price'    => '290.00',
-                'product_units'    => [
+                'id'                 => 6,
+                'sku'                => '5TJ23',
+                'name_1'             => '17-inch POS Touch Screen Monitor with Card Reader',
+                'shortDescription_1' => 'This sleek and slim 17-inch touch screen monitor is great for retail',
+                'all_text_1'         => '5TJ23 17 inch pos touch screen monitor with card reader',
+                'minimum_price'      => '290.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '290.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 7,
-                'sku'              => '4PJ19',
-                'name'             => 'Handheld Laser Barcode Scanner',
-                'shortDescription' => 'This lightweight laser handheld barcode scanner offers high performace...',
-                'minimum_price'    => '190.00',
-                'product_units'    => [
+                'id'                 => 7,
+                'sku'                => '4PJ19',
+                'name_1'             => 'Handheld Laser Barcode Scanner',
+                'shortDescription_1' => 'This lightweight laser handheld barcode scanner offers high performace...',
+                'all_text_1'         => '4PJ19 handheld laser barcode scanner this lightweight',
+                'minimum_price'      => '190.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '190.00'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 8,
-                'sku'              => '7NQ22',
-                'name'             => 'Storage Combination with Doors',
-                'shortDescription' => 'Store and display your favorite items with this storage-display cabinet.',
-                'minimum_price'    => '789.99',
-                'product_units'    => [
+                'id'                 => 8,
+                'sku'                => '7NQ22',
+                'name_1'             => 'Storage Combination with Doors',
+                'shortDescription_1' => 'Store and display your favorite items with this storage-display cabinet.',
+                'all_text_1'         => '7NQ22 storage combination with doors store display',
+                'minimum_price'      => '789.99',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '789.99'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 9,
-                'sku'              => '5GF68',
-                'name'             => '300-Watt Floodlight',
-                'shortDescription' => 'This 300-watt flood light provides bright and focused illumination.',
-                'minimum_price'    => '35.99',
-                'product_units'    => [
+                'id'                 => 9,
+                'sku'                => '5GF68',
+                'name_1'             => '300-Watt Floodlight',
+                'shortDescription_1' => 'This 300-watt flood light provides bright and focused illumination.',
+                'all_text_1'         => '5GF68 300 watt floodlight flood light provides bright',
+                'minimum_price'      => '35.99',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '35.99'
                 ],
-                'image'            => null
+                'image'              => null
 
             ],
             [
-                'id'               => 10,
-                'sku'              => '8DO33',
-                'name'             => 'Receipt Printer',
-                'shortDescription' => 'This receipt printer uses a ribbon to transfer ink to paper',
-                'minimum_price'    => '240.00',
-                'product_units'    => [
+                'id'                 => 10,
+                'sku'                => '8DO33',
+                'name_1'             => 'Receipt Printer',
+                'shortDescription_1' => 'This receipt printer uses a ribbon to transfer ink to paper',
+                'all_text_1'         => '8DO33 receipt printer uses ribben transfer ink paper',
+                'minimum_price'      => '240.00',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '240.00'
                 ],
-                'image'            => null
+                'image'              => null
             ],
             [
-                'id'               => 10,
-                'sku'              => 'SDSDUNC-064G-AN6IN',
-                'name'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
-                'shortDescription' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
-                'minimum_price'    => '250.00',
-                'product_units'    => [
+                'id'                 => 10,
+                'sku'                => 'SDSDUNC-064G-AN6IN',
+                'name_1'             => 'Sandisk Ultra SDXC 64GB 80MB/S C10 Flash Memory Card',
+                'shortDescription_1' => 'An ultra fast Sandisk Ultra SDXC memory card for various devices...',
+                'all_text_1'         => 'SDSDUNC 064G AN6IN sandisk ultra sdxc 64gb flash card',
+                'product_units'      => [
                     'item' => 'item'
                 ],
-                'prices'           => [
+                'prices'             => [
                     'item_1' => '250.00'
                 ],
-                'image'            => 'https://images-na.ssl-images-amazon.com/images/I/51pvrWJX2sL.jpg'
+                'image'              => 'https://images-na.ssl-images-amazon.com/images/I/51pvrWJX2sL.jpg'
             ],
         ];
     }
@@ -384,7 +418,7 @@ class ExampleMockEngine implements EngineV2Interface
      * @param $selectedColumns
      * @return array
      */
-    private function extractSelectedFields($fullData, $selectedColumns)
+    private function readDatabase($fullData, $selectedColumns)
     {
         $result = [];
 
@@ -401,6 +435,19 @@ class ExampleMockEngine implements EngineV2Interface
         return $result;
     }
 
+    /**
+     * @param $data
+     * @param $criteria
+     * @return array
+     */
+    private function applyFilters($data, Criteria $criteria)
+    {
+        $result = [];
+
+        if (!$criteria->getWhereExpression()) {
+            return $data;
+        }
+    }
 
 
     /**
@@ -439,6 +486,7 @@ class ExampleMockEngine implements EngineV2Interface
         $criteria = $query->getCriteria();
 
         $offset = $criteria->getFirstResult();
+
         $limit = $criteria->getMaxResults();
 
         if (empty($result)) {
@@ -446,6 +494,92 @@ class ExampleMockEngine implements EngineV2Interface
         }
 
         $result = array_slice($result, $offset, $limit);
+
+        return $result;
+    }
+
+    /**
+     * @param array $fields
+     * @return array
+     */
+    private function resolveLocalizationPlaceholder(array $fields)
+    {
+        $currentLocalization = $this->currentLocalizationProvider->getCurrentLocalization();
+        $localeId            = $currentLocalization->getId();
+
+        $originalFields = $resolvedFieldsBackArray = [];
+
+        foreach ($fields as $key => $field) {
+            list ($type, $originalField) = Criteria::explodeFieldTypeName($field);
+            $originalFields[] = $originalField;
+            $fields[$key]     = str_replace(self::$localizationIdPlaceholder, $localeId, $field);
+            list ($type, $translatedField) = Criteria::explodeFieldTypeName($fields[$key]);
+            $resolvedFieldsBackArray[] = $translatedField;
+        }
+
+        $this->resolvedFieldsBackArray = array_combine(
+            $resolvedFieldsBackArray,
+            $originalFields
+        );
+
+        return $fields;
+    }
+
+    /**
+     * @param array $result
+     * @return array
+     */
+    private function revertLocalizationPlaceholderInResults(array $result)
+    {
+        if (empty($this->resolvedFieldsBackArray)) {
+            return $result;
+        }
+
+        foreach ($result as $key => $row) {
+            $keys   = array_keys($row);
+            $values = array_values($row);
+
+            array_walk(
+                $keys,
+                function (&$field) {
+                    $field = strtr($field, $this->resolvedFieldsBackArray);
+                }
+            );
+
+            $result[$key] = array_combine($keys, $values);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $result
+     * @return array
+     */
+    private function copyPlaceholderFieldsToNormal(array $result)
+    {
+        if (empty($result)) {
+            return $result;
+        }
+
+        foreach ($result as $key => $row) {
+            $normalFields = [];
+
+            array_walk(
+                $row,
+                function ($value, $field) use (&$normalFields) {
+                    if (false !== strpos($field, self::$localizationIdPlaceholder)) {
+                        $normalKey                = str_replace('_' . self::$localizationIdPlaceholder, '', $field);
+                        $normalFields[$normalKey] = $value;
+                    }
+                }
+            );
+
+            $result[$key] = array_merge(
+                $row,
+                $normalFields
+            );
+        }
 
         return $result;
     }

@@ -27,6 +27,7 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         images.label: Images
+        anything.label: Any Text
 
         status:
             enabled: Enabled
