@@ -22,7 +22,7 @@ class PriceResponse
     protected $pricesByService = [];
 
     /**
-     * @param $string
+     * @param string $string
      * @throws \InvalidArgumentException
      */
     public function setJSON($string)
