@@ -48,13 +48,13 @@ class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->shippingOriginProvider
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
         $shippingContext = new ShippingContext();
         $shippingContext->setShippingOrigin($shippingOrigin);
 
-        $this->assertEquals($shippingContext, $this->factory->create());
+        static::assertEquals($shippingContext, $this->factory->create());
     }
 }

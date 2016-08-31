@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -32,7 +33,7 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
+        $this->shoppingList = $this->getMockBuilder(ShoppingList::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -70,6 +71,7 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
+        /** @var AddressInterface $address */
         $address = $this->getMock(OrderAddress::class);
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
@@ -93,22 +95,22 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
         $context->setSubtotal(Price::create($amount, $currency));
 
         $this->checkoutLineItemsManager
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('getData')
             ->willReturn([]);
 
         $this->shippingContextFactory
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('create')
             ->willReturn(new ShippingContext());
 
 
         $this->totalProcessorProvider
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('getTotal')
             ->with($checkout)
             ->willReturn($subtotal);
 
-        $this->assertEquals($context, $this->factory->create($checkout));
+        static::assertEquals($context, $this->factory->create($checkout));
     }
 }
