@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransport extends AbstractRestTransport
 {
-
     const API_RATES_PREFIX = 'Rate';
 
     /**

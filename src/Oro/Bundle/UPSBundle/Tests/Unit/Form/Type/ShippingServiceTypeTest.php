@@ -56,6 +56,7 @@ class ShippingServiceTypeTest extends FormIntegrationTestCase
         static::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
+        
         static::assertEquals($isValid, $form->isValid());
         static::assertEquals($expectedData, $form->getData());
     }
@@ -86,11 +87,13 @@ class ShippingServiceTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         static::assertEquals(ShippingServiceType::NAME, $this->formType->getName());
+    }
+
+    public function getBlockPrefix()
+    {
+        static::assertEquals(ShippingServiceType::NAME, $this->formType->getBlockPrefix());
     }
 }

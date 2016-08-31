@@ -42,4 +42,9 @@ class ShippingServiceCollectionTypeTest extends \PHPUnit_Framework_TestCase
     {
         static::assertEquals(ShippingServiceCollectionType::NAME, $this->formType->getName());
     }
+
+    public function testGetBlockPrefix()
+    {
+        static::assertEquals(ShippingServiceCollectionType::NAME, $this->formType->getBlockPrefix());
+    }
 }

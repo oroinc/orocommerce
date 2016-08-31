@@ -230,3 +230,7 @@ services:
 
     orob2b_checkout.factory.shipping_context_provider_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'
+        arguments:
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
+            - '@orob2b_shipping.factory.shipping_context_factory'

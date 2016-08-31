@@ -33,10 +33,11 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
     {
         $this->transport = $this->getMock(TransportInterface::class);
         $this->transport->expects(static::any())
-            ->method('getSettingsEntityFQCN()')
+            ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
         $this->formType = new UPSTransportSettingFormType($this->transport);
         $this->formType->setDataClass(self::DATA_CLASS);
+
         parent::setUp();
     }
 
@@ -78,6 +79,7 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
         static::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
+
         static::assertEquals($isValid, $form->isValid());
         static::assertEquals($expectedData, $form->getData());
     }
@@ -125,9 +127,18 @@ class UPSTransportSettingFormTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getName
-     */
+    public function testConfigureOptions()
+    {
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with([
+                'data_class' => $this->transport->getSettingsEntityFQCN()
+            ]);
+
+        $this->formType->configureOptions($resolver);
+    }
+
     public function testGetName()
     {
         static::assertEquals(UPSTransportSettingFormType::NAME, $this->formType->getName());

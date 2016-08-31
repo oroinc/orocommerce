@@ -6,7 +6,6 @@ services:
         tags:
             - { name: form.type, alias: oro_ups_transport_setting_form_type }
 
-
     oro_ups.form.type.shipping_service:
         class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType'
         calls:
