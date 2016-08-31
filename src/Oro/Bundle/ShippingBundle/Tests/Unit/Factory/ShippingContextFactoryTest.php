@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\Factory;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ConfigManager |\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginProvider |\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configManager;
+    protected $shippingOriginProvider;
 
     /**
      * @var ShippingContextFactory
@@ -21,36 +21,35 @@ class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->shippingOriginProvider = $this->getMockBuilder(ShippingOriginProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->factory = new ShippingContextFactory($this->configManager);
+        $this->factory = new ShippingContextFactory($this->shippingOriginProvider);
     }
 
     protected function tearDown()
     {
-        unset($this->factory, $this->configManager);
+        unset($this->factory, $this->shippingOriginProvider);
     }
 
     public function testCreate()
     {
         $shippingOrigin = new ShippingOrigin(
             [
-                'country' => 'US',
-                'region' => 'test',
+                'country'     => 'US',
+                'region'      => 'test',
                 'region_text' => 'test region text',
                 'postal_code' => 'test postal code',
-                'city' => 'test city',
-                'street' => 'test street 1',
-                'street2' => 'test street 2'
+                'city'        => 'test city',
+                'street'      => 'test street 1',
+                'street2'     => 'test street 2'
             ]
         );
 
-        $this->configManager
+        $this->shippingOriginProvider
             ->expects($this->once())
-            ->method('get')
-            ->with('oro_config.global')
+            ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
         $shippingContext = new ShippingContext();

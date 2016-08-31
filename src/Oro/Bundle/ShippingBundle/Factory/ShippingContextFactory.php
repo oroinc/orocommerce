@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\ShippingBundle\Factory;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 class ShippingContextFactory
 {
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var ShippingOriginProvider */
+    protected $shippingOriginProvider;
 
     /**
-     * @param ConfigManager $configManager
+     * @param ShippingOriginProvider $shippingOriginProvider
      */
     public function __construct(
-        ConfigManager $configManager
+        ShippingOriginProvider $shippingOriginProvider
     ) {
-        $this->configManager = $configManager;
+        $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
     /**
@@ -28,7 +28,7 @@ class ShippingContextFactory
     {
         $shippingContext = new ShippingContext();
 
-        $shippingContext->setShippingOrigin($this->configManager->get('oro_config.global'));
+        $shippingContext->setShippingOrigin($this->shippingOriginProvider->getSystemShippingOrigin());
 
         return $shippingContext;
     }
