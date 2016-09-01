@@ -70,6 +70,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $this->reset();
 
             $qb = $this->createQueryBuilder($rule);
+            $qb->distinct();
             $rootAlias = $this->getRootAlias($qb);
             if (!$rule->getProductUnitExpression()) {
                 $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
@@ -84,7 +85,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
 
         $this->restrictByGivenProduct($qb, $product);
-        $q = $qb->getDQL();
 
         return $qb;
     }
@@ -139,27 +139,62 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         $params = [];
-        $priceValue = (string)$this->expressionBuilder->convert(
-            $this->expressionParser->parse($rule->getRule()),
-            $qb->expr(),
-            $params,
-            $this->queryConverter->getTableAliasByColumn()
-        );
+        $priceValue = (string)$this->getValueByExpression($qb, $rule->getRule(), $params);
+
+        $currencyValue = (string)$qb->expr()->literal($rule->getCurrency());
+        $quantityValue = (string)$qb->expr()->literal($rule->getQuantity());
+        $unitValue = (string)$qb->expr()->literal($rule->getProductUnit()->getCode());
+
+        if ($rule->getCurrencyExpression()) {
+            $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
+            $qb->andWhere($qb->expr()->in($currencyValue, $rule->getPriceList()->getCurrencies()));
+        }
+        if ($rule->getProductUnitExpression()) {
+            $unitValue = sprintf(
+                'IDENTITY(%s)',
+                (string)$this->getValueByExpression(
+                    $qb,
+                    $rule->getProductUnitExpression(),
+                    $params
+                )
+            );
+            $qb->andWhere($qb->expr()->isNotNull($unitValue));
+        }
+        if ($rule->getQuantityExpression()) {
+            $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
+            $qb->andWhere($qb->expr()->gte($quantityValue, 0));
+        }
         $this->addSelectInOrder(
             $qb,
             [
                 'product' => $rootAlias . '.id',
                 'productSku' => $rootAlias . '.sku',
                 'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
-                'unit' => (string)$qb->expr()->literal($rule->getProductUnit()->getCode()),
-                'currency' => (string)$qb->expr()->literal($rule->getCurrency()),
-                'quantity' => (string)$qb->expr()->literal($rule->getQuantity()),
+                'unit' => $unitValue,
+                'currency' => $currencyValue,
+                'quantity' => $quantityValue,
                 'priceRule' => (string)$qb->expr()->literal($rule->getId()),
                 'value' => $priceValue,
             ]
         );
         $qb->andWhere($qb->expr()->gte($priceValue, 0));
         $this->applyParameters($qb, $params);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param string $expression
+     * @param array $params
+     * @return string
+     */
+    protected function getValueByExpression(QueryBuilder $qb, $expression, array $params)
+    {
+        return (string)$this->expressionBuilder->convert(
+            $this->expressionParser->parse($expression),
+            $qb->expr(),
+            $params,
+            $this->queryConverter->getTableAliasByColumn()
+        );
     }
 
     /**
@@ -324,7 +359,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             }
         }
 
-        return implode(' and ', $generatedConditions);
+        return implode(' and ', array_filter($generatedConditions));
     }
 
     /**
@@ -339,33 +374,39 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $additionalCondition = null;
         switch ($relationField) {
             case 'currency':
-                $additionalCondition = sprintf(
-                    "%s.%s.%s == '%s'",
-                    $root,
-                    $field,
-                    $relationField,
-                    $rule->getCurrency()
-                );
+                if (null === $rule->getCurrencyExpression()) {
+                    $additionalCondition = sprintf(
+                        "%s.%s.%s == '%s'",
+                        $root,
+                        $field,
+                        $relationField,
+                        $rule->getCurrency()
+                    );
+                }
                 break;
 
             case 'unit':
-                $additionalCondition = sprintf(
-                    "%s.%s.%s == '%s'",
-                    $root,
-                    $field,
-                    $relationField,
-                    $rule->getProductUnit()->getCode()
-                );
+                if (null === $rule->getProductUnitExpression()) {
+                    $additionalCondition = sprintf(
+                        "%s.%s.%s == '%s'",
+                        $root,
+                        $field,
+                        $relationField,
+                        $rule->getProductUnit()->getCode()
+                    );
+                }
                 break;
 
             case 'quantity':
-                $additionalCondition = sprintf(
-                    '%s.%s.%s == %f',
-                    $root,
-                    $field,
-                    $relationField,
-                    $rule->getQuantity()
-                );
+                if (null === $rule->getProductUnitExpression()) {
+                    $additionalCondition = sprintf(
+                        '%s.%s.%s == %f',
+                        $root,
+                        $field,
+                        $relationField,
+                        $rule->getQuantity()
+                    );
+                }
                 break;
         }
 

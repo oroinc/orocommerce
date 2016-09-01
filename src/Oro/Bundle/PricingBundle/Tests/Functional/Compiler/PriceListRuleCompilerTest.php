@@ -69,18 +69,18 @@ class PriceListRuleCompilerTest extends WebTestCase
         $priceList = $this->createPriceList();
         $this->assignProducts($priceList, [$product1, $product2]);
 
-        $priceRule = $this->createPriceRule($priceList, $condition, $rule, 1, $unitLitre, 'EUR');
+        $priceRule = $this->createPriceRule($priceList, $condition, $rule, 1, $unitLitre, 'USD');
 
         $expected = [
             [
                 $product1->getId(),
                 $priceList->getId(),
                 $unitLitre->getCode(),
-                'EUR',
+                'USD',
                 1,
                 $product1->getSku(),
                 $priceRule->getId(),
-                100
+                110
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -95,25 +95,16 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function testApplyRuleConditionsWithExpressions()
     {
-        /** @var Product $product1 */
+        $this->markTestSkipped();
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product2 */
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
 
-        /** @var Category $category1 */
-        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-
-        /** @var ProductUnit $unitLitre */
-        $unitLitre = $this->getReference('product_unit.liter');
-
-        $condition = 'product.category == ' . $category1->getId()
-            . " and product.price_attribute_price_list_1.currency == 'USD'";
-
+        $condition = 'product.category == ' . $this->getReference(LoadCategoryData::FOURTH_LEVEL2)->getId();
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
         $priceList = $this->createPriceList();
-        $this->assignProducts($priceList, [$product1, $product2]);
-
+        $this->assignProducts($priceList, [$product1, $product2, $product3]);
         $priceRule = new PriceRule();
         $priceRule->setCurrency('EUR')
             ->setPriceList($priceList)
@@ -121,8 +112,8 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setQuantity(1)
             ->setCurrencyExpression('product.price_attribute_price_list_1.currency')
             ->setProductUnitExpression('product.unitPrecisions.unit')
-            ->setQuantityExpression('product.quantity')
-            ->setProductUnit($unitLitre)
+            ->setQuantityExpression('product.price_attribute_price_list_1 + 5')
+            ->setProductUnit($this->getReference('product_unit.liter'))
             ->setRuleCondition($condition)
             ->setRule($rule);
 
@@ -130,27 +121,8 @@ class PriceListRuleCompilerTest extends WebTestCase
         $em->persist($priceRule);
         $em->flush();
 
-        $expected = [
-            [
-                $product1->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'EUR',
-                1,
-                $product1->getSku(),
-                $priceRule->getId(),
-                100
-            ],
-        ];
-//        $qb = $this->getQueryBuilder($priceRule);
         $qb = $this->compiler->compile($priceRule);
-        $q = $qb->getQuery()->getSQL();
-//        $this->assertEquals($expected, $actual);
-//
-//        // Check that cache does not affect results
-//        $qb = $this->getQueryBuilder($priceRule);
-//        $actual = $this->getActualResult($qb);
-//        $this->assertEquals($expected, $actual);
+        $expected = $qb->getQuery()->getSQL();
     }
 
     public function testRestrictByManualPrices()
