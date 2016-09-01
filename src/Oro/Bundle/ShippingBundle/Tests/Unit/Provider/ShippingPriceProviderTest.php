@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Address;
@@ -15,11 +16,11 @@ use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\FlatRatePricesAwareShippingMethod;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
@@ -154,21 +155,59 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
+     * @dataProvider destinationApplicableProvider
+     *
+     * @param ArrayCollection $destinations
+     * @param ShippingContext $context
+     * @param bool $expectedValue
      */
-    public function getApplicableShippingRulesProvider()
+    public function testDestinationApplicable(ArrayCollection $destinations, ShippingContext $context, $expectedValue)
     {
-        return [
-            'data' => [
-                'shippingRule' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => 'true',
-                    'currency' => 'USD',
-                ]),
-                'shippingMethod' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
-                'context' => $this->createContext('USD', 'US'),
-            ],
-        ];
+        $destinationApplicableReflection = self::getMethod('destinationApplicable');
+        $result = $destinationApplicableReflection->invokeArgs($this->shippingPriceProvider, [$destinations, $context]);
+
+        $this->assertEquals($expectedValue, $result);
+    }
+
+    /**
+     * @dataProvider getPricesAwareShippingMethodTypePricesProvider
+     *
+     * @param ShippingContext $context
+     * @param ShippingMethodInterface $method
+     * @param string|int|null $methodTypeIdentifier
+     * @param Price $expectedValue
+     */
+    public function testGetPricesAwareShippingMethodTypePrices(
+        ShippingContext $context,
+        ShippingMethodInterface $method,
+        $methodTypeIdentifier,
+        $expectedValue
+    ) {
+        $awareShippingMethodTypePricesReflection = self::getMethod('getAwareShippingMethodTypePrices');
+        $prices = $awareShippingMethodTypePricesReflection->invokeArgs(
+            $this->shippingPriceProvider,
+            [$context, $method, $methodTypeIdentifier]
+        );
+
+        $this->assertCount(1, $prices);
+
+        $price = reset($prices);
+
+        $this->assertInstanceOf(Price::class, $price);
+        $this->assertEquals($expectedValue->getValue(), $price->getValue());
+    }
+
+    /**
+     * @param string $name
+     * @return \ReflectionMethod
+     */
+    protected static function getMethod($name)
+    {
+        $class = new \ReflectionClass(ShippingPriceProvider::class);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+
+        return $method;
     }
 
     /**
@@ -177,8 +216,20 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function createShippingRule(array $data)
     {
+        $data['destinations'] = $this->createDestinations($data);
+        $data['methodConfigs'] = [$this->getEntity(ShippingRuleMethodConfig::class, ['method' => 'flat_rate'])];
+
+        return $this->getEntity(ShippingRule::class, $data);
+    }
+
+    /**
+     * @param array $data
+     * @return Collection|ShippingRuleDestination[]|array
+     */
+    protected function createDestinations(array $data)
+    {
         if (array_key_exists('destinations', $data)) {
-            $data['destinations'] = new ArrayCollection(array_map(function ($destinationData) {
+            return new ArrayCollection(array_map(function ($destinationData) {
                 $region = null;
                 if (array_key_exists('region', $destinationData)) {
                     $region = $this->getEntity(Region::class, ['code' => $destinationData['region']]);
@@ -194,9 +245,8 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                 ]);
             }, $data['destinations']));
         }
-        $data['methodConfigs'] = [$this->getEntity(ShippingRuleMethodConfig::class, ['method' => 'flat_rate'])];
 
-        return $this->getEntity(ShippingRule::class, $data);
+        return new ArrayCollection();
     }
 
     /**
@@ -222,7 +272,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn([])
         ;
 
-        return $this->getEntity(FlatRateShippingMethod::class, ['type' => $shippingMethodType]);
+        return $this->getEntity(FlatRatePricesAwareShippingMethod::class, ['type' => $shippingMethodType]);
     }
 
     /**
@@ -247,5 +297,81 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         return $context;
+    }
+
+    /**
+     * @return array
+     */
+    public function getApplicableShippingRulesProvider()
+    {
+        return [
+            'data' => [
+                'shippingRule' => $this->createShippingRule([
+                    'name' => 'ShippingRule.1',
+                    'conditions' => 'true',
+                    'currency' => 'USD',
+                ]),
+                'shippingMethod' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
+                'context' => $this->createContext('USD', 'US'),
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function destinationApplicableProvider()
+    {
+        return [
+            'applicable country' => [
+                'destinations' => $this->createDestinations([
+                    'destinations' => [
+                        ['country' => 'US']
+                    ]
+                ]),
+                'context' => $this->createContext('USD', 'US'),
+                'expectedValue' => true,
+            ],
+            'not applicable country' => [
+                'destinations' => $this->createDestinations([
+                    'destinations' => [
+                        ['country' => 'FR']
+                    ]
+                ]),
+                'context' => $this->createContext('USD', 'US'),
+                'expectedValue' => false,
+            ],
+            'several applicable country' => [
+                'destinations' => $this->createDestinations([
+                    'destinations' => [
+                        ['country' => 'FR'],
+                        ['country' => 'US'],
+                    ]
+                ]),
+                'context' => $this->createContext('USD', 'US'),
+                'expectedValue' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesAwareShippingMethodTypePricesProvider()
+    {
+        return [
+            'without type identifier' => [
+                'context' => $this->createContext('USD', 'US'),
+                'method' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
+                'methodTypeIdentifier' => null,
+                'expectedValue' => Price::create(5, 'USD'),
+            ],
+            'with type identifier' => [
+                'context' => $this->createContext('USD', 'US'),
+                'method' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
+                'methodTypeIdentifier' => 'primary',
+                'expectedValue' => Price::create(5, 'USD'),
+            ],
+        ];
     }
 }

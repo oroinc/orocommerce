@@ -84,7 +84,7 @@ class ShippingPriceProvider
                     $methodTypePrices = [];
                     if ($method instanceof PricesAwareShippingMethodInterface) {
                         $methodTypePrices = $this->
-                            getPricesAwareShippingMethodTypePrices($context, $method, $typeIdentifier)
+                            getAwareShippingMethodTypePrices($context, $method, $typeIdentifier)
                         ;
                     }
 
@@ -227,7 +227,7 @@ class ShippingPriceProvider
         if (count($methodTypes) > 0) {
             $methodTypePrices = [];
             if ($method instanceof PricesAwareShippingMethodInterface) {
-                $methodTypePrices = $this->getPricesAwareShippingMethodTypePrices($context, $method);
+                $methodTypePrices = $this->getAwareShippingMethodTypePrices($context, $method);
             }
 
             foreach ($methodTypes as $methodType) {
@@ -253,7 +253,7 @@ class ShippingPriceProvider
      * @param string|int|null $methodTypeIdentifier
      * @return array
      */
-    protected function getPricesAwareShippingMethodTypePrices(
+    protected function getAwareShippingMethodTypePrices(
         ShippingContextInterface $context,
         PricesAwareShippingMethodInterface $method,
         $methodTypeIdentifier = null
