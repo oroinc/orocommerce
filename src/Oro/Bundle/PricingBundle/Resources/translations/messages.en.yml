@@ -16,6 +16,7 @@ oro.pricing:
         withoutPrice: N/A
 
     pricelist:
+        actual.label: Actual
         entity_label: Price List
         entity_plural_label: Price Lists
         entity_description: Represents price list information

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -32,11 +33,12 @@ class ProductPriceEntityListenerTest extends WebTestCase
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $em->getRepository('OroPricingBundle:PriceListToProduct')
+        $em->getRepository(PriceListToProduct::class)
             ->createQueryBuilder('pltp')
             ->delete()
             ->getQuery()
             ->execute();
+        $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler')->sendScheduledTriggers();
     }
 
     public function testOnCreate()
@@ -95,7 +97,6 @@ class ProductPriceEntityListenerTest extends WebTestCase
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference(LoadProductPrices::PRODUCT_PRICE_4);
         $productPrice->setPrice(Price::create(1000, 'EUR'));
-        $em->persist($productPrice);
         $em->flush();
         $handler = $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
