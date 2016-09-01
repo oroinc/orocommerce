@@ -37,7 +37,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         $expected = [
             '02' => Price::create('8.60', 'USD'),
         ];
-        $this->assertEquals($expected, $this->priceResponse->getPricesByServices());
+        static::assertEquals($expected, $this->priceResponse->getPricesByServices());
     }
 
     public function testParseResponsePriceAsArray()
@@ -82,8 +82,8 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
             '01' => Price::create('8.60', 'USD'),
             '02' => Price::create('3.40', 'EUR'),
         ];
-        $this->assertEquals($pricesExpected, $this->priceResponse->getPricesByServices());
-        $this->assertEquals($pricesExpected['01'], $this->priceResponse->getPriceByService('01'));
+        static::assertEquals($pricesExpected, $this->priceResponse->getPricesByServices());
+        static::assertEquals($pricesExpected['01'], $this->priceResponse->getPriceByService('01'));
     }
 
     /**

@@ -5,7 +5,8 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\UPSBundle\Provider\RateRequestInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
+use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +17,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var RestClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $clientFactory;
 
@@ -34,6 +35,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->client = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface');
+
         $this->clientFactory = $this->getMock(
             'Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface'
         );
@@ -49,7 +51,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSettingsFormType()
     {
-        static::assertEquals('oro_ups_transport_setting_form_type', $this->transport->getSettingsFormType());
+        static::assertEquals('oro_ups_transport_settings_type', $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
@@ -57,13 +59,22 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('Oro\Bundle\UPSBundle\Entity\UPSTransport', $this->transport->getSettingsEntityFQCN());
     }
 
-    public function testGetRates()
+    public function testGetPrices()
     {
-        /** @var RateRequestInterface|\PHPUnit_Framework_MockObject_MockObject $rateRequest **/
-        $rateRequest = $this->getMock(RateRequestInterface::class);
+        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest **/
+        $rateRequest = $this->getMock(PriceRequest::class);
+
         $rateRequest->expects(static::once())
-            ->method('toArray')
-            ->willReturn([]);
+            ->method('setSecurity')
+            ->willReturn($rateRequest);
+
+        $rateRequest->expects(static::once())
+            ->method('setShipperName')
+            ->willReturn($rateRequest);
+
+        $rateRequest->expects(static::once())
+            ->method('setShipperNumber')
+            ->willReturn($rateRequest);
 
         $integration = new Channel();
         $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
@@ -92,13 +103,31 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('createRestClient')
             ->willReturn($this->client);
 
-        $restResponce = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
-
+        $restResponse = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+        
+        $json = '{
+                   "RateResponse":{
+                      "RatedShipment":{
+                         "Service": {
+                            "Code":"02"
+                         },
+                         "TotalCharges":{
+                            "CurrencyCode":"USD",
+                            "MonetaryValue":"8.60"
+                         }
+                      }
+                   }
+                }';
+        
+        $restResponse->expects(static::once())
+            ->method('json')
+            ->willReturn($json);
+            
         $this->client->expects(static::once())
             ->method('post')
-            ->willReturn($restResponce);
+            ->willReturn($restResponse);
 
         //TODO: add test assertions
-        $this->transport->getRates($rateRequest);
+        $this->transport->getPrices($rateRequest);
     }
 }

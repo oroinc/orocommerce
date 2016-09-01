@@ -5,8 +5,11 @@ namespace Oro\Bundle\UPSBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
+use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Oro\Bundle\UPSBundle\Model\PriceResponse;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -28,7 +31,9 @@ class UPSTransport extends AbstractRestTransport
     }
 
     /**
-     * {@inheritdoc}
+     * @param ParameterBag $parameterBag
+     * @throws \InvalidArgumentException
+     * @return string
      */
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
@@ -40,6 +45,7 @@ class UPSTransport extends AbstractRestTransport
      */
     protected function getClientOptions(ParameterBag $parameterBag)
     {
+        return [];
     }
 
     /**
@@ -55,7 +61,7 @@ class UPSTransport extends AbstractRestTransport
      */
     public function getSettingsFormType()
     {
-        return 'oro_ups_transport_setting_form_type';
+        return 'oro_ups_transport_settings_type';
     }
 
     /**
@@ -68,7 +74,10 @@ class UPSTransport extends AbstractRestTransport
 
     /**
      * @param PriceRequest $priceRequest
-     * @return array
+     * @throws RestException
+     * @throws InvalidConfigurationException
+     * @throws \InvalidArgumentException
+     * @return PriceResponse|null
      */
     public function getPrices(PriceRequest $priceRequest)
     {
@@ -92,7 +101,10 @@ class UPSTransport extends AbstractRestTransport
                     ->setShipperName($parameterBag->get('shipping_account_name'))
                     ->setShipperNumber($parameterBag->get('shipping_account_number'));
 
-                return $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
+                $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
+                $priceResponse = new PriceResponse();
+                $priceResponse->parseJSON($json);
+                return $priceResponse;
             }
         }
 

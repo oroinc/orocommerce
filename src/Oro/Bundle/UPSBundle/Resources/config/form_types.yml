@@ -1,20 +1,8 @@
 services:
-    oro_ups.form.type.transport_setting:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingFormType'
+    oro_ups.form.type.transport_settings:
+        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType'
         arguments:
             - "@oro_ups.provider.transport"
-            - "@oro_config.global"
+            - '@orob2b_shipping.shipping_origin.provider'
         tags:
-            - { name: form.type, alias: oro_ups_transport_setting_form_type }
-
-    oro_ups.form.type.shipping_service:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceType'
-        calls:
-            - [setDataClass, ['Oro\Bundle\UPSBundle\Entity\ShippingService']]
-        tags:
-            - { name: form.type, alias: oro_ups_shipping_service }
-
-    oro_ups.form.type.shipping_service_collection:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType'
-        tags:
-            - { name: form.type, alias: oro_ups_shipping_service_collection }
+            - { name: form.type, alias: oro_ups_transport_settings_type }

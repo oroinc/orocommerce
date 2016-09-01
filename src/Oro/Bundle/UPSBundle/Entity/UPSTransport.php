@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 
@@ -63,12 +64,18 @@ class UPSTransport extends Transport
     protected $shippingAccountName;
 
     /**
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
+     * @ORM\JoinColumn(name="ups_country_code", referencedColumnName="iso2_code", nullable=false)
+     */
+    protected $country;
+
+    /**
      * @var Collection|ShippingService[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="ShippingService",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      targetEntity="ShippingService"
      * )
      * @ORM\JoinTable(
      *      name="oro_ups_transport_ship_service",
@@ -213,6 +220,24 @@ class UPSTransport extends Transport
     }
 
     /**
+     * @param Country $country
+     * @return $this
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+    /**
+     * @return Country
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
      * @return Collection|ShippingService[]
      */
     public function getApplicableShippingServices()
@@ -278,6 +303,7 @@ class UPSTransport extends Transport
                     'base_url' => $this->getBaseUrl(),
                     'shipping_account_name' => $this->getShippingAccountName(),
                     'shipping_account_number' => $this->getShippingAccountNumber(),
+                    'country' => $this->getCountry(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
                 ]
             );

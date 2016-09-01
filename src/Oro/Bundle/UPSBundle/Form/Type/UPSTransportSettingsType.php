@@ -2,29 +2,31 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Doctrine\ORM\EntityRepository;
-
-class UPSTransportSettingFormType extends AbstractType
+class UPSTransportSettingsType extends AbstractType
 {
-    const NAME = 'oro_ups_transport_setting_form_type';
+    const NAME = 'oro_ups_transport_settings_type';
 
     /**
      * @var TransportInterface
      */
     protected $transport;
-    
+
     /**
-     * @var ConfigManager
+     * @var ShippingOriginProvider
      */
-    protected $configManager;
+    protected $shippingOriginProvider;
 
     /**
      * @var string
@@ -33,14 +35,14 @@ class UPSTransportSettingFormType extends AbstractType
 
     /**
      * @param TransportInterface $transport
-     * @param ConfigManager $configManager
+     * @param ShippingOriginProvider $shippingOriginProvider
      */
     public function __construct(
         TransportInterface $transport,
-        ConfigManager $configManager
+        ShippingOriginProvider $shippingOriginProvider
     ) {
         $this->transport  = $transport;
-        $this->configManager = $configManager;
+        $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
     /**
@@ -102,8 +104,15 @@ class UPSTransportSettingFormType extends AbstractType
                 'constraints' => [new NotBlank()]
             ]
         );
-        
-        $shippingOrigin = $this->configManager->get('orob2b_shipping.shipping_origin');
+        $builder->add(
+            'country',
+            CountryType::class,
+            [
+                'label' => 'oro.ups.transport.country.label',
+                'required' => true,
+                'constraints' => [new NotBlank()],
+            ]
+        );
         $builder->add(
             'applicableShippingServices',
             'entity',
@@ -113,13 +122,32 @@ class UPSTransportSettingFormType extends AbstractType
                 'mapped' => true,
                 'multiple' => true,
                 'class' => 'Oro\Bundle\UPSBundle\Entity\ShippingService',
-                'query_builder' => function (EntityRepository $repository) use ($shippingOrigin) {
-                    return $repository->createQueryBuilder('shippingService')
-                    ->andWhere('shippingService.country = :country')
-                    ->setParameter(':country', $shippingOrigin['country']);
-                }
             ]
         );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var UPSTransport $transport */
+            $transport = $event->getData();
+            $form = $event->getForm();
+
+            if (!$transport || null === $transport->getCountry()) {
+                $country = $this
+                    ->shippingOriginProvider
+                    ->getSystemShippingOrigin()
+                    ->getCountry();
+                
+                $form->remove('country');
+                $form->add(
+                    'country',
+                    CountryType::class,
+                    [
+                        'label' => 'oro.ups.transport.country.label',
+                        'required' => true,
+                        'constraints' => [new NotBlank()],
+                        'data' => $country
+                    ]
+                );
+            }
+        });
     }
 
     /**
