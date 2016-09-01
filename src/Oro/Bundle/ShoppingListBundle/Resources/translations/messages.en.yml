@@ -142,6 +142,9 @@ oro:
 
                 view_details.label: 'View Details'
                 create_new_shopping_list.label: 'Create New List'
+
+                view_order.label: 'View Order'
+                create_new_order.label: 'Create a New Order'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 line_item_deleted: 'Shopping list item has been deleted'

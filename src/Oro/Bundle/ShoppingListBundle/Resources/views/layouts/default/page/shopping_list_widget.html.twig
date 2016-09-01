@@ -33,7 +33,7 @@
 {% block _main_menu_shopping_lists_widget_content_widget %}
     {% set attr = attr|merge({
         id: 'order-widget-dropdown',
-        class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode"
+        class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode shopping-list-dropdown"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -58,26 +58,31 @@
 
 {% block _main_menu_shopping_lists_widget_content_item_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " order-widget__item"
+        class: attr.class|default('') ~ " order-widget__item shopping-list-dropdown__item"
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <div class="order-widget__order-name text-uppercase">
-            <span class="shopping-list-label order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label }}</span>
+        <div class="shopping-list-dropdown__radio">
+            <label class="custom-radio">
+                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" value="id" checked="{{ shoppingList.isCurrent }}">
+                <span class="custom-radio__text"></span>
+            </label>
         </div>
-        <table class="order-widget__table">
-            <tbody>
-            <tr>
-                <td>{{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
-                <td class="text-right">
-                    {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
-            <span>{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} </span><i class="cf-right-open-mini"></i>
+        <a class="shopping-list-dropdown__link" href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
+            <span class="shopping-list-dropdown__title">
+                <span class="shopping-list-dropdown__name">
+                    <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}" title="{{ shoppingList.label }}">{{ shoppingList.label }}</span>
+                </span>
+                <span class="shopping-list-dropdown__details">
+                {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
+                | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}</span>
+            </span>
+            <span class="shopping-list-dropdown__desc">
+                220 Lumen Rechargeable Headlamp
+                Credit Card Pin Pad Reader
+                Women’s Slip-On Clog
+            </span>
+            <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_order.label'|trans }} <i class="cf-right-open-mini"></i></span>
         </a>
     </div>
 {% endblock %}
@@ -87,7 +92,7 @@
     {{ UI.clientLink({
         'aCss': 'order-widget__create-btn',
         'iCss': 'cf-add_circle nmmt3-md',
-        'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+        'label' : 'oro.frontend.shoppinglist.view.create_new_order.label'|trans,
         'widget' : {
             'type' : 'shopping-list-create',
             'options': {

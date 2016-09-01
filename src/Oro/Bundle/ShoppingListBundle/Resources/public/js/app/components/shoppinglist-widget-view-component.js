@@ -32,7 +32,7 @@ define(function(require) {
             if (!this.shoppingListId) {
                 return; // no ID, no update possible
             }
-            this.$el.find('.order-widget__order-name-span-' + this.shoppingListId)
+            this.$el.find('.shopping-list-dropdown__name-inner--' + this.shoppingListId)
                 .text(updateData.label);
         },
 

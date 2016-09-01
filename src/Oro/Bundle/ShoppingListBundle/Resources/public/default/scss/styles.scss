@@ -5,10 +5,15 @@
 
 @import 'components/products-widget';
 @import 'components/shopping-list-widget';
+
 @import 'components/shopping-lists/shopping-lists';
 @import 'components/shopping-lists-link/shopping-lists-link';
 @import 'components/shopping-lists-popup/shopping-lists-popup';
 @import 'components/shopping-lists-units/shopping-lists-units';
 @import 'components/shopping-lists-modify/shopping-lists-modify';
+
 @import 'components/sidebar';
 @import 'components/shopping-list-view.scss';
+
+@import './components/custom-radio/custom-radio';
+@import './components/shopping-list-dropdown/shopping-list-dropdown';

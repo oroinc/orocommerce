@@ -1,0 +1,40 @@
+.custom-radio {
+    display: inline-block;
+
+    width: 13px;
+    height: 13px;
+    margin: 0;
+
+    line-height: 13px;
+
+    &__control {
+        display: none;
+    }
+
+    &__text {
+        display: block;
+    }
+
+    &__control + &__text::before {
+        font-size: 20px;
+
+        display: block;
+
+        width: 13px;
+        height: 13px;
+
+        line-height: 10px;
+        content: '•';
+        text-align: center;
+
+        border: 1px solid #cdcdcd;
+        border-radius: 50%;
+        color: #fff;
+        background: #fff;
+    }
+
+    &__control:checked + &__text::before {
+        color: #3991c7;
+        background: #ebebeb;
+    }
+}
