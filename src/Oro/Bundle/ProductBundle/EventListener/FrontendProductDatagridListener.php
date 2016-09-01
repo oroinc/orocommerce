@@ -7,7 +7,6 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
@@ -15,6 +14,7 @@ use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\DataGridBundle\Event\AbstractResultAfter;
 
 class FrontendProductDatagridListener
 {
@@ -148,9 +148,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param AbstractResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(AbstractResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -167,11 +167,11 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param AbstractResultAfter $event
      * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
+    protected function addProductImages(AbstractResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];

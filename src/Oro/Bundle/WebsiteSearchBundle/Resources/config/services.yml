@@ -8,7 +8,6 @@ services:
         class: %oro_website_search.mock.class%
         arguments:
             - '@doctrine.orm.entity_manager'
-            - '@oro_locale.provider.current_localization'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
