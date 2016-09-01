@@ -25,7 +25,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['payment_term_id'], 'IDX_4F66B6F617653B16', []);
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_payment_term'),

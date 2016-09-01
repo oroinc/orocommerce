@@ -69,6 +69,8 @@ class ProductImage extends ExtendProductImage
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->types = new ArrayCollection();
     }
 
