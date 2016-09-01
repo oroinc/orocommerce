@@ -17,6 +17,7 @@ use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
