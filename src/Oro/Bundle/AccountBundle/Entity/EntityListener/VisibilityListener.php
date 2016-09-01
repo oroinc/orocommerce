@@ -2,23 +2,29 @@
 
 namespace Oro\Bundle\AccountBundle\Entity\EntityListener;
 
-use Oro\Bundle\AccountBundle\Async\Topics;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Model\VisibilityTriggerHandler;
+use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
 
-class ProductVisibilityListener
+class VisibilityListener
 {
     /**
-     * @var VisibilityTriggerHandler
+     * @var string
+     */
+    protected $topic = '';
+    
+    /**
+     * @var VisibilityMessageHandler
      */
     protected $productVisibilityChangeTriggerHandler;
 
     /**
-     * @param VisibilityTriggerHandler $productVisibilityChangeTriggerHandler
+     * @param VisibilityMessageHandler $productVisibilityChangeTriggerHandler
+     * @param string $topic
      */
-    public function __construct(VisibilityTriggerHandler $productVisibilityChangeTriggerHandler)
+    public function __construct(VisibilityMessageHandler $productVisibilityChangeTriggerHandler, $topic)
     {
         $this->productVisibilityChangeTriggerHandler = $productVisibilityChangeTriggerHandler;
+        $this->topic = (string)$topic;
     }
     
     /**
@@ -28,8 +34,8 @@ class ProductVisibilityListener
      */
     public function postPersist(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addTriggersForProductVisibility(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+            $this->topic,
             $productVisibility
         );
     }
@@ -41,8 +47,8 @@ class ProductVisibilityListener
      */
     public function preUpdate(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addTriggersForProductVisibility(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+            $this->topic,
             $productVisibility
         );
     }
@@ -54,8 +60,8 @@ class ProductVisibilityListener
      */
     public function preRemove(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addTriggersForProductVisibility(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+            $this->topic,
             $productVisibility
         );
     }

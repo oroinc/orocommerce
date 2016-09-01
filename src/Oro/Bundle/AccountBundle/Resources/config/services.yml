@@ -872,24 +872,25 @@ services:
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
 
-    orob2b_account.visibility_trigger_factory:
-        class: 'Oro\Bundle\AccountBundle\Model\VisibilityTriggerFactory'
+    orob2b_account.visibility_message_factory:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory'
         arguments:
             - '@doctrine'
 
-    orob2b_account.product_visibility_trigger_handler:
-        class: 'Oro\Bundle\AccountBundle\Model\VisibilityTriggerHandler'
+    orob2b_account.visibility_message_handler:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler'
         arguments:
-            - '@orob2b_account.visibility_trigger_factory'
+            - '@orob2b_account.visibility_message_factory'
             - '@oro_message_queue.client.message_producer'
         tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
 
     orob2b_account.entity_listener.product_visibility:
-       class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\ProductVisibilityListener'
+       class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\VisibilityListener'
        public: false
        arguments:
-           - '@orob2b_account.product_visibility_trigger_handler'
+           - '@orob2b_account.visibility_message_handler'
+           - 'orob2b_account.visibility.resolve_product_visibility'
        tags:
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.product_visibility.class%', event: preUpdate }
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.product_visibility.class%', event: preRemove }
@@ -899,11 +900,11 @@ services:
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: preUpdate }
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: postPersist }
 
-    orob2b_account.async.product_visibility_processor:
-        class: 'Oro\Bundle\AccountBundle\Async\ProductVisibilityProcessor'
+    orob2b_account.async.visibility_processor:
+        class: 'Oro\Bundle\AccountBundle\Async\VisibilityProcessor'
         arguments:
             - '@doctrine'
-            - '@orob2b_account.visibility_trigger_factory'
+            - '@orob2b_account.visibility_message_factory'
             - '@orob2b_account.visibility.cache.product.cache_builder'
             - '@logger'
         tags:

@@ -48,6 +48,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
 
     public function testDeleteByProduct()
     {
+        $this->markTestSkipped('Will be done in scope BB-4124');
         $repository = $this->getRepository();
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
@@ -104,10 +105,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
             ],
         ];
     }
-    public function clearTableDataProvider()
-    {
-        return ['expected_rows' => [5]];
-    }
+
     /**
      * @inheritDoc
      */

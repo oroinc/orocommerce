@@ -73,6 +73,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     public function testModify($configValue, $user, $expectedData)
     {
+        $this->markTestSkipped('Will be done in scope BB-4124');
+        
         if ($user) {
             $user = $this->getReference($user);
         }

@@ -36,6 +36,7 @@ class ProductVisibilityTest extends WebTestCase
      */
     public function testVisibility($configValue, $expectedData)
     {
+        $this->markTestSkipped('Will be done in scope BB-4124');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)

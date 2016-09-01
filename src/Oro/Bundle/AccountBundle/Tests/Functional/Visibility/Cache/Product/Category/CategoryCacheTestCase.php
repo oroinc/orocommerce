@@ -31,9 +31,6 @@ abstract class CategoryCacheTestCase extends WebTestCase
             'hiddenCategories' => $this->getHiddenCategories(),
             'hiddenCategoriesByAccountGroups' => $this->getHiddenCategoriesByAccountGroups(),
             'hiddenCategoriesByAccounts' => $this->getHiddenCategoriesByAccounts(),
-            'hiddenProducts' => $this->getHiddenProducts(),
-            'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
-            'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
         ]);
     }
 

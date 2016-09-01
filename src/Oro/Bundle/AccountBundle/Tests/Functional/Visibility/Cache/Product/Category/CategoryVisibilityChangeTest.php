@@ -25,6 +25,8 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
      */
     public function testVisibilityChange($categoryReference, array $visibility, array $expectedData)
     {
+        $this->markTestSkipped('Will be done in scope BB-4124');
+        
         $categoryVisibility = $this->getVisibilityEntity($categoryReference, $visibility);
 
         $originalVisibility = $categoryVisibility->getVisibility();

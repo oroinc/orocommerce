@@ -3,8 +3,9 @@
 namespace Oro\Bundle\AccountBundle\Async;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\AccountBundle\Model\VisibilityTriggerFactory;
+use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -14,7 +15,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class VisibilityProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
      * @var RegistryInterface
@@ -22,9 +23,9 @@ class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubs
     protected $registry;
 
     /**
-     * @var VisibilityTriggerFactory
+     * @var VisibilityMessageFactory
      */
-    protected $triggerFactory;
+    protected $messageFactory;
 
     /**
      * @var CacheBuilderInterface
@@ -38,20 +39,20 @@ class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubs
 
     /**
      * @param RegistryInterface $registry
-     * @param VisibilityTriggerFactory $triggerFactory
+     * @param VisibilityMessageFactory $messageFactory
      * @param CacheBuilderInterface $cacheBuilder
      * @param LoggerInterface $logger
      */
     public function __construct(
         RegistryInterface $registry,
-        VisibilityTriggerFactory $triggerFactory,
+        VisibilityMessageFactory $messageFactory,
         CacheBuilderInterface $cacheBuilder,
         LoggerInterface $logger
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->cacheBuilder = $cacheBuilder;
-        $this->triggerFactory = $triggerFactory;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
@@ -64,7 +65,7 @@ class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubs
 
         try {
             $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->triggerFactory->getVisibilityFromTrigger($messageData);
+            $visibilityEntity = $this->messageFactory->getVisibilityFromMessage($messageData);
 
             $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
             $em->commit();
@@ -87,7 +88,7 @@ class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubs
                 )
             );
 
-            return self::REJECT;
+            return self::REQUEUE;
         }
 
         return self::ACK;
@@ -108,6 +109,6 @@ class ProductVisibilityProcessor implements MessageProcessorInterface, TopicSubs
      */
     protected function getEntityManager()
     {
-        return $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        return $this->registry->getManagerForClass(ProductVisibilityResolved::class);
     }
 }
