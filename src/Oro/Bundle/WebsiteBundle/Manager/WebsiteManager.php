@@ -48,6 +48,16 @@ class WebsiteManager
     }
 
     /**
+     * @return Website
+     */
+    public function getDefaultWebsite()
+    {
+        return $this->getEntityManager()
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
+    }
+
+    /**
      * @return EntityManager
      */
     protected function getEntityManager()
@@ -65,15 +75,5 @@ class WebsiteManager
         }
 
         return $this->currentWebsite;
-    }
-
-    /**
-     * @return Website
-     */
-    public function getDefaultWebsite()
-    {
-        return $this->getEntityManager()
-            ->getRepository(Website::class)
-            ->getDefaultWebsite();
     }
 }

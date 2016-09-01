@@ -380,15 +380,12 @@ services:
 
     orob2b_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
-        calls:
-            - [setPriceListClass, ['%orob2b_pricing.entity.price_list.class%']]
         arguments:
             - '@request_stack'
             - '@oro_security.security_facade'
             - '@orob2b_pricing.model.price_list_tree_handler'
             - '@doctrine'
             - '@orob2b_account.provider.account_user_relations_provider'
-            - '@orob2b_frontend.request.frontend_helper'
             - '@orob2b_website.manager'
 
     orob2b_pricing.model.price_list_tree_handler:
@@ -397,8 +394,6 @@ services:
             - '@doctrine'
             - '@orob2b_website.manager'
             - '@oro_config.global'
-        calls:
-            - [setPriceListClass, ['%orob2b_pricing.entity.combined_price_list.class%']]
 
     orob2b_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'

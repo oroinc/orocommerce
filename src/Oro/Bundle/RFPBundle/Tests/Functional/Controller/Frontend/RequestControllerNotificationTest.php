@@ -5,10 +5,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @dbIsolation
@@ -36,19 +38,16 @@ class RequestControllerNotificationTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadRequestData::class,
+                LoadProductPrices::class,
             ]
         );
 
         $this->client->enableProfiler();
 
-        $this->em = $this
-            ->client
-            ->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityManager('Oro\Bundle\UserBundle\Entity\User');
+        $this->em = $this->client->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(User::class);
 
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }
@@ -155,6 +154,10 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->assertEmailSent([$saleRep], 2);
     }
 
+    /**
+     * @param array $usersToSendTo
+     * @param int $numberOfMessagesExpected
+     */
     protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)
     {
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
@@ -206,6 +209,9 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $parameters);
     }
 
+    /**
+     * @return array
+     */
     protected function getFormData()
     {
         return [
