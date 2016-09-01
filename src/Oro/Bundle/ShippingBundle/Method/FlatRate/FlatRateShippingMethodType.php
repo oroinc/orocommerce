@@ -54,10 +54,10 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function calculatePrice(ShippingContextInterface $context, array $options)
+    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
-        $price = $options[static::PRICE_OPTION];
-        switch ($options[static::TYPE_OPTION]) {
+        $price = $typeOptions[static::PRICE_OPTION];
+        switch ($typeOptions[static::TYPE_OPTION]) {
             case static::PER_ORDER_TYPE:
                 break;
             case static::PER_ITEM_TYPE:
@@ -71,10 +71,10 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
         }
 
         $handlingFee = 0;
-        if ($options[static::HANDLING_FEE_OPTION]) {
-            $handlingFee = $options[static::HANDLING_FEE_OPTION];
+        if ($typeOptions[static::HANDLING_FEE_OPTION]) {
+            $handlingFee = $typeOptions[static::HANDLING_FEE_OPTION];
         }
 
-        return Price::create((float)$price + (float)$handlingFee, $options[static::CURRENCY_OPTION]);
+        return Price::create((float)$price + (float)$handlingFee, $context->getCurrency());
     }
 }

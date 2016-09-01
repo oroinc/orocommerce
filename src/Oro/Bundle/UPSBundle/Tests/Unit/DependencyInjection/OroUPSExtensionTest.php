@@ -25,7 +25,11 @@ class OroUPSExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
-            'oro_ups.provider.channel'
+            'oro_ups.provider.channel',
+            'oro_ups.provider.transport',
+            'oro_ups.form.type.transport_setting',
+            'oro_ups.form.type.shipping_service',
+            'oro_ups.form.type.shipping_service_collection'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

@@ -8,8 +8,9 @@ interface PricesAwareShippingMethodInterface
 {
     /**
      * @param ShippingContextInterface $context
+     * @param array $methodOptions
      * @param array $optionsByTypes
      * @return array
      */
-    public function calculatePrices(ShippingContextInterface $context, array $optionsByTypes);
+    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes);
 }

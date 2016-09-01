@@ -43,7 +43,7 @@ class FlatRateShippingMethodTypeOptionsType extends AbstractType
             ->add(FlatRateShippingMethodType::PRICE_OPTION, NumberType::class, array_merge([
                 'required' => true,
                 'label' => 'oro.shipping.method.flat_rate.price.label',
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotBlank(['groups' => ['Enabled']])]
             ], $priceOptions))
             ->add(FlatRateShippingMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
                 'label' => 'oro.shipping.method.flat_rate.handling_fee.label',
