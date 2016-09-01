@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
+use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
@@ -117,6 +117,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
+        $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
         foreach (self::$itemsData as $reference => $itemData) {
             $item = new Item;
             $item
@@ -152,8 +153,8 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
 
     /**
      * @param Item $item
-     * @param $collection
-     * @param $fieldObject
+     * @param Collection $collection
+     * @param ItemFieldInterface $fieldObject
      * @param array $fieldsData
      */
     private function populateFields(

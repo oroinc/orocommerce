@@ -4,9 +4,13 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
+use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 trait SearchTestTrait
 {
@@ -15,16 +19,18 @@ trait SearchTestTrait
      */
     public function truncateIndexTextTable()
     {
-        /** @var EntityRepository $repository */
-        /** @var WebTestCase $this */
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(IndexText::class)
-            ->getRepository(IndexText::class);
+        /** @var OroEntityManager $manager */
+        $manager = $this->getDoctrine()->getManager('search');
 
-        $repository->createQueryBuilder('t')
-            ->delete()
-            ->getQuery()
-            ->execute();
+        if ($manager->getConnection()->getDatabasePlatform()->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
+            /** @var EntityRepository $repository */
+            $repository = $this->getDoctrine()->getRepository(IndexText::class, 'search');
+
+            $repository->createQueryBuilder('t')
+                ->delete()
+                ->getQuery()
+                ->execute();
+        }
     }
 
     /**
@@ -32,8 +38,16 @@ trait SearchTestTrait
      */
     private function getItemRepository()
     {
-        /** @var WebTestCase $this */
-        return $this->getContainer()->get('doctrine')->getRepository(Item::class, 'search');
+        return $this->getDoctrine()->getRepository(Item::class, 'search');
+    }
+
+    /**
+     * @return \Oro\Bundle\EntityBundle\ORM\Registry
+     */
+    private function getDoctrine()
+    {
+        /** @var ContainerAwareTrait $this */
+        return $this->getContainer()->get('doctrine');
     }
 
     /**
@@ -42,10 +56,7 @@ trait SearchTestTrait
      */
     private function getRepository($entity)
     {
-        /** @var WebTestCase $this */
-        return $this->getContainer()
-            ->get('doctrine.orm.search_entity_manager')
-            ->getRepository($entity);
+        return $this->getDoctrine()->getRepository($entity, 'search');
     }
 
     /**

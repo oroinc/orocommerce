@@ -9,6 +9,7 @@ parameters:
     oro_website_search.query_factory.class:         Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
     oro_website_search.select_data.listener.class:  Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
     oro_website_search.entity.item.class: Oro\Bundle\WebsiteSearchBundle\Entity\Item
+    oro_website_search.index_text_table_name: oro_website_search_text
 
 services:
     oro_website_search.resolver.query_placeholder:
@@ -91,7 +92,7 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
         arguments:
             - '%database_driver%'
-            - 'oro_website_search_text'
+            - '%oro_website_search.index_text_table_name%'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 
@@ -124,8 +125,8 @@ services:
             - [setRegistry,  ['@doctrine']]
 
     oro_website_search.fulltext_index_manager:
-        class: '%oro_search.fulltext_index_manager.class%'
+        class: 'Oro\Bundle\SearchBundle\Engine\FulltextIndexManager'
         arguments:
             - '@doctrine.dbal.default_connection'
             - '%oro_search.drivers%'
-            - 'oro_website_search_text'
+            - '%oro_website_search.index_text_table_name%'

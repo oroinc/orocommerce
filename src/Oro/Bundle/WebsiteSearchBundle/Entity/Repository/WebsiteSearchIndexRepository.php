@@ -4,7 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
 class WebsiteSearchIndexRepository extends SearchIndexRepository
 {
@@ -28,42 +30,39 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
                 'entityIds' => $entityIds
             ]);
 
-        $parameters = [$entityClass];
-
         if (null !== $entityAlias) {
             $queryBuilder
                 ->andWhere($queryBuilder->expr()->eq('item.alias', ':entityAlias'))
                 ->setParameter('entityAlias', $entityAlias);
-
-            $parameters[] = $entityAlias;
         }
 
-        $this->deleteFromIndexTextTable(clone $queryBuilder, $entityIds, $parameters);
+        $this->deleteFromIndexTextTable(clone $queryBuilder);
 
         $queryBuilder->delete()->getQuery()->execute();
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param array $entityIds
-     * @param array $stringParameters
+     * We need to remove info manually as fulltext index in MySQL only available in MyISAM engine which doesn't support
+     * cascade deletes by a foreign key.
+     *
+     * @param QueryBuilder $subQueryBuilder
      */
-    private function deleteFromIndexTextTable(QueryBuilder $queryBuilder, $entityIds, array $stringParameters)
+    private function deleteFromIndexTextTable(QueryBuilder $subQueryBuilder)
     {
-        $subQuery = $queryBuilder->select('DISTINCT item.id')->getQuery()->getSQL();
+        $platformName = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
 
-        $unnamedParameters = str_repeat('?,', count($entityIds) - 1) . '?';
-        $subQuery = str_replace('IN (?)', 'IN (' . $unnamedParameters . ')', $subQuery);
+        if (DatabasePlatformInterface::DATABASE_MYSQL === $platformName) {
 
-        $query = 'DELETE FROM oro_website_search_text WHERE item_id IN (' . $subQuery . ')';
+            $subQueryDQL = $subQueryBuilder->select('item.id')->getDQL();
 
-        $parameterTypes = array_fill(0, count($entityIds), \PDO::PARAM_INT);
-        $parameterTypes = array_merge($parameterTypes, array_fill(0, count($stringParameters) - 1, \PDO::PARAM_STR));
-
-        $this->_em->getConnection()->executeQuery(
-            $query,
-            array_merge($entityIds, $stringParameters),
-            $parameterTypes
-        );
+            $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+            $queryBuilder
+                ->from(IndexText::class, 'indexText')
+                ->delete()
+                ->where($queryBuilder->expr()->in('indexText.item', $subQueryDQL))
+                ->setParameters($subQueryBuilder->getParameters())
+                ->getQuery()
+                ->execute();
+        }
     }
 }

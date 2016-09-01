@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+/**
+ * This is a stub implementation and will be replaced with real implementation in BB-4076.
+ */
 class Mapper
 {
     /**
