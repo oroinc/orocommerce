@@ -3,24 +3,19 @@
 namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
-use Oro\Bundle\PaymentBundle\Event\ResolveShippingAddressOptionsEvent;
+use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
-class ResolveShippingAddressOptionsListener
+class ExtractShippingAddressOptionsListener
 {
     /**
-     * @param ResolveShippingAddressOptionsEvent $event
+     * @param ExtractShippingAddressOptionsEvent $event
      * @throws IncorrectEntityException
      */
-    public function onResolveShippingAddressOptions(ResolveShippingAddressOptionsEvent $event)
+    public function onExtractShippingAddressOptions(ExtractShippingAddressOptionsEvent $event)
     {
         /** @var OrderAddress $entity */
         $entity = $event->getEntity();
-
-        if (!$entity instanceof OrderAddress) {
-            throw new IncorrectEntityException("OrderAddress Entity was expected");
-        }
-
         $options = [
             (string)$entity->getFirstName(),
             (string)$entity->getLastName(),
@@ -32,6 +27,6 @@ class ResolveShippingAddressOptionsListener
             (string)$entity->getCountryIso2(),
         ];
 
-        $event->setOptions(array_combine($event->getKeys(), $options));
+        $event->setOptions($event->applyKeys($options));
     }
 }

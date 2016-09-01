@@ -3,14 +3,14 @@
 namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PaymentBundle\Event\ResolveLineItemOptionsEvent;
+use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 
-class ResolveLineItemOptionsListener
+class ExtractLineItemPaymentOptionsListener
 {
     /**
-     * @param ResolveLineItemOptionsEvent $event
+     * @param ExtractLineItemPaymentOptionsEvent $event
      */
-    public function onResolveLineItemOptions(ResolveLineItemOptionsEvent $event)
+    public function onExtractLineItemPaymentOptions(ExtractLineItemPaymentOptionsEvent $event)
     {
         $entity = $event->getEntity();
         $lineItems = $entity->getLineItems();
@@ -33,7 +33,7 @@ class ResolveLineItemOptionsListener
                 (int)$lineItem->getQuantity()
             ];
 
-            $options[] = array_combine($event->getKeys(), $lineItemOptions);
+            $options[] = $event->applyKeys($lineItemOptions);
         }
 
         $event->setOptions($options);

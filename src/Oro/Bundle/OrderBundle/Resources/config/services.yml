@@ -245,12 +245,12 @@ services:
         tags:
             - { name: oro_user.privilege_category}
 
-    oro_order.event_listener.resolve_line_item_options:
-        class: 'Oro\Bundle\OrderBundle\EventListener\ResolveLineItemOptionsListener'
+    oro_order.event_listener.extract_line_item_options:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.event.resolve_line_item_options, method: onResolveLineItemOptions }
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions }
 
-    oro_order.event_listener.resolve_shipping_address_options:
-        class: 'Oro\Bundle\OrderBundle\EventListener\ResolveShippingAddressOptionsListener'
+    oro_order.event_listener.extract_shipping_address_options.orderaddress:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractShippingAddressOptionsListener'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.event.resolve_shipping_address_options, method: onResolveShippingAddressOptions }
+            - { name: kernel.event_listener, event: oro_payment.event.extract_shipping_address_options.orderaddress, method: onExtractShippingAddressOptions }
