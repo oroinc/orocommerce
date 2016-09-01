@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Indexer;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -145,8 +145,8 @@ class IndexerTest extends WebTestCase
 
         $website = $this->doctrineHelper->getEntityRepository(Website::class)->findOneBy([]);
         $this->dispatcher->addListener(
-            RestrictIndexEntitiesEvent::NAME,
-            function (RestrictIndexEntitiesEvent $event) {
+            RestrictIndexEntityEvent::NAME,
+            function (RestrictIndexEntityEvent $event) {
                 $qb = $event->getQueryBuilder();
                 list($rootAlias) = $qb->getRootAliases();
                 $qb->where($qb->expr()->neq($rootAlias . '.name', ':name'))

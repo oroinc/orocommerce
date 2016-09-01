@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -58,15 +58,7 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('modifyByInventoryStatus')
             ->with($this->queryBuilder, $inventoryStatuses);
 
-        $event = new RestrictIndexEntitiesEvent($this->queryBuilder, Product::class, []);
-        $this->listener->onRestrictIndexEntitiesEvent($event);
-    }
-
-    public function testOtherEntityPassed()
-    {
-        $event = new RestrictIndexEntitiesEvent($this->queryBuilder, \stdClass::class, []);
-        $this->listener->onRestrictIndexEntitiesEvent($event);
-        $this->modifier->expects($this->never())->method('modifyByInventoryStatus');
-        $this->modifier->expects($this->never())->method('modifyByStatus');
+        $event = new RestrictIndexEntityEvent($this->queryBuilder, []);
+        $this->listener->onRestrictIndexEntityEvent($event);
     }
 }

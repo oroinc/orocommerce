@@ -389,4 +389,4 @@ services:
                 - '@orob2b_product.model.product_visibility_query_builder_modifier'
                 - 'orob2b_product.general_frontend_product_visibility'
             tags:
-                - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entities, method: onRestrictIndexEntitiesEvent }
+                - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }

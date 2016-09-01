@@ -4,7 +4,4 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
     oro_website_search.indexer:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Indexer'
-        arguments:
-            - '@event_dispatcher'
-            - '@oro_entity.doctrine_helper'
-            - '@temp_mapper_stub'
+        parent: 'oro_website_search.search.indexer'
