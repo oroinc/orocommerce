@@ -48,16 +48,13 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
      */
     public function load(ObjectManager $manager)
     {
-        $helper = $this->container->get('oro_entity.doctrine_helper');
-        $em = $helper->getEntityManager(Product::class);
-
-        foreach ($this->data as $i) {
+        foreach ($this->data as $obj) {
             $item = new Product();
-            $item->setName($i['name']);
-            $em->persist($item);
+            $item->setName($obj['name']);
+            $manager->persist($item);
         }
 
-        $em->flush();
-        $em->clear();
+        $manager->flush();
+        $manager->clear();
     }
 }

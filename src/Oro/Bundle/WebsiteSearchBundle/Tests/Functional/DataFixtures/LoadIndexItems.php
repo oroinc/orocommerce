@@ -18,9 +18,6 @@ class LoadIndexItems extends AbstractFixture implements ContainerAwareInterface
     const ALIAS_TEMP = 'some_tmp_alias';
     const ALIAS_REAL = 'some_real_alias';
 
-    /** @var ContainerInterface */
-    protected $container;
-
     /** @var array */
     protected $data = [
         'item1' => [
@@ -41,7 +38,6 @@ class LoadIndexItems extends AbstractFixture implements ContainerAwareInterface
             'record_id' => 3,
             'title' => 'some title'
         ],
-
     ];
 
     /**
@@ -52,12 +48,12 @@ class LoadIndexItems extends AbstractFixture implements ContainerAwareInterface
         $helper = $this->container->get('oro_entity.doctrine_helper');
         $em = $helper->getEntityManager(Item::class);
 
-        foreach ($this->data as $i) {
+        foreach ($this->data as $obj) {
             $item = new Item();
-            $item->setAlias($i['alias'])
-                ->setEntity($i['entity'])
-                ->setRecordId($i['record_id'])
-                ->setTitle($i['title']);
+            $item->setAlias($obj['alias'])
+                ->setEntity($obj['entity'])
+                ->setRecordId($obj['record_id'])
+                ->setTitle($obj['title']);
             $em->persist($item);
         }
 

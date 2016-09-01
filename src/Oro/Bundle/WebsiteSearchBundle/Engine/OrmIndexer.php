@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
-class Indexer extends AbstractIndexer
+class OrmIndexer extends AbstractIndexer
 {
     /**
      * {@inheritdoc}
@@ -72,12 +72,12 @@ class Indexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    protected function renameIndex($oldAlias, $newAlias)
+    protected function renameIndex($temporaryAlias, $currentAlias)
     {
         /** @var WebsiteSearchIndexRepository $itemRepository */
         $itemRepository = $this->doctrineHelper->getEntityRepository(Item::class);
-        $itemRepository->removeIndexByAlias($newAlias);
-        $itemRepository->renameIndexAlias($oldAlias, $newAlias);
+        $itemRepository->removeIndexByAlias($currentAlias);
+        $itemRepository->renameIndexAlias($temporaryAlias, $currentAlias);
     }
 
     /**
