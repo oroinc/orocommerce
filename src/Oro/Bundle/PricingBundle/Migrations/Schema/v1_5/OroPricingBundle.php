@@ -12,11 +12,14 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\MigrationTrait;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
 {
+    use MigrationTrait;
+
     /**
      * @var AbstractPlatform
      */
@@ -301,6 +304,46 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     {
         $extension = $this->renameExtension;
 
+        $cplAccountGroupTable = $schema->getTable('orob2b_cmb_plist_to_acc_gr');
+        $cplAccountGroupTableAccGroupForeignKey = $this->getConstraintName($cplAccountGroupTable, 'account_group_id');
+        $cplAccountGroupTable->removeForeignKey($cplAccountGroupTableAccGroupForeignKey);
+        $cplAccountGroupTableWebsiteForeignKey = $this->getConstraintName($cplAccountGroupTable, 'website_id');
+        $cplAccountGroupTable->removeForeignKey($cplAccountGroupTableWebsiteForeignKey);
+
+        $cplAccountTable = $schema->getTable('orob2b_cmb_price_list_to_acc');
+        $cplAccountTableAccountForeignKey = $this->getConstraintName($cplAccountTable, 'account_id');
+        $cplAccountTable->removeForeignKey($cplAccountTableAccountForeignKey);
+        $cplAccountTableWebsiteForeignKey = $this->getConstraintName($cplAccountTable, 'website_id');
+        $cplAccountTable->removeForeignKey($cplAccountTableWebsiteForeignKey);
+
+        $cplWebsiteTable = $schema->getTable('orob2b_cmb_price_list_to_ws');
+        $cplWebsiteTableWebsiteForeignKey = $this->getConstraintName($cplWebsiteTable, 'website_id');
+        $cplWebsiteTable->removeForeignKey($cplWebsiteTableWebsiteForeignKey);
+
+        $priceAttributeTable = $schema->getTable('orob2b_price_attribute_price');
+        $priceAttributeProductForeignKey = $this->getConstraintName($priceAttributeTable, 'product_id');
+        $priceAttributeTable->removeForeignKey($priceAttributeProductForeignKey);
+        $priceAttributePriceListForeignKey = $this->getConstraintName($priceAttributeTable, 'price_attribute_pl_id');
+        $priceAttributeTable->removeForeignKey($priceAttributePriceListForeignKey);
+        $priceAttributeProductUnitForeignKey = $this->getConstraintName($priceAttributeTable, 'unit_code');
+        $priceAttributeTable->removeForeignKey($priceAttributeProductUnitForeignKey);
+
+        $priceListToProductTable = $schema->getTable('orob2b_price_list_to_product');
+        $priceListToProductTableProductForeignKey = $this->getConstraintName($priceListToProductTable, 'product_id');
+        $priceListToProductTable->removeForeignKey($priceListToProductTableProductForeignKey);
+        $priceListToProductTableListForeignKey = $this->getConstraintName($priceListToProductTable, 'price_list_id');
+        $priceListToProductTable->removeForeignKey($priceListToProductTableListForeignKey);
+
+        $priceListToWebsiteTable = $schema->getTable('orob2b_price_list_website_fb');
+        $priceListToWebsiteTableForeignKey = $this->getConstraintName($priceListToWebsiteTable, 'website_id');
+        $priceListToWebsiteTable->removeForeignKey($priceListToWebsiteTableForeignKey);
+
+        $minimalPriceTable = $schema->getTable('orob2b_price_product_minimal');
+        $minimalPriceProductForeignKEy = $this->getConstraintName($minimalPriceTable, 'product_id');
+        $minimalPriceTable->removeForeignKey($minimalPriceProductForeignKEy);
+        $minimalPriceCPLForeignKEy = $this->getConstraintName($minimalPriceTable, 'combined_price_list_id');
+        $minimalPriceTable->removeForeignKey($minimalPriceCPLForeignKEy);
+
         $schema->getTable('orob2b_price_product')->dropIndex('orob2b_pricing_price_list_uidx');
         $schema->getTable('orob2b_price_product_combined')->dropIndex('orob2b_combined_price_uidx');
         $schema->getTable('orob2b_price_product_minimal')->dropIndex('orob2b_minimal_price_uidx');
@@ -314,6 +357,124 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $schema->getTable('orob2b_prod_price_ch_trigger')->dropIndex('orob2b_changed_product_price_list_unq');
         $schema->getTable('orob2b_price_attribute_price')->dropIndex('orob2b_pricing_price_attribute_uidx');
         $schema->getTable('orob2b_price_list_to_product')->dropIndex('orob2b_price_list_to_product_uidx');
+
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_cmb_plist_to_acc_gr',
+            'oro_account_group',
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_cmb_plist_to_acc_gr',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_cmb_price_list_to_acc',
+            'oro_account',
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_cmb_price_list_to_acc',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_cmb_price_list_to_ws',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_attribute_price',
+            'oro_price_attribute_pl',
+            ['price_attribute_pl_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_attribute_price',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_attribute_price',
+            'oro_product_unit',
+            ['unit_code'],
+            ['code'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_list_to_product',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_list_to_product',
+            'oro_price_list',
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_list_website_fb',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_product_minimal',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_price_product_minimal',
+            'oro_price_list_combined',
+            ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
 
         $extension->addUniqueIndex(
             $schema,

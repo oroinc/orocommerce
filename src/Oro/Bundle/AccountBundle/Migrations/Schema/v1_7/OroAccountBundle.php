@@ -4,15 +4,19 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Doctrine\DBAL\Schema\Table;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\MigrationTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
+    use MigrationTrait;
+
     /**
      * @var RenameExtension
      */
@@ -121,6 +125,14 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     {
         $extension = $this->renameExtension;
 
+        $categoryVisibility = $schema->getTable('orob2b_category_visibility');
+        $categoryVisibilityForeignKey = $this->getConstraintName($categoryVisibility, 'category_id');
+        $categoryVisibility->removeForeignKey($categoryVisibilityForeignKey);
+
+        $windowsState = $schema->getTable('orob2b_windows_state');
+        $windowsStateForeignKey = $this->getConstraintName($windowsState, 'customer_user_id');
+        $windowsState->removeForeignKey($windowsStateForeignKey);
+
         $schema->getTable('orob2b_account')->dropIndex('orob2b_account_name_idx');
         $schema->getTable('orob2b_account_group')->dropIndex('orob2b_account_group_name_idx');
         $schema->getTable('orob2b_account_user_role')->dropIndex('orob2b_account_user_role_account_id_label_idx');
@@ -139,6 +151,25 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $schema->getTable('orob2b_product_visibility')->dropIndex('orob2b_prod_vis_uidx');
         $schema->getTable('orob2b_acc_product_visibility')->dropIndex('orob2b_acc_prod_vis_uidx');
         $schema->getTable('orob2b_acc_grp_prod_visibility')->dropIndex('orob2b_acc_grp_prod_vis_uidx');
+
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_category_visibility',
+            'oro_catalog_category',
+            ['category_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $extension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_acc_windows_state',
+            'oro_account_user',
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
 
         $extension->addIndex($schema, $queries, 'oro_account', ['name'], 'oro_account_name_idx');
         $extension->addIndex($schema, $queries, 'oro_account_group', ['name'], 'oro_account_group_name_idx');
