@@ -10,9 +10,7 @@ class AccountGroupVoter extends AbstractEntityVoter
     /**
      * @var array
      */
-    protected $supportedAttributes = [
-        'DELETE'
-    ];
+    protected $supportedAttributes = ['DELETE'];
 
     /**
      * @var ConfigManager
