@@ -176,10 +176,10 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
 
-    orob2b_shipping.validator.enabled_configuration_validation_group:
-        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator'
+    orob2b_shipping.validator.enabled_type_config_validation_group:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_shipping_enabled_configuration_validation_group_validator }
+            - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
 
     orob2b_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'

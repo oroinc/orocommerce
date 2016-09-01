@@ -43,12 +43,26 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=0
+     *              "order"=20
      *          }
      *      }
      * )
      */
     protected $options = [];
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=30
+     *          }
+     *      }
+     * )
+     */
+    protected $enabled = false;
 
     /**
      * @var ShippingRuleMethodConfig
@@ -127,6 +141,24 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     public function setMethodConfig(ShippingRuleMethodConfig $methodConfig)
     {
         $this->methodConfig = $methodConfig;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param string $enabled
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
         return $this;
     }
 }

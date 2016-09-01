@@ -57,6 +57,8 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
             - Valid: ~
         methodConfigs:
             - Valid: ~
+            - Count:
+                min: 1
         currency:
             - Currency: ~
             - NotBlank: ~
@@ -75,6 +77,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
             - NotBlank: ~
         typeConfigs:
             - Valid: ~
+            - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup: ~
 
 Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
     properties:

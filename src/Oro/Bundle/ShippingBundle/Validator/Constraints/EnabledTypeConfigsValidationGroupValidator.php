@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-
-class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
+class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
 {
     /**
      * @param array $value
-     * @param EnabledConfigurationValidationGroup|Constraint $constraint
+     * @param EnabledTypeConfigsValidationGroup|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
@@ -21,15 +20,15 @@ class EnabledConfigurationValidationGroupValidator extends ConstraintValidator
         }
 
         $enabledRules = [];
-        foreach ($value as $configuration) {
-            if (!$configuration instanceof ShippingRuleConfiguration) {
+        foreach ($value as $config) {
+            if (!$config instanceof ShippingRuleMethodTypeConfig) {
                 throw new UnexpectedTypeException(
-                    $configuration,
-                    'Oro\Bundle\ShippingBundle\Model\ShippingRuleConfiguration'
+                    $config,
+                    'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig'
                 );
             }
-            if ($configuration->isEnabled()) {
-                $enabledRules[] = $configuration;
+            if ($config->isEnabled()) {
+                $enabledRules[] = $config;
             }
         }
 

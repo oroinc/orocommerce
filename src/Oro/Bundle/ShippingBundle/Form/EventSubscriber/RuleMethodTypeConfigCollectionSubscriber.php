@@ -5,7 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigType;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
@@ -55,29 +57,17 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
         $methodConfig = $form->getParent()->getData();
         $method = $this->methodRegistry->getShippingMethod($methodConfig->getMethod());
 
-        $formType = ShippingRuleMethodTypeConfigType::class;
         $renderedTypes = [];
         foreach ($data as $index => $typeConfig) {
-            $child = $form->get($index);
-            $childOptions = $child->getConfig()->getOptions();
             $type = $method->getType($typeConfig->getType());
-            $form->add($index, $formType, array_merge($childOptions, [
-                'options_type' => $type->getOptionsConfigurationFormType(),
-                'is_grouped' => $method->isGrouped(),
-                'label' => $type->getLabel(),
-            ]));
+            $this->createTypeForm($form, $index, $method, $type);
             $renderedTypes[] = $type->getIdentifier();
         }
 
         $index = count($data);
         foreach ($method->getTypes() as $type) {
             if (!in_array($type->getIdentifier(), $renderedTypes, true)) {
-                $form->add($index, $formType, [
-                    'options_type' => $type->getOptionsConfigurationFormType(),
-                    'is_grouped' => $method->isGrouped(),
-                    'auto_initialize' => false,
-                    'label' => $type->getLabel(),
-                ]);
+                $this->createTypeForm($form, $index, $method, $type);
                 $entity = new ShippingRuleMethodTypeConfig();
                 $entity->setType($type->getIdentifier())
                     ->setMethodConfig($methodConfig);
@@ -103,17 +93,29 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
         $methodIdentifier = $form->getParent()->get('method')->getData();
         $method = $this->methodRegistry->getShippingMethod($methodIdentifier);
 
-        $formType = ShippingRuleMethodTypeConfigType::class;
-
         foreach ($submittedData as $index => $methodTypeData) {
-            $child = $form->get($index);
-            $childOptions = $child->getConfig()->getOptions();
             $type = $method->getType($methodTypeData['type']);
-            $form->add($index, $formType, array_merge($childOptions, [
-                'options_type' => $type->getOptionsConfigurationFormType(),
-                'is_grouped' => $method->isGrouped(),
-                'label' => $type->getLabel(),
-            ]));
+            $this->createTypeForm($form, $index, $method, $type);
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $index
+     * @param ShippingMethodInterface $method
+     * @param ShippingMethodTypeInterface $type
+     */
+    protected function createTypeForm(
+        FormInterface $form,
+        $index,
+        ShippingMethodInterface $method,
+        ShippingMethodTypeInterface $type
+    ) {
+        $form->add($index, ShippingRuleMethodTypeConfigType::class, [
+            'options_type' => $type->getOptionsConfigurationFormType(),
+            'auto_initialize' => false,
+            'label' => $type->getLabel(),
+            'is_grouped' => $method->isGrouped(),
+        ]);
     }
 }

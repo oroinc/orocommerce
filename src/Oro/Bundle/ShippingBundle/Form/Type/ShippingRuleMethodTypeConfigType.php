@@ -19,8 +19,10 @@ class ShippingRuleMethodTypeConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$options['is_grouped']) {
-            $builder->add('enabled', CheckboxType::class, [
-                'mapped' => false,
+            $builder->add('enabled', CheckboxType::class);
+        } else {
+            $builder->add('enabled', HiddenType::class, [
+                'data' => true,
             ]);
         }
         $builder->add('type', HiddenType::class);

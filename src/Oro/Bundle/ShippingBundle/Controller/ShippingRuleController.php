@@ -105,10 +105,9 @@ class ShippingRuleController extends Controller
             return $this->get('oro_ui.router')->redirect($entity);
         }
 
-        $isUpdateOnly = $request->get(ShippingRuleHandler::UPDATE_FLAG, false);
-
-        // take different form due to JS validation should be shown even in case when it was not validated on backend
-        if ($isUpdateOnly) {
+        if ($request->get(ShippingRuleHandler::UPDATE_FLAG, false)) {
+            // take different form due to JS validation should be shown even in case
+            // when it was not validated on backend
             $form = $this->createForm(ShippingRuleType::class, $form->getData());
         }
 

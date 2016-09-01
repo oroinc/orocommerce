@@ -4,4 +4,4 @@ oro:
             product_unit_shipping_options:
                 unique_entity.message: 'Product has duplication of shipping options. Field "Unit" should be unique.'
         shippingrule:
-            configuration.count.message: "You must select at least {{ limit }} shipping method"
+            type.config.count.message: "You must select at least {{ limit }} shipping method type"

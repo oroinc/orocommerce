@@ -145,7 +145,8 @@ class ShippingRule extends ExtendShippingRule
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig",
      *     mappedBy="rule",
      *     cascade={"ALL"},
-     *     fetch="EAGER"
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
     protected $methodConfigs;

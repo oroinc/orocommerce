@@ -50,11 +50,10 @@
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
                 view: 'oroshipping/js/app/views/shipping-rule-method-view',
-                methodCount: form.methodConfigs.vars.value|length,
                 methodSelectSelector: 'select.oro-shipping-rule-add-method-select',
                 buttonSelector: '.add-method',
                 updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingRuleHandler::UPDATE_FLAG'),
-                methods: form.vars.methods,
+                methods: form.vars.methods
             }|json_encode }}"
     >
         <div class="oro-shipping-rule-add-method-select">
@@ -122,7 +121,5 @@
         'dataBlocks': dataBlocks
     } %}
 
-<div data-validation-ignore="">
     {{ parent() }}
-</div>
 {% endblock %}

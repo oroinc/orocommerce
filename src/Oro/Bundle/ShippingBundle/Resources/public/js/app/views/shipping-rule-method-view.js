@@ -13,7 +13,7 @@ define([
      */
     return Backbone.View.extend({
 
-        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'methodCount', 'updateFlag', 'methods'],
+        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
 
         /**
          * @param options Object
@@ -37,6 +37,7 @@ define([
             this.button.on('click', _.bind(this.changeHandler, this));
 
             var elements = this.form.find(".orob2b-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder");
+            this.methodCount = elements.length;
             var self = this;
             elements.each(function(index, element) {
                 $(element).parent().on('content:remove', function(e) {
@@ -56,10 +57,10 @@ define([
             var url = $form.attr('action');
             var value = $(this.el).find(this.options.methodSelectSelector).val();
             data.push({
-                'name': 'oro_shipping_rule[methodConfigs][' + this.options.methodCount + '][method]',
+                'name': 'oro_shipping_rule[methodConfigs][' + this.methodCount + '][method]',
                 'value': value
             });
-            this.options.methodCount++;
+            this.methodCount++;
             data.push({
                 'name': this.options.updateFlag,
                 'value': true

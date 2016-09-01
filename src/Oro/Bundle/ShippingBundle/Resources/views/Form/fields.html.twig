@@ -200,6 +200,11 @@
         </div>
     {% endif %}
     {{ form_widget(form.typeConfigs) }}
+    <div class="control-group control-group-choice">
+        <div class="controls">
+            {{ form_errors(form.typeConfigs) }}
+        </div>
+    </div>
     {{ form_widget(form.options) }}
     {{ form_rest(form) }}
 {% endblock %}
