@@ -58,7 +58,7 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getConfiguration()
     {
@@ -94,7 +94,7 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return CumulativeResourceInfo[]
+     * {@inheritdoc}
      */
     public function getResources()
     {
