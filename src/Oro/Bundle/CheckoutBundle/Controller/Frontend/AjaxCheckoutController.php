@@ -61,7 +61,7 @@ class AjaxCheckoutController extends Controller
         }
 
         $shippingContextProviderFactory = new ShippingContextProviderFactory();
-        return $this->get('orob2b_shipping.shipping_price.provider')->getApplicableMethodTypePrice(
+        return $this->get('orob2b_shipping.shipping_price.provider')->getPrice(
             $shippingContextProviderFactory->create($checkout),
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType()

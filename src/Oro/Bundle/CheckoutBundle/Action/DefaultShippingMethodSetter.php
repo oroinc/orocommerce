@@ -61,7 +61,7 @@ class DefaultShippingMethodSetter
 
         $checkout->setShippingMethod($config->getMethod());
         $checkout->setShippingMethodType($config->getTypeConfigs()->first()->getType());
-        $cost = $this->priceProvider->getApplicableMethodTypePrice(
+        $cost = $this->priceProvider->getPrice(
             $context,
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType()

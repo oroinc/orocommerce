@@ -441,7 +441,7 @@ workflows:
                 post_actions:
                     - '@call_service_method':
                         service: orob2b_shipping.shipping_price.provider
-                        method: getApplicableMethodTypePrice
+                        method: getPrice
                         method_parameters: [$checkout, $shipping_rule_config]
                         attribute: $checkout.shippingCost
 

@@ -64,7 +64,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $this->rulesProvider->expects($this->never())
             ->method('getApplicableShippingRules');
         $this->priceProvider->expects($this->never())
-            ->method('getApplicableMethodTypePrice');
+            ->method('getPrice');
         $this->setter->setDefaultShippingMethod($checkout);
     }
 
@@ -83,7 +83,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn([]);
         $this->priceProvider->expects($this->never())
-            ->method('getApplicableMethodTypePrice');
+            ->method('getPrice');
         $this->setter->setDefaultShippingMethod($checkout);
     }
 
@@ -116,7 +116,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->willReturn([$rule]);
         $price = Price::create(10, 'USD');
         $this->priceProvider->expects($this->once())
-            ->method('getApplicableMethodTypePrice')
+            ->method('getPrice')
             ->with($context, $checkout->getShippingMethod(), $checkout->getShippingMethodType())
             ->willReturn($price);
         $this->setter->setDefaultShippingMethod($checkout);

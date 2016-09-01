@@ -121,7 +121,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @param ShippingMethodInterface $shippingMethod
      * @param ShippingContext $context
      */
-    public function testGetApplicableMethodTypePrice(
+    public function testGetPrice(
         ShippingRule $shippingRule,
         ShippingMethodInterface $shippingMethod,
         ShippingContext $context
@@ -144,7 +144,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $methodIdentifier = 'flat_rate';
         $typeIdentifier = 'primary';
 
-        $price = $this->shippingPriceProvider->getApplicableMethodTypePrice(
+        $price = $this->shippingPriceProvider->getPrice(
             $context,
             $methodIdentifier,
             $typeIdentifier

@@ -65,7 +65,7 @@ class ShippingPriceProvider
      * @param string|int $typeIdentifier
      * @return Price|null
      */
-    public function getApplicableMethodTypePrice(ShippingContextInterface $context, $methodIdentifier, $typeIdentifier)
+    public function getPrice(ShippingContextInterface $context, $methodIdentifier, $typeIdentifier)
     {
         $rules = $this->getApplicableShippingRules($context);
         if (count($rules) === 0) {
