@@ -31,6 +31,9 @@ class OrmIndexerTest extends WebTestCase
     /** @var OrmIndexer */
     protected $indexer;
 
+    /** @var callable */
+    protected $listener;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -133,12 +136,16 @@ class OrmIndexerTest extends WebTestCase
                 LoadProductsToIndex::RESTRCTED_PRODUCT
             ]
         );
-        $listener = $this->setListener($productIds);
+        $this->listener = $this->setListener($productIds);
         $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 777]);
         $recordIds = $this->getItemRecordIds('oro_product_website_777');
         $this->assertEquals($productIds, $recordIds);
+    }
+
+    protected function tearDown()
+    {
         //Remove listener to not to interract with other tests
-        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $listener);
+        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
     }
 
     public function testIndexWithoutArguments()
@@ -163,10 +170,8 @@ class OrmIndexerTest extends WebTestCase
                 LoadProductsToIndex::PRODUCT2
             ]
         );
-        $listener = $this->setListener($productIds);
+        $this->listener = $this->setListener($productIds);
         $this->indexer->reindex();
-        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $listener);
-
         $recordIds = $this->getItemRecordIds('oro_product_website_' . $website->getId());
         $this->assertCount(2, $recordIds);
     }
