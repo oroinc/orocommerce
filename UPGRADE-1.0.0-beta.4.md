@@ -64,6 +64,15 @@ OrderBundle:
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
 
+PricingBundle:
+-------------
+
+- Removed `getWebsiteIdsByAccountGroup` method from `PriceListToAccountGroupRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Changed arguments of `PriceListChangeTriggerHandler` constructor
+
 SaleBundle:
 -----------
 - Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.

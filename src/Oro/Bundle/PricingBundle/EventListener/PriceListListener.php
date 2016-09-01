@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 
 class PriceListListener
 {
@@ -25,7 +25,7 @@ class PriceListListener
     protected $activationPlanBuilder;
 
     /**
-     * @var PriceListChangeTriggerHandler
+     * @var PriceListRelationTriggerHandler
      */
     protected $triggerHandler;
 
@@ -41,12 +41,12 @@ class PriceListListener
 
     /**
      * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     * @param PriceListChangeTriggerHandler $triggerHandler
+     * @param PriceListRelationTriggerHandler $triggerHandler
      * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
      */
     public function __construct(
         CombinedPriceListActivationPlanBuilder $activationPlanBuilder,
-        PriceListChangeTriggerHandler $triggerHandler,
+        PriceListRelationTriggerHandler $triggerHandler,
         PriceRuleLexemeHandler $priceRuleLexemeHandler
     ) {
         $this->activationPlanBuilder = $activationPlanBuilder;

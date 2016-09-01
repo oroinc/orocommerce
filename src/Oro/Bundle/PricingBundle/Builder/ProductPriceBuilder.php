@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceBuilder
@@ -36,26 +36,26 @@ class ProductPriceBuilder
     protected $productPriceRepository;
 
     /**
-     * @var ScopeRecalculateTriggersFiller
+     * @var PriceListTriggerHandler
      */
-    protected $triggersFiller;
+    protected $priceListTriggerHandler;
 
     /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
-     * @param ScopeRecalculateTriggersFiller $triggersFiller
+     * @param PriceListTriggerHandler $priceListTriggerHandler
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
-        ScopeRecalculateTriggersFiller $triggersFiller
+        PriceListTriggerHandler $priceListTriggerHandler
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
-        $this->triggersFiller = $triggersFiller;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
     }
 
     /**
@@ -71,7 +71,8 @@ class ProductPriceBuilder
                 $this->applyRule($rule, $product);
             }
         }
-        $this->fillTriggers($priceList, $product);
+        $this->priceListTriggerHandler->addTriggersForPriceList(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
@@ -99,19 +100,6 @@ class ProductPriceBuilder
         }
 
         return $this->productPriceRepository;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param Product|null $product
-     */
-    protected function fillTriggers(PriceList $priceList, Product $product = null)
-    {
-        if ($product === null) {
-            $this->triggersFiller->fillTriggersByPriceList($priceList);
-        } else {
-            $this->triggersFiller->createTriggerByPriceListProduct($priceList, $product);
-        }
     }
 
     /**
