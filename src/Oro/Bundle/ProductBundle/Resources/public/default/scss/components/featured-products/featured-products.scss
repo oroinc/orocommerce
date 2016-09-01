@@ -5,24 +5,6 @@ $slick-slide-count: 4;
 $image-holder-max-height: 249px;
 
 .featured-products {
-    & .embedded-list {
-        margin: 0 42px;
-
-        @media screen and (max-width: 923px) {
-            margin: 0;
-        }
-    }
-
-    & .embedded-list__label {
-        margin-left: -42px;
-        margin-right: -42px;
-
-        @media screen and (max-width: 923px) {
-            margin-left: 0;
-            margin-right: 0;
-        }
-    }
-
     & .embedded-list__container--slider {
         & .slick-arrow {
             top: calc(((100vw - #{$grid-gutter-width + $embedded-edge}) / #{$slick-slide-count} - #{$slick-gap-width}) / 2);
@@ -39,6 +21,19 @@ $image-holder-max-height: 249px;
 
     & .embedded-list__item {
         width: 25%;
+    }
+}
+
+@include breakpoint('desktop') {
+    .featured-products {
+        & .embedded-list {
+            margin: 0 42px;
+        }
+
+        & .embedded-list__label {
+            margin-left: -42px;
+            margin-right: -42px;
+        }
     }
 }
 
