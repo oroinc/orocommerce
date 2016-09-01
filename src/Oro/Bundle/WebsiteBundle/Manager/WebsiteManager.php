@@ -61,11 +61,19 @@ class WebsiteManager
     protected function getResolvedWebsite()
     {
         if (!$this->currentWebsite) {
-            $this->currentWebsite = $this->getEntityManager()
-                ->getRepository(Website::class)
-                ->getDefaultWebsite();
+            $this->currentWebsite = $this->getDefaultWebsite();
         }
 
         return $this->currentWebsite;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getDefaultWebsite()
+    {
+        return $this->getEntityManager()
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
     }
 }

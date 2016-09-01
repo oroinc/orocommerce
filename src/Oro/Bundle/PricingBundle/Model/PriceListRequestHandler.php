@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -64,24 +66,39 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $relationsProvider;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param RequestStack $requestStack
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
      * @param AccountUserRelationsProvider $relationsProvider
+     * @param FrontendHelper $frontendHelper
      */
     public function __construct(
         RequestStack $requestStack,
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler,
         ManagerRegistry $registry,
-        AccountUserRelationsProvider $relationsProvider
+        AccountUserRelationsProvider $relationsProvider,
+        FrontendHelper $frontendHelper,
+        WebsiteManager $websiteManager
     ) {
         $this->requestStack = $requestStack;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
         $this->relationsProvider = $relationsProvider;
+        $this->frontendHelper = $frontendHelper;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -257,11 +274,23 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     {
         $website = null;
         $request = $this->getRequest();
-        if ($request && $id = $this->getRequest()->get(self::WEBSITE_KEY)) {
-            $website = $this->registry->getManagerForClass('Oro\Bundle\WebsiteBundle\Entity\Website')
-                ->getRepository('Oro\Bundle\WebsiteBundle\Entity\Website')
-                ->find($id);
+
+        if ($request) {
+            if ($this->frontendHelper->isFrontendRequest($request)) {
+                if ($request->attributes->has('current_website')) {
+                    $website = $request->attributes->get('current_website');
+                }
+            } else {
+                if ($id = $this->getRequest()->get(self::WEBSITE_KEY)) {
+                    $website = $this->registry->getManagerForClass(Website::class)
+                        ->getRepository(Website::class)
+                        ->find($id);
+                } else {
+                    $website = $this->websiteManager->getDefaultWebsite();
+                }
+            }
         }
+
         return $website;
     }
 

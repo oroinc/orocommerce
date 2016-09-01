@@ -71,6 +71,34 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($website, $this->manager->getCurrentWebsite());
     }
 
+    public function testGetDefaultWebsite()
+    {
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
+
+        $repository = $this->getMockBuilder(WebsiteRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $website = new Website();
+        $repository->expects($this->once())
+            ->method('getDefaultWebsite')
+            ->willReturn($website);
+
+        $objectManager = $this->getMock(ObjectManager::class);
+        $objectManager->expects($this->once())
+            ->method('getRepository')
+            ->with(Website::class)
+            ->willReturn($repository);
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($objectManager);
+
+        $this->assertSame($website, $this->manager->getDefaultWebsite());
+    }
+
     public function testGetCurrentWebsiteNonFrontend()
     {
         $this->frontendHelper->expects($this->once())
