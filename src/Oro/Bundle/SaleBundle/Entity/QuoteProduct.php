@@ -26,6 +26,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class QuoteProduct implements ProductHolderInterface
