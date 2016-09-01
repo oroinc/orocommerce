@@ -9,7 +9,7 @@
         '~class': ' login-form'
     }) %}
 
-    <form {{ block('block_attributes') }}
+    <form id="form-login" {{ block('block_attributes') }}
           action="{{ path('orob2b_account_account_user_security_check') }}"
           method="post"
     >
@@ -17,6 +17,12 @@
             {{ block_widget(block) }}
         </div>
     </form>
+    <script type="text/javascript">
+        require(['jquery', 'jquery.validate', 'oroui/js/input-widget-manager'],
+            function ($) {
+                $('.login-form').validate({});
+            });
+    </script>
 {% endblock %}
 
 {% block _login_form_title_widget %}
@@ -118,4 +124,22 @@
             label_attr: label_attr
         }) }}
     </div>
+{% endblock %}
+
+{% block _login_form_username_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        required: 'required',
+        autofocus: true,
+        'data-validation': {"NotBlank":{"payload":null}}|json_encode
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
++{% block _login_form_password_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        required: 'required',
+        'data-validation': {"NotBlank":{"payload":null}}|json_encode
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
