@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -15,6 +17,40 @@ class CheckoutAddressType extends AbstractOrderAddressType
     const NAME = 'orob2b_checkout_address';
     const ENTER_MANUALLY = 0;
     const SHIPPING_ADDRESS_NAME = 'shipping_address';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $event->setData(
+                    $this->clearCustomFieldsIfAccountAddressIsChosen(
+                        $event->getData()
+                    )
+                );
+            }
+        );
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function clearCustomFieldsIfAccountAddressIsChosen(array $data)
+    {
+        if (isset($data['accountAddress']) && $data['accountAddress']) {
+            return [
+                'accountAddress' => $data['accountAddress']
+            ];
+        }
+
+        return $data;
+    }
 
     /**
      * @param Checkout $entity

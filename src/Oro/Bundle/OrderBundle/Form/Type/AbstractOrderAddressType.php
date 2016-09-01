@@ -96,7 +96,8 @@ abstract class AbstractOrderAddressType extends AbstractType
                 }
 
                 if ($orderAddress || $address) {
-                    $event->setData($this->orderAddressManager->updateFromAbstract($address, $orderAddress));
+                    $result = $this->orderAddressManager->updateFromAbstract($address, $orderAddress);
+                    $event->setData($result);
                 }
             },
             -10
