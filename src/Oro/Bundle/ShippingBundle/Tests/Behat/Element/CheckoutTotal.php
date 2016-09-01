@@ -12,7 +12,7 @@ class CheckoutTotal extends Element
      * @param  string $total
      * @return boolean
      */
-    public function assertEqual($total)
+    public function isEqual($total)
     {
         return ($total === $this->getText());
 

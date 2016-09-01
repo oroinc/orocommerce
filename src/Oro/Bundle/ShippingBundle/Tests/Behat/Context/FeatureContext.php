@@ -103,7 +103,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     {
         /** @var checkoutForm $checkoutForm */
         $checkoutTotal = $this->createElement('CheckoutTotal');
-        $checkoutTotal->assertEqual($arg1);
+        $checkoutTotal->isEqual($arg1);
     }
 
 

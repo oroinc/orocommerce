@@ -1,5 +1,5 @@
 @fixture-ShippingRule.yml
-Feature: Applying shipping rules applying
+Feature: Applying shipping rules
   In order to decrease shipping cost
   As administrator
   I need to be able change shipping methods rules and orders
