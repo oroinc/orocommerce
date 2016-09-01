@@ -15,6 +15,10 @@ layout:
             id: featured_products
             optionName: label
             optionValue: oro.product.featured_products.label
+        - '@setOption':
+            id: featured_products
+            optionName: slider_options
+            optionValue: {arrows: true, responsive: [{breakpoint: 924, settings: {slidesToShow: 3, arrows: false}}, {breakpoint: 480, settings: {slidesToShow: 2, arrows: false}}]}
         - '@add':
             id: featured_products_container
             parentId: content

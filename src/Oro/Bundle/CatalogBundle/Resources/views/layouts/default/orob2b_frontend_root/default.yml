@@ -12,7 +12,7 @@ layout:
                     options:
                         items: [1, 2, 3]
                         use_slider: true
-                        slides_count: 1
+                        slider_options: {slidesToShow: 1}
                 hero_promo_item:
                     blockType: container
                 featured_categories:

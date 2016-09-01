@@ -15,6 +15,10 @@ layout:
             id: top_selling_products
             optionName: label
             optionValue: oro.order.top_selling_items.label
+        - '@setOption':
+            id: top_selling_products
+            optionName: slider_options
+            optionValue: {arrows: true, responsive: [{breakpoint: 924, settings: {slidesToShow: 3, arrows: false}}, {breakpoint: 480, settings: {slidesToShow: 2, arrows: false}}]}
         - '@add':
             id: top_selling_items_container
             parentId: content

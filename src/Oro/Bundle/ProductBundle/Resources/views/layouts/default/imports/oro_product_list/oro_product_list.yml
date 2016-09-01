@@ -14,7 +14,7 @@ layout:
             options:
                 item_key: product
                 use_slider: true
-                slides_count: 4
+                slider_options: {slidesToShow: 4}
         - '@setOption':
             id: __product
             optionName: class_prefix

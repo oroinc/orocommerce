@@ -36,7 +36,7 @@ services:
                         items_data: {default: []}
                         item_key: {default: item}
                         use_slider: {default: false}
-                        slides_count: {default: 4}
+                        slider_options: {default: {slidesToShow: 4}}
             - [setName, ['embedded_list']]
         tags:
             - { name: layout.block_type, alias: embedded_list }

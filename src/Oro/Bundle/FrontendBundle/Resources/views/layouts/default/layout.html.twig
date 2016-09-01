@@ -124,9 +124,9 @@
         {% if use_slider %}
             {% set attr = layout_attr_defaults(attr, {
                 'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
-                '~data-page-component-options': {
-                    slidesToShow: slides_count
-                },
+                '~data-page-component-options': slider_options|merge({
+
+                }),
                 '~class': ' embedded-list__container--slider'
             }) %}
         {% else %}
