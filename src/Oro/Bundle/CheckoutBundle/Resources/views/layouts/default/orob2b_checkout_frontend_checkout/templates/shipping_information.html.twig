@@ -30,10 +30,11 @@
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 
             {% if workflowItem.data.get('billing_address_has_shipping') %}
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.ship_to_billing_address) }}
-            </fieldset>
+                <fieldset class="checkout__form__row">
+                    {{ form_row(form.ship_to_billing_address) }}
+                </fieldset>
             {% endif %}
+            {{ form_row(form.state_token) }}
         </div>
     {% endif %}
 {%- endblock %}

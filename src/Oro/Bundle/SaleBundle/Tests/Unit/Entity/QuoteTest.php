@@ -7,6 +7,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -28,6 +29,7 @@ class QuoteTest extends AbstractTest
             ['owner', new User()],
             ['accountUser', new AccountUser()],
             ['shippingAddress', new QuoteAddress()],
+            ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['organization', new Organization()],
             ['poNumber', '1'],

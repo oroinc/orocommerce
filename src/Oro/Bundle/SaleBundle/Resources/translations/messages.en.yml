@@ -29,7 +29,8 @@ oro:
             shipping_estimate.label: 'Shipping Estimate'
             shipping_estimate_amount.label: 'Shipping Estimate Ammount'
             shipping_estimate_currency.label: 'Shipping Estimate Currency'
-            shipping_address.label: Shipping Address
+            shipping_address.label: 'Shipping Address'
+            payment_term.label: 'Payment Term'
 
             sections:
                 general: 'General'
@@ -76,6 +77,7 @@ oro:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
+                payment.label: 'Payment'
 
             datagrid:
                 account.label: 'Quotes'
@@ -84,6 +86,9 @@ oro:
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
+
+        privilege:
+            category.quotes.label: 'Quotes'
 
         quoteproduct:
             entity_label: 'Quote Product'
@@ -230,6 +235,7 @@ oro:
                 assigned_account_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
+                payment_term.label: 'Payment Term'
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
