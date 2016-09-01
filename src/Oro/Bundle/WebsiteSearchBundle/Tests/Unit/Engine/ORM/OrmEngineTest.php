@@ -4,10 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\ORM;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use Oro\Bundle\SearchBundle\Engine\ObjectMapper;
 use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -39,7 +39,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
     private $entityManager;
 
     /**
-     * @var ObjectMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var Mapper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mapper;
 
@@ -75,7 +75,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mapper = $this->getMockBuilder(ObjectMapper::class)
+        $this->mapper = $this->getMockBuilder(Mapper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -90,7 +90,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
                     'entity' => 'Oro\Bundle\ProductBundle\Entity\Product',
                     'alias' => 'orob2b_product_website_1',
                     'recordId' => 1,
-                    'title' => '0RT28',
+                    'title' => 'Product 1 title',
                     'changed' => false,
                     'createdAt' => new \DateTimeImmutable(),
                     'updatedAt' => new \DateTimeImmutable(),
@@ -102,7 +102,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
                     'entity' => 'Oro\Bundle\ProductBundle\Entity\Product',
                     'alias' => 'orob2b_product_website_1',
                     'recordId' => 2,
-                    'title' => '1AB92',
+                    'title' => 'Product 2 title',
                     'changed' => false,
                     'createdAt' => new \DateTimeImmutable(),
                     'updatedAt' => new \DateTimeImmutable(),
@@ -114,7 +114,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
                     'entity' => 'Oro\Bundle\ProductBundle\Entity\Product',
                     'alias' => 'orob2b_product_website_1',
                     'recordId' => 3,
-                    'title' => '1GB82',
+                    'title' => 'Product 3 title',
                     'changed' => false,
                     'createdAt' => new \DateTimeImmutable(),
                     'updatedAt' => new \DateTimeImmutable(),
@@ -167,8 +167,33 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($this->entityManager);
 
-        $this->mapper->expects($this->exactly(3))->method('mapSelectedData')->willReturn([]);
-        $this->mapper->expects($this->exactly(3))->method('getEntityConfig')->willReturn([]);
+        $this->mapper->expects($this->exactly(3))->method('mapSelectedData')->willReturnOnConsecutiveCalls(
+            [
+                'title' => 'Product 1 title',
+                'sku' => '0RT28',
+            ],
+            [
+                'title' => 'Product 2 title',
+                'sku' => '1AB92',
+            ],
+            [
+                'title' => 'Product 3 title',
+                'sku' => '1GB82',
+            ]
+        );
+        $this->mapper->expects($this->exactly(3))->method('getEntityConfig')->willReturn([
+            'alias' => 'orob2b_product_WEBSITE_ID',
+            'fields' => [
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text'
+                ],
+                [
+                    'name' => 'sku_LOCALIZATION_ID',
+                    'type' => 'text'
+                ],
+            ],
+        ]);
 
         $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
 
@@ -184,28 +209,73 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
                     $this->entityManager,
                     'Oro\Bundle\ProductBundle\Entity\Product',
                     1,
-                    '0RT28',
+                    'Product 1 title',
                     null,
-                    [],
-                    []
+                    [
+                        'title' => 'Product 1 title',
+                        'sku' => '0RT28',
+                    ],
+                    [
+                        'alias' => 'orob2b_product_WEBSITE_ID',
+                        'fields' => [
+                            [
+                                'name' => 'title_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                            [
+                                'name' => 'sku_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                        ],
+                    ]
                 ),
                 new Item(
                     $this->entityManager,
                     'Oro\Bundle\ProductBundle\Entity\Product',
                     2,
-                    '1AB92',
+                    'Product 2 title',
                     null,
-                    [],
-                    []
+                    [
+                        'title' => 'Product 2 title',
+                        'sku' => '1AB92',
+                    ],
+                    [
+                        'alias' => 'orob2b_product_WEBSITE_ID',
+                        'fields' => [
+                            [
+                                'name' => 'title_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                            [
+                                'name' => 'sku_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                        ],
+                    ]
                 ),
                 new Item(
                     $this->entityManager,
                     'Oro\Bundle\ProductBundle\Entity\Product',
                     3,
-                    '1GB82',
+                    'Product 3 title',
                     null,
-                    [],
-                    []
+                    [
+                        'title' => 'Product 3 title',
+                        'sku' => '1GB82',
+                    ],
+                    [
+                        'alias' => 'orob2b_product_WEBSITE_ID',
+                        'fields' => [
+                            [
+                                'name' => 'title_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                            [
+                                'name' => 'sku_LOCALIZATION_ID',
+                                'type' => 'text'
+                            ],
+                        ],
+                    ]
                 ),
             ],
             3
@@ -228,8 +298,8 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->with('OroWebsiteSearchBundle:Item')
             ->willReturn($this->entityManager);
 
-        $this->mapper->expects($this->never())->method('mapSelectedData')->willReturn([]);
-        $this->mapper->expects($this->never())->method('getEntityConfig')->willReturn([]);
+        $this->mapper->expects($this->never())->method('mapSelectedData');
+        $this->mapper->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->never())->method('search');
 
@@ -258,8 +328,8 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($this->entityManager);
 
-        $this->mapper->expects($this->never())->method('mapSelectedData')->willReturn([]);
-        $this->mapper->expects($this->never())->method('getEntityConfig')->willReturn([]);
+        $this->mapper->expects($this->never())->method('mapSelectedData');
+        $this->mapper->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
 
@@ -281,8 +351,8 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        $this->mapper->expects($this->never())->method('mapSelectedData')->willReturn([]);
-        $this->mapper->expects($this->never())->method('getEntityConfig')->willReturn([]);
+        $this->mapper->expects($this->never())->method('mapSelectedData');
+        $this->mapper->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->never())->method('search');
 

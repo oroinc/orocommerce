@@ -31,7 +31,8 @@ services:
         calls:
             - [setRegistry, ['@doctrine']]
             - [setDrivers, ['%oro_search.drivers%']]
-            - [setMapper, ['@oro_search.mapper']]
+#           TODO: replace class name with a service when the mapper will be done in BB-4076 or BB-4321
+            - [setMapper, ['Oro\Bundle\WebsiteSearchBundle\Engine\Mapper']]
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'

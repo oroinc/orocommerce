@@ -5,11 +5,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use Oro\Bundle\SearchBundle\Engine\ObjectMapper;
 use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
 class OrmEngine extends AbstractEngine
@@ -20,7 +20,7 @@ class OrmEngine extends AbstractEngine
     /** @var BaseDriver[] */
     protected $drivers = [];
 
-    /** @var ObjectMapper */
+    /** @var Mapper */
     protected $mapper;
 
     /** @var WebsiteSearchIndexRepository */
@@ -130,15 +130,15 @@ class OrmEngine extends AbstractEngine
     }
 
     /**
-     * @param ObjectMapper $mapper
+     * @param Mapper $mapper
      */
-    public function setMapper(ObjectMapper $mapper)
+    public function setMapper(Mapper $mapper)
     {
         $this->mapper = $mapper;
     }
 
     /**
-     * @return ObjectMapper
+     * @return Mapper
      * @throws \RuntimeException
      */
     protected function getMapper()
