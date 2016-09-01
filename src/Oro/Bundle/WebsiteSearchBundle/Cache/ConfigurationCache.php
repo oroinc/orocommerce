@@ -5,19 +5,19 @@ namespace Oro\Bundle\WebsiteSearchBundle\Cache;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
-use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCachedLoader;
+use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 
 class ConfigurationCache implements CacheClearerInterface, CacheWarmerInterface
 {
     /**
-     * @var MappingConfigurationCachedLoader
+     * @var MappingConfigurationCacheLoader
      */
     protected $loader;
 
     /**
-     * @param MappingConfigurationCachedLoader $loader
+     * @param MappingConfigurationCacheLoader $loader
      */
-    public function __construct(MappingConfigurationCachedLoader $loader)
+    public function __construct(MappingConfigurationCacheLoader $loader)
     {
         $this->loader = $loader;
     }

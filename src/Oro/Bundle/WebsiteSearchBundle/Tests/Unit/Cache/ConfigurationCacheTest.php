@@ -3,11 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Cache;
 
 use Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCache;
-use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCachedLoader;
+use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 
 class ConfigurationCacheTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var MappingConfigurationCachedLoader|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MappingConfigurationCacheLoader|\PHPUnit_Framework_MockObject_MockObject */
     protected $configurationCacheLoader;
 
     /** @var ConfigurationCache */
@@ -16,7 +16,7 @@ class ConfigurationCacheTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->configurationCacheLoader = $this
-            ->getMockBuilder(MappingConfigurationCachedLoader::class)
+            ->getMockBuilder(MappingConfigurationCacheLoader::class)
             ->disableOriginalConstructor()
             ->getMock();
 

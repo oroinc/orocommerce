@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 
-class MappingConfigurationCachedLoader implements ConfigurationLoaderInterface
+class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 {
     const CACHE_KEY_HASH = 'cache_key_hash';
     const CACHE_KEY_CONFIGURATION = 'cache_key_configuration';
@@ -98,7 +98,7 @@ class MappingConfigurationCachedLoader implements ConfigurationLoaderInterface
      */
     public function getResources()
     {
-        if (!$this->resources) {
+        if (null === $this->resources) {
             $this->resources = $this->configurationProvider->getResources();
         }
 
