@@ -144,6 +144,10 @@ class OrmIndexerTest extends WebTestCase
 
     protected function tearDown()
     {
+        unset($this->doctrineHelper);
+        unset($this->mappingProviderMock);
+        unset($this->dispatcher);
+        unset($this->indexer);
         //Remove listener to not to interract with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
     }
