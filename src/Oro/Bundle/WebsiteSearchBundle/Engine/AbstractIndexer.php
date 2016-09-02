@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
@@ -24,18 +25,18 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var Mapper */
+    /** @var AbstractSearchMappingProvider */
     protected $mapper;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
-     * @param Mapper $mapper
+     * @param AbstractSearchMappingProvider $mapper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
-        Mapper $mapper
+        AbstractSearchMappingProvider $mapper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
