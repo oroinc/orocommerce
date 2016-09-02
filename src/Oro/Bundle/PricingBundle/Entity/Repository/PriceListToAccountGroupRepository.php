@@ -6,11 +6,12 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -95,20 +96,22 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     }
 
     /**
-     * @param AccountGroup $accountGroup
-     * @return int[]
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
      */
-    public function getWebsiteIdsByAccountGroup(AccountGroup $accountGroup)
+    public function getIteratorByPriceList(PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('PriceListToAccountGroup');
 
-        $result = $qb->select('distinct(PriceListToAccountGroup.website)')
-            ->andWhere($qb->expr()->eq('PriceListToAccountGroup.accountGroup', ':accountGroup'))
-            ->setParameter('accountGroup', $accountGroup)
-            ->getQuery()
-            ->getResult();
+        $qb->select(
+            sprintf('IDENTITY(PriceListToAccountGroup.accountGroup) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(PriceListToAccountGroup.website) as %s', PriceListRelationTrigger::WEBSITE)
+        )
+            ->where('PriceListToAccountGroup.priceList = :priceList')
+            ->groupBy('PriceListToAccountGroup.accountGroup', 'PriceListToAccountGroup.website')
+            ->setParameter('priceList', $priceList);
 
-        return array_map('current', $result);
+        return new BufferedQueryResultIterator($qb);
     }
 
     /**
