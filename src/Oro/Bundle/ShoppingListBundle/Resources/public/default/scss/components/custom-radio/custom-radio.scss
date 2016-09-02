@@ -24,17 +24,17 @@
         height: 13px;
 
         line-height: 10px;
-        content: '•';
+        content: '';
         text-align: center;
 
         border: 1px solid #cdcdcd;
         border-radius: 50%;
-        color: #fff;
         background: #fff;
     }
 
     &__control:checked + &__text::before {
-        color: #3991c7;
-        background: #ebebeb;
+        background: #3991c7;
+
+        box-shadow: inset 0 0 0 2px #ebebeb;
     }
 }
