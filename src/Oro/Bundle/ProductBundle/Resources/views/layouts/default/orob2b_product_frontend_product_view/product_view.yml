@@ -1,0 +1,90 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroProductBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.product.entity_plural_label'
+                - '=data["locale"].getLocalizedValue(data["product"].getNames())'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: '=data["locale"].getLocalizedValue(data["product"].getNames())'
+        - '@move':
+            id: page_title
+            parentId: product_title_container
+        - '@addTree':
+            items:
+                product_view_page:
+                    blockType: container
+                product_container:
+                    blockType: product_view_container
+                    options:
+                        product: '=data["product"]'
+                product_title_mobile:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["product"].getNames())'
+                product_image:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
+                product_description_container:
+                    blockType: container
+                product_title_container:
+                    blockType: container
+                product_rating:
+                    blockType: block
+                product_specification_container:
+                    blockType: container
+                product_specification:
+                    blockType: container
+                product_specification_sku:
+                    blockType: text
+                    options:
+                        text: '=data["product"].getSku()'
+                product_specification_mfg:
+                    blockType: text
+                    options:
+                        text: 1ABC13656
+                product_variants:
+                    blockType: block
+                    options:
+                        visible: '=data["product"].hasVariants()'
+                order_with_matrix:
+                    blockType: block
+                product_description_content:
+                    blockType: container
+                product_description:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["product"].getDescriptions())'
+                        escape: false
+                attachments:
+                    blockType: block
+                share:
+                    blockType: block
+                product_tabs:
+                    blockType: block
+            tree:
+                content:
+                    product_view_page:
+                        product_container:
+                            product_title_mobile: ~
+                            product_image: ~
+                            product_description_container:
+                                product_title_container: ~
+                                    #product_rating: ~
+                                product_specification_container:
+                                    product_specification:
+                                        product_specification_sku: ~
+                                        #product_specification_mfg: ~
+                                    #product_variants: ~
+                                    #order_with_matrix: ~
+                                product_description_content:
+                                    product_description: ~
+                                    #attachments: ~
+                                    #share: ~
+                        #product_tabs: ~
