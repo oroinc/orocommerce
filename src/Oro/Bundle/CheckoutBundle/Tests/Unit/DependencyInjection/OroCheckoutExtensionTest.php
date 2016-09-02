@@ -26,7 +26,6 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'orob2b_checkout.layout.data_provider.shipping_methods',
-            'orob2b_checkout.shipping_cost.calculator',
             'orob2b_checkout.condition.has_applicable_shipping_methods',
             'orob2b_checkout.condition.shipping_method_supports'
         ];

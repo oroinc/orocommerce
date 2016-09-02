@@ -440,8 +440,8 @@ workflows:
                             shipping_rule_config: $shipping_rule_config
                 post_actions:
                     - '@call_service_method':
-                        service: orob2b_checkout.shipping_cost.calculator
-                        method: calculatePrice
+                        service: orob2b_shipping.shipping_price.provider
+                        method: getPrice
                         method_parameters: [$checkout, $shipping_rule_config]
                         attribute: $checkout.shippingCost
 

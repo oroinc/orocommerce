@@ -218,6 +218,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
 
+    orob2b_shipping.shipping_price.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_method.registry'
+
     oro_shipping.form.handler.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
         scope: request
