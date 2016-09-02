@@ -12,6 +12,9 @@ class FrontendWebTestCase extends WebTestCase
      */
     protected $storedWebsiteManager;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function initClient(array $options = [], array $server = [], $force = false)
     {
         $client = parent::initClient($options, $server, $force);
