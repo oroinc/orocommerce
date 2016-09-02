@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
@@ -65,6 +66,7 @@ trait SearchTestTrait
      */
     private function assertEntityCount($count, $entityClass)
     {
+        /** @var WebTestCase $this */
         $repository = $this->getRepository($entityClass);
 
         $actualCount = $repository->createQueryBuilder('t')

@@ -52,7 +52,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     public function testRemoveEntitiesForSpecificWebsite()
     {
-        $this->getItemRepository()->removeEntities([1, 2], Product::class, 'orob2b_product_2');
+        $this->getItemRepository()->removeEntities([1, 2], Product::class, 'orob2b_product_website_2');
 
         $this->assertEntityCount(3, Item::class);
         $this->assertEntityCount(1, IndexText::class);

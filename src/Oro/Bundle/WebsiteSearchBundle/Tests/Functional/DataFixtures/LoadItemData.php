@@ -52,7 +52,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
     private static $itemsData = [
         self::REFERENCE_GOOD_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_1',
+            'alias' => 'orob2b_product_website_1',
             'recordId' => 1,
             'title' => 'Good product',
             'datetimeFields' => [
@@ -64,7 +64,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
         ],
         self::REFERENCE_BETTER_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_1',
+            'alias' => 'orob2b_product_website_1',
             'recordId' => 2,
             'title' => 'Better product',
             'textFields' => [
@@ -76,7 +76,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
         ],
         self::REFERENCE_OTHER_GOOD_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_2',
+            'alias' => 'orob2b_product_website_2',
             'recordId' => 1,
             'title' => 'Good product on other website',
             'textFields' => [
@@ -88,7 +88,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
         ],
         self::REFERENCE_OTHER_BETTER_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_2',
+            'alias' => 'orob2b_product_website_2',
             'recordId' => 2,
             'title' => 'Better product on other website',
             'decimalFields' => [
@@ -100,7 +100,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface
         ],
         self::REFERENCE_GREAT_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_3',
+            'alias' => 'orob2b_product_website_3',
             'recordId' => 11,
             'title' => 'Lottery ticket',
             'integerFields' => [

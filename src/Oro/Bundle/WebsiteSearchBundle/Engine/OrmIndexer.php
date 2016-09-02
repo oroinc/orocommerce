@@ -10,10 +10,12 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function delete(array $entities, array $context = [])
+    public function delete($entities, array $context = [])
     {
+        $entities = $this->convertToArray($entities);
+
         if (empty($entities)) {
-            return;
+            return true;
         }
 
         $firstEntityClass = $this->doctrineHelper->getEntityClass(current($entities));
@@ -28,10 +30,8 @@ class OrmIndexer extends AbstractIndexer
 
         $entityAlias = null;
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $websiteId = $context[self::CONTEXT_WEBSITE_ID_KEY];
             $entityAlias = $this->mapper->getEntityAlias($firstEntityClass);
-            //TODO: replace with mapper or other service method call
-            $entityAlias = str_replace('WEBSITE_ID', $websiteId, $entityAlias);
+            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
         }
 
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
@@ -39,6 +39,21 @@ class OrmIndexer extends AbstractIndexer
         /** @var WebsiteSearchIndexRepository $indexRepository */
         $indexRepository = $entityManager->getRepository(Item::class);
         $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
+
+        return true;
+    }
+
+    /**
+     * @param object|array $entities
+     * @return array
+     */
+    private function convertToArray($entities)
+    {
+        if (!is_array($entities)) {
+            $entities = [$entities];
+        }
+
+        return $entities;
     }
 
     /**
