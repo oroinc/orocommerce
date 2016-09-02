@@ -113,7 +113,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setQuantity(1)
             ->setCurrencyExpression('product.price_attribute_price_list_1.currency')
             ->setProductUnitExpression('product.unitPrecisions.unit')
-            ->setQuantityExpression('product.price_attribute_price_list_1.value + 5')
+            ->setQuantityExpression('product.price_attribute_price_list_1.quantity + 5')
             ->setProductUnit($this->getReference('product_unit.liter'))
             ->setRuleCondition($condition)
             ->setRule($rule);
@@ -131,7 +131,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         --   448                       AS sclr_1,
         o1_.unit_code             AS unit,
         o2_.currency              AS currency,
-        o2_.value + 5             AS quantity,
+        o2_.quantity + 5             AS quantity,
         o0_.sku                   AS sku,
         --   75                        AS sclr_6,
         o2_.value * 10            AS price
@@ -156,7 +156,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         WHERE
         o2_.currency IN ('EUR', 'USD') AND
         o1_.unit_code IS NOT NULL AND
-        o2_.id + 5 >= 0 AND
+        o2_.quantity + 5 >= 0 AND
         o2_.value * 10 >= 0 AND
         o3_.id = 2 AND
         o6_.price_list_id = 4 AND
