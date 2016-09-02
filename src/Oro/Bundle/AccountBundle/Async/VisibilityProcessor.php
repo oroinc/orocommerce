@@ -3,11 +3,9 @@
 namespace Oro\Bundle\AccountBundle\Async;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -15,7 +13,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class VisibilityProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class VisibilityProcessor implements MessageProcessorInterface
 {
     /**
      * @var RegistryInterface
@@ -36,6 +34,11 @@ class VisibilityProcessor implements MessageProcessorInterface, TopicSubscriberI
      * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var string
+     */
+    protected $resolvedVisibilityClassName = '';
 
     /**
      * @param RegistryInterface $registry
@@ -95,20 +98,18 @@ class VisibilityProcessor implements MessageProcessorInterface, TopicSubscriberI
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $className
      */
-    public static function getSubscribedTopics()
+    public function setResolvedVisibilityClassName($className)
     {
-        return [Topics::RESOLVE_PRODUCT_VISIBILITY];
+        $this->resolvedVisibilityClassName = $className;
     }
 
     /**
-     * All resolved product visibility entities should be stored together, so entity manager should be the same too
-     *
      * @return EntityManager
      */
     protected function getEntityManager()
     {
-        return $this->registry->getManagerForClass(ProductVisibilityResolved::class);
+        return $this->registry->getManagerForClass($this->resolvedVisibilityClassName);
     }
 }

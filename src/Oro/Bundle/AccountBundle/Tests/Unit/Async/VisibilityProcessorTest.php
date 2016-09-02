@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Async;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Async\Topics;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
@@ -58,6 +57,8 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             $this->cacheBuilder,
             $this->logger
         );
+
+        $this->visibilityProcessor->setResolvedVisibilityClassName(ProductVisibilityResolved::class);
     }
 
     public function testProcessInvalidArgumentException()
@@ -203,11 +204,12 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetSubscribedTopics()
+    public function testSetResolvedVisibilityClassName()
     {
-        $this->assertEquals(
-            [Topics::RESOLVE_PRODUCT_VISIBILITY],
-            $this->visibilityProcessor->getSubscribedTopics()
+        $this->assertAttributeEquals(
+            ProductVisibilityResolved::class,
+            'resolvedVisibilityClassName',
+            $this->visibilityProcessor
         );
     }
 }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
-use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,9 @@ trait MessageQueueTrait
     protected function cleanQueueMessageTraces()
     {
         $this->sendScheduledMessages();
-        $this->getMessageProducer()->clearTraces();
+
+        $this->getMessageProducer()->enable();
+        $this->getMessageProducer()->clear();
     }
 
     /**
@@ -30,7 +32,7 @@ trait MessageQueueTrait
         $this->sendScheduledMessages();
 
         return array_filter(
-            $this->getMessageProducer()->getTraces(),
+            $this->getMessageProducer()->getSentMessages(),
             function (array $trace) {
                 return $this->topic === $trace['topic'];
             }
@@ -44,7 +46,7 @@ trait MessageQueueTrait
     }
 
     /**
-     * @return TraceableMessageProducer
+     * @return MessageCollector
      */
     protected function getMessageProducer()
     {
