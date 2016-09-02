@@ -16,11 +16,13 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
     public function removeIndexByAlias($currentAlias)
     {
         $qb = $this->createQueryBuilder('item');
-        $qb->delete()
+        $qb
             ->where($qb->expr()->eq('item.alias', ':current_alias'))
-            ->getQuery()
-            ->setParameter('current_alias', $currentAlias)
-            ->execute();
+            ->setParameter('current_alias', $currentAlias);
+
+        $this->deleteFromIndexTextTable(clone $qb);
+
+        $qb->delete()->getQuery()->execute();
     }
 
     /**
@@ -37,6 +39,7 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
             ->getQuery()
             ->execute();
     }
+
     /**
      * @param array $entityIds
      * @param string $entityClass

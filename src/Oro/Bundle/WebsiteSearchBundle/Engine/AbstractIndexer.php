@@ -112,7 +112,8 @@ abstract class AbstractIndexer implements IndexerInterface
 
         /** @var WebsiteRepository $websiteRepository */
         $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        return $websiteRepository->getAllWebsiteIds();
+
+        return $websiteRepository->getWebsiteIdentifiers();
     }
 
     /**
@@ -186,6 +187,7 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $indexEntityEvent = new IndexEntityEvent($entityClass, $entityIds, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
+
         return $indexEntityEvent->getEntitiesData();
     }
 
