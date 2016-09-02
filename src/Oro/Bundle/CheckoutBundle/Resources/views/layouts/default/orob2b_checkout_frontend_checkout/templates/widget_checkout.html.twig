@@ -1,0 +1,9 @@
+{% block _raw_notification_widget %}
+    {% if app.session.flashbag.peekAll|length > 0 %}
+        {% for type, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div data-role="checkout-flash-notifications" data-type="{{ type }}" data-message="{{ message|trans|raw }}"></div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

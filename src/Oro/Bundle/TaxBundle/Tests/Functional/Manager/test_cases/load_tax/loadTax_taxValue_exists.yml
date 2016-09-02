@@ -1,0 +1,43 @@
+method: loadTax
+reference: simple_order
+configuration: {}
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
+    'Oro\Bundle\TaxBundle\Entity\TaxValue':
+        simple_order_tax_value:
+            entityClass: { property_value: 'Oro\Bundle\OrderBundle\Entity\Order' }
+            entityId: { reference: simple_order, property: id }
+            address: { property_value: address }
+            result:
+                class: 'Oro\Bundle\TaxBundle\Model\Result'
+                property_value:
+                    total:
+                        class: 'Oro\Bundle\TaxBundle\Model\ResultElement'
+                        property_value:
+                            includingTax: '867.9' # 789 + 78.9
+                            excludingTax: '789'
+                            taxAmount: '78.9' # 789 * 0.1
+                            adjustment: ~
+                            currency: 'USD'
+                    taxes:
+                        -
+                            class: 'Oro\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                tax: 'TAX1'
+                                rate: '0.1'
+                                taxableAmount: '789'
+                                taxAmount: '78.9'
+                                currency: 'USD'
+expectedResult:
+    total:
+        includingTax: '867.9' # 789 + 78.9
+        excludingTax: '789'
+        taxAmount: '78.9' # 789 * 0.1
+        adjustment: ~
+        currency: 'USD'
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '789', taxAmount: '78.9', currency: 'USD' }

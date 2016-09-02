@@ -4,8 +4,7 @@ namespace Oro\Bundle\PayPalBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
-
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 
 class PayPalSelectedCountriesListener
 {

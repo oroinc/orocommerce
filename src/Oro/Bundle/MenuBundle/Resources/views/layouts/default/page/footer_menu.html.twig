@@ -1,0 +1,27 @@
+{% block _footer_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " row"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="col-md-8 col-sm-12 clearfix">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _footer_menu_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " footer-nav__list",
+    }) %}
+    {% spaceless %}
+        {% for child in item.children %}
+            {% if child.extras.isAllowed %}
+            <div class="footer-nav footer-columns footer-columns--one-third">
+                <h2 class="footer-nav__title">{{ child.label }}</h2>
+                {% set item = child %}
+                {{ block('menu_widget') }}
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endspaceless %}
+{% endblock %}

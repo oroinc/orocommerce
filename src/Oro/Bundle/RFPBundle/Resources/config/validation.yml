@@ -1,0 +1,74 @@
+Oro\Bundle\RFPBundle\Entity\Request:
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        lastName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        email:
+            - NotBlank: ~
+            - Email: ~
+            - Length:
+                max: 255
+        company:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        role:
+            - Length:
+                max: 255
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
+        requestProducts:
+            - Valid: ~
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    properties:
+        request:
+            - NotBlank: ~
+        product:
+            - NotBlank:
+                message: 'oro.rfp.requestproduct.product.blank'
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+        requestProductItems:
+            - Count:
+                min: 1
+                minMessage: 'oro.rfp.requestproduct.request_product_items.blank'
+            - Valid: ~
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    properties:
+        requestProduct:
+            - NotBlank: ~
+        quantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - Valid: ~
+
+Oro\Bundle\RFPBundle\Entity\RequestStatus:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields:     [ name ]
+              ignoreNull: false
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        sortOrder:
+            - NotBlank: ~

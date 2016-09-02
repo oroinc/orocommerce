@@ -1,0 +1,13 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    alias:                          orob2b_order
+    title_fields:                   [identifier]
+    route:
+        name:                       orob2b_order_view
+        parameters:
+            id:                     id
+    search_template:                OroOrderBundle:Order:searchResult.html.twig
+    fields:
+        -
+            name:                   identifier
+            target_type:            text
+            target_fields:          [identifier]

@@ -1,3 +1,0 @@
-BUYER:
-    permissions:
-        entity|OroB2B\Bundle\PricingBundle\Entity\ProductPrice: [VIEW_SYSTEM]

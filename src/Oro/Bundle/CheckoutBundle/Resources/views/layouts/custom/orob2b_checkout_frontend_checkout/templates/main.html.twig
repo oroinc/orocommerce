@@ -1,0 +1,8 @@
+{% block _checkout_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
