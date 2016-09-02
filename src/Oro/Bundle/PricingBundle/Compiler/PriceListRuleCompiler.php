@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class PriceListRuleCompiler extends AbstractRuleCompiler
 {
@@ -72,9 +73,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $qb = $this->createQueryBuilder($rule);
             $qb->distinct();
             $rootAlias = $this->getRootAlias($qb);
-            if (!$rule->getProductUnitExpression()) {
-                $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
-            }
+            $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
 
             $this->modifySelectPart($qb, $rule, $rootAlias);
             $this->applyRuleConditions($qb, $rule);
@@ -108,9 +107,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
         if ($rule->getCurrencyExpression()) {
             $expression .= sprintf(' and %s != null', $rule->getCurrencyExpression());
-        }
-        if ($rule->getProductUnitExpression()) {
-            $expression .= sprintf(' and %s != null', $rule->getProductUnitExpression());
         }
         if ($rule->getQuantityExpression()) {
             $expression .= sprintf(' and %s != null', $rule->getQuantityExpression());
@@ -302,13 +298,21 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function restrictBySupportedUnits(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
-        $qb
-            ->join(
-                $rootAlias . '.unitPrecisions',
-                '_allowedUnit'
-            )
-            ->andWhere($qb->expr()->eq('_allowedUnit.unit', ':requiredUnitUnit'))
-            ->setParameter('requiredUnitUnit', $rule->getProductUnit());
+        if (!$rule->getProductUnitExpression()) {
+            $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit')
+                ->andWhere($qb->expr()->eq('_allowedUnit.unit', ':requiredUnitUnit'))
+                ->setParameter('requiredUnitUnit', $rule->getProductUnit());
+        } else {
+            $joins = array_key_exists($rootAlias, $qb->getDQLPart('join')) ? $qb->getDQLPart('join')[$rootAlias] : [];
+            $joinConditions = [];
+            /** @var Join $join */
+            foreach ($joins as $join) {
+                if (is_subclass_of($join->getJoin(), ProductUnitHolderInterface::class)) {
+                    $joinConditions[] = sprintf('allowedUnit.unit = %s.unit', $join->getAlias());
+                }
+            }
+            $qb->join($rootAlias.'.unitPrecisions', 'allowedUnit', Join::WITH, implode(' AND ', $joinConditions));
+        }
     }
 
     /**

@@ -112,7 +112,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setPriority(1)
             ->setQuantity(1)
             ->setCurrencyExpression('product.price_attribute_price_list_1.currency')
-            ->setProductUnitExpression('product.unitPrecisions.unit')
+            ->setProductUnitExpression('product.price_attribute_price_list_1.unit')
             ->setQuantityExpression('product.price_attribute_price_list_1.quantity + 5')
             ->setProductUnit($this->getReference('product_unit.liter'))
             ->setRuleCondition($condition)
@@ -122,50 +122,52 @@ class PriceListRuleCompilerTest extends WebTestCase
         $em->persist($priceRule);
         $em->flush();
 
-        $expected = [];
-
-        /**
-        SELECT DISTINCT
-        o0_.id                    AS product,
-        o2_.price_attribute_pl_id AS price_attribute,
-        --   448                       AS sclr_1,
-        o1_.unit_code             AS unit,
-        o2_.currency              AS currency,
-        o2_.quantity + 5             AS quantity,
-        o0_.sku                   AS sku,
-        --   75                        AS sclr_6,
-        o2_.value * 10            AS price
-        FROM orob2b_product o0_
-        LEFT JOIN orob2b_catalog_category o3_ ON (
-        EXISTS(
-        SELECT 1
-        FROM orob2b_category_to_product o4_
-        INNER JOIN orob2b_product o5_ ON o4_.product_id = o5_.id
-        WHERE o4_.category_id = o3_.id AND o5_.id IN (o0_.id)))
-        LEFT JOIN orob2b_price_attribute_price o2_ ON ((o2_.product_id = o0_.id AND o2_.price_attribute_pl_id = 1))
-        LEFT JOIN orob2b_product_unit_precision o1_ ON (o0_.id = o1_.product_id AND EXISTS (
-        SELECT 1
-        FROM orob2b_price_attribute_price o7_
-        WHERE
-        o7_.unit_code = o1_.unit_code AND
-        o7_.unit_code = o2_.unit_code AND
-        o7_.product_id = o0_.id AND
-        o7_.currency = o2_.currency
-        ))
-        INNER JOIN orob2b_price_list_to_product o6_ ON (o6_.product_id = o0_.id)
-        WHERE
-        o2_.currency IN ('EUR', 'USD') AND
-        o1_.unit_code IS NOT NULL AND
-        o2_.quantity + 5 >= 0 AND
-        o2_.value * 10 >= 0 AND
-        o3_.id = 2 AND
-        o6_.price_list_id = 4 AND
-        o0_.id = 1;
-         */
+        $expected = [
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'bottle',
+                'EUR',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '122.0000',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'bottle',
+                'USD',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '122.0000',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'liter',
+                'EUR',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '100.0000',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'liter',
+                'USD',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '110.0000',
+            ],
+        ];
 
         $qb = $this->getQueryBuilder($priceRule);
-        $q = $qb->getQuery()->getSQL();
         $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
     }
 
     public function testRestrictByManualPrices()
