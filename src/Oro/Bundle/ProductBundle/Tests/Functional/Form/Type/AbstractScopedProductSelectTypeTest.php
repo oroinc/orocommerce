@@ -17,9 +17,9 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     protected $configPath;
 
     /**
-     * @var Website
+     * @var int|object|null
      */
-    protected $website;
+    protected $configScope;
 
     public function setUp()
     {
@@ -30,23 +30,22 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 LoadCategoryProductData::class,
             ]
         );
-        $this->website = $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
 
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
     protected function tearDown()
     {
-        $this->configManager->reset($this->configPath, $this->website);
-        $this->configManager->flush($this->website);
+        $this->configManager->reset($this->configPath, $this->configScope);
+        $this->configManager->flush($this->configScope);
     }
 
     public function setUpBeforeRestriction()
     {
         list($availableInventoryStatuses) = func_get_args();
 
-        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->website);
-        $this->configManager->flush($this->website);
+        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScope);
+        $this->configManager->flush($this->configScope);
     }
 
     /**
