@@ -61,8 +61,8 @@ class PriceListRuleCompilerTest extends WebTestCase
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
 
-        $condition = 'product.category == ' . $category1->getId()
-            . " and product.price_attribute_price_list_1.currency == 'USD'";
+        $condition = 'product.category == '.$category1->getId()
+            ." and product.price_attribute_price_list_1.currency == 'USD'";
 
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
@@ -80,7 +80,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 1,
                 $product1->getSku(),
                 $priceRule->getId(),
-                110
+                110,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -95,16 +95,17 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function testApplyRuleConditionsWithExpressions()
     {
-        $this->markTestSkipped();
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
 
-        $condition = 'product.category == ' . $this->getReference(LoadCategoryData::FOURTH_LEVEL2)->getId();
+        $condition = sprintf(
+            'product.category == %s',
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
+        );
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
         $priceList = $this->createPriceList();
-        $this->assignProducts($priceList, [$product1, $product2, $product3]);
+        $this->assignProducts($priceList, [$product1, $product2]);
         $priceRule = new PriceRule();
         $priceRule->setCurrency('EUR')
             ->setPriceList($priceList)
@@ -112,7 +113,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setQuantity(1)
             ->setCurrencyExpression('product.price_attribute_price_list_1.currency')
             ->setProductUnitExpression('product.unitPrecisions.unit')
-            ->setQuantityExpression('product.price_attribute_price_list_1 + 5')
+            ->setQuantityExpression('product.price_attribute_price_list_1.value + 5')
             ->setProductUnit($this->getReference('product_unit.liter'))
             ->setRuleCondition($condition)
             ->setRule($rule);
@@ -121,8 +122,50 @@ class PriceListRuleCompilerTest extends WebTestCase
         $em->persist($priceRule);
         $em->flush();
 
-        $qb = $this->compiler->compile($priceRule);
-        $expected = $qb->getQuery()->getSQL();
+        $expected = [];
+
+        /**
+        SELECT DISTINCT
+        o0_.id                    AS product,
+        o2_.price_attribute_pl_id AS price_attribute,
+        --   448                       AS sclr_1,
+        o1_.unit_code             AS unit,
+        o2_.currency              AS currency,
+        o2_.value + 5             AS quantity,
+        o0_.sku                   AS sku,
+        --   75                        AS sclr_6,
+        o2_.value * 10            AS price
+        FROM orob2b_product o0_
+        LEFT JOIN orob2b_catalog_category o3_ ON (
+        EXISTS(
+        SELECT 1
+        FROM orob2b_category_to_product o4_
+        INNER JOIN orob2b_product o5_ ON o4_.product_id = o5_.id
+        WHERE o4_.category_id = o3_.id AND o5_.id IN (o0_.id)))
+        LEFT JOIN orob2b_price_attribute_price o2_ ON ((o2_.product_id = o0_.id AND o2_.price_attribute_pl_id = 1))
+        LEFT JOIN orob2b_product_unit_precision o1_ ON (o0_.id = o1_.product_id AND EXISTS (
+        SELECT 1
+        FROM orob2b_price_attribute_price o7_
+        WHERE
+        o7_.unit_code = o1_.unit_code AND
+        o7_.unit_code = o2_.unit_code AND
+        o7_.product_id = o0_.id AND
+        o7_.currency = o2_.currency
+        ))
+        INNER JOIN orob2b_price_list_to_product o6_ ON (o6_.product_id = o0_.id)
+        WHERE
+        o2_.currency IN ('EUR', 'USD') AND
+        o1_.unit_code IS NOT NULL AND
+        o2_.id + 5 >= 0 AND
+        o2_.value * 10 >= 0 AND
+        o3_.id = 2 AND
+        o6_.price_list_id = 4 AND
+        o0_.id = 1;
+         */
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $q = $qb->getQuery()->getSQL();
+        $actual = $this->getActualResult($qb);
     }
 
     public function testRestrictByManualPrices()
@@ -162,8 +205,8 @@ class PriceListRuleCompilerTest extends WebTestCase
                 1,
                 $product1->getSku(),
                 $priceRule->getId(),
-                420
-            ]
+                420,
+            ],
         ];
 
         $qb = $this->getQueryBuilder($priceRule);
@@ -198,8 +241,8 @@ class PriceListRuleCompilerTest extends WebTestCase
                 1,
                 $product1->getSku(),
                 $priceRule->getId(),
-                420
-            ]
+                420,
+            ],
         ];
 
         $qb = $this->getQueryBuilder($priceRule, $product1);
@@ -220,9 +263,9 @@ class PriceListRuleCompilerTest extends WebTestCase
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference('product_unit.liter');
 
-        $condition = '(product.category == ' . $category1->getId()
-            . ' or product.category == ' . $category2->getId() . ')'
-            . " and product.price_attribute_price_list_1.currency == 'USD'";
+        $condition = '(product.category == '.$category1->getId()
+            .' or product.category == '.$category2->getId().')'
+            ." and product.price_attribute_price_list_1.currency == 'USD'";
 
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
@@ -241,7 +284,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 1,
                 $product2->getSku(),
                 $priceRule->getId(),
-                200
+                200,
             ],
         ];
         $actual = $this->getActualResult($qb);
@@ -274,7 +317,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 1,
                 $product2->getSku(),
                 $priceRule->getId(),
-                10
+                10,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -313,7 +356,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         $qb = $this->compiler->compile($priceRule, $product);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
-        $qb->orderBy($rootAlias . '.id');
+        $qb->orderBy($rootAlias.'.id');
 
         return $qb;
     }
