@@ -5,7 +5,6 @@ ShoppingListWidget:
 ShoppingListItem:
   class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListItem
 
-
 CheckoutTotal:
   selector: 'td.order-checkout-widget__total'
   class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal
