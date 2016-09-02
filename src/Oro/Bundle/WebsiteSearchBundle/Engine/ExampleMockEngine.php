@@ -14,12 +14,6 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 
-/**
- * Mock data engine.
- * This engine code is demonstrating a very basic control flow
- * of a V2 engine: it retrieves a Query, mimics Query execution
- * and returns data, complying the requested parameters in the Query.
- */
 class ExampleMockEngine implements EngineV2Interface
 {
     /**
@@ -43,6 +37,30 @@ class ExampleMockEngine implements EngineV2Interface
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param Query $query
+     * @param array $context
+     * @return Result
+     */
+    public function search(Query $query, $context = [])
+    {
+        $selectedColumns = $query->getSelect();
+        $queryBuilder = $this->prepareQueryBuilder($selectedColumns);
+
+        $this->applyFiltersToQueryBuilder($queryBuilder, $query->getCriteria());
+
+        $count = count($queryBuilder->getQuery()->getArrayResult());
+
+        $this->applyPagination($query, $queryBuilder);
+        $this->applyOrderBy($query, $queryBuilder);
+
+        $results = $queryBuilder
+            ->getQuery()
+            ->getArrayResult();
+
+        return new Result($query, $results, $count);
     }
 
     /**
@@ -78,7 +96,7 @@ class ExampleMockEngine implements EngineV2Interface
      * @param Query $query
      * @param QueryBuilder $queryBuilder
      */
-    public function applyPagination(Query $query, QueryBuilder $queryBuilder)
+    private function applyPagination(Query $query, QueryBuilder $queryBuilder)
     {
         $criteria = $query->getCriteria();
         $offset = $criteria->getFirstResult();
@@ -178,30 +196,6 @@ class ExampleMockEngine implements EngineV2Interface
 
             $queryBuilder->addOrderBy($field, $ordering);
         }
-    }
-
-    /**
-     * @param Query $query
-     * @param array $context
-     * @return Result
-     */
-    public function search(Query $query, $context = [])
-    {
-        $selectedColumns = $query->getSelect();
-        $queryBuilder = $this->prepareQueryBuilder($selectedColumns);
-
-        $this->applyFiltersToQueryBuilder($queryBuilder, $query->getCriteria());
-
-        $count = count($queryBuilder->getQuery()->getArrayResult());
-
-        $this->applyPagination($query, $queryBuilder);
-        $this->applyOrderBy($query, $queryBuilder);
-
-        $results = $queryBuilder
-            ->getQuery()
-            ->getArrayResult();
-
-        return new Result($query, $results, $count);
     }
 
     /**

@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\DataGridBundle\Event\AbstractResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 
 class FrontendProductDatagridListener
 {
@@ -148,9 +148,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param AbstractResultAfter $event
+     * @param GridResultAfter $event
      */
-    public function onResultAfter(AbstractResultAfter $event)
+    public function onResultAfter(GridResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -167,11 +167,11 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param AbstractResultAfter $event
+     * @param GridResultAfter $event
      * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(AbstractResultAfter $event, array $productIds, array $records)
+    protected function addProductImages(GridResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
