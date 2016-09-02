@@ -2,19 +2,22 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\AbstractGridControllerTest;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
+use Oro\Bundle\FrontendTestFrameworkBundle\Datagrid\DatagridTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class OrderControllerTest extends AbstractGridControllerTest
+class OrderControllerTest extends WebTestCase
 {
+    use DatagridTestTrait;
+
     const TOTAL_VALUE = 400;
     const SUBTOTAL_VALUE = 20;
 
@@ -46,7 +49,7 @@ class OrderControllerTest extends AbstractGridControllerTest
     {
         $this->client->request('GET', '/about'); // any page to authorize a user, CMS is used as the fastest one
 
-        $checkouts = $this->getDatagridData();
+        $checkouts = $this->getDatagridData('frontend-checkouts-grid');
         $this->assertCount(5, $checkouts);
     }
 
@@ -60,6 +63,7 @@ class OrderControllerTest extends AbstractGridControllerTest
     public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
     {
         $checkouts = $this->getDatagridData(
+            'frontend-checkouts-grid',
             [
                 sprintf('[%s][value]', $columnName) => $value,
                 sprintf('[%s][type]', $columnName) => $filterType
@@ -135,6 +139,7 @@ class OrderControllerTest extends AbstractGridControllerTest
     {
         //check checkouts with subtotal sorter
         $checkouts = $this->getDatagridData(
+            'frontend-checkouts-grid',
             [],
             [
                 '[subtotal]' => OrmSorterExtension::DIRECTION_ASC,
@@ -214,13 +219,5 @@ class OrderControllerTest extends AbstractGridControllerTest
         }
 
         return $this->allCheckouts[$checkoutId];
-    }
-
-    /**
-     * @return string
-     */
-    protected function getGridName()
-    {
-        return 'frontend-checkouts-grid';
     }
 }

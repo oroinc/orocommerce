@@ -3,11 +3,14 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Grid\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\AbstractGridControllerTest as AbstractGridTest;
+use Oro\Bundle\FrontendTestFrameworkBundle\Datagrid\DatagridTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class SearchGridTest extends AbstractGridTest
+class SearchGridTest extends WebTestCase
 {
+    use DatagridTestTrait;
+
     protected function setUp()
     {
         $this->initClient(
@@ -18,9 +21,17 @@ class SearchGridTest extends AbstractGridTest
 
     public function testSorters()
     {
-        $products = $this->getDatagridData([], ['[sku]' => AbstractSorterExtension::DIRECTION_ASC,]);
+        $products = $this->getDatagridData(
+            'frontend-product-search-grid',
+            [],
+            ['[sku]' => AbstractSorterExtension::DIRECTION_ASC]
+        );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_ASC);
-        $products = $this->getDatagridData([], ['[sku]' => AbstractSorterExtension::DIRECTION_DESC,]);
+        $products = $this->getDatagridData(
+            'frontend-product-search-grid',
+            [],
+            ['[sku]' => AbstractSorterExtension::DIRECTION_DESC,]
+        );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_DESC);
     }
 
@@ -44,13 +55,5 @@ class SearchGridTest extends AbstractGridTest
             }
             $lastValue = $actualValue;
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getGridName()
-    {
-        return 'frontend-product-search-grid';
     }
 }
