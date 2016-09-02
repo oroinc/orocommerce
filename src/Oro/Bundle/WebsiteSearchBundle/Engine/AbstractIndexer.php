@@ -7,12 +7,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -148,12 +148,14 @@ abstract class AbstractIndexer implements IndexerInterface
                 $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
                 $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
+                $entityManager->clear($entityClass);
             }
         }
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
             $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+            $entityManager->clear($entityClass);
         }
 
         $this->renameIndex($temporaryAlias, $currentAlias);

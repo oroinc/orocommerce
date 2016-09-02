@@ -32,9 +32,8 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     public function testRenameIndexAlias()
     {
-        $this->repository->removeIndexByAlias(LoadIndexItems::ALIAS_REAL);
         $this->repository->renameIndexAlias(LoadIndexItems::ALIAS_TEMP, LoadIndexItems::ALIAS_REAL);
         $realAliasesLeft = $this->repository->findBy(['alias' => LoadIndexItems::ALIAS_REAL]);
-        $this->assertCount(2, $realAliasesLeft);
+        $this->assertCount(3, $realAliasesLeft);
     }
 }
