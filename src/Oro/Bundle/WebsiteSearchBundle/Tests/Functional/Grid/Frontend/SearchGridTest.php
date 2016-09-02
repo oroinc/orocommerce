@@ -18,14 +18,10 @@ class SearchGridTest extends AbstractGridTest
 
     public function testSorters()
     {
-        //check checkouts with subtotal sorter
-        $products = $this->getDatagridData(
-            [],
-            [
-                '[sku]' => AbstractSorterExtension::DIRECTION_ASC,
-            ]
-        );
+        $products = $this->getDatagridData([], ['[sku]' => AbstractSorterExtension::DIRECTION_ASC,]);
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_ASC);
+        $products = $this->getDatagridData([], ['[sku]' => AbstractSorterExtension::DIRECTION_DESC,]);
+        $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_DESC);
     }
 
     /**
