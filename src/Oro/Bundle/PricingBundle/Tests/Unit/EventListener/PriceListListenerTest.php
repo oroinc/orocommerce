@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\Test\FormInterface;
-
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\EventListener\PriceListListener;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\EventListener\PriceListListener;
+use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Test\FormInterface;
 
 class PriceListListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +33,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
-     * @var PriceListChangeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $triggerHandler;
 
@@ -49,17 +48,17 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->builder = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder')
+            ->getMockBuilder(CombinedPriceListActivationPlanBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->triggerHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
+            ->getMockBuilder(PriceListRelationTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->priceRuleLexemeHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler')
+            ->getMockBuilder(PriceRuleLexemeHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
 

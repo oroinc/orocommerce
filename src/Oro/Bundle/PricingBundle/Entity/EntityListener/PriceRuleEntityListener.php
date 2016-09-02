@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
-
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
 class PriceRuleEntityListener
 {
@@ -15,18 +15,18 @@ class PriceRuleEntityListener
     protected $cache;
 
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceListTriggerHandler
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleChangeTriggerHandler;
 
     /**
      * @param Cache $cache
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
      */
-    public function __construct(Cache $cache, PriceRuleTriggerFiller $priceRuleTriggersFiller)
+    public function __construct(Cache $cache, PriceListTriggerHandler $priceRuleChangeTriggerHandler)
     {
         $this->cache = $cache;
-        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
+        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
     }
 
     /**
@@ -36,7 +36,11 @@ class PriceRuleEntityListener
      */
     public function postPersist(PriceRule $priceRule)
     {
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $priceRule->getPriceList()->setActual(false);
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
+            Topics::CALCULATE_RULE,
+            $priceRule->getPriceList()
+        );
     }
 
     /**
@@ -46,8 +50,12 @@ class PriceRuleEntityListener
      */
     public function preUpdate(PriceRule $priceRule)
     {
+        $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
+            Topics::CALCULATE_RULE,
+            $priceRule->getPriceList()
+        );
     }
 
     /**
@@ -57,8 +65,12 @@ class PriceRuleEntityListener
      */
     public function preRemove(PriceRule $priceRule)
     {
+        $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
-        $this->priceRuleTriggersFiller->addTriggersForPriceList($priceRule->getPriceList());
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
+            Topics::CALCULATE_RULE,
+            $priceRule->getPriceList()
+        );
     }
 
     /**

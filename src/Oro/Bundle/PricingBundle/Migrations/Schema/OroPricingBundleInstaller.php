@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -34,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -60,8 +59,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $this->createOrob2BCmbPriceListToAccGrTable($schema);
         $this->createOrob2BCmbPriceListToWsTable($schema);
         $this->createOrob2BCmbPlToPlTable($schema);
-        $this->createOroPriceListChangeTriggerTable($schema);
-        $this->createOroProductPriceChangeTriggerTable($schema);
         $this->createOroPriceListScheduleTable($schema);
         $this->createOroCplActivationRuleTable($schema);
         $this->createOroPriceAttributeTable($schema);
@@ -69,7 +66,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $this->createOroPriceAttributeProductPriceTable($schema);
         $this->createOroriceListToProductTable($schema);
         $this->createOroPriceRuleTable($schema);
-        $this->createOroPriceRuleChTriggerTable($schema);
         $this->createOroPriceRuleLexemeTable($schema);
 
         /** Foreign keys generation **/
@@ -88,15 +84,12 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
-        $this->addOrob2BPriceListChangeTriggerForeignKeys($schema);
-        $this->addOroProductPriceChangeTriggerForeignKeys($schema);
         $this->addOroPriceListScheduleForeignKeys($schema);
         $this->addOroCplActivationRuleForeignKeys($schema);
         $this->addOroPriceAttributeCurrencyForeignKeys($schema);
         $this->addOroPriceAttributeProductPriceForeignKeys($schema);
         $this->addOroriceListToProductForeignKeys($schema);
         $this->addOroPriceRuleForeignKeys($schema);
-        $this->addOroPriceRuleChTriggerForeignKeys($schema);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
     }
 
@@ -112,6 +105,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
+        $table->addColumn('actual', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);
         $table->addColumn('contain_schedule', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -409,21 +403,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create orob2b_prod_price_ch_trigger table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroProductPriceChangeTriggerTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_prod_price_ch_trigger');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_list_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_changed_product_price_list_unq');
-    }
-
-    /**
      * Create orob2b_price_list_schedule table
      *
      * @param Schema $schema
@@ -456,22 +435,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id'], 'IDX_E71CEADAF4E1C8D4', []);
         $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
-    }
-
-    /**
-     * Create orob2b_price_list_ch_trigger table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPriceListChangeTriggerTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_price_list_ch_trigger');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('is_force', 'boolean', ['notnull' => false]);
-        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -916,56 +879,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add orob2b_price_list_ch_trigger foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOrob2BPriceListChangeTriggerForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_price_list_ch_trigger');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_group'),
-            ['account_group_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
-            ['account_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add orob2b_prod_price_ch_trigger foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroProductPriceChangeTriggerForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_prod_price_ch_trigger');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
      * Add orob2b_price_list_schedule foreign keys.
      *
      * @param Schema $schema
@@ -1085,20 +998,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create orob2b_price_rule_ch_trigger table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPriceRuleChTriggerTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_price_rule_ch_trigger');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('price_list_id', 'integer', []);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Create orob2b_price_rule_lexeme table
      *
      * @param Schema $schema
@@ -1128,28 +1027,6 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add orob2b_price_rule_ch_trigger foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroPriceRuleChTriggerForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_price_rule_ch_trigger');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
