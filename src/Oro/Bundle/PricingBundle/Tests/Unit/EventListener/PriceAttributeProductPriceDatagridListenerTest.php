@@ -9,7 +9,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -148,8 +148,8 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
 
     public function testOnResultAfterWithoutCurrency()
     {
-        /* @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+        /* @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
         $this->setRequestHandlerExpectations([]);
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
         $this->priceAttributeProductPriceDatagridListener->onResultAfter($event);
@@ -159,8 +159,8 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
     {
         $config = DatagridConfiguration::create([]);
         $datagrid = new Datagrid('grid', $config, new ParameterBag([]));
-        /** @var OrmResultAfter $event * */
-        $event = new OrmResultAfter($datagrid, [new ResultRecord(['id' => 1])]);
+        /** @var GridResultAfter $event * */
+        $event = new GridResultAfter($datagrid, [new ResultRecord(['id' => 1])]);
 
         $product = new Product();
         $this->setProperty($product, 'id', 1);

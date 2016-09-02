@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -86,9 +86,9 @@ class FrontendProductPriceDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param GridResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(GridResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();

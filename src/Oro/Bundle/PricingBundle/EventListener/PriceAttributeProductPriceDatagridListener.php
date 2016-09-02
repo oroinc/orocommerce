@@ -7,7 +7,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -75,9 +75,9 @@ class PriceAttributeProductPriceDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param GridResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(GridResultAfter $event)
     {
         $currencies = $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
         if (!$currencies) {

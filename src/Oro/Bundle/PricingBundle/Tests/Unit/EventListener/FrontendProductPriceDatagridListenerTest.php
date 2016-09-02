@@ -11,7 +11,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -223,7 +223,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->getMockForAbstractClass();
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new OrmResultAfter($datagrid, [], $query);
+        $event = new GridResultAfter($datagrid, [], $query);
         $this->listener->onResultAfter($event);
     }
 
@@ -239,7 +239,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->getMockForAbstractClass();
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new OrmResultAfter($datagrid, [new ResultRecord([])], $query);
+        $event = new GridResultAfter($datagrid, [new ResultRecord([])], $query);
         $this->listener->onResultAfter($event);
     }
 
@@ -316,7 +316,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new OrmResultAfter($datagrid, $sourceResultRecords, $query);
+        $event = new GridResultAfter($datagrid, $sourceResultRecords, $query);
         $this->listener->onResultAfter($event);
         $actualResults = $event->getRecords();
 
