@@ -7,10 +7,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -25,22 +25,22 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var Mapper */
-    protected $mapper;
+    /** @var WebsiteSearchMappingProvider */
+    protected $mappingProvider;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
-     * @param AbstractSearchMappingProvider $mapper
+     * @param WebsiteSearchMappingProvider $mappingProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
-        AbstractSearchMappingProvider $mapper
+        WebsiteSearchMappingProvider $mappingProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
-        $this->mapper = $mapper;
+        $this->mappingProvider = $mappingProvider;
     }
 
     /**
@@ -48,7 +48,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $mappingConfig = $this->mapper->getMappingConfig();
+        $mappingConfig = $this->mappingProvider->getMappingConfig();
 
         if (!$mappingConfig) {
             throw new \LogicException('Mapping config is empty.');
