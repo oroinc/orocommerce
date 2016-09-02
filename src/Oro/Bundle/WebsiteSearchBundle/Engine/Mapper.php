@@ -8,24 +8,6 @@ use Oro\Bundle\SearchBundle\Query\Query;
 class Mapper
 {
     /**
-     * @return array
-     */
-    public function getMappingConfig()
-    {
-        return [
-            'Oro\Bundle\ProductBundle\Entity\Product' => [
-                'alias' => 'orob2b_product_WEBSITE_ID',
-                'fields' => [
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    /**
      * @param Query $query
      * @param array $item
      * @return array|null
