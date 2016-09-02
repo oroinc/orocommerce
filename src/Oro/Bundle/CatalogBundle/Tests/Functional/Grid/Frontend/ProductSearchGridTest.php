@@ -1,13 +1,16 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Grid\Frontend;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Grid\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Datagrid\DatagridTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class SearchGridTest extends WebTestCase
+/**
+ * @dbIsolation
+ */
+class ProductSearchGridTest extends WebTestCase
 {
     use DatagridTestTrait;
 
@@ -16,6 +19,12 @@ class SearchGridTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+        );
+
+        $this->loadFixtures(
+            [
+                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData'
+            ]
         );
     }
 
@@ -27,12 +36,27 @@ class SearchGridTest extends WebTestCase
             ['[sku]' => AbstractSorterExtension::DIRECTION_ASC]
         );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_ASC);
+
         $products = $this->getDatagridData(
             'frontend-product-search-grid',
             [],
             ['[sku]' => AbstractSorterExtension::DIRECTION_DESC,]
         );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_DESC);
+
+        $products = $this->getDatagridData(
+            'frontend-product-search-grid',
+            [],
+            ['[name]' => AbstractSorterExtension::DIRECTION_ASC,]
+        );
+        $this->checkSorting($products, 'name', AbstractSorterExtension::DIRECTION_ASC);
+
+        $products = $this->getDatagridData(
+            'frontend-product-search-grid',
+            [],
+            ['[name]' => AbstractSorterExtension::DIRECTION_DESC,]
+        );
+        $this->checkSorting($products, 'name', AbstractSorterExtension::DIRECTION_DESC);
     }
 
     /**
