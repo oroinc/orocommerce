@@ -52,6 +52,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * )
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class AccountUserRole extends AbstractRole implements OrganizationAwareInterface, \Serializable
 {
