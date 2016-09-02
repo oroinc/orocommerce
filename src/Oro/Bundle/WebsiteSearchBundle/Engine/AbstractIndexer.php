@@ -134,7 +134,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
 
         return array_map(
-            function($websiteId) {
+            function ($websiteId) {
                 return $websiteId['id'];
             },
             $websiteRepository->getAllWebsiteIds()
@@ -153,6 +153,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $temporaryAlias = $this->generateTemporaryAlias($currentAlias);
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
+        $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
         $queryBuilder->select('entity.id');
 
@@ -213,6 +214,12 @@ abstract class AbstractIndexer implements IndexerInterface
         return $entityAlias . '_' . uniqid('website_search', true);
     }
 
+    /**
+     * @param array $entityIds
+     * @param array $context
+     * @param $entityClass
+     * @return array
+     */
     protected function restrictIndexEntity(array $entityIds, array $context, $entityClass)
     {
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
@@ -234,7 +241,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_map(
-            function($entityId) {
+            function ($entityId) {
                 return $entityId['id'];
             },
             $result
