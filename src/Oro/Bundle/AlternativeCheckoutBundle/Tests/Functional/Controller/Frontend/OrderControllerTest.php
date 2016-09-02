@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\AbstractGridControllerTest;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -13,9 +13,8 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 /**
  * @dbIsolation
  */
-class OrderControllerTest extends WebTestCase
+class OrderControllerTest extends AbstractGridControllerTest
 {
-    const GRID_NAME = 'frontend-checkouts-grid';
     const TOTAL_VALUE = 400;
     const SUBTOTAL_VALUE = 20;
 
@@ -169,25 +168,6 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $filters
-     * @param array $sorters
-     * @return array
-     */
-    protected function getDatagridData(array $filters = [], array $sorters = [])
-    {
-        $result = [];
-        foreach ($filters as $filter => $value) {
-            $result[self::GRID_NAME . '[_filter]' . $filter] = $value;
-        }
-        foreach ($sorters as $sorter => $value) {
-            $result[self::GRID_NAME . '[_sort_by]' . $sorter] = $value;
-        }
-        $response = $this->client->requestGrid(['gridName' => self::GRID_NAME], $result);
-
-        return json_decode($response->getContent(), true)['data'];
-    }
-
-    /**
      * @param array $checkouts
      * @return array
      */
@@ -234,5 +214,13 @@ class OrderControllerTest extends WebTestCase
         }
 
         return $this->allCheckouts[$checkoutId];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getGridName()
+    {
+        return 'frontend-checkouts-grid';
     }
 }
