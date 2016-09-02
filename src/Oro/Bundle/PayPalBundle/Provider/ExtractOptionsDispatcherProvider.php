@@ -50,7 +50,7 @@ class ExtractOptionsDispatcherProvider
      * @param array $keys
      * @return array
      */
-    public function getLineItemPaymentOptions($entity, array $keys)
+    public function getLineItemPaymentOptions(LineItemsAwareInterface $entity, array $keys)
     {
         $event = new ExtractLineItemPaymentOptionsEvent($entity, $keys);
         $this->dispatcher->dispatch(ExtractLineItemPaymentOptionsEvent::NAME, $event);

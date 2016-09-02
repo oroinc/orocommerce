@@ -29,9 +29,6 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
         $event = new ExtractLineItemPaymentOptionsEvent($entity, array_keys($expected));
         $listener = new ExtractLineItemPaymentOptionsListener();
         $listener->onExtractLineItemPaymentOptions($event);
-        $options = $event->getOptions();
-
-        $this->assertEquals([$expected], $options);
-        return;
+        $this->assertEquals([$expected], $event->getOptions());
     }
 }

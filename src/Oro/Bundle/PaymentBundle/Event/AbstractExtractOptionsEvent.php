@@ -31,6 +31,7 @@ abstract class AbstractExtractOptionsEvent extends Event
     /**
      * @param array $options
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function applyKeys(array $options)
     {

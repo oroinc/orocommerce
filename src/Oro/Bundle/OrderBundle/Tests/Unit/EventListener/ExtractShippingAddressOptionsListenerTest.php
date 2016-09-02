@@ -31,8 +31,6 @@ class ExtractShippingAddressOptionsListenerTest extends \PHPUnit_Framework_TestC
         $event = new ExtractShippingAddressOptionsEvent($address, array_keys($expected));
         $listener = new ExtractShippingAddressOptionsListener();
         $listener->onExtractShippingAddressOptions($event);
-
-        $options = $event->getOptions();
-        $this->assertEquals($expected, $options);
+        $this->assertEquals($expected, $event->getOptions());
     }
 }

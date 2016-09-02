@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\Exception\IncorrectEntityException;
 use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
@@ -10,7 +9,6 @@ class ExtractShippingAddressOptionsListener
 {
     /**
      * @param ExtractShippingAddressOptionsEvent $event
-     * @throws IncorrectEntityException
      */
     public function onExtractShippingAddressOptions(ExtractShippingAddressOptionsEvent $event)
     {

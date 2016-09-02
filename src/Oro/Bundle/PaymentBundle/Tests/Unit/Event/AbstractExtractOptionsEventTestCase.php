@@ -33,7 +33,6 @@ class AbstractExtractOptionsEventTestCase extends \PHPUnit_Framework_TestCase
      */
     public function testApplyKeysException()
     {
-        $this->keys = ['key1', ['key2']];
         $this->event->setOptions($this->event->applyKeys(['option1']));
     }
 }
