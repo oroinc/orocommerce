@@ -69,7 +69,6 @@ oro_system_configuration:
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
-                resettable: false
                 required: false
                 fileConstraints:
                     - Image: ~
