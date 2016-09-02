@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
+use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
 class PriceListSystemConfigSubscriber
 {
@@ -23,15 +23,15 @@ class PriceListSystemConfigSubscriber
     protected $isApplicable;
 
     /**
-     * @var PriceListChangeTriggerHandler
+     * @var PriceListRelationTriggerHandler
      */
     protected $triggerHandler;
 
     /**
      * @param PriceListConfigConverter $converter
-     * @param PriceListChangeTriggerHandler $triggerHandler
+     * @param PriceListRelationTriggerHandler $triggerHandler
      */
-    public function __construct(PriceListConfigConverter $converter, PriceListChangeTriggerHandler $triggerHandler)
+    public function __construct(PriceListConfigConverter $converter, PriceListRelationTriggerHandler $triggerHandler)
     {
         $this->converter = $converter;
         $this->triggerHandler = $triggerHandler;

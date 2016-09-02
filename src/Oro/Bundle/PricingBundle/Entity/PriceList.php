@@ -50,6 +50,13 @@ class PriceList extends BasePriceList
     protected $active = true;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="actual", type="boolean", options={"default"=true})
+     */
+    protected $actual = true;
+
+    /**
      * @var Collection|ProductPrice[]
      *
      * @ORM\OneToMany(
@@ -299,6 +306,25 @@ class PriceList extends BasePriceList
     public function setActive($active)
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActual()
+    {
+        return $this->actual;
+    }
+
+    /**
+     * @param boolean $actual
+     * @return $this
+     */
+    public function setActual($actual)
+    {
+        $this->actual = $actual;
 
         return $this;
     }
