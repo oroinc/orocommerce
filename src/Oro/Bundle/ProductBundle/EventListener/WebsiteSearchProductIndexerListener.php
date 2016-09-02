@@ -31,6 +31,9 @@ class WebsiteSearchProductIndexerListener
         $this->localizationHelper = $localizationHelper;
     }
 
+    /**
+     * @param IndexEntityEvent $event
+     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $entityClass = $event->getEntityClass();

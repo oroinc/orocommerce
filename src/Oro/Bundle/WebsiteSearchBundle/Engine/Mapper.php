@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 
-class Mapper
+class Mapper extends AbstractSearchMappingProvider
 {
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getMappingConfig()
     {
