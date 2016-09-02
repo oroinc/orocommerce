@@ -46,7 +46,7 @@ class OrmIndexer extends AbstractIndexer
             $items[] = $item;
         }
         $em->flush($items);
-        $em->clear($entityClass);
+        $em->clear(Item::class);
 
         return count($entitiesData);
     }
