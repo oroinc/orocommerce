@@ -67,7 +67,6 @@ services:
         class: 'Oro\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
         arguments:
             - '@oro_config.global'
-            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
 

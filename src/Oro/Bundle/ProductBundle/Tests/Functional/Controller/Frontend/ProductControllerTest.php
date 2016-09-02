@@ -62,7 +62,6 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexAction()
     {
-        // TODO - fix the test to work with new data grid source, or bring back the previous datagrid config
 //        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
 //        $result = $this->client->getResponse();
 //        $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -76,7 +75,7 @@ class ProductControllerTest extends WebTestCase
     public function testIndexDatagridViews()
     {
         // default view is DataGridThemeHelper::VIEW_GRID
-        $response = $this->client->requestFrontendGrid('frontend-products-grid', [], true);
+        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
         $this->assertArrayHasKey('shortDescription', $result['data'][0]);

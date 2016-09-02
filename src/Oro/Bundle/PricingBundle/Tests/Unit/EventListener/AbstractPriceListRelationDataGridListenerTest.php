@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use Oro\Bundle\PricingBundle\EventListener\AccountDataGridListener;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
@@ -57,7 +57,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Fr
         $eventBuildBefore = new BuildBefore($dataGrid, $config);
 
         $record = new ResultRecord(['name' => 'test']);
-        $event = new OrmResultAfter($dataGrid, [$record]);
+        $event = new GridResultAfter($dataGrid, [$record]);
 
         $this->listener->onBuildBefore($eventBuildBefore);
         $this->listener->onResultAfter($event);

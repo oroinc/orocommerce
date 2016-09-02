@@ -150,7 +150,8 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'required' => false,
                     'mapped'   => false,
                     'configs'  => [
-                        'placeholder' => 'oro.payment.account.payment_term_defined_in_group_trans'
+                        'placeholder' => 'oro.payment.account.payment_term_defined_in_group_trans',
+                        'allowClear' => true,
                     ]
                 ],
                 'account' => $accountWithGroup,
@@ -163,7 +164,8 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'required' => false,
                     'mapped'   => false,
                     'configs'  => [
-                        'placeholder' => 'oro.payment.account.payment_term_non_defined_in_group_trans'
+                        'placeholder' => 'oro.payment.account.payment_term_non_defined_in_group_trans',
+                        'allowClear' => true,
                     ],
                 ],
                 'account' => $accountWithGroup,
