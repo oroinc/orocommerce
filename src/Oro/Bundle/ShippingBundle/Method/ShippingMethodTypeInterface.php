@@ -7,8 +7,6 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 interface ShippingMethodTypeInterface
 {
-    const CURRENCY_OPTION = 'currency';
-
     /**
      * @return string|int
      */

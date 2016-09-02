@@ -17,7 +17,7 @@ class ShippingRuleRepository extends EntityRepository
     public function getEnabledOrderedRulesByCurrencyAndCountry($currency, Country $country)
     {
         return $this->createQueryBuilder('rule')
-            ->addSelect('configurations')
+            ->addSelect('methodConfigs', 'typeConfigs')
             ->leftJoin(
                 'rule.destinations',
                 'destinations',
@@ -25,7 +25,8 @@ class ShippingRuleRepository extends EntityRepository
                 'destinations.rule = rule and destinations.country = :country'
             )
             ->leftJoin('rule.destinations', 'nullDestinations')
-            ->leftJoin('rule.configurations', 'configurations')
+            ->leftJoin('rule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('rule.currency = :currency')
             ->andWhere('rule.enabled = true')
             ->andWhere('nullDestinations.id is null or destinations.id is not null')

@@ -7,10 +7,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingRules extends AbstractFixture
@@ -60,18 +62,25 @@ class LoadShippingRules extends AbstractFixture
                 $entity->addDestination($shippingRuleDestination);
             }
 
-            foreach ($data['configurations'] as $configuration) {
-                $flatConfig = new FlatRateRuleConfiguration();
+            foreach ($data['methodConfigs'] as $methodConfigData) {
+                $methodConfig = new ShippingRuleMethodConfig();
 
-                $flatConfig
+                $methodConfig
                     ->setRule($entity)
-                    ->setType(FlatRateShippingMethod::NAME)
-                    ->setMethod(FlatRateShippingMethod::NAME)
-                    ->setProcessingType($configuration['processingType'])
-                    ->setValue($configuration['value']);
+                    ->setMethod(FlatRateShippingMethod::IDENTIFIER);
 
-                $manager->persist($flatConfig);
-                $entity->addConfiguration($flatConfig);
+                foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
+                    $typeConfig = new ShippingRuleMethodTypeConfig();
+                    $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
+                        ->setOptions([
+                            FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],
+                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
+                            FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
+                        ]);
+                }
+
+                $manager->persist($methodConfig);
+                $entity->addMethodConfig($methodConfig);
             }
 
             $manager->persist($entity);

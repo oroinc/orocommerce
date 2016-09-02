@@ -68,10 +68,6 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
         $data = $form->getData();
 
         if (!$data) {
-            if ($data && $submittedData['method'] !== $data->getMethod()) {
-                $submittedData['typeConfigs'] = [];
-                $submittedData['options'] = [];
-            }
             $this->recreateDynamicChildren($form, $submittedData['method']);
             $event->setData($submittedData);
         }

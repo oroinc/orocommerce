@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
@@ -33,8 +34,16 @@ class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
         }
 
         if (count($enabledRules) < $constraint->min) {
-            $this->context->buildViolation($constraint->message, ['{{ limit }}' => $constraint->min])
-                ->atPath('configurations')->addViolation();
+            if ($this->context instanceof ExecutionContextInterface) {
+                $this->context->buildViolation($constraint->message, ['{{ limit }}' => $constraint->min])
+                    ->atPath('configurations')
+                    ->addViolation();
+            } else {
+                $this->buildViolation($constraint->message)
+                    ->setParameter('{{ limit }}', $constraint->min)
+                    ->atPath('configurations')
+                    ->addViolation();
+            }
         }
     }
 }
