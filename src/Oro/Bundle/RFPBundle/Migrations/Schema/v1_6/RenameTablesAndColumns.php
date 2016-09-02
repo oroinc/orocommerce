@@ -66,6 +66,26 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'request_d6948721',
             RelationType::MANY_TO_ONE
         ));
+
+        // rename tables
+        $extension->renameTable($schema, $queries, 'orob2b_rfp_request', 'oro_rfp_request');
+        $extension->renameTable($schema, $queries, 'orob2b_rfp_status', 'oro_rfp_status');
+        $extension->renameTable($schema, $queries, 'orob2b_rfp_status_translation', 'oro_rfp_status_translation');
+        $extension->renameTable($schema, $queries, 'orob2b_rfp_request_product', 'oro_rfp_request_product');
+        $extension->renameTable($schema, $queries, 'orob2b_rfp_request_prod_item', 'oro_rfp_request_prod_item');
+
+        // rename indexes
+        $schema->getTable('orob2b_rfp_status')->dropIndex('orob2b_rfp_status_name_idx');
+        $schema->getTable('orob2b_rfp_status_translation')->dropIndex('orob2b_rfp_status_trans_idx');
+
+        $extension->addIndex($schema, $queries, 'oro_rfp_status', ['name'], 'oro_rfp_status_name_idx');
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_rfp_status_translation',
+            ['locale', 'object_id', 'field'],
+            'oro_rfp_status_trans_idx'
+        );
     }
 
     /**

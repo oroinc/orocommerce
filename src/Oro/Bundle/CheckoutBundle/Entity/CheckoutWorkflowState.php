@@ -11,9 +11,9 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository")
- * @ORM\Table(name="orob2b_checkout_workflow_state",
+ * @ORM\Table(name="oro_checkout_workflow_state",
  *     uniqueConstraints={@ORM\UniqueConstraint(
- *         name="orob2b_checkout_wf_state_uidx",
+ *         name="oro_checkout_wf_state_uidx",
  *         columns={"entity_id", "entity_class", "token"}
  *     )}
  * )

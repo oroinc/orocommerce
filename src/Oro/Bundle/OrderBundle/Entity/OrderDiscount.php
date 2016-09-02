@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Table("orob2b_order_discount")
+ * @ORM\Table("oro_order_discount")
  * @Config(
  *       defaultValues={
  *          "entity"={

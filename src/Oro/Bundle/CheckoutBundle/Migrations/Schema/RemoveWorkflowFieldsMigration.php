@@ -17,6 +17,6 @@ class RemoveWorkflowFieldsMigration implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->removeWorkflowFields($schema->getTable('orob2b_checkout'));
+        $this->removeWorkflowFields($schema->getTable('oro_checkout'));
     }
 }

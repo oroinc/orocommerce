@@ -68,6 +68,35 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'product_f4309915',
             RelationType::MANY_TO_ONE
         ));
+
+        // rename tables
+        $extension->renameTable($schema, $queries, 'orob2b_product', 'oro_product');
+        $extension->renameTable($schema, $queries, 'orob2b_product_name', 'oro_product_name');
+        $extension->renameTable($schema, $queries, 'orob2b_product_description', 'oro_product_description');
+        $extension->renameTable($schema, $queries, 'orob2b_product_short_desc', 'oro_product_short_desc');
+        $extension->renameTable($schema, $queries, 'orob2b_product_unit', 'oro_product_unit');
+        $extension->renameTable($schema, $queries, 'orob2b_product_unit_precision', 'oro_product_unit_precision');
+        $extension->renameTable($schema, $queries, 'orob2b_product_variant_link', 'oro_product_variant_link');
+        $extension->renameTable($schema, $queries, 'orob2b_product_image', 'oro_product_image');
+        $extension->renameTable($schema, $queries, 'orob2b_product_image_type', 'oro_product_image_type');
+
+        // rename indexes
+        $schema->getTable('orob2b_product')->dropIndex('idx_orob2b_product_sku');
+        $schema->getTable('orob2b_product')->dropIndex('idx_orob2b_product_created_at');
+        $schema->getTable('orob2b_product')->dropIndex('idx_orob2b_product_updated_at');
+        $schema->getTable('orob2b_product_unit_precision')
+            ->dropIndex('product_unit_precision__product_id__unit_code__uidx');
+
+        $extension->addIndex($schema, $queries, 'oro_product', ['sku'], 'idx_oro_product_sku');
+        $extension->addIndex($schema, $queries, 'oro_product', ['created_at'], 'idx_oro_product_created_at');
+        $extension->addIndex($schema, $queries, 'oro_product', ['updated_at'], 'idx_oro_product_updated_at');
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_product_unit_precision',
+            ['product_id', 'unit_code'],
+            'uidx_oro_product_unit_precision'
+        );
     }
 
     /**
