@@ -2,11 +2,20 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
 class OrmIndexer extends AbstractIndexer
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function save($entity, array $context = [])
+    {
+        return true;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -59,22 +68,57 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function renameIndex($oldAlias, $newAlias)
+    public function getClassesForReindex($class = null, array $context = [])
     {
-        // TODO: Implement renameIndex() method.
+        // TODO: Implement getClassesForReindex() method.
     }
 
     /**
      * {@inheritdoc}
      */
-    public function saveIndexData(
+    protected function saveIndexData(
         $entityClass,
-        array $entityIds,
         array $entitiesData,
-        $entityAliasTemp,
-        array $context
+        $entityAliasTemp
     ) {
-        // TODO: Implement saveIndexData() method.
+        $em = $this->doctrineHelper->getEntityManager(Item::class);
+        $items = [];
+        foreach ($entitiesData as $entityId => $indexData) {
+            $item = new Item();
+            $item->setEntity($entityClass)
+                ->setRecordId($entityId)
+                ->setAlias($entityAliasTemp)
+                ->setTitle($this->getEntityTitle($indexData))
+                ->setChanged(false)
+                ->saveItemData($indexData);
+            $em->persist($item);
+            $items[] = $item;
+        }
+        $em->flush($items);
+        $em->clear(Item::class);
+
+        return count($entitiesData);
+    }
+
+    /**
+     * Use first text field as a title
+     * @param array $indexData
+     * @return string
+     */
+    protected function getEntityTitle(array $indexData)
+    {
+        return isset($indexData[SearchQuery::TYPE_TEXT]) ? reset($indexData[SearchQuery::TYPE_TEXT]) : '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function renameIndex($temporaryAlias, $currentAlias)
+    {
+        /** @var WebsiteSearchIndexRepository $itemRepository */
+        $itemRepository = $this->doctrineHelper->getEntityRepository(Item::class);
+        $itemRepository->removeIndexByAlias($currentAlias);
+        $itemRepository->renameIndexAlias($temporaryAlias, $currentAlias);
     }
 
     /**
@@ -83,21 +127,5 @@ class OrmIndexer extends AbstractIndexer
     public function resetIndex($class = null, array $context = [])
     {
         // TODO: Implement resetIndex() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save($entity, array $context = [])
-    {
-        // TODO: Implement save() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getClassesForReindex($class = null, array $context = [])
-    {
-        // TODO: Implement getClassesForReindex() method.
     }
 }

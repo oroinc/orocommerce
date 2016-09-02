@@ -92,6 +92,7 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
         arguments:
             - '%database_driver%'
+            - 'oro_website_search_text'
             - '%oro_website_search.index_text_table_name%'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }

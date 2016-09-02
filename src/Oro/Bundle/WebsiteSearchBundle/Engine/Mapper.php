@@ -10,7 +10,7 @@ use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 class Mapper extends AbstractSearchMappingProvider
 {
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getMappingConfig()
     {
@@ -28,8 +28,7 @@ class Mapper extends AbstractSearchMappingProvider
     }
 
     /**
-     * @param string $entityClass
-     * @return string
+     * {@inheritdoc}
      */
     public function getEntityAlias($entityClass)
     {
