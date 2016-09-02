@@ -86,11 +86,11 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
-    oro_search.event_listener.orm.fulltext_index_listener:
+    oro_website_search.event_listener.orm.fulltext_index_listener:
         class: '%oro_search.event_listener.orm.fulltext_index_listener.class%'
         arguments:
             - '%database_driver%'
-            - 'oro_website_search_index_text'
+            - 'oro_website_search_text'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 
