@@ -1,0 +1,5 @@
+services:
+    oro_catalog.fallback.provider.parent_category:
+        class: Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider
+        tags:
+            - { name: oro.fallback.provider, id: parentCategory }

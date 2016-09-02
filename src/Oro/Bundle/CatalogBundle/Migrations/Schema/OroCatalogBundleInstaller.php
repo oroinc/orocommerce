@@ -83,6 +83,8 @@ class OroCatalogBundleInstaller implements
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage');
         $this->addCategoryImageAssociation($schema, 'smallImage');
+
+        $this->addManageInventoryField($schema);
     }
 
     /**
@@ -262,7 +264,7 @@ class OroCatalogBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
-    
+
     /**
      * Add orob2b_catalog_category_long_description foreign keys.
      *
@@ -313,6 +315,22 @@ class OroCatalogBundleInstaller implements
             self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addManageInventoryField(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME);
+        $table->addColumn('manage_inventory_fallback_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['manage_inventory_fallback_id'], 'UNIQ_FBD712DDA4E4A513');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_entity_field_fallback_val'),
+            ['manage_inventory_fallback_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
         );
     }
 }

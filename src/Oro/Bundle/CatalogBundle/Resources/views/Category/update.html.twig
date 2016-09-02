@@ -114,7 +114,10 @@
         'subblocks': [{
             'title': '',
             'useSpan': false,
-            'data' : [form_widget(form.defaultProductOptions)]
+            'data' : [
+                form_widget(form.defaultProductOptions),
+                form_row(form.manageInventory)
+            ]
         }]
     }] ) %}
 

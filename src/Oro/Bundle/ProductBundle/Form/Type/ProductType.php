@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -10,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -111,6 +113,28 @@ class ProductType extends AbstractType
                             'toolbar' =>
                                 [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                         ]
+                    ]
+                ]
+            )
+            ->add(
+                'manageInventory',
+                EntityFieldFallbackValueType::NAME,
+                [
+                    'label' => 'oro.product.manage_inventory.label',
+                    'parent_object' => $builder->getData(),
+                    'fallback_translation_prefix' => 'oro.product.fallback',
+                    'value_type' => ChoiceType::class,
+                    'value_options' => [
+                        'expanded' => false,
+                        'choices' => $this->getManageInventoryChoices(),
+                        'empty_value' => false,
+                    ],
+                    'fallback_type' => ChoiceType::class,
+                    'fallback_options' => [
+                        'empty_value' => false,
+                    ],
+                    'use_fallback_options' => [
+                        'empty_data' => true
                     ]
                 ]
             )
@@ -253,5 +277,16 @@ class ProductType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getManageInventoryChoices()
+    {
+        return [
+            'no' => 'oro.product.manage_inventory.label.no',
+            'yes' => 'oro.product.manage_inventory.label.yes',
+        ];
     }
 }

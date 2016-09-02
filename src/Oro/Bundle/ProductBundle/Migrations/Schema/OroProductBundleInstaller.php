@@ -103,6 +103,8 @@ class OroProductBundleInstaller implements
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
+
+        $this->addManageInventoryField($schema);
     }
 
     /**
@@ -437,6 +439,22 @@ class OroProductBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
             ['product_image_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addManageInventoryField(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table->addColumn('manage_inventory_fallback_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['manage_inventory_fallback_id'], 'UNIQ_5F9796C9A4E4A513');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_entity_field_fallback_val'),
+            ['manage_inventory_fallback_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
         );

@@ -1,0 +1,7 @@
+services:
+    orob2b_product.fallback.provider.category_provider:
+        class: Oro\Bundle\ProductBundle\Fallback\Provider\ProductCategoryFallbackProvider
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        tags:
+            - { name: oro.fallback.provider, id: category }

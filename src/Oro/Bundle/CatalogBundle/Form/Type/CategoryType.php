@@ -3,10 +3,13 @@
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -48,6 +51,7 @@ class CategoryType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $category = $builder->getData();
         $builder
             ->add(
                 'parentCategory',
@@ -147,6 +151,28 @@ class CategoryType extends AbstractType
                 [
                     'required' => false
                 ]
+            )
+            ->add(
+                'manageInventory',
+                EntityFieldFallbackValueType::NAME,
+                [
+                    'parent_object' => $builder->getData(),
+                    'fallback_translation_prefix' => 'oro.catalog.fallback',
+                    'value_type' => ChoiceType::class,
+                    'value_options' => [
+                        'expanded' => false,
+                        'choices' => $this->getManageInventoryChoices(),
+                        'empty_value' => false,
+                    ],
+                    'fallback_type' => ChoiceType::class,
+                    'fallback_choice_filter' => function ($choices) use ($category) {
+                        if (array_key_exists(ParentCategoryFallbackProvider::ID, $choices) && !$category->getParentCategory()) {
+                            unset($choices[ParentCategoryFallbackProvider::ID]);
+                        }
+
+                        return $choices;
+                    },
+                ]
             );
     }
 
@@ -176,5 +202,16 @@ class CategoryType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getManageInventoryChoices()
+    {
+        return [
+            'no' => 'oro.catalog.manage_inventory.label.no',
+            'yes' => 'oro.catalog.manage_inventory.label.yes',
+        ];
     }
 }

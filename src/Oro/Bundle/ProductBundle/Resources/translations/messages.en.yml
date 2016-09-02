@@ -16,6 +16,7 @@ oro:
         owner.label: Owner
         organization.label: Organization
         primary_unit_precision.label: Unit of Quantity
+        manage_inventory.label: Managed Inventory
         primary_unit_precision_id.label: Primary Unit Precision Id
         additional_unit_precisions.label: Additional Units
         unit_precisions.label: Unit Precisions
@@ -137,6 +138,8 @@ oro:
                 backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
+                product_options.title: 'Product Options'
+                product_inventory_options.title: 'Product Inventory Options'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
             fields:
@@ -144,7 +147,11 @@ oro:
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
+                manage_inventory.label: 'Manage Inventory'
 
+        fallback:
+            category: Category Defaults
+            systemConfig: System Config
         grid:
             action:
                 duplicate: Duplicate
@@ -187,6 +194,14 @@ oro:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
                     component_not_accessible: Can't process request, component not accessible
                     invalid_request: Invalid request submitted
+
+        manage_inventory:
+            fallback:
+                system_config: System Config
+                category_manage_inventory: Category Defaults
+            label:
+                yes: Yes
+                no: No
 
         export:
             inventory_status_only: "Inventory statuses only"

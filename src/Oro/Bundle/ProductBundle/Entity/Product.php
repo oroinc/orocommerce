@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -400,6 +401,27 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $images;
 
     /**
+     * @var EntityFieldFallbackValue
+     *
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue", cascade={"All"})
+     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id")
+     * @ConfigField(
+     *     defaultValues={
+     *          "fallback": {
+     *              "category" : {
+     *                  "fieldName": "manageInventory"
+     *              },
+     *              "systemConfig": {
+     *                  "fieldName": "manageInventory",
+     *                  "configName": "orob2b_product.manage_inventory"
+     *              }
+     *          }
+     *     }
+     * )
+     */
+    protected $manageInventory;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -456,6 +478,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param string $sku
+     *
      * @return $this
      */
     public function setSku($sku)
@@ -475,6 +498,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param bool $hasVariants
+     *
      * @return Product
      */
     public function setHasVariants($hasVariants)
@@ -494,6 +518,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param array $variantFields
+     *
      * @return Product
      */
     public function setVariantFields(array $variantFields)
@@ -513,6 +538,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param \DateTime $createdAt
+     *
      * @return Product
      */
     public function setCreatedAt($createdAt)
@@ -532,6 +558,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return Product
      */
     public function setUpdatedAt($updatedAt)
@@ -571,6 +598,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param BusinessUnit $owningBusinessUnit
+     *
      * @return Product
      */
     public function setOwner($owningBusinessUnit)
@@ -582,6 +610,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param OrganizationInterface $organization
+     *
      * @return Product
      */
     public function setOrganization(OrganizationInterface $organization = null)
@@ -603,6 +632,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Add unitPrecisions
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -626,6 +656,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Remove unitPrecisions
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function removeUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -651,6 +682,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Get unitPrecisions by unit code
      *
      * @param string $unitCode
+     *
      * @return ProductUnitPrecision|null
      */
     public function getUnitPrecision($unitCode)
@@ -783,6 +815,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param ProductVariantLink $variantLink
+     *
      * @return $this
      */
     public function addVariantLink(ProductVariantLink $variantLink)
@@ -798,6 +831,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param ProductVariantLink $variantLink
+     *
      * @return $this
      */
     public function removeVariantLink(ProductVariantLink $variantLink)
@@ -819,17 +853,21 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param string $type
+     *
      * @return ProductImage[]|Collection
      */
     public function getImagesByType($type)
     {
-        return $this->getImages()->filter(function (ProductImage $image) use ($type) {
-            return $image->hasType($type);
-        });
+        return $this->getImages()->filter(
+            function (ProductImage $image) use ($type) {
+                return $image->hasType($type);
+            }
+        );
     }
 
     /**
      * @param ProductImage $image
+     *
      * @return $this
      */
     public function addImage(ProductImage $image)
@@ -845,6 +883,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param ProductImage $image
+     *
      * @return $this
      */
     public function removeImage(ProductImage $image)
@@ -946,6 +985,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param ProductUnitPrecision|null $primaryUnitPrecision
+     *
      * @return Product
      */
     public function setPrimaryUnitPrecision($primaryUnitPrecision)
@@ -973,6 +1013,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Add additionalUnitPrecisions
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function addAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -992,6 +1033,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * Remove additionalUnitPrecisions
      *
      * @param ProductUnitPrecision $unitPrecision
+     *
      * @return Product
      */
     public function removeAdditionalUnitPrecision(ProductUnitPrecision $unitPrecision)
@@ -1016,12 +1058,34 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         $primaryPrecision = $this->getPrimaryUnitPrecision();
         $additionalPrecisions = $this->getUnitPrecisions()
-            ->filter(function ($precision) use ($primaryPrecision) {
-                return $precision != $primaryPrecision;
-            });
+            ->filter(
+                function ($precision) use ($primaryPrecision) {
+                    return $precision != $primaryPrecision;
+                }
+            );
 
         $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
 
         return $additionalPrecisionsSorted;
+    }
+
+    /**
+     * @return EntityFieldFallbackValue
+     */
+    public function getManageInventory()
+    {
+        return $this->manageInventory;
+    }
+
+    /**
+     * @param EntityFieldFallbackValue $manageInventory
+     *
+     * @return $this
+     */
+    public function setManageInventory($manageInventory)
+    {
+        $this->manageInventory = $manageInventory;
+
+        return $this;
     }
 }
