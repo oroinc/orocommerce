@@ -19,7 +19,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var VisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $triggerFactory;
+    protected $messageFactory;
 
     /**
      * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,21 +29,21 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var VisibilityMessageHandler
      */
-    protected $visibilityTriggerHandler;
+    protected $visibilityMessageHandler;
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
+        $this->messageFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->messageProducer = $this->getMock(MessageProducerInterface::class);
-        $this->visibilityTriggerHandler = new VisibilityMessageHandler(
-            $this->triggerFactory,
+        $this->visibilityMessageHandler = new VisibilityMessageHandler(
+            $this->messageFactory,
             $this->messageProducer
         );
     }
 
-    public function testAddTriggersForProductVisibility()
+    public function testAddMessagesForProductVisibility()
     {
         /** @var ProductVisibility $productVisibility **/
         $productVisibility = $this->getEntity(ProductVisibility::class, ['id' => 42]);
@@ -54,7 +54,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroupProductVisibility $accountGroupProductVisibility **/
         $accountGroupProductVisibility = $this->getEntity(AccountGroupProductVisibility::class, ['id' => 321]);
 
-        $this->triggerFactory->expects($this->any())
+        $this->messageFactory->expects($this->any())
             ->method('createMessage')
             ->willReturnMap([
                 [
@@ -82,22 +82,22 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             ]);
 
-        // Add same trigger twice
-        $this->visibilityTriggerHandler->addVisibilityMessageToSchedule(
+        // Add same message twice
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             Topics::RESOLVE_PRODUCT_VISIBILITY,
             $productVisibility
         );
-        $this->visibilityTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             Topics::RESOLVE_PRODUCT_VISIBILITY,
             $productVisibility
         );
 
-        // Add another triggers
-        $this->visibilityTriggerHandler->addVisibilityMessageToSchedule(
+        // Add another messages
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             Topics::RESOLVE_PRODUCT_VISIBILITY,
             $accountProductVisibility
         );
-        $this->visibilityTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             Topics::RESOLVE_PRODUCT_VISIBILITY,
             $accountGroupProductVisibility
         );
@@ -121,34 +121,34 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             ]],
             'scheduledMessages',
-            $this->visibilityTriggerHandler
+            $this->visibilityMessageHandler
         );
     }
 
-    public function testSendScheduledTriggers()
+    public function testSendScheduledMessages()
     {
         /** @var ProductVisibility $productVisibility **/
         $productVisibility = $this->getEntity(ProductVisibility::class, ['id' => 42]);
 
-        $trigger = [
+        $message = [
             VisibilityMessageFactory::ID => 42,
             VisibilityMessageFactory::VISIBILITY_CLASS => ClassUtils::getClass($productVisibility)
         ];
 
-        $this->triggerFactory->expects($this->any())
+        $this->messageFactory->expects($this->any())
             ->method('createMessage')
             ->with($productVisibility)
-            ->willReturn($trigger);
+            ->willReturn($message);
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $trigger);
+            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $message);
 
-        $this->visibilityTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             Topics::RESOLVE_PRODUCT_VISIBILITY,
             $productVisibility
         );
 
-        $this->visibilityTriggerHandler->sendScheduledMessages();
+        $this->visibilityMessageHandler->sendScheduledMessages();
     }
 }

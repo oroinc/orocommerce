@@ -887,7 +887,7 @@ services:
 
     orob2b_account.entity_listener.product_visibility:
        class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\VisibilityListener'
-       public: false
+       public: true
        arguments:
            - '@orob2b_account.visibility_message_handler'
            - 'orob2b_account.visibility.resolve_product_visibility'
@@ -900,7 +900,24 @@ services:
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: preUpdate }
            - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_product_visibility.class%', event: postPersist }
 
-    orob2b_account.async.visibility_processor:
+    orob2b_account.entity_listener.category_visibility:
+       class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\VisibilityListener'
+       public: true
+       arguments:
+           - '@orob2b_account.visibility_message_handler'
+           - 'orob2b_account.visibility.resolve_product_visibility'
+       tags:
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.category_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.category_visibility.class%', event: preRemove }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.category_visibility.class%', event: postPersist }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_category_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_category_visibility.class%', event: preRemove }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_group_category_visibility.class%', event: postPersist }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_category_visibility.class%', event: preUpdate }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_category_visibility.class%', event: preRemove }
+           - { name: doctrine.orm.entity_listener, entity: '%orob2b_account.entity.account_category_visibility.class%', event: postPersist }
+
+    orob2b_account.async.product_visibility_processor:
         class: 'Oro\Bundle\AccountBundle\Async\VisibilityProcessor'
         arguments:
             - '@doctrine'
@@ -911,3 +928,15 @@ services:
             - [setResolvedVisibilityClassName, ['%orob2b_account.entity.account_product_visibility_resolved.class%']]
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'orob2b_account.visibility.resolve_product_visibility' }
+
+    orob2b_account.async.category_visibility_processor:
+        class: 'Oro\Bundle\AccountBundle\Async\VisibilityProcessor'
+        arguments:
+            - '@doctrine'
+            - '@orob2b_account.visibility_message_factory'
+            - '@orob2b_account.visibility.cache.product.category.cache_builder'
+            - '@logger'
+        calls:
+            - [setResolvedVisibilityClassName, ['%orob2b_account.entity.category_visibility_resolved.class%']]
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'orob2b_account.visibility.change_category_visibility' }

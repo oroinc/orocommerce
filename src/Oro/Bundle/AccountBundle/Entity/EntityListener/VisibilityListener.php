@@ -15,7 +15,7 @@ class VisibilityListener
     /**
      * @var VisibilityMessageHandler
      */
-    protected $productVisibilityChangeTriggerHandler;
+    protected $visibilityMessageHandler;
 
     /**
      * @param VisibilityMessageHandler $productVisibilityChangeTriggerHandler
@@ -23,7 +23,7 @@ class VisibilityListener
      */
     public function __construct(VisibilityMessageHandler $productVisibilityChangeTriggerHandler, $topic)
     {
-        $this->productVisibilityChangeTriggerHandler = $productVisibilityChangeTriggerHandler;
+        $this->visibilityMessageHandler = $productVisibilityChangeTriggerHandler;
         $this->topic = (string)$topic;
     }
     
@@ -34,7 +34,7 @@ class VisibilityListener
      */
     public function postPersist(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             $this->topic,
             $productVisibility
         );
@@ -47,7 +47,7 @@ class VisibilityListener
      */
     public function preUpdate(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             $this->topic,
             $productVisibility
         );
@@ -60,7 +60,7 @@ class VisibilityListener
      */
     public function preRemove(VisibilityInterface $productVisibility)
     {
-        $this->productVisibilityChangeTriggerHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
             $this->topic,
             $productVisibility
         );

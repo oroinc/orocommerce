@@ -7,32 +7,6 @@ definitions:
         actions_configuration:
             - '@change_category_position': ~
 
-    # Category visibility update
-
-    change_category_visibility:
-        label: 'Update product visibility after category visibility for all changed'
-        enabled: true
-        order: 21
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
-        actions_configuration:
-            - '@change_category_visibility': ~
-
-    change_account_group_category_visibility:
-        label: 'Update product visibility after category visibility for account group changed'
-        enabled: true
-        order: 22
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
-        actions_configuration:
-            - '@change_category_visibility': ~
-
-    change_account_category_visibility:
-        label: 'Update product visibility after category visibility for account changed'
-        enabled: true
-        order: 23
-        entity: Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
-        actions_configuration:
-            - '@change_category_visibility': ~
-
     # Product visibility update
 
     product_visibility_product_create:
@@ -83,30 +57,6 @@ triggers:
         -
             event: update
             field: parentCategory
-
-    change_category_visibility:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
-
-    change_account_group_category_visibility:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
-
-    change_account_category_visibility:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
 
     product_visibility_product_create:
         -
