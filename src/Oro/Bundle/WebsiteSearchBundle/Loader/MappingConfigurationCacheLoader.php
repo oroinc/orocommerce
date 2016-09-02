@@ -66,10 +66,17 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
             return $this->configuration;
         }
 
+        $this->warmUpConfiguration();
+
+        return $this->configuration;
+    }
+
+    protected function warmUpConfiguration()
+    {
         if ($this->isFresh()) {
             $this->configuration = $this->cacheProvider->fetch(self::CACHE_KEY_CONFIGURATION);
 
-            return $this->configuration;
+            return;
         }
 
         $this->configuration = $this->configurationProvider->getConfiguration();
@@ -77,14 +84,12 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
             self::CACHE_KEY_HASH => $this->getHash($this->getResources()),
             self::CACHE_KEY_CONFIGURATION => $this->configuration,
         ]);
-
-        return $this->configuration;
     }
 
     public function warmUpCache()
     {
         $this->clearCache();
-        $this->getConfiguration();
+        $this->warmUpConfiguration();
     }
 
     public function clearCache()
