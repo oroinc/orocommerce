@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Repository;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepositor
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadIndexItems;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class WebsiteSearchIndexRepositoryTest extends WebTestCase
 {
@@ -34,6 +34,6 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
     {
         $this->repository->renameIndexAlias(LoadIndexItems::ALIAS_TEMP, LoadIndexItems::ALIAS_REAL);
         $realAliasesLeft = $this->repository->findBy(['alias' => LoadIndexItems::ALIAS_REAL]);
-        $this->assertCount(2, $realAliasesLeft);
+        $this->assertCount(3, $realAliasesLeft);
     }
 }

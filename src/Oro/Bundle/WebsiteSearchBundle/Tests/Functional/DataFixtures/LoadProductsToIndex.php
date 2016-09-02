@@ -8,16 +8,15 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const RESTRCTED_PRODUCT = 'RestrictedProduct';
     const PRODUCT1 = 'Product 1';
     const PRODUCT2 = 'Product 2';
-
-    /** @var ContainerInterface */
-    protected $container;
 
     /** @var array */
     protected $data = [
@@ -38,26 +37,15 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $manager)
     {
-        $helper = $this->container->get('oro_entity.doctrine_helper');
-        $em = $helper->getEntityManager(Product::class);
-
-        foreach ($this->data as $i) {
+        foreach ($this->data as $obj) {
             $item = new Product();
-            $item->setName($i['name']);
-            $em->persist($item);
+            $item->setName($obj['name']);
+            $manager->persist($item);
         }
 
-        $em->flush();
-        $em->clear();
+        $manager->flush();
+        $manager->clear();
     }
 }

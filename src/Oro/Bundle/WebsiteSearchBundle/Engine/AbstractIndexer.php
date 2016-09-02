@@ -8,12 +8,12 @@ use Oro\Bundle\EntityBundle\Provider\EntityAliasProvider;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -173,6 +173,7 @@ abstract class AbstractIndexer implements IndexerInterface
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
                 $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
+                $entityManager->clear($entityClass);
             }
         }
 
@@ -181,6 +182,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $realItemsCount += count($restrictedEntityIds);
             $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
             $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+            $entityManager->clear($entityClass);
         }
 
         $this->renameIndex($temporaryAlias, $currentAlias);
