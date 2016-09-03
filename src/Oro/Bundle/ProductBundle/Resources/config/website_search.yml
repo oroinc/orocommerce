@@ -18,13 +18,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: decimal
         -
             name: is_visible_by_default
-            type: bool
+            type: integer
         -
             name: visibility_anonymous
-            type: bool
+            type: integer
         -
             name: visibility_new
-            type: bool
+            type: integer
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     alias: oro_product_category_WEBSITE_ID

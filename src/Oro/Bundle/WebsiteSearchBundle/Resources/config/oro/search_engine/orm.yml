@@ -1,10 +1,7 @@
 services:
-    #TODO: Remove to real implemantation of mapper from BB-4076
-    temp_mapper_stub:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
-    oro_website_search.indexer:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Indexer'
+    oro_website_search.engine.orm_indexer:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer'
         arguments:
             - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
-            - '@temp_mapper_stub'
+            - '@oro_website_search.provider.search_mapping'
