@@ -1,4 +1,4 @@
-OroB2B\Bundle\TestPageBundle\Entity\Page:
+Oro\Bundle\TestBundle2\Entity\Page:
     fields:
       -
         name: custom_field

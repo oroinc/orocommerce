@@ -2,27 +2,27 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
-use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @dbIsolationPerTest
@@ -31,8 +31,8 @@ class OrmIndexerTest extends WebTestCase
 {
     use SearchTestTrait;
 
-    /** @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $mappingProviderMock;
+    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $mappingProviderMock;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
@@ -66,7 +66,9 @@ class OrmIndexerTest extends WebTestCase
 
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
 
-        $this->mappingProviderMock = $this->getMockBuilder(AbstractSearchMappingProvider::class)->getMock();
+        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
@@ -77,11 +79,16 @@ class OrmIndexerTest extends WebTestCase
     protected function tearDown()
     {
         $this->truncateIndexTextTable();
-        //Remove listener to not to interract with other tests
 
+        //Remove listener to not to interract with other tests
         if (null !== $this->listener) {
             $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
         }
+
+        unset($this->doctrineHelper);
+        unset($this->mappingProviderMock);
+        unset($this->dispatcher);
+        unset($this->indexer);
     }
 
     /**

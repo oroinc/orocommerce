@@ -2,38 +2,41 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Query;
 
-/**
- * This is a stub implementation and will be replaced with real implementation in BB-4076.
- */
-class Mapper extends AbstractSearchMappingProvider
+class Mapper
 {
     /**
-     * {@inheritdoc}
+     * @param Query $query
+     * @param array $item
+     * @return array|null
      */
-    public function getMappingConfig()
+    public function mapSelectedData(Query $query, array $item)
     {
-        return [
-            'Oro\Bundle\ProductBundle\Entity\Product' => [
-                'alias' => 'orob2b_product_WEBSITE_ID',
-                'fields' => [
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-                ]
-            ]
-        ];
-    }
+        $selects = $query->getSelect();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityAlias($entityClass)
-    {
-        $mappingConfig = $this->getMappingConfig();
+        if (empty($selects)) {
+            return null;
+        }
 
-        return $mappingConfig[$entityClass]['alias'];
+        $result = [];
+
+        foreach ($selects as $select) {
+            list ($type, $name) = Criteria::explodeFieldTypeName($select);
+
+            $result[$name] = '';
+
+            if (isset($item[$name])) {
+                $value = $item[$name];
+                if (is_array($value)) {
+                    $value = array_shift($value);
+                }
+
+                $result[$name] = $value;
+            }
+        }
+
+        return $result;
     }
 }

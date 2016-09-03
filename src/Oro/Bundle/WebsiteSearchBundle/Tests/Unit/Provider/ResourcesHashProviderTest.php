@@ -4,45 +4,61 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
 use Oro\Component\Config\CumulativeResourceInfo;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
 
 class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
 {
-    use ConfigResourcePathTrait;
+    /** @var string[] */
+    protected $tempFiles;
+
+    protected function setUp()
+    {
+        $this->tempFiles = [];
+    }
+
+    protected function tearDown()
+    {
+        foreach ($this->tempFiles as $tempFile) {
+            unlink($tempFile);
+        }
+    }
 
     public function testGetHash()
     {
-        $pageBundleResource = $this->createResource('TestPageBundle', 'website_search.yml');
-        $productBundleResource = $this->createResource('TestProductBundle', 'website_search.yml');
+        $resource1 = $this->createResource();
+        $resource2 = $this->createResource();
 
-        $resources = [
-            $pageBundleResource,
-            $productBundleResource
-        ];
-
-        $pathsAndTimes = $pageBundleResource->path.filemtime($pageBundleResource->path)
-            .'_'.$productBundleResource->path.filemtime($productBundleResource->path);
+        $pathsAndTimes = sprintf(
+            '%s%d_%s%d',
+            $resource1->path,
+            filemtime($resource1->path),
+            $resource2->path,
+            filemtime($resource2->path)
+        );
 
         $expectedHash = md5($pathsAndTimes);
 
         $hashProvider = new ResourcesHashProvider();
-        $this->assertEquals($expectedHash, $hashProvider->getHash($resources));
+        $this->assertEquals($expectedHash, $hashProvider->getHash([$resource1, $resource2]));
     }
 
     /**
-     * @param string $bundle
-     * @param string $resourceFile
-     * @return CumulativeResourceInfo|\PHPUnit_Framework_MockObject_MockObject
+     * @return CumulativeResourceInfo
      */
-    private function createResource($bundle, $resourceFile)
+    private function createResource()
     {
-        /** @var CumulativeResourceInfo|\PHPUnit_Framework_MockObject_MockObject $resource */
-        $resource = $this->getMockBuilder(CumulativeResourceInfo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return new CumulativeResourceInfo('', '', $this->createTempFile());
+    }
 
-        $resource->path = $this->getBundleConfigResourcePath($bundle, $resourceFile);
+    /**
+     * Create temp file
+     *
+     * @return string
+     */
+    private function createTempFile()
+    {
+        $fileName = tempnam(sys_get_temp_dir(), 'website-search');
+        $this->tempFiles[] = $fileName;
 
-        return $resource;
+        return $fileName;
     }
 }

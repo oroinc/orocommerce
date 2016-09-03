@@ -4,15 +4,12 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\ConfigResourcePathTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestCustomBundle\TestCustomBundle;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestPageBundle\TestPageBundle;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Fixture\Bundle\TestProductBundle\TestProductBundle;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle1\TestBundle1;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle2\TestBundle2;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle3\TestBundle3;
 
 class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    use ConfigResourcePathTrait;
-
     /**
      * @var MappingConfigurationLoader
      */
@@ -20,16 +17,16 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $pageBundle = new TestPageBundle();
-        $productBundle = new TestProductBundle();
-        $customBundle = new TestCustomBundle();
+        $bundle1 = new TestBundle1();
+        $bundle2 = new TestBundle2();
+        $bundle3 = new TestBundle3();
 
         CumulativeResourceManager::getInstance()
             ->clear()
             ->setBundles([
-                $pageBundle->getName() => get_class($pageBundle),
-                $productBundle->getName() => get_class($productBundle),
-                $customBundle->getName() => get_class($customBundle)
+                $bundle2->getName() => get_class($bundle2),
+                $bundle1->getName() => get_class($bundle1),
+                $bundle3->getName() => get_class($bundle3),
             ]);
 
         $this->loader = new MappingConfigurationLoader();
@@ -38,6 +35,7 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->loader);
+        CumulativeResourceManager::getInstance()->clear();
     }
 
     public function testGetResources()
@@ -46,13 +44,13 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
         $resourcesPaths = [
             $resources[0]->path,
             $resources[1]->path,
-            $resources[2]->path
+            $resources[2]->path,
         ];
 
         $expectedResources = [
-            $this->getBundleConfigResourcePath('TestPageBundle', 'website_search.yml'),
-            $this->getBundleConfigResourcePath('TestProductBundle', 'website_search.yml'),
-            $this->getBundleConfigResourcePath('TestCustomBundle', 'website_search.yml')
+            $this->getBundleConfigResourcePath('TestBundle2', 'website_search.yml'),
+            $this->getBundleConfigResourcePath('TestBundle1', 'website_search.yml'),
+            $this->getBundleConfigResourcePath('TestBundle3', 'website_search.yml'),
         ];
 
         $this->assertEquals($expectedResources, $resourcesPaths);
@@ -61,34 +59,52 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     public function testGetConfiguration()
     {
         $expectedConfiguration = [
-            'OroB2B\Bundle\TestPageBundle\Entity\Page' => [
+            'Oro\Bundle\TestBundle2\Entity\Page' => [
                 'alias' => 'page_WEBSITE_ID',
                 'fields' => [
                     [
                         'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
+                        'type' => 'text',
                     ],
                     [
                         'name' => 'custom_field',
-                        'type' => 'text'
+                        'type' => 'text',
                     ],
-                ]
+                ],
             ],
-            'OroB2B\Bundle\TestProductBundle\Entity\Product' => [
+            'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
                 'fields' => [
                     [
                         'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
+                        'type' => 'text',
                     ],
                     [
                         'name' => 'price',
-                        'type' => 'decimal'
-                    ]
-                ]
-            ]
+                        'type' => 'decimal',
+                    ],
+                ],
+            ],
         ];
 
         $this->assertEquals($expectedConfiguration, $this->loader->getConfiguration());
+    }
+
+    /**
+     * @param string $bundleName
+     * @param string $resourceFileName
+     * @return string
+     */
+    protected function getBundleConfigResourcePath($bundleName, $resourceFileName)
+    {
+        return implode(DIRECTORY_SEPARATOR, [
+            __DIR__,
+            'Fixture',
+            'Bundle',
+            $bundleName,
+            'Resources',
+            'config',
+            $resourceFileName,
+        ]);
     }
 }
