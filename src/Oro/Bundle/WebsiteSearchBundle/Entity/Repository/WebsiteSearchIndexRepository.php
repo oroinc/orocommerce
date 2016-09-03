@@ -72,8 +72,8 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
     }
 
     /**
-     * We need to remove info manually as fulltext index in MySQL only available in MyISAM engine which doesn't support
-     * cascade deletes by a foreign key.
+     * We need to remove data manually as fulltext index in MySQL is only available in MyISAM engine which doesn't
+     * support cascade deletes by a foreign key.
      *
      * @param QueryBuilder $subQueryBuilder
      */

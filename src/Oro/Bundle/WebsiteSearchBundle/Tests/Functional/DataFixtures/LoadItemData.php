@@ -38,39 +38,39 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     private static $itemsData = [
         self::REFERENCE_GOOD_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_website_',
+            'alias' => 'oro_product_website_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
             'title' => 'Good product',
             'datetimeFields' => [
                 [
                     'field' => 'created',
-                    'value' => 'now'
-                ]
+                    'value' => 'now',
+                ],
             ],
             'textFields' => [
                 [
                     'field' => 'long_description',
-                    'value' => 'Long description'
-                ]
-            ]
+                    'value' => 'Long description',
+                ],
+            ],
         ],
         self::REFERENCE_BETTER_PRODUCT => [
             'entity' => Product::class,
-            'alias' => 'orob2b_product_website_',
+            'alias' => 'oro_product_website_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
             'title' => 'Better product',
             'decimalFields' => [
                 [
                     'field' => 'price',
-                    'value' => '100'
-                ]
+                    'value' => '100',
+                ],
             ],
             'integerFields' => [
                 [
                     'field' => 'lucky_number',
-                    'value' => 777
-                ]
-            ]
+                    'value' => 777,
+                ],
+            ],
         ],
     ];
 
@@ -81,7 +81,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     {
         return [
             LoadProductsToIndex::class,
-            LoadOtherWebsite::class
+            LoadOtherWebsite::class,
         ];
     }
 

@@ -49,7 +49,7 @@ class OrmIndexerTest extends WebTestCase
     /** @var array */
     private $mappingConfig = [
         Product::class => [
-            'alias' => 'orob2b_product_WEBSITE_ID',
+            'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
                 [
                     'name' => 'title_LOCALIZATION_ID',
@@ -124,7 +124,7 @@ class OrmIndexerTest extends WebTestCase
         $this->listener = $this->setListener();
         $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
 
-        $items = $this->getItemRepository()->findBy(['alias' => 'orob2b_product_website_1']);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -152,7 +152,7 @@ class OrmIndexerTest extends WebTestCase
         $this->listener = $this->setListener();
         $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
 
-        $items = $this->getItemRepository()->findBy(['alias' => 'orob2b_product_website_1']);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
         $this->assertCount(1, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -168,7 +168,7 @@ class OrmIndexerTest extends WebTestCase
 
         $otherWebsite = $this->getReference(LoadOtherWebsite::REFERENCE_OTHER_WEBSITE);
         $items = $this->getItemRepository()->findBy([
-            'alias' => 'orob2b_product_website_' . $otherWebsite->getId()
+            'alias' => 'oro_product_website_' . $otherWebsite->getId()
         ]);
 
         $this->assertCount(2, $items);
@@ -177,7 +177,7 @@ class OrmIndexerTest extends WebTestCase
 
         $defaultWebsite =$this->getDoctrine()->getRepository('OroWebsiteBundle:Website')->getDefaultWebsite();
         $items = $this->getItemRepository()->findBy([
-            'alias' => 'orob2b_product_website_' . $defaultWebsite->getId()
+            'alias' => 'oro_product_website_' . $defaultWebsite->getId()
         ]);
 
         $this->assertCount(2, $items);
@@ -252,7 +252,7 @@ class OrmIndexerTest extends WebTestCase
         $this->mappingProviderMock
             ->expects($this->once())
             ->method('getEntityAlias')
-            ->willReturn('orob2b_product_WEBSITE_ID');
+            ->willReturn('oro_product_WEBSITE_ID');
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
@@ -260,7 +260,7 @@ class OrmIndexerTest extends WebTestCase
         $this->indexer->delete(
             [
                 $product1,
-                $product2
+                $product2,
             ],
             ['website_id' => 1]
         );

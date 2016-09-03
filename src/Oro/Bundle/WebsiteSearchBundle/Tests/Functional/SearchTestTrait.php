@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
+use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -43,7 +44,7 @@ trait SearchTestTrait
     }
 
     /**
-     * @return \Oro\Bundle\EntityBundle\ORM\Registry
+     * @return Registry
      */
     private function getDoctrine()
     {

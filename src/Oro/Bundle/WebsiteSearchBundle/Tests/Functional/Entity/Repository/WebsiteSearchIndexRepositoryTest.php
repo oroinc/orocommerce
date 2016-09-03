@@ -33,15 +33,15 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     public function testRemoveIndexByAlias()
     {
-        $this->getItemRepository()->removeIndexByAlias('orob2b_product_website_1');
-        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'orob2b_product_website_1']);
+        $this->getItemRepository()->removeIndexByAlias('oro_product_website_1');
+        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
         $this->assertCount(0, $realAliasesLeft);
     }
 
     public function testRenameIndexAlias()
     {
-        $this->getItemRepository()->renameIndexAlias('orob2b_product_website_1', 'orob2b_product_website_temp_alias_1');
-        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'orob2b_product_website_temp_alias_1']);
+        $this->getItemRepository()->renameIndexAlias('oro_product_website_1', 'oro_product_website_temp_alias_1');
+        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_temp_alias_1']);
         $this->assertCount(2, $realAliasesLeft);
     }
 
@@ -64,10 +64,10 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $this->getItemRepository()->removeEntities(
             [
                 $product1->getId(),
-                $product2->getId()
+                $product2->getId(),
             ],
             Product::class,
-            'orob2b_product_website_1'
+            'oro_product_website_1'
         );
 
         $this->assertEntityCount(2, Item::class);
@@ -83,7 +83,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $this->getItemRepository()->removeEntities(
             [
                 $product1->getId(),
-                $product2->getId()
+                $product2->getId(),
             ],
             Product::class
         );
