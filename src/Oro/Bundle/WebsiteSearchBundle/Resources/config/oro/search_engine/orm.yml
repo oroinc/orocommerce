@@ -4,4 +4,4 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
-            - '@oro_website_search.engine.mapper'
+            - '@oro_website_search.provider.search_mapping'
