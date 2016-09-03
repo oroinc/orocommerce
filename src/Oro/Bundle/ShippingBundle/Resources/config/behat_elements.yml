@@ -25,7 +25,10 @@ Shipping Rule:
          Currency: 'orob2b_shipping_rule[currency]'
          Country: 'orob2b_shipping_rule[destinations][0][country]'
          Country2: 'orob2b_shipping_rule[destinations][2][country]'
+         ZIP: 'orob2b_shipping_rule[destinations][0][postalCode]'
+         ZIP2: 'orob2b_shipping_rule[destinations][2][postalCode]'
          Congif Enable: 'orob2b_shipping_rule[configurations][0][enabled]'
          Price: 'orob2b_shipping_rule[configurations][0][value]'
          HandlingFee: 'orob2b_shipping_rule[configurations][0][handlingFeeValue]'
          Type:  'orob2b_shipping_rule[configurations][0][processingType]'
+

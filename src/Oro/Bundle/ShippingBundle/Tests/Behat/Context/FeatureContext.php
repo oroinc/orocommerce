@@ -55,6 +55,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function loginAsBuyer($email)
     {
         $this->visitPath('account/user/login');
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
         $this->getSession()->getDriver()->waitForAjax();
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
@@ -137,6 +138,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
+        $form ->clickLink('Add');
         $form->fill($table);
         $form->saveAndClose();
         $this->getSession()->getDriver()->waitForAjax();
@@ -146,7 +148,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given Admin User Created :arg1 with next data
+     * @Given Admin User created :arg1 with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
@@ -166,12 +168,13 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
-        $form->fillField('Sort Order', '2');
+        $form->fillField('Sort Order', 1);
         $form ->clickLink('Add');
         $form->fill($table);
         $form->saveAndClose();
 
         $this->getSession()->getDriver()->waitForAjax();
+        sleep(10);
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
     }
@@ -202,10 +205,13 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
    */
     protected function createOrderFromShoppingList($shoppingListName)
     {
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
         $this->getSession()->getDriver()->waitForAjax();
         /** @var ShoppingListWidget $shoppingListWidget */
         $shoppingListWidget = $this->createElement('ShoppingListWidget');
         $shoppingListWidget->mouseOver();
+        $this->getSession()->getDriver()->evaluateScript("$('li.shopping-lists-frontend-widget').trigger('mouseover')");
+        $this->getSession()->getDriver()->waitForAjax();
         $shoppingList = $shoppingListWidget->getShoppingList($shoppingListName);
         $shoppingList->viewDetails();
         $this->getSession()->getDriver()->waitForAjax();

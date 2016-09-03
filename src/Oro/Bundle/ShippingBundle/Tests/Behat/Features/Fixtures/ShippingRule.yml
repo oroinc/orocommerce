@@ -2,7 +2,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
        enabled: true
-       priority: '1'
+       priority: '5'
        conditions: 'true'
        currency: 'EUR'
        stopProcessing: 'false'
