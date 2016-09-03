@@ -13,8 +13,8 @@ class OroFrontendNavigationBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        /** Generate table orob2b_front_nav_menu_update **/
-        $table = $schema->createTable('orob2b_front_nav_menu_update');
+        /** Generate table oro_front_nav_menu_update **/
+        $table = $schema->createTable('oro_front_nav_menu_update');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('key', 'string', ['length' => 100]);
         $table->addColumn('parent_id', 'string', ['length' => 100]);

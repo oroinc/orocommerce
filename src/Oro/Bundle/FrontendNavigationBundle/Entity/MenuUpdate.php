@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="orob2b_front_nav_menu_update")
+ * @ORM\Table(name="oro_front_nav_menu_update")
  */
 class MenuUpdate extends MenuUpdateModel
 {

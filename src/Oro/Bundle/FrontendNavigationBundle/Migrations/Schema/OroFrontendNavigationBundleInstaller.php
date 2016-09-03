@@ -30,13 +30,13 @@ class OroFrontendNavigationBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_front_nav_menu_update table.
+     * Create oro_front_nav_menu_update table.
      *
      * @param Schema $schema
      */
     protected function createOroFrontendNavigationMenuUpdateTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_front_nav_menu_update');
+        $table = $schema->createTable('oro_front_nav_menu_update');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('key', 'string', ['length' => 100]);
         $table->addColumn('parent_id', 'string', ['length' => 100]);
@@ -54,13 +54,13 @@ class OroFrontendNavigationBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_front_nav_menu_update freign keys.
+     * Add oro_front_nav_menu_update freign keys.
      *
      * @param Schema $schema
      */
     protected function addOroFrontendNavigationMenuUpdateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_front_nav_menu_update');
+        $table = $schema->getTable('oro_front_nav_menu_update');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
