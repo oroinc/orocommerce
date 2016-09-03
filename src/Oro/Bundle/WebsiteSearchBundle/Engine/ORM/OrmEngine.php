@@ -11,6 +11,7 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 class OrmEngine extends AbstractEngine
 {
@@ -22,6 +23,9 @@ class OrmEngine extends AbstractEngine
 
     /** @var Mapper */
     protected $mapper;
+
+    /** @var WebsiteSearchMappingProvider */
+    protected $mappingProvider;
 
     /** @var WebsiteSearchIndexRepository */
     protected $indexRepository;
@@ -47,7 +51,7 @@ class OrmEngine extends AbstractEngine
                 $item['title'],
                 null,
                 $this->getMapper()->mapSelectedData($query, $searchResult),
-                $this->getMapper()->getEntityConfig($item['entity'])
+                $this->getMappingProvider()->getEntityConfig($item['entity'])
             );
         }
 
@@ -148,5 +152,26 @@ class OrmEngine extends AbstractEngine
         }
 
         return $this->mapper;
+    }
+
+    /**
+     * @param WebsiteSearchMappingProvider $mappingProvider
+     */
+    public function setMappingProvider(WebsiteSearchMappingProvider $mappingProvider)
+    {
+        $this->mappingProvider = $mappingProvider;
+    }
+
+    /**
+     * @return WebsiteSearchMappingProvider
+     * @throws \RuntimeException
+     */
+    protected function getMappingProvider()
+    {
+        if (!$this->mappingProvider) {
+            throw new \RuntimeException('The required parameter was not set');
+        }
+
+        return $this->mappingProvider;
     }
 }
