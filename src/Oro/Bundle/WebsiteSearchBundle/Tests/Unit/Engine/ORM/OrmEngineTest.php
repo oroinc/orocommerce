@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\ORM;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
@@ -12,8 +11,10 @@ use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
 class OrmEngineTest extends \PHPUnit_Framework_TestCase
@@ -42,6 +43,11 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
      * @var Mapper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mapper;
+
+    /**
+     * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $mappingProvider;
 
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -76,6 +82,10 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->mapper = $this->getMockBuilder(Mapper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -181,7 +191,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
                 'sku' => '1GB82',
             ]
         );
-        $this->mapper->expects($this->exactly(3))->method('getEntityConfig')->willReturn([
+        $this->mappingProvider->expects($this->exactly(3))->method('getEntityConfig')->willReturn([
             'alias' => 'orob2b_product_WEBSITE_ID',
             'fields' => [
                 [
@@ -201,6 +211,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
         $engine->setRegistry($this->registry);
         $engine->setDrivers([$this->driver]);
         $engine->setMapper($this->mapper);
+        $engine->setMappingProvider($this->mappingProvider);
 
         $expectedResult = new Result(
             $this->query,
@@ -284,6 +295,10 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $engine->search($this->query, []));
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The required parameter was not set
+     */
     public function testSearchDriversNotSet()
     {
         $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
@@ -299,18 +314,22 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->entityManager);
 
         $this->mapper->expects($this->never())->method('mapSelectedData');
-        $this->mapper->expects($this->never())->method('getEntityConfig');
+        $this->mappingProvider->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->never())->method('search');
 
         $engine = $this->getORMEngine();
         $engine->setRegistry($this->registry);
         $engine->setMapper($this->mapper);
+        $engine->setMappingProvider($this->mappingProvider);
 
-        $this->setExpectedException(\RuntimeException::class, 'The required parameter was not set');
         $engine->search($this->query, []);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The required parameter was not set
+     */
     public function testSearchMapperNotSet()
     {
         $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
@@ -329,18 +348,56 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->entityManager);
 
         $this->mapper->expects($this->never())->method('mapSelectedData');
-        $this->mapper->expects($this->never())->method('getEntityConfig');
+        $this->mappingProvider->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
 
         $engine = $this->getORMEngine();
         $engine->setRegistry($this->registry);
         $engine->setDrivers([$this->driver]);
+        $engine->setMappingProvider($this->mappingProvider);
 
-        $this->setExpectedException(\RuntimeException::class, 'The required parameter was not set');
         $engine->search($this->query, []);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The required parameter was not set
+     */
+    public function testSearchMappingProviderNotSet()
+    {
+        $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
+
+        $this->entityManager->expects($this->once())
+            ->method('getRepository')
+            ->with('OroWebsiteSearchBundle:Item')
+            ->willReturn($this->indexRepository);
+
+        $this->registry->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->withConsecutive(
+                ['OroWebsiteSearchBundle:Item'],
+                ['Oro\Bundle\ProductBundle\Entity\Product']
+            )
+            ->willReturn($this->entityManager);
+
+        $this->mapper->expects($this->once())->method('mapSelectedData');
+        $this->mappingProvider->expects($this->never())->method('getEntityConfig');
+
+        $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
+
+        $engine = $this->getORMEngine();
+        $engine->setRegistry($this->registry);
+        $engine->setDrivers([$this->driver]);
+        $engine->setMapper($this->mapper);
+
+        $engine->search($this->query, []);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The required parameter was not set
+     */
     public function testSearchRegistryNotSet()
     {
         $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
@@ -352,15 +409,15 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass');
 
         $this->mapper->expects($this->never())->method('mapSelectedData');
-        $this->mapper->expects($this->never())->method('getEntityConfig');
+        $this->mappingProvider->expects($this->never())->method('getEntityConfig');
 
         $this->indexRepository->expects($this->never())->method('search');
 
         $engine = $this->getORMEngine();
         $engine->setDrivers([$this->driver]);
         $engine->setMapper($this->mapper);
+        $engine->setMappingProvider($this->mappingProvider);
 
-        $this->setExpectedException(\RuntimeException::class, 'The required parameter was not set');
         $engine->search($this->query, []);
     }
 
@@ -378,7 +435,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->entityManager);
 
         $this->mapper->expects($this->exactly(6))->method('mapSelectedData')->willReturn([]);
-        $this->mapper->expects($this->exactly(6))->method('getEntityConfig')->willReturn([]);
+        $this->mappingProvider->expects($this->exactly(6))->method('getEntityConfig')->willReturn([]);
 
         $this->indexRepository->expects($this->exactly(2))
             ->method('search')
@@ -388,6 +445,7 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
         $engine->setRegistry($this->registry);
         $engine->setDrivers([$this->driver]);
         $engine->setMapper($this->mapper);
+        $engine->setMappingProvider($this->mappingProvider);
 
         $engine->search($this->query, []);
         $engine->search($this->query, []);
@@ -411,6 +469,16 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
 
         $engine->setMapper($this->mapper);
         $this->assertAttributeEquals($this->mapper, 'mapper', $engine);
+    }
+
+    public function testSetMappingProvider()
+    {
+        $engine = $this->getORMEngine();
+
+        $this->assertAttributeEquals(null, 'mappingProvider', $engine);
+
+        $engine->setMappingProvider($this->mappingProvider);
+        $this->assertAttributeEquals($this->mappingProvider, 'mappingProvider', $engine);
     }
 
     public function testSetRegistry()
