@@ -28,7 +28,6 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidation
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -148,6 +147,7 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
         ]);
 
         $this->assertCount(1, $shippingRule->getMethodConfigs());
+        /** @var ShippingRuleMethodConfig $methodConfig */
         $methodConfig = $shippingRule->getMethodConfigs()->first();
         $this->assertCount(1, $methodConfig->getTypeConfigs());
         $typeConfig = $methodConfig->getTypeConfigs()->first();

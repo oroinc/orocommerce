@@ -3,9 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber;
-use Symfony\Component\Form\FormFactoryInterface;
-
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class RuleMethodTypeConfigCollectionSubscriberProxy extends RuleMethodTypeConfigCollectionSubscriber
 {
@@ -20,6 +19,7 @@ class RuleMethodTypeConfigCollectionSubscriberProxy extends RuleMethodTypeConfig
     protected $methodRegistry;
 
     /**
+     * RuleMethodTypeConfigCollectionSubscriberProxy constructor.
      */
     public function __construct()
     {

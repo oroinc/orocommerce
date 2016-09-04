@@ -79,15 +79,15 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
      */
     protected function recreateDynamicChildren(FormInterface $form, $method)
     {
-        $method = $this->methodRegistry->getShippingMethod($method);
+        $shippingMethod = $this->methodRegistry->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
         $form->add('typeConfigs', ShippingRuleMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
-            'is_grouped' => $method->isGrouped(),
+            'is_grouped' => $shippingMethod->isGrouped(),
         ]));
 
         $oldOptions = $form->get('options')->getConfig()->getOptions();
-        $child = $this->factory->createNamed('options', $method->getOptionsConfigurationFormType());
-        $form->add('options', $method->getOptionsConfigurationFormType(), array_merge($oldOptions, [
+        $child = $this->factory->createNamed('options', $shippingMethod->getOptionsConfigurationFormType());
+        $form->add('options', $shippingMethod->getOptionsConfigurationFormType(), array_merge($oldOptions, [
             'compound' => $child->getConfig()->getOptions()['compound']
         ]));
     }

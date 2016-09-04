@@ -146,6 +146,7 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
         ]);
 
         $this->assertCount(1, $shippingRule->getMethodConfigs());
+        /** @var ShippingRuleMethodConfig $methodConfig */
         $methodConfig = $shippingRule->getMethodConfigs()->first();
         $this->assertCount(1, $methodConfig->getTypeConfigs());
         $typeConfig = $methodConfig->getTypeConfigs()->first();

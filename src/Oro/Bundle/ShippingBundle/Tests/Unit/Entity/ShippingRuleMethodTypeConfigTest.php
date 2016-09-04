@@ -16,6 +16,7 @@ class ShippingRuleMethodTypeConfigTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['type', 'custom'],
             ['options', ['custom' => 'test']],
+            ['enabled', true],
             ['methodConfig', new ShippingRuleMethodConfig()],
         ];
 

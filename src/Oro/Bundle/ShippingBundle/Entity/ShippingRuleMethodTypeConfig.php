@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodTypeConfig;
@@ -51,7 +50,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     protected $options = [];
 
     /**
-     * @var string
+     * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
      * @ConfigField(
@@ -145,7 +144,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isEnabled()
     {
@@ -153,7 +152,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @param string $enabled
+     * @param bool $enabled
      * @return $this
      */
     public function setEnabled($enabled)

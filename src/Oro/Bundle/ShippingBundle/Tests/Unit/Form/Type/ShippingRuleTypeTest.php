@@ -146,7 +146,7 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            [(new ShippingRule())],
+            [new ShippingRule()],
             [
                 (new ShippingRule())
                     ->setCurrency('EUR')
