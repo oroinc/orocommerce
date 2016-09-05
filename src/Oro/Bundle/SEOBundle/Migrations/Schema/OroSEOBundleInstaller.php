@@ -12,9 +12,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const LANDING_PAGE_TABLE_NAME = 'orob2b_cms_page';
+    const PRODUCT_TABLE_NAME = 'oro_product';
+    const CATEGORY_TABLE_NAME = 'oro_catalog_category';
+    const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
     /** @var ExtendExtension */

@@ -2,17 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class PriceListToAccountRepositoryTest extends WebTestCase
@@ -23,8 +30,8 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                LoadPriceListRelations::class,
+                LoadPriceListFallbackSettings::class,
             ]
         );
     }
@@ -55,6 +62,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function restrictByPriceListDataProvider()
     {
         return [
@@ -226,8 +236,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         ];
     }
 
-
-    public function testGetAccountWebsitePairsByAccountGroup()
+    public function testGetAccountWebsitePairsByAccountGroupIterator()
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
@@ -235,14 +244,43 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup(
-            $accountGroup,
-            [$website->getId()]
+
+        $iterator = $this->getRepository()->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+        $this->assertEquals(
+            [
+                [
+                    'account' => $account->getId(),
+                    'website' => $website->getId()
+                ]
+            ],
+            $result
         );
-        $this->assertCount(1, $result);
-        $result = $result[0];
-        $this->assertEquals($result->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result->getWebsite()->getId(), $website->getId());
+    }
+
+    public function testGetIteratorByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_6');
+        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+
+        $this->assertEquals(
+            [
+                [
+                    'account'  => $this->getReference('account.level_1.3')->getId(),
+                    'accountGroup'  => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                ]
+            ],
+            $result
+        );
     }
 
     public function testGetAccountWebsitePairsByAccount()

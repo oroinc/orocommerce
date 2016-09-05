@@ -64,16 +64,16 @@ class OroRFPBundleInstaller implements
         $this->createOroRfpRequestTable($schema);
         $this->createOroRfpStatusTable($schema);
         $this->createOroRfpStatusTranslationTable($schema);
-        $this->createOrob2BRfpRequestProductTable($schema);
-        $this->createOrob2BRfpRequestProductItemTable($schema);
+        $this->createOroRfpRequestProductTable($schema);
+        $this->createOroRfpRequestProductItemTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroRfpAssignedAccUsersForeignKeys($schema);
         $this->addOroRfpAssignedUsersForeignKeys($schema);
         $this->addOroRfpRequestForeignKeys($schema);
         $this->addOroRfpStatusForeignKeys($schema);
-        $this->addOrob2BRfpRequestProductForeignKeys($schema);
-        $this->addOrob2BRfpRequestProductItemForeignKeys($schema);
+        $this->addOroRfpRequestProductForeignKeys($schema);
+        $this->addOroRfpRequestProductItemForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addActivityAssociations($schema, $this->activityExtension);
@@ -106,13 +106,13 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Create orob2b_rfp_request table
+     * Create oro_rfp_request table
      *
      * @param Schema $schema
      */
     protected function createOroRfpRequestTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_rfp_request');
+        $table = $schema->createTable('oro_rfp_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
@@ -135,47 +135,47 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Create orob2b_rfp_status table
+     * Create oro_rfp_status table
      *
      * @param Schema $schema
      */
     protected function createOroRfpStatusTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_rfp_status');
+        $table = $schema->createTable('oro_rfp_status');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('sort_order', 'integer', ['notnull' => false]);
         $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['name'], 'orob2b_rfp_status_name_idx', []);
+        $table->addIndex(['name'], 'oro_rfp_status_name_idx', []);
     }
 
     /**
-     * Create orob2b_rfp_status_translation table
+     * Create oro_rfp_status_translation table
      *
      * @param Schema $schema
      */
     protected function createOroRfpStatusTranslationTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_rfp_status_translation');
+        $table = $schema->createTable('oro_rfp_status_translation');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('object_id', 'integer', ['notnull' => false]);
         $table->addColumn('locale', 'string', ['length' => 8]);
         $table->addColumn('field', 'string', ['length' => 32]);
         $table->addColumn('content', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['locale', 'object_id', 'field'], 'orob2b_rfp_status_trans_idx', []);
+        $table->addIndex(['locale', 'object_id', 'field'], 'oro_rfp_status_trans_idx', []);
     }
 
     /**
-     * Create orob2b_rfp_request_product table
+     * Create oro_rfp_request_product table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRfpRequestProductTable(Schema $schema)
+    protected function createOroRfpRequestProductTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_rfp_request_product');
+        $table = $schema->createTable('oro_rfp_request_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
@@ -185,13 +185,13 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Create orob2b_rfp_request_prod_item table
+     * Create oro_rfp_request_prod_item table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRfpRequestProductItemTable(Schema $schema)
+    protected function createOroRfpRequestProductItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_rfp_request_prod_item');
+        $table = $schema->createTable('oro_rfp_request_prod_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('request_product_id', 'integer', ['notnull' => false]);
@@ -220,13 +220,13 @@ class OroRFPBundleInstaller implements
     {
         $table = $schema->getTable('oro_rfp_assigned_acc_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request'),
+            $schema->getTable('oro_rfp_request'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -248,7 +248,7 @@ class OroRFPBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request'),
+            $schema->getTable('oro_rfp_request'),
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -256,13 +256,13 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Add orob2b_rfp_request foreign keys.
+     * Add oro_rfp_request foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroRfpRequestForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_rfp_request');
+        $table = $schema->getTable('oro_rfp_request');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -270,19 +270,19 @@ class OroRFPBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_status'),
+            $schema->getTable('oro_rfp_status'),
             ['status_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -290,15 +290,15 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Add orob2b_rfp_status_translation foreign keys.
+     * Add oro_rfp_status_translation foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroRfpStatusForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_rfp_status_translation');
+        $table = $schema->getTable('oro_rfp_status_translation');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_status'),
+            $schema->getTable('oro_rfp_status'),
             ['object_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -306,21 +306,21 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Add orob2b_rfp_request_product foreign keys.
+     * Add oro_rfp_request_product foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BRfpRequestProductForeignKeys(Schema $schema)
+    protected function addOroRfpRequestProductForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_rfp_request_product');
+        $table = $schema->getTable('oro_rfp_request_product');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request'),
+            $schema->getTable('oro_rfp_request'),
             ['request_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -328,21 +328,21 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Add orob2b_rfp_request_prod_item foreign keys.
+     * Add oro_rfp_request_prod_item foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BRfpRequestProductItemForeignKeys(Schema $schema)
+    protected function addOroRfpRequestProductItemForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_rfp_request_prod_item');
+        $table = $schema->getTable('oro_rfp_request_prod_item');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_request_product'),
+            $schema->getTable('oro_rfp_request_product'),
             ['request_product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -357,7 +357,7 @@ class OroRFPBundleInstaller implements
      */
     protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
     {
-        $noteExtension->addNoteAssociation($schema, 'orob2b_rfp_request');
+        $noteExtension->addNoteAssociation($schema, 'oro_rfp_request');
     }
 
     /**
@@ -368,7 +368,7 @@ class OroRFPBundleInstaller implements
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
-        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_rfp_request');
+        $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
+        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'oro_rfp_request');
     }
 }

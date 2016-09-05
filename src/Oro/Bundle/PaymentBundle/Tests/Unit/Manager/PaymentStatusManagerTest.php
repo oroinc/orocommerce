@@ -45,7 +45,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->transaction = new PaymentTransaction();
-        $this->transaction->setEntityClass('Oro\Bundle\OrderBundle\Entity\Order');
+        $this->transaction->setEntityClass('\stdClass');
         $this->transaction->setEntityIdentifier(1);
         $this->transaction->setPaymentMethod('payment_term');
 
@@ -58,13 +58,13 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateStatusNewEntity()
     {
-        $entity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->getEntity('\stdClass');
         $repositoryMock = $this->commonExpectations($entity);
 
         $repositoryMock->expects($this->once())->method('findOneBy')
             ->with(
                 [
-                    'entityClass' => 'Oro\Bundle\OrderBundle\Entity\Order',
+                    'entityClass' => '\stdClass',
                     'entityIdentifier' => 1,
                 ]
             )
@@ -81,13 +81,13 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
     {
         $existingPaymentStatus = new PaymentStatus();
         $existingTransaction = new PaymentTransaction();
-        $entity = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->getEntity('\stdClass');
         $repositoryMock = $this->commonExpectations($entity);
 
         $repositoryMock->expects($this->once())->method('findOneBy')
             ->with(
                 [
-                    'entityClass' => 'Oro\Bundle\OrderBundle\Entity\Order',
+                    'entityClass' => '\stdClass',
                     'entityIdentifier' => 1,
                 ]
             )
@@ -123,7 +123,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->doctrineHelperMock->expects($this->once())->method('getEntityReference')
-            ->with('Oro\Bundle\OrderBundle\Entity\Order', 1)
+            ->with('\stdClass', 1)
             ->willReturn($entity);
 
         $this->doctrineHelperMock->expects($this->once())->method('getEntityRepository')

@@ -105,4 +105,21 @@ class PriceListRepository extends BasePriceListRepository
 
         return new BufferedQueryResultIterator($qb);
     }
+
+    /**
+     * @param array|PriceList[] $priceLists
+     * @param bool $actual
+     */
+    public function updatePriceListsActuality(array $priceLists, $actual)
+    {
+        if (count($priceLists)) {
+            $qb = $this->_em->createQueryBuilder();
+            $qb->update($this->_entityName, 'priceList');
+            $qb->set('priceList.actual', ':actual')
+                ->where($qb->expr()->in('priceList.id', ':priceLists'))
+                ->setParameter('actual', $actual)
+                ->setParameter('priceLists', $priceLists);
+            $qb->getQuery()->execute();
+        }
+    }
 }

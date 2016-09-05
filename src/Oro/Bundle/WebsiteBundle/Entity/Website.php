@@ -14,10 +14,10 @@ use Oro\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
 /**
  * @ORM\Table(
- *     name="orob2b_website",
+ *     name="oro_website",
  *     indexes={
- *          @ORM\Index(name="idx_orob2b_website_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_orob2b_website_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_website_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_oro_website_updated_at", columns={"updated_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
@@ -64,7 +64,7 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
      *
      * @ORM\ManyToMany(targetEntity="Website", inversedBy="inversedWebsites")
      * @ORM\JoinTable(
-     *      name="orob2b_related_website",
+     *      name="oro_related_website",
      *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="related_website_id", referencedColumnName="id", onDelete="CASCADE")

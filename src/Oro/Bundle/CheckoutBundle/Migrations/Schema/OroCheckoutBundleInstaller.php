@@ -36,25 +36,25 @@ class OroCheckoutBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_checkout_source table
+     * Create oro_checkout_source table
      *
      * @param Schema $schema
      */
     protected function createOroCheckoutSourceTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_checkout_source');
+        $table = $schema->createTable('oro_checkout_source');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->setPrimaryKey(['id']);
     }
 
     /**
-     * Create orob2b_checkout table
+     * Create oro_checkout table
      *
      * @param Schema $schema
      */
     protected function createOroCheckoutTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_checkout');
+        $table = $schema->createTable('oro_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
@@ -90,33 +90,33 @@ class OroCheckoutBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_checkout foreign keys.
+     * Add oro_checkout foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCheckoutForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_checkout');
+        $table = $schema->getTable('oro_checkout');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_checkout_source'),
+            $schema->getTable('oro_checkout_source'),
             ['source_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -134,13 +134,13 @@ class OroCheckoutBundleInstaller implements Installation
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+            $schema->getTable('oro_order_address'),
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+            $schema->getTable('oro_order_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -152,7 +152,7 @@ class OroCheckoutBundleInstaller implements Installation
      */
     protected function createCheckoutWorkflowStateTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_checkout_workflow_state');
+        $table = $schema->createTable('oro_checkout_workflow_state');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('token', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer', []);
@@ -160,7 +160,7 @@ class OroCheckoutBundleInstaller implements Installation
         $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['entity_id', 'entity_class', 'token'], 'orob2b_checkout_wf_state_uidx');
+        $table->addUniqueIndex(['entity_id', 'entity_class', 'token'], 'oro_checkout_wf_state_uidx');
         $table->setPrimaryKey(['id']);
     }
 }
