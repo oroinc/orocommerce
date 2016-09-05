@@ -11,7 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class OroSaleBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -23,6 +23,16 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable('orob2b_sale_quote');
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_payment_term'),
+            ['payment_term_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+
         $extension = $this->renameExtension;
 
         // email to quote association
@@ -89,6 +99,15 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'quote_7de78df3',
             RelationType::MANY_TO_ONE
         ));
+
+        // rename tables
+        $extension->renameTable($schema, $queries, 'orob2b_sale_quote', 'oro_sale_quote');
+        $extension->renameTable($schema, $queries, 'orob2b_quote_address', 'oro_quote_address');
+        $extension->renameTable($schema, $queries, 'orob2b_sale_quote_prod_offer', 'oro_sale_quote_prod_offer');
+        $extension->renameTable($schema, $queries, 'orob2b_sale_quote_prod_request', 'oro_sale_quote_prod_request');
+        $extension->renameTable($schema, $queries, 'orob2b_sale_quote_product', 'oro_sale_quote_product');
+        $extension->renameTable($schema, $queries, 'orob2b_quote_demand', 'oro_quote_demand');
+        $extension->renameTable($schema, $queries, 'orob2b_quote_product_demand', 'oro_quote_product_demand');
     }
 
     /**

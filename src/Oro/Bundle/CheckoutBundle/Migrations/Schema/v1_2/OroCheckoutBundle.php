@@ -8,13 +8,20 @@ use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface
+class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
 {
     use DatabasePlatformAwareTrait;
+
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -26,7 +33,7 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface
         $postSchema = clone $schema;
 
         $this->updateCheckoutTable($postSchema);
-        $this->addCheckoutTableForeignKeys($postSchema);
+        $this->addCheckoutTableForeignKeys($postSchema, $queries);
 
         foreach ($this->getSchemaDiff($schema, $postSchema) as $query) {
             $queries->addPreQuery($query);
@@ -53,6 +60,11 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface
                 ['new_class_name' => Type::STRING, 'class_name' => Type::STRING]
             )
         );
+
+        $extension = $this->renameExtension;
+
+        $extension->renameTable($schema, $queries, 'orob2b_checkout', 'oro_checkout');
+        $extension->renameTable($schema, $queries, 'orob2b_checkout_source', 'oro_checkout_source');
     }
 
     /**
@@ -76,18 +88,24 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addCheckoutTableForeignKeys(Schema $schema)
+    protected function addCheckoutTableForeignKeys(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('orob2b_checkout');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_checkout',
+            'oro_order_address',
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_checkout',
+            'oro_order_address',
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -112,5 +130,13 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface
         $comparator = new Comparator();
 
         return $comparator->compare($schema, $toSchema)->toSql($this->platform);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

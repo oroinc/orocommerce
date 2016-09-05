@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
- * @ORM\Table(name="orob2b_shipping_freight_class")
+ * @ORM\Table(name="oro_shipping_freight_class")
  * @ORM\Entity
  * @Config
  */

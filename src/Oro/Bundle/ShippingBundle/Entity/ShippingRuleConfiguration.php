@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleConfiguration;
 
 /**
- * @ORM\Table(name="orob2b_shipping_rule_config")
+ * @ORM\Table(name="oro_shipping_rule_config")
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="entity_name", type="string")

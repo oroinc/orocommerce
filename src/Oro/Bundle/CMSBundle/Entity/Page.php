@@ -16,7 +16,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * @ORM\Table(name="orob2b_cms_page")
+ * @ORM\Table(name="oro_cms_page")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
@@ -169,7 +169,7 @@ class Page extends ExtendPage
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
-     * @ORM\JoinTable(name="orob2b_cms_page_to_slug",
+     * @ORM\JoinTable(name="oro_cms_page_to_slug",
      *      joinColumns={
      *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

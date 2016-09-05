@@ -14,7 +14,7 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'orob2b_category_def_prod_opts';
     const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
-    
+
     /**
      * @var RenameExtension
      */
@@ -56,7 +56,7 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
         );
         $this->createOroCategoryDefaultProductOptionsTable($schema);
         $this->updateOroCategoryTable($schema);
-        $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
+        $this->addOroCategoryDefaultProductOptionsForeignKeys($schema, $queries);
         $this->addOroCategoryForeignKeys($schema);
     }
 
@@ -105,11 +105,13 @@ class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
     /**
      * @param Schema $schema
      */
-    protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema)
+    protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME,
+            'oro_product_unit',
             ['product_unit_code'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
