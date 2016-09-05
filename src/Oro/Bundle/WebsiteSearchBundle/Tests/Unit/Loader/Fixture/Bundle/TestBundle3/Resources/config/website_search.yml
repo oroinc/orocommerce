@@ -1,4 +1,4 @@
-OroB2B\Bundle\TestProductBundle\Entity\Product:
+Oro\Bundle\TestBundle3\Entity\Product:
     alias: product_WEBSITE_ID
     fields:
       -

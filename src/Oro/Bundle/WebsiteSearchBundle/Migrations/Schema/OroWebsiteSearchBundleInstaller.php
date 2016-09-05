@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Schema;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -42,7 +41,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $this->createOroWebsiteSearchIntegerTable($schema);
         $this->createOroWebsiteSearchDatetimeTable($schema);
         $this->createOroWebsiteSearchItemTable($schema);
-        $this->createOroWebsiteSearchTextTable($schema, $queries);
+        $this->createOroWebsiteSearchTextTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroWebsiteSearchDecimalForeignKeys($schema);
@@ -123,10 +122,8 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Create oro_website_search_text table
      * @param Schema $schema
-     * @param QueryBag $queries
-     * @throws ServiceNotFoundException
      */
-    protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
+    protected function createOroWebsiteSearchTextTable(Schema $schema)
     {
         $table = $schema->createTable('oro_website_search_text');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -152,7 +149,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
             $schema->getTable('oro_website_search_item'),
             ['item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
@@ -167,7 +164,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
             $schema->getTable('oro_website_search_item'),
             ['item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
@@ -182,7 +179,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
             $schema->getTable('oro_website_search_item'),
             ['item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
