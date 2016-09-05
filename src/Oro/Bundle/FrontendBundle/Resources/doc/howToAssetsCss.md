@@ -112,7 +112,7 @@ The resulting ```styles.css``` file will be next:
 
 ## Theme customization by theme extending
 
-In custom themes we have the opportunity to change globalи and settings for a particular component by changing the value of the variable under the same name. And can also make own configs for new or existing components in the exended theme.
+In custom themes we have the opportunity to change globals and settings for a particular component by changing the value of the variable under the same name. And can also make own configs for new or existing components in the exended theme.
 
 We use styles from ```my-theme``` and configs from ```my-custom-theme```.
 For example ```components/input/input.scss```:
