@@ -158,62 +158,9 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
         return new OrmEngine($eventDispatcher, $this->queryPlaceholderResolver);
     }
 
-    public function testSearch()
+    private function getSearchExpectedResult()
     {
-        $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
-
-        $this->entityManager->expects($this->once())
-            ->method('getRepository')
-            ->with('OroWebsiteSearchBundle:Item')
-            ->willReturn($this->indexRepository);
-
-        $this->registry->expects($this->exactly(4))
-            ->method('getManagerForClass')
-            ->withConsecutive(
-                ['OroWebsiteSearchBundle:Item'],
-                ['Oro\Bundle\ProductBundle\Entity\Product'],
-                ['Oro\Bundle\ProductBundle\Entity\Product'],
-                ['Oro\Bundle\ProductBundle\Entity\Product']
-            )
-            ->willReturn($this->entityManager);
-
-        $this->mapper->expects($this->exactly(3))->method('mapSelectedData')->willReturnOnConsecutiveCalls(
-            [
-                'title' => 'Product 1 title',
-                'sku' => '0RT28',
-            ],
-            [
-                'title' => 'Product 2 title',
-                'sku' => '1AB92',
-            ],
-            [
-                'title' => 'Product 3 title',
-                'sku' => '1GB82',
-            ]
-        );
-        $this->mappingProvider->expects($this->exactly(3))->method('getEntityConfig')->willReturn([
-            'alias' => 'orob2b_product_WEBSITE_ID',
-            'fields' => [
-                [
-                    'name' => 'title_LOCALIZATION_ID',
-                    'type' => 'text'
-                ],
-                [
-                    'name' => 'sku_LOCALIZATION_ID',
-                    'type' => 'text'
-                ],
-            ],
-        ]);
-
-        $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
-
-        $engine = $this->getORMEngine();
-        $engine->setRegistry($this->registry);
-        $engine->setDrivers([$this->driver]);
-        $engine->setMapper($this->mapper);
-        $engine->setMappingProvider($this->mappingProvider);
-
-        $expectedResult = new Result(
+        return new Result(
             $this->query,
             [
                 new Item(
@@ -291,8 +238,64 @@ class OrmEngineTest extends \PHPUnit_Framework_TestCase
             ],
             3
         );
+    }
 
-        $this->assertEquals($expectedResult, $engine->search($this->query, []));
+    public function testSearch()
+    {
+        $this->queryPlaceholderResolver->expects($this->once())->method('replace')->willReturn($this->query);
+
+        $this->entityManager->expects($this->once())
+            ->method('getRepository')
+            ->with('OroWebsiteSearchBundle:Item')
+            ->willReturn($this->indexRepository);
+
+        $this->registry->expects($this->exactly(4))
+            ->method('getManagerForClass')
+            ->withConsecutive(
+                ['OroWebsiteSearchBundle:Item'],
+                ['Oro\Bundle\ProductBundle\Entity\Product'],
+                ['Oro\Bundle\ProductBundle\Entity\Product'],
+                ['Oro\Bundle\ProductBundle\Entity\Product']
+            )
+            ->willReturn($this->entityManager);
+
+        $this->mapper->expects($this->exactly(3))->method('mapSelectedData')->willReturnOnConsecutiveCalls(
+            [
+                'title' => 'Product 1 title',
+                'sku' => '0RT28',
+            ],
+            [
+                'title' => 'Product 2 title',
+                'sku' => '1AB92',
+            ],
+            [
+                'title' => 'Product 3 title',
+                'sku' => '1GB82',
+            ]
+        );
+        $this->mappingProvider->expects($this->exactly(3))->method('getEntityConfig')->willReturn([
+            'alias' => 'orob2b_product_WEBSITE_ID',
+            'fields' => [
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text'
+                ],
+                [
+                    'name' => 'sku_LOCALIZATION_ID',
+                    'type' => 'text'
+                ],
+            ],
+        ]);
+
+        $this->indexRepository->expects($this->once())->method('search')->willReturn($this->repositorySearchResults);
+
+        $engine = $this->getORMEngine();
+        $engine->setRegistry($this->registry);
+        $engine->setDrivers([$this->driver]);
+        $engine->setMapper($this->mapper);
+        $engine->setMappingProvider($this->mappingProvider);
+
+        $this->assertEquals($this->getSearchExpectedResult(), $engine->search($this->query, []));
     }
 
     /**
