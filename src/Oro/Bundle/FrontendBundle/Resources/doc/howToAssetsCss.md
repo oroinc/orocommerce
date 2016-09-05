@@ -20,29 +20,25 @@ MyBundle/
 
 All styles should be placed in ```components``` folder with the same file name as block name.
 For example ```components/input/input.scss```:
-```css
+```scss
 .input {
     display: inline-block;
     padding: $input-padding;
-
     font-size: $font-size;
     font-family: $input-font-family;
     line-height: $input-line-height;
-
     border: $border;
     color: $input-color;    
 }
 ```
 And for example ```components/button/button.scss```:
-```css
+```scss
 .button {
     display: inline-block;
     padding: $button-padding;
-
     font-size: $font-size;
     font-family: $button-font-family;
     line-height: $button-line-height;
-
     border: $border;
     color: $button-color;
 }
@@ -50,7 +46,7 @@ And for example ```components/button/button.scss```:
 
 Global settings should contain global variables for blocks.
 Example ```global-settings.scss```:
-```css
+```scss
 $font-size: 12px;
 $font-family: 'Thamoma';
 $line-height: 1.1;
@@ -59,7 +55,7 @@ $line-height: 1.1;
 All block variables should be placed in ```variables``` folder.
 Files should contain configs for blocks what can be reconfigures in ```my-custom-theme```.
 For example ```input-config.scss```:
-```css
+```scss
 $input-padding: 8px 9px !default;
 $input-font-size: $font-size !default;
 $input-font-family: $font-family !default;
@@ -67,7 +63,7 @@ $input-line-height: $line-height !default;
 $input-color: blue !default;
 ```
 And for example ```button-config.scss```:
-```css
+```scss
 $button-padding: 18px 9px !default;
 $button-font-size: $font-size !default;
 $button-font-family: $font-family !default;
@@ -98,22 +94,17 @@ The resulting ```styles.css``` file will be next:
 .input {
     display: inline-block;
     padding: 8px 9px;
-
     font-size: 12px;
     font-family: 'Thamoma';
     line-height: 1.1;
-
     color: blue;
 }
-
 .button {
     display: inline-block;
     padding: 18px 9px;
-
     font-size: 12px;
     font-family: 'Thamoma';
     line-height: 1.1;
-
     color: yellow;
 }
 
@@ -121,25 +112,26 @@ The resulting ```styles.css``` file will be next:
 
 ## Theme customization by theme extending
 
+In custom themes we have the opportunity to change globalи and settings for a particular component by changing the value of the variable under the same name. And can also make own configs for new or existing components in the exended theme.
+
 We use styles from ```my-theme``` and configs from ```my-custom-theme```.
 For example ```components/input/input.scss```:
-```css
+```scss
 .button {
     border: $input-border;
-
     &--full {
         width:  100%;
     }    
 }
 ```
 And for example ```global-settings.scss```
-```css
+```scss
 $font-size: 14px;
 $font-family: 'Arial';
 
 ```
 And for example ```input-config.scss```:
-```css
+```scss
 $input-border: 1px solid red;
 $input-color: purple;
 ```
@@ -159,26 +151,20 @@ The resulting ```styles.css``` file will be next:
 .input {
     display: inline-block;
     padding: 8px 9px;
-
     font-size: 14px;
     font-family: 'Arial';
     line-height: 1.1;
-
     color: purple;
     border: 1px solid red;
 }
-
 .button {
     display: inline-block;
     padding: 18px 9px;
-
     font-size: 14px;
     font-family: 'Arial';
     line-height: 1.1;
-
     color: yellow;
 }
-
 .button--full {
     width: 100%
 }
