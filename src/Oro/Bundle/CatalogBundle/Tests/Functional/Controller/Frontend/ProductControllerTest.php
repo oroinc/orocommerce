@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @dbIsolation
@@ -44,7 +45,7 @@ class ProductControllerTest extends WebTestCase
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $response = $this->client->requestFrontendGrid(
             [
-                'gridName' => 'frontend-products-grid',
+                'gridName' => 'frontend-product-search-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
             ],
@@ -120,5 +121,100 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
         $this->assertNotEmpty($content);
+    }
+
+    /**
+     * @dataProvider navigationBarTestDataProvider
+     *
+     * @param $category
+     * @param $expectedParts
+     * @param $filters
+     */
+    public function testNavigationBar($category, array $expectedParts, array $filters)
+    {
+        $category = $this->getReference($category);
+
+        $requestParams = [
+            'includeSubcategories' => 1,
+            'categoryId' => $category->getId()
+        ];
+
+        $gridParams = [
+            'i' => 1,
+            'p' => 25,
+            'f' => [],
+            'v' => '__all__',
+            'a' => 'grid'
+        ];
+
+        foreach ($filters as $name => $data) {
+            $gridParams['f'][$name] = [
+                'value' => $data['value'],
+                'type' => $data['type']
+            ];
+        }
+
+        $gridUrlPart = urlencode(http_build_query($gridParams));
+
+        $url = $this->getUrl(
+            'orob2b_product_frontend_product_index',
+            $requestParams
+        ).'&grid[frontend-product-search-grid]='.$gridUrlPart;
+
+        $crawler = $this->client->request('GET', $url);
+
+        $navigationBarNode = $crawler->filter('div.catalog-navigation-bar')->first()->getNode(0);
+        $text = $navigationBarNode->textContent;
+
+        $foundParts = [];
+
+        foreach ($expectedParts as $expectedPart) {
+            if (strstr($text, $expectedPart)) {
+                $foundParts[] = $expectedPart;
+            }
+        }
+
+        $this->assertSame($foundParts, $expectedParts);
+    }
+
+    /**
+     * @return array
+     */
+    public function navigationBarTestDataProvider()
+    {
+        return [
+            [
+                'category' => LoadCategoryData::SECOND_LEVEL1,
+                'expectedParts' => [
+                    LoadCategoryData::SECOND_LEVEL1
+                ],
+                'filters' => []
+            ],
+            [
+                'categoryId' => LoadCategoryData::THIRD_LEVEL1,
+                'expectedParts' => [
+                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadCategoryData::THIRD_LEVEL1
+                ],
+                'filters' => []
+            ],
+            [
+                'categoryId' => LoadCategoryData::SECOND_LEVEL1,
+                'expectedParts' => [
+                    LoadCategoryData::SECOND_LEVEL1,
+                    // filters are not expected to show as they render using javascript
+                ],
+                'filters' => [
+                    'sku' => [
+                        'type' => 3,
+                        'value' => '2332'
+                    ],
+                    'name' => [
+                        'type' => 1,
+                        'value' => 'test'
+                    ]
+                ]
+            ]
+        ];
     }
 }
