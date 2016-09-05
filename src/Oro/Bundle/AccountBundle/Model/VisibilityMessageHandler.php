@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\AccountBundle\Model;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class VisibilityMessageHandler
@@ -36,11 +35,11 @@ class VisibilityMessageHandler
 
     /**
      * @param string $topic
-     * @param VisibilityInterface $productVisibility
+     * @param object $entity
      */
-    public function addVisibilityMessageToSchedule($topic, VisibilityInterface $productVisibility)
+    public function addVisibilityMessageToSchedule($topic, $entity)
     {
-        $message = $this->messageFactory->createMessage($productVisibility);
+        $message = $this->messageFactory->createMessage($entity);
 
         if (!$this->isScheduledMessage($topic, $message)) {
             $this->scheduleMessage($topic, $message);
@@ -87,6 +86,6 @@ class VisibilityMessageHandler
      */
     protected function getMessageKey($message)
     {
-        return $message[VisibilityMessageFactory::VISIBILITY_CLASS] . ':' . $message[VisibilityMessageFactory::ID];
+        return $message[VisibilityMessageFactory::ENTITY_CLASS_NAME] . ':' . $message[VisibilityMessageFactory::ID];
     }
 }

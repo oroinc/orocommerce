@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\AccountBundle\Async\Topics;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -61,14 +60,14 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                     $productVisibility,
                     [
                         VisibilityMessageFactory::ID => 42,
-                        VisibilityMessageFactory::VISIBILITY_CLASS => ClassUtils::getClass($productVisibility)
+                        VisibilityMessageFactory::ENTITY_CLASS_NAME => ClassUtils::getClass($productVisibility)
                     ]
                 ],
                 [
                     $accountProductVisibility,
                     [
                         VisibilityMessageFactory::ID => 123,
-                        VisibilityMessageFactory::VISIBILITY_CLASS
+                        VisibilityMessageFactory::ENTITY_CLASS_NAME
                             => ClassUtils::getClass($accountProductVisibility)
                     ]
                 ],
@@ -76,7 +75,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                     $accountGroupProductVisibility,
                     [
                         VisibilityMessageFactory::ID => 321,
-                        VisibilityMessageFactory::VISIBILITY_CLASS
+                        VisibilityMessageFactory::ENTITY_CLASS_NAME
                             => ClassUtils::getClass($accountGroupProductVisibility)
                     ]
                 ]
@@ -84,21 +83,21 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         // Add same message twice
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            'orob2b_account.visibility.resolve_product_visibility',
             $productVisibility
         );
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            'orob2b_account.visibility.resolve_product_visibility',
             $productVisibility
         );
 
         // Add another messages
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            'orob2b_account.visibility.resolve_product_visibility',
             $accountProductVisibility
         );
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            'orob2b_account.visibility.resolve_product_visibility',
             $accountGroupProductVisibility
         );
 
@@ -106,17 +105,17 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
             ['orob2b_account.visibility.resolve_product_visibility' => [
                 'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility:42' => [
                     VisibilityMessageFactory::ID => 42,
-                    VisibilityMessageFactory::VISIBILITY_CLASS =>
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
                         'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility'
                 ],
                 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility:123' => [
                     VisibilityMessageFactory::ID => 123,
-                    VisibilityMessageFactory::VISIBILITY_CLASS =>
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
                         'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility'
                 ],
                 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility:321' => [
                     VisibilityMessageFactory::ID => 321,
-                    VisibilityMessageFactory::VISIBILITY_CLASS =>
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
                         'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility'
                 ]
             ]],
@@ -132,7 +131,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         $message = [
             VisibilityMessageFactory::ID => 42,
-            VisibilityMessageFactory::VISIBILITY_CLASS => ClassUtils::getClass($productVisibility)
+            VisibilityMessageFactory::ENTITY_CLASS_NAME => ClassUtils::getClass($productVisibility)
         ];
 
         $this->messageFactory->expects($this->any())
@@ -142,10 +141,10 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $message);
+            ->with('orob2b_account.visibility.resolve_product_visibility', $message);
 
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            'orob2b_account.visibility.resolve_product_visibility',
             $productVisibility
         );
 

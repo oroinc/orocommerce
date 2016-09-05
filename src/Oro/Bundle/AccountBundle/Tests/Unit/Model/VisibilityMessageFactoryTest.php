@@ -55,7 +55,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 42,
                 'expected' => [
                     VisibilityMessageFactory::ID => 42,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                         => 'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility'
                 ]
             ],
@@ -64,7 +64,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 123,
                 'expected' => [
                     VisibilityMessageFactory::ID => 123,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                     => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility'
                 ]
             ],
@@ -73,7 +73,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 321,
                 'expected' => [
                     VisibilityMessageFactory::ID => 321,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                     => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility'
                 ]
             ],
@@ -97,7 +97,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->visibilityMessageFactory->getVisibilityFromMessage([
             VisibilityMessageFactory::ID => null,
-            VisibilityMessageFactory::VISIBILITY_CLASS => 'ProductVisibility'
+            VisibilityMessageFactory::ENTITY_CLASS_NAME => 'ProductVisibility'
         ]);
     }
 

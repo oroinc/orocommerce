@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\EntityListener;
 
-use Oro\Bundle\AccountBundle\Async\Topics;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\EntityListener\VisibilityListener;
+use Oro\Bundle\AccountBundle\Entity\EntityListener\ProductVisibilityListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
     
@@ -18,7 +17,7 @@ class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
     protected $visibilityChangeMessageHandler;
 
     /**
-     * @var VisibilityListener
+     * @var ProductVisibilityListener
      */
     protected $visibilityListener;
 
@@ -27,10 +26,9 @@ class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $this->visibilityChangeMessageHandler = $this->getMockBuilder(VisibilityMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->visibilityListener = new VisibilityListener(
-            $this->visibilityChangeMessageHandler,
-            Topics::RESOLVE_PRODUCT_VISIBILITY
-        );
+        $this->visibilityListener = new ProductVisibilityListener($this->visibilityChangeMessageHandler);
+
+        $this->visibilityListener->setTopic('orob2b_account.visibility.resolve_product_visibility');
     }
 
     public function testPostPersist()
@@ -40,7 +38,7 @@ class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $visibility);
+            ->with('orob2b_account.visibility.resolve_product_visibility', $visibility);
         $this->visibilityListener->postPersist($visibility);
     }
 
@@ -51,7 +49,7 @@ class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $visibility);
+            ->with('orob2b_account.visibility.resolve_product_visibility', $visibility);
 
         $this->visibilityListener->preUpdate($visibility);
     }
@@ -63,7 +61,7 @@ class VisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with(Topics::RESOLVE_PRODUCT_VISIBILITY, $visibility);
+            ->with('orob2b_account.visibility.resolve_product_visibility', $visibility);
 
         $this->visibilityListener->preRemove($visibility);
     }
