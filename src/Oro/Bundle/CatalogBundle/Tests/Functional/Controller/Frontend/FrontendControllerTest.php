@@ -38,5 +38,9 @@ class FrontendControllerTest extends WebTestCase
         $this->assertContains(LoadCategoryData::THIRD_LEVEL2, $content);
         $this->assertContains(LoadCategoryData::FOURTH_LEVEL1, $content);
         $this->assertContains(LoadCategoryData::FOURTH_LEVEL2, $content);
+        $this->assertContains('list-slider-component', $content);
+        $this->assertContains('Featured Products', $content);
+        $this->assertContains('Top Selling Items', $content);
+
     }
 }
