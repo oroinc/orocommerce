@@ -16,10 +16,10 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
  * )
  * @ORM\Table(
- *      name="orob2b_acc_product_visibility",
+ *      name="oro_acc_product_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_acc_prod_vis_uidx",
+ *              name="oro_acc_prod_vis_uidx",
  *              columns={"website_id", "product_id", "account_id"}
  *          )
  *      }

@@ -5,11 +5,13 @@ namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 
+use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
-use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutForm;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutForm;
+use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal;
 use Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
@@ -20,31 +22,21 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class FeatureContext extends OroFeatureContext implements OroElementFactoryAware, KernelAwareContext
 {
-    use ElementFactoryDictionary;
-
-    /**
-     * @var KernelInterface
-     */
-    protected $kernel;
-
-
-    public function setKernel(KernelInterface $kernelInterface)
-    {
-        $this->kernel = $kernelInterface;
-    }
+    use ElementFactoryDictionary, KernelDictionary;
 
     /**
      * @Given there is EUR currency in the system configuration
      */
     public function thereIsEurCurrencyInTheSystemConfiguration()
     {
-        $container = $this->kernel->getContainer();
-        $configManager = $container->get('oro_config.global');
+        $configManager = $this->getContainer()->get('oro_config.global');
+        /** @var var array $currencies */
         $currencies = (array)$configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
         $configManager->flush();
-        $configManager = $container->get('oro_config.manager');
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR','USD']);
         $configManager->flush();
     }
@@ -55,8 +47,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function loginAsBuyer($email)
     {
         $this->visitPath('account/user/login');
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
         $table = new TableNode([
@@ -65,6 +56,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         ]);
         $form->fill($table);
         $form->pressButton('Sign In');
+        $this->waitForAjax();
     }
 
     /**
@@ -77,13 +69,12 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var checkoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle('Billing Information');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         $this->getSession()->getPage()->pressButton('Continue');
-        $this->getSession()->getDriver()->waitForAjax();
-       // $checkoutStep->assertTitle('Shipping Information');
+        $this->waitForAjax();
         $this->getSession()->getPage()->pressButton('Continue');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Method');
     }
 
@@ -92,7 +83,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function shippingTypeFlatRateIsShownForBuyerSelection()
     {
-        /** @var checkoutForm $checkoutForm */
+        /** @var CheckoutForm $checkoutForm */
         $checkoutForm = $this->createElement('CheckoutForm');
         $checkoutForm->assertHas('Flat Rate');
     }
@@ -102,11 +93,10 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function theOrderTotalIsRecalculatedTo($arg1)
     {
-        /** @var checkoutForm $checkoutForm */
+        /** @var CheckoutTotal $checkoutTotal */
         $checkoutTotal = $this->createElement('CheckoutTotal');
         $checkoutTotal->isEqual($arg1);
     }
-
 
     /**
      * @Then There is no shipping method available for this order
@@ -129,26 +119,25 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('System/Shipping Rules');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         /** @var Grid $grid */
         $grid = $this->createElement('Grid');
         $grid->clickActionLink($shippingRule, 'Edit');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        $form ->clickLink('Add');
         $form->fill($table);
         $form->saveAndClose();
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
     }
 
     /**
-     * @Given Admin User created :arg1 with next data:
+     * @Given Admin User Created :arg1 with next data
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
@@ -160,21 +149,20 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('System/Shipping Rules');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         $this->getSession()->getPage()->clickLink('Create Shipping Rule');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
-        $form->fillField('Sort Order', 1);
+        $form->fillField('Sort Order', '2');
         $form ->clickLink('Add');
         $form->fill($table);
         $form->saveAndClose();
 
-        $this->getSession()->getDriver()->waitForAjax();
-        sleep(10);
+        $this->waitForAjax();
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
     }
@@ -197,25 +185,17 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $login = $this->createElement('Login');
         $login->fill(new TableNode([['Username', 'admin'], ['Password', 'admin']]));
         $login->pressButton('Log in');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
     }
 
-    /*
-   * @param string $shoppingListName
-   */
+    /**
+     * @param string $shoppingListName
+     */
     protected function createOrderFromShoppingList($shoppingListName)
     {
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
-        $this->getSession()->getDriver()->waitForAjax();
-        /** @var ShoppingListWidget $shoppingListWidget */
-        $shoppingListWidget = $this->createElement('ShoppingListWidget');
-        $shoppingListWidget->mouseOver();
-        $this->getSession()->getDriver()->evaluateScript("$('li.shopping-lists-frontend-widget').trigger('mouseover')");
-        $this->getSession()->getDriver()->waitForAjax();
-        $shoppingList = $shoppingListWidget->getShoppingList($shoppingListName);
-        $shoppingList->viewDetails();
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->visitPath('account/shoppinglist/1');
+        $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
     }
 }

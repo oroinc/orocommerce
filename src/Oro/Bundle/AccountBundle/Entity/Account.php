@@ -15,9 +15,9 @@ use Oro\Bundle\AccountBundle\Model\ExtendAccount;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository")
  * @ORM\Table(
- *      name="orob2b_account",
+ *      name="oro_account",
  *      indexes={
- *          @ORM\Index(name="orob2b_account_name_idx", columns={"name"})
+ *          @ORM\Index(name="oro_account_name_idx", columns={"name"})
  *      }
  * )
  *
@@ -194,7 +194,7 @@ class Account extends ExtendAccount
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="orob2b_account_sales_reps",
+     *      name="oro_account_sales_reps",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

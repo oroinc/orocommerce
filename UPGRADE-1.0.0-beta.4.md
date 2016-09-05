@@ -4,6 +4,7 @@ Upgrade from beta.3
 General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
+- Name prefix for all OroCommerce tables was changed from `orob2b_` to `oro_` 
 
 FrontendBundle:
 ---------------
@@ -63,6 +64,15 @@ OrderBundle:
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
+
+PricingBundle:
+-------------
+
+- Removed `getWebsiteIdsByAccountGroup` method from `PriceListToAccountGroupRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Changed arguments of `PriceListChangeTriggerHandler` constructor
 
 SaleBundle:
 -----------

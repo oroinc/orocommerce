@@ -3,8 +3,8 @@ ShoppingListWidget:
   class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget
 
 ShoppingListItem:
+  selector: '.shopping-list-label'
   class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListItem
-
 
 CheckoutTotal:
   selector: 'td.order-checkout-widget__total'

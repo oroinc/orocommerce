@@ -48,16 +48,6 @@ oro_system_configuration:
                         min: 0
                     - Type:
                         type: integer
-        oro_b2b_pricing.price_lists_update_mode:
-            data_type: string
-            type: choice
-            options:
-                label: oro.pricing.system_configuration.fields.price_lists_update_mode.label
-                tooltip: oro.pricing.system_configuration.fields.price_lists_update_mode.tooltip
-                choice_translation_domain: messages
-                choices:
-                    scheduled: oro.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
-                    real_time: oro.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
         oro_b2b_pricing.offset_of_processing_cpl_prices:
             data_type: float
             type: number
@@ -111,7 +101,6 @@ oro_system_configuration:
                                     price_lists_update:
                                         priority: 50
                                         children:
-                                            - oro_b2b_pricing.price_lists_update_mode
                                             - oro_b2b_pricing.offset_of_processing_cpl_prices
                                     display_currencies:
                                         priority: 20
