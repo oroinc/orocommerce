@@ -197,18 +197,6 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEquals(0, $indexedNum);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no such entity in mapping config.
-     */
-    public function testWrongMappingException()
-    {
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
-        $this->indexer->reindex(\stdClass::class, []);
-        $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
-    }
-
     public function testCount()
     {
         $this->assertEntityCount(4, Item::class);

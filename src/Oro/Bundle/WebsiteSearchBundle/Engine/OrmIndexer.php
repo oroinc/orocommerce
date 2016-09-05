@@ -27,27 +27,41 @@ class OrmIndexer extends AbstractIndexer
             return true;
         }
 
-        $firstEntityClass = $this->doctrineHelper->getEntityClass(current($entities));
-        $entityIds = [];
-        foreach ($entities as $entity) {
-            if ($firstEntityClass !== $this->doctrineHelper->getEntityClass($entity)) {
-                throw new \InvalidArgumentException('Entities must be of the same type');
-            }
-
-            $entityIds[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
-        }
-
-        $entityAlias = null;
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
-            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
-        }
+        $doctrineHelper = $this->doctrineHelper;
+        usort($entities, function ($leftEntity, $rightEntity) use ($doctrineHelper) {
+            return strcmp($doctrineHelper->getEntityClass($leftEntity), $doctrineHelper->getEntityClass($rightEntity));
+        });
 
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
 
         /** @var WebsiteSearchIndexRepository $indexRepository */
         $indexRepository = $entityManager->getRepository(Item::class);
-        $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
+
+        while (!empty($entities)) {
+            $firstEntityClass = $doctrineHelper->getEntityClass(current($entities));
+            $sameEntitiesCount = 0;
+            foreach ($entities as $entity) {
+                if ($doctrineHelper->getEntityClass($entity) != $firstEntityClass) {
+                    break;
+                }
+
+                $sameEntitiesCount++;
+            }
+
+            $entityIds = [];
+            $sameEntities = array_splice($entities, 0, $sameEntitiesCount);
+            foreach ($sameEntities as $entity) {
+                $entityIds[] = $doctrineHelper->getSingleEntityIdentifier($entity);
+            }
+
+            $entityAlias = null;
+            if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+                $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
+                $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+            }
+
+            $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
+        }
 
         return true;
     }
