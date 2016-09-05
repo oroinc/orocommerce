@@ -30,6 +30,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function thereIsEurCurrencyInTheSystemConfiguration()
     {
         $configManager = $this->getContainer()->get('oro_config.global');
+        /** @var var array $currencies */
         $currencies = (array)$configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
@@ -72,7 +73,6 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         $this->getSession()->getPage()->pressButton('Continue');
         $this->waitForAjax();
-       // $checkoutStep->assertTitle('Shipping Information');
         $this->getSession()->getPage()->pressButton('Continue');
         $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Method');
@@ -97,7 +97,6 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $checkoutTotal = $this->createElement('CheckoutTotal');
         $checkoutTotal->isEqual($arg1);
     }
-
 
     /**
      * @Then There is no shipping method available for this order
@@ -194,14 +193,9 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     protected function createOrderFromShoppingList($shoppingListName)
     {
-        $this->getSession()->getDriver()->waitForAjax();
-        /** @var ShoppingListWidget $shoppingListWidget */
-        $shoppingListWidget = $this->createElement('ShoppingListWidget');
-        $shoppingListWidget->mouseOver();
-        $shoppingList = $shoppingListWidget->getShoppingList($shoppingListName);
-        $shoppingList->viewDetails();
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->visitPath('account/shoppinglist/1');
+        $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
-        $this->getSession()->getDriver()->waitForAjax();
+        $this->waitForAjax();
     }
 }
