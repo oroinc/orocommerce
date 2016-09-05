@@ -1,4 +1,4 @@
-{% block _account_address_book_addresses_grid_head_widget %}
+{% block __orob2b_account_address_grid__addresses_head_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " oro-grid__row"
     }) %}
@@ -7,7 +7,7 @@
     </div>
 {% endblock %}
 
-{% block _account_address_book_addresses_grid_title_widget %}
+{% block __orob2b_account_address_grid__addresses_head_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " oro-grid__column oro-grid__column-half"
     }) %}
@@ -21,7 +21,7 @@
     </div>
 {% endblock %}
 
-{% block _account_address_book_addresses_grid_create_button_widget %}
+{% block __orob2b_account_address_grid__addresses_create_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " btn btn_xsm btn-dark oq-group-btn"
     }) %}
@@ -30,7 +30,7 @@
     }) }}
 {% endblock %}
 
-{% block _account_address_book_addresses_grid_widget %}
+{% block __orob2b_account_address_grid__datagrid_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " oro-grid__row oro-grid__row--has-twin-row oro-grid__row--has-child-grid"
     }) %}
@@ -39,18 +39,11 @@
     </div>
 {% endblock %}
 
-{% block _account_address_book_user_addresses_grid_head_widget %}
-    {{ block('_account_address_book_addresses_grid_head_widget') }}
-{% endblock %}
-
-{% block _account_address_book_user_addresses_grid_title_widget %}
-    {{ block('_account_address_book_addresses_grid_title_widget') }}
-{% endblock %}
-
-{% block _account_address_book_user_addresses_grid_create_button_widget %}
-    {{ block('_account_address_book_addresses_grid_create_button_widget') }}
-{% endblock %}
-
-{% block _account_address_book_user_addresses_grid_widget %}
-    {{ block('_account_address_book_addresses_grid_widget') }}
+{% block __orob2b_account_address_grid__datagrid_toolbar_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " grid-toolbar"
+    }) %}
+    <script type="text/html" id="template-account-address-book-addresses-grid-toolbar">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </script>
 {% endblock %}
