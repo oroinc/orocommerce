@@ -12,7 +12,7 @@ class OroWebsiteSearchExtension extends Extension
     const ALIAS = 'oro_website_search';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -26,7 +26,7 @@ class OroWebsiteSearchExtension extends Extension
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAlias()
     {
