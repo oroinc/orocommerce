@@ -15,13 +15,20 @@ class NameNode implements NodeInterface
     protected $field;
 
     /**
+     * @var int|null|string
+     */
+    protected $containerId;
+
+    /**
      * @param string $container
      * @param string|null $field
+     * @param null|int|string $containerId
      */
-    public function __construct($container, $field = null)
+    public function __construct($container, $field = null, $containerId = null)
     {
         $this->container = $container;
         $this->field = $field;
+        $this->containerId = $containerId;
     }
 
     /**
@@ -54,5 +61,13 @@ class NameNode implements NodeInterface
     public function isBoolean()
     {
         return false;
+    }
+
+    /**
+     * @return int|null|string
+     */
+    public function getContainerId()
+    {
+        return $this->containerId;
     }
 }

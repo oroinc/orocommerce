@@ -20,4 +20,17 @@ class RelationNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$node], $node->getNodes());
         $this->assertFalse($node->isBoolean());
     }
+
+    public function testNodeWithId()
+    {
+        $class = 'testClass';
+        $relationField = 'field';
+        $field = 'relation';
+        $id = 42;
+        $node = new RelationNode($class, $field, $relationField, $id);
+        $this->assertSame($class, $node->getContainer());
+        $this->assertSame($relationField, $node->getRelationField());
+        $this->assertSame($field, $node->getField());
+        $this->assertSame($id, $node->getContainerId());
+    }
 }

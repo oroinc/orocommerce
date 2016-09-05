@@ -51,58 +51,114 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testParse()
+    /**
+     * @dataProvider invalidExpressionDataProvider
+     * @param string $expression
+     * @param string $exceptionMessage
+     */
+    public function testParseException($expression, $exceptionMessage)
     {
-        $this->assertCategoryRelation();
+        $this->setExpectedException(\RuntimeException::class, $exceptionMessage);
+        $this->expressionParser->parse($expression);
+    }
 
-        $expression = "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
-            " || (Product.category == -Product.MSRP and not (Product.MSRP.currency matches 'U'))";
+    /**
+     * @return array
+     */
+    public function invalidExpressionDataProvider()
+    {
+        return [
+            [
+                'PriceList.value[1]', 'Attribute is supported only for root variable in expression'
+            ],
+            [
+                'PriceList.relation.value[1]', 'Attribute is supported only for root variable in expression'
+            ],
+            [
+                'PriceList.relation[1].value', 'Attribute is supported only for root variable in expression'
+            ],
+            [
+                'PriceList.category.relation.id', 'Relations of related entities are not allowed to be used'
+            ],
+            [
+                'PriceList', 'At least one field must be present in expression'
+            ],
+            [
+                'PriceList.value(1)', 'Function calls are not supported'
+            ]
+        ];
+    }
 
-        $expected = new Expression\BinaryNode(
-            new Expression\BinaryNode(
-                new Expression\BinaryNode(
-                    new Expression\NameNode('pl', 'currency'),
-                    new Expression\ValueNode('USD'),
-                    '=='
-                ),
-                new Expression\BinaryNode(
-                    new Expression\BinaryNode(
-                        new Expression\NameNode('p', 'margin'),
-                        new Expression\ValueNode(10),
-                        '*'
-                    ),
-                    new Expression\BinaryNode(
-                        new Expression\ValueNode(130),
-                        new Expression\RelationNode('p', 'category', 'minMargin'),
-                        '*'
-                    ),
-                    '>'
-                ),
-                'and'
-            ),
-            new Expression\BinaryNode(
-                new Expression\BinaryNode(
-                    new Expression\RelationNode('p', 'category', 'categoryId'),
-                    new Expression\UnaryNode(
-                        new Expression\NameNode('p', 'MSRP'),
-                        '-'
-                    ),
-                    '=='
-                ),
-                new Expression\UnaryNode(
-                    new Expression\BinaryNode(
-                        new Expression\RelationNode('p', 'MSRP', 'currency'),
-                        new Expression\ValueNode('U'),
-                        'matches'
-                    ),
-                    'not'
-                ),
-                'and'
-            ),
-            '||'
-        );
-
+    /**
+     * @dataProvider expressionsDataProvider
+     * @param string $expression
+     * @param Expression\NodeInterface $expected
+     */
+    public function testParse($expression, Expression\NodeInterface $expected)
+    {
+        $this->prepareCategoryRelation();
         $this->assertEquals($expected, $this->expressionParser->parse($expression));
+    }
+
+    public function expressionsDataProvider()
+    {
+        return [
+            [
+                'PriceList[42].prices.currency',
+                new Expression\RelationNode('pl', 'prices', 'currency', 42)
+            ],
+            [
+                'PriceList[42].assignedProducts',
+                new Expression\NameNode('pl', 'assignedProducts', 42)
+            ],
+            [
+                "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
+                " || (Product.category == -Product.MSRP and not (Product.MSRP.currency matches 'U'))",
+                new Expression\BinaryNode(
+                    new Expression\BinaryNode(
+                        new Expression\BinaryNode(
+                            new Expression\NameNode('pl', 'currency'),
+                            new Expression\ValueNode('USD'),
+                            '=='
+                        ),
+                        new Expression\BinaryNode(
+                            new Expression\BinaryNode(
+                                new Expression\NameNode('p', 'margin'),
+                                new Expression\ValueNode(10),
+                                '*'
+                            ),
+                            new Expression\BinaryNode(
+                                new Expression\ValueNode(130),
+                                new Expression\RelationNode('p', 'category', 'minMargin'),
+                                '*'
+                            ),
+                            '>'
+                        ),
+                        'and'
+                    ),
+                    new Expression\BinaryNode(
+                        new Expression\BinaryNode(
+                            new Expression\RelationNode('p', 'category', 'categoryId'),
+                            new Expression\UnaryNode(
+                                new Expression\NameNode('p', 'MSRP'),
+                                '-'
+                            ),
+                            '=='
+                        ),
+                        new Expression\UnaryNode(
+                            new Expression\BinaryNode(
+                                new Expression\RelationNode('p', 'MSRP', 'currency'),
+                                new Expression\ValueNode('U'),
+                                'matches'
+                            ),
+                            'not'
+                        ),
+                        'and'
+                    ),
+                    '||'
+                )
+            ]
+        ];
     }
 
     /**
@@ -112,7 +168,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUsedLexemes($expression, array $expected)
     {
-        $this->assertCategoryRelation();
+        $this->prepareCategoryRelation();
         $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression));
     }
 
@@ -139,7 +195,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function assertCategoryRelation()
+    protected function prepareCategoryRelation()
     {
         $this->fieldsProvider->expects($this->any())
             ->method('isRelation')
