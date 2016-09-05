@@ -31,6 +31,7 @@ class FeaturedCategoriesProvider
     public function getAll()
     {
         $this->setCategories();
+
         return $this->categories;
     }
 

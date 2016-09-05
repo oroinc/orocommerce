@@ -2,6 +2,10 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: orob2b_frontend.home_page.title
         - '@addTree':
             items:
                 wrapper:

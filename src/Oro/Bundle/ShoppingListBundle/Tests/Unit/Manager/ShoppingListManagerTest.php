@@ -205,8 +205,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
         $repository->expects($this->once())
-            ->method('getItemsByShoppingListAndProduct')
-            ->with($this->shoppingListOne, $product)
+            ->method('getItemsByShoppingListAndProducts')
+            ->with($this->shoppingListOne, [$product])
             ->willReturn($relatedLineItems);
 
         $result = $this->manager->removeProduct($this->shoppingListOne, $product, $flush);

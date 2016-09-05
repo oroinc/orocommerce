@@ -163,7 +163,6 @@ class CategoryRepository extends NestedTreeRepository
             ->setParameter('categories', $categories)
             ->groupBy('category.id');
 
-
         return $qb;
     }
 

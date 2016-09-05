@@ -44,7 +44,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->frontendProductPricesProvider->expects($this->once())
             ->method('getByProduct')
-            ->willReturn(array_map([$this, 'getUnitPrecision'], $unitPrecisionsWithPrices));
+            ->willReturn(array_map([$this, 'getProductUnit'], $unitPrecisionsWithPrices));
 
         $actual = $this->provider->getProductUnits($product);
 
@@ -117,6 +117,17 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $unitPrecision['unit'] = $this->getUnit($unitPrecision['unit']);
         return $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', $unitPrecision);
+    }
+
+    /**
+     * @param array $unitPrecision
+     * @return ProductUnit[]
+     */
+    protected function getProductUnit(array $unitPrecision)
+    {
+        $productUnit['unit'] = $this->getUnit($unitPrecision['unit']);
+
+        return $productUnit;
     }
 
     /**

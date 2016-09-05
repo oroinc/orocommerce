@@ -37,6 +37,7 @@ class FrontendProductPricesProvider
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param UserCurrencyManager $userCurrencyManager
+     * @param ProductPriceFormatter $productPriceFormatter
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -122,6 +123,7 @@ class FrontendProductPricesProvider
                 'qty' => $price->getQuantity(),
                 'price' => $price->getPrice()->getValue(),
                 'currency' => $price->getPrice()->getCurrency(),
+                'unit'  => $price->getUnit()->getCode(),
             ];
         }
         $productsPrices = $this->productPriceFormatter->formatProducts($productsPrices);

@@ -73,7 +73,7 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product[] $product
+     * @param Product[] $products
      * @return array|LineItem[]
      */
     public function getItemsByShoppingListAndProducts(ShoppingList $shoppingList, $products)

@@ -22,6 +22,9 @@ orob2b_frontend:
             frontend_theme.label: 'Theme'
     copyright: '&copy; 2016 Oro.Inc. All Rights Reserved.'
 
+    home_page:
+        title: 'Home page'
+
     exception:
         default: 'The System is currently under maintenance and should be available in a few minutes.'
         code.403: "You don't have permission to access this page."

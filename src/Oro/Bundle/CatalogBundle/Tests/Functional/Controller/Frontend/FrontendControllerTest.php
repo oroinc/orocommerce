@@ -23,12 +23,11 @@ class FrontendControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $menuHtml = $crawler->filter('ul.main-menu__list')->text();
+        $menuHtml = $crawler->filter('ul.main-menu')->text();
 
         /** @var AccountUser $loggedUser */
         $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
