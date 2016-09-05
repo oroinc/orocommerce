@@ -28,7 +28,7 @@ services:
             - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
             - '@temp_mapper_stub'
-            - '@oro_entity.entity_alias_provider'
+            - '@oro_entity.entity_alias_resolver'
 
     oro_website_search.orm.engine:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'

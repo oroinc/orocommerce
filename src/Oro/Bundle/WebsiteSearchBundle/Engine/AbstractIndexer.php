@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\EntityBundle\Provider\EntityAliasProvider;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
@@ -29,25 +29,25 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var Mapper */
     protected $mapper;
 
-    /** @var EntityAliasProvider */
-    protected $entityAliasProvider;
+    /** @var EntityAliasResolver */
+    protected $entityAliasResolver;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
      * @param AbstractSearchMappingProvider $mapper
-     * @param EntityAliasProvider $entityAliasProvider
+     * @param EntityAliasResolver $entityAliasResolver
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
         AbstractSearchMappingProvider $mapper,
-        EntityAliasProvider $entityAliasProvider
+        EntityAliasResolver $entityAliasResolver
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
         $this->mapper = $mapper;
-        $this->entityAliasProvider = $entityAliasProvider;
+        $this->entityAliasResolver = $entityAliasResolver;
     }
 
     /**
@@ -107,10 +107,14 @@ abstract class AbstractIndexer implements IndexerInterface
         foreach ($websiteIdsToIndex as $websiteId) {
             $websiteContext = $context;
 
-            $collectContextEvent = new CollectContextEvent($websiteContext, $websiteId);
+            $websiteContext[self::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+            $collectContextEvent = new CollectContextEvent($websiteContext);
             $this->eventDispatcher->dispatch(CollectContextEvent::NAME, $collectContextEvent);
             $websiteContext = $collectContextEvent->getContext();
-            $websiteContext[self::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+
+            if (empty($websiteContext[self::CONTEXT_WEBSITE_ID_KEY])) {
+                throw new \RuntimeException('Website id should be in context.');
+            }
 
             foreach ($entitiesToIndex as $entityClass => $entityConfig) {
                 $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
@@ -149,7 +153,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function reindexSingleEntity($entityClass, array $entityConfig, array $context)
     {
-        $currentAlias = sprintf('%s_%s', $entityConfig['alias'], $context[self::CONTEXT_WEBSITE_ID_KEY]);
+        $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
         $temporaryAlias = $this->generateTemporaryAlias($currentAlias);
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
@@ -192,6 +196,17 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
+     * @todo: Use some provider to replace placeholders
+     * @param string $alias
+     * @param array $context
+     * @return mixed
+     */
+    protected function applyPlaceholders($alias, $context)
+    {
+        return str_replace('WEBSITE_ID', $context[self::CONTEXT_WEBSITE_ID_KEY], $alias);
+    }
+
+    /**
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
@@ -217,18 +232,18 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param array $entityIds
      * @param array $context
-     * @param $entityClass
+     * @param string $entityClass
      * @return array
      */
     protected function restrictIndexEntity(array $entityIds, array $context, $entityClass)
     {
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($entityClass);
+        $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
 
         $restrictEntitiesEvent = new RestrictIndexEntityEvent($queryBuilder, $context);
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RestrictIndexEntityEvent::NAME, $entityAlias->getAlias()),
+            sprintf('%s.%s', RestrictIndexEntityEvent::NAME, $entityAlias),
             $restrictEntitiesEvent
         );
         $this->eventDispatcher->dispatch(RestrictIndexEntityEvent::NAME, $restrictEntitiesEvent);

@@ -14,19 +14,12 @@ class CollectContextEvent extends Event
     private $context = [];
 
     /**
-     * @var int
-     */
-    private $websiteId;
-
-    /**
      *
      * @param array $context
-     * @param int $websiteId
      */
-    public function __construct(array $context, $websiteId)
+    public function __construct(array $context)
     {
         $this->context = $context;
-        $this->websiteId = $websiteId;
     }
 
     /**
@@ -56,13 +49,5 @@ class CollectContextEvent extends Event
     public function getContext()
     {
         return $this->context;
-    }
-
-    /**
-     * @return int
-     */
-    public function getWebsiteId()
-    {
-        return $this->websiteId;
     }
 }

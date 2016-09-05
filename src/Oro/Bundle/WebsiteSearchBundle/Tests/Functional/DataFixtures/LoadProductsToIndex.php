@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\TestFrameworkBundle\Entity\Product;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 
 class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInterface
 {
@@ -21,17 +21,14 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
     /** @var array */
     protected $data = [
         'product1' => [
-            'name' => self::PRODUCT1,
-
+            'name' => self::PRODUCT1
         ],
         'product2' => [
-            'name' => self::PRODUCT2,
-
+            'name' => self::PRODUCT2
         ],
         'product3' => [
-            'name' => self::RESTRCTED_PRODUCT,
-        ],
-
+            'name' => self::RESTRCTED_PRODUCT
+        ]
     ];
 
     /**
@@ -40,7 +37,7 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $obj) {
-            $item = new Product();
+            $item = new TestProduct();
             $item->setName($obj['name']);
             $manager->persist($item);
         }

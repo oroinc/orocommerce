@@ -12,6 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityR
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
 class RestrictedProductsIndexEventListener
@@ -50,11 +51,11 @@ class RestrictedProductsIndexEventListener
         $context = $event->getContext();
         $queryBuilder = $event->getQueryBuilder();
 
-        if (!$websiteId = $context['website_id']) {
+        if (!$websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]) {
             return;
         }
 
-        $this->setAccountQueryPart($queryBuilder);
+        $queryBuilder->join(Account::class, self::ACCOUNT_ALIAS, Join::WITH, $queryBuilder->expr()->neq(self::ACCOUNT_ALIAS, 0));
 
         $productVisibility = [$this->getProductVisibilityResolvedQueryPart($queryBuilder, $websiteId)];
         $productVisibility[] = $this->getAccountGroupProductVisibilityResolvedQueryPart($queryBuilder, $websiteId);
@@ -62,19 +63,6 @@ class RestrictedProductsIndexEventListener
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $productVisibility), 0));
         $queryBuilder->distinct();
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
-    protected function setAccountQueryPart(QueryBuilder $queryBuilder)
-    {
-        $queryBuilder->join(
-            Account::class,
-            self::ACCOUNT_ALIAS,
-            Join::WITH,
-            $queryBuilder->expr()->neq(self::ACCOUNT_ALIAS, 0)
-        );
     }
 
     /**
