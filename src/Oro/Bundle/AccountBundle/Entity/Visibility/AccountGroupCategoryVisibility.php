@@ -14,10 +14,10 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
  *   repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository"
  * )
  * @ORM\Table(
- *      name="orob2b_acc_grp_ctgr_visibility",
+ *      name="oro_acc_grp_ctgr_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_acc_grp_ctgr_vis_uidx",
+ *              name="oro_acc_grp_ctgr_vis_uidx",
  *              columns={"category_id", "account_group_id"}
  *          )
  *      }

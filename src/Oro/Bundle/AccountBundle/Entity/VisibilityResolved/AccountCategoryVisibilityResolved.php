@@ -12,7 +12,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Entity(
  *    repositoryClass="Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository"
  * )
- * @ORM\Table(name="orob2b_acc_ctgr_vsb_resolv")
+ * @ORM\Table(name="oro_acc_ctgr_vsb_resolv")
  */
 class AccountCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {

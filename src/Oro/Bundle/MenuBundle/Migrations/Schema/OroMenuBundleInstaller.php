@@ -27,7 +27,7 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -44,22 +44,22 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BMenuItemTable($schema);
-        $this->createOrob2BMenuItemTitleTable($schema);
+        $this->createOroMenuItemTable($schema);
+        $this->createOroMenuItemTitleTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BMenuItemForeignKeys($schema);
-        $this->addOrob2BMenuItemTitleForeignKeys($schema);
+        $this->addOroMenuItemForeignKeys($schema);
+        $this->addOroMenuItemTitleForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_menu_item table
+     * Create oro_menu_item table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BMenuItemTable(Schema $schema)
+    protected function createOroMenuItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_menu_item');
+        $table = $schema->createTable('oro_menu_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('uri', 'text', ['notnull' => false]);
@@ -73,7 +73,7 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,
-            'orob2b_menu_item',
+            'oro_menu_item',
             'image',
             [],
             self::MAX_MENU_ITEM_IMAGE_SIZE_IN_MB
@@ -81,13 +81,13 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
     }
 
     /**
-     * Create orob2b_menu_item_title table
+     * Create oro_menu_item_title table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BMenuItemTitleTable(Schema $schema)
+    protected function createOroMenuItemTitleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_menu_item_title');
+        $table = $schema->createTable('oro_menu_item_title');
         $table->addColumn('menu_item_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['menu_item_id', 'localized_value_id']);
@@ -95,15 +95,15 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
     }
 
     /**
-     * Add orob2b_menu_item foreign keys.
+     * Add oro_menu_item foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BMenuItemForeignKeys(Schema $schema)
+    protected function addOroMenuItemForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_menu_item');
+        $table = $schema->getTable('oro_menu_item');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_menu_item'),
+            $schema->getTable('oro_menu_item'),
             ['parent_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -111,13 +111,13 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
     }
 
     /**
-     * Add orob2b_menu_item_title foreign keys.
+     * Add oro_menu_item_title foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BMenuItemTitleForeignKeys(Schema $schema)
+    protected function addOroMenuItemTitleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_menu_item_title');
+        $table = $schema->getTable('oro_menu_item_title');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
@@ -125,7 +125,7 @@ class OroMenuBundleInstaller implements Installation, AttachmentExtensionAwareIn
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_menu_item'),
+            $schema->getTable('oro_menu_item'),
             ['menu_item_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

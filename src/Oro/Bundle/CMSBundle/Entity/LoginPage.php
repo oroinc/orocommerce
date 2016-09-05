@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\CMSBundle\Model\ExtendLoginPage;
 
 /**
- * @ORM\Table(name="orob2b_cms_login_page")
+ * @ORM\Table(name="oro_cms_login_page")
  * @ORM\Entity()
  * @Config(
  *      routeName="orob2b_cms_loginpage_index",

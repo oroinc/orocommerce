@@ -17,11 +17,11 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
  * @ORM\Table(
- *      name="orob2b_product",
+ *      name="oro_product",
  *      indexes={
- *          @ORM\Index(name="idx_orob2b_product_sku", columns={"sku"}),
- *          @ORM\Index(name="idx_orob2b_product_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
+ *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
@@ -272,7 +272,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_name",
+     *      name="oro_product_name",
      *      joinColumns={
      *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -304,7 +304,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_description",
+     *      name="oro_product_description",
      *      joinColumns={
      *          @ORM\JoinColumn(name="description_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -354,7 +354,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_short_desc",
+     *      name="oro_product_short_desc",
      *      joinColumns={
      *          @ORM\JoinColumn(name="short_description_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
