@@ -4,20 +4,18 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Front
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
-use Oro\Bundle\FrontendTestFrameworkBundle\Datagrid\DatagridTestTrait;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
 class OrderControllerTest extends WebTestCase
 {
-    use DatagridTestTrait;
-
+    const GRID_NAME = 'frontend-checkouts-grid';
     const TOTAL_VALUE = 400;
     const SUBTOTAL_VALUE = 20;
 
@@ -49,7 +47,7 @@ class OrderControllerTest extends WebTestCase
     {
         $this->client->request('GET', '/about'); // any page to authorize a user, CMS is used as the fastest one
 
-        $checkouts = $this->getDatagridData('frontend-checkouts-grid');
+        $checkouts = $this->getDatagridData();
         $this->assertCount(5, $checkouts);
     }
 
@@ -63,7 +61,6 @@ class OrderControllerTest extends WebTestCase
     public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
     {
         $checkouts = $this->getDatagridData(
-            'frontend-checkouts-grid',
             [
                 sprintf('[%s][value]', $columnName) => $value,
                 sprintf('[%s][type]', $columnName) => $filterType
@@ -139,7 +136,6 @@ class OrderControllerTest extends WebTestCase
     {
         //check checkouts with subtotal sorter
         $checkouts = $this->getDatagridData(
-            'frontend-checkouts-grid',
             [],
             [
                 '[subtotal]' => OrmSorterExtension::DIRECTION_ASC,
@@ -170,6 +166,25 @@ class OrderControllerTest extends WebTestCase
             }
             $lastValue = $actualValue;
         }
+    }
+
+    /**
+     * @param array $filters
+     * @param array $sorters
+     * @return array
+     */
+    protected function getDatagridData(array $filters = [], array $sorters = [])
+    {
+        $result = [];
+        foreach ($filters as $filter => $value) {
+            $result[self::GRID_NAME . '[_filter]' . $filter] = $value;
+        }
+        foreach ($sorters as $sorter => $value) {
+            $result[self::GRID_NAME . '[_sort_by]' . $sorter] = $value;
+        }
+        $response = $this->client->requestGrid(['gridName' => self::GRID_NAME], $result);
+
+        return json_decode($response->getContent(), true)['data'];
     }
 
     /**

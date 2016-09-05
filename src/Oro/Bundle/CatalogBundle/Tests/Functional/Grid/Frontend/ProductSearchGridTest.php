@@ -3,16 +3,19 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Grid\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
-use Oro\Bundle\FrontendTestFrameworkBundle\Datagrid\DatagridTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 /**
  * @dbIsolation
  */
 class ProductSearchGridTest extends WebTestCase
 {
-    use DatagridTestTrait;
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -79,5 +82,111 @@ class ProductSearchGridTest extends WebTestCase
             }
             $lastValue = $actualValue;
         }
+    }
+
+    public function testFilters()
+    {
+        $response = $this->client->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-product-search-grid'
+            ],
+            [],
+            true
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        $data = $result['data'];
+
+        $firstRow = array_shift($data);
+        $countWithoutFilters = count($data);
+
+        $response = $this->client->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-product-search-grid'
+            ],
+            [
+                'frontend-product-search-grid[_filter][sku][value]' => $firstRow['sku'],
+                'frontend-product-search-grid[_filter][sku][type]' => '1',
+                'frontend-product-search-grid[_filter][name][value]' => $firstRow['name'],
+                'frontend-product-search-grid[_filter][name][type]' => '1',
+            ],
+            true
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        $filteredData = $result['data'];
+
+        $this->assertTrue($countWithoutFilters > count($filteredData));
+
+        $firstFilteredRow = array_shift($filteredData);
+
+        $this->assertEquals($firstRow['sku'], $firstFilteredRow['sku']);
+        $this->assertEquals($firstRow['name'], $firstFilteredRow['name']);
+    }
+
+    public function testAllTextFilter()
+    {
+        $response = $this->client->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-product-search-grid'
+            ],
+            [],
+            true
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        $data = $result['data'];
+
+        $firstRow = array_shift($data);
+        $allTextValue = substr($firstRow['name'], 1, -1);
+
+        $this->assertNotEmpty($allTextValue);
+
+        $response = $this->client->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-product-search-grid'
+            ],
+            [
+                'frontend-product-search-grid[_filter][sku][all_text]' => $firstRow['sku'],
+                'frontend-product-search-grid[_filter][sku][type]' => '1',
+            ],
+            true
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+
+        $filteredData = $result['data'];
+        $found = false;
+
+        foreach ($filteredData as $row) {
+            if ($row['name'] == $firstRow['name']) {
+                $found = true;
+            }
+        }
+
+        $this->assertTrue($found);
+    }
+
+    /**
+     * @param string $gridName
+     * @param array  $filters
+     * @param array  $sorters
+     * @return array
+     */
+    protected function getDatagridData($gridName, array $filters = [], array $sorters = [])
+    {
+        $result = [];
+        foreach ($filters as $filter => $value) {
+            $result[$gridName . '[_filter]' . $filter] = $value;
+        }
+        foreach ($sorters as $sorter => $value) {
+            $result[$gridName . '[_sort_by]' . $sorter] = $value;
+        }
+        $response = $this->client->requestFrontendGrid(['gridName' => $gridName], $result);
+
+        return json_decode($response->getContent(), true)['data'];
     }
 }
