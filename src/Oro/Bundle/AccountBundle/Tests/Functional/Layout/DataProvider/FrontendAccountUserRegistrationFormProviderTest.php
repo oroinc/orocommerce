@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * @dbIsolation
@@ -14,16 +15,34 @@ class FrontendAccountUserRegistrationFormProviderTest extends WebTestCase
     /** @var FrontendAccountUserRegistrationFormProvider */
     protected $dataProvider;
 
+    /**
+     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteManager;
+
     protected function setUp()
     {
         $this->initClient();
 
-        $this->dataProvider = $this->getContainer()
-            ->get('orob2b_account.provider.frontend_account_user_registration_form');
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->dataProvider = new FrontendAccountUserRegistrationFormProvider(
+            $this->getContainer()->get('form.factory'),
+            $this->getContainer()->get('doctrine'),
+            $this->getContainer()->get('oro_config.manager'),
+            $this->websiteManager,
+            $this->getContainer()->get('oro_user.manager')
+        );
     }
 
     public function testGetData()
     {
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite());
+
         $actual = $this->dataProvider->getRegisterForm();
 
         $this->assertInstanceOf('\Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface', $actual);

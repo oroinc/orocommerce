@@ -75,9 +75,20 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUserCurrencyNoWebsite()
     {
-        $this->configManager->expects($this->never())
-            ->method($this->anything());
-        $this->assertNull($this->userCurrencyManager->getUserCurrency());
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn(null);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    ['oro_b2b_pricing.enabled_currencies', [], false, null, ['EUR', 'USD']],
+                    ['oro_b2b_pricing.default_currency', false, false, null, 'EUR']
+                ]
+            );
+
+        $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency());
     }
 
     public function testGetUserCurrencyLoggedUser()
