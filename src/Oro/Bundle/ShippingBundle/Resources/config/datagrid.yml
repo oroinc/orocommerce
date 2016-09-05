@@ -33,7 +33,7 @@ datagrid:
                 label:         oro.shipping.shippingrule.currency.label
             conditions:
                 label:         oro.shipping.shippingrule.conditions.label
-            configurations:
+            methodConfigs:
                 label:         oro.shipping.shippingrule.method_configs.label
                 type:          twig
                 frontend_type: html

@@ -63,7 +63,7 @@ oro:
             destinations.label: Destinations
             address.label: Address
             method_configs.label: Configurations
-            currency.label: Сurrency
+            currency.label: Currency
             stop_processing.label: Stop Further Rule Processing
         shippingrulemethodconfig:
             entity_label: Shipping Rule Method Config
@@ -97,6 +97,8 @@ oro:
                 freight_class.label: Select freight class
         method:
             flat_rate:
+                label: Flat Rate
+                type.label: Flat Rate
                 price.label: Price
                 handling_fee.label: Handling Fee
                 processing_type:

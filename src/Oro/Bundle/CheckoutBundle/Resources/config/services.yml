@@ -219,8 +219,8 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
         arguments:
             - '@orob2b_checkout.factory.shipping_context_provider_factory'
-            - '@orob2b_shipping.provider.shipping_rules.provider'
-            - '@orob2b_shipping.shipping_price'
+            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.shipping_price.provider'
 
     orob2b_checkout.factory.shipping_context_provider_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'

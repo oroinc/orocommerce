@@ -4,17 +4,17 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 
-class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCase
+class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var UniqueProductUnitShippingOptions */
     protected $constraint;
@@ -27,17 +27,17 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->constraint = new EnabledConfigurationValidationGroup();
+        $this->constraint = new EnabledTypeConfigsValidationGroup();
         $this->context = $this->getMock(ExecutionContextInterface::class);
 
-        $this->validator = new EnabledConfigurationValidationGroupValidator();
+        $this->validator = new EnabledTypeConfigsValidationGroupValidator();
         $this->validator->initialize($this->context);
     }
 
     public function testConfiguration()
     {
         $this->assertEquals(
-            'orob2b_shipping_enabled_configuration_validation_group_validator',
+            'oro_shipping_enabled_type_config_validation_group_validator',
             $this->constraint->validatedBy()
         );
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
@@ -54,8 +54,8 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
 
 
         $data = new ArrayCollection([
-            (new CustomShippingRuleConfiguration())->setEnabled(false),
-            (new CustomShippingRuleConfiguration())->setEnabled(true),
+            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
+            (new ShippingRuleMethodTypeConfig())->setEnabled(true),
         ]);
 
         $this->validator->validate($data, $this->constraint);
@@ -79,8 +79,8 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
             ->method('addViolation');
 
         $data = new ArrayCollection([
-            (new CustomShippingRuleConfiguration())->setEnabled(false),
-            (new CustomShippingRuleConfiguration())->setEnabled(false),
+            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
+            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
         ]);
 
         $this->validator->validate($data, $this->constraint);
@@ -99,7 +99,8 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
     {
         $this->setExpectedException(
             '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "Oro\Bundle\ShippingBundle\Model\ShippingRuleConfiguration", "stdClass" given'
+            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",'
+            . ' "stdClass" given'
         );
         $data = new ArrayCollection([new \stdClass()]);
         $this->validator->validate($data, $this->constraint);

@@ -2,18 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber;
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
-class SubscriberProxy extends RuleConfigurationSubscriber
+class RuleMethodConfigSubscriberProxy extends RuleMethodConfigSubscriber
 {
-    /**
-     * @var RuleConfigurationSubscriber
-     */
-    protected $subscriber;
-
     /**
      * @var FormFactoryInterface
      */
@@ -48,17 +43,5 @@ class SubscriberProxy extends RuleConfigurationSubscriber
     {
         $this->methodRegistry = $methodRegistry;
         return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     */
-    public function __call($name, array $arguments)
-    {
-        if ($this->subscriber) {
-            $this->subscriber = new RuleConfigurationSubscriber($this->factory, $this->methodRegistry);
-        }
-        call_user_func_array([$this->subscriber, $name], $arguments);
     }
 }

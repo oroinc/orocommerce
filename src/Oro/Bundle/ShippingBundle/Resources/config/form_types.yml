@@ -65,13 +65,16 @@ services:
 
     orob2b_shipping.form.type.rule:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+            - '@translator'
         tags:
             - { name: form.type, alias: orob2b_shipping_rule }
 
-    orob2b_shipping.form.type.rule_config_collection:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType
+    orob2b_shipping.form.type.rule_method_type_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType
         arguments:
-            - '@orob2b_shipping.form_event_subscriber.rule_configuration_subscriber'
+            - '@oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber'
         tags:
             - { name: form.type }
 
@@ -82,15 +85,18 @@ services:
         tags:
             - { name: form.type}
 
-    orob2b_shipping.form.type.rule_configuration:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType
-        tags:
-            - { name: form.type, alias: orob2b_shipping_rule_configuration }
-
-    orob2b_shipping.form.type.flat_rate_rule__method_type_config:
+    orob2b_shipping.form.type.flat_rate_rule_method_type_config_options:
         class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType
         arguments:
             - '@orob2b_pricing.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
+
+    orob2b_shipping.form.type.shipping_rule_method_config:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_subscriber'
+            - '@orob2b_shipping.shipping_method.registry'
         tags:
             - { name: form.type }
 
@@ -100,8 +106,13 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
 
-    orob2b_shipping.form_event_subscriber.rule_configuration_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
+    oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber'
         arguments:
             - '@form.factory'
             - '@orob2b_shipping.shipping_method.registry'
