@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(
- *      name="orob2b_price_list_website_fb",
+ *      name="oro_price_list_website_fb",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_price_list_website_fb_unq", columns={
+ *          @ORM\UniqueConstraint(name="oro_price_list_website_fb_unq", columns={
  *              "website_id"
  *          })
  *      }

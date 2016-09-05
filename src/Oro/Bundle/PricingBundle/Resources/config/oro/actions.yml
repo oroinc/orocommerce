@@ -85,7 +85,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
@@ -110,7 +110,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.disabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_change_trigger_handler
+                service: orob2b_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
@@ -187,6 +187,8 @@ operations:
                 service: 'orob2b_pricing.builder.product_price_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
+            - '@assign_value': [$.entity.actual, true]
+            - '@flush_entity': $.entity
             - '@flash_message':
                 message: oro.pricing.pricelist.recalculate.message
                 type: 'success'

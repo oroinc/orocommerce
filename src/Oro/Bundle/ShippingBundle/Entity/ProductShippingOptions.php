@@ -13,10 +13,10 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 /**
  * @ORM\Table(
- *      name="orob2b_shipping_product_opts",
+ *      name="oro_shipping_product_opts",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="shipping_product_opts__product_id__product_unit_code__uidx",
+ *              name="oro_shipping_product_opts_uidx",
  *              columns={"product_id","product_unit_code"}
  *          )
  *      }

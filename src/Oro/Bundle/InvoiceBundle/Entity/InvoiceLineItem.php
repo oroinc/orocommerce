@@ -17,7 +17,7 @@ use Oro\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 
 /**
  * @ORM\Table(
- *      name="orob2b_invoice_line_item"
+ *      name="oro_invoice_line_item"
  * )
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
