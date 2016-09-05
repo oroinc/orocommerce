@@ -16,9 +16,7 @@ class OroWebsiteSearchExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
 
-        $expectedDefinitions = [
-            'oro_website_search.provider.search_engine_config_provider'
-        ];
+        $expectedDefinitions = [];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 }

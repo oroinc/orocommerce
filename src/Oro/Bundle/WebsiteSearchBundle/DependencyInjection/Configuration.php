@@ -9,6 +9,9 @@ use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfigura
 
 class Configuration implements ConfigurationInterface
 {
+    const ENGINE_KEY = 'engine';
+    const ENGINE_PARAMETERS_KEY = 'engine_parameters';
+
     /**
      * {@inheritdoc}
      */
@@ -18,11 +21,11 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root(OroWebsiteSearchExtension::ALIAS);
 
         $rootNode->children()
-            ->scalarNode('engine')
+            ->scalarNode(self::ENGINE_KEY)
                 ->cannotBeEmpty()
                 ->defaultValue(SearchConfiguration::DEFAULT_ENGINE)
             ->end()
-            ->arrayNode('engine_parameters')
+            ->arrayNode(self::ENGINE_PARAMETERS_KEY)
                 ->prototype('variable')->end()
             ->end();
 
