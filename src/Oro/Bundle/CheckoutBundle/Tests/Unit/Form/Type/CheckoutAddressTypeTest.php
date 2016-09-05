@@ -63,39 +63,25 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
     }
 
     /**
-     * @param bool $isValid
      * @param array $submittedData
      * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     * @param array $groupedAddresses
-     * @dataProvider submitWithPermissionAndGroupedAddressesProvider
+     * @param AccountAddress $savedAddress
+     * @param string $addressType
+     * @dataProvider submitWithPermissionAndCustomFieldsAndAccountAddressProvider
      */
-    public function testSubmitWithManualPermissionAndGroupedAddresses(
-        $isValid,
+    public function testSubmitWithManualPermissionAndCustomFieldsAndAddressAccount(
         $submittedData,
         $expectedData,
-        $defaultData,
-        array $formErrors = [],
-        array $groupedAddresses = []
+        $savedAddress,
+        $addressType
     ) {
+        $accountAddressIdentifier = $submittedData['accountAddress'];
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
-            ->willReturn($groupedAddresses);
-        $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
-            ->will(
-                $this->returnCallback(
-                    function ($identifier) use ($groupedAddresses) {
-                        foreach ($groupedAddresses as $groupedAddressesGroup) {
-                            if (array_key_exists($identifier, $groupedAddressesGroup)) {
-                                return $groupedAddressesGroup[$identifier];
-                            }
-                        }
+            ->willReturn(['group_name' => [$accountAddressIdentifier => $savedAddress]]);
 
-                        return null;
-                    }
-                )
-            );
+        $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
+            ->willReturn($savedAddress);
 
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
@@ -118,18 +104,18 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             );
 
         $formOptions =  [
-            'addressType' => AddressTypeEntity::TYPE_SHIPPING,
+            'addressType' => $addressType,
             'object' => $this->getEntity(),
             'isEditEnabled' => true,
         ];
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
+        $this->checkForm(true, $submittedData, $expectedData, new OrderAddress(), [], $formOptions);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function submitWithPermissionAndGroupedAddressesProvider()
+    public function submitWithPermissionAndCustomFieldsAndAccountAddressProvider()
     {
         $country = new Country('US');
         $region = (new Region('US-AL'))->setCountry($country);
@@ -142,41 +128,45 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             ->setPostalCode('AL')
             ->setStreet('Street');
 
+        $submittedData = [
+            'accountAddress' => 'a_1',
+            'label' => 'Label',
+            'namePrefix' => 'NamePrefix',
+            'firstName' => 'FirstName',
+            'middleName' => 'MiddleName',
+            'lastName' => 'LastName',
+            'nameSuffix' => 'NameSuffix',
+            'organization' => 'Organization',
+            'street' => 'Street',
+            'street2' => 'Street2',
+            'city' => 'City',
+            'region' => 'US-AL',
+            'region_text' => 'Region Text',
+            'postalCode' => 'AL',
+            'country' => 'US',
+        ];
+
+        $expectedData = (new OrderAddress())
+            ->setAccountAddress($savedAccountAddress)
+            ->setLabel('Label')
+            ->setStreet('Street')
+            ->setCity('City')
+            ->setRegion($region)
+            ->setPostalCode('AL')
+            ->setCountry($country);
+
         return [
-            'other_address_info_submitted_together_with_chosen_account_address' => [
-                'isValid' => true,
-                'submittedData' => [
-                    'accountAddress' => 'a_1',
-                    'label' => 'Label',
-                    'namePrefix' => 'NamePrefix',
-                    'firstName' => 'FirstName',
-                    'middleName' => 'MiddleName',
-                    'lastName' => 'LastName',
-                    'nameSuffix' => 'NameSuffix',
-                    'organization' => 'Organization',
-                    'street' => 'Street',
-                    'street2' => 'Street2',
-                    'city' => 'City',
-                    'region' => 'US-AL',
-                    'region_text' => 'Region Text',
-                    'postalCode' => 'AL',
-                    'country' => 'US',
-                ],
-                'expectedData' => (new OrderAddress())
-                    ->setAccountAddress($savedAccountAddress)
-                    ->setLabel('Label')
-                    ->setStreet('Street')
-                    ->setCity('City')
-                    ->setRegion($region)
-                    ->setPostalCode('AL')
-                    ->setCountry($country),
-                'defaultData' => new OrderAddress(),
-                'formErrors' => [],
-                'groupedAddresses' => [
-                    'group_name' => [
-                        'a_1' => $savedAccountAddress
-                    ],
-                ],
+            'custom_address_info_submitted_together_with_chosen_account_address_for_billing_address' => [
+                'submittedData' => $submittedData,
+                'expectedData' => $expectedData,
+                'savedAddress' => $savedAccountAddress,
+                'addressType' => AddressTypeEntity::TYPE_BILLING
+            ],
+            'custom_address_info_submitted_together_with_chosen_account_address_for_shipping_address' => [
+                'submittedData' => $submittedData,
+                'expectedData' => $expectedData,
+                'savedAddress' => $savedAccountAddress,
+                'addressType' => AddressTypeEntity::TYPE_SHIPPING
             ]
         ];
     }

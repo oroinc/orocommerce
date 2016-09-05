@@ -29,7 +29,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
             FormEvents::PRE_SUBMIT,
             function (FormEvent $event) {
                 $event->setData(
-                    $this->clearCustomFieldsIfAccountAddressIsChosen(
+                    $this->clearCustomFields(
                         $event->getData()
                     )
                 );
@@ -41,7 +41,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
      * @param array $data
      * @return array
      */
-    private function clearCustomFieldsIfAccountAddressIsChosen(array $data)
+    private function clearCustomFields(array $data)
     {
         if (isset($data['accountAddress']) && $data['accountAddress']) {
             return [
