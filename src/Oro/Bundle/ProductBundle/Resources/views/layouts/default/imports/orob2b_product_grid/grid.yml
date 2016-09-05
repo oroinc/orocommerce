@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'grid.html.twig'
 
         - '@addTree':
             items:

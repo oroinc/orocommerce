@@ -4,9 +4,6 @@ layout:
             id: orob2b_product_grid
             root: product_grid_container
             namespace: product
-        -
-            id: orob2b_product_grid_row
-            root: product_grid_row
 
     actions:
         - '@setBlockTheme':
