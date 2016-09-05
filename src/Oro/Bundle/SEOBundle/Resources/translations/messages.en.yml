@@ -1,0 +1,15 @@
+oro:
+    seo:
+        label: SEO
+
+oro.product.meta_titles.label: Meta title
+oro.product.meta_descriptions.label: Meta description
+oro.product.meta_keywords.label: Meta keywords
+
+oro.catalog.category.meta_titles.label: Meta title
+oro.catalog.category.meta_descriptions.label: Meta description
+oro.catalog.category.meta_keywords.label: Meta keywords
+
+oro.cms.page.meta_titles.label: Meta title
+oro.cms.page.meta_descriptions.label: Meta description
+oro.cms.page.meta_keywords.label: Meta keywords

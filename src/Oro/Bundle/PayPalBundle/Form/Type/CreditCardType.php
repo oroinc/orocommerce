@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class CreditCardType extends AbstractType
 {
@@ -87,7 +87,7 @@ class CreditCardType extends AbstractType
                         'mapped' => false,
                         'block_name' => 'payment_credit_card_cvv',
                         'constraints' => [
-                            new Integer(['message' => 'orob2b.payment.number.error']),
+                            new Integer(['message' => 'oro.payment.number.error']),
                             new NotBlank(),
                             new Length(['min' => 3, 'max' => 4]),
                         ],

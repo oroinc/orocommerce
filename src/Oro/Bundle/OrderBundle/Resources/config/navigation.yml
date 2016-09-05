@@ -1,0 +1,56 @@
+oro_menu_config:
+    items:
+        order_list:
+            label:           'oro.order.entity_plural_label'
+            route:           'orob2b_order_index'
+            extras:
+                position:    400
+                routes:      ['orob2b_order_index', 'orob2b_order_view', 'orob2b_order_update', 'orob2b_order_create']
+                description: 'oro.order.menu.order_list.description'
+
+        frontend_order_list:
+            label:           'oro.order.entity_plural_label'
+            route:           'orob2b_order_frontend_index'
+            extras:
+                position:    600
+                routes:      ['/^orob2b_order_frontend_/']
+                description: 'oro.order.menu.order_list.description'
+
+        shortcut_order_list:
+            label:           'oro.order.entity_plural_label'
+            route:           'orob2b_order_index'
+            extras:
+                description: 'oro.order.menu.shortcut_order_list.description'
+
+        shortcut_new_order:
+            label:           'oro.order.menu.shortcut_new_order.label'
+            route:           'orob2b_order_create'
+            extras:
+                description:    'oro.order.menu.shortcut_new_order.description'
+                isCustomAction: true
+
+    tree:
+        application_menu:
+            children:
+                sales_tab:
+                    children:
+                        order_list: ~
+        frontend_menu:
+            children:
+                frontend_order_list: ~
+
+        shortcuts:
+            children:
+                shortcut_order_list: ~
+                shortcut_new_order:   ~
+
+oro_titles:
+    orob2b_order_index: ~
+    orob2b_order_view:   'oro.order.navigation.view'
+    orob2b_order_update: 'oro.order.navigation.view - oro.ui.edit'
+    orob2b_order_create: 'oro.ui.create_entity'
+
+    orob2b_order_frontend_index:  'oro.order.entity_plural_label'
+    orob2b_order_frontend_view:   'oro.order.navigation.view'
+#    orob2b_order_frontend_update: 'oro.order.navigation.view - oro.ui.edit'
+#    orob2b_order_frontend_create: 'oro.ui.create_entity'
