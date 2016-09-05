@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -20,7 +19,7 @@ class LoadPriceAttributeProductPrices extends AbstractFixture implements Depende
     /**
      * @var array
      */
-    protected $data = [
+    protected static $data = [
         // PRICE_ATTRIBUTE_PRICE_LIST_1
         [
             'product' => LoadProductData::PRODUCT_1,
@@ -159,7 +158,7 @@ class LoadPriceAttributeProductPrices extends AbstractFixture implements Depende
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->data as $data) {
+        foreach (self::$data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
 

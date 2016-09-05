@@ -32,7 +32,7 @@ class PriceRule
     /**
      * @var string
      *
-     * @ORM\Column(name="currency_expression", type="string", length=255, nullable=true)
+     * @ORM\Column(name="currency_expression", type="text", nullable=true)
      */
     protected $currencyExpression;
 
@@ -46,7 +46,7 @@ class PriceRule
     /**
      * @var string
      *
-     * @ORM\Column(name="quantity_expression", type="string", length=255, nullable=true)
+     * @ORM\Column(name="quantity_expression", type="text", nullable=true)
      */
     protected $quantityExpression;
 
@@ -61,7 +61,7 @@ class PriceRule
     /**
      * @var string
      *
-     * @ORM\Column(name="product_unit_expression", type="string", length=255, nullable=true)
+     * @ORM\Column(name="product_unit_expression", type="text", nullable=true)
      */
     protected $productUnitExpression;
 

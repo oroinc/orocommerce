@@ -15,8 +15,8 @@ class OroPricingBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_rule');
-        $table->addColumn('quantity_expression', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('currency_expression', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('product_unit_expression', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
+        $table->addColumn('currency_expression', 'text', ['notnull' => false]);
+        $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);
     }
 }

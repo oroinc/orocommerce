@@ -170,6 +170,64 @@ class PriceListRuleCompilerTest extends WebTestCase
         $this->assertEquals($expected, $actual, '', 0.0, 10, true);
     }
 
+    public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $condition = sprintf(
+            'product.category == %s and product.price_attribute_price_list_1.currency == "%s"',
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
+            'USD'
+        );
+        $rule = 'product.price_attribute_price_list_1.value * 10';
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+        $priceRule = new PriceRule();
+        $priceRule
+            ->setCurrency('EUR')
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setQuantity(1)
+            ->setProductUnitExpression('product.price_attribute_price_list_1.unit')
+            ->setQuantityExpression('product.price_attribute_price_list_1.quantity + 5')
+            ->setProductUnit($this->getReference('product_unit.liter'))
+            ->setRuleCondition($condition)
+            ->setRule($rule);
+
+        $em = $this->registry->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $expected = [
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'bottle',
+                'EUR',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '122.0000',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'liter',
+                'EUR',
+                '6',
+                'product.1',
+                $priceRule->getId(),
+                '110.0000',
+            ],
+        ];
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+    }
+
     public function testRestrictByManualPrices()
     {
         /** @var Product $product1 */
