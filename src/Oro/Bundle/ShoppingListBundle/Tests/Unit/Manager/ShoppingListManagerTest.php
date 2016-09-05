@@ -29,6 +29,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 {
