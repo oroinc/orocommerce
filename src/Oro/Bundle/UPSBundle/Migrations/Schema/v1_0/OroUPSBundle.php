@@ -17,6 +17,7 @@ class OroUPSBundle implements Migration
         $this->updateOroIntegrationTransportTable($schema);
         $this->createOroUPSShippingServiceTable($schema);
         $this->createOroUPSTransportShipServiceTable($schema);
+        $this->addOroIntegrationTransportForeignKeys($schema);
         $this->addOroUPSShippingServiceForeignKeys($schema);
     }
 
@@ -32,6 +33,7 @@ class OroUPSBundle implements Migration
         $table->addColumn('ups_api_key', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_shipping_account_number', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('ups_shipping_account_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ups_country_code', 'string', ['length' => 2]);
     }
 
     /**
@@ -57,6 +59,20 @@ class OroUPSBundle implements Migration
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('ship_service_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroIntegrationTransportForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_integration_transport');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['ups_country_code'],
+            ['iso2_code'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
     }
 
     /**

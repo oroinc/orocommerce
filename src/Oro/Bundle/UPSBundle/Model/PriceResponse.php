@@ -41,7 +41,7 @@ class PriceResponse
      */
     private function addRatedShipments($rateShipments)
     {
-        foreach ($rateShipments as $key => $rateShipment) {
+        foreach ($rateShipments as $rateShipment) {
             $this->addRatedShipment($rateShipment);
         }
     }
@@ -90,6 +90,7 @@ class PriceResponse
 
     /**
      * @param string $code
+     * @throws \InvalidArgumentException
      * @return Price
      */
     public function getPriceByService($code)

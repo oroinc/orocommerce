@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -39,9 +39,9 @@ class ShippingRuleRepositoryTest extends WebTestCase
     public function testGetOrderedRulesByCurrency($currency, $country, array $expectedRules)
     {
         /** @var ShippingRule[]|array $expectedShippingRule */
-        $expectedShippingRule = $this->getEntitiesByReferences($expectedRules);
+        $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
         /** @var ShippingRule $expectedShippingRule */
-        $expectedShippingRule = $expectedShippingRule[0];
+        $expectedShippingRule = $expectedShippingRules[0];
         $shippingRules = $this->repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $currency,
             $this->findCountry($country)

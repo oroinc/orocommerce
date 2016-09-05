@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -23,6 +25,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ['apiKey', 'some string'],
             ['shippingAccountNumber', 'some string'],
             ['shippingAccountName', 'some string'],
+            ['country', new Country('US')]
         ]);
         static::assertPropertyCollections(new UPSTransport(), [
             ['applicableShippingServices', new ShippingService()],
@@ -40,6 +43,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 'apiKey' => 'some key',
                 'shippingAccountNumber' => 'some number',
                 'shippingAccountName' => 'some name',
+                'country' => new Country('US'),
                 'applicableShippingServices' => [new ShippingService()]
             ]
         );
@@ -52,6 +56,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         static::assertEquals($result->get('api_key'), 'some key');
         static::assertEquals($result->get('shipping_account_number'), 'some number');
         static::assertEquals($result->get('shipping_account_name'), 'some name');
+        static::assertEquals($result->get('country'), new Country('US'));
         static::assertEquals(
             $result->get('applicable_shipping_services'),
             $entity->getApplicableShippingServices()->toArray()

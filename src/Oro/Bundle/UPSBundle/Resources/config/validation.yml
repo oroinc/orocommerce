@@ -1,6 +1,5 @@
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
     properties:
         applicableShippingServices:
-            - Count:
-                min: 1
-                minMessage: 'oro.ups.transport.shipping_service.blank'
+            - NotBlank:
+                message: 'oro.ups.transport.shipping_service.blank'

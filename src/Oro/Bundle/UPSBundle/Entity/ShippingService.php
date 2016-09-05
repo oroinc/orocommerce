@@ -8,7 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 
 /**
  * @ORM\Table(name="oro_ups_shipping_service")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository")
  */
 class ShippingService
 {
@@ -104,5 +104,10 @@ class ShippingService
     {
         $this->country = $country;
         return $this;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->getDescription();
     }
 }
