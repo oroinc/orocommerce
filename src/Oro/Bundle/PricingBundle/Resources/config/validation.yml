@@ -52,8 +52,6 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank: ~
             - Currency: ~
         quantity:
-            - NotBlank:
-                message: 'oro.pricing.validators.product_price.quantity.blank'
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
