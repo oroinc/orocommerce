@@ -73,6 +73,7 @@ class VisibilityProcessor implements MessageProcessorInterface
             $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
             $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
