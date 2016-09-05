@@ -70,6 +70,13 @@ oro:
             order:
                 label: Warehouse
 
+        system_configuration:
+            groups:
+                warehouse.title: Warehouses
+                warehouse_configuration.title: Warehouse Configuration
+            fields:
+                enabled_warehouses.label: Enabled Warehouses
+
     order:
         orderlineitem:
             warehouse:

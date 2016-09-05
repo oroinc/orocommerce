@@ -1,0 +1,19 @@
+oro_system_configuration:
+    groups:
+        warehouse:
+            title: oro.warehouse.system_configuration.groups.warehouse.title
+        warehouse_configuration:
+            title: oro.warehouse.system_configuration.groups.warehouse_configuration.title
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    product_inventory:
+                        children:
+                            warehouse:
+                                priority: 100
+                                children:
+                                    warehouse_configuration:
+                                        children:
+                                            - oro_b2b_pricing.default_price_lists
