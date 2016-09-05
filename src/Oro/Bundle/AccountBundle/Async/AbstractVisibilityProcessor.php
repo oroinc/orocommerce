@@ -71,7 +71,7 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 
         try {
             $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->messageFactory->getVisibilityFromMessage($messageData);
+            $visibilityEntity = $this->messageFactory->getEntityFromMessage($messageData);
 
             $this->resolveVisibilityByEntity($visibilityEntity);
             $em->commit();

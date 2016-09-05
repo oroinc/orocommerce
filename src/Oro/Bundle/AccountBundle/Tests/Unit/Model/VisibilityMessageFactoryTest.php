@@ -86,7 +86,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVisibilityFromMessageEmptyException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([]);
+        $this->visibilityMessageFactory->getEntityFromMessage([]);
     }
 
     /**
@@ -95,7 +95,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVisibilityFromMessageRequiredIdException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([
+        $this->visibilityMessageFactory->getEntityFromMessage([
             VisibilityMessageFactory::ID => null,
             VisibilityMessageFactory::ENTITY_CLASS_NAME => 'ProductVisibility'
         ]);
@@ -107,6 +107,6 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVisibilityFromMessageRequiredClassNameException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([VisibilityMessageFactory::ID => 42]);
+        $this->visibilityMessageFactory->getEntityFromMessage([VisibilityMessageFactory::ID => 42]);
     }
 }
