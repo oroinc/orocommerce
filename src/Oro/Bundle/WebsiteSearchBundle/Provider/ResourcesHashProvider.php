@@ -10,7 +10,7 @@ class ResourcesHashProvider
      * @param CumulativeResourceInfo[] $resources
      * @return string
      */
-    public function getHash($resources)
+    public function getHash(array $resources)
     {
         $modificationTimes = [];
         foreach ($resources as $resource) {
