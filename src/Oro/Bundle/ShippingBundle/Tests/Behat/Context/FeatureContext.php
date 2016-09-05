@@ -128,6 +128,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
+        $form ->clickLink('Add');
         $form->fill($table);
         $form->saveAndClose();
         $this->waitForAjax();
@@ -137,7 +138,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given Admin User Created :arg1 with next data
+     * @Given Admin User created :arg1 with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
