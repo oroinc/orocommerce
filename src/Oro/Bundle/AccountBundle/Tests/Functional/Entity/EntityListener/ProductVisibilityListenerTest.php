@@ -47,7 +47,7 @@ class ProductVisibilityListenerTest extends WebTestCase
      */
     public function setUp()
     {
-        $this->topic = 'orob2b_account.visibility.resolve_product_visibility';
+        $this->topic = 'oro_account.visibility.resolve_product_visibility';
         $this->initClient();
 
         $this->loadFixtures([

@@ -98,7 +98,7 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->messageFactory->expects($this->once())
-            ->method('getVisibilityFromMessage')
+            ->method('getEntityFromMessage')
             ->with($data)
             ->willThrowException(new InvalidArgumentException('Test message'));
 
@@ -147,7 +147,7 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $visibilityEntity = new ProductVisibility();
 
         $this->messageFactory->expects($this->once())
-            ->method('getVisibilityFromMessage')
+            ->method('getEntityFromMessage')
             ->with($data)
             ->willReturn($visibilityEntity);
 
@@ -191,7 +191,7 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $visibilityEntity = new ProductVisibility();
 
         $this->messageFactory->expects($this->once())
-            ->method('getVisibilityFromMessage')
+            ->method('getEntityFromMessage')
             ->with($data)
             ->willReturn($visibilityEntity);
 
