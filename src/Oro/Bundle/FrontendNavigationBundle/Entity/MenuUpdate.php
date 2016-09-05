@@ -20,21 +20,21 @@ class MenuUpdate extends MenuUpdateModel
     /**
      * @var string
      *
-     * @ORM\Column(name="image", type="string", length=256)
+     * @ORM\Column(name="image", type="string", length=255, nullable=true)
      */
     protected $image;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=100)
+     * @ORM\Column(name="description", type="string", length=100, nullable=true)
      */
     protected $description;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="condition", type="string", length=512)
+     * @ORM\Column(name="condition", type="string", length=512, nullable=true)
      */
     protected $condition;
 

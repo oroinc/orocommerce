@@ -18,16 +18,16 @@ class OroFrontendNavigationBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('key', 'string', ['length' => 100]);
         $table->addColumn('parent_id', 'string', ['length' => 100]);
-        $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('uri', 'string', ['length' => 255]);
+        $table->addColumn('title', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('uri', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('menu', 'string', ['length' => 100]);
         $table->addColumn('ownership_type', 'integer', []);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('is_active', 'boolean', []);
-        $table->addColumn('priority', 'integer', []);
-        $table->addColumn('image', 'string', ['length' => 256]);
-        $table->addColumn('description', 'string', ['length' => 100]);
-        $table->addColumn('condition', 'string', ['length' => 512]);
+        $table->addColumn('is_active', 'boolean', ['notnull' => false]);
+        $table->addColumn('priority', 'integer', ['notnull' => false]);
+        $table->addColumn('image', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('description', 'string', ['length' => 100, 'notnull' => false]);
+        $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
 
