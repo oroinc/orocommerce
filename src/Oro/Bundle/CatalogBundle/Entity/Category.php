@@ -16,7 +16,7 @@ use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * @ORM\Table(name="orob2b_catalog_category")
+ * @ORM\Table(name="oro_catalog_category")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
@@ -63,7 +63,7 @@ class Category extends ExtendCategory
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_catalog_category_title",
+     *      name="oro_catalog_category_title",
      *      joinColumns={
      *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -145,7 +145,7 @@ class Category extends ExtendCategory
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinTable(
-     *      name="orob2b_category_to_product",
+     *      name="oro_category_to_product",
      *      joinColumns={
      *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -172,7 +172,7 @@ class Category extends ExtendCategory
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_catalog_cat_short_desc",
+     *      name="oro_catalog_cat_short_desc",
      *      joinColumns={
      *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -199,7 +199,7 @@ class Category extends ExtendCategory
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_catalog_cat_long_desc",
+     *      name="oro_catalog_cat_long_desc",
      *      joinColumns={
      *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

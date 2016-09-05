@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
-
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 class TransitionFormProvider extends AbstractFormProvider
 {
@@ -29,7 +28,7 @@ class TransitionFormProvider extends AbstractFormProvider
      * @param WorkflowItem $workflowItem
      * @param TransitionData $transitionData
      *
-     * @return Form|null
+     * @return FormInterface|null
      * @throws WorkflowException
      */
     public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
@@ -42,7 +41,7 @@ class TransitionFormProvider extends AbstractFormProvider
         if (!$transition->hasForm()) {
             return null;
         }
-        
+
         return $this->getFormAccessor(
             $transition->getFormType(),
             null,
@@ -53,7 +52,8 @@ class TransitionFormProvider extends AbstractFormProvider
                 [
                     'workflow_item' => $workflowItem,
                     'transition_name' => $transition->getName(),
-                    'disabled' => !$transitionData->isAllowed()
+                    'disabled' => !$transitionData->isAllowed(),
+                    'allow_extra_fields' => true,
                 ]
             )
         )->getForm();

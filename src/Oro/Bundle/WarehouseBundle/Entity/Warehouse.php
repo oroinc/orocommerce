@@ -15,10 +15,10 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
 
 /**
  * @ORM\Table(
- *     name="orob2b_warehouse",
+ *     name="oro_warehouse",
  *      indexes={
- *          @ORM\Index(name="idx_orob2b_warehouse_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_orob2b_warehouse_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_warehouse_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_oro_warehouse_updated_at", columns={"updated_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")

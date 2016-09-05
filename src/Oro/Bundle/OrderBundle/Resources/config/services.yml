@@ -240,6 +240,11 @@ services:
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_shipping_method_provider }
 
+    oro_order.provider.privilege_category_provider:
+        class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category}
+
     orob2b_order.layout.provider.top_selling_items:
         parent: orob2b_product.layout.data_provider.featured_products
         tags:

@@ -28,7 +28,8 @@ class OrderController extends AbstractOrderController
      *      id="orob2b_order_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
-     *      permission="VIEW"
+     *      permission="VIEW",
+     *      category="orders"
      * )
      *
      * @param Order $order

@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table("orob2b_tax_jurisdiction")
+ * @ORM\Table("oro_tax_jurisdiction")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",

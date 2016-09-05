@@ -3,6 +3,7 @@ orob2b_order_address_shipping_account_use_any:
     label: oro.order.security.permission.address_shipping_account_use_any
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_shipping_account_use_any_backend:
     label: oro.order.security.permission.address_shipping_account_use_any
@@ -13,6 +14,7 @@ orob2b_order_address_shipping_account_user_use_default:
     label: oro.order.security.permission.address_shipping_account_user_use_default
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_shipping_account_user_use_default_backend:
     label: oro.order.security.permission.address_shipping_account_user_use_default
@@ -23,6 +25,7 @@ orob2b_order_address_shipping_account_user_use_any:
     label: oro.order.security.permission.address_shipping_account_user_use_any
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_shipping_account_user_use_any_backend:
     label: oro.order.security.permission.address_shipping_account_user_use_any
@@ -33,6 +36,7 @@ orob2b_order_address_shipping_allow_manual:
     label: oro.order.security.permission.address_shipping_allow_manual
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_shipping_allow_manual_backend:
     label: oro.order.security.permission.address_shipping_allow_manual
@@ -43,6 +47,7 @@ orob2b_order_address_billing_account_use_any:
     label: oro.order.security.permission.address_billing_account_use_any
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_billing_account_use_any_backend:
     label: oro.order.security.permission.address_billing_account_use_any
@@ -53,6 +58,7 @@ orob2b_order_address_billing_account_user_use_default:
     label: oro.order.security.permission.address_billing_account_user_use_default
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_billing_account_user_use_default_backend:
     label: oro.order.security.permission.address_billing_account_user_use_default
@@ -63,6 +69,7 @@ orob2b_order_address_billing_account_user_use_any:
     label: oro.order.security.permission.address_billing_account_user_use_any
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_billing_account_user_use_any_backend:
     label: oro.order.security.permission.address_billing_account_user_use_any
@@ -73,6 +80,7 @@ orob2b_order_address_billing_allow_manual:
     label: oro.order.security.permission.address_billing_allow_manual
     type: action
     group_name: "commerce"
+    category: "checkout"
 
 orob2b_order_address_billing_allow_manual_backend:
     label: oro.order.security.permission.address_billing_allow_manual

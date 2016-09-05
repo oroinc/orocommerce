@@ -22,7 +22,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
- * @ORM\Table(name="orob2b_checkout")
+ * @ORM\Table(name="oro_checkout")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -40,7 +40,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          }
  *      }
  * )
