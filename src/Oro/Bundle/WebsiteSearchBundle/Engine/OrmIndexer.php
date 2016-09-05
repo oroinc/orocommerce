@@ -48,16 +48,20 @@ class OrmIndexer extends AbstractIndexer
                 $sameEntitiesCount++;
             }
 
-            $entityIds = [];
             $sameEntities = array_splice($entities, 0, $sameEntitiesCount);
-            foreach ($sameEntities as $entity) {
-                $entityIds[] = $doctrineHelper->getSingleEntityIdentifier($entity);
-            }
-
             $entityAlias = null;
             if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
                 $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
+                if (null === $entityAlias) {
+                    continue;
+                }
+
                 $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+            }
+
+            $entityIds = [];
+            foreach ($sameEntities as $entity) {
+                $entityIds[] = $doctrineHelper->getSingleEntityIdentifier($entity);
             }
 
             $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);

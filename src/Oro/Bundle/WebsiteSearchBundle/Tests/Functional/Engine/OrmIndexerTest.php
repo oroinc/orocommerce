@@ -197,6 +197,18 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEquals(0, $indexedNum);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage There is no such entity in mapping config.
+     */
+    public function testWrongMappingException()
+    {
+        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+        $this->indexer->reindex(\stdClass::class, []);
+        $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
+    }
+
     public function testCount()
     {
         $this->assertEntityCount(4, Item::class);
@@ -206,8 +218,13 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEntityCount(2, IndexDecimal::class);
     }
 
-    public function testRemoveEntitiesWhenNonExistentEntityRemoved()
+    public function testDeleteWhenNonExistentEntityRemoved()
     {
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->willReturn('oro_product_WEBSITE_ID');
+
         $productMock = $this->getMockBuilder(Product::class)
             ->getMock();
 
@@ -224,8 +241,12 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEntityCount(2, IndexDecimal::class);
     }
 
-    public function testRemoveEntitiesWhenEntityIdsArrayIsEmpty()
+    public function testDeleteWhenEntityIdsArrayIsEmpty()
     {
+        $this->mappingProviderMock
+            ->expects($this->never())
+            ->method('getEntityAlias');
+
         $this->indexer->delete([], ['website_id' => 1]);
 
         $this->assertEntityCount(4, Item::class);
@@ -235,11 +256,12 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEntityCount(2, IndexDecimal::class);
     }
 
-    public function testRemoveEntitiesWhenProductEntitiesForSpecificWebsiteRemoved()
+    public function testDeleteWhenProductEntitiesForSpecificWebsiteRemoved()
     {
         $this->mappingProviderMock
             ->expects($this->once())
             ->method('getEntityAlias')
+            ->with(Product::class)
             ->willReturn('oro_product_WEBSITE_ID');
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -260,8 +282,40 @@ class OrmIndexerTest extends WebTestCase
         $this->assertEntityCount(1, IndexDecimal::class);
     }
 
-    public function testRemoveEntitiesWhenProductEntitiesForAllWebsitesRemoved()
+    public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfiguration()
     {
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->withConsecutive([Product::class], ['stdClass'])
+            ->will($this->onConsecutiveCalls('oro_product_WEBSITE_ID', null));
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+                new \stdClass(),
+                new \stdClass()
+            ],
+            ['website_id' => 1]
+        );
+
+        $this->assertEntityCount(2, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
+    public function testDeleteWhenProductEntitiesForAllWebsitesRemoved()
+    {
+        $this->mappingProviderMock
+            ->expects($this->never())
+            ->method('getEntityAlias');
+
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
