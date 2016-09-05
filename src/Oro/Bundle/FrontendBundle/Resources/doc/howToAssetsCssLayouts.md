@@ -40,3 +40,12 @@ to ```assets.yml``` file witch is located in:
 ```
 MyBundle/Resources/views/layouts/my-theme/config/
 ```
+
+For theme customization use blocks configs, for example:
+```
+styles:
+    inputs:
+        - 'bundles/mybundle/my-custom-theme/scss/variables/block1-config.scss'
+        - 'bundles/mybundle/my-custom-theme/scss/styles.scss'
+    output: 'css/layout/default/styles.css'
+```
