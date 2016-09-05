@@ -76,6 +76,7 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
             $this->resolveVisibilityByEntity($visibilityEntity);
             $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
