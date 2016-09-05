@@ -5,14 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfiguration;
 
 class Configuration implements ConfigurationInterface
 {
-    const ENGINE_KEY   = 'engine';
-    const ENGINE_PARAMETERS_KEY   = 'engine_parameters';
-    const DEFAULT_ENGINE = 'orm';
-
     /**
      * {@inheritdoc}
      */
@@ -24,7 +20,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->scalarNode('engine')
                 ->cannotBeEmpty()
-                ->defaultValue(self::DEFAULT_ENGINE)
+                ->defaultValue(SearchConfiguration::DEFAULT_ENGINE)
             ->end()
             ->arrayNode('engine_parameters')
                 ->prototype('variable')->end()
