@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Layout\Block\Extension;
 
 use Oro\Component\Layout\AbstractBlockTypeExtension;
 use Oro\Component\Layout\Block\Type\BaseType;
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -17,14 +18,15 @@ class BlockPrefixExtension extends AbstractBlockTypeExtension
     }
 
     /** {@inheritdoc} */
-    public function finishView(BlockView $view, BlockInterface $block, array $options)
+    public function finishView(BlockView $view, BlockInterface $block, Options $options)
     {
         $blockPrefixes = [];
-        if (array_key_exists('block_prefixes', $view->vars)) {
-            $blockPrefixes = (array)$view->vars['block_prefixes'];
+        if ($view->vars->offsetExists('block_prefixes')) {
+            $blockPrefixes = $view->vars['block_prefixes']->toArray();
         }
-        if (array_key_exists('block_prefixes', $options)) {
-            $blockPrefixes = array_merge($blockPrefixes, $options['block_prefixes']);
+
+        if ($options->offsetExists('block_prefixes')) {
+            $blockPrefixes = array_merge($blockPrefixes, $options['block_prefixes']->toArray());
         }
 
         $view->vars['block_prefixes'] = $blockPrefixes;
