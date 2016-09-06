@@ -4,12 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class EnabledConfigurationValidationGroup extends Constraint
+class EnabledTypeConfigsValidationGroup extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'oro.shipping.shippingrule.configuration.count.message';
+    public $message = 'oro.shipping.shippingrule.type.config.count.message';
 
     /**
      * @var int
@@ -21,6 +21,6 @@ class EnabledConfigurationValidationGroup extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_shipping_enabled_configuration_validation_group_validator';
+        return 'oro_shipping_enabled_type_config_validation_group_validator';
     }
 }

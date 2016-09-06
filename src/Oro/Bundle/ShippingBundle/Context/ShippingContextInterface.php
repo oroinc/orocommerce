@@ -41,4 +41,9 @@ interface ShippingContextInterface
      * @return Price
      */
     public function getSubtotal();
+
+    /**
+     * @return array
+     */
+    public function getOptions();
 }

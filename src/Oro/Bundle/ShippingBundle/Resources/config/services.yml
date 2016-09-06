@@ -181,10 +181,10 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
 
-    orob2b_shipping.validator.enabled_configuration_validation_group:
-        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator'
+    orob2b_shipping.validator.enabled_type_config_validation_group:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_shipping_enabled_configuration_validation_group_validator }
+            - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
 
     orob2b_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
@@ -217,3 +217,16 @@ services:
             - [setProductShippingOptionsClass, ['%orob2b_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_shipping.shipping_price.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_shipping.shipping_method.registry'
+
+    oro_shipping.form.handler.shipping_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+        scope: request
+        arguments:
+            - '@request'
+            - '@doctrine.orm.entity_manager'

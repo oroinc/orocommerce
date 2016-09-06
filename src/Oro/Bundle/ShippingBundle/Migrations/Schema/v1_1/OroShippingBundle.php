@@ -72,6 +72,7 @@ class OroShippingBundle implements Migration
         $table->addColumn('method_config_id', 'integer', []);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('enabled', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }
 

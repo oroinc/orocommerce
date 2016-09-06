@@ -189,12 +189,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -80 }
 
-    orob2b_checkout.shipping_cost.calculator:
-        class: 'Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
-        arguments:
-          - '@orob2b_shipping.shipping_method.registry'
-          - '@orob2b_checkout.factory.shipping_context_provider_factory'
-
     orob2b_checkout.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
         arguments:
@@ -226,7 +220,7 @@ services:
         arguments:
             - '@orob2b_checkout.factory.shipping_context_provider_factory'
             - '@orob2b_shipping.provider.shipping_rules'
-            - '@orob2b_checkout.shipping_cost.calculator'
+            - '@orob2b_shipping.shipping_price.provider'
 
     orob2b_checkout.factory.shipping_context_provider_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'

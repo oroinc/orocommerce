@@ -45,6 +45,24 @@
     {% endif %}
 {% endblock navButtons %}
 
+{% block oro_shipping_rule_add_method_widget %}
+    <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroshipping/js/app/views/shipping-rule-method-view',
+                methodSelectSelector: 'select.oro-shipping-rule-add-method-select',
+                buttonSelector: '.add-method',
+                updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingRuleHandler::UPDATE_FLAG'),
+                methods: form.vars.methods
+            }|json_encode }}"
+    >
+        <div class="oro-shipping-rule-add-method-select">
+            {{ form_row(form.method, {'attr': {'class': 'oro-shipping-rule-add-method-select'}}) }}
+        </div>
+        <a class="btn add-method" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+    </div>
+{% endblock %}
+
 {% block content_data %}
     {% set id = 'shipping-rule-edit' %}
 
@@ -69,7 +87,7 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.destinations, {'attr': {'class': 'orob2b-shipping-destination-collection row-oro'}}),
+                        form_widget(form.destinations, {'attr': {'class': 'orob2b-shipping-rule-collection orob2b-shipping-rule-destinations-collection row-oro'}}),
                     ]
                 }
             ]
@@ -89,8 +107,9 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.configurations),
-                        form_errors(form.configurations),
+                        form_widget(form.methodConfigs, {'attr': {'class': 'orob2b-shipping-rule-collection orob2b-shipping-rule-method-configs-collection row-oro'}}),
+                        form_errors(form.methodConfigs),
+                        block('oro_shipping_rule_add_method_widget')
                     ]
                 }
             ]

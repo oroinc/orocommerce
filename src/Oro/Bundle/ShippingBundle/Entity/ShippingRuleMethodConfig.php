@@ -59,7 +59,8 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",
      *     mappedBy="methodConfig",
      *     cascade={"ALL"},
-     *     fetch="EAGER"
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
     protected $typeConfigs;
@@ -79,10 +80,21 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
      */
     protected $rule;
 
+    /**
+     * Construct
+     */
     public function __construct()
     {
         parent::__construct();
         $this->typeConfigs = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getMethod();
     }
 
     /**

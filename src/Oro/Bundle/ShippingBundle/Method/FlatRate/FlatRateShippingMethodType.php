@@ -54,6 +54,14 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritdoc}
      */
+    public function getOptions()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
         $price = $typeOptions[static::PRICE_OPTION];
