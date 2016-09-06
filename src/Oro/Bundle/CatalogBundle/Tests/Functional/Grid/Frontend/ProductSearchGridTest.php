@@ -125,7 +125,7 @@ class ProductSearchGridTest extends WebTestCase
         $filteredData = $this->getDatagridData(
             'frontend-product-search-grid',
             [
-                '[sku][all_text]' => $firstRow['sku'],
+                '[sku][all_text]' => $allTextValue,
                 '[sku][type]' => '1'
             ]
         );
