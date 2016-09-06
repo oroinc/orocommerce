@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Async;
+namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;

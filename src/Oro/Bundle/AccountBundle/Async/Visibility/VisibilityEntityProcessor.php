@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Async;
+namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class VisibilityProcessor extends AbstractVisibilityProcessor
+class VisibilityEntityProcessor extends AbstractVisibilityProcessor
 {
     /**
      * @param object|VisibilityInterface $entity

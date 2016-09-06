@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Async;
+namespace Oro\Bundle\AccountBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Async\VisibilityProcessor;
+use Oro\Bundle\AccountBundle\Async\Visibility\VisibilityEntityProcessor;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
@@ -15,7 +15,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
+class VisibilityEntityProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -38,7 +38,7 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var VisibilityProcessor
+     * @var VisibilityEntityProcessor
      */
     protected $visibilityProcessor;
 
@@ -51,7 +51,7 @@ class VisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);
         $this->logger = $this->getMock(LoggerInterface::class);
 
-        $this->visibilityProcessor = new VisibilityProcessor(
+        $this->visibilityProcessor = new VisibilityEntityProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
