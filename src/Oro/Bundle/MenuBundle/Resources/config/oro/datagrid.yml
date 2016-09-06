@@ -1,0 +1,48 @@
+datagrid:
+    menu-item-roots-grid:
+        extended_entity_name: %orob2b_menu.entity.menu_item.class%
+        options:
+            entityHint: menu_item
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_menu_item_view
+            type: orm
+            query:
+                select:
+                    - m.id
+                from:
+                    - { table: %orob2b_menu.entity.menu_item.class%, alias: m }
+                where:
+                    and:
+                        - m.parent IS NULL
+        columns:
+            title:
+                label: oro.menu.menuitem.titles.label
+        properties:
+            id: ~
+            title:
+                type: localized_value
+                data_name: titles
+            view_link:
+                type: url
+                route: orob2b_menu_item_view
+                params:
+                    - id
+        sorters:
+            columns:
+                title:
+                    data_name: title
+
+        filters:
+            columns:
+                title:
+                    type: string
+                    data_name: title
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_menu_item_view
+                rowAction:     true

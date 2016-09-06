@@ -1,0 +1,622 @@
+datagrid:
+    base-orders-grid:
+        extended_entity_name: %orob2b_order.entity.order.class%
+        options:
+            entityHint:        order
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - DISTINCT order1.id
+                    - order1.identifier
+                    - order1.poNumber
+                    - order1.currency
+                    - order1.subtotal
+                    - order1.total
+                    - order1.shipUntil
+                    - order1.createdAt
+                    - order1.updatedAt
+                    - paymentTerm.label as paymentTermLabel
+                    - payment_status.paymentStatus
+                    - order1.shippingMethod
+                    - order1.shippingMethodType
+                from:
+                    - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                join:
+                    left:
+                        - { join: order1.paymentTerm, alias: paymentTerm }
+                        - { join: '%orob2b_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%orob2b_order.entity.order.class%'" }
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                params: [ id ]
+
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+
+    frontend-orders-grid:
+        acl_resource: orob2b_order_frontend_view
+        extends: base-orders-grid
+        update: false
+        delete: false
+        source:
+            query:
+                select:
+                    - partial order1.{id, shippingAddress}
+                join:
+                    left:
+                        - { join: order1.shippingAddress, alias: shippingAddress }
+        columns:
+            identifier:
+                label:         oro.order.identifier.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            shippingAddress:
+                label: oro.order.shipping_address.label
+                type: twig
+                template: 'OroOrderBundle:Order:Datagrid/shippingAddress.html.twig'
+                frontend_type: html
+            total:
+                label:         oro.order.total.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+            paymentMethods:
+                label: oro.order.payment_method.label
+                type: twig
+                template: 'OroOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+                frontend_type: html
+            paymentStatus:
+                label:         oro.order.payment_status.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+            #Hidden fields goes next
+            poNumber:
+                label:         oro.order.po_number.label
+                renderable:    false
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+                renderable:    false
+            currency:
+                label:         oro.order.currency.label
+                renderable:    false
+            subtotal:
+                label:         oro.order.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
+                renderable:    false
+            paymentTermLabel:
+                label:         oro.order.payment_term.label
+                renderable:    false
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                renderable:    false
+            poNumber:
+                label:         oro.order.po_number.label
+                renderable:    false
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+                renderable:    false
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+                renderable:    false
+        sorters:
+            columns:
+                paymentTermLabel:
+                    data_name: paymentTermLabel
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+                identifier:
+                    data_name: order1.identifier
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
+                currency:
+                    data_name: order1.currency
+                subtotal:
+                    data_name: order1.subtotal
+                total:
+                    data_name: order1.total
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                paymentTermLabel:
+                    type:      string
+                    data_name: paymentTermLabel
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                createdAt:
+                    type:      datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: order1.updatedAt
+                paymentStatus:
+                    type:      choice
+                    data_name: payment_status.paymentStatus
+                    options:
+                        field_options:
+                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
+                identifier:
+                    type:      string
+                    data_name: order1.identifier
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                currency:
+                    type:      choice
+                    data_name: order1.currency
+                    options:
+                        field_options:
+                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                subtotal:
+                    type:      number
+                    data_name: order1.subtotal
+                    enabled:   false
+                total:
+                    type:      number
+                    data_name: order1.total
+        properties:
+            id: ~
+            view_link:
+                route: orob2b_order_frontend_view
+        actions:
+            view:
+                acl_resource:  orob2b_order_frontend_view
+
+    orders-grid:
+        acl_resource: orob2b_order_view
+        extends: base-orders-grid
+        source:
+            query:
+                select:
+                    - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - account.name as accountName
+                    - order1.sourceEntityClass
+                    - order1.sourceEntityId
+                    - order1.sourceEntityIdentifier
+                    - order1.totalDiscountsAmount
+                join:
+                    left:
+                        - { join: order1.owner, alias: order_owner }
+                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.account, alias: account }
+        columns:
+            identifier:
+                label:         oro.order.identifier.label
+            poNumber:
+                label:         oro.order.po_number.label
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+            currency:
+                label:         oro.order.currency.label
+            subtotal:
+                label:         oro.order.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
+                renderable:    false
+            total:
+                label:         oro.order.total.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+            accountName:
+                label:         oro.order.account.label
+            accountUserName:
+                label:         oro.order.account_user.label
+            owner:
+                label:         oro.order.owner.label
+            paymentStatus:
+                label:         oro.order.payment_status.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+            paymentMethods:
+                label: oro.order.payment_method.label
+                renderable: true
+                type: twig
+                template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                frontend_type: html
+            paymentTermLabel:
+                label:         oro.order.payment_term.label
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+            poNumber:
+                label:         oro.order.po_number.label
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+            sourceEntityClass:
+                label:         oro.order.source_document.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/sourceDocument.html.twig
+                renderable:    false
+            totalDiscountsAmount:
+                label:         oro.order.discount.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/discount.html.twig
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                identifier:
+                    data_name: order1.identifier
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
+                currency:
+                    data_name: order1.currency
+                subtotal:
+                    data_name: order1.subtotal
+                total:
+                    data_name: order1.total
+                accountName:
+                    data_name: accountName
+                accountUserName:
+                    data_name: accountUserName
+                owner:
+                    data_name: owner
+                paymentTermLabel:
+                    data_name: paymentTermLabel
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    data_name: order1.totalDiscountsAmount
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+        default:
+            createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                identifier:
+                    type:      string
+                    data_name: order1.identifier
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                currency:
+                    type:      choice
+                    data_name: order1.currency
+                    options:
+                        field_options:
+                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                subtotal:
+                    type:      number
+                    data_name: order1.subtotal
+                    enabled:   false
+                total:
+                    type:      number
+                    data_name: order1.total
+                accountName:
+                    type:      string
+                    data_name: accountName
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                owner:
+                    type:      string
+                    data_name: owner
+                paymentTermLabel:
+                    type:      entity
+                    data_name: paymentTerm.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_payment.entity.payment_term.class%
+                            property: label
+                            multiple: true
+                paymentStatus:
+                    type:      choice
+                    data_name: payment_status.paymentStatus
+                    options:
+                        field_options:
+                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
+
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
+                createdAt:
+                    type:      datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: order1.updatedAt
+        properties:
+            id: ~
+            view_link:
+                route: orob2b_order_view
+        actions:
+            view:
+                acl_resource:  orob2b_order_view
+
+    embed-orders-grid:
+        acl_resource: orob2b_order_view
+        extended_entity_name: %orob2b_order.entity.order.class%
+        options:
+            entityHint:        order
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - order1.id
+                    - order1.identifier
+                    - order1.subtotal
+                    - order1.total
+                    - order1.poNumber
+                    - order1.shipUntil
+                    - COUNT(lineItems.id) as lineItemsCount
+                    - order1.createdAt
+                    - order1.updatedAt
+                from:
+                    - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                join:
+                    left:
+                        - { join: order1.lineItems, alias: lineItems}
+        columns:
+            identifier:
+                label:         oro.order.identifier.label
+            subtotal:
+                label:         oro.order.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
+                renderable:    false
+            total:
+                label:         oro.order.total.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+            lineItemsCount:
+                label:         oro.order.line_items_count.label
+                type: field
+                frontend_type: integer
+            poNumber:
+                label:         oro.order.po_number.label
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                identifier:
+                    data_name: order1.identifier
+                subtotal:
+                    data_name: order1.subtotal
+                total:
+                    data_name: order1.total
+                lineItemsCount:
+                    data_name: lineItemsCount
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                identifier:
+                    type:      string
+                    data_name: order1.identifier
+                subtotal:
+                    type:      number
+                    data_name: order1.subtotal
+                    enabled:   false
+                total:
+                    type:      number
+                    data_name: order1.total
+                lineItemsCount:
+                    type:      number
+                    data_name: lineItemsCount
+                    filter_by_having: true
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                createdAt:
+                    type: datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: order1.updatedAt
+        properties:
+            id: ~
+            view_link:
+                route: orob2b_order_view
+                type:  url
+                params: [ id ]
+        actions:
+            view:
+                acl_resource:  orob2b_order_view
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+
+    account-user-orders-grid:
+        extends: embed-orders-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: order1.accountUser, alias: accountUser }
+                where:
+                    and:
+                        - order1.accountUser = :account_user_id
+            bind_parameters:
+                - account_user_id
+
+    account-orders-grid:
+        extends: embed-orders-grid
+        source:
+            query:
+            query:
+                select:
+                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                join:
+                    left:
+                        - { join: order1.account, alias: account }
+                        - { join: order1.accountUser, alias: accountUser }
+                where:
+                    and:
+                        - order1.account = :account_id
+            bind_parameters:
+                - account_id
+        columns:
+            accountUserName:
+                label:         oro.order.account_user.label
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+        filters:
+            columns:
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+
+    base-order-line-items-grid:
+        extended_entity_name: %orob2b_order.entity.order_line_item.class%
+        options:
+            entityHint: order_line_item
+        source:
+            type: orm
+            query:
+                select:
+                    - partial order_item.{ id, currency, value }
+                    - order_item.productSku
+                    - order_item.freeFormProduct
+                    - order_item.quantity
+                    - order_item.shipBy
+                    - order_item.comment
+                from:
+                    - { table: %orob2b_order.entity.order_line_item.class%, alias: order_item }
+                join:
+                    left:
+                        - { join: order_item.product, alias: product }
+                where:
+                    and:
+                        - order_item.order = :order_id
+            bind_parameters:
+                - order_id
+        properties:
+            productName:
+                type: localized_value
+                data_name: product.names
+
+    order-line-items-grid:
+        extends: base-order-line-items-grid
+        columns:
+            productSku:
+                label: oro.product.sku.label
+            product:
+                label:         oro.product.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/product.html.twig
+            quantity:
+                label: oro.order.orderlineitem.quantity.label
+            price:
+                label:         oro.order.orderlineitem.price.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+            shipBy:
+                label:         oro.order.orderlineitem.ship_by.label
+                frontend_type: date
+            comment:
+                label: oro.order.orderlineitem.comment.label
+
+    order-line-items-grid-frontend:
+        extends: base-order-line-items-grid
+        columns:
+            product:
+                label:         oro.product.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
+            quantity:
+                label: oro.order.orderlineitem.quantity.label
+            price:
+                label:         oro.order.orderlineitem.price.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+            shipBy:
+                label:         oro.order.orderlineitem.ship_by.label
+                frontend_type: date
+            comment:
+                label: oro.order.orderlineitem.comment.label
+        options:
+            toolbarOptions:
+                placement:
+                    bottom: true
