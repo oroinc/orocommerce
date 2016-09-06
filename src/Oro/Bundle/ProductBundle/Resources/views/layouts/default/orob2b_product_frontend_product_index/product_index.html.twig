@@ -13,3 +13,13 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _product_search_navigation_widget %}
+    <div data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
+        <span class="categories-info">
+            {% for parentCategory in parentCategories %}{{ parentCategory.defaultTitle }} &gt;{% endfor %}
+            {{ currentCategory.defaultTitle }}
+        </span>
+        <span class="filters-info"></span>
+    </div>
+{% endblock %}
