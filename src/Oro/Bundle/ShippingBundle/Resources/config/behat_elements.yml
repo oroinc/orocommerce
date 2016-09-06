@@ -8,7 +8,7 @@ ShoppingListItem:
 
 CheckoutTotal:
   selector: 'td.order-checkout-widget__total'
-  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal
+  class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
 CheckoutForm:
   selector: 'div.checkout__form'

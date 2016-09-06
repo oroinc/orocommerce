@@ -6,13 +6,14 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutForm;
 use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal;
-use Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
@@ -30,8 +31,8 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function thereIsEurCurrencyInTheSystemConfiguration()
     {
         $configManager = $this->getContainer()->get('oro_config.global');
-        /** @var var array $currencies */
-        $currencies = (array)$configManager->get('oro_currency.allowed_currencies', []);
+        /** @var array $currencies */
+        $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
         $configManager->flush();
@@ -89,13 +90,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Then the order total is recalculated to <:arg1>
+     * @Then the order total is recalculated to :arg1
      */
     public function theOrderTotalIsRecalculatedTo($arg1)
     {
-        /** @var CheckoutTotal $checkoutTotal */
-        $checkoutTotal = $this->createElement('CheckoutTotal');
-        $checkoutTotal->isEqual($arg1);
+        self::assertEquals($arg1, $this->createElement('CheckoutTotal')->getText());
     }
 
     /**
@@ -193,7 +192,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     protected function createOrderFromShoppingList($shoppingListName)
     {
-        $this->visitPath('account/shoppinglist/1');
+        /** @var ObjectManager $manager */
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
+        $this->visitPath('account/shoppinglist/'.$shoppingList->getId());
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
         $this->waitForAjax();
