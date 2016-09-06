@@ -12,7 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
 /**
- * @ORM\Table("orob2b_order_address")
+ * @ORM\Table("oro_order_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={

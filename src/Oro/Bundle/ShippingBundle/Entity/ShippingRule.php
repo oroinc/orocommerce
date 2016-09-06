@@ -13,9 +13,9 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository")
  * @ORM\Table(
- *     name="orob2b_shipping_rule",
+ *     name="oro_shipping_rule",
  *     indexes={
- *         @ORM\Index(name="orob2b_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="oro_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
  *     }
  * )
  * @ORM\HasLifecycleCallbacks()

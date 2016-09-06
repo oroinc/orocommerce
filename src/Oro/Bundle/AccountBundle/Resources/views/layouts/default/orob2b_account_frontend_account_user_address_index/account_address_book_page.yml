@@ -1,6 +1,15 @@
 layout:
     imports:
         - orob2b_account_menu
+        -
+            id: orob2b_account_address_grid
+            root: account_address_book_addresses
+            namespace: account_address_book
+        -
+            id: orob2b_account_user_address_grid
+            root: account_address_book_user_addresses
+            namespace: account_address_book
+
     actions:
         - '@appendOption':
             id: title

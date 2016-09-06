@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
 /**
@@ -14,6 +13,8 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
  */
 class PriceRuleEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -23,7 +24,8 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
-        $this->cleanTriggers();
+        $this->topic = Topics::CALCULATE_RULE;
+        $this->cleanQueueMessageTraces();
     }
 
     public function testPreUpdate()
@@ -37,11 +39,9 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->persist($rule);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
-
-        $trigger = $triggers[0];
-        $this->assertEquals($trigger->getPriceList()->getId(), $rule->getPriceList()->getId());
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+        $this->assertEquals($rule->getPriceList()->getId(), $this->getPriceListIdFromTrace($traces[0]));
     }
 
     public function testPreRemove()
@@ -54,31 +54,8 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->remove($rule);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
-
-        $trigger = $triggers[0];
-        $this->assertEquals($trigger->getPriceList()->getId(), $rule->getPriceList()->getId());
-    }
-
-    protected function cleanTriggers()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
-        $em->createQueryBuilder()
-            ->delete(PriceRuleChangeTrigger::class)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return PriceRuleChangeTrigger[]
-     */
-    protected function getTriggers()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceRuleChangeTrigger::class)
-            ->getRepository(PriceRuleChangeTrigger::class)
-            ->findAll();
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+        $this->assertEquals($rule->getPriceList()->getId(), $this->getPriceListIdFromTrace($traces[0]));
     }
 }

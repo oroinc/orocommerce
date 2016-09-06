@@ -111,6 +111,16 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertEquals(['EUR'], $currencies);
     }
 
+    public function testUpdatePriceListsActuality()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $this->getRepository()->updatePriceListsActuality([$priceList], false);
+        $priceList = $this->getRepository()->find($priceList->getId());
+        $this->getManager()->refresh($priceList);
+        $this->assertFalse($priceList->isActual());
+    }
+
     /**
      * @return PriceListRepository
      */

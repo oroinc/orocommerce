@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 /**
- * @ORM\Table(name="orob2b_ship_flat_rate_rule_cnf")
+ * @ORM\Table(name="oro_ship_flat_rate_rule_cnf")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @Config
