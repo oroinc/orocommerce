@@ -66,12 +66,4 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
         $event = new CollectContextEvent([], $websiteId);
         $event->addContextValue('', 'some_value');
     }
-
-    public function testGetWebsiteId()
-    {
-        $websiteId = 1;
-        $event = new CollectContextEvent([], $websiteId);
-
-        $this->assertSame($websiteId, $event->getWebsiteId());
-    }
 }
