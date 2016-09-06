@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace OroB2B\Component\ExpressionLanguage\Node;
+namespace Oro\Component\ExpressionLanguage\Node;
 
 use Symfony\Component\ExpressionLanguage\Compiler;
 use Symfony\Component\ExpressionLanguage\Node\Node;

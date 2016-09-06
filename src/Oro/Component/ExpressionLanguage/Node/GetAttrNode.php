@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace OroB2B\Component\ExpressionLanguage\Node;
+namespace Oro\Component\ExpressionLanguage\Node;
 
 use Doctrine\Common\Inflector\Inflector;
 use Oro\Component\PropertyAccess\PropertyAccessor;
@@ -106,7 +106,7 @@ class GetAttrNode extends Node
 
             case self::ALL_CALL:
                 $obj = $this->nodes['node']->evaluate($functions, $values);
-                if (!$obj instanceof \Traversable) {
+                if (!is_array($obj) && !$obj instanceof \Traversable) {
                     throw new \RuntimeException('Unable to iterate through a non-object.');
                 }
 
@@ -128,7 +128,7 @@ class GetAttrNode extends Node
 
             case self::ANY_CALL:
                 $obj = $this->nodes['node']->evaluate($functions, $values);
-                if (!$obj instanceof \Traversable) {
+                if (!is_array($obj) && !$obj instanceof \Traversable) {
                     throw new \RuntimeException('Unable to iterate through a non-object.');
                 }
 

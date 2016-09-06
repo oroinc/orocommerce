@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Component\ExpressionLanguage;
+namespace Oro\Component\ExpressionLanguage;
 
 use Symfony\Component\ExpressionLanguage\Token;
 use Symfony\Component\ExpressionLanguage\TokenStream;
 use Symfony\Component\ExpressionLanguage\Node;
-use OroB2B\Component\ExpressionLanguage\Node\BinaryNode;
-use OroB2B\Component\ExpressionLanguage\Node\GetAttrNode;
+use Oro\Component\ExpressionLanguage\Node\BinaryNode;
+use Oro\Component\ExpressionLanguage\Node\GetAttrNode;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class Parser

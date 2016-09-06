@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Component\ExpressionLanguage\Tests;
+namespace Oro\Component\ExpressionLanguage\Tests;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Component\ExpressionLanguage\Parser;
-use OroB2B\Component\ExpressionLanguage\Lexer;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\ExpressionLanguage\Parser;
+use Oro\Component\ExpressionLanguage\Lexer;
 
 class ParserTests extends \PHPUnit_Framework_TestCase
 {

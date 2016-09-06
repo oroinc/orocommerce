@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace OroB2B\Component\ExpressionLanguage;
+namespace Oro\Component\ExpressionLanguage;
 
 use Symfony\Component\ExpressionLanguage\Token;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
