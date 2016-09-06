@@ -40,3 +40,12 @@ services:
             - '@orob2b_warehouse.entity.helper.warehouse_counter'
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%' }
+
+    orob2b_warehouse.form.autocomplete.warehouse.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%orob2b_warehouse.entity.warehouse.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_warehouse, acl_resource: orob2b_warehouse_view }

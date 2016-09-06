@@ -5,6 +5,14 @@ oro_system_configuration:
         warehouse_configuration:
             title: oro.warehouse.system_configuration.groups.warehouse_configuration.title
 
+    fields:
+        oro_warehouse.enabled_warehouses:
+            data_type: array
+            type: oro_warehouse_system_config
+            options:
+                label: oro.warehouse.system_configuration.fields.enabled_warehouses.label
+                resettable: false
+
     tree:
         system_configuration:
             commerce:
@@ -16,4 +24,4 @@ oro_system_configuration:
                                 children:
                                     warehouse_configuration:
                                         children:
-                                            - oro_b2b_pricing.default_price_lists
+                                            - oro_warehouse.enabled_warehouses

@@ -42,6 +42,10 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
+ *          "form"={
+ *              "form_type"="oro_warehouse_warehouse_list_select",
+ *              "grid_name"="base-warehouse-grid",
+ *          },
  *      }
  * )
  */
