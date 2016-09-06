@@ -3,7 +3,6 @@ layout:
         -
             id: oro_product_list_item
             root: __products
-            namespace: __
     actions:
         - '@setBlockTheme':
             themes: 'oro_product_list.html.twig'

@@ -2,8 +2,8 @@ layout:
     imports:
         -
             id: oro_product_line_item_form
-            root: __product_secondary_content_second_container
-            namespace: __product
+            root: __secondary_content_second_container
+            namespace: product
     actions:
         - '@setBlockTheme':
             themes: 'oro_product_list_item.html.twig'
