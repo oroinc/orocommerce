@@ -28,6 +28,7 @@ services:
     orob2b_menu.menu.factory:
         class: 'Knp\Menu\MenuFactory'
         calls:
+            - [ addExtension, [ "@orob2b_menu.menu.feature_extension" ] ]
             - [ addExtension, [ "@orob2b_menu.menu.acl_extension" ] ]
             - [ addExtension, [ "@orob2b_menu.menu.condition.condition_extension" ] ]
 
@@ -135,6 +136,12 @@ services:
         calls:
             - [ setCache, [ "@oro_menu.cache" ] ]
             - [ setHideAllForNotLoggedInUsers, [ false ] ]
+
+    orob2b_menu.menu.feature_extension:
+        class: 'Oro\Bundle\NavigationBundle\Menu\FeatureAwareMenuFactoryExtension'
+        public: false
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
 
     orob2b_menu.cache.warmer:
         public: false
