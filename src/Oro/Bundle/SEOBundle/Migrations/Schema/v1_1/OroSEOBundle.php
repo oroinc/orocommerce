@@ -18,7 +18,7 @@ class OroSEOBundle implements Migration
     const RELATION_TYPE = 'manyToMany';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

@@ -59,6 +59,10 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
         $this->updateEntityConfig($logger);
     }
 
+    /**
+     * @param LoggerInterface $logger
+     * @throws \Doctrine\DBAL\DBALException
+     */
     protected function updateEntityConfig(LoggerInterface $logger)
     {
         $sql = 'SELECT id, data FROM oro_entity_config WHERE class_name = ? LIMIT 1';
