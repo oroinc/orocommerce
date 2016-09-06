@@ -150,13 +150,13 @@
 
   &__sublist-container {
     position: absolute;
-    top: 48px;
+    top: 100%;
     left: 0;
-    z-index: 11;
+    right: 0;
+    z-index: z('base') + 10;
 
     display: none;
-    width: 1197px;
-    padding: 0 15px;
+
     border-top: 1px solid transparent;
   }
 
@@ -186,19 +186,15 @@
         padding: 0 0 0 25px;
       }
 
-      &.top-nav__sublist__item_has-sales-block {
+      &_has-sales-block {
         flex-grow: 0;
 
         @media (max-width: $screen-md) {
           order: 1;
         }
-
-        .sales-block {
-          margin: 2rem 0 0;
-        }
       }
 
-      &.top-nav__sublist__item_has-2columns {
+      &_has-2columns {
         flex-grow: 2;
       }
 

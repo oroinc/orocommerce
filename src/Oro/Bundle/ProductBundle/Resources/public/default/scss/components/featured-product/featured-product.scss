@@ -18,13 +18,13 @@
             font-size: 12px;
         }
 
-        & .btn.btn_has-dropdown.btn_has-dropdown_lg {
+        & #add-to-shopping-list {
             min-width: 0;
             min-height: 42px;
         }
 
-        & .btn.btn_has-dropdown.btn_has-dropdown_lg > a.direct-link,
-        & .btn.btn_has-dropdown.btn_has-dropdown_lg > span.direct-link {
+        & #add-to-shopping-list > a.direct-link,
+        & #add-to-shopping-list > span.direct-link {
             overflow: hidden;
 
             width: calc(100% - 22px);
@@ -37,8 +37,8 @@
             text-overflow: ellipsis;
         }
 
-        & .btn.btn_has-dropdown.btn_has-dropdown_lg > a.dropdown-toggle,
-        & .btn.btn_has-dropdown.btn_has-dropdown_lg > span.dropdown-toggle {
+        & #add-to-shopping-list > a.dropdown-toggle,
+        & #add-to-shopping-list > span.dropdown-toggle {
             width: 20px;
 
             line-height: 42px;
