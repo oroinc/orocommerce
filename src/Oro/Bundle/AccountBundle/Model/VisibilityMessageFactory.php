@@ -5,7 +5,6 @@ namespace Oro\Bundle\AccountBundle\Model;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 class VisibilityMessageFactory
 {
@@ -39,9 +38,9 @@ class VisibilityMessageFactory
 
     /**
      * @param array|null $data
-     * @return VisibilityInterface
+     * @return object
      */
-    public function getVisibilityFromMessage($data)
+    public function getEntityFromMessage($data)
     {
         if (!is_array($data) || empty($data)) {
             throw new InvalidArgumentException('Message should not be empty.');
