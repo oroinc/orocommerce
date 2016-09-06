@@ -5,7 +5,6 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\EntityListener;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Async\Topics;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -24,7 +23,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
-class VisibilityListenerTest extends WebTestCase
+class ProductVisibilityListenerTest extends WebTestCase
 {
     use MessageQueueTrait;
 
@@ -48,7 +47,7 @@ class VisibilityListenerTest extends WebTestCase
      */
     public function setUp()
     {
-        $this->topic = Topics::RESOLVE_PRODUCT_VISIBILITY;
+        $this->topic = 'oro_account.visibility.resolve_product_visibility';
         $this->initClient();
 
         $this->loadFixtures([
@@ -278,7 +277,7 @@ class VisibilityListenerTest extends WebTestCase
         $result = [];
 
         foreach ($this->getQueueMessageTraces() as $item) {
-            $result[$item['message'][VisibilityMessageFactory::VISIBILITY_CLASS]][]
+            $result[$item['message'][VisibilityMessageFactory::ENTITY_CLASS_NAME]][]
                 = $item['message'][VisibilityMessageFactory::ID];
         }
 

@@ -41,7 +41,7 @@ trait MessageQueueTrait
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('orob2b_account.visibility_message_handler')
+        self::getContainer()->get('oro_account.visibility_message_handler')
             ->sendScheduledMessages();
     }
 
@@ -68,6 +68,6 @@ trait MessageQueueTrait
      */
     protected function getVisibilityEntityClassFromTrace(array $trace)
     {
-        return $trace['message'][VisibilityMessageFactory::VISIBILITY_CLASS];
+        return $trace['message'][VisibilityMessageFactory::ENTITY_CLASS_NAME];
     }
 }

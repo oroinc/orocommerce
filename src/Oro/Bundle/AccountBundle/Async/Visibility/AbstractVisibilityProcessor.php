@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Async;
+namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
@@ -13,7 +13,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class VisibilityProcessor implements MessageProcessorInterface
+abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 {
     /**
      * @var RegistryInterface
@@ -43,21 +43,24 @@ class VisibilityProcessor implements MessageProcessorInterface
     /**
      * @param RegistryInterface $registry
      * @param VisibilityMessageFactory $messageFactory
-     * @param CacheBuilderInterface $cacheBuilder
      * @param LoggerInterface $logger
+     * @param CacheBuilderInterface $cacheBuilder
      */
     public function __construct(
         RegistryInterface $registry,
         VisibilityMessageFactory $messageFactory,
-        CacheBuilderInterface $cacheBuilder,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CacheBuilderInterface $cacheBuilder
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
-        $this->cacheBuilder = $cacheBuilder;
         $this->messageFactory = $messageFactory;
+        $this->cacheBuilder = $cacheBuilder;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     /**
      * {@inheritdoc}
      */
@@ -68,9 +71,9 @@ class VisibilityProcessor implements MessageProcessorInterface
 
         try {
             $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->messageFactory->getVisibilityFromMessage($messageData);
+            $visibilityEntity = $this->messageFactory->getEntityFromMessage($messageData);
 
-            $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
+            $this->resolveVisibilityByEntity($visibilityEntity);
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
@@ -107,10 +110,16 @@ class VisibilityProcessor implements MessageProcessorInterface
     }
 
     /**
+     * All resolved product visibility entities should be stored together, so entity manager should be the same too
      * @return EntityManager
      */
     protected function getEntityManager()
     {
         return $this->registry->getManagerForClass($this->resolvedVisibilityClassName);
     }
+
+    /**
+     * @param object $entity
+     */
+    abstract protected function resolveVisibilityByEntity($entity);
 }

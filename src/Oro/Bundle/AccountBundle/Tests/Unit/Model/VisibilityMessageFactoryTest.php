@@ -55,7 +55,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 42,
                 'expected' => [
                     VisibilityMessageFactory::ID => 42,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                         => 'Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility'
                 ]
             ],
@@ -64,7 +64,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 123,
                 'expected' => [
                     VisibilityMessageFactory::ID => 123,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                     => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility'
                 ]
             ],
@@ -73,7 +73,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'id' => 321,
                 'expected' => [
                     VisibilityMessageFactory::ID => 321,
-                    VisibilityMessageFactory::VISIBILITY_CLASS
+                    VisibilityMessageFactory::ENTITY_CLASS_NAME
                     => 'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility'
                 ]
             ],
@@ -84,20 +84,20 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException
      * @expectedExceptionMessage Message should not be empty
      */
-    public function testGetVisibilityFromMessageEmptyException()
+    public function testGetEntityFromMessageEmptyException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([]);
+        $this->visibilityMessageFactory->getEntityFromMessage([]);
     }
 
     /**
      * @expectedException \Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException
      * @expectedExceptionMessage Visibility id is required
      */
-    public function testGetVisibilityFromMessageRequiredIdException()
+    public function testGetEntityFromMessageRequiredIdException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([
+        $this->visibilityMessageFactory->getEntityFromMessage([
             VisibilityMessageFactory::ID => null,
-            VisibilityMessageFactory::VISIBILITY_CLASS => 'ProductVisibility'
+            VisibilityMessageFactory::ENTITY_CLASS_NAME => 'ProductVisibility'
         ]);
     }
 
@@ -105,8 +105,8 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException
      * @expectedExceptionMessage Visibility class name is required
      */
-    public function testGetVisibilityFromMessageRequiredClassNameException()
+    public function testGetEntityFromMessageRequiredClassNameException()
     {
-        $this->visibilityMessageFactory->getVisibilityFromMessage([VisibilityMessageFactory::ID => 42]);
+        $this->visibilityMessageFactory->getEntityFromMessage([VisibilityMessageFactory::ID => 42]);
     }
 }

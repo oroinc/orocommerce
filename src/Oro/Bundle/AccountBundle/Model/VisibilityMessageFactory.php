@@ -4,14 +4,12 @@ namespace Oro\Bundle\AccountBundle\Model;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 class VisibilityMessageFactory
 {
     const ID = 'id';
-    const VISIBILITY_CLASS = 'visibility_class';
+    const ENTITY_CLASS_NAME = 'entity_class_name';
 
     /**
      * @var ManagerRegistry
@@ -27,22 +25,22 @@ class VisibilityMessageFactory
     }
     
     /**
-     * @param VisibilityInterface|ProductVisibility $visibility
+     * @param object $visibility
      * @return array
      */
-    public function createMessage(VisibilityInterface $visibility)
+    public function createMessage($visibility)
     {
         return [
             self::ID => $visibility->getId(),
-            self::VISIBILITY_CLASS => ClassUtils::getClass($visibility)
+            self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility)
         ];
     }
 
     /**
      * @param array|null $data
-     * @return VisibilityInterface
+     * @return object
      */
-    public function getVisibilityFromMessage($data)
+    public function getEntityFromMessage($data)
     {
         if (!is_array($data) || empty($data)) {
             throw new InvalidArgumentException('Message should not be empty.');
@@ -52,12 +50,12 @@ class VisibilityMessageFactory
             throw new InvalidArgumentException('Visibility id is required.');
         }
 
-        if (!isset($data[self::VISIBILITY_CLASS]) || !$data[self::VISIBILITY_CLASS]) {
+        if (!isset($data[self::ENTITY_CLASS_NAME]) || !$data[self::ENTITY_CLASS_NAME]) {
             throw new InvalidArgumentException('Visibility class name is required.');
         }
         
-        return $this->registry->getManagerForClass($data[self::VISIBILITY_CLASS])
-            ->getRepository($data[self::VISIBILITY_CLASS])
+        return $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
+            ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);
     }
 }
