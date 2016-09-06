@@ -100,6 +100,9 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->expressionParser->parse($expression));
     }
 
+    /**
+     * @return array
+     */
     public function expressionsDataProvider()
     {
         return [
