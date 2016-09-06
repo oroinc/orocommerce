@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Collections\Criteria;
-
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -41,7 +39,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::MY_ORDER => [
             'user' => LoadOrderUsers::ORDER_USER_1,
-            'accountUser' => LoadAccountUserData::AUTH_USER,
+            'accountUser' => TestAccountUserData::AUTH_USER,
             'poNumber' => 'PO_NUM',
             'customerNotes' => 'Test account user notes',
             'currency' => 'EUR',
@@ -75,10 +73,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
-            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
+            LoadAccountUserData::class,
+            LoadOrderUsers::class,
+            LoadPaymentTermData::class
         ];
     }
 
@@ -143,11 +140,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     protected function getDefaultWebsite()
     {
         if (!$this->defaultWebsite) {
-            $this->defaultWebsite = $this->container->get('doctrine')->getRepository('OroWebsiteBundle:Website')
-                ->findOneBy(
-                    [],
-                    ['id' => Criteria::ASC]
-                );
+            $this->defaultWebsite = $this->container->get('doctrine')
+                ->getRepository(Website::class)
+                ->findOneBy(['default' => true]);
         }
 
         return $this->defaultWebsite;
