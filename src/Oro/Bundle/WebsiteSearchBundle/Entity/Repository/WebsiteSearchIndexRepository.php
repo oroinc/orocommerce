@@ -82,7 +82,6 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
         $platformName = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
 
         if (DatabasePlatformInterface::DATABASE_MYSQL === $platformName) {
-
             $subQueryDQL = $subQueryBuilder->select('item.id')->getDQL();
 
             $queryBuilder = $this->getEntityManager()->createQueryBuilder();
