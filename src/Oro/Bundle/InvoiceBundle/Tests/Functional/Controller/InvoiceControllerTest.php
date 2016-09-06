@@ -2,18 +2,15 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\InvoiceBundle\Entity\Invoice;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation

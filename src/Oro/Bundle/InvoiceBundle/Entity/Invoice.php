@@ -21,8 +21,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(
- *      name="orob2b_invoice",
- *      indexes={@ORM\Index(name="orob2b_invoice_created_at_index", columns={"created_at"})}
+ *      name="oro_invoice",
+ *      indexes={@ORM\Index(name="oro_invoice_created_at_index", columns={"created_at"})}
  * )
  * @ORM\Entity
  * @ORM\AssociationOverrides({

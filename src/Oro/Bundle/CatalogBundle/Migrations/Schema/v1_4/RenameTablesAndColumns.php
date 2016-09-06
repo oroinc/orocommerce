@@ -45,6 +45,14 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'category_670316e',
             RelationType::MANY_TO_ONE
         ));
+
+        // entity tables
+        $extension->renameTable($schema, $queries, 'orob2b_catalog_category', 'oro_catalog_category');
+        $extension->renameTable($schema, $queries, 'orob2b_catalog_category_title', 'oro_catalog_category_title');
+        $extension->renameTable($schema, $queries, 'orob2b_category_to_product', 'oro_category_to_product');
+        $extension->renameTable($schema, $queries, 'orob2b_catalog_cat_short_desc', 'oro_catalog_cat_short_desc');
+        $extension->renameTable($schema, $queries, 'orob2b_catalog_cat_long_desc', 'oro_catalog_cat_long_desc');
+        $extension->renameTable($schema, $queries, 'orob2b_category_def_prod_opts', 'oro_category_def_prod_opts');
     }
 
     /**

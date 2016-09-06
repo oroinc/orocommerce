@@ -17,9 +17,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * RequestStatus
  *
  * @ORM\Table(
- *      name="orob2b_rfp_status",
+ *      name="oro_rfp_status",
  *      indexes={
- *          @ORM\Index(name="orob2b_rfp_status_name_idx",columns={"name"})
+ *          @ORM\Index(name="oro_rfp_status_name_idx",columns={"name"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")

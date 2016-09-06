@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
- * @ORM\Table(name="orob2b_tax_product_tax_code")
+ * @ORM\Table(name="oro_tax_product_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="orob2b_tax_product_tax_code_index",
@@ -33,7 +33,7 @@ class ProductTaxCode extends AbstractTaxCode
     /**
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinTable(
-     *      name="orob2b_tax_prod_tax_code_prod",
+     *      name="oro_tax_prod_tax_code_prod",
      *      joinColumns={
      *          @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

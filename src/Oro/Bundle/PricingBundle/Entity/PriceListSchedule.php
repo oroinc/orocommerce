@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_price_list_schedule")
+ * @ORM\Table(name="oro_price_list_schedule")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
  */
 class PriceListSchedule
