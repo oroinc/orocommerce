@@ -1,0 +1,613 @@
+system_configuration:
+    groups:
+        paypal_payments_pro:
+            title: oro.paypal.system_configuration.groups.paypal_payments_pro.title
+        paypal_payments_pro_display:
+            title: oro.paypal.system_configuration.groups.display_options.title
+        paypal_payments_pro_integration:
+            title: oro.paypal.system_configuration.groups.integration.title
+        paypal_payments_pro_connection:
+            title: oro.paypal.system_configuration.groups.connection.title
+        paypal_payments_pro_settings:
+            title: oro.paypal.system_configuration.groups.advanced_settings.title
+        paypal_payments_pro_express_checkout:
+            title: oro.paypal.system_configuration.groups.payflow_express_checkout.title
+
+        payflow_gateway:
+            title: oro.paypal.system_configuration.groups.payflow_gateway.title
+        payflow_gateway_display:
+            title: oro.paypal.system_configuration.groups.display_options.title
+        payflow_gateway_integration:
+            title: oro.paypal.system_configuration.groups.integration.title
+        payflow_gateway_connection:
+            title: oro.paypal.system_configuration.groups.connection.title
+        payflow_gateway_settings:
+            title: oro.paypal.system_configuration.groups.advanced_settings.title
+        payflow_gateway_express_checkout:
+            title: oro.paypal.system_configuration.groups.payflow_express_checkout.title
+
+    fields:
+        # PayPal Payments Pro
+        oro_paypal.paypal_payments_pro_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+
+        oro_paypal.paypal_payments_pro_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        oro_paypal.paypal_payments_pro_short_label:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        oro_paypal.paypal_payments_pro_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        oro_paypal.paypal_payments_pro_allowed_countries:
+            data_type: string
+            type: choice
+            priority: 60
+            options:
+                label: oro.payment.system_configuration.fields.allowed_countries.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    all: oro.payment.system_configuration.fields.allowed_countries.all
+                    selected: oro.payment.system_configuration.fields.allowed_countries.selected
+                attr:
+                    'data-page-component-module': 'oropayment/js/app/components/config-hide-fields-component'
+                    'data-dependency-id': 'paypal_payments_pro_allowed_countries'
+
+        oro_paypal.paypal_payments_pro_selected_countries:
+            data_type: string
+            type: oro_locale_country
+            priority: 50
+            options:
+                label: oro.payment.system_configuration.fields.selected_countries.label
+                multiple: true
+                attr:
+                    'data-depends-on-field': 'paypal_payments_pro_allowed_countries'
+                    'data-depends-on-field-value': 'selected'
+
+        oro_paypal.paypal_payments_pro_allowed_cc_types:
+            data_type: string
+            type: choice
+            priority: 40
+            options:
+                label: oro.paypal.system_configuration.fields.allowed_cc_types.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                multiple: true
+                choices:
+                    visa: oro.paypal.system_configuration.fields.allowed_cc_types.visa
+                    mastercard: oro.paypal.system_configuration.fields.allowed_cc_types.mastercard
+                    discover: oro.paypal.system_configuration.fields.allowed_cc_types.discover
+                    american_express: oro.paypal.system_configuration.fields.allowed_cc_types.american_express
+
+        oro_paypal.paypal_payments_pro_allowed_currencies:
+            data_type: array
+            type: oro_paypal_currency_selection
+            priority: 30
+            options:
+                label: oro.pricing.system_configuration.fields.enabled_currencies.label
+                required: true
+                multiple: true
+                constraints:
+                    - NotBlank: ~
+
+        oro_paypal.paypal_payments_pro_partner:
+            data_type: string
+            type: text
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.partner.label
+
+        oro_paypal.paypal_payments_pro_vendor:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.vendor.label
+
+        oro_paypal.paypal_payments_pro_user:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.user.label
+
+        oro_paypal.paypal_payments_pro_password:
+            data_type: string
+            type: oro_paypal_paypal_password_type
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.password.label
+
+        oro_paypal.paypal_payments_pro_test_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.test_mode.label
+
+        oro_paypal.paypal_payments_pro_payment_action:
+            data_type: string
+            type: choice
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.payment_action.label
+                required: true
+                choice_translation_domain: messages
+                choices:
+                    authorize: oro.paypal.system_configuration.fields.payment_action.authorize
+                    charge: oro.paypal.system_configuration.fields.payment_action.charge
+
+        oro_paypal.paypal_payments_pro_debug_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.debug_mode.label
+
+        oro_paypal.paypal_payments_pro_require_cvv:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.require_cvv.label
+
+        oro_paypal.paypal_payments_pro_zero_amount_authorization:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.zero_amount_authorization.label
+                tooltip: oro.paypal.system_configuration.fields.zero_amount_authorization.tooltip
+
+        oro_paypal.paypal_payments_pro_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.authorization_for_required_amount.label
+
+        oro_paypal.paypal_payments_pro_use_proxy:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.use_proxy.label
+
+        oro_paypal.paypal_payments_pro_proxy_host:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.proxy_host.label
+
+        oro_paypal.paypal_payments_pro_proxy_port:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.proxy_port.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
+
+        oro_paypal.paypal_payments_pro_enable_ssl_verification:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.enable_ssl_verification.label
+
+        # PayPal Payments Pro Express Checkout
+        oro_paypal.paypal_payments_pro_express_checkout_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+
+        oro_paypal.paypal_payments_pro_express_checkout_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        oro_paypal.paypal_payments_pro_express_checkout_short_label:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        oro_paypal.paypal_payments_pro_express_checkout_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        oro_paypal.paypal_payments_pro_express_checkout_payment_action:
+            data_type: string
+            type: choice
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.payment_action.label
+                required: true
+                choice_translation_domain: messages
+                choices:
+                    authorize: oro.paypal.system_configuration.fields.payment_action.authorize
+                    charge: oro.paypal.system_configuration.fields.payment_action.charge
+
+        # Payflow Gateway
+        oro_paypal.payflow_gateway_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+
+        oro_paypal.payflow_gateway_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        oro_paypal.payflow_gateway_short_label:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        oro_paypal.payflow_gateway_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        oro_paypal.payflow_gateway_allowed_countries:
+            data_type: string
+            type: choice
+            priority: 60
+            options:
+                label: oro.payment.system_configuration.fields.allowed_countries.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    all: oro.payment.system_configuration.fields.allowed_countries.all
+                    selected: oro.payment.system_configuration.fields.allowed_countries.selected
+                attr:
+                    'data-page-component-module': 'oropayment/js/app/components/config-hide-fields-component'
+                    'data-dependency-id': 'payflow_gateway_allowed_countries'
+
+        oro_paypal.payflow_gateway_selected_countries:
+            data_type: string
+            type: oro_locale_country
+            priority: 50
+            options:
+                label: oro.payment.system_configuration.fields.selected_countries.label
+                multiple: true
+                attr:
+                    'data-depends-on-field': 'payflow_gateway_allowed_countries'
+                    'data-depends-on-field-value': 'selected'
+
+        oro_paypal.payflow_gateway_allowed_cc_types:
+            data_type: string
+            type: choice
+            priority: 40
+            options:
+                label: oro.paypal.system_configuration.fields.allowed_cc_types.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                multiple: true
+                choices:
+                    visa: oro.paypal.system_configuration.fields.allowed_cc_types.visa
+                    mastercard: oro.paypal.system_configuration.fields.allowed_cc_types.mastercard
+                    discover: oro.paypal.system_configuration.fields.allowed_cc_types.discover
+                    american_express: oro.paypal.system_configuration.fields.allowed_cc_types.american_express
+
+        oro_paypal.payflow_gateway_allowed_currencies:
+            data_type: array
+            type: oro_paypal_currency_selection
+            priority: 30
+            options:
+                label: oro.pricing.system_configuration.fields.enabled_currencies.label
+                required: true
+                multiple: true
+                constraints:
+                    - NotBlank: ~
+
+        oro_paypal.payflow_gateway_partner:
+            data_type: string
+            type: text
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.partner.label
+
+        oro_paypal.payflow_gateway_vendor:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.vendor.label
+
+        oro_paypal.payflow_gateway_user:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.user.label
+
+        oro_paypal.payflow_gateway_password:
+            data_type: string
+            type: oro_paypal_paypal_password_type
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.password.label
+
+        oro_paypal.payflow_gateway_test_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.test_mode.label
+
+        oro_paypal.payflow_gateway_payment_action:
+            data_type: string
+            type: choice
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.payment_action.label
+                required: true
+                choice_translation_domain: messages
+                choices:
+                    authorize: oro.paypal.system_configuration.fields.payment_action.authorize
+                    charge: oro.paypal.system_configuration.fields.payment_action.charge
+
+        oro_paypal.payflow_gateway_debug_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.debug_mode.label
+
+        oro_paypal.payflow_gateway_require_cvv:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.require_cvv.label
+
+        oro_paypal.payflow_gateway_zero_amount_authorization:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.zero_amount_authorization.label
+                tooltip: oro.paypal.system_configuration.fields.zero_amount_authorization.tooltip
+
+        oro_paypal.payflow_gateway_authorization_for_required_amount:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.authorization_for_required_amount.label
+
+        oro_paypal.payflow_gateway_use_proxy:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.paypal.system_configuration.fields.use_proxy.label
+
+        oro_paypal.payflow_gateway_proxy_host:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.paypal.system_configuration.fields.proxy_host.label
+
+        oro_paypal.payflow_gateway_proxy_port:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.paypal.system_configuration.fields.proxy_port.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
+
+        oro_paypal.payflow_gateway_enable_ssl_verification:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 70
+            options:
+                label: oro.paypal.system_configuration.fields.enable_ssl_verification.label
+
+        # Payflow Express Checkout
+        oro_paypal.payflow_express_checkout_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+
+        oro_paypal.payflow_express_checkout_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        oro_paypal.payflow_express_checkout_short_label:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        oro_paypal.payflow_express_checkout_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        oro_paypal.payflow_express_checkout_payment_action:
+            data_type: string
+            type: choice
+            priority: 60
+            options:
+                label: oro.paypal.system_configuration.fields.payment_action.label
+                required: true
+                choice_translation_domain: messages
+                choices:
+                    authorize: oro.paypal.system_configuration.fields.payment_action.authorize
+                    charge: oro.paypal.system_configuration.fields.payment_action.charge
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    payment:
+                        children:
+                            paypal_payments_pro:
+                                priority: 90
+                                children:
+                                    paypal_payments_pro_display:
+                                        priority: 100
+                                        children:
+                                            - oro_paypal.paypal_payments_pro_enabled
+                                            - oro_paypal.paypal_payments_pro_label
+                                            - oro_paypal.paypal_payments_pro_short_label
+                                            - oro_paypal.paypal_payments_pro_sort_order
+                                            - oro_paypal.paypal_payments_pro_allowed_countries
+                                            - oro_paypal.paypal_payments_pro_selected_countries
+                                            - oro_paypal.paypal_payments_pro_allowed_cc_types
+                                            - oro_paypal.paypal_payments_pro_allowed_currencies
+                                    paypal_payments_pro_integration:
+                                        priority: 90
+                                        children:
+                                            - oro_paypal.paypal_payments_pro_partner
+                                            - oro_paypal.paypal_payments_pro_vendor
+                                            - oro_paypal.paypal_payments_pro_user
+                                            - oro_paypal.paypal_payments_pro_password
+                                            - oro_paypal.paypal_payments_pro_test_mode
+                                    paypal_payments_pro_settings:
+                                        priority: 80
+                                        children:
+                                            - oro_paypal.paypal_payments_pro_payment_action
+                                            - oro_paypal.paypal_payments_pro_debug_mode
+                                            - oro_paypal.paypal_payments_pro_require_cvv
+                                            - oro_paypal.paypal_payments_pro_zero_amount_authorization
+                                            - oro_paypal.paypal_payments_pro_authorization_for_required_amount
+                                    paypal_payments_pro_connection:
+                                        priority: 70
+                                        children:
+                                            - oro_paypal.paypal_payments_pro_use_proxy
+                                            - oro_paypal.paypal_payments_pro_proxy_host
+                                            - oro_paypal.paypal_payments_pro_proxy_port
+                                            - oro_paypal.paypal_payments_pro_enable_ssl_verification
+                                    paypal_payments_pro_express_checkout:
+                                        priority: 60
+                                        children:
+                                            - oro_paypal.paypal_payments_pro_express_checkout_enabled
+                                            - oro_paypal.paypal_payments_pro_express_checkout_label
+                                            - oro_paypal.paypal_payments_pro_express_checkout_short_label
+                                            - oro_paypal.paypal_payments_pro_express_checkout_sort_order
+                                            - oro_paypal.paypal_payments_pro_express_checkout_payment_action
+                            payflow_gateway:
+                                priority: 80
+                                children:
+                                    payflow_gateway_display:
+                                        priority: 100
+                                        children:
+                                            - oro_paypal.payflow_gateway_enabled
+                                            - oro_paypal.payflow_gateway_label
+                                            - oro_paypal.payflow_gateway_short_label
+                                            - oro_paypal.payflow_gateway_sort_order
+                                            - oro_paypal.payflow_gateway_allowed_countries
+                                            - oro_paypal.payflow_gateway_selected_countries
+                                            - oro_paypal.payflow_gateway_allowed_cc_types
+                                            - oro_paypal.payflow_gateway_allowed_currencies
+                                    payflow_gateway_integration:
+                                        priority: 90
+                                        children:
+                                            - oro_paypal.payflow_gateway_partner
+                                            - oro_paypal.payflow_gateway_vendor
+                                            - oro_paypal.payflow_gateway_user
+                                            - oro_paypal.payflow_gateway_password
+                                            - oro_paypal.payflow_gateway_test_mode
+                                    payflow_gateway_settings:
+                                        priority: 80
+                                        children:
+                                            - oro_paypal.payflow_gateway_payment_action
+                                            - oro_paypal.payflow_gateway_debug_mode
+                                            - oro_paypal.payflow_gateway_require_cvv
+                                            - oro_paypal.payflow_gateway_zero_amount_authorization
+                                            - oro_paypal.payflow_gateway_authorization_for_required_amount
+                                    payflow_gateway_connection:
+                                        priority: 70
+                                        children:
+                                            - oro_paypal.payflow_gateway_use_proxy
+                                            - oro_paypal.payflow_gateway_proxy_host
+                                            - oro_paypal.payflow_gateway_proxy_port
+                                            - oro_paypal.payflow_gateway_enable_ssl_verification
+                                    payflow_gateway_express_checkout:
+                                        priority: 60
+                                        children:
+                                            - oro_paypal.payflow_express_checkout_enabled
+                                            - oro_paypal.payflow_express_checkout_label
+                                            - oro_paypal.payflow_express_checkout_short_label
+                                            - oro_paypal.payflow_express_checkout_sort_order
+                                            - oro_paypal.payflow_express_checkout_payment_action
