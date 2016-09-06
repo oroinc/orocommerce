@@ -41,7 +41,7 @@ class MoveCheckoutAddressDataQuery extends ParametrizedMigrationQuery
 
         foreach ($rows as $row) {
             $queries[] = [
-                'UPDATE orob2b_checkout
+                'UPDATE ' . $this->getBaseTableName() . '
                   SET billing_address_id = :billing_address_id,
                     shipping_address_id = :shipping_address_id,
                     save_billing_address = :save_billing_address,
@@ -85,9 +85,9 @@ class MoveCheckoutAddressDataQuery extends ParametrizedMigrationQuery
         $sql = 'SELECT dc.id, dc.billing_address_id, dc.shipping_address_id, dc.save_billing_address,
                   dc.ship_to_billing_address, dc.save_shipping_address
                 FROM %s AS dc
-                INNER JOIN orob2b_checkout AS c
+                INNER JOIN %s AS c
                   ON c.id = dc.id';
-        $sql = sprintf($sql, $this->getSourceTableName());
+        $sql = sprintf($sql, $this->getSourceTableName(), $this->getBaseTableName());
         $params = [];
         $types  = [];
 
@@ -102,5 +102,13 @@ class MoveCheckoutAddressDataQuery extends ParametrizedMigrationQuery
     protected function getSourceTableName()
     {
         return 'orob2b_default_checkout';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBaseTableName()
+    {
+        return 'orob2b_checkout';
     }
 }

@@ -110,8 +110,8 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
     {
         $sql = 'SELECT ac.id
                 FROM orob2b_alternative_checkout AS ac
-                INNER JOIN orob2b_checkout AS c ON c.id = ac.id
-                INNER JOIN orob2b_checkout_source AS cs ON cs.id = c.source_id
+                INNER JOIN oro_checkout AS c ON c.id = ac.id
+                INNER JOIN oro_checkout_source AS cs ON cs.id = c.source_id
                 WHERE cs.shoppingList_id = :id
                 LIMIT 1';
         $params = ['id' => $shoppingListId];

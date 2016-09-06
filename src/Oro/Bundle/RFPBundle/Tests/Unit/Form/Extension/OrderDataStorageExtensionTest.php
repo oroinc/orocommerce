@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
-use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,6 +41,11 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected $priceListTreeHandler;
 
     /**
+     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $featureChecker;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -52,11 +56,16 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()->getMock();
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->extension = new OrderDataStorageExtension(
             $this->requestStack,
             $this->productPriceProvider,
             $this->priceListTreeHandler
         );
+        $this->extension->setFeatureChecker($this->featureChecker);
     }
 
     public function testExtendedTypeAccessors()
@@ -78,6 +87,12 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $order = $this->getOrder($lineItems);
         $matchedPrices = $this->getMatchedPrices($matchedPrices);
+
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(true);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
@@ -239,6 +254,27 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(null);
         $this->extension->buildForm($builder, []);
     }
+
+    public function testBuildFormDisabledFeature()
+    {
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(false);
+
+        $builder = $this->getBuilderMock();
+        $builder->expects($this->never())
+            ->method('addEventListener');
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMock(Request::class);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->extension->buildForm($builder, []);
+    }
+
 
     /**
      * @return FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject

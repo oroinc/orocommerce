@@ -28,6 +28,7 @@ class AjaxOrderController extends Controller
     {
         if (!$order) {
             $order = new Order();
+            $order->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
         }
 
         $form = $this->getType($order);

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="orob2b_price_rule")
+ * @ORM\Table(name="oro_price_rule")
  * @ORM\Entity()
  */
 class PriceRule

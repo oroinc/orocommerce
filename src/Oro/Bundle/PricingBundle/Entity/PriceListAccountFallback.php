@@ -8,9 +8,9 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @ORM\Table(
- *      name="orob2b_price_list_acc_fb",
+ *      name="oro_price_list_acc_fb",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_price_list_acc_fb_unq", columns={
+ *          @ORM\UniqueConstraint(name="oro_price_list_acc_fb_unq", columns={
  *              "account_id",
  *              "website_id"
  *          })

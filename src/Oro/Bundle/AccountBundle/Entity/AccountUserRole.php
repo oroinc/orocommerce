@@ -16,9 +16,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
- * @ORM\Table(name="orob2b_account_user_role",
+ * @ORM\Table(name="oro_account_user_role",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_account_user_role_account_id_label_idx", columns={
+ *          @ORM\UniqueConstraint(name="oro_account_user_role_account_id_label_idx", columns={
  *              "account_id",
  *              "label"
  *          })
@@ -50,6 +50,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class AccountUserRole extends AbstractRole implements OrganizationAwareInterface, \Serializable
 {
@@ -120,7 +123,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinTable(
-     *      name="orob2b_account_role_to_website",
+     *      name="oro_account_role_to_website",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

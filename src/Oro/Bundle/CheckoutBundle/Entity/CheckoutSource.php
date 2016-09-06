@@ -10,7 +10,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_checkout_source")
+ * @ORM\Table(name="oro_checkout_source")
  * @Config
  */
 class CheckoutSource extends ExtendCheckoutSource

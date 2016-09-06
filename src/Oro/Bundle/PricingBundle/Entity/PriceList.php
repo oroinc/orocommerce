@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
- * @ORM\Table(name="orob2b_price_list")
+ * @ORM\Table(name="oro_price_list")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
@@ -48,6 +48,13 @@ class PriceList extends BasePriceList
      * @ORM\Column(name="active", type="boolean", options={"default"=true})
      */
     protected $active = true;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="actual", type="boolean", options={"default"=true})
+     */
+    protected $actual = true;
 
     /**
      * @var Collection|ProductPrice[]
@@ -299,6 +306,25 @@ class PriceList extends BasePriceList
     public function setActive($active)
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActual()
+    {
+        return $this->actual;
+    }
+
+    /**
+     * @param boolean $actual
+     * @return $this
+     */
+    public function setActual($actual)
+    {
+        $this->actual = $actual;
 
         return $this;
     }
