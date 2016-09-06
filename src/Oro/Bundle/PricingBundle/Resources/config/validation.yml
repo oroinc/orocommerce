@@ -56,9 +56,17 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
     properties:
         currency:
             - Currency: ~
+        currencyExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
+            - Oro\Bundle\PricingBundle\Validator\Constraints\CurrencyExpression: ~
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        quantityExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                numericOnly: true
+                withRelations: true
         ruleCondition:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true

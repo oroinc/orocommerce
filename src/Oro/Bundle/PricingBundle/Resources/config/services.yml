@@ -796,6 +796,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
 
+    orob2b_pricing.validator_constraints.currency_expression_validator:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\CurrencyExpressionValidator'
+        arguments:
+            - '@orob2b_pricing.expression.parser'
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.currency_expression_validator }
+
     orob2b_pricing.hander.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         arguments:
