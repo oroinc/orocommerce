@@ -49,3 +49,8 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_warehouse, acl_resource: orob2b_warehouse_view }
+
+    orob_warehouse.validator.unique_warehouse:
+        class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }

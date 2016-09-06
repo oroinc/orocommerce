@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouse;
 
 class WarehouseCollectionType extends AbstractType
 {
@@ -38,6 +39,7 @@ class WarehouseCollectionType extends AbstractType
                 'mapped' => false,
                 'label' => false,
                 'handle_primary' => false,
+                'constraints' => [new UniqueWarehouse()],
                 'required' => false,
                 'render_as_widget' => false,
             ]

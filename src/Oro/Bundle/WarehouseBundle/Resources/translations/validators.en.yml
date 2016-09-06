@@ -1,0 +1,4 @@
+oro:
+    warehouse:
+        validators:
+            unique_warehouse.message: 'Warehouse is duplicated.'
