@@ -2,20 +2,50 @@
 
 namespace Oro\Bundle\FrontendNavigationBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\NavigationBundle\Model\MenuUpdate as MenuUpdateModel;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="oro_front_nav_menu_update")
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-th"
+ *          }
+ *      }
+ * )
  */
-class MenuUpdate extends MenuUpdateModel
+class MenuUpdate extends ExtendMenuUpdate
 {
     const OWNERSHIP_WEBSITE      = 3;
     const OWNERSHIP_ACCOUNT      = 4;
     const OWNERSHIP_ACCOUNT_USER = 5;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_front_nav_menu_upd_title",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="menu_update_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $titles;
 
     /**
      * @var string
@@ -57,6 +87,40 @@ class MenuUpdate extends MenuUpdateModel
             'condition'   => $this->condition,
             'website'     => $this->website
         ];
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getTitles()
+    {
+        return $this->titles;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $title
+     * @return $this
+     */
+    public function addTitle(LocalizedFallbackValue $title)
+    {
+        if (!$this->titles->contains($title)) {
+            $this->titles->add($title);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $title
+     * @return $this
+     */
+    public function removeTitle(LocalizedFallbackValue $title)
+    {
+        if ($this->titles->contains($title)) {
+            $this->titles->removeElement($title);
+        }
+
+        return $this;
     }
 
     /**

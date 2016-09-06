@@ -1,0 +1,18 @@
+oro:
+    frontendnavigation:
+        menuupdate:
+            entity_label: Menu Update
+            id.label: Id
+            key.label: Key
+            parent_key.label: Parent Key
+            menu.label: Menu
+            titles.label: Titles
+            uri.label: Uri
+            active.label: Active
+            priority.label: Priority
+            ownership_type.label: Ownership Type
+            owner_id.label: Owner Id
+            image.label: Image
+            description.label: Description
+            condition.label: Condition
+            website.label: Website

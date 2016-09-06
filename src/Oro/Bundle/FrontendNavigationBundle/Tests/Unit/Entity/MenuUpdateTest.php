@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -14,16 +15,7 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', 42],
-            ['key', 'page_wrapper'],
-            ['parentId', 'page_container'],
-            ['title', 'title'],
-            ['uri', 'uri'],
-            ['menu', 'main_menu'],
-            ['ownershipType', MenuUpdate::OWNERSHIP_GLOBAL],
-            ['ownerId', 3],
-            ['isActive', true],
-            ['priority', 1],
+            ['titles', new LocalizedFallbackValue()],
             ['image', 'image.jpg'],
             ['description', 'description'],
             ['condition', 'condition'],
@@ -31,5 +23,27 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors(new MenuUpdate(), $properties);
+    }
+
+    public function testGetExtras()
+    {
+        $website = new Website();
+
+        $update = new MenuUpdate();
+        $update
+            ->setImage('test image')
+            ->setDescription('test description')
+            ->setCondition('test condition')
+            ->setWebsite($website)
+        ;
+
+        $expected = [
+            'image' => 'test image',
+            'description' => 'test description',
+            'condition' => 'test condition',
+            'website' => $website,
+        ];
+
+        $this->assertSame($expected, $update->getExtras());
     }
 }
