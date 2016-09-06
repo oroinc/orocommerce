@@ -15,8 +15,6 @@
 }
 
 .header-row {
-    // position: relative;
-
     display: flex;
 
     border: 1px solid $theme-lighter-gray-color;
@@ -132,6 +130,14 @@
             top: 0 !important;
             bottom: 0;
             overflow-y: scroll;
+        }
+
+        & .main-menu__sublist-container {
+            width: auto;
+        }
+
+        & .main-menu__sublist {
+            display: block;
         }
     }
 }
