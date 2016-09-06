@@ -45,10 +45,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
-        $configManager->flush();
-
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR','USD']);
+        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR', 'USD']);
         $configManager->flush();
     }
 
