@@ -13,3 +13,9 @@ services:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
         tags:
             - { name: oro_integration.transport, type: ups, channel_type: ups }
+
+    oro_ups.repository.transport:
+        class: 'Doctrine\ORM\EntityRepository'
+        factory: ['@oro_entity.doctrine_helper', getEntityRepository]
+        arguments:
+            - 'Oro\Bundle\UPSBundle\Entity\UPSTransport'

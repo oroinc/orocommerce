@@ -2,54 +2,87 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\UPS;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Factory\UPSShippingMethodTypeFactory;
+use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
-class UPSShippingMethodType implements ShippingMethodTypeInterface
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
+class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingMethodInterface
 {
-    /**
-     * @var string|int
-     */
-    protected $identifier;
+    const IDENTIFIER = 'ups';
+
+    /** @var EntityRepository */
+    protected $transportRepository;
+
+    /** @var UPSShippingMethodTypeFactory */
+    protected $methodTypeFactory;
 
     /**
-     * @var string
+     * @param EntityRepository $transportRepository
+     * @param UPSShippingMethodTypeFactory $methodTypeFactory
      */
-    protected $label;
-
-    /**
-     * @param string|int $identifier
-     * @param string $label
-     */
-    public function __construct($identifier, $label)
+    public function __construct(EntityRepository $transportRepository, UPSShippingMethodTypeFactory $methodTypeFactory)
     {
-        $this->identifier = $identifier;
-        $this->label = $label;
+        $this->transportRepository = $transportRepository;
+        $this->methodTypeFactory = $methodTypeFactory;
     }
 
     /**
-     * @return string|int
+     * {@inheritdoc}
+     */
+    public function isGrouped()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
-        return $this->identifier;
+        return static::IDENTIFIER;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel()
     {
-        return $this->label;
+        return 'oro.shipping.method.ups.label';
     }
 
     /**
-     * @return int
+     * @return ShippingMethodTypeInterface[]|null
      */
-    public function getSortOrder()
+    public function getTypes()
     {
-        // TODO: Implement getSortOrder() method.
+        return $this->getApplicableMethodTypes();
+    }
+
+    /**
+     * @param string $identifier
+     * @return ShippingMethodTypeInterface|null
+     */
+    public function getType($identifier)
+    {
+        $methodTypes = $this->getApplicableMethodTypes();
+        if ($methodTypes !== null) {
+            foreach ($methodTypes as $methodType) {
+                if ($methodType->getIdentifier() === $identifier) {
+                    return $methodType;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -57,25 +90,52 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getOptionsConfigurationFormType()
     {
-        // TODO: Implement getOptionsConfigurationFormType() method.
+        return HiddenType::class;
     }
 
     /**
-     * @return array
+     * @return int
      */
-    public function getOptions()
+    public function getSortOrder()
     {
-        // TODO: Implement getOptions() method.
+        return 20;
     }
 
     /**
      * @param ShippingContextInterface $context
      * @param array $methodOptions
-     * @param array $typeOptions
-     * @return null|Price
+     * @param array $optionsByTypes
+     * @return array
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
+    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        // TODO: Implement calculatePrice() method.
+        // TODO: Implement calculatePrices() method.
+    }
+
+    /**
+     * @return ShippingMethodTypeInterface[]|null
+     */
+    protected function getApplicableMethodTypes()
+    {
+        $types = null;
+        $transports = $this->transportRepository->findAll();
+        if (count($transports) > 0) {
+            /** @var UPSTransport $transport */
+            foreach ($transports as $transport) {
+                /** @var Collection $shippingServices */
+                $shippingServices = $transport->getApplicableShippingServices();
+                if (count($shippingServices) > 0) {
+                    /** @var ShippingService $shippingService */
+                    foreach ($shippingServices as $shippingService) {
+                        $types[] = $this->methodTypeFactory->create(
+                            $shippingService->getCode(),
+                            $shippingService->getDescription()
+                        );
+                    }
+                }
+            }
+        }
+
+        return $types;
     }
 }

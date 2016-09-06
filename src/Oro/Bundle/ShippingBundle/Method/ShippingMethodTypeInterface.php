@@ -28,11 +28,6 @@ interface ShippingMethodTypeInterface
     public function getOptionsConfigurationFormType();
 
     /**
-     * @return array
-     */
-    public function getOptions();
-
-    /**
      * @param ShippingContextInterface $context
      * @param array $methodOptions
      * @param array $typeOptions

@@ -2,34 +2,53 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\UPS;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
-    /**
-     * @var string|int
-     */
+    /** @var string|int */
     protected $identifier;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $label;
 
     /**
-     * @param string|int $identifier
-     * @param string $label
+     * @param int|string $identifier
+     * @return $this
      */
-    public function __construct($identifier, $label)
+    public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
-        $this->label = $label;
+
+        return $this;
     }
 
     /**
-     * @return string|int
+     * @param string $label
+     * @return $this
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $optionsConfigurationFormType
+     * @return $this
+     */
+    public function setOptionsConfigurationFormType($optionsConfigurationFormType)
+    {
+        $this->optionsConfigurationFormType = $optionsConfigurationFormType;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
@@ -37,7 +56,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel()
     {
@@ -45,34 +64,23 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getSortOrder()
     {
-        // TODO: Implement getSortOrder() method.
+        return 0;
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getOptionsConfigurationFormType()
     {
-        // TODO: Implement getOptionsConfigurationFormType() method.
+        return UPSShippingMethodOptionsType::class;
     }
 
     /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        // TODO: Implement getOptions() method.
-    }
-
-    /**
-     * @param ShippingContextInterface $context
-     * @param array $methodOptions
-     * @param array $typeOptions
-     * @return null|Price
+     * {@inheritdoc}
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {

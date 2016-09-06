@@ -29,6 +29,9 @@ services:
         arguments:
             - '@orob2b_shipping.shipping_origin.provider'
 
+    orob2b_shipping.factory.ups_shipping_method_type_factory:
+        class: 'Oro\Bundle\ShippingBundle\Factory\UPSShippingMethodTypeFactory'
+
     orob2b_shipping.event_listener.config.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener'
         arguments:
