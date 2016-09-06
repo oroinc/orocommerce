@@ -2,15 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -27,30 +21,15 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 {
     use SearchTestTrait;
 
-    /**
-     * @var OrmEngine
-     */
-    protected $ormEngine;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $manager;
-
     protected function setUp()
     {
         $this->initClient();
         $this->loadFixtures([LoadItemData::class]);
-
-        $this->ormEngine = $this->getContainer()->get('oro_website_search.orm.engine');
-        $this->manager = $this->getContainer()->get('doctrine')->getManager();
     }
 
     protected function tearDown()
     {
         $this->truncateIndexTextTable();
-
-        unset($this->ormEngine, $this->manager);
     }
 
     public function testRemoveIndexByAlias()
@@ -122,130 +101,5 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
 
         $this->assertEntityCount(4, Item::class);
-    }
-
-    public function testSearchAll()
-    {
-        $query = new Query();
-        $query->from('*');
-
-        $goodProduct = $this->getContainer()->get('doctrine')->getRepository(Product::class)
-            ->findOneBy(['name' => 'Product 1']);
-        $betterProduct = $this->getContainer()->get('doctrine')->getRepository(Product::class)
-            ->findOneBy(['name' => 'Product 2']);
-
-        $expectedResult = new Result(
-            $query,
-            [
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $goodProduct->getId(),
-                    'Good product',
-                    null,
-                    [],
-                    []
-                ),
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $betterProduct->getId(),
-                    'Better product',
-                    null,
-                    [],
-                    []
-                ),
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $goodProduct->getId(),
-                    'Good product',
-                    null,
-                    [],
-                    []
-                ),
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $betterProduct->getId(),
-                    'Better product',
-                    null,
-                    [],
-                    []
-                ),
-            ],
-            4
-        );
-
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
-    }
-
-    public function testSearchByAlias()
-    {
-        $query = new Query();
-        $query->from('oro_product_website_WEBSITE_ID');
-
-        $goodProduct = $this->getContainer()->get('doctrine')->getRepository(Product::class)
-            ->findOneBy(['name' => 'Product 1']);
-        $betterProduct = $this->getContainer()->get('doctrine')->getRepository(Product::class)
-            ->findOneBy(['name' => 'Product 2']);
-
-        $expectedResult = new Result(
-            $query,
-            [
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $goodProduct->getId(),
-                    'Good product',
-                    null,
-                    [],
-                    []
-                ),
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $betterProduct->getId(),
-                    'Better product',
-                    null,
-                    [],
-                    []
-                ),
-            ],
-            2
-        );
-
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
-    }
-
-    public function testSearchByAliasWithCriteria()
-    {
-        $query = new Query();
-        $query->from('oro_product_website_WEBSITE_ID');
-        $expr = new Comparison("long_description", "=", "Long description");
-        $criteria = new Criteria();
-        $criteria->where($expr);
-        $query->setCriteria($criteria);
-
-        $goodProduct = $this->getContainer()->get('doctrine')->getRepository(Product::class)
-            ->findOneBy(['name' => 'Product 1']);
-
-        $expectedResult = new Result(
-            $query,
-            [
-                new Result\Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Product',
-                    $goodProduct->getId(),
-                    'Good product',
-                    null,
-                    [],
-                    []
-                ),
-            ],
-            1
-        );
-
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
     }
 }
