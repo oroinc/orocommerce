@@ -11,10 +11,10 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
 
 /**
  * @ORM\Table(
- *     name="orob2b_warehouse_inventory_lev",
+ *     name="oro_warehouse_inventory_lev",
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="uidx_orob2b_wh_wh_inventory_lev",
+ *              name="uidx_oro_wh_wh_inventory_lev",
  *              columns={"warehouse_id", "product_unit_precision_id"}
  *          )
  *      }

@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener;
@@ -23,6 +25,9 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrine;
 
+    /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
+    protected $config;
+
     protected function setUp()
     {
         $this->requestProductHandler = $this->getMockBuilder(RequestProductHandler::class)
@@ -32,15 +37,101 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
+
+        $this->config = $this->getMockBuilder(DatagridConfiguration::class)
+            ->disableOriginalConstructor()->getMock();
     }
 
-    public function testAddsSingleCategoryToQuery()
+    public function testPreBuildWithoutCategory()
+    {
+        /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(PreBuild::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'getParameters'])
+            ->getMock();
+
+        $event->expects($this->any())
+            ->method('getParameters')
+            ->willReturnSelf();
+
+        $event->expects($this->any())
+            ->method('get')
+            ->withAnyParameters()
+            ->willReturn(null);
+
+        $this->requestProductHandler->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(null);
+
+        $this->requestProductHandler->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturn(null);
+
+        $listener = new SearchCategoryFilteringEventListener(
+            $this->requestProductHandler,
+            $this->doctrine
+        );
+
+        $listener->onPreBuild($event);
+    }
+
+    public function testPreBuildWithCategory()
+    {
+        $categoryId = 1;
+
+        /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(PreBuild::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'getParameters', 'getConfig'])
+            ->getMock();
+
+        $event->expects($this->any())
+            ->method('getParameters')
+            ->willReturnSelf();
+
+        $event->expects($this->any())
+            ->method('get')
+            ->withAnyParameters()
+            ->willReturn($categoryId); // categoryId, includeSubcategories
+
+        $listener = new SearchCategoryFilteringEventListener(
+            $this->requestProductHandler,
+            $this->doctrine
+        );
+
+        $this->config->expects($this->at(0))
+            ->method('offsetSetByPath')
+            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH, $categoryId);
+
+        $this->config->expects($this->at(1))
+            ->method('offsetSetByPath')
+            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH, $categoryId);
+
+        $event->method('getConfig')
+            ->willReturn($this->config);
+
+        $listener->onPreBuild($event);
+    }
+
+    public function testOnBuildAfterWithSingleCategory()
     {
         $categoryId = 23;
 
-        $this->requestProductHandler
-            ->method('getCategoryId')
+        $event = $this->getMockBuilder(BuildAfter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->config
+            ->expects($this->at(0))
+            ->method('offsetGetByPath')
+            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH)
             ->willReturn($categoryId);
+
+        $this->config
+            ->expects($this->at(1))
+            ->method('offsetGetByPath')
+            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
+            ->willReturn(null);
 
         $this->requestProductHandler
             ->method('getIncludeSubcategoriesChoice')
@@ -52,9 +143,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         );
 
         /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(BuildAfter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDataSource */
         $datasource = $this->getMockBuilder(SearchDatasource::class)
@@ -89,21 +177,26 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('andWhere')
             ->with('cat_id', Query::OPERATOR_EQUALS, $categoryId, 'integer');
 
+        $listener->setConfig($this->config);
         $listener->onBuildAfter($event);
     }
 
-    public function testAddsMultipleCategoriesToQuery()
+    public function testOnBuildAfterWithMultipleCategories()
     {
-        $categoryId = 11;
-        $subcategoryIds = [1,2,6,10];
+        $categoryId     = 11;
+        $subcategoryIds = [1, 2, 6, 10];
 
-        $this->requestProductHandler
-            ->method('getCategoryId')
+        $this->config
+            ->expects($this->at(0))
+            ->method('offsetGetByPath')
+            ->with(SearchCategoryFilteringEventListener::CATEGORY_ID_CONFIG_PATH)
             ->willReturn($categoryId);
 
-        $this->requestProductHandler
-            ->method('getIncludeSubcategoriesChoice')
-            ->willReturn(true);
+        $this->config
+            ->expects($this->at(1))
+            ->method('offsetGetByPath')
+            ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
+            ->willReturn($subcategoryIds);
 
         $mockedRepo = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()->getMock();
@@ -158,13 +251,14 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $datasource->method('getQuery')
             ->willReturn($websiteSearchQuery);
 
-        $categories = $subcategoryIds;
+        $categories   = $subcategoryIds;
         $categories[] = $categoryId;
 
         $query->expects($this->once())
             ->method('andWhere')
             ->with('cat_id', Query::OPERATOR_IN, $categories, 'integer');
 
+        $listener->setConfig($this->config);
         $listener->onBuildAfter($event);
     }
 }

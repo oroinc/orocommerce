@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
- * @ORM\Table(name="orob2b_rfp_request_prod_item")
+ * @ORM\Table(name="oro_rfp_request_prod_item")
  * @ORM\Entity
  * @Config(
  *      defaultValues={

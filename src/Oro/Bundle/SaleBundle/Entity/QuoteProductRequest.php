@@ -10,9 +10,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
- * QuoteProductRequest
- *
- * @ORM\Table(name="orob2b_sale_quote_prod_request")
+ * @ORM\Table(name="oro_sale_quote_prod_request")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(
