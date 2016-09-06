@@ -43,6 +43,8 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 'apiKey' => 'some key',
                 'shippingAccountNumber' => 'some number',
                 'shippingAccountName' => 'some name',
+                'pickupType' => '01',
+                'unitOfWeight' => 'LPS',
                 'country' => new Country('US'),
                 'applicableShippingServices' => [new ShippingService()]
             ]
@@ -56,6 +58,8 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         static::assertEquals($result->get('api_key'), 'some key');
         static::assertEquals($result->get('shipping_account_number'), 'some number');
         static::assertEquals($result->get('shipping_account_name'), 'some name');
+        static::assertEquals($result->get('pickup_type'), '01');
+        static::assertEquals($result->get('unit_of_weight'), 'LPS');
         static::assertEquals($result->get('country'), new Country('US'));
         static::assertEquals(
             $result->get('applicable_shipping_services'),

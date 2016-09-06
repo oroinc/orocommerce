@@ -2,17 +2,29 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
+use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Exception\InvalidOptionsException;
+use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class UPSTransportSettingsType extends AbstractType
 {
@@ -29,6 +41,11 @@ class UPSTransportSettingsType extends AbstractType
     protected $shippingOriginProvider;
 
     /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
      * @var string
      */
     protected $dataClass;
@@ -36,13 +53,16 @@ class UPSTransportSettingsType extends AbstractType
     /**
      * @param TransportInterface $transport
      * @param ShippingOriginProvider $shippingOriginProvider
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         TransportInterface $transport,
-        ShippingOriginProvider $shippingOriginProvider
+        ShippingOriginProvider $shippingOriginProvider,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->transport  = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -55,40 +75,43 @@ class UPSTransportSettingsType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @throws ConstraintDefinitionException
+     * @throws InvalidOptionsException
+     * @throws MissingOptionsException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
             'baseUrl',
-            'text',
+            TextType::class,
             ['label' => 'oro.ups.transport.base_url.label', 'required' => true]
         );
         $builder->add(
             'apiUser',
-            'text',
+            TextType::class,
             ['label' => 'oro.ups.transport.api_user.label', 'required' => true]
         );
         $builder->add(
             'apiPassword',
-            'password',
+            PasswordType::class,
             [
-                'label'       => 'oro.ups.transport.api_password.label',
-                'required'    => true,
+                'label' => 'oro.ups.transport.api_password.label',
+                'required' => true,
                 'constraints' => [new NotBlank()]
             ]
         );
         $builder->add(
             'apiKey',
-            'text',
+            TextType::class,
             [
-                'label'       => 'oro.ups.transport.api_key.label',
-                'required'    => true,
+                'label' => 'oro.ups.transport.api_key.label',
+                'required' => true,
                 'constraints' => [new NotBlank()]
             ]
         );
         $builder->add(
             'shippingAccountName',
-            'text',
+            TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_name.label',
                 'required' => true,
@@ -97,11 +120,38 @@ class UPSTransportSettingsType extends AbstractType
         );
         $builder->add(
             'shippingAccountNumber',
-            'text',
+            TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_number.label',
                 'required' => true,
                 'constraints' => [new NotBlank()]
+            ]
+        );
+        $builder->add(
+            'pickupType',
+            ChoiceType::class,
+            [
+                'required' => true,
+                'choices' => [
+                    '01' => 'Regular Daily Pickup',
+                    '03' => 'Customer Counter',
+                    '06' => 'One Time Pickup',
+                    '07' => 'On Call Air',
+                    '19' => 'Letter Center'
+                ],
+                'constraints' => [new NotBlank()],
+            ]
+        );
+        $builder->add(
+            'unitOfWeight',
+            ChoiceType::class,
+            [
+                'required' => true,
+                'choices' => [
+                    'KGS' => 'KGS',
+                    'LPS' => 'LPS'
+                ],
+                'constraints' => [new NotBlank()],
             ]
         );
         $builder->add(
@@ -124,34 +174,55 @@ class UPSTransportSettingsType extends AbstractType
                 'class' => 'Oro\Bundle\UPSBundle\Entity\ShippingService',
             ]
         );
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var UPSTransport $transport */
-            $transport = $event->getData();
-            $form = $event->getForm();
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+    }
 
-            if (!$transport || null === $transport->getCountry()) {
-                $country = $this
-                    ->shippingOriginProvider
-                    ->getSystemShippingOrigin()
-                    ->getCountry();
-                
-                $form->remove('country');
-                $form->add(
-                    'country',
-                    CountryType::class,
-                    [
-                        'label' => 'oro.ups.transport.country.label',
-                        'required' => true,
-                        'constraints' => [new NotBlank()],
-                        'data' => $country
-                    ]
-                );
+    /**
+     * @param FormEvent $event
+     * @throws NotManageableEntityException
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        /** @var UPSTransport $transport */
+        $transport = $event->getData();
+
+        if ($transport && null === $transport->getCountry()) {
+            $countryCode = $this
+                ->shippingOriginProvider
+                ->getSystemShippingOrigin()
+                ->getCountry();
+            
+            $country = $this->getCountry($countryCode);
+            if (null !== $country) {
+                $transport->setCountry($country);
+
+                if ($country === 'US') {
+                    $transport->setUnitOfWeight('LPS');
+                } else {
+                    $transport->setUnitOfWeight('KGS');
+                }
+                $event->setData($transport);
             }
-        });
+        }
+    }
+
+    /**
+     * @param string $iso2Code
+     * @throws NotManageableEntityException
+     * @return Country|null
+     */
+    protected function getCountry($iso2Code)
+    {
+        $repo = $this->doctrineHelper
+            ->getEntityManagerForClass('OroAddressBundle:Country')
+            ->getRepository('OroAddressBundle:Country');
+
+        return $repo->findOneBy(['iso2Code' => $iso2Code]);
     }
 
     /**
      * {@inheritdoc}
+     * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {

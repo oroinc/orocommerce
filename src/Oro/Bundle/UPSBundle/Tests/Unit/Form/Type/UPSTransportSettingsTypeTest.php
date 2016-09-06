@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
@@ -40,6 +41,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $shippingOriginProvider;
 
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrineHelper;
+
     /**
      * @var UPSTransportSettingsType
      */
@@ -56,7 +60,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $this->transport->expects(static::any())
             ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
-        $this->formType = new UPSTransportSettingsType($this->transport, $this->shippingOriginProvider);
+
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new UPSTransportSettingsType(
+            $this->transport,
+            $this->shippingOriginProvider,
+            $this->doctrineHelper
+        );
         $this->formType->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
@@ -169,6 +182,25 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository->expects(static::once())
+            ->method('findOneBy')
+            ->willReturn(new Country('US'));
+
+        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects(static::once())
+            ->method('getRepository')
+            ->with('OroAddressBundle:Country')
+            ->willReturn($repository);
+
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityManagerForClass')
+            ->with('OroAddressBundle:Country')
+            ->willReturn($entityManager);
+
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         static::assertEquals($defaultData, $form->getData());
@@ -210,6 +242,8 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'apiKey'=> 'key',
                     'shippingAccountName' => 'name',
                     'shippingAccountNumber' => 'number',
+                    'pickupType' => '01',
+                    'unitOfWeight' => 'LPS',
                     'country' => 'US',
                     'applicableShippingServices' => [1]
                 ],
@@ -221,6 +255,8 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     ->setApiKey('key')
                     ->setShippingAccountName('name')
                     ->setShippingAccountNumber('number')
+                    ->setPickupType('01')
+                    ->setUnitOfWeight('LPS')
                     ->setCountry(new Country('US'))
                     ->addApplicableShippingService($expectedShippingService)
             ]
