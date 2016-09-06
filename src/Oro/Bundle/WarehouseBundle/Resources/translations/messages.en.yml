@@ -71,6 +71,7 @@ oro:
             order:
                 label: Warehouse
             choose_warehouse: Choose a Warehouse
+            add_warehouse: Add Warehouse
 
         system_configuration:
             groups:
