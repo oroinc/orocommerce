@@ -751,7 +751,7 @@ services:
             - '@orob2b_pricing.expression.expression_language_converter'
         calls:
             - [addNameMapping, ['product', '%orob2b_product.entity.product.class%']]
-            - [addNameMapping, ['pricelist', '%%orob2b_pricing.entity.price_list.class%']]
+            - [addNameMapping, ['pricelist', '%orob2b_pricing.entity.price_list.class%']]
 
     orob2b_pricing.expression.node_to_query_designer_converter:
         class: 'Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
