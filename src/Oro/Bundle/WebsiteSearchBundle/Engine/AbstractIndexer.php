@@ -8,10 +8,10 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -26,8 +26,8 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var Mapper */
-    protected $mapper;
+    /** @var WebsiteSearchMappingProvider */
+    protected $mappingProvider;
 
     /** @var EntityAliasResolver */
     protected $entityAliasResolver;
@@ -35,18 +35,18 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
-     * @param AbstractSearchMappingProvider $mapper
+     * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityAliasResolver $entityAliasResolver
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
-        AbstractSearchMappingProvider $mapper,
+        WebsiteSearchMappingProvider $mappingProvider,
         EntityAliasResolver $entityAliasResolver
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
-        $this->mapper = $mapper;
+        $this->mappingProvider = $mappingProvider;
         $this->entityAliasResolver = $entityAliasResolver;
     }
 
@@ -75,7 +75,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $mappingConfig = $this->mapper->getMappingConfig();
+        $mappingConfig = $this->mappingProvider->getMappingConfig();
 
         if (!$mappingConfig) {
             throw new \LogicException('Mapping config is empty.');
@@ -137,12 +137,7 @@ abstract class AbstractIndexer implements IndexerInterface
         /** @var WebsiteRepository $websiteRepository */
         $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
 
-        return array_map(
-            function ($websiteId) {
-                return $websiteId['id'];
-            },
-            $websiteRepository->getAllWebsiteIds()
-        );
+        return $websiteRepository->getWebsiteIdentifiers();
     }
 
     /**
@@ -216,6 +211,7 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $indexEntityEvent = new IndexEntityEvent($entityClass, $entityIds, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
+
         return $indexEntityEvent->getEntitiesData();
     }
 

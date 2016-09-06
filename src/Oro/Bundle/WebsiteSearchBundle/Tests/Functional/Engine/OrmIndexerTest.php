@@ -1,46 +1,55 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class OrmIndexerTest extends WebTestCase
 {
-    /** @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    use SearchTestTrait;
+
+    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
 
     /** @var EventDispatcherInterface */
-    protected $dispatcher;
+    private $dispatcher;
 
     /** @var OrmIndexer */
-    protected $indexer;
+    private $indexer;
 
     /** @var callable */
-    protected $listener;
+    private $listener;
 
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var array */
-    protected $mappingConfig = [
-        TestProduct::class => [
+    private $mappingConfig = [
+       TestProduct::class => [
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
                 [
@@ -57,9 +66,14 @@ class OrmIndexerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->loadFixtures([LoadItemData::class]);
 
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $this->mappingProviderMock = $this->getMockBuilder(AbstractSearchMappingProvider::class)->getMock();
+
+        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
         $this->entityAliasResolver = $this->getContainer()->get('oro_entity.entity_alias_resolver');
 
@@ -70,40 +84,37 @@ class OrmIndexerTest extends WebTestCase
             $this->entityAliasResolver
         );
 
-        $this->loadFixtures([LoadProductsToIndex::class]);
     }
 
-    /**
-     * @param array $productNames
-     * @return array
-     */
-    protected function getProductIdsByNames(array $productNames)
+    protected function tearDown()
     {
-        $qb = $this->doctrineHelper->getEntityRepository(TestProduct::class)->createQueryBuilder('product');
-        $products = $qb->select('product.id')
-            ->where($qb->expr()->in('product.name', ':names'))
-            ->setParameter('names', $productNames)
-            ->getQuery()
-            ->getScalarResult();
+        $this->truncateIndexTextTable();
 
-        return array_column($products, 'id');
+        //Remove listener to not to interract with other tests
+        if (null !== $this->listener) {
+            $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
+        }
+
+        unset($this->doctrineHelper);
+        unset($this->mappingProviderMock);
+        unset($this->dispatcher);
+        unset($this->indexer);
     }
 
     /**
-     * @param array $productIds
      * @return callable
      */
-    protected function setListener(array $productIds)
+    private function setListener()
     {
-        $listener = function (IndexEntityEvent $event) use ($productIds) {
-            array_map(function ($id) use ($event) {
+        $listener = function (IndexEntityEvent $event) {
+            foreach ($event->getEntityIds() as $entityId) {
                 $event->addField(
-                    $id,
+                    $entityId,
                     Query::TYPE_TEXT,
                     'name',
-                    "Some product name $id"
+                    sprintf('Reindexed product %s', $entityId)
                 );
-            }, $productIds);
+            }
         };
 
         $this->dispatcher->addListener(
@@ -115,78 +126,73 @@ class OrmIndexerTest extends WebTestCase
         return $listener;
     }
 
-    /**
-     * @param string $alias
-     * @return array
-     */
-    protected function getItemRecordIds($alias)
-    {
-        $itemRepo = $this->doctrineHelper->getEntityRepository(Item::class);
-        $qb = $itemRepo->createQueryBuilder('item');
-        $items = $qb->select('item.recordId')
-            ->where($qb->expr()->eq('item.alias', ':alias'))
-            ->setParameter('alias', $alias)
-            ->orderBy('item.id')
-            ->getQuery()
-            ->getScalarResult();
-
-        return array_column($items, 'recordId');
-    }
-
-    public function testReindex()
-    {
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
-        $productIds = $this->getProductIdsByNames(
-            [
-                LoadProductsToIndex::PRODUCT1,
-                LoadProductsToIndex::PRODUCT2,
-                LoadProductsToIndex::RESTRCTED_PRODUCT
-            ]
-        );
-        $this->listener = $this->setListener($productIds);
-        $this->indexer->reindex(TestProduct::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 777]);
-        $recordIds = $this->getItemRecordIds('oro_product_777');
-        $this->assertEquals($productIds, $recordIds);
-    }
-
-    protected function tearDown()
-    {
-        //Remove listener to not to interract with other tests
-        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
-
-        unset($this->doctrineHelper);
-        unset($this->mappingProviderMock);
-        unset($this->dispatcher);
-        unset($this->indexer);
-    }
-
-    public function testIndexWithoutArguments()
+    public function testReindexForSpecificWebsite()
     {
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
-        $website = $this->doctrineHelper->getEntityRepository(Website::class)->findOneBy([]);
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(TestProduct::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
+
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
+    }
+
+    public function testReindexWithRestriction()
+    {
+        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+
+        $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+
         $this->dispatcher->addListener(
             RestrictIndexEntityEvent::NAME,
-            function (RestrictIndexEntityEvent $event) {
+            function (RestrictIndexEntityEvent $event) use ($restrictedProduct) {
                 $qb = $event->getQueryBuilder();
                 list($rootAlias) = $qb->getRootAliases();
-                $qb->where($qb->expr()->neq($rootAlias . '.name', ':name'))
-                    ->setParameter('name', LoadProductsToIndex::RESTRCTED_PRODUCT);
+                $qb->where($qb->expr()->neq($rootAlias . '.id', ':id'))
+                    ->setParameter('id', $restrictedProduct->getId());
             },
             -255
         );
-        $productIds = $this->getProductIdsByNames(
-            [
-                LoadProductsToIndex::PRODUCT1,
-                LoadProductsToIndex::PRODUCT2
-            ]
-        );
-        $this->listener = $this->setListener($productIds);
+
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(TestProduct::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
+
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
+
+        $this->assertCount(1, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+    }
+
+    public function testReindexOfAllWebsites()
+    {
+        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+
+        $this->listener = $this->setListener();
         $this->indexer->reindex();
-        $recordIds = $this->getItemRecordIds('oro_product_' . $website->getId());
-        $this->assertCount(2, $recordIds);
+
+        $otherWebsite = $this->getReference(LoadOtherWebsite::REFERENCE_OTHER_WEBSITE);
+        $items = $this->getItemRepository()->findBy([
+            'alias' => 'oro_product_website_' . $otherWebsite->getId()
+        ]);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
+
+        $defaultWebsite =$this->getDoctrine()->getRepository('OroWebsiteBundle:Website')->getDefaultWebsite();
+        $items = $this->getItemRepository()->findBy([
+            'alias' => 'oro_product_website_' . $defaultWebsite->getId()
+        ]);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
     }
 
     /**
@@ -210,5 +216,89 @@ class OrmIndexerTest extends WebTestCase
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
         $this->indexer->reindex(\stdClass::class, []);
+        $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
+    }
+
+    public function testCount()
+    {
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(2, IndexDatetime::class);
+        $this->assertEntityCount(2, IndexDecimal::class);
+    }
+
+    public function testRemoveEntitiesWhenNonExistentEntityRemoved()
+    {
+        $productMock = $this->getMockBuilder(TestProduct::class)
+            ->getMock();
+
+        $productMock
+            ->method('getId')
+            ->willReturn(123456);
+
+        $this->indexer->delete($productMock, ['website_id' => 1]);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(2, IndexDatetime::class);
+        $this->assertEntityCount(2, IndexDecimal::class);
+    }
+
+    public function testRemoveEntitiesWhenEntityIdsArrayIsEmpty()
+    {
+        $this->indexer->delete([], ['website_id' => 1]);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(2, IndexInteger::class);
+        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(2, IndexDatetime::class);
+        $this->assertEntityCount(2, IndexDecimal::class);
+    }
+
+    public function testRemoveEntitiesWhenProductEntitiesForSpecificWebsiteRemoved()
+    {
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->willReturn('oro_product_WEBSITE_ID');
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+            ],
+            ['website_id' => 1]
+        );
+
+        $this->assertEntityCount(2, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
+    public function testRemoveEntitiesWhenProductEntitiesForAllWebsitesRemoved()
+    {
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+            ],
+            []
+        );
+
+        $this->assertEntityCount(0, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
     }
 }

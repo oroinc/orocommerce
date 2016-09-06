@@ -19,6 +19,55 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
+    public function delete($entities, array $context = [])
+    {
+        $entities = $this->convertToArray($entities);
+
+        if (empty($entities)) {
+            return true;
+        }
+
+        $firstEntityClass = $this->doctrineHelper->getEntityClass(current($entities));
+        $entityIds = [];
+        foreach ($entities as $entity) {
+            if ($firstEntityClass !== $this->doctrineHelper->getEntityClass($entity)) {
+                throw new \InvalidArgumentException('Entities must be of the same type');
+            }
+
+            $entityIds[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+        }
+
+        $entityAlias = null;
+        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+            $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
+            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+        }
+
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
+
+        /** @var WebsiteSearchIndexRepository $indexRepository */
+        $indexRepository = $entityManager->getRepository(Item::class);
+        $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
+
+        return true;
+    }
+
+    /**
+     * @param object|array $entities
+     * @return array
+     */
+    private function convertToArray($entities)
+    {
+        if (!is_array($entities)) {
+            $entities = [$entities];
+        }
+
+        return $entities;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getClassesForReindex($class = null, array $context = [])
     {
         // TODO: Implement getClassesForReindex() method.
@@ -59,14 +108,6 @@ class OrmIndexer extends AbstractIndexer
     protected function getEntityTitle(array $indexData)
     {
         return isset($indexData[SearchQuery::TYPE_TEXT]) ? reset($indexData[SearchQuery::TYPE_TEXT]) : '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($entity, array $context = [])
-    {
-        // TODO: will be applied in BB-4083
     }
 
     /**

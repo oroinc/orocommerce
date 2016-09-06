@@ -13,4 +13,10 @@ use Oro\Bundle\SearchBundle\Entity\AbstractIndexInteger;
 class IndexInteger extends AbstractIndexInteger
 {
     const TABLE_NAME = 'oro_website_search_integer';
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Item", inversedBy="integerFields")
+     * @ORM\JoinColumn(name="item_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $item;
 }
