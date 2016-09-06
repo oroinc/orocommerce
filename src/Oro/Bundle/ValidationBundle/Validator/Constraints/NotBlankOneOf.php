@@ -9,7 +9,7 @@ class NotBlankOneOf extends Constraint
     /**
      * @var string
      */
-    public $message = 'oh no :(';
+    public $message = 'One of fields: %fields%, is required';
 
     /**
      * @var array

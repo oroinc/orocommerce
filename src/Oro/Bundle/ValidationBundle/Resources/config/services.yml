@@ -3,5 +3,7 @@ services:
         class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator'
         arguments:
             - '@property_accessor'
+        calls:
+            - [ setTranslator, ['@translator'] ]
         tags:
             - { name: validator.constraint_validator, alias: oro_validation_not_blank_one_of }
