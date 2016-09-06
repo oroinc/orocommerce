@@ -23,5 +23,6 @@ config:
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
 
         'orofrontend/js/app/elements-helper': 'bundles/orofrontend/js/app/elements-helper.js'
+        'orofrontend/default/js/components/rule-editor-component': 'orofrontend/default/js/components/rule-editor-component/rule-editor-component.js'
     appmodules:
         - orofrontend/js/app/modules/inline-editor-types-map-module

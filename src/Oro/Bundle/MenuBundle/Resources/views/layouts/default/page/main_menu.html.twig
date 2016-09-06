@@ -45,3 +45,28 @@
         </button>
     </li>
 {% endblock %}
+
+{% block rule_editor_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orofrontend/default/js/components/rule-editor-component',
+        'data-page-component-options': {
+            data: {
+                product: [ 'id', 'name', 'status', 'category' ],
+                category: [ 'id', 'name', 'parent' ],
+                account: [ 'id', 'name', 'role'],
+                products: {
+                    type: 'array',
+                    entity: 'product'
+                }
+            },
+            operations: ['+', '-', '=', '!='],
+            grouping: ['or', 'and'],
+            array_operation: ['all', 'any']
+        },
+        '~class': " rule-editor",
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <input type="text" name="name">
+    </div>
+{% endblock %}
