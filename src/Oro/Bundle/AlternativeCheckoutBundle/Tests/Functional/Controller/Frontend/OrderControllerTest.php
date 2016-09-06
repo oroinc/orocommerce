@@ -20,6 +20,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
  */
 class OrderControllerTest extends FrontendWebTestCase
 {
+    const GRID_NAME      = 'frontend-checkouts-grid';
     const TOTAL_VALUE    = 400;
     const SUBTOTAL_VALUE = 20;
 
@@ -52,7 +53,7 @@ class OrderControllerTest extends FrontendWebTestCase
     {
         $this->client->request('GET', '/about'); // any page to authorize a user, CMS is used as the fastest one
 
-        $checkouts = $this->getDatagridData('frontend-checkouts-grid');
+        $checkouts = $this->getDatagridData(self::GRID_NAME);
         $this->assertCount(5, $checkouts);
     }
 
@@ -66,7 +67,7 @@ class OrderControllerTest extends FrontendWebTestCase
     public function testFilters($columnName, $value, $filterType, $expectedCheckouts)
     {
         $checkouts = $this->getDatagridData(
-            'frontend-checkouts-grid',
+            self::GRID_NAME,
             [
                 sprintf('[%s][value]', $columnName) => $value,
                 sprintf('[%s][type]', $columnName)  => $filterType
@@ -142,7 +143,7 @@ class OrderControllerTest extends FrontendWebTestCase
     {
         //check checkouts with subtotal sorter
         $checkouts = $this->getDatagridData(
-            'frontend-checkouts-grid',
+            self::GRID_NAME,
             [],
             [
                 '[subtotal]' => OrmSorterExtension::DIRECTION_ASC,
