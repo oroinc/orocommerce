@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -15,13 +16,18 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     /** @var string */
     protected $configPath;
 
+    /**
+     * @var int|object|null
+     */
+    protected $configScope;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+                LoadCategoryProductData::class,
             ]
         );
 
@@ -30,16 +36,16 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
 
     protected function tearDown()
     {
-        $this->configManager->reset($this->configPath);
-        $this->configManager->flush();
+        $this->configManager->reset($this->configPath, $this->configScope);
+        $this->configManager->flush($this->configScope);
     }
 
     public function setUpBeforeRestriction()
     {
         list($availableInventoryStatuses) = func_get_args();
 
-        $this->configManager->set($this->configPath, $availableInventoryStatuses);
-        $this->configManager->flush();
+        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScope);
+        $this->configManager->flush($this->configScope);
     }
 
     /**
