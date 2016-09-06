@@ -27,11 +27,6 @@ class PriceListTreeHandler
     protected $websiteManager;
 
     /**
-     * @var string
-     */
-    protected $priceListClass;
-
-    /**
      * @var PriceListRepository
      */
     protected $priceListRepository;
@@ -93,11 +88,11 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Account|null $account
-     * @param Website|null $website
+     * @param Account $account
+     * @param Website $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccount(Account $account = null, Website $website = null)
+    protected function getPriceListByAccount(Account $account, Website $website)
     {
         if ($account->getId()) {
             $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
@@ -114,7 +109,7 @@ class PriceListTreeHandler
      * @param Website|null $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccountGroup(Account $account = null, Website $website = null)
+    protected function getPriceListByAccountGroup(Account $account, Website $website)
     {
         $priceList = null;
         $accountGroup = $account->getGroup();
@@ -163,19 +158,11 @@ class PriceListTreeHandler
     protected function getPriceListRepository()
     {
         if (!$this->priceListRepository) {
-            $this->priceListRepository = $this->registry->getManagerForClass($this->priceListClass)
-                ->getRepository($this->priceListClass);
+            $this->priceListRepository = $this->registry
+                ->getManagerForClass(CombinedPriceList::class)
+                ->getRepository(CombinedPriceList::class);
         }
 
         return $this->priceListRepository;
-    }
-
-    /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
-        $this->priceListRepository = null;
     }
 }

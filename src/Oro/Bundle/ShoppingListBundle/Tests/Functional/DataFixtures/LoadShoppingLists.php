@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
@@ -76,7 +77,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
-        if (!in_array($name, $this->shoppingListsWithDefaultWebsite, true)) {
+        if (in_array($name, $this->shoppingListsWithDefaultWebsite, true)) {
+            $shoppingList->setWebsite($this->getDefaultWebsite($manager));
+        } else {
             $shoppingList->setWebsite($this->getReference(LoadWebsiteData::WEBSITE1));
         }
         $manager->persist($shoppingList);
@@ -115,5 +118,14 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
             self::SHOPPING_LIST_4,
             self::SHOPPING_LIST_5
         ];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Website
+     */
+    protected function getDefaultWebsite(ObjectManager $manager)
+    {
+        return $manager->getRepository(Website::class)->getDefaultWebsite();
     }
 }
