@@ -3,12 +3,12 @@
 namespace Oro\Bundle\MenuBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 
 /**
  * @dbIsolation
  */
-class FrontendControllerTest extends WebTestCase
+class FrontendControllerTest extends FrontendWebTestCase
 {
     protected function setUp()
     {
@@ -16,10 +16,13 @@ class FrontendControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        parent::setUp();
     }
 
     public function testIndex()
     {
+        $this->setCurrentWebsite('default');
+
         /** @var \Knp\Menu\ItemInterface $menu */
         $menu = $this->getContainer()->get('orob2b_menu.menu_provider')->get('main-menu');
         if (!$menu) {

@@ -1,4 +1,4 @@
-{% block _datagrid_toolbar_sorting_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_sorting_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " sorting pull-left form-horizontal",
         'data-grid-sorting': ''
@@ -8,7 +8,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_mass_actions_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_mass_actions_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " mass-actions-panel btn-group icons-holder"
     }) %}
@@ -17,7 +17,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_extra_actions_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_extra_actions_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " extra-actions-panel",
         'data-grid-extra-actions-panel': ''
@@ -27,7 +27,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_pagination_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_pagination_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " oro-pagination",
         'data-grid-pagination': ''
@@ -37,7 +37,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_page_size_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_page_size_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " page-size pull-right form-horizontal",
         'data-grid-pagesize': ''
@@ -47,7 +47,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_actions_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_actions_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " actions-panel pull-right form-horizontal",
         'data-grid-actions-panel': ''
@@ -57,7 +57,7 @@
     </div>
 {% endblock %}
 
-{% block _datagrid_toolbar_button_container_widget %}
+{% block __datagrid_toolbar__datagrid_toolbar_button_container_widget %}
     {% if block.children|length %}
         {% set attr = attr|merge({class: attr.class|default('') ~ "grid__tool grid__tool--specific-action"}) %}
         <div{{ block('block_attributes') }}>

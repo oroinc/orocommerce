@@ -13,9 +13,11 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 /**
  * @dbIsolation
@@ -52,6 +54,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     protected $manager;
 
+    /**
+     * @var Client
+     */
+    protected $client;
 
     protected function setUp()
     {
@@ -62,20 +68,18 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadCombinedProductPrices::class
             ]
         );
 
-        $priceListClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite';
-        $cplClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceList';
-        $websiteClass = 'Oro\Bundle\WebsiteBundle\Entity\Website';
         $registry = $this->getContainer()->get('doctrine');
 
-        $this->manager = $registry->getManagerForClass($priceListClass);
-        $this->priceListToWebsiteRepository = $this->manager->getRepository($priceListClass);
+        $this->manager = $registry->getManagerForClass(CombinedPriceListToWebsite::class);
+        $this->priceListToWebsiteRepository = $this->manager->getRepository(CombinedPriceListToWebsite::class);
 
-        $this->websiteRepository = $registry->getManagerForClass($websiteClass)->getRepository($websiteClass);
-        $this->combinedPriceListRepository = $registry->getManagerForClass($websiteClass)->getRepository($cplClass);
+        $this->websiteRepository = $registry->getManagerForClass(Website::class)->getRepository(Website::class);
+        $this->combinedPriceListRepository = $registry->getManagerForClass(CombinedPriceList::class)
+            ->getRepository(CombinedPriceList::class);
     }
 
     /**
@@ -176,10 +180,14 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testGridFilter(array $filter, array $expected)
     {
         $account = $this->getReference('account.level_1.2');
-        $response = $this->client->requestGrid([
-            'gridName' => 'frontend-products-grid',
-            PriceListRequestHandler::ACCOUNT_ID_KEY => $account->getId(),
-        ], $filter);
+        $response = $this->client->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-products-grid',
+                PriceListRequestHandler::ACCOUNT_ID_KEY => $account->getId(),
+            ],
+            $filter,
+            true
+        );
         $result = $this->getJsonResponseContent($response, 200);
 
         $this->assertArrayHasKey('data', $result);
