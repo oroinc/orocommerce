@@ -70,4 +70,18 @@ class NameNode implements NodeInterface
     {
         return $this->containerId;
     }
+
+    /**
+     * @return string
+     */
+    public function getNodeAlias()
+    {
+        $alias = $this->getContainer();
+
+        if ($this->getContainerId()) {
+            $alias .= '|' . $this->getContainerId();
+        }
+
+        return $alias;
+    }
 }

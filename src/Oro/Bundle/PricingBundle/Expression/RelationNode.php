@@ -79,6 +79,20 @@ class RelationNode implements NodeInterface
     }
 
     /**
+     * @return string
+     */
+    public function getNodeAlias()
+    {
+        $alias = $this->getRelationAlias();
+
+        if ($this->getContainerId()) {
+            $alias .= '|' . $this->getContainerId();
+        }
+
+        return $alias;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isBoolean()

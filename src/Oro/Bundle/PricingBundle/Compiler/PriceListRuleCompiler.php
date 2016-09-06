@@ -66,7 +66,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     public function compile(PriceRule $rule, Product $product = null)
     {
         $cacheKey = 'pr_' . $rule->getId();
-        $qb = $this->cache->fetch($cacheKey);
+        $qb = null;//$this->cache->fetch($cacheKey);
         if (!$qb) {
             $this->reset();
 
@@ -272,9 +272,9 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         foreach ($node->getNodes() as $subNode) {
             if ($subNode instanceof RelationNode) {
-                $classAlias = $subNode->getRelationAlias();
+                $classAlias = $subNode->getNodeAlias();
                 $realClass = $this->fieldsProvider->getRealClassName($classAlias);
-                if ($realClass === PriceAttributeProductPrice::class) {
+                if ($realClass === PriceAttributeProductPrice::class || $realClass === ProductPrice::class) {
                     $this->usedPriceRelations[$classAlias] = $this->requiredPriceConditions;
                 }
             }
@@ -282,6 +282,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
+     * @todo Support price list prices in additional conditions adding
      * @param PriceRule $rule
      * @return string
      */
@@ -293,7 +294,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $parsedCondition = $this->expressionParser->parse($ruleCondition);
             foreach ($parsedCondition->getNodes() as $node) {
                 if ($node instanceof RelationNode) {
-                    $relationAlias = $node->getRelationAlias();
+                    $relationAlias = $node->getNodeAlias();
                     if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
                         $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
                     }
@@ -304,6 +305,10 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $generatedConditions = [];
         foreach ($this->usedPriceRelations as $alias => $relationFields) {
             list($root, $field) = explode('::', $alias);
+            $identifierPos = strpos($field, '|');
+            if ($identifierPos !== false) {
+                $field = substr($field, 0, $identifierPos + 1);
+            }
             $root = $reverseNameMapping[$root];
 
             foreach ($relationFields as $relationField => $requiredField) {

@@ -113,8 +113,9 @@ class QueryExpressionBuilder
     protected function convertNameNode(NameNode $node, array $aliasMapping)
     {
         $container = $node->getContainer();
-        if (array_key_exists($container, $aliasMapping)) {
-            $container = $aliasMapping[$container];
+        $aliasKey = $node->getNodeAlias();
+        if (array_key_exists($aliasKey, $aliasMapping)) {
+            $container = $aliasMapping[$aliasKey];
         }
 
         return $node->getField() ? $container . '.' . $node->getField() : $container;
@@ -128,7 +129,7 @@ class QueryExpressionBuilder
     protected function convertRelationNode(RelationNode $node, array $aliasMapping)
     {
         $container = $node->getContainer() . '.' . $node->getField();
-        $aliasKey = $node->getRelationAlias();
+        $aliasKey = $node->getNodeAlias();
         if (array_key_exists($aliasKey, $aliasMapping)) {
             $container = $aliasMapping[$aliasKey];
         }

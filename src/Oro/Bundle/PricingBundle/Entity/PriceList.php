@@ -57,6 +57,17 @@ class PriceList extends BasePriceList
     protected $actual = true;
 
     /**
+     * @var Collection|PriceListToProduct[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceListToProduct",
+     *      mappedBy="priceList",
+     *      fetch="EXTRA_LAZY"
+     * )
+     **/
+    protected $assignedProducts;
+
+    /**
      * @var Collection|ProductPrice[]
      *
      * @ORM\OneToMany(
