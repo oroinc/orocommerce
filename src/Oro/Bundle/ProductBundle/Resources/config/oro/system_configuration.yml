@@ -1,0 +1,85 @@
+system_configuration:
+    groups:
+        product:
+            title: oro.product.system_configuration.groups.product.title
+        product_inventory:
+            title: oro.product.system_configuration.groups.product_inventory.title
+        allowed_statuses:
+            title: oro.product.system_configuration.groups.allowed_statuses.title
+            icon: 'icon-list'
+        product_unit:
+            title: oro.product.system_configuration.groups.product_unit.title
+            icon: 'icon-briefcase'
+        product_unit_rounding:
+            title: oro.product.system_configuration.groups.product_unit_rounding.title
+        default_product_unit:
+            title: oro.product.system_configuration.groups.default_product_unit.title
+            icon: 'icon-briefcase'
+        frontend_inventory_statuses_visibility:
+            title: oro.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
+        backend_inventory_statuses_visibility:
+            title: oro.product.system_configuration.groups.backend_inventory_statuses_visibility.title
+    fields:
+        orob2b_product.unit_rounding_type:
+            data_type: string
+            type: choice
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.unit_rounding_type.label
+                tooltip: oro.product.form.tooltip.unit_rounding_type
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    0: oro.product.rounding.type.ceil.label
+                    1: oro.product.rounding.type.floor.label
+                    5: oro.product.rounding.type.half_down.label
+                    6: oro.product.rounding.type.half_up.label
+
+        orob2b_product.general_frontend_product_visibility:
+            data_type: array
+            type: orob2b_product_inventory_status_select
+            options:
+                label: oro.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
+
+        orob2b_product.default_unit:
+            data_type: string
+            type: orob2b_product_units
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.default_unit.label
+
+        orob2b_product.default_unit_precision:
+            data_type: integer
+            type: integer
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.default_unit_precision.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    product:
+                        priority: 700
+                        children:
+                            product_unit:
+                                priority: 100
+                                children:
+                                    product_unit_rounding:
+                                        children:
+                                            - orob2b_product.unit_rounding_type
+                                    default_product_unit:
+                                        children:
+                                            - orob2b_product.default_unit
+                                            - orob2b_product.default_unit_precision
+                    product_inventory:
+                        priority: 650
+                        children:
+                            allowed_statuses:
+                                priority: 100
+                                children:
+                                    frontend_inventory_statuses_visibility:
+                                        children:
+                                            - orob2b_product.general_frontend_product_visibility

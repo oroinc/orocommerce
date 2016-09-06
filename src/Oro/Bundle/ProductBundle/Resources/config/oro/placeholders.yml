@@ -1,0 +1,9 @@
+placeholders:
+    placeholders:
+        orob2b_product_quick_add_buttons:
+            items:
+                quick_add_actions_buttons: ~
+
+    items:
+        quick_add_actions_buttons:
+            template: OroActionBundle:Widget:buttons.html.twig
