@@ -126,9 +126,8 @@ class ProductControllerTest extends WebTestCase
      *
      * @param $category
      * @param $expectedParts
-     * @param $filters
      */
-    public function testNavigationBar($category, array $expectedParts, array $filters)
+    public function testNavigationBar($category, array $expectedParts)
     {
         $category = $this->getReference($category);
 
@@ -144,13 +143,6 @@ class ProductControllerTest extends WebTestCase
             'v' => '__all__',
             'a' => 'grid'
         ];
-
-        foreach ($filters as $name => $data) {
-            $gridParams['f'][$name] = [
-                'value' => $data['value'],
-                'type' => $data['type']
-            ];
-        }
 
         $gridUrlPart = urlencode(http_build_query($gridParams));
 
@@ -185,32 +177,20 @@ class ProductControllerTest extends WebTestCase
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1
-                ],
-                'filters' => []
+                ]
             ],
             [
                 'categoryId' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1,
                     LoadCategoryData::THIRD_LEVEL1
-                ],
-                'filters' => []
+                ]
             ],
             [
                 'categoryId' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1,
                     // filters are not expected to show as they render using javascript
-                ],
-                'filters' => [
-                    'sku' => [
-                        'type' => 3,
-                        'value' => '2332'
-                    ],
-                    'name' => [
-                        'type' => 1,
-                        'value' => 'test'
-                    ]
                 ]
             ]
         ];
