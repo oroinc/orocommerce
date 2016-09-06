@@ -89,7 +89,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Then the order total is recalculated to <:arg1>
+     * @Then the order total is recalculated to :arg1
      */
     public function theOrderTotalIsRecalculatedTo($arg1)
     {
@@ -198,5 +198,16 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
         $this->waitForAjax();
+    }
+
+    /**
+     * @When Buyer created order with next shipping address:
+     */
+    public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('OroForm');
+        $form->fillField('SELECT BILLING ADDRESS','Enter other address');
+        $form->fill($table);
     }
 }
