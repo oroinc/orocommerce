@@ -10,9 +10,7 @@ use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 /**
- * SelectedOffers
- *
- * @ORM\Table(name="orob2b_quote_product_demand")
+ * @ORM\Table(name="oro_quote_product_demand")
  * @ORM\Entity
  */
 class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface, PriceTypeAwareInterface

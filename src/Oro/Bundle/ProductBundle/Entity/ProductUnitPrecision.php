@@ -10,10 +10,10 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(
- *      name="orob2b_product_unit_precision",
+ *      name="oro_product_unit_precision",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="product_unit_precision__product_id__unit_code__uidx",
+ *              name="uidx_oro_product_unit_precision",
  *              columns={"product_id","unit_code"}
  *          )
  *      }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -15,7 +16,7 @@ use Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD)
  */
 class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,6 +35,11 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $sectionProvider;
 
+    /**
+     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $featureChecker;
+
     protected function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
@@ -45,12 +51,16 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->extension = new OrderLineItemDataStorageExtension(
             $this->requestStack,
             $this->sessionStorage,
             $this->formDataStorage
         );
-
+        $this->extension->setFeatureChecker($this->featureChecker);
         $this->extension->setSectionProvider($this->sectionProvider);
     }
 
@@ -60,8 +70,32 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('orob2b_order_line_item', $this->extension->getExtendedType());
     }
 
-    public function testBuildView()
+    public function testBuildViewNoFeatures()
     {
+        $this->featureChecker->expects($this->never())
+            ->method($this->anything());
+
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->once())->method('get')->willReturn(true);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
+            ->with($this->extension->getExtendedType());
+
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->extension->buildView($view, $form, []);
+    }
+
+    public function testBuildViewWithFeatureEnabled()
+    {
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(true);
+
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
@@ -297,5 +331,22 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         );
 
         $extension->setSectionProvider(new \stdClass());
+    }
+
+    public function testBuildFormDisabled()
+    {
+        $this->extension->addFeature('test');
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->never())->method('get');
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(false);
+
+        $this->sessionStorage->expects($this->never())->method($this->anything());
+
+        $this->extension->buildForm($this->getBuilderMock(), []);
     }
 }

@@ -5,17 +5,24 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_6;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundle implements Migration
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
+
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addAccountUserSettingsTable($schema);
+        $this->addAccountUserSettingsTable($schema, $queries);
 
         $table = $schema->getTable('orob2b_account_user_role');
         $table->addColumn('self_managed', 'boolean', ['notnull' => true, 'default' => false]);
@@ -30,7 +37,7 @@ class OroAccountBundle implements Migration
      *
      * @throws SchemaException
      */
-    protected function addAccountUserSettingsTable(Schema $schema)
+    protected function addAccountUserSettingsTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('orob2b_account_user_settings');
 
@@ -49,8 +56,11 @@ class OroAccountBundle implements Migration
             'fk_account_user_id'
         );
 
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_account_user_settings',
+            'oro_website',
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE'],
@@ -87,5 +97,13 @@ class OroAccountBundle implements Migration
         ) {
             $table->dropColumn('serialized_data');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

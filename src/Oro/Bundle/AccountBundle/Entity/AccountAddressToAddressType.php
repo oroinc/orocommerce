@@ -5,9 +5,9 @@ namespace Oro\Bundle\AccountBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table("orob2b_account_adr_adr_type",
+ * @ORM\Table("oro_account_adr_adr_type",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_account_adr_id_type_name_idx", columns={
+ *          @ORM\UniqueConstraint(name="oro_account_adr_id_type_name_idx", columns={
  *              "account_address_id",
  *              "type_name"
  *          })

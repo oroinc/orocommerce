@@ -13,4 +13,12 @@ class MoveCheckoutAddressDataQuery extends BaseQuery
     {
         return 'orob2b_alternative_checkout';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getBaseTableName()
+    {
+        return 'oro_checkout';
+    }
 }

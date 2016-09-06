@@ -82,6 +82,9 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
         }
 
         $website = $this->websiteManager->getCurrentWebsite();
+        if (!$website) {
+            throw new \RuntimeException('Website is empty');
+        }
 
         /** @var Organization $organization */
         $organization = $website->getOrganization();

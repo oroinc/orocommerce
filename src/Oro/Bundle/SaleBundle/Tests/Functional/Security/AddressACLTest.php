@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Security;
 
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -41,7 +42,7 @@ class AddressACLTest extends AbstractAddressACLTest
             ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+            LoadQuoteData::class
         ]);
     }
 
