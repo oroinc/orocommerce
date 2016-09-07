@@ -83,7 +83,7 @@ system_configuration:
             type: orob2b_tax_base_exclusion_collection
             options:
                 label: oro.tax.system_configuration.fields.use_as_base.exclusions.label
-                data_transformer: orob2b_tax.form.data_transformer.tax_base_exclusion_transformer
+                data_transformer: oro_tax.form.data_transformer.tax_base_exclusion_transformer
 
         orob2b_tax.destination:
             data_type: string

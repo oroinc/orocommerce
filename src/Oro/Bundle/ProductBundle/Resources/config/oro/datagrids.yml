@@ -1,6 +1,6 @@
 datagrids:
     products-select-grid-base:
-        extended_entity_name: %orob2b_product.entity.product.class%
+        extended_entity_name: %oro_product.entity.product.class%
         options:
             entityHint:        product
         source:
@@ -15,7 +15,7 @@ datagrids:
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
                 from:
-                    - { table: %orob2b_product.entity.product.class%, alias: product }
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
@@ -32,7 +32,7 @@ datagrids:
             status:
                 label:         oro.product.status.label
                 frontend_type: select
-                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -77,7 +77,7 @@ datagrids:
                     type: choice
                     options:
                         field_options:
-                            choices: "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                            choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -114,7 +114,7 @@ datagrids:
                 rowAction:     true
 
     frontend-products-grid:
-        extended_entity_name: %orob2b_product.entity.product.class%
+        extended_entity_name: %oro_product.entity.product.class%
         options:
             entityHint:        product
             entity_pagination: true
@@ -131,7 +131,7 @@ datagrids:
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                 from:
-                    - { table: %orob2b_product.entity.product.class%, alias: product }
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
@@ -224,7 +224,7 @@ datagrids:
                     type: choice
                     options:
                         field_options:
-                            choices: "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                            choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 inventoryStatus:
                     type:      enum
                     data_name: inventoryStatusId
@@ -249,11 +249,11 @@ datagrids:
                                ELSE false
                           END) as isVariant
                 from:
-                    - { table: %orob2b_product.entity.product.class%, alias: product }
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         -
-                            join: %orob2b_product.entity.product_variant_link.class%
+                            join: %oro_product.entity.product_variant_link.class%
                             alias: currentVariantLink
                             conditionType: WITH
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
@@ -274,7 +274,7 @@ datagrids:
             status:
                 label:         oro.product.status.label
                 frontend_type: select
-                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
             inventoryStatus:
                 label:         oro.product.inventory_status.label
                 type:          twig
@@ -294,7 +294,7 @@ datagrids:
                 select:
                     - productVariantLink.visible as visible
                 from:
-                    - { table: %orob2b_product.entity.product_variant_link.class%, alias: productVariantLink }
+                    - { table: %oro_product.entity.product_variant_link.class%, alias: productVariantLink }
                 join:
                     inner:
                         - { join: productVariantLink.product, alias: product }
@@ -314,7 +314,7 @@ datagrids:
             status:
                 label:         oro.product.status.label
                 frontend_type: select
-                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
             inventoryStatus:
                 label:         oro.product.inventory_status.label
                 type:          twig

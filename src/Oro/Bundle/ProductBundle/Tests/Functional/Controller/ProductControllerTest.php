@@ -533,7 +533,7 @@ class ProductControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId'      => $id,
-                    'entityClass'   => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                    'entityClass'   => $this->getContainer()->getParameter('oro_product.entity.product.class'),
                 ]
             ),
             [],

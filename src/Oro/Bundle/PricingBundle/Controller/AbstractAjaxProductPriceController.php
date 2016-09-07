@@ -23,12 +23,12 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByAccount(Request $request)
     {
-        $priceListId = $this->get('orob2b_pricing.model.price_list_request_handler')
+        $priceListId = $this->get('oro_pricing.model.price_list_request_handler')
             ->getPriceListByAccount()
             ->getId();
 
         return new JsonResponse(
-            $this->get('orob2b_pricing.provider.combined_product_price')
+            $this->get('oro_pricing.provider.combined_product_price')
                 ->getPriceByPriceListIdAndProductIds(
                     $priceListId,
                     $request->get('product_ids', []),
@@ -61,7 +61,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     protected function getProductUnitFormatter()
     {
-        return $this->container->get('orob2b_product.formatter.product_unit_label');
+        return $this->container->get('oro_product.formatter.product_unit_label');
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     protected function getProductUnitsByCurrency(BasePriceList $priceList, Request $request, $productPriceClass)
     {
-        $productClass = $this->getParameter('orob2b_product.entity.product.class');
+        $productClass = $this->getParameter('oro_product.entity.product.class');
 
         /** @var Product $product */
         $product = $this->getEntityReference($productClass, $request->get('id'));

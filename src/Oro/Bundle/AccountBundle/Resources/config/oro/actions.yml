@@ -339,7 +339,7 @@ action_groups:
         actions:
             - '@assign_value': [$.data.enabled, $.value]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
@@ -359,7 +359,7 @@ action_groups:
         actions:
             - '@assign_value': [$.data.enabled, $.value]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
@@ -372,11 +372,11 @@ action_groups:
             '@equal': [$.data.confirmed, false]
         actions:
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: confirmRegistration
                 method_parameters: [$.data]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
@@ -389,6 +389,6 @@ action_groups:
             '@equal': [$.data.confirmed, false]
         actions:
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: sendConfirmationEmail
                 method_parameters: [$.data]

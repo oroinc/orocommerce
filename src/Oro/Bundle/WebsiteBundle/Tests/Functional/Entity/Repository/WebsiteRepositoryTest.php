@@ -99,7 +99,7 @@ class WebsiteRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_website.entity.website.class')
+            $this->getContainer()->getParameter('oro_website.entity.website.class')
         );
     }
 }

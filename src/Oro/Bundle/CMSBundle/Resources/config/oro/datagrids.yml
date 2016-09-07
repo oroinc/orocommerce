@@ -10,7 +10,7 @@ datagrids:
                 select:
                     - loginPage.id
                 from:
-                    - { table: %orob2b_cms.entity.loginpage.class%, alias: loginPage }
+                    - { table: %oro_cms.entity.loginpage.class%, alias: loginPage }
         columns:
             id: ~
         properties:

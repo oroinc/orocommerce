@@ -8,7 +8,7 @@ placeholders:
     items:
         payment_method:
             template: OroPaymentBundle:PaymentTransaction:method.html.twig
-            data: '@orob2b_payment.provider.payment_transaction->getPaymentMethods($entity$)'
+            data: '@oro_payment.provider.payment_transaction->getPaymentMethods($entity$)'
         payment_info:
             template: OroPaymentBundle:PaymentTransaction:status.html.twig
-            data: '@orob2b_payment.provider.payment_status->getPaymentStatus($entity$)'
+            data: '@oro_payment.provider.payment_status->getPaymentStatus($entity$)'

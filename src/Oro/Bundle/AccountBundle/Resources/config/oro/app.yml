@@ -1,7 +1,7 @@
 security:
     providers:
         commerce_account_user:
-            id: orob2b_account.security.provider
+            id: oro_account.security.provider
 
     encoders:
         Oro\Bundle\AccountBundle\Entity\AccountUser: sha512
