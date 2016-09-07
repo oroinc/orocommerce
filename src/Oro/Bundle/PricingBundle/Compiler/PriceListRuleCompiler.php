@@ -66,7 +66,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     public function compile(PriceRule $rule, Product $product = null)
     {
         $cacheKey = 'pr_' . $rule->getId();
-        $qb = null;//$this->cache->fetch($cacheKey);
+        $qb = $this->cache->fetch($cacheKey);
         if (!$qb) {
             $this->reset();
 
