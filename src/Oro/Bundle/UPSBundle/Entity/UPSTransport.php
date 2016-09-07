@@ -5,12 +5,10 @@ namespace Oro\Bundle\UPSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @ORM\Entity
@@ -107,7 +105,7 @@ class UPSTransport extends Transport
      * @var ParameterBag
      */
     protected $settings;
-    
+
     public function __construct()
     {
         $this->applicableShippingServices = new ArrayCollection();

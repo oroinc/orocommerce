@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 
 /**
@@ -20,7 +19,7 @@ class ShippingService
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @var string
      *
@@ -87,7 +86,6 @@ class ShippingService
         return $this;
     }
 
-
     /**
      * @return Country
      */
@@ -106,8 +104,11 @@ class ShippingService
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return (string) $this->getDescription();
+        return (string)$this->getDescription();
     }
 }

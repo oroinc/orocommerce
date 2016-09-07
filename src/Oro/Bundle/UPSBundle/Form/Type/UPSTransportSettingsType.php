@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
@@ -11,7 +9,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -60,7 +57,7 @@ class UPSTransportSettingsType extends AbstractType
         ShippingOriginProvider $shippingOriginProvider,
         DoctrineHelper $doctrineHelper
     ) {
-        $this->transport  = $transport;
+        $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
@@ -191,7 +188,7 @@ class UPSTransportSettingsType extends AbstractType
                 ->shippingOriginProvider
                 ->getSystemShippingOrigin()
                 ->getCountry();
-            
+
             $country = $this->getCountry($countryCode);
             if (null !== $country) {
                 $transport->setCountry($country);

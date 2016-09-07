@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -84,7 +83,7 @@ class OroUPSBundleInstaller implements Installation
             ['onUpdate' => null, 'onDelete' => null]
         );
     }
-    
+
     /**
      * @param Schema $schema
      */

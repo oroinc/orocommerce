@@ -5,10 +5,8 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
