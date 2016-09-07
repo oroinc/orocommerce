@@ -7,6 +7,8 @@ define(function(require) {
     var $ = require('jquery');
 
     RuleEditorComponent = BaseComponent.extend({
+        options: null,
+
         /**
          *
          * @param options
@@ -35,7 +37,7 @@ define(function(require) {
             var groupingAreValid = (function(arr, ref) {
                 return _.every(arr, function(item) {
                     return _.contains(ref, item);
-                })
+                });
             })(groupingWords, this.options.grouping);
             var lastIsGrouping = _.last(groupingWords) === _.last(words);
 
@@ -43,7 +45,7 @@ define(function(require) {
             var dataAreValid = (function(arr, ref) {
                 var isValid = true;
 
-                _.each(arr, function(item){
+                _.each(arr, function(item) {
                     if (isValid) {
                         var expressionMatch = item.match(opsRegEx);
                         var matchSplit = expressionMatch ? item.split(expressionMatch[0]) : [];
@@ -56,7 +58,7 @@ define(function(require) {
 
                             _.each(path, function(pathItem) {
                                 if (isValid) {
-                                    isValid = _.isArray(subRef) ? _.contains(subRef, pathItem) : _.contains(_.keys(subRef), pathItem);
+                                    isValid = _.contains(_.isArray(subRef) ? subRef : _.keys(subRef), pathItem);
 
                                     if (isValid && _.last(path) !== pathItem) {
                                         subRef = _.constant(ref, pathItem) ? ref[pathItem] : subRef[pathItem];
@@ -74,7 +76,7 @@ define(function(require) {
 
             function separateGroups(groups, isOdd) {
                 return _.filter(groups, function(item, i) {
-                    return isOdd ? ! (i % 2) : i % 2;
+                    return isOdd ? !i % 2 : i % 2;
                 });
             }
 
@@ -82,7 +84,7 @@ define(function(require) {
                 var result = [];
 
                 if (ops && ops.length) {
-                    _.each(ops, function(item, i) {
+                    _.each(ops, function(item) {
                         result.push('\\' + item.split('').join('\\'));
                     });
                 }
@@ -91,7 +93,8 @@ define(function(require) {
             }
         },
 
-        autocomplete: function() {}
+        autocomplete: function() {
+        }
     });
 
     return RuleEditorComponent;
