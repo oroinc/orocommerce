@@ -274,7 +274,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             if ($subNode instanceof RelationNode) {
                 $realClass = $this->fieldsProvider->getRealClassName($subNode->getRelationAlias());
                 if (is_a($realClass, BaseProductPrice::class, true)) {
-                    $this->usedPriceRelations[$subNode->getNodeAlias()] = $this->requiredPriceConditions;
+                    $this->usedPriceRelations[$subNode->getResolvedContainer()] = $this->requiredPriceConditions;
                 }
             }
         }
@@ -297,7 +297,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $parsedCondition = $this->expressionParser->parse($ruleCondition);
             foreach ($parsedCondition->getNodes() as $node) {
                 if ($node instanceof RelationNode) {
-                    $relationAlias = $node->getNodeAlias();
+                    $relationAlias = $node->getResolvedContainer();
                     if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
                         $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
                     }

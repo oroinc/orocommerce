@@ -74,7 +74,7 @@ class NameNode implements NodeInterface
     /**
      * @return string
      */
-    public function getNodeAlias()
+    public function getResolvedContainer()
     {
         $alias = $this->getContainer();
 

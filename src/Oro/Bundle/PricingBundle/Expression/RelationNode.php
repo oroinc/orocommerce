@@ -81,7 +81,7 @@ class RelationNode implements NodeInterface
     /**
      * @return string
      */
-    public function getNodeAlias()
+    public function getResolvedContainer()
     {
         $alias = $this->getRelationAlias();
 
