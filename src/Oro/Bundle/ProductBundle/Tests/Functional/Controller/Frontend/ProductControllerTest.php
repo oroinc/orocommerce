@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -43,8 +44,8 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            LoadProductData::class,
+            LoadCombinedPriceLists::class,
         ]);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
@@ -140,7 +141,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertContains(
             $this->translator->trans(
-                'oro.frontend.sale.product.view.request_a_quote'
+                'oro.frontend.product.view.request_a_quote'
             ),
             $result->getContent()
         );
@@ -163,7 +164,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertNotContains(
             $this->translator->trans(
-                'oro.frontend.sale.product.view.request_a_quote'
+                'oro.frontend.product.view.request_a_quote'
             ),
             $result->getContent()
         );

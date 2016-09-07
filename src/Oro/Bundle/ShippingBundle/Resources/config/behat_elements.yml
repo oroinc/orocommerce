@@ -1,18 +1,10 @@
-ShoppingListWidget:
-  selector: 'li.shopping-lists-frontend-widget'
-  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget
+CheckoutTotalSum:
+  selector: 'td.order-checkout-widget__total span.blue'
+  class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
-ShoppingListItem:
-  selector: '.shopping-list-label'
-  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListItem
-
-CheckoutTotal:
-  selector: 'td.order-checkout-widget__total'
-  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal
-
-CheckoutForm:
-  selector: 'div.checkout__form'
-  class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutForm
+CheckoutFormRow:
+  selector: '.checkout__form__row'
+  class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
 Shipping Rule:
    selector: 'div#container'

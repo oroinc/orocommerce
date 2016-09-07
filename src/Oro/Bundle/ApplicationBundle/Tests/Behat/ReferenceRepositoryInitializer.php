@@ -2,23 +2,24 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat;
 
+use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\ReferenceRepositoryInitializer as BaseInitializer;
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\EntityExtendBundle\OroEntityExtendBundle;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Repository\RegionRepository;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ReferenceRepositoryInitializer extends BaseInitializer
@@ -26,7 +27,7 @@ class ReferenceRepositoryInitializer extends BaseInitializer
     public function init()
     {
         parent::init();
-        /** @var CountryRepository $repository */
+        /** @var EntityRepository $repository */
         $repository = $this->em->getRepository('OroAddressBundle:Country');
         /** @var Country $germany */
         $germany = $repository->findOneBy(['name' => 'Germany']);
@@ -59,8 +60,7 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $shippingType = $repository->findOneBy(['name' => 'shipping']);
         $this->referenceRepository->set('shippingType', $shippingType);
 
-
-        /** @var PriceListCurrencyRepository $repository */
+        /** @var EntityRepository $repository */
         $repository = $this->em->getRepository('OroPricingBundle:PriceListCurrency');
         /** @var PriceListCurrency EUR*/
         $eur = $repository->findOneBy(['currency' => 'EUR']);
@@ -84,10 +84,8 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $combinedPriceList = $repository->findOneBy(['id' => '1']);
         $this->referenceRepository->set('combinedPriceList', $combinedPriceList);
 
-
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         $enumInventoryStatuses = $this->em->getRepository($inventoryStatusClassName)->findOneBy(['id' => 'in_stock']);
         $this->referenceRepository->set('enumInventoryStatuses', $enumInventoryStatuses);
-
     }
 }

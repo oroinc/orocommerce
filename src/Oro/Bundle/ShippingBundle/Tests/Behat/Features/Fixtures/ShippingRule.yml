@@ -108,7 +108,6 @@ Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
         systemOrganization: '@organization'
         primary: true
 
-
 Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
     priceListToAccount1:
         account: '@account1'
@@ -126,6 +125,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 2
         currency:  'EUR'
 
+
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice1:
         pricelist: '@combinedPriceList'
@@ -135,7 +135,6 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         value: 2
         currency: 'EUR'
-
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
     combinedPriceListToAccount1:

@@ -2,27 +2,38 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
-use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
-use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutForm;
-use Oro\Bundle\ShippingBundle\Tests\Behat\Element\CheckoutTotal;
-use Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShoppingListWidget;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
-
-use Symfony\Component\HttpKernel\KernelInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 
 class FeatureContext extends OroFeatureContext implements OroElementFactoryAware, KernelAwareContext
 {
     use ElementFactoryDictionary, KernelDictionary;
+
+    /**
+     * @var OroMainContext
+     */
+    private $oroMainContext;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->oroMainContext = $environment->getContext(OroMainContext::class);
+    }
 
     /**
      * @Given there is EUR currency in the system configuration
@@ -30,33 +41,12 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function thereIsEurCurrencyInTheSystemConfiguration()
     {
         $configManager = $this->getContainer()->get('oro_config.global');
-        /** @var var array $currencies */
-        $currencies = (array)$configManager->get('oro_currency.allowed_currencies', []);
+        /** @var array $currencies */
+        $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
+        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR', 'USD']);
         $configManager->flush();
-
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR','USD']);
-        $configManager->flush();
-    }
-
-    /**
-     * @Given /^I login as (?P<email>\S+)$/
-     */
-    public function loginAsBuyer($email)
-    {
-        $this->visitPath('account/user/login');
-        $this->waitForAjax();
-        /** @var OroForm $form */
-        $form = $this->createElement('OroForm');
-        $table = new TableNode([
-            ['Email Address', $email],
-            ['Password', $email]
-        ]);
-        $form->fill($table);
-        $form->pressButton('Sign In');
-        $this->waitForAjax();
     }
 
     /**
@@ -79,23 +69,23 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Then Shipping Type FlatRate is shown for Buyer selection
+     * @Then Shipping Type :shippingType is shown for Buyer selection
      */
-    public function shippingTypeFlatRateIsShownForBuyerSelection()
+    public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
     {
-        /** @var CheckoutForm $checkoutForm */
-        $checkoutForm = $this->createElement('CheckoutForm');
-        $checkoutForm->assertHas('Flat Rate');
+        $element= $this->createElement('CheckoutFormRow');
+        self::assertNotFalse(
+            strpos($element->getText(), $shippingType),
+            "Shipping type '$shippingType' not found on checkout form"
+        );
     }
 
     /**
-     * @Then the order total is recalculated to :arg1
+     * @Then the order total is recalculated to :total
      */
-    public function theOrderTotalIsRecalculatedTo($arg1)
+    public function theOrderTotalIsRecalculatedTo($total)
     {
-        /** @var CheckoutTotal $checkoutTotal */
-        $checkoutTotal = $this->createElement('CheckoutTotal');
-        $checkoutTotal->isEqual($arg1);
+        self::assertEquals($total, $this->createElement('CheckoutTotalSum')->getText());
     }
 
     /**
@@ -107,15 +97,15 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given Admin User edited :arg1 with next data:
+     * @Given Admin User edited :shippingRule with next data:
      */
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
-        $this->loginAsAdmin();
-
+        $this->oroMainContext->loginAsUserWithPassword();
+        $this->waitForAjax();
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('System/Shipping Rules');
@@ -138,14 +128,15 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given Admin User created :arg1 with next data:
+     * @Given Admin User created :shoppingRuleName with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
-        $this->loginAsAdmin();
+        $this->oroMainContext->loginAsUserWithPassword();
+        $this->waitForAjax();
 
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
@@ -179,22 +170,16 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $checkoutStep->assertTitle('Shipping Method');
     }
 
-    protected function loginAsAdmin()
-    {
-        $this->visitPath('admin/user/login');
-        /** @var Form $login */
-        $login = $this->createElement('Login');
-        $login->fill(new TableNode([['Username', 'admin'], ['Password', 'admin']]));
-        $login->pressButton('Log in');
-        $this->waitForAjax();
-    }
-
     /**
      * @param string $shoppingListName
      */
     protected function createOrderFromShoppingList($shoppingListName)
     {
-        $this->visitPath('account/shoppinglist/1');
+        /** @var ObjectManager $manager */
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
+        $this->visitPath('account/shoppinglist/'.$shoppingList->getId());
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
         $this->waitForAjax();

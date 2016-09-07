@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
@@ -39,11 +38,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $registry;
 
     /**
-     * @var string
-     */
-    protected $priceListClass = 'Oro\Bundle\PricingBundle\Entity\PriceList';
-
-    /**
      * @var PriceList
      */
     protected $defaultPriceList;
@@ -64,24 +58,32 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $relationsProvider;
 
     /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param RequestStack $requestStack
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
      * @param AccountUserRelationsProvider $relationsProvider
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         RequestStack $requestStack,
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler,
         ManagerRegistry $registry,
-        AccountUserRelationsProvider $relationsProvider
+        AccountUserRelationsProvider $relationsProvider,
+        WebsiteManager $websiteManager
     ) {
         $this->requestStack = $requestStack;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
         $this->relationsProvider = $relationsProvider;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -168,14 +170,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     }
 
     /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
-    }
-
-    /**
      * @return null|Account
      */
     protected function getAccount()
@@ -186,8 +180,8 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
             $request = $this->getRequest();
             if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
                 return $this->registry
-                    ->getManagerForClass('Oro\Bundle\AccountBundle\Entity\Account')
-                    ->getRepository('Oro\Bundle\AccountBundle\Entity\Account')
+                    ->getManagerForClass(Account::class)
+                    ->getRepository(Account::class)
                     ->find($accountId);
             }
         } else {
@@ -244,9 +238,10 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     {
         if (!$this->priceListRepository) {
             $this->priceListRepository = $this->registry
-                ->getManagerForClass($this->priceListClass)
-                ->getRepository($this->priceListClass);
+                ->getManagerForClass(PriceList::class)
+                ->getRepository(PriceList::class);
         }
+
         return $this->priceListRepository;
     }
 
@@ -256,12 +251,21 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected function getWebsite()
     {
         $website = null;
-        $request = $this->getRequest();
-        if ($request && $id = $this->getRequest()->get(self::WEBSITE_KEY)) {
-            $website = $this->registry->getManagerForClass('Oro\Bundle\WebsiteBundle\Entity\Website')
-                ->getRepository('Oro\Bundle\WebsiteBundle\Entity\Website')
-                ->find($id);
+
+        $user = $this->securityFacade->getLoggedUser();
+        if ($user instanceof User) {
+            $request = $this->getRequest();
+            if ($request && $id = $request->get(self::WEBSITE_KEY)) {
+                $website = $this->registry->getManagerForClass(Website::class)
+                    ->getRepository(Website::class)
+                    ->find($id);
+            } else {
+                $website = $this->websiteManager->getDefaultWebsite();
+            }
+        } else {
+            $website = $this->websiteManager->getCurrentWebsite();
         }
+
         return $website;
     }
 
