@@ -59,6 +59,8 @@ class ExpressionLanguageConverter
                 $this->convertExpressionLanguageNode($node->nodes['node'], $namesMapping),
                 $node->attributes['operator']
             );
+        } elseif ($node instanceof Node\ArrayNode) {
+            return $this->convertArrayNode($node);
         }
 
         throw new SyntaxError(sprintf('Unsupported expression node %s', get_class($node)));
@@ -179,5 +181,22 @@ class ExpressionLanguageConverter
     protected function getNodeType(Node\Node $node)
     {
         return $node->attributes['type'];
+    }
+
+    /**
+     * @param Node\ArrayNode $node
+     * @return ValueNode
+     */
+    protected function convertArrayNode(Node\ArrayNode $node)
+    {
+        $value = [];
+        foreach (array_chunk($node->nodes, 2) as $pair) {
+            if (!$pair[0] instanceof Node\ConstantNode || !$pair[1] instanceof Node\ConstantNode) {
+                throw new SyntaxError('Only constant are supported for arrays');
+            }
+            $value[$this->getConstantNodeValue($pair[0])] = $this->getConstantNodeValue($pair[1]);
+        }
+
+        return new ValueNode($value);
     }
 }

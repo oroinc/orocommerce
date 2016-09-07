@@ -22,7 +22,8 @@ class BinaryNode implements NodeInterface
         '<' => true,
         '<=' => true,
         '>=' => true,
-        'like' => true
+        'like' => true,
+        'in' => true
     ];
 
     /**

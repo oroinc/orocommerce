@@ -83,6 +83,9 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'PriceList.value(1)', 'Function calls are not supported'
+            ],
+            [
+                'Product.id in [1, 3, Product.category.id]', 'Only constant are supported for arrays'
             ]
         ];
     }
@@ -111,6 +114,14 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             [
                 'PriceList[42].assignedProducts',
                 new Expression\NameNode('pl', 'assignedProducts', 42)
+            ],
+            [
+                'Product.category.id in [1, 5]',
+                new Expression\BinaryNode(
+                    new Expression\RelationNode('p', 'category', 'id'),
+                    new Expression\ValueNode([1, 5]),
+                    'in'
+                )
             ],
             [
                 "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .

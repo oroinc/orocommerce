@@ -90,4 +90,40 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals(['_vn0' => true, '_vn1' => 'U'], $params);
     }
+
+    public function testConvertIn()
+    {
+        $node = new Expression\BinaryNode(
+            new Expression\NameNode('p', 'id'),
+            new Expression\ValueNode([1, 3]),
+            'in'
+        );
+        $converter = new QueryExpressionBuilder();
+        $params = [];
+        $expr = new Expr();
+        $actual = $converter->convert($node, $expr, $params);
+        $this->assertEquals(
+            'p.id IN(:_vn0)',
+            (string)$actual
+        );
+        $this->assertEquals(['_vn0' => [1, 3]], $params);
+    }
+
+    public function testConvertInMemberOf()
+    {
+        $node = new Expression\BinaryNode(
+            new Expression\NameNode('p', 'id'),
+            new Expression\NameNode('pl', 'assignedProduct'),
+            'in'
+        );
+        $converter = new QueryExpressionBuilder();
+        $params = [];
+        $expr = new Expr();
+        $actual = $converter->convert($node, $expr, $params);
+        $this->assertEquals(
+            'p.id MEMBER OF pl.assignedProduct',
+            (string)$actual
+        );
+        $this->assertEquals([], $params);
+    }
 }

@@ -20,6 +20,7 @@ class QueryExpressionBuilder
         'and' => 'andX',
         'or' => 'orX',
         'like' => 'like',
+        'in' => 'in',
         '+' => 'sum',
         '-' => 'diff',
         '*' => 'prod',
@@ -98,6 +99,10 @@ class QueryExpressionBuilder
         }
 
         $method = self::$exprMap[$node->getOperation()];
+
+        if ($method === 'in' && !$node->getRight() instanceof ValueNode) {
+            $method = 'isMemberOf';
+        }
 
         return $expr->$method(
             $this->convert($node->getLeft(), $expr, $params, $aliasMapping),
