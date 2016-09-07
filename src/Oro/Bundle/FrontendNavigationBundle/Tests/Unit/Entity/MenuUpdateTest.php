@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
+use Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Entity\Stub\MenuUpdateStub;
 
 class MenuUpdateTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,8 +17,6 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['titles', new LocalizedFallbackValue()],
-            ['image', 'image.jpg'],
-            ['description', 'description'],
             ['condition', 'condition'],
             ['website', new Website()],
         ];
@@ -29,17 +28,15 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
     {
         $website = new Website();
 
-        $update = new MenuUpdate();
+        $update = new MenuUpdateStub();
         $update
             ->setImage('test image')
-            ->setDescription('test description')
             ->setCondition('test condition')
             ->setWebsite($website)
         ;
 
         $expected = [
             'image' => 'test image',
-            'description' => 'test description',
             'condition' => 'test condition',
             'website' => $website,
         ];

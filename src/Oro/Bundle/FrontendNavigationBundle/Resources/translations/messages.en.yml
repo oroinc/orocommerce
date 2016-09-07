@@ -13,6 +13,5 @@ oro:
             ownership_type.label: Ownership Type
             owner_id.label: Owner Id
             image.label: Image
-            description.label: Description
             condition.label: Condition
             website.label: Website

@@ -50,20 +50,6 @@ class MenuUpdate extends ExtendMenuUpdate
     /**
      * @var string
      *
-     * @ORM\Column(name="image", type="string", length=255, nullable=true)
-     */
-    protected $image;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="string", length=100, nullable=true)
-     */
-    protected $description;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="condition", type="string", length=512, nullable=true)
      */
     protected $condition;
@@ -82,10 +68,9 @@ class MenuUpdate extends ExtendMenuUpdate
     public function getExtras()
     {
         return [
-            'image'       => $this->image,
-            'description' => $this->description,
-            'condition'   => $this->condition,
-            'website'     => $this->website
+            'image'     => $this->getImage(),
+            'condition' => $this->condition,
+            'website'   => $this->website
         ];
     }
 
@@ -119,44 +104,6 @@ class MenuUpdate extends ExtendMenuUpdate
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
         }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * @param string $image
-     * @return MenuUpdate
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     * @return MenuUpdate
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
 
         return $this;
     }

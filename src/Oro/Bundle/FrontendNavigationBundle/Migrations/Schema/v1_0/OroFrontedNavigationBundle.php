@@ -4,11 +4,30 @@ namespace Oro\Bundle\FrontendNavigationBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroFrontendNavigationBundle implements Migration
+class OroFrontendNavigationBundle implements
+    Migration,
+    AttachmentExtensionAwareInterface
 {
+    const MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB = 10;
+    const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
+    const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
+
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,6 +40,9 @@ class OroFrontendNavigationBundle implements Migration
         /** Foreign keys generation **/
         $this->addOroFrontendNavigationMenuUpdateForeignKeys($schema);
         $this->addOroFrontendNavigationMenuUpdateTitleForeignKeys($schema);
+
+        /** Associations */
+        $this->addOroFrontendNavigationMenuUpdateImageAssociation($schema);
     }
 
     /**
@@ -40,8 +62,6 @@ class OroFrontendNavigationBundle implements Migration
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
-        $table->addColumn('image', 'string', ['length' => 256, 'notnull' => false]);
-        $table->addColumn('description', 'string', ['length' => 100, 'notnull' => false]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
@@ -96,6 +116,22 @@ class OroFrontendNavigationBundle implements Migration
             ['menu_update_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addOroFrontendNavigationMenuUpdateImageAssociation(Schema $schema)
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_front_nav_menu_update',
+            'image',
+            [],
+            self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,
+            self::THUMBNAIL_WIDTH_SIZE_IN_PX,
+            self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
     }
 }
