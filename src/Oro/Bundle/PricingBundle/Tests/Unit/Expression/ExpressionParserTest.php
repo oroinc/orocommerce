@@ -198,6 +198,36 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider getUsedLexemesConsideringContainerIdDataProvider
+     * @param string $expression
+     * @param array $expected
+     */
+    public function testGetUsedLexemesConsideringContainerId($expression, array $expected)
+    {
+        $this->prepareCategoryRelation();
+        $this->assertEquals($expected, $this->expressionParser->getUsedLexemesConsideringContainerId($expression));
+    }
+
+    /**
+     * @return array
+     */
+    public function getUsedLexemesConsideringContainerIdDataProvider()
+    {
+        return [
+            [
+                "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
+                " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))",
+                [
+                    'pl' => [null => ['currency']],
+                    'p' => [null => ['margin', 'someValue']],
+                    'p::MSRP' => [null => ['currency']],
+                    'p::category' => [null => ['minMargin', 'categoryId']]
+                ]
+            ],
+        ];
+    }
+
     protected function prepareCategoryRelation()
     {
         $this->fieldsProvider->expects($this->any())

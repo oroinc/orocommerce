@@ -117,6 +117,45 @@ class ExpressionParser
     }
 
     /**
+     * @param string|Expression $expression
+     * @return array
+     */
+    public function getUsedLexemesConsideringContainerId($expression)
+    {
+        $usedLexemes = [];
+        $rootNode = $this->parse($expression);
+        if (!$rootNode) {
+            return $usedLexemes;
+        }
+
+        foreach ($rootNode->getNodes() as $node) {
+            if ($node instanceof NameNode) {
+                $class = $node->getContainer();
+                $containerId = $node->getContainerId();
+
+                if (!isset($usedLexemes[$class][$containerId]) ||
+                    isset($usedLexemes[$class][$containerId])
+                    && !in_array($node->getField(), $usedLexemes[$class][$containerId], true)
+                ) {
+                    $usedLexemes[$class][$containerId][] = $node->getField();
+                }
+            } elseif ($node instanceof RelationNode) {
+                $class = $node->getRelationAlias();
+                $containerId = $node->getContainerId();
+
+                if (!isset($usedLexemes[$class][$containerId]) ||
+                    isset($usedLexemes[$class][$containerId])
+                    && !in_array($node->getRelationField(), $usedLexemes[$class][$containerId], true)
+                ) {
+                    $usedLexemes[$class][$containerId][] = $node->getRelationField();
+                }
+            }
+        }
+
+        return $usedLexemes;
+    }
+
+    /**
      * @return array
      */
     public function getSupportedNames()
