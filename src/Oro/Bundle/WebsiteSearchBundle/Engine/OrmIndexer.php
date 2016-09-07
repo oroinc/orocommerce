@@ -32,43 +32,69 @@ class OrmIndexer extends AbstractIndexer
             return strcmp($doctrineHelper->getEntityClass($leftEntity), $doctrineHelper->getEntityClass($rightEntity));
         });
 
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-
-        /** @var WebsiteSearchIndexRepository $indexRepository */
-        $indexRepository = $entityManager->getRepository(Item::class);
-
         while (!empty($entities)) {
-            $firstEntityClass = $doctrineHelper->getEntityClass(current($entities));
-            $sameEntitiesCount = 0;
-            foreach ($entities as $entity) {
-                if ($doctrineHelper->getEntityClass($entity) != $firstEntityClass) {
-                    break;
-                }
+            $entitiesBatch = $this->extractEntitiesBatch($entities);
 
-                $sameEntitiesCount++;
-            }
-
-            $sameEntities = array_splice($entities, 0, $sameEntitiesCount);
-            $entityAlias = null;
-            if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-                $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
-                if (null === $entityAlias) {
-                    continue;
-                }
-
-                $entityAlias = $this->applyPlaceholders($entityAlias, $context);
-            }
-
-            $entityIds = [];
-            foreach ($sameEntities as $entity) {
-                $entityIds[] = $doctrineHelper->getSingleEntityIdentifier($entity);
-            }
-
-            $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
+            $this->removeEntitiesBatch($entitiesBatch, $context);
         }
 
         return true;
     }
+
+    /**
+     * @return WebsiteSearchIndexRepository
+     */
+    private function getItemRepository()
+    {
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
+
+        return $entityManager->getRepository(Item::class);
+    }
+
+    /**
+     * @param array $entities
+     * @param array $context
+     */
+    private function removeEntitiesBatch(array $entities, array $context)
+    {
+        $entitiesClass = $this->doctrineHelper->getEntityClass(reset($entities));
+        if (!$this->mappingProvider->isClassSupported($entitiesClass)) {
+            return;
+        }
+
+        $entityAlias = null;
+        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+            $entityAlias = $this->mappingProvider->getEntityAlias($entitiesClass);
+            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+        }
+
+        $entityIds = [];
+        foreach ($entities as $entity) {
+            $entityIds[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+        }
+
+        $this->getItemRepository()->removeEntities($entityIds, $entitiesClass, $entityAlias);
+    }
+
+    /**
+     * @param array $sortedEntities
+     * @return array
+     */
+    private function extractEntitiesBatch(array &$sortedEntities)
+    {
+        $firstEntityClass = $this->doctrineHelper->getEntityClass(current($sortedEntities));
+        $entitiesCount = 0;
+        foreach ($sortedEntities as $entity) {
+            if ($this->doctrineHelper->getEntityClass($entity) != $firstEntityClass) {
+                break;
+            }
+
+            $entitiesCount++;
+        }
+
+        return array_splice($sortedEntities, 0, $entitiesCount);
+    }
+
 
     /**
      * @param object|array $entities

@@ -209,17 +209,13 @@ class OrmIndexerTest extends WebTestCase
         $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
     }
 
-    public function testCount()
-    {
-        $this->assertEntityCount(4, Item::class);
-        $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
-        $this->assertEntityCount(2, IndexDatetime::class);
-        $this->assertEntityCount(2, IndexDecimal::class);
-    }
-
     public function testDeleteWhenNonExistentEntityRemoved()
     {
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->willReturn(true);
+
         $this->mappingProviderMock
             ->expects($this->once())
             ->method('getEntityAlias')
@@ -260,6 +256,12 @@ class OrmIndexerTest extends WebTestCase
     {
         $this->mappingProviderMock
             ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(Product::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
             ->method('getEntityAlias')
             ->with(Product::class)
             ->willReturn('oro_product_WEBSITE_ID');
@@ -286,9 +288,15 @@ class OrmIndexerTest extends WebTestCase
     {
         $this->mappingProviderMock
             ->expects($this->exactly(2))
-            ->method('getEntityAlias')
+            ->method('isClassSupported')
             ->withConsecutive([Product::class], ['stdClass'])
-            ->will($this->onConsecutiveCalls('oro_product_WEBSITE_ID', null));
+            ->will($this->onConsecutiveCalls(true, false));
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(Product::class)
+            ->willReturn('oro_product_WEBSITE_ID');
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
@@ -312,6 +320,12 @@ class OrmIndexerTest extends WebTestCase
 
     public function testDeleteWhenProductEntitiesForAllWebsitesRemoved()
     {
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(Product::class)
+            ->willReturn(true);
+
         $this->mappingProviderMock
             ->expects($this->never())
             ->method('getEntityAlias');
