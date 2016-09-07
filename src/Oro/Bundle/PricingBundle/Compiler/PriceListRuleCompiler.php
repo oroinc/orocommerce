@@ -7,9 +7,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-
-use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -150,7 +147,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
         $currencyValue = (string)$qb->expr()->literal($rule->getCurrency());
         $quantityValue = (string)$qb->expr()->literal($rule->getQuantity());
-        $unitValue = (string)$qb->expr()->literal($rule->getProductUnit()->getCode());
 
         if ($rule->getCurrencyExpression()) {
             $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
@@ -164,6 +160,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     $params
                 )
             );
+        } else {
+            $unitValue = (string)$qb->expr()->literal($rule->getProductUnit()->getCode());
         }
         if ($rule->getQuantityExpression()) {
             $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
@@ -244,22 +242,20 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder();
+        $select = $qb->getDQLPart('select')[0]->getParts();
         $subQb->from(ProductPrice::class, 'productPriceManual')
             ->select('productPriceManual')
             ->where(
                 $subQb->expr()->andX(
                     $subQb->expr()->eq('productPriceManual.product', $rootAlias),
                     $subQb->expr()->eq('productPriceManual.priceList', ':priceListManual'),
-                    $subQb->expr()->eq('productPriceManual.unit', ':unitManual'),
-                    $subQb->expr()->eq('productPriceManual.currency', ':currencyManual'),
-                    $subQb->expr()->eq('productPriceManual.quantity', ':quantityManual')
+                    sprintf('productPriceManual.unit = %s', $select[2]),
+                    sprintf('productPriceManual.currency = %s', $select[3]),
+                    sprintf('productPriceManual.quantity = %s', $select[4])
                 )
             );
 
         $qb->setParameter('priceListManual', $rule->getPriceList()->getId())
-            ->setParameter('unitManual', $rule->getProductUnit()->getCode())
-            ->setParameter('currencyManual', $rule->getCurrency())
-            ->setParameter('quantityManual', $rule->getQuantity())
             ->andWhere(
                 $qb->expr()->not(
                     $qb->expr()->exists(
@@ -333,7 +329,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($rule->getCurrencyExpression()) {
             $currencyCondition = $qb->expr()->andX();
             $joins = array_key_exists($rootAlias, $qb->getDQLPart('join')) ? $qb->getDQLPart('join')[$rootAlias] : [];
-            $fields = [];
             /** @var Join $join */
             foreach ($joins as $join) {
                 if (is_subclass_of($join->getJoin(), BaseProductPrice::class) ||
@@ -428,7 +423,21 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             }
         }
 
-        return implode(' and ', array_filter($generatedConditions));
+        $generatedConditions = array_filter(
+            $generatedConditions,
+            function ($condition) {
+                if (null === $condition) {
+                    return false;
+                }
+                $parts = explode('==', $condition);
+                if (count($parts) < 2 || trim($parts[0]) === trim($parts[1])) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
+        return implode(' and ', $generatedConditions);
     }
 
     /**
@@ -454,18 +463,31 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $conditionVariables = [$root, $field, $relationField];
         switch ($relationField) {
             case 'currency':
-                $conditionTemplate .= '\'%4$s\'';
-                $conditionVariables[] = $rule->getCurrency();
+                $conditionTemplate .= '%4$s';
+                if ($rule->getCurrencyExpression()) {
+                    $conditionVariables[] = $rule->getCurrencyExpression();
+                } else {
+                    $conditionVariables[] = sprintf("'%s'", $rule->getCurrency());
+                }
                 break;
 
             case 'unit':
-                $conditionTemplate .= '\'%4$s\'';
-                $conditionVariables[] = $rule->getProductUnit()->getCode();
+                $conditionTemplate .= '%4$s';
+                if ($rule->getProductUnitExpression()) {
+                    $conditionVariables[] = $rule->getProductUnitExpression();
+                } else {
+                    $conditionVariables[] = sprintf("'%s'", $rule->getProductUnit()->getCode());
+                }
                 break;
 
             case 'quantity':
-                $conditionTemplate .= '%4$f';
-                $conditionVariables[] = $rule->getQuantity();
+                if ($rule->getProductUnitExpression()) {
+                    $conditionTemplate .= '%4$s';
+                    $conditionVariables[] = $this->getBaseQuantityExpression($rule);
+                } else {
+                    $conditionTemplate .= '%4$f';
+                    $conditionVariables[] = $rule->getQuantity();
+                }
                 break;
         }
 
@@ -475,6 +497,37 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
 
         return call_user_func_array('sprintf', $conditionVariables);
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @return string
+     */
+    protected function getBaseQuantityExpression(PriceRule $rule)
+    {
+        $parsedCondition = $this->expressionParser->parse($rule->getQuantityExpression());
+        foreach ($parsedCondition->getNodes() as $node) {
+            if ($node instanceof RelationNode) {
+                $nodeRoot = $this->expressionParser->getReverseNameMapping()[$node->getContainer()];
+                if ($node->getContainerId()) {
+                    return sprintf(
+                        '%s[%d].%s.%s',
+                        $nodeRoot,
+                        $node->getContainerId(),
+                        $node->getField(),
+                        $node->getRelationField()
+                    );
+                } else {
+                     return sprintf(
+                        '%s.%s.%s',
+                        $nodeRoot,
+                        $node->getField(),
+                        $node->getRelationField()
+                    );
+                }
+            }
+        }
+        return '';
     }
 
     /**

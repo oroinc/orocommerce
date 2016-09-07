@@ -134,7 +134,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 '6',
                 'product.1',
                 $priceRule->getId(),
-                '122.0000',
+                '200.0000',
             ],
             [
                 $product1->getId(),
@@ -175,7 +175,6 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function testApplyRuleConditionsWithTwoBaseRelations()
     {
-        $this->markTestIncomplete("@todo: after BB-4364");
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
@@ -251,7 +250,8 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $q = $qb->getQuery()->getSQL();
+        $this->assertEquals($expected, $actual);
     }
 
     public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
