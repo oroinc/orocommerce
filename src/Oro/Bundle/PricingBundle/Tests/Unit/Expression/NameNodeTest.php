@@ -13,6 +13,7 @@ class NameNodeTest extends \PHPUnit_Framework_TestCase
         $node = new NameNode($class, $field);
         $this->assertSame($class, $node->getContainer());
         $this->assertSame($field, $node->getField());
+        $this->assertSame($class, $node->getResolvedContainer());
 
         $this->assertEquals([$node], $node->getNodes());
         $this->assertFalse($node->isBoolean());
@@ -27,5 +28,6 @@ class NameNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($class, $node->getContainer());
         $this->assertSame($field, $node->getField());
         $this->assertSame($id, $node->getContainerId());
+        $this->assertSame($class . '|' . $id, $node->getResolvedContainer());
     }
 }
