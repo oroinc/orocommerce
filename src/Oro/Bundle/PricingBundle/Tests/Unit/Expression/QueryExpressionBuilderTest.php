@@ -126,4 +126,40 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals([], $params);
     }
+
+    public function testConvertNotIn()
+    {
+        $node = new Expression\BinaryNode(
+            new Expression\NameNode('p', 'id'),
+            new Expression\ValueNode([1, 3]),
+            'not in'
+        );
+        $converter = new QueryExpressionBuilder();
+        $params = [];
+        $expr = new Expr();
+        $actual = $converter->convert($node, $expr, $params);
+        $this->assertEquals(
+            'p.id NOT IN(:_vn0)',
+            (string)$actual
+        );
+        $this->assertEquals(['_vn0' => [1, 3]], $params);
+    }
+
+    public function testConvertNotInMemberOf()
+    {
+        $node = new Expression\BinaryNode(
+            new Expression\NameNode('p', 'id'),
+            new Expression\NameNode('pl', 'assignedProduct'),
+            'not in'
+        );
+        $converter = new QueryExpressionBuilder();
+        $params = [];
+        $expr = new Expr();
+        $actual = $converter->convert($node, $expr, $params);
+        $this->assertEquals(
+            'NOT(p.id MEMBER OF pl.assignedProduct)',
+            (string)$actual
+        );
+        $this->assertEquals([], $params);
+    }
 }

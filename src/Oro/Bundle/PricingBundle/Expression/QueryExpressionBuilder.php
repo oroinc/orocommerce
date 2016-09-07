@@ -21,6 +21,7 @@ class QueryExpressionBuilder
         'or' => 'orX',
         'like' => 'like',
         'in' => 'in',
+        'not in' => 'notIn',
         '+' => 'sum',
         '-' => 'diff',
         '*' => 'prod',
@@ -102,6 +103,14 @@ class QueryExpressionBuilder
 
         if ($method === 'in' && !$node->getRight() instanceof ValueNode) {
             $method = 'isMemberOf';
+        }
+        if ($method === 'notIn' && !$node->getRight() instanceof ValueNode) {
+            return $expr->not(
+                $expr->isMemberOf(
+                    $this->convert($node->getLeft(), $expr, $params, $aliasMapping),
+                    $this->convert($node->getRight(), $expr, $params, $aliasMapping)
+                )
+            );
         }
 
         return $expr->$method(

@@ -43,11 +43,7 @@ class ExpressionLanguageConverter
     protected function convertExpressionLanguageNode(Node\Node $node, array $namesMapping = [])
     {
         if ($node instanceof Node\BinaryNode) {
-            return new BinaryNode(
-                $this->convertExpressionLanguageNode($node->nodes['left'], $namesMapping),
-                $this->convertExpressionLanguageNode($node->nodes['right'], $namesMapping),
-                $node->attributes['operator']
-            );
+            return $this->convertBinaryNode($node, $namesMapping);
         } elseif ($node instanceof Node\GetAttrNode || $node instanceof Node\NameNode) {
             return $this->convertFieldAwareNode($node, $namesMapping);
         } elseif ($node instanceof Node\ConstantNode) {
@@ -57,7 +53,7 @@ class ExpressionLanguageConverter
         } elseif ($node instanceof Node\UnaryNode) {
             return new UnaryNode(
                 $this->convertExpressionLanguageNode($node->nodes['node'], $namesMapping),
-                $node->attributes['operator']
+                $this->getOperator($node)
             );
         } elseif ($node instanceof Node\ArrayNode) {
             return $this->convertArrayNode($node);
@@ -198,5 +194,41 @@ class ExpressionLanguageConverter
         }
 
         return new ValueNode($value);
+    }
+
+    /**
+     * @param Node\Node $node
+     * @return string
+     */
+    protected function getOperator(Node\Node $node)
+    {
+        return $node->attributes['operator'];
+    }
+
+    /**
+     * @param Node\BinaryNode $node
+     * @param array $namesMapping
+     * @return BinaryNode
+     */
+    protected function convertBinaryNode(Node\BinaryNode $node, array $namesMapping)
+    {
+        $left = $this->convertExpressionLanguageNode($node->nodes['left'], $namesMapping);
+        $right = $this->convertExpressionLanguageNode($node->nodes['right'], $namesMapping);
+        $operator = $this->getOperator($node);
+
+        if ($operator === 'in' || $operator === 'not in') {
+            if (!$left instanceof ContainerHolderNodeInterface) {
+                throw new SyntaxError(sprintf('Left operand of %s must be field expression', $operator));
+            }
+            if ((!$right instanceof ContainerHolderNodeInterface && !$right instanceof ValueNode)
+                || ($right instanceof ValueNode && !is_array($right->getValue()))
+            ) {
+                throw new SyntaxError(
+                    sprintf('Right operand of %s must be an array of scalars or field expression', $operator)
+                );
+            }
+        }
+
+        return new BinaryNode($left, $right, $operator);
     }
 }

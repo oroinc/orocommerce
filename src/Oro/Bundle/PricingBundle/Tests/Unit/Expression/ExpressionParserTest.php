@@ -86,7 +86,15 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'Product.id in [1, 3, Product.category.id]', 'Only constant are supported for arrays'
-            ]
+            ],
+            [
+                'Product.id in PriceList[4].assignedProducts/2',
+                'Right operand of in must be an array of scalars or field expression'
+            ],
+            [
+                'Product.id not in PriceList[4].assignedProducts/2',
+                'Right operand of not in must be an array of scalars or field expression'
+            ],
         ];
     }
 
