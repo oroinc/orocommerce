@@ -115,8 +115,6 @@ oro:
             column:
                 product: 'Product'
 
-            frontend.order.view.label: Item#
-
         orderdiscountitem:
             columns:
                 title: Discount
