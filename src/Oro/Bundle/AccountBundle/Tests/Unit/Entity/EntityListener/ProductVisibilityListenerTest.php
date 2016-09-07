@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\EntityListener;
 
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Entity\EntityListener\ProductVisibilityListener;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase

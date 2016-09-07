@@ -4,11 +4,10 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
-use Oro\Bundle\AccountBundle\EventListener\CategoryListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,17 +28,17 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+        $this->registry = $this->getMockBuilder(Registry::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->insertFromSelectQueryExecutor = $this
-            ->getMockBuilder('Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor')
+            ->getMockBuilder(InsertFromSelectQueryExecutor::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->cacheBuilder = $this
-            ->getMockBuilder('Oro\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder')
+            ->getMockBuilder(CacheBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 

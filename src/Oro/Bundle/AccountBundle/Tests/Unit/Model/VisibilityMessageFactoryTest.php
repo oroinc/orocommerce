@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\AccountBundle\Model;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 
 class VisibilityMessageFactory

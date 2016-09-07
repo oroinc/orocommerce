@@ -7,8 +7,8 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
