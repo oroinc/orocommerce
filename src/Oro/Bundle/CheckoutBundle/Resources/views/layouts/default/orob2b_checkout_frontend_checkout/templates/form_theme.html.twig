@@ -7,30 +7,10 @@
 {% endblock %}
 
 {% block orob2b_region_widget %}
+    {% set regionView = 'orocheckout/js/region/view' %}
     <div class="checkout__form__select">
         {{ block('oro_region_widget') }}
     </div>
-{% endblock %}
-
-{% block oro_region_script_widget %}
-    <script type="text/javascript">
-        require(['jquery', 'orocheckout/js/region/view', 'oroaddress/js/region/collection'],
-        function($, RegionView, RegionCollection){
-            $(function() {
-                /** @type oro.region.View */
-                new RegionView({
-                    el: $('#{{ country_field.vars.id }}'),
-                    target: $('#{{ id }}'),
-                    simpleEl: $('#{{ region_text_field.vars.id }}'),
-                    collection: new RegionCollection([], {
-                        route: {{ form.parent.vars.region_route|default('oro_api_country_get_regions')|json_encode|raw }}
-                    }),
-                    showSelect: {{ showSelect|json_encode|raw }},
-                    regionRequired: {{ required|json_encode|raw }}
-                });
-            });
-        });
-    </script>
 {% endblock %}
 
 {%- block form_label -%}
