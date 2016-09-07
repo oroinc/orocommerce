@@ -18,6 +18,7 @@ use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 {
