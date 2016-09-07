@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Expression;
 
-class NameNode implements NodeInterface
+class NameNode implements NodeInterface, ContainerHolderNodeInterface
 {
     /**
      * @var string
@@ -32,7 +32,7 @@ class NameNode implements NodeInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getContainer()
     {
@@ -64,7 +64,7 @@ class NameNode implements NodeInterface
     }
 
     /**
-     * @return int|null|string
+     * {@inheritdoc}
      */
     public function getContainerId()
     {
@@ -72,7 +72,7 @@ class NameNode implements NodeInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getResolvedContainer()
     {

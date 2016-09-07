@@ -112,10 +112,8 @@ class QueryExpressionBuilder
      */
     protected function convertNameNode(NameNode $node, array $aliasMapping)
     {
-        $container = $node->getContainer();
-        $aliasKey = $node->getResolvedContainer();
-        if (array_key_exists($aliasKey, $aliasMapping)) {
-            $container = $aliasMapping[$aliasKey];
+        if (!$container = $this->getMappedContainer($node, $aliasMapping)) {
+            $container = $node->getContainer();
         }
 
         return $node->getField() ? $container . '.' . $node->getField() : $container;
@@ -128,10 +126,8 @@ class QueryExpressionBuilder
      */
     protected function convertRelationNode(RelationNode $node, array $aliasMapping)
     {
-        $container = $node->getContainer() . '.' . $node->getField();
-        $aliasKey = $node->getResolvedContainer();
-        if (array_key_exists($aliasKey, $aliasMapping)) {
-            $container = $aliasMapping[$aliasKey];
+        if (!$container = $this->getMappedContainer($node, $aliasMapping)) {
+            $container = $node->getContainer() . '.' . $node->getField();
         }
 
         return $container . '.' . $node->getRelationField();
@@ -153,5 +149,20 @@ class QueryExpressionBuilder
         }
 
         return $value;
+    }
+
+    /**
+     * @param ContainerHolderNodeInterface $node
+     * @param array $aliasMapping
+     * @return string|null
+     */
+    protected function getMappedContainer(ContainerHolderNodeInterface $node, array $aliasMapping)
+    {
+        $aliasKey = $node->getResolvedContainer();
+        if (array_key_exists($aliasKey, $aliasMapping)) {
+            return $aliasMapping[$aliasKey];
+        }
+
+        return null;
     }
 }
