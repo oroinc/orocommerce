@@ -1,0 +1,13 @@
+placeholders:
+    placeholders:
+        scripts_before:
+            items:
+                line_item_templates: ~
+
+        orob2b_product_quick_add_buttons:
+            items:
+                order_quick_add: ~
+
+    items:
+        line_item_templates:
+            template: OroOrderBundle:Js:line_item_templates.js.twig
