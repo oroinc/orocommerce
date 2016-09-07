@@ -6,7 +6,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
 
-    oro_website_search.orm.engine:
+    oro_website_search.engine:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
         parent: oro_website_search.search.engine
         calls:

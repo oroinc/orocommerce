@@ -84,9 +84,7 @@ class OrmEngineTest extends WebTestCase
     {
         $this->initClient();
 
-        // TODO: Add check to only run this test with orm search engine
-        // TODO: when the configuration for the engine types will be added
-        if (false) {
+        if ($this->getContainer()->getParameter('oro_website_search.engine') != 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
 
@@ -97,13 +95,19 @@ class OrmEngineTest extends WebTestCase
         $indexer = $this->getContainer()->get('oro_website_search.engine.orm_indexer');
         $indexer->reindex(TestEntity::class, []);
 
-        $this->ormEngine = $this->getContainer()->get('oro_website_search.orm.engine');
+        $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');
         $this->manager = $this->getContainer()->get('doctrine')->getManager();
 
         $this->expectedSearchItems = [];
-        for ($ind = 1; $ind <= LoadSearchItemData::COUNT; $ind++) {
-            $this->expectedSearchItems[] = $this->getReference(sprintf('searchItem%s', $ind));
-        }
+        $this->expectedSearchItems[] = $this->getReference('searchItem1');
+        $this->expectedSearchItems[] = $this->getReference('searchItem2');
+        $this->expectedSearchItems[] = $this->getReference('searchItem3');
+        $this->expectedSearchItems[] = $this->getReference('searchItem4');
+        $this->expectedSearchItems[] = $this->getReference('searchItem5');
+        $this->expectedSearchItems[] = $this->getReference('searchItem6');
+        $this->expectedSearchItems[] = $this->getReference('searchItem7');
+        $this->expectedSearchItems[] = $this->getReference('searchItem8');
+        $this->expectedSearchItems[] = $this->getReference('searchItem9');
     }
 
     protected function tearDown()
@@ -121,7 +125,7 @@ class OrmEngineTest extends WebTestCase
         $listener = function (IndexEntityEvent $event) {
             $items = $this->getContainer()->get('doctrine')
                 ->getRepository(TestEntity::class)
-                ->getItemsByIds($event->getEntityIds());
+                ->findBy(['id' => $event->getEntityIds()]);
 
             foreach ($items as $item) {
                 $event->addField(
