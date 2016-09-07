@@ -112,7 +112,7 @@ services:
     orob2b_frontend.listener.update_migration_namespaces:
         class: 'Oro\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
-            - '@doctrine.dbal.default_connection'
+            - '@doctrine'
             - '@oro_entity_config.config_manager'
             - '%installed%'
         tags:
