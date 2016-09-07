@@ -24,7 +24,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     /**
      * @var OroMainContext
      */
-    private $commerceMainContext;
+    private $oroMainContext;
 
     /**
      * @BeforeScenario
@@ -32,7 +32,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $environment = $scope->getEnvironment();
-        $this->commerceMainContext = $environment->getContext(OroMainContext::class);
+        $this->oroMainContext = $environment->getContext(OroMainContext::class);
     }
 
     /**
@@ -101,7 +101,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getMink()->setDefaultSessionName('second_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
-        $this->commerceMainContext->loginAsUserWithPassword();
+        $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
@@ -131,7 +131,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getMink()->setDefaultSessionName('second_session');
         $this->getSession()->resizeWindow(1920, 1080, 'current');
 
-        $this->commerceMainContext->loginAsUserWithPassword();
+        $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
 
         /** @var MainMenu $mainMenu */
