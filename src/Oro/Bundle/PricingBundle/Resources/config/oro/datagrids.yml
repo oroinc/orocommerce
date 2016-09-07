@@ -14,10 +14,10 @@ datagrids:
                     - priceList.updatedAt
                     - CASE WHEN priceList.active <> true THEN 'disabled' ELSE CASE WHEN priceList.containSchedule = true THEN CASE WHEN schedule.id IS NOT NULL THEN 'active' ELSE 'inactive' END ELSE 'active' END END as activity
                 from:
-                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     left:
-                        - { join: '%orob2b_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
+                        - { join: '%oro_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
             bind_parameters:
                 - now
 
@@ -107,7 +107,7 @@ datagrids:
                 icon:          eye-open
                 acl_resource:  orob2b_pricing_price_list_view
                 rowAction:     true
-        action_configuration: ['@orob2b_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
+        action_configuration: ['@oro_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
 
     base-price-list-relations-grid:
         acl_resource:      orob2b_pricing_price_list_view
@@ -157,10 +157,10 @@ datagrids:
                     - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: %orob2b_pricing.entity.price_list_to_account.class%, alias: priceListToAccount, conditionType: 'WITH', condition: 'priceListToAccount.priceList = priceList'}
+                        - { join: %oro_pricing.entity.price_list_to_account.class%, alias: priceListToAccount, conditionType: 'WITH', condition: 'priceListToAccount.priceList = priceList'}
                         - { join: priceListToAccount.account, alias: relatedEntity }
                     left:
                         - { join: relatedEntity.group, alias: accountGroup }
@@ -189,7 +189,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_account.entity.account_group.class%
+                            class:    %oro_account.entity.account_group.class%
                             property: name
                 parentName:
                     type:      string
@@ -203,10 +203,10 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                    - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: %orob2b_pricing.entity.price_list_to_account_group.class%, alias: priceListToAccountGroup, conditionType: 'WITH', condition: 'priceListToAccountGroup.priceList = priceList'}
+                        - { join: %oro_pricing.entity.price_list_to_account_group.class%, alias: priceListToAccountGroup, conditionType: 'WITH', condition: 'priceListToAccountGroup.priceList = priceList'}
                         - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
@@ -274,10 +274,10 @@ datagrids:
                     - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: relatedEntity }
+                    - { table: %oro_account.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
-                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accounts' }
+                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accounts' }
                         - { join: relatedEntity.group, alias: accountGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
@@ -295,7 +295,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_account.entity.account_group.class%
+                            class:    %oro_account.entity.account_group.class%
                             property: name
                 parentName:
                     type:       string
@@ -317,10 +317,10 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_account.entity.account_group.class%, alias: relatedEntity }
+                    - { table: %oro_account.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
-                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
+                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
                 label:          oro.account.accountgroup.name.label
@@ -337,10 +337,10 @@ datagrids:
                 select:
                     - relatedEntity.url
                 from:
-                    - { table: %orob2b_website.entity.website.class%, alias: relatedEntity }
+                    - { table: %oro_website.entity.website.class%, alias: relatedEntity }
                 join:
                     left:
-                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
+                        - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
         columns:
             name:
                 label:          oro.website.name.label
@@ -378,7 +378,7 @@ datagrids:
                     - productPrice.currency
                     - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
                 from:
-                    - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                    - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
                 join:
                     inner:
                         - { join: productPrice.product, alias: product }
@@ -448,7 +448,7 @@ datagrids:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 filter:
                     type:       single_choice
                     data_name:  ruleId
@@ -509,7 +509,7 @@ datagrids:
                     - productPrice.value
                     - productPrice.currency
                 from:
-                    - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                    - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
                 join:
                     left:
                         - { join: productPrice.priceList, alias: priceList }
@@ -552,7 +552,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_pricing.entity.price_list.class%
+                            class:    %oro_pricing.entity.price_list.class%
                             property: name
                 quantity:
                     type:      number
@@ -570,7 +570,7 @@ datagrids:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
         properties:
             priceListId: ~
             view_price_list_link:
@@ -597,7 +597,7 @@ datagrids:
                 select:
                     - priceAttributepriceList
                 from:
-                    - { table: %orob2b_pricing.entity.price_attribute_price_list.class%, alias: priceAttributepriceList }
+                    - { table: %oro_pricing.entity.price_attribute_price_list.class%, alias: priceAttributepriceList }
 
         columns:
             name:

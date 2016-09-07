@@ -222,7 +222,7 @@ workflows:
                             entity: $checkout
                             attribute: $.result.initCheckoutState
                         - '@call_service_method':
-                            service: orob2b_checkout.action.default_shipping_method_setter
+                            service: oro_checkout.action.default_shipping_method_setter
                             method: setDefaultShippingMethod
                             method_parameters: [$checkout]
                     attribute_fields:
@@ -255,7 +255,7 @@ workflows:
                     form_init:
                         - '@assign_value': [$payment_validate, true]
                         - '@call_service_method':
-                            service: orob2b_payment.provider.payment_transaction
+                            service: oro_payment.provider.payment_transaction
                             method: getActiveValidatePaymentTransaction
                             method_parameters: [$payment_method]
                             attribute: $.result.validatePaymentTransaction
@@ -622,7 +622,7 @@ workflows:
                                 shipping_rule_config: $shipping_rule_config
                 actions:
                     - '@call_service_method':
-                        service: orob2b_checkout.shipping_cost.calculator
+                        service: oro_checkout.shipping_cost.calculator
                         method: calculatePrice
                         method_parameters: [$checkout, $shipping_rule_config]
                         attribute: $checkout.shippingCost
@@ -827,7 +827,7 @@ workflows:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.result.shippingAddress
                     - '@call_service_method':
-                        service: orob2b_payment.provider.payment_term
+                        service: oro_payment.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@create_entity':
@@ -861,7 +861,7 @@ workflows:
                         method_parameters:
                             - $.result.lineItems
                     - '@call_service_method':
-                        service: orob2b_order.handler.order_totals_handler
+                        service: oro_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
                             - $order

@@ -38,7 +38,7 @@ class PriceListController extends Controller
 
         return [
             'entity' => $priceList,
-            'product_price_entity_class' => $this->container->getParameter('orob2b_pricing.entity.product_price.class')
+            'product_price_entity_class' => $this->container->getParameter('oro_pricing.entity.product_price.class')
         ];
     }
 
@@ -66,7 +66,7 @@ class PriceListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_pricing.entity.price_list.class')
+            'entity_class' => $this->container->getParameter('oro_pricing.entity.price_list.class')
         ];
     }
 

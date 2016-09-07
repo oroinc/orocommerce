@@ -28,7 +28,7 @@ class AjaxMenuItemController extends Controller
         $position = $request->get('position');
 
         return new JsonResponse(
-            $this->get('orob2b_menu.tree.menu_item_tree_handler')->moveNode($nodeId, $parentId, $position)
+            $this->get('oro_menu.tree.menu_item_tree_handler')->moveNode($nodeId, $parentId, $position)
         );
     }
 }

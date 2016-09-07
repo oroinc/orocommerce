@@ -30,7 +30,7 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
             $securityPolicyDef->replaceArgument(1, $filters);
 
             $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', [new Reference('orob2b_product.twig.product_unit_value')]);
+            $rendererDef->addMethodCall('addExtension', [new Reference('oro_product.twig.product_unit_value')]);
         }
     }
 }

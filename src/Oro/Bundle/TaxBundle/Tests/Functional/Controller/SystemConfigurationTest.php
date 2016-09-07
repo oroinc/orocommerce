@@ -93,7 +93,7 @@ class SystemConfigurationTest extends WebTestCase
 
     public function testBuiltInProvider()
     {
-        $providers = $this->getContainer()->get('orob2b_tax.provider.tax_provider_registry')->getProviders();
+        $providers = $this->getContainer()->get('oro_tax.provider.tax_provider_registry')->getProviders();
 
         $provider = reset($providers);
 

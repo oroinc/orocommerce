@@ -30,7 +30,7 @@ class AjaxEntityTotalsController extends Controller
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -59,7 +59,7 @@ class AjaxEntityTotalsController extends Controller
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
+            $totalRequestHandler = $this->get('oro_pricing.subtotal_processor.handler.request_handler');
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);

@@ -1,7 +1,7 @@
 datagrids:
     payment-terms-grid:
         acl_resource: orob2b_payment_term_view
-        extended_entity_name: %orob2b_payment.entity.payment_term.class%
+        extended_entity_name: %oro_payment.entity.payment_term.class%
         options:
             entityHint:        payment_term
             entity_pagination: true
@@ -12,7 +12,7 @@ datagrids:
                     - paymentTerm.id
                     - paymentTerm.label
                 from:
-                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
+                    - { table: %oro_payment.entity.payment_term.class%, alias: paymentTerm }
         columns:
             label:
                 label: oro.payment.paymentterm.label.label
@@ -77,7 +77,7 @@ datagrids:
                     - paymentTerm.id
                     - paymentTerm.label
                 from:
-                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm }
+                    - { table: %oro_payment.entity.payment_term.class%, alias: paymentTerm }
         columns:
             label:
                 label: oro.payment.paymentterm.label.label
@@ -139,7 +139,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm}
+                    - { table: %oro_payment.entity.payment_term.class%, alias: paymentTerm}
                 join:
                     inner:
                         - { join: paymentTerm.accounts, alias: relatedEntity }
@@ -158,7 +158,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_payment.entity.payment_term.class%, alias: paymentTerm}
+                    - { table: %oro_payment.entity.payment_term.class%, alias: paymentTerm}
                 join:
                     inner:
                         - { join: paymentTerm.accountGroups, alias: relatedEntity }
@@ -225,11 +225,11 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_account.entity.account_group.class%, alias: relatedEntity }
+                    - { table: %oro_account.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
                         -
-                            join: %orob2b_payment.entity.payment_term.class%
+                            join: %oro_payment.entity.payment_term.class%
                             alias: paymentTerm
                             conditionType: 'WITH'
                             condition: 'relatedEntity MEMBER OF paymentTerm.accountGroups'
@@ -247,11 +247,11 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: relatedEntity }
+                    - { table: %oro_account.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
                         -
-                            join: %orob2b_payment.entity.payment_term.class%
+                            join: %oro_payment.entity.payment_term.class%
                             alias: paymentTerm
                             conditionType: 'WITH'
                             condition: 'relatedEntity MEMBER OF paymentTerm.accounts'

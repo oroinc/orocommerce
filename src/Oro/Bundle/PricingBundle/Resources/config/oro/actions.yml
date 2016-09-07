@@ -85,7 +85,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_relation_trigger_handler
+                service: oro_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
@@ -110,7 +110,7 @@ operations:
                 message: oro.pricing.pricelist.status.message.disabled
                 type: 'success'
             - '@call_service_method':
-                service: orob2b_pricing.price_list_relation_trigger_handler
+                service: oro_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
@@ -141,16 +141,16 @@ operations:
             - '@assign_value': [$.newPriceList.active, false]
             - '@assign_value': [$.newPriceList.default, false]
             - '@call_service_method':
-                service: orob2b_pricing.duplicator.schedule
+                service: oro_pricing.duplicator.schedule
                 method: duplicateSchedule
                 method_parameters: [$.entity,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@call_service_method':
-                service: orob2b_pricing.duplicator.price_list_to_product_duplicator
+                service: oro_pricing.duplicator.price_list_to_product_duplicator
                 method: duplicate
                 method_parameters: [$.entity, $.newPriceList]
             - '@call_service_method':
-                service: orob2b_pricing.duplicator.product_price_duplicator
+                service: oro_pricing.duplicator.product_price_duplicator
                 method: duplicate
                 method_parameters: [$.entity, $.newPriceList]
             - '@flash_message':
@@ -180,11 +180,11 @@ operations:
             icon: icon-money
         actions:
             - '@call_service_method':
-                service: 'orob2b_pricing.builder.price_list_product_assignment_builder'
+                service: 'oro_pricing.builder.price_list_product_assignment_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@call_service_method':
-                service: 'orob2b_pricing.builder.product_price_builder'
+                service: 'oro_pricing.builder.product_price_builder'
                 method: 'buildByPriceList'
                 method_parameters: [$.entity]
             - '@assign_value': [$.entity.actual, true]

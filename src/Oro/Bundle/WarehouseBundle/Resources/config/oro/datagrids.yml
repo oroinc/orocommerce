@@ -1,6 +1,6 @@
 datagrids:
     base-warehouse-grid:
-        extended_entity_name: %orob2b_warehouse.entity.warehouse.class%
+        extended_entity_name: %oro_warehouse.entity.warehouse.class%
         options:
                 entity_pagination: true
                 entityHint:        warehouse
@@ -13,7 +13,7 @@ datagrids:
                     - warehouse.createdAt
                     - warehouse.updatedAt
                 from:
-                    - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
+                    - { table: %oro_warehouse.entity.warehouse.class%, alias: warehouse }
         columns:
             id:
                 label:         oro.warehouse.id.label
@@ -85,12 +85,12 @@ datagrids:
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-                    - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
+                    - { table: %oro_warehouse.entity.warehouse.class%, alias: warehouse }
                 join:
                     inner:
-                        - { join: %orob2b_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
+                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
                     left:
-                        - { join: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: level, conditionType: WITH, condition: "level.warehouse = warehouse AND level.productUnitPrecision = precision" }
+                        - { join: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: level, conditionType: WITH, condition: "level.warehouse = warehouse AND level.productUnitPrecision = precision" }
             bind_parameters:
                 - productId
         columns:
@@ -133,7 +133,7 @@ datagrids:
                 - orowarehouse/js/datagrid/builder/level-quantity-builder
 
     warehouse-inventory-grid:
-        extended_entity_name: %orob2b_warehouse.entity.warehouse_inventory_level.class%
+        extended_entity_name: %oro_warehouse.entity.warehouse_inventory_level.class%
         acl_resource: orob2b_product_warehouse_inventory_view
         source:
             type: orm
@@ -150,7 +150,7 @@ datagrids:
                     - productPrecision.precision as inventoryLevelPrecision
                     - IDENTITY(productPrecision.unit) as unitCode
                 from:
-                    - { table: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
+                    - { table: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
                 join:
                     left:
                         - { join: inventory.warehouse, alias: warehouse }
@@ -247,7 +247,7 @@ datagrids:
                     options:
                         field_type:     entity
                         field_options:
-                            class:      %orob2b_warehouse.entity.warehouse.class%
+                            class:      %oro_warehouse.entity.warehouse.class%
                             property:   name
                 quantity:
                     data_name:       quantity
@@ -258,7 +258,7 @@ datagrids:
                     data_name:       precisionUnit
                     options:
                         field_options:
-                            choices: "@orob2b_product.provider.product_units_provider->getAvailableProductUnits"
+                            choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
                             multiple: true
         actions:
             delete:

@@ -1,43 +1,43 @@
 services:
     # Event listener
-    orob2b_warehouse.event_listener.order_warehouse_grid_listener:
+    oro_warehouse.event_listener.order_warehouse_grid_listener:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener'
         arguments:
-            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+            - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
 
-    orob2b_warehouse.event_listener.order_line_item_warehouse_grid_listener:
+    oro_warehouse.event_listener.order_line_item_warehouse_grid_listener:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderLineItemWarehouseGridListener'
         arguments:
-            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+            - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
 
-    orob2b_warehouse.event_listener.order_form_view:
+    oro_warehouse.event_listener.order_form_view:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderFormViewListener'
-        arguments: ["@orob2b_warehouse.entity.helper.warehouse_counter"]
+        arguments: ["@oro_warehouse.entity.helper.warehouse_counter"]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onOrderEdit }
 
-    orob2b_warehouse.event_listener.order_warehouse_before_render:
+    oro_warehouse.event_listener.order_warehouse_before_render:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener'
-        arguments: ["@orob2b_warehouse.entity.helper.warehouse_counter"]
+        arguments: ["@oro_warehouse.entity.helper.warehouse_counter"]
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: onWarehouseOrderDisplay, priority: -255 }
 
     # Form extension
-    orob2b_warehouse.form.extension.order:
+    oro_warehouse.form.extension.order:
         class: 'Oro\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension'
         arguments:
-            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+            - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: form.type_extension, alias: orob2b_order_type }
 
-    orob2b_warehouse.form.extension.order_line:
+    oro_warehouse.form.extension.order_line:
         class: 'Oro\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension'
         arguments:
-            - "@orob2b_order.form.section.provider"
-            - "@orob2b_warehouse.entity.helper.warehouse_counter"
+            - "@oro_order.form.section.provider"
+            - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item }

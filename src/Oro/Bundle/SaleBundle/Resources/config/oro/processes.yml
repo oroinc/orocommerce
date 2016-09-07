@@ -34,7 +34,7 @@ processes:
             actions_configuration:
                 - '@call_service_method':
                     attribute: $.requests
-                    service: orob2b_sale.service.request_helper
+                    service: oro_sale.service.request_helper
                     method: getRequestsWoQuote
                 - '@foreach':
                     array: $.requests

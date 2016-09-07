@@ -69,7 +69,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             $this->configManager,
             $this->tokenStorage,
             $this->websiteManager,
-            $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
+            $this->getContainer()->get('oro_account.provider.account_user_relations_provider')
         );
     }
 
@@ -238,6 +238,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     protected function getDefaultWebsite()
     {
-        return $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        return $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 }
