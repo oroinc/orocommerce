@@ -53,7 +53,7 @@ class LoadPriceAttributeProductPrices extends AbstractFixture implements Depende
             'priceList' => LoadPriceAttributePriceLists::PRICE_ATTRIBUTE_PRICE_LIST_1,
             'qty' => 1,
             'unit' => LoadProductUnits::BOTTLE,
-            'price' => 12.2,
+            'price' => 20,
             'currency' => 'EUR',
             'reference' => 'price_attribute_product_price.4',
         ],

@@ -14,6 +14,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -41,6 +43,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             [
                 LoadPriceAttributeProductPrices::class,
                 LoadCategoryProductData::class,
+                LoadProductPrices::class
             ]
         );
 
@@ -163,6 +166,87 @@ class PriceListRuleCompilerTest extends WebTestCase
                 $priceRule->getId(),
                 '110.0000',
             ],
+        ];
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+    }
+
+    public function testApplyRuleConditionsWithTwoBaseRelations()
+    {
+        $this->markTestIncomplete("@todo: after BB-4364");
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $condition = sprintf(
+            'product.category == %s',
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
+        );
+        /** @var PriceList $basePriceList */
+        $basePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $rule = sprintf(
+            'pricelist[%s].prices.value + product.price_attribute_price_list_1.value',
+            $basePriceList->getId()
+        );
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+        $priceRule = new PriceRule();
+        $priceRule
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setCurrencyExpression(sprintf('pricelist[%s].prices.currency', $basePriceList->getId()))
+            ->setProductUnitExpression(sprintf('pricelist[%s].prices.unit', $basePriceList->getId()))
+            ->setQuantityExpression(sprintf('pricelist[%s].prices.quantity', $basePriceList->getId()))
+            ->setRuleCondition($condition)
+            ->setRule($rule);
+
+        $em = $this->registry->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $expected = [
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'liter',
+                'USD',
+                '10',
+                'product.1',
+                $priceRule->getId(),
+                '23.2',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'liter',
+                'USD',
+                '1',
+                'product.1',
+                $priceRule->getId(),
+                '21',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'bottle',
+                'EUR',
+                '11',
+                'product.1',
+                $priceRule->getId(),
+                '32.2',
+            ],
+            [
+                $product1->getId(),
+                $priceList->getId(),
+                'bottle',
+                'EUR',
+                '1',
+                'product.1',
+                $priceRule->getId(),
+                '32.2',
+            ]
         ];
 
         $qb = $this->getQueryBuilder($priceRule);

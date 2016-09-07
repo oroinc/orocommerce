@@ -331,20 +331,24 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($rule->getCurrencyExpression()) {
             $currencyCondition = $qb->expr()->andX();
             $joins = array_key_exists($rootAlias, $qb->getDQLPart('join')) ? $qb->getDQLPart('join')[$rootAlias] : [];
+            $fields = [];
             /** @var Join $join */
             foreach ($joins as $join) {
                 if (is_subclass_of($join->getJoin(), BaseProductPrice::class) ||
                     is_subclass_of($join->getJoin(), CurrencyAwareInterface::class)
                 ) {
+                    $field = sprintf('%s.currency', $join->getAlias());
                     $currencyCondition->add(
                         $qb->expr()->in(
-                            sprintf('%s.currency', $join->getAlias()),
+                            $field,
                             $rule->getPriceList()->getCurrencies()
                         )
                     );
                 }
             }
-            $qb->andWhere($currencyCondition);
+            if ($currencyCondition->count() > 0) {
+                $qb->andWhere($currencyCondition);
+            }
         }
     }
 
