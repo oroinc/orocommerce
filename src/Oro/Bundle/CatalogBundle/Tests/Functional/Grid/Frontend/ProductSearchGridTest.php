@@ -141,14 +141,30 @@ class ProductSearchGridTest extends WebTestCase
         $this->assertTrue($found);
     }
 
+    public function testPagination()
+    {
+        // getting SKU of first item on first page
+        $data = $this->getDatagridData('frontend-product-search-grid', [], [], 1);
+        $sku1 = $data[0]['sku'];
+
+        // getting SKU of first item on second page
+        $data = $this->getDatagridData('frontend-product-search-grid', [], [], 2);
+        $sku2 = $data[0]['sku'];
+
+        $this->assertNotEquals($sku1, $sku2);
+    }
+
     /**
      * @param string $gridName
      * @param array  $filters
      * @param array  $sorters
+     * @param int|null $page
      * @return array
      */
-    protected function getDatagridData($gridName, array $filters = [], array $sorters = [])
+    protected function getDatagridData($gridName, array $filters = [], array $sorters = [], $page = null)
     {
+        $gridParameters = ['gridName' => $gridName];
+
         $result = [];
         foreach ($filters as $filter => $value) {
             $result[$gridName . '[_filter]' . $filter] = $value;
@@ -156,7 +172,11 @@ class ProductSearchGridTest extends WebTestCase
         foreach ($sorters as $sorter => $value) {
             $result[$gridName . '[_sort_by]' . $sorter] = $value;
         }
-        $response = $this->client->requestFrontendGrid(['gridName' => $gridName], $result);
+        if ($page !== null) {
+            $result[$gridName . '[_pager][_page]'] = (int) $page;
+        }
+
+        $response = $this->client->requestFrontendGrid($gridParameters, $result);
 
         return json_decode($response->getContent(), true)['data'];
     }
