@@ -1,6 +1,11 @@
 layout:
     imports:
         - orob2b_account_menu
+        -
+            id: orob2b_line_items_grid
+            root: order_container
+            namespace: line_items
+
     actions:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
@@ -25,10 +30,6 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'account'
-        - '@setOption':
-            id: datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'grid__toolbar grid__toolbar--simplistic'
         - '@addTree':
             items:
                 order_view_page:
@@ -47,13 +48,7 @@ layout:
                         block_prefixes: ['order_body_column']
                 order_after_line_items_grid:
                     blockType: container
-                order_line_items_grid_container:
-                    blockType: container
                 order_body_container:
-                    blockType: container
-                    options:
-                        block_prefixes: ['order_body_block_container']
-                order_ine_items_grid_body_container:
                     blockType: container
                     options:
                         block_prefixes: ['order_body_block_container']
@@ -61,18 +56,10 @@ layout:
                     blockType: container
                     options:
                         block_prefixes: ['order_head_block_container']
-                order_ine_items_grid_head_container:
-                    blockType: container
-                    options:
-                        block_prefixes: ['order_head_block_container']
                 order_information_head:
                     blockType: text
                     options:
                         text: 'oro.order.frontend.order_information.title'
-                order_line_items_grid_title:
-                    blockType: text
-                    options:
-                        text: 'oro.order.frontend.ordered_items.title'
                 order_list_link:
                     blockType: link
                     options:
@@ -110,14 +97,6 @@ layout:
                         address: '=data["order"].getShippingAddress()'
                         label: 'oro.order.shipping_address.label'
                         block_prefixes: ['order_body_column_element']
-                order_line_items_grid:
-                    id: order-line-items
-                    parentId: content
-                    blockType: datagrid
-                    options:
-                        grid_name: order-line-items-grid-frontend
-                        grid_parameters:
-                            order_id: '=data["order"].getId()'
                 order_po_number:
                     blockType: text
                     options:
@@ -198,11 +177,6 @@ layout:
                                         order_ship_until: ~
                                         order_po_number: ~
                                         order_customer_notes: ~
-                            order_line_items_grid_container:
-                                order_ine_items_grid_head_container:
-                                    order_line_items_grid_title: ~
-                                order_ine_items_grid_body_container:
-                                    order_line_items_grid: ~
                             order_after_line_items_grid:
                                 order_list_link: ~
                                 order_total: ~
