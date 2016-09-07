@@ -1,0 +1,12 @@
+behat_elements:
+    Registration:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      selector: "form[id^='orob2b_account_frontend_account_user_register']"
+      options:
+        mapping:
+          Company Name: orob2b_account_frontend_account_user_register[companyName]
+          First Name: orob2b_account_frontend_account_user_register[firstName]
+          Last Name: orob2b_account_frontend_account_user_register[lastName]
+          Email Address: orob2b_account_frontend_account_user_register[email]
+          Password: orob2b_account_frontend_account_user_register[plainPassword][first]
+          Confirm Password: orob2b_account_frontend_account_user_register[plainPassword][second]
