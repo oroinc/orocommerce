@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -175,14 +172,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function load(ObjectManager $manager)
     {
         $user = $this->getUser($manager);
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
         foreach (self::$items as $item) {
-            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+            $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
 
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])
+                ->setWebsite($website)
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
                 ->setShipUntil(new \DateTime('+10 day'))

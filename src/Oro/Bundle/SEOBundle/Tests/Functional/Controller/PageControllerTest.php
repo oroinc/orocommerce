@@ -59,7 +59,7 @@ class PageControllerTest extends WebTestCase
     protected function getPage()
     {
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_cms.entity.page.class')
+            $this->getContainer()->getParameter('oro_cms.entity.page.class')
         );
 
         return $repository->findOneBy(['title' => 'page.1']);

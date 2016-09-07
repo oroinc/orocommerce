@@ -40,7 +40,7 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
     public function testConfiguration()
     {
         static::assertEquals(
-            'orob2b_sale.validator.quote_product',
+            'oro_sale.validator.quote_product',
             $this->constraint->validatedBy()
         );
 

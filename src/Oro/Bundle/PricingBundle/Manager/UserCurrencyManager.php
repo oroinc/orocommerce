@@ -72,20 +72,18 @@ class UserCurrencyManager
         $currency = null;
         $website = $this->getWebsite($website);
 
-        if (!$website) {
-            return null;
-        }
-
-        $user = $this->getLoggedUser();
-        if ($user instanceof AccountUser) {
-            $userSettings = $user->getWebsiteSettings($website);
-            if ($userSettings) {
-                $currency = $userSettings->getCurrency();
-            }
-        } else {
-            $sessionStoredCurrencies = $this->getSessionCurrencies();
-            if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
-                $currency = $sessionStoredCurrencies[$website->getId()];
+        if ($website) {
+            $user = $this->getLoggedUser();
+            if ($user instanceof AccountUser) {
+                $userSettings = $user->getWebsiteSettings($website);
+                if ($userSettings) {
+                    $currency = $userSettings->getCurrency();
+                }
+            } else {
+                $sessionStoredCurrencies = $this->getSessionCurrencies();
+                if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
+                    $currency = $sessionStoredCurrencies[$website->getId()];
+                }
             }
         }
 

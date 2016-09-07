@@ -105,7 +105,7 @@ operations:
             '@equal': [$status.draft, false]
         actions:
             - '@call_service_method':
-                service: orob2b_rfp.service.request_to_quote_data_storage
+                service: oro_rfp.service.request_to_quote_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
             - '@redirect':
@@ -132,7 +132,7 @@ operations:
                 component_additional: '[name$="[additional]"]'
         preactions:
             - '@call_service_method':
-                service: orob2b_rfp.processor.quick_add
+                service: oro_rfp.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
@@ -208,8 +208,8 @@ operations:
                   - [[keep], [propertyName, [accountUser]]]
                   - [[keep], [propertyName, [account]]]
                   - [[keep], [propertyName, [organization]]]
-                  - [[keep], [property, ["%orob2b_rfp.entity.request_product.class%", product]]]
-                  - [[keep], [property, ["%orob2b_rfp.entity.request_product_item.class%", productUnit]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
             - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
             - '@find_entity':

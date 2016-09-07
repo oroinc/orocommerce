@@ -39,7 +39,7 @@ class AccountUserProviderTest extends WebTestCase
         $roleName = 'DENIED';
         $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $roleName);
         $role->setLabel($roleName);
-        $className = $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class');
+        $className = $this->getContainer()->getParameter('oro_account.entity.account_user_role.class');
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($className);
         $em->persist($role);
         $em->flush();
@@ -53,7 +53,7 @@ class AccountUserProviderTest extends WebTestCase
      */
     protected function assertRoleHasPermission($roleName, array $expected)
     {
-        $className = $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class');
+        $className = $this->getContainer()->getParameter('oro_account.entity.account_user_role.class');
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($className);
         $repository = $em->getRepository($className);
 
@@ -61,7 +61,7 @@ class AccountUserProviderTest extends WebTestCase
         $this->assertNotEmpty($role);
 
         /* @var $securityProvider AccountUserProvider */
-        $securityProvider = $this->getContainer()->get('orob2b_account.security.account_user_provider');
+        $securityProvider = $this->getContainer()->get('oro_account.security.account_user_provider');
 
         /** @var AccountUser $user */
         $user = $securityProvider->getLoggedUser();
@@ -70,7 +70,7 @@ class AccountUserProviderTest extends WebTestCase
         $user->setRoles([$role]);
         $em->flush();
 
-        $userClassName = $this->getContainer()->getParameter('orob2b_account.entity.account_user.class');
+        $userClassName = $this->getContainer()->getParameter('oro_account.entity.account_user.class');
 
         list(
             $isGrantedViewAccountUser,

@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @Config()
  * @ORM\Entity
  * @ORM\Table(
- *    name="orob2b_account_user_settings",
+ *    name="oro_account_user_settings",
  *    uniqueConstraints={
  *        @ORM\UniqueConstraint(name="unique_acc_user_website", columns={"account_user_id", "website_id"})
  *    }

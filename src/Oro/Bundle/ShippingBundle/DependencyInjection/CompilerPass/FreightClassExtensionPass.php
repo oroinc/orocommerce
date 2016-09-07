@@ -7,8 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FreightClassExtensionPass implements CompilerPassInterface
 {
-    const PROVIDER_TAG = 'orob2b_shipping.extension.freight_classes';
-    const EXTENSION_SERVICE_ID = 'orob2b_shipping.provider.measure_units.freight';
+    const PROVIDER_TAG = 'oro_shipping.extension.freight_classes';
+    const EXTENSION_SERVICE_ID = 'oro_shipping.provider.measure_units.freight';
 
     /**
      * {@inheritdoc}

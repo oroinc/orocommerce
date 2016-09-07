@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtota
  * If isValid=false values should be recalculated
  *
  * @ORM\Table(
- *     name="orob2b_shopping_list_total",
+ *     name="oro_shopping_list_total",
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(name="unique_shopping_list_currency", columns={
  *              "shopping_list_id",

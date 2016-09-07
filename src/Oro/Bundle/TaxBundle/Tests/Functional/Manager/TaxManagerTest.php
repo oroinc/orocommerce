@@ -110,7 +110,7 @@ class TaxManagerTest extends WebTestCase
      */
     protected function executeMethod($method, $object, $expectedResult)
     {
-        $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
+        $manager = $this->getContainer()->get('oro_tax.manager.tax_manager');
 
         $this->compareResult($expectedResult, $manager->{$method}($object, true));
 

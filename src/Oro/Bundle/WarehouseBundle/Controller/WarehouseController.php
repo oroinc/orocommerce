@@ -62,7 +62,7 @@ class WarehouseController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_warehouse.entity.warehouse.class'),
+            'entity_class' => $this->container->getParameter('oro_warehouse.entity.warehouse.class'),
         ];
     }
 

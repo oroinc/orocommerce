@@ -52,7 +52,7 @@ class RequestController extends Controller
      */
     public function indexAction()
     {
-        $entityClass = $this->container->getParameter('orob2b_rfp.entity.request.class');
+        $entityClass = $this->container->getParameter('oro_rfp.entity.request.class');
         $viewPermission = 'VIEW;entity:' . $entityClass;
         if (!$this->getSecurityFacade()->isGranted($viewPermission)) {
             return $this->redirect(
@@ -81,7 +81,7 @@ class RequestController extends Controller
      */
     public function createAction(Request $request)
     {
-        $rfpRequest = $this->get('orob2b_rfp.request.manager')->create();
+        $rfpRequest = $this->get('oro_rfp.request.manager')->create();
         $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);
@@ -125,7 +125,7 @@ class RequestController extends Controller
     protected function update(RFPRequest $rfpRequest)
     {
         /* @var $handler RequestUpdateHandler */
-        $handler = $this->get('orob2b_rfp.service.request_update_handler');
+        $handler = $this->get('oro_rfp.service.request_update_handler');
 
         // set default status after edit
         if ($rfpRequest->getId()) {
@@ -136,7 +136,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->get('orob2b_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest)->getForm(),
+            $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest)->getForm(),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
@@ -201,7 +201,7 @@ class RequestController extends Controller
      */
     protected function getWebsiteManager()
     {
-        return $this->get('orob2b_website.manager');
+        return $this->get('oro_website.manager');
     }
 
     /**
@@ -217,7 +217,7 @@ class RequestController extends Controller
      */
     protected function getDefaultRequestStatus()
     {
-        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
         $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
 
         return $this
@@ -254,7 +254,7 @@ class RequestController extends Controller
         if (count($productLineItems) === 0) {
             return;
         }
-        $this->get('orob2b_rfp.request.manager')
+        $this->get('oro_rfp.request.manager')
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
 }

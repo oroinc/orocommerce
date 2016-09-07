@@ -145,7 +145,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getContainer()
-            ->get('orob2b_shopping_list.shopping_list.manager')
+            ->get('oro_shopping_list.shopping_list.manager')
             ->getForCurrentUser();
 
         $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
@@ -166,7 +166,7 @@ class ShoppingListControllerTest extends WebTestCase
         $shippingListId = null
     ) {
         $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
-        $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
+        $processor = $this->getContainer()->get('oro_shopping_list.processor.quick_add');
 
         $this->client->followRedirects(true);
 

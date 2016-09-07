@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
@@ -13,7 +12,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -267,7 +265,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $qb = $this->createQueryBuilder('cpl');
 
-        $qb->select('cpl')
+        $qb->select('DISTINCT cpl')
             ->innerJoin(
                 'OroPricingBundle:CombinedPriceListToPriceList',
                 'priceListRelations',
@@ -280,6 +278,27 @@ class CombinedPriceListRepository extends BasePriceListRepository
             $qb->andWhere($qb->expr()->eq('cpl.pricesCalculated', ':hasCalculatedPrices'))
                 ->setParameter('hasCalculatedPrices', $hasCalculatedPrices);
         }
+
+        return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param array|PriceList[]|int[] $priceLists
+     * @return BufferedQueryResultIterator
+     */
+    public function getCombinedPriceListsByPriceLists(array $priceLists)
+    {
+        $qb = $this->createQueryBuilder('cpl');
+
+        $qb->select('cpl')
+            ->innerJoin(
+                CombinedPriceListToPriceList::class,
+                'priceListRelations',
+                Join::WITH,
+                $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
+            )
+            ->where($qb->expr()->in('priceListRelations.priceList', ':priceLists'))
+            ->setParameter('priceLists', $priceLists);
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

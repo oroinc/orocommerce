@@ -12,9 +12,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository")
  * @ORM\Table(
- *      name="orob2b_account_group",
+ *      name="oro_account_group",
  *      indexes={
- *          @ORM\Index(name="orob2b_account_group_name_idx", columns={"name"})
+ *          @ORM\Index(name="oro_account_group_name_idx", columns={"name"})
  *      }
  * )
  * @Config(
