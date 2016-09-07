@@ -245,7 +245,7 @@ services:
         tags:
             - { name: oro_user.privilege_category}
 
-    orob2b_order.layout.provider.top_selling_items:
-        parent: orob2b_product.layout.data_provider.featured_products
+    oro_order.layout.provider.top_selling_items:
+        parent: oro_product.layout.data_provider.featured_products
         tags:
             - { name: layout.data_provider, alias: top_selling_items }

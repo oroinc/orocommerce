@@ -373,7 +373,7 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
 
-    orob2b_product.layout.data_provider.featured_products:
+    oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
             - "@oro_product.repository.product"

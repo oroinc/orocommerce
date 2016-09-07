@@ -67,14 +67,14 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_lists_menu }
 
-    orob2b_shopping_list.layout.type.shopping_list_dropdown_item:
+    oro_shopping_list.layout.type.shopping_list_dropdown_item:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setName, ['shopping_list_dropdown_item']]
         tags:
              - { name: layout.block_type, alias: shopping_list_dropdown_item }
 
-    orob2b_shopping_list.layout.type.shopping_list_dropdown_create:
+    oro_shopping_list.layout.type.shopping_list_dropdown_create:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setName, ['shopping_list_dropdown_create']]

@@ -17,19 +17,19 @@ services:
         tags:
             - { name: layout.data_provider, alias: category }
 
-    orob2b_catalog.layout.data_provider.featured_categories:
+    oro_catalog.layout.data_provider.featured_categories:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider'
         public: true
         arguments:
-            - "@orob2b_catalog.provider.category_tree_provider"
+            - "@oro_catalog.provider.category_tree_provider"
         tags:
             - { name: layout.data_provider, alias: featured_categories }
 
-    orob2b_catalog.layout.data_provider.featured_categories_products:
+    oro_catalog.layout.data_provider.featured_categories_products:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider'
         public: true
         arguments:
-            - "@orob2b_catalog.repository.category"
-            - "@orob2b_product.product.manager"
+            - "@oro_catalog.repository.category"
+            - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: categories_products }

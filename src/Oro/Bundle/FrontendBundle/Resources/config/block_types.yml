@@ -24,7 +24,7 @@ services:
         tags:
             - { name: layout.block_type, alias: back_link }
 
-    orob2b_frontend.block_type.embedded_list:
+    oro_frontend.block_type.embedded_list:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             -
