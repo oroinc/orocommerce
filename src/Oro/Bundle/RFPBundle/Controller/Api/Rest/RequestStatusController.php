@@ -40,7 +40,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      */
     public function deleteAction($id)
     {
-        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
         $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
 
         /** @var RequestStatus $requestStatus */
@@ -87,7 +87,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      */
     public function restoreAction($id)
     {
-        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
         $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
         $requestStatus = $em->getRepository($requestStatusClass)->find($id);
 

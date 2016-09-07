@@ -43,7 +43,7 @@ class OrderController extends RestController implements ClassResourceInterface
      */
     public function getManager()
     {
-        return $this->get('orob2b_order.order.manager.api');
+        return $this->get('oro_order.order.manager.api');
     }
 
     /**

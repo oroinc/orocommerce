@@ -12,7 +12,7 @@ class OroWebsiteExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroWebsiteExtension());
 
         $expectedParameters = [
-            'orob2b_website.entity.website.class'
+            'oro_website.entity.website.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);

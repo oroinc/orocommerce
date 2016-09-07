@@ -48,7 +48,7 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user.class')
+            'entity_class' => $this->container->getParameter('oro_account.entity.account_user.class')
         ];
     }
 
@@ -87,7 +87,7 @@ class AccountUserController extends Controller
 
         if ($accountUserId) {
             $accountUser = $doctrineHelper->getEntityReference(
-                $this->getParameter('orob2b_account.entity.account_user.class'),
+                $this->getParameter('oro_account.entity.account_user.class'),
                 $accountUserId
             );
         } else {
@@ -97,7 +97,7 @@ class AccountUserController extends Controller
         $account = null;
         if ($accountId) {
             $account = $doctrineHelper->getEntityReference(
-                $this->getParameter('orob2b_account.entity.account.class'),
+                $this->getParameter('oro_account.entity.account.class'),
                 $accountId
             );
         }
@@ -158,7 +158,7 @@ class AccountUserController extends Controller
         $handler = new AccountUserHandler(
             $form,
             $request,
-            $this->get('orob2b_account_user.manager'),
+            $this->get('oro_account_user.manager'),
             $this->get('oro_security.security_facade'),
             $this->get('translator'),
             $this->get('logger')

@@ -16,7 +16,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
         parent::setUp();
 
-        $this->configScope = $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        $this->configScope = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 
     /**

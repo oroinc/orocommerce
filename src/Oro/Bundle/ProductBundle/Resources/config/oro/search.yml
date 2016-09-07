@@ -1,0 +1,50 @@
+search:
+    Oro\Bundle\ProductBundle\Entity\Product:
+        alias:                          orob2b_product
+        title_fields:                   [defaultName]
+        route:
+            name:                       orob2b_product_view
+            parameters:
+                id:                     id
+        search_template:                OroProductBundle:Product:searchResult.html.twig
+        fields:
+            -
+                name:                   sku
+                target_type:            text
+                target_fields:          [sku]
+            -
+                name:                   defaultName
+                target_type:            text
+                target_fields:          [defaultName]
+            -
+                name: names
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: string
+                        target_type: text
+                        target_fields: [names]
+            -
+                name:                   defaultDescription
+                target_type:            text
+                target_fields:          [defaultDescription]
+            -
+                name:                   defaultShortDescription
+                target_type:            text
+                target_fields:          [defaultShortDescription]
+            -
+                name: descriptions
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: text
+                        target_type: text
+                        target_fields: [descriptions]
+            -
+                name: shortDescriptions
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: text
+                        target_type: text
+                        target_fields: [shortDescriptions]
