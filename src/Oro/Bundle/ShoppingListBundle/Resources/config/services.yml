@@ -187,9 +187,7 @@ services:
             - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
 
     orob2b_shopping_list.repository.line_item:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        parent: oro_entity.abstract_repository
         arguments:
             - '%orob2b_shopping_list.entity.line_item.class%'
 

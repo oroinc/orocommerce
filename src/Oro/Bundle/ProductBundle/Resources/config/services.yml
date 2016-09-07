@@ -312,9 +312,7 @@ services:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
     orob2b_product.repository.product:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        parent: oro_entity.abstract_repository
         arguments:
             - '%orob2b_product.entity.product.class%'
 
