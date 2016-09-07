@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener;
@@ -36,8 +36,8 @@ class OrderDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfter($returnResult, $expectation)
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $eventMock */
+        $eventMock = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
         $recordId = 1;
         $record = new ResultRecord(['id' => $recordId]);
         $records = [$record];
