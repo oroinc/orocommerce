@@ -8,7 +8,7 @@ Feature: Applying shipping rules
     Given I login as AmandaRCole@example.org buyer
     And there is EUR currency in the system configuration
     When Buyer is on Checkout step on Shopping List 1
-    Then Shipping Type "Flat Rate" is shown for Buyer selection
+    Then Shipping Type "Flat Rate: €3.00" is shown for Buyer selection
     And the order total is recalculated to "€13.00"
 
   Scenario: "SHIPPING" > EDIT AND DISABLE SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - MAJOR
@@ -36,5 +36,5 @@ Feature: Applying shipping rules
       | Type          | Per Order |
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then Shipping Type "Flat Rate" is shown for Buyer selection
+    Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
     And  the order total is recalculated to "€14.00"
