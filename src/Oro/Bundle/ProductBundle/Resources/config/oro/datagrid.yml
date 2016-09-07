@@ -179,9 +179,9 @@ datagrid:
             search_index: website
             query:
                 select:
-                    - text.sku
-                    - text.name_LOCALIZATION_ID
-                    - text.all_text_LOCALIZATION_ID
+                    - text.sku as sku
+                    - text.name_LOCALIZATION_ID as name
+                    - text.all_text_LOCALIZATION_ID as text.all_text
                 from:
                     - { table: %orob2b_product.entity.product.class%, alias: product }
         columns:
