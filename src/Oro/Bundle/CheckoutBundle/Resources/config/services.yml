@@ -145,6 +145,7 @@ services:
             - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
 
     oro_checkout.repository.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_checkout.entity.checkout.class%'

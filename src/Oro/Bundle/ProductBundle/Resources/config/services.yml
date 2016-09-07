@@ -312,6 +312,7 @@ services:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
     oro_product.repository.product:
+        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product.class%'

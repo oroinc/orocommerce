@@ -187,6 +187,7 @@ services:
             - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
 
     oro_shopping_list.repository.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_shopping_list.entity.line_item.class%'
