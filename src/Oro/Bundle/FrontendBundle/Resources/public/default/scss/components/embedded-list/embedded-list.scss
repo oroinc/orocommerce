@@ -12,7 +12,7 @@
 
         &::before {
             position: absolute;
-            z-index: 1;
+            z-index: z('base');
             top: 50%;
             right: 0;
             left: 0;
@@ -56,7 +56,7 @@
     }
 
     &__container--slider {
-        // Hide content before slick slider is inited
+        // Hide content before slick slider is united
         overflow: hidden;
 
         margin: 0 0 0 -26px;
@@ -76,7 +76,7 @@
 
         &::before {
             position: absolute;
-            z-index: 2;
+            z-index: z('base') + 1;
             left: -16px;
 
             display: none;
@@ -100,7 +100,7 @@
 
         & .slick-arrow {
             position: absolute;
-            z-index: 4;
+            z-index: z('base') + 3;
             top: 35%;
 
             overflow: hidden;
