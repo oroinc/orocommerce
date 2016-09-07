@@ -12,6 +12,7 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
+use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 
@@ -21,6 +22,11 @@ use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 class OrmEngineTest extends WebTestCase
 {
     use SearchTestTrait;
+
+    /**
+     * @var callable
+     */
+    protected $listener;
 
     /**
      * @var OrmEngine
@@ -86,13 +92,7 @@ class OrmEngineTest extends WebTestCase
 
         $this->loadFixtures([LoadSearchItemData::class]);
 
-        $this->getContainer()->get('event_dispatcher')->addListenerService(
-            'oro_website_search.event.index_entity',
-            [
-                'oro_test.item.event_listener.website_search_index',
-                'onWebsiteSearchIndex',
-            ]
-        );
+        $this->listener = $this->setListener();
 
         $indexer = $this->getContainer()->get('oro_website_search.engine.orm_indexer');
         $indexer->reindex(TestEntity::class, []);
@@ -110,7 +110,78 @@ class OrmEngineTest extends WebTestCase
     {
         $this->truncateIndexTextTable();
 
-        unset($this->ormEngine, $this->manager, $this->expectedSearchItems);
+        unset($this->listener, $this->ormEngine, $this->manager, $this->expectedSearchItems);
+    }
+
+    /**
+     * @return callable
+     */
+    private function setListener()
+    {
+        $listener = function (IndexEntityEvent $event) {
+            $items = $this->getContainer()->get('doctrine')
+                ->getRepository(TestEntity::class)
+                ->getItemsByIds($event->getEntityIds());
+
+            foreach ($items as $item) {
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_INTEGER,
+                    'integerValue',
+                    $item->integerValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_DECIMAL,
+                    'decimalValue',
+                    $item->decimalValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_DECIMAL,
+                    'floatValue',
+                    $item->floatValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_DATETIME,
+                    'datetimeValue',
+                    $item->datetimeValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_TEXT,
+                    'stringValue_1',
+                    $item->stringValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_TEXT,
+                    'all_text_1',
+                    $item->stringValue
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_TEXT,
+                    'phone',
+                    $item->phone
+                );
+                $event->addField(
+                    $item->getId(),
+                    Query::TYPE_TEXT,
+                    'blobValue',
+                    (string)$item->blobValue
+                );
+            }
+        };
+
+        $this->getContainer()->get('event_dispatcher')->addListener(
+            IndexEntityEvent::NAME,
+            $listener,
+            -255
+        );
+
+        return $listener;
     }
 
     public function testSearchAll()
