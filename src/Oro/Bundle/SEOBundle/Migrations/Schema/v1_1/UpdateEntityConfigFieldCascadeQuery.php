@@ -31,8 +31,9 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
     protected $fields;
 
     /**
-     * UpdateEntityConfigFieldCascadeQuery constructor.
-     * @param $entityName
+     * @param $entityFrom
+     * @param $entityTo
+     * @param $relationType
      * @param array $fields
      */
     public function __construct($entityFrom, $entityTo, $relationType, array $fields)

@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\SEOBundle\Form\Extension;
 
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 abstract class BaseMetaFormExtension extends AbstractTypeExtension
 {
