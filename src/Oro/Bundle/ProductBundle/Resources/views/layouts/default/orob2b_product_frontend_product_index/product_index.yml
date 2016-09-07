@@ -1,10 +1,6 @@
 layout:
     imports:
-        - datagrid_row_product
-        -
-            id: orob2b_product_grid
-            root: product_grid_container
-            namespace: product
+        - orob2b_product_grid
 
     actions:
         - '@setBlockTheme':

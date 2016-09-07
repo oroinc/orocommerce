@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: product_shopping_lists
-            root: __line_item_form
+            root: __product_line_item_form
             namespace: product
     actions:
         - '@move':
