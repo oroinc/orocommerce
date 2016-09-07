@@ -54,8 +54,14 @@ class VisibilityMessageFactory
             throw new InvalidArgumentException('Visibility class name is required.');
         }
         
-        return $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
+        $visibility = $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
             ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);
+
+        if (!$visibility) {
+            throw new InvalidArgumentException('Visibility not found.');
+        }
+
+        return $visibility;
     }
 }

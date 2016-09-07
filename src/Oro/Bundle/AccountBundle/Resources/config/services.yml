@@ -944,18 +944,20 @@ services:
             - '@oro_account.visibility_message_factory'
             - '@logger'
             - '@orob2b_account.visibility.cache.product.cache_builder'
+            - '@oro_product.model.product_message_handler'
         calls:
             - [setResolvedVisibilityClassName, ['%orob2b_account.entity.account_product_visibility_resolved.class%']]
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_account.visibility.resolve_product_visibility' }
 
     oro_account.async.visibility.category_visibility_processor:
-        class: Oro\Bundle\AccountBundle\Async\Visibility\VisibilityEntityProcessor
+        class: Oro\Bundle\AccountBundle\Async\Visibility\CategoryVisibilityProcessor
         arguments:
             - '@doctrine'
             - '@oro_account.visibility_message_factory'
             - '@logger'
             - '@orob2b_account.visibility.cache.product.category.cache_builder'
+            - '@oro_product.model.product_message_handler'
         calls:
             - [setResolvedVisibilityClassName, ['%orob2b_account.entity.category_visibility_resolved.class%']]
         tags:
@@ -965,7 +967,7 @@ services:
         class: Oro\Bundle\AccountBundle\Async\Visibility\ProductProcessor
         arguments:
             - '@doctrine'
-            - '@oro_account.visibility_message_factory'
+            - '@oro_product.model.product_message_factory'
             - '@logger'
             - '@orob2b_account.visibility.cache.product.category.cache_builder'
         calls:
@@ -980,4 +982,4 @@ services:
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@logger'
         tags:
-            - { name: oro_message_queue.client.message_processor, topicName: 'orob2b_account.visibility.category_remove' }
+            - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_remove' }

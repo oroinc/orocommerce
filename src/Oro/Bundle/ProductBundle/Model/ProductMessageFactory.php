@@ -43,7 +43,7 @@ class ProductMessageFactory
             ->getRepository(Product::class)
             ->find($data[self::ID]);
         if (!$product) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('Product not found.');
         }
 
         return $product;
