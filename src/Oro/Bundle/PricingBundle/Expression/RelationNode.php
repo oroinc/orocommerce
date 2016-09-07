@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Expression;
 
-class RelationNode implements NodeInterface
+class RelationNode implements NodeInterface, ContainerHolderNodeInterface
 {
     /**
      * @var string
@@ -39,7 +39,7 @@ class RelationNode implements NodeInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getContainer()
     {
@@ -81,13 +81,27 @@ class RelationNode implements NodeInterface
     /**
      * {@inheritdoc}
      */
+    public function getResolvedContainer()
+    {
+        $alias = $this->getRelationAlias();
+
+        if ($this->getContainerId()) {
+            $alias .= '|' . $this->getContainerId();
+        }
+
+        return $alias;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isBoolean()
     {
         return false;
     }
 
     /**
-     * @return int|null|string
+     * {@inheritdoc}
      */
     public function getContainerId()
     {

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Expression;
 
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Symfony\Component\ExpressionLanguage\Node;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
-
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ExpressionLanguageConverter
 {
@@ -61,7 +61,7 @@ class ExpressionLanguageConverter
             );
         }
 
-        throw new \RuntimeException(sprintf('Unsupported expression node %s', get_class($node)));
+        throw new SyntaxError(sprintf('Unsupported expression node %s', get_class($node)));
     }
 
     /**
@@ -79,13 +79,18 @@ class ExpressionLanguageConverter
         $metadata[self::FIELDS_KEY] = array_reverse($metadata[self::FIELDS_KEY]);
         $fieldsCount = count($metadata[self::FIELDS_KEY]);
 
-        if ($fieldsCount === 1) {
-            throw new \RuntimeException('At least one field must be present in expression');
-        }
         if ($fieldsCount > 3) {
-            throw new \RuntimeException('Relations of related entities are not allowed to be used');
+            throw new SyntaxError('Relations of related entities are not allowed to be used');
         }
 
+        // Add entity identifier as field for container
+        if ($fieldsCount === 1) {
+            $metadata[self::FIELDS_KEY][] = $this->fieldsProvider->getIdentityFieldName(
+                $metadata[self::FIELDS_KEY][0]
+            );
+            $fieldsCount++;
+        }
+        // Add entity identifier as field for relations
         if ($fieldsCount === 2) {
             if ($this->fieldsProvider->isRelation($metadata[self::FIELDS_KEY][0], $metadata[self::FIELDS_KEY][1])) {
                 $metadata[self::FIELDS_KEY][] = $this->fieldsProvider->getIdentityFieldName(
@@ -129,11 +134,11 @@ class ExpressionLanguageConverter
             } elseif ($this->getNodeType($node) === Node\GetAttrNode::ARRAY_CALL) {
                 $metadata[self::CONTAINER_ID_KEY] = $this->getConstantNodeValue($node->nodes['attribute']);
                 if (!$node->nodes['node'] instanceof Node\NameNode) {
-                    throw new \RuntimeException('Attribute is supported only for root variable in expression');
+                    throw new SyntaxError('Attribute is supported only for root variable in expression');
                 }
                 $this->getFieldAwareNodeMetadata($node->nodes['node'], $metadata, $namesMapping);
             } else {
-                throw new \RuntimeException('Function calls are not supported');
+                throw new SyntaxError('Function calls are not supported');
             }
         } elseif ($node instanceof Node\NameNode) {
             $metadata[self::FIELDS_KEY][] = $this->getNameNodeValue($node, $namesMapping);

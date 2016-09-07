@@ -8,6 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -371,16 +373,20 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         foreach ($node->getNodes() as $subNode) {
             if ($subNode instanceof RelationNode) {
-                $classAlias = $subNode->getRelationAlias();
-                $realClass = $this->fieldsProvider->getRealClassName($classAlias);
-                if ($realClass === PriceAttributeProductPrice::class) {
-                    $this->usedPriceRelations[$classAlias] = $this->requiredPriceConditions;
+                $realClass = $this->fieldsProvider->getRealClassName($subNode->getRelationAlias());
+                if (is_a($realClass, BaseProductPrice::class, true)) {
+                    $this->usedPriceRelations[$subNode->getResolvedContainer()] = $this->requiredPriceConditions;
                 }
             }
         }
     }
 
     /**
+     * Add additional unit, quantity and currency for price.
+     *
+     * Prices contains unit, quantity and currency. If not of them are mentioned in rule condition, then them are added
+     * automatically based on unit, quantity and currency selected in rule.
+     *
      * @param PriceRule $rule
      * @return string
      */
@@ -392,7 +398,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $parsedCondition = $this->expressionParser->parse($ruleCondition);
             foreach ($parsedCondition->getNodes() as $node) {
                 if ($node instanceof RelationNode) {
-                    $relationAlias = $node->getRelationAlias();
+                    $relationAlias = $node->getResolvedContainer();
                     if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
                         $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
                     }
@@ -403,11 +409,21 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $generatedConditions = [];
         foreach ($this->usedPriceRelations as $alias => $relationFields) {
             list($root, $field) = explode('::', $alias);
+            $containerId = null;
+            if (strpos($field, '|') !== false) {
+                list($field, $containerId) = explode('|', $field);
+            }
             $root = $reverseNameMapping[$root];
 
             foreach ($relationFields as $relationField => $requiredField) {
                 if ($requiredField) {
-                    $generatedConditions[] = $this->getAdditionalCondition($rule, $root, $field, $relationField);
+                    $generatedConditions[] = $this->getAdditionalCondition(
+                        $rule,
+                        $root,
+                        $field,
+                        $relationField,
+                        $containerId
+                    );
                 }
             }
         }
@@ -416,54 +432,49 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
+     * Get additional condition string.
+     *
+     * Return condition string in format "root.field.relationField == ?"
+     * or "root[containerId].field.relationField == ?" if container is not null,
+     * where ? is string or number depend on field type
+     *
      * @param PriceRule $rule
      * @param string $root
      * @param string $field
      * @param string $relationField
+     * @param null|int $containerId
      * @return null|string
      */
-    protected function getAdditionalCondition(PriceRule $rule, $root, $field, $relationField)
+    protected function getAdditionalCondition(PriceRule $rule, $root, $field, $relationField, $containerId = null)
     {
-        $additionalCondition = null;
+        $conditionTemplate = '%1$s.%2$s.%3$s == ';
+        if ($containerId) {
+            $conditionTemplate = '%1$s[%5$d].%2$s.%3$s == ';
+        }
+        $conditionVariables = [$root, $field, $relationField];
         switch ($relationField) {
             case 'currency':
-                if (null === $rule->getCurrencyExpression()) {
-                    $additionalCondition = sprintf(
-                        "%s.%s.%s == '%s'",
-                        $root,
-                        $field,
-                        $relationField,
-                        $rule->getCurrency()
-                    );
-                }
+                $conditionTemplate .= '\'%4$s\'';
+                $conditionVariables[] = $rule->getCurrency();
                 break;
 
             case 'unit':
-                if (null === $rule->getProductUnitExpression()) {
-                    $additionalCondition = sprintf(
-                        "%s.%s.%s == '%s'",
-                        $root,
-                        $field,
-                        $relationField,
-                        $rule->getProductUnit()->getCode()
-                    );
-                }
+                $conditionTemplate .= '\'%4$s\'';
+                $conditionVariables[] = $rule->getProductUnit()->getCode();
                 break;
 
             case 'quantity':
-                if (null === $rule->getProductUnitExpression()) {
-                    $additionalCondition = sprintf(
-                        '%s.%s.%s == %f',
-                        $root,
-                        $field,
-                        $relationField,
-                        $rule->getQuantity()
-                    );
-                }
+                $conditionTemplate .= '%4$f';
+                $conditionVariables[] = $rule->getQuantity();
                 break;
         }
 
-        return $additionalCondition;
+        array_unshift($conditionVariables, $conditionTemplate);
+        if ($containerId) {
+            $conditionVariables[] = $containerId;
+        }
+
+        return call_user_func_array('sprintf', $conditionVariables);
     }
 
     /**
