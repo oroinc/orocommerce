@@ -240,13 +240,13 @@ class PriceListControllerTest extends WebTestCase
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
 
         //Generate product prices by rules
-        $container->get('orob2b_pricing.builder.price_list_product_assignment_builder')
+        $container->get('oro_pricing.builder.price_list_product_assignment_builder')
             ->buildByPriceList($priceList);
-        $container->get('orob2b_pricing.builder.product_price_builder')
+        $container->get('oro_pricing.builder.product_price_builder')
             ->buildByPriceList($priceList);
 
         //Get combined price list which would be used at frontend
-        $cpl = $container->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
+        $cpl = $container->get('oro_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
 
         /** @var EntityManager $manager */
         $prices = $container->get('doctrine')

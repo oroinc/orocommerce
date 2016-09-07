@@ -24,7 +24,7 @@ class FrontendControllerTest extends FrontendWebTestCase
         $this->setCurrentWebsite('default');
 
         /** @var \Knp\Menu\ItemInterface $menu */
-        $menu = $this->getContainer()->get('orob2b_menu.menu_provider')->get('main-menu');
+        $menu = $this->getContainer()->get('oro_menu.menu_provider')->get('main-menu');
         if (!$menu) {
             $this->markTestSkipped('There is no "main-menu" in system.');
         }

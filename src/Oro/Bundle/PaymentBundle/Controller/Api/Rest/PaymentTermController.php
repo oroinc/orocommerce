@@ -44,7 +44,7 @@ class PaymentTermController extends RestController implements ClassResourceInter
      */
     public function getManager()
     {
-        return $this->get('orob2b_payment.payment_term.manager.api');
+        return $this->get('oro_payment.payment_term.manager.api');
     }
 
     /**

@@ -43,7 +43,7 @@ class RedirectController extends FOSRestController
      */
     public function slugifyAction($string)
     {
-        $slug = ['slug' => $this->get('orob2b_redirect.slug.generator')->slugify($string)];
+        $slug = ['slug' => $this->get('oro_redirect.slug.generator')->slugify($string)];
         return new Response(json_encode($slug), Response::HTTP_OK);
     }
 }

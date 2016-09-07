@@ -125,16 +125,16 @@ class ProductControllerTest extends WebTestCase
     protected function assertProductShippingOptions(ProductShippingOptions $option, $html)
     {
         /** @var UnitLabelFormatter $unitFormatter */
-        $unitFormatter = $this->getContainer()->get('orob2b_product.formatter.product_unit_label');
+        $unitFormatter = $this->getContainer()->get('oro_product.formatter.product_unit_label');
 
         /** @var UnitValueFormatter $weightFormatter */
-        $weightFormatter = $this->getContainer()->get('orob2b_shipping.formatter.weight_unit_value');
+        $weightFormatter = $this->getContainer()->get('oro_shipping.formatter.weight_unit_value');
 
         /** @var UnitLabelFormatter $lengthFormatter */
-        $lengthFormatter = $this->getContainer()->get('orob2b_shipping.formatter.length_unit_label');
+        $lengthFormatter = $this->getContainer()->get('oro_shipping.formatter.length_unit_label');
 
         /** @var UnitLabelFormatter $freightFormatter */
-        $freightFormatter = $this->getContainer()->get('orob2b_shipping.formatter.freight_class_label');
+        $freightFormatter = $this->getContainer()->get('oro_shipping.formatter.freight_class_label');
 
         $this->assertContains($unitFormatter->format($option->getProductUnit()), $html);
         $this->assertContains(

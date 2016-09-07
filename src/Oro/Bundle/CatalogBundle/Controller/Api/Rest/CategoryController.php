@@ -54,7 +54,7 @@ class CategoryController extends RestController implements ClassResourceInterfac
      */
     public function getManager()
     {
-        return $this->get('orob2b_catalog.category.manager.api');
+        return $this->get('oro_catalog.category.manager.api');
     }
 
     /**

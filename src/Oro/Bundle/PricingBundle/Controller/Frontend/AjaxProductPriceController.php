@@ -32,9 +32,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get('orob2b_pricing.provider.matching_price')->getMatchingPrices(
+        $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
             $lineItems,
-            $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()
+            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
         );
 
         return new JsonResponse($matchedPrices);
@@ -49,9 +49,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getProductUnitsByCurrencyAction(Request $request)
     {
         return $this->getProductUnitsByCurrency(
-            $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount(),
+            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount(),
             $request,
-            $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
+            $this->getParameter('oro_pricing.entity.combined_product_price.class')
         );
     }
 
@@ -65,7 +65,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $currency = $request->get('currency');
         $result = false;
-        $userCurrencyManager = $this->get('orob2b_pricing.user_currency_manager');
+        $userCurrencyManager = $this->get('oro_pricing.user_currency_manager');
         if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
             $userCurrencyManager->saveSelectedCurrency($currency);
             $result = true;

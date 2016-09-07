@@ -41,7 +41,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends WebTestCase
     {
         $this->websiteManager->expects($this->any())
             ->method('getCurrentWebsite')
-            ->willReturn($this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite());
+            ->willReturn($this->getContainer()->get('oro_website.manager')->getDefaultWebsite());
 
         $actual = $this->dataProvider->getRegisterForm();
 

@@ -52,7 +52,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
         $view = $this->view(null, Codes::HTTP_NO_CONTENT);
         if ($lineItem) {
-            $this->get('orob2b_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
+            $this->get('oro_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
             $success = true;
         }
 
@@ -83,7 +83,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $form,
                 $request,
                 $this->getDoctrine(),
-                $this->get('orob2b_shopping_list.shopping_list.manager')
+                $this->get('oro_shopping_list.shopping_list.manager')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {
@@ -106,7 +106,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      */
     public function getManager()
     {
-        return $this->get('orob2b_shopping_list.line_item.manager.api');
+        return $this->get('oro_shopping_list.line_item.manager.api');
     }
 
     /**

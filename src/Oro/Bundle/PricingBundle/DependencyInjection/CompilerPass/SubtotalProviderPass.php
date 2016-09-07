@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class SubtotalProviderPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'orob2b_pricing.subtotal_processor.subtotal_provider_registry';
+    const REGISTRY_SERVICE = 'oro_pricing.subtotal_processor.subtotal_provider_registry';
     const TAG = 'orob2b_pricing.subtotal_provider';
     const PRIORITY = 'priority';
 

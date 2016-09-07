@@ -12,7 +12,7 @@ class OroRedirectExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroRedirectExtension());
 
         $expectedParameters = [
-            'orob2b_redirect.entity.slug.class',
+            'oro_redirect.entity.slug.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
     }

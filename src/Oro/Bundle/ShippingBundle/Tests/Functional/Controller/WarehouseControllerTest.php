@@ -154,7 +154,7 @@ class WarehouseControllerTest extends WebTestCase
     protected function getShippingOriginWarehouse(Warehouse $warehouse)
     {
         return $this->getContainer()
-            ->get('orob2b_shipping.shipping_origin.provider')
+            ->get('oro_shipping.shipping_origin.provider')
             ->getShippingOriginByWarehouse($warehouse);
     }
 
