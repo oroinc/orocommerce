@@ -1,4 +1,4 @@
-{% block _product_grid_row_template_widget %}
+{% block _product_grid_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
@@ -8,12 +8,12 @@
     }) %}
     <script id="template-grid-row" type="text/template">
         <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
+            {{ block("container_widget") }}
         </div>
     </script>
 {% endblock %}
 
-{% block _product_grid_row_image_holder_widget %}
+{% block __orob2b_product_grid__grid_row_image_holder_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -25,7 +25,7 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_quick_view_widget %}
+{% block __orob2b_product_grid__grid_row_quick_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__quick-view-btn",
         'data-toggle': 'modal',
@@ -36,16 +36,18 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_title_widget %}
+{% block __orob2b_product_grid__grid_cell_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__title product-item__title_<%= themeOptions.currentRowView %>"
     }) %}
-    <h3 {{ block('block_attributes') }}>
-        <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
-    </h3>
+    <h3 {{ block('block_attributes') }}>{{ block("container_widget") }}</h3>
 {% endblock %}
 
-{% block _product_grid_row_primary_content_container_widget %}
+{% block __orob2b_product_grid__grid_cell_name_value_widget %}
+    <a href="<%= model.view_link %>" class="view-product"><%= model.name %></a>
+{% endblock %}
+
+{% block __orob2b_product_grid__grid_row_primary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__primary-content product-item__primary-content_<%= themeOptions.currentRowView %>"
     }) %}
@@ -56,7 +58,7 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_number_widget %}
+{% block __orob2b_product_grid__grid_row_number_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__number product-item__number_<%= themeOptions.currentRowView %>"
     }) %}
@@ -65,14 +67,14 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_specification_widget %}
+{% block __orob2b_product_grid__grid_row_specification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product__specification product__specification_<%= themeOptions.currentRowView %> mb2-md"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _product_grid_row_sku_container_widget %}
+{% block __orob2b_product_grid__grid_row_sku_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " mb0-md mb0-sm"
     }) %}
@@ -81,19 +83,21 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_sku_widget %}
-    <div>
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
-    </div>
+{% block __orob2b_product_grid__grid_cell_sku_widget %}
+    <div {{ block('block_attributes') }}>{{ block("container_widget") }}</div>
 {% endblock %}
 
-{% block _product_grid_row_mfg_widget %}
+{% block __orob2b_product_grid__grid_cell_sku_value_widget %}
+    {{ 'oro.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
+{% endblock %}
+
+{% block __orob2b_product_grid__grid_row_mfg_widget %}
     <div>
         {{ 'oro.product.frontend.index.mfg'|trans }} <span class="red">1ABC13656</span>
     </div>
 {% endblock %}
 
-{% block _product_grid_row_short_description_widget %}
+{% block __orob2b_product_grid__grid_row_short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product__description product__description_<%= themeOptions.currentRowView %>"
     }) %}
@@ -102,7 +106,7 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_details_widget %}
+{% block __orob2b_product_grid__grid_row_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product__view-details-link product__view-details-link_<%= themeOptions.currentRowView %>"
     }) %}
@@ -113,21 +117,21 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_secondary_content_container_widget %}
+{% block __orob2b_product_grid__grid_row_secondary_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__secondary-content product-item__secondary-content_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _product_grid_row_secondary_content_first_container_widget %}
+{% block __orob2b_product_grid__grid_row_secondary_content_first_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>"
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _product_grid_row_specification_delivery_widget %}
+{% block __orob2b_product_grid__grid_row_specification_delivery_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product__specification product__specification_delivery product__specification_<%= themeOptions.currentRowView %> not-implemented"
     }) %}
@@ -135,7 +139,7 @@
     </div>
 {% endblock %}
 
-{% block _product_grid_row_secondary_content_second_container_widget %}
+{% block __orob2b_product_grid__grid_row_secondary_content_second_container_widget %}
     {% if blocks.line_item_buttons.children is defined and blocks.line_item_buttons.children is not empty %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__secondary-half product-item__secondary-half_<%= themeOptions.currentRowView %>"
@@ -144,7 +148,7 @@
     {% endif %}
 {% endblock %}
 
-{% block _product_grid_row_more_info_widget %}
+{% block __orob2b_product_grid__grid_row_more_info_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.currentRowView %>"
     }) %}
@@ -161,14 +165,14 @@
     </div>
 {% endblock %}
 
-{% block _line_item_form_start_widget %}
+{% block __orob2b_product_grid__line_item_form_start_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': form.vars.id ~ '-product-id-<%= model.id %>',
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
-{% block _line_item_form_fields_widget %}
+{% block __orob2b_product_grid__line_item_form_fields_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__qty__current-grid",
         'data-page-component-module': "oroproduct/js/app/components/product-unit-select-component"
@@ -180,7 +184,7 @@
     <% } %>
 {% endblock %}
 
-{% block _line_item_form_widget %}
+{% block __orob2b_product_grid__line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__qty product-item__qty_<%= themeOptions.currentRowView %>"
     }) %}
@@ -189,7 +193,7 @@
     </div>
 {% endblock %}
 
-{% block _line_item_buttons_widget %}
+{% block __orob2b_product_grid__line_item_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {

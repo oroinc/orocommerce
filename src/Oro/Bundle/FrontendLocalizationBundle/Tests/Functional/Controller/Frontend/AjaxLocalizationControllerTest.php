@@ -52,10 +52,14 @@ class AjaxLocalizationControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
         $this->assertSame($expectedResult, $data);
 
+        $website = $this->client->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
         /* @var $localizationManager UserLocalizationManager */
         $localizationManager = $this->getContainer()->get('oro_frontend_localization.manager.user_localization');
+        $currentLocalization = $localizationManager->getCurrentLocalization($website);
 
-        $this->assertEquals($localization->getId(), $localizationManager->getCurrentLocalization()->getId());
+        $this->assertNotEmpty($localization);
+        $this->assertNotEmpty($currentLocalization);
+        $this->assertEquals($localization->getId(), $currentLocalization->getId());
     }
 
     /**

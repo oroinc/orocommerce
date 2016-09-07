@@ -90,7 +90,7 @@ class InvoiceController extends Controller
     public function createAction()
     {
         $invoice = new Invoice();
-        $invoice->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+        $invoice->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
         //TODO: BB-3824 Change the getting currency from system configuration
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
 

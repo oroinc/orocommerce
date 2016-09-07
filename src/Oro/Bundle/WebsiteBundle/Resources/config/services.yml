@@ -7,6 +7,7 @@ services:
         public: true
         arguments:
             - "@doctrine"
+            - "@orob2b_frontend.request.frontend_helper"
 
     orob2b_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'

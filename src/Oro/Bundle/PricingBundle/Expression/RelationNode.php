@@ -20,15 +20,22 @@ class RelationNode implements NodeInterface
     protected $relationField;
 
     /**
+     * @var int|null|string
+     */
+    protected $containerId;
+
+    /**
      * @param string $container
      * @param string $field
      * @param string $relationField
+     * @param null|int|string $containerId
      */
-    public function __construct($container, $field, $relationField)
+    public function __construct($container, $field, $relationField, $containerId = null)
     {
         $this->container = $container;
         $this->field = $field;
         $this->relationField = $relationField;
+        $this->containerId = $containerId;
     }
 
     /**
@@ -77,5 +84,13 @@ class RelationNode implements NodeInterface
     public function isBoolean()
     {
         return false;
+    }
+
+    /**
+     * @return int|null|string
+     */
+    public function getContainerId()
+    {
+        return $this->containerId;
     }
 }

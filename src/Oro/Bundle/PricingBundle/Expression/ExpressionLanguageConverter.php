@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 
 class ExpressionLanguageConverter
 {
+    const FIELDS_KEY = 'fields';
+    const CONTAINER_ID_KEY = 'container_id';
+
     /**
      * @var PriceRuleFieldsProvider
      */
@@ -45,36 +48,8 @@ class ExpressionLanguageConverter
                 $this->convertExpressionLanguageNode($node->nodes['right'], $namesMapping),
                 $node->attributes['operator']
             );
-        } elseif ($node instanceof Node\GetAttrNode) {
-            $rootNameNode = $node->nodes['node'];
-            if ($rootNameNode instanceof Node\GetAttrNode) {
-                return new RelationNode(
-                    $this->getNameNodeValue($rootNameNode->nodes['node'], $namesMapping),
-                    $this->getConstantNodeValue($rootNameNode->nodes['attribute']),
-                    $this->getConstantNodeValue($node->nodes['attribute'])
-                );
-            } else {
-                $container = $this->getNameNodeValue($rootNameNode, $namesMapping);
-                $field = $this->getConstantNodeValue($node->nodes['attribute']);
-
-                if ($this->fieldsProvider->isRelation($container, $field)) {
-                    return new RelationNode(
-                        $container,
-                        $field,
-                        $this->fieldsProvider->getIdentityFieldName(
-                            $this->fieldsProvider->getRealClassName($container, $field)
-                        )
-                    );
-                } else {
-                    return new NameNode($container, $field);
-                }
-            }
-        } elseif ($node instanceof Node\NameNode) {
-            $container = $this->getNameNodeValue($node, $namesMapping);
-            return new NameNode(
-                $container,
-                $this->fieldsProvider->getIdentityFieldName($container)
-            );
+        } elseif ($node instanceof Node\GetAttrNode || $node instanceof Node\NameNode) {
+            return $this->convertFieldAwareNode($node, $namesMapping);
         } elseif ($node instanceof Node\ConstantNode) {
             return new ValueNode(
                 $this->getConstantNodeValue($node)
@@ -87,6 +62,84 @@ class ExpressionLanguageConverter
         }
 
         throw new \RuntimeException(sprintf('Unsupported expression node %s', get_class($node)));
+    }
+
+    /**
+     * @param Node\GetAttrNode|Node\NameNode|Node\Node $node
+     * @param array $namesMapping
+     * @return NameNode|RelationNode
+     */
+    protected function convertFieldAwareNode(Node\Node $node, array $namesMapping = [])
+    {
+        $metadata = [
+            self::FIELDS_KEY => [],
+            self::CONTAINER_ID_KEY => null
+        ];
+        $this->getFieldAwareNodeMetadata($node, $metadata, $namesMapping);
+        $metadata[self::FIELDS_KEY] = array_reverse($metadata[self::FIELDS_KEY]);
+        $fieldsCount = count($metadata[self::FIELDS_KEY]);
+
+        if ($fieldsCount === 1) {
+            throw new \RuntimeException('At least one field must be present in expression');
+        }
+        if ($fieldsCount > 3) {
+            throw new \RuntimeException('Relations of related entities are not allowed to be used');
+        }
+
+        if ($fieldsCount === 2) {
+            if ($this->fieldsProvider->isRelation($metadata[self::FIELDS_KEY][0], $metadata[self::FIELDS_KEY][1])) {
+                $metadata[self::FIELDS_KEY][] = $this->fieldsProvider->getIdentityFieldName(
+                    $this->fieldsProvider->getRealClassName(
+                        $metadata[self::FIELDS_KEY][0],
+                        $metadata[self::FIELDS_KEY][1]
+                    )
+                );
+                $fieldsCount++;
+            }
+        }
+
+        if ($fieldsCount === 3) {
+            return new RelationNode(
+                $metadata[self::FIELDS_KEY][0],
+                $metadata[self::FIELDS_KEY][1],
+                $metadata[self::FIELDS_KEY][2],
+                $metadata[self::CONTAINER_ID_KEY]
+            );
+        } else {
+            return new NameNode(
+                $metadata[self::FIELDS_KEY][0],
+                $metadata[self::FIELDS_KEY][1],
+                $metadata[self::CONTAINER_ID_KEY]
+            );
+        }
+    }
+
+    /**
+     * @param Node\Node $node
+     * @param array $metadata
+     * @param array $namesMapping
+     * @return array
+     */
+    protected function getFieldAwareNodeMetadata(Node\Node $node, array &$metadata, array $namesMapping = [])
+    {
+        if ($node instanceof Node\GetAttrNode) {
+            if ($this->getNodeType($node) === Node\GetAttrNode::PROPERTY_CALL) {
+                $metadata[self::FIELDS_KEY][] = $this->getConstantNodeValue($node->nodes['attribute']);
+                $this->getFieldAwareNodeMetadata($node->nodes['node'], $metadata, $namesMapping);
+            } elseif ($this->getNodeType($node) === Node\GetAttrNode::ARRAY_CALL) {
+                $metadata[self::CONTAINER_ID_KEY] = $this->getConstantNodeValue($node->nodes['attribute']);
+                if (!$node->nodes['node'] instanceof Node\NameNode) {
+                    throw new \RuntimeException('Attribute is supported only for root variable in expression');
+                }
+                $this->getFieldAwareNodeMetadata($node->nodes['node'], $metadata, $namesMapping);
+            } else {
+                throw new \RuntimeException('Function calls are not supported');
+            }
+        } elseif ($node instanceof Node\NameNode) {
+            $metadata[self::FIELDS_KEY][] = $this->getNameNodeValue($node, $namesMapping);
+        }
+
+        return $metadata;
     }
 
     /**
@@ -112,5 +165,14 @@ class ExpressionLanguageConverter
         }
 
         return $name;
+    }
+
+    /**
+     * @param Node\Node $node
+     * @return int
+     */
+    protected function getNodeType(Node\Node $node)
+    {
+        return $node->attributes['type'];
     }
 }
