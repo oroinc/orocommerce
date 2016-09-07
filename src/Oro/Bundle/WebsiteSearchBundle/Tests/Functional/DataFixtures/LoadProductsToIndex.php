@@ -16,11 +16,9 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
 
     const REFERENCE_PRODUCT1 = 'product1';
     const REFERENCE_PRODUCT2 = 'product2';
-    const REFERENCE_PRODUCT3 = 'product3';
 
     const PRODUCT1 = 'Product 1';
     const PRODUCT2 = 'Product 2';
-    const PRODUCT3 = 'Product 3';
 
     /** @var array */
     protected $data = [
@@ -30,9 +28,6 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
         self::REFERENCE_PRODUCT2 => [
             'name' => self::PRODUCT2,
         ],
-        self::REFERENCE_PRODUCT3 => [
-            'name' => self::PRODUCT3
-        ]
     ];
 
     /**
