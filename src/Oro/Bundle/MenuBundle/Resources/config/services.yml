@@ -2,11 +2,11 @@ parameters:
     orob2b_menu.entity.menu_item.class: Oro\Bundle\MenuBundle\Entity\MenuItem
 
 services:
-    orob2b_menu.cache:
+    orob2b_menu.cache.item:
         public: false
         parent: oro.cache.abstract
         calls:
-            - [ setNamespace, [ 'orob2b_menu' ] ]
+            - [ setNamespace, [ 'orob2b_menu_item' ] ]
 
     orob2b_menu.form.type.menu_item:
         class: 'Oro\Bundle\MenuBundle\Form\Type\MenuItemType'
@@ -75,7 +75,7 @@ services:
             - "@doctrine"
         calls:
             - [setEntityClass, ['%orob2b_menu.entity.menu_item.class%']]
-            - [setCache, ["@orob2b_menu.cache"]]
+            - [setCache, ["@orob2b_menu.cache.item"]]
 
     orob2b_menu.menu_provider.link:
         public: false
@@ -143,7 +143,7 @@ services:
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
 
-    orob2b_menu.cache.warmer:
+    orob2b_menu.cache.warmer.item:
         public: false
         class: Oro\Bundle\MenuBundle\Cache\CacheWarmer
         arguments:

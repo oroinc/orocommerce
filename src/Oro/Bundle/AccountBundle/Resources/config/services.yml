@@ -206,7 +206,7 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
 
-    orob2b_user.security.provider:
+    orob2b_account.security.provider:
         class: '%oro_user.security.provider.class%'
         public: false
         arguments:
