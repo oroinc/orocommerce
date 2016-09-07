@@ -1,5 +1,5 @@
 /*Reset*/
-//@import 'shared/_reset';
+@import 'shared/_reset';
 
 /*Variables & mixins & helpers*/
 @import 'shared/_vars';
@@ -28,6 +28,7 @@
 @import 'components/uploader-widget';
 @import 'components/page-title';
 @import 'components/link';
+@import 'components/loading-mask-url';
 /*=== END COMPONENTS===*/
 
 /*Layout*/

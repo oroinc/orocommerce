@@ -57,18 +57,3 @@
     </div>
 {% endblock %}
 
-{% block _login_form_remember_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' custom-checkbox__input'
-    }) %}
-
-    <label for="{{ id }}" class="custom-checkbox">
-        <input
-                id="{{ id }}"
-                type="checkbox"
-                {{ block('block_attributes') }}
-        />
-        <span class="custom-checkbox__icon"></span>
-        <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }} </span>
-    </label>
-{% endblock %}

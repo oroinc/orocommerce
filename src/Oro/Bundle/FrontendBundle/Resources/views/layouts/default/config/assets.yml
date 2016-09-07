@@ -1,10 +1,10 @@
 styles:
     inputs:
-        - 'bundles/orofrontend/default/vendors/bootstrap/css/bootstrap.min.css'
         - 'bundles/orofrontend/default/vendors/fontawesome/css/font-awesome.min.css'
         - 'bundles/orofrontend/default/scss/settings/global-settings.scss'
         - 'bundles/orofrontend/default/scss/variables/base-config.scss'
         - 'bundles/orofrontend/default/scss/variables/link-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-title-config.scss'
+        - 'bundles/orofrontend/default/vendors/bootstrap/css/bootstrap.scss'
         - 'bundles/orofrontend/default/scss/styles.scss'
     output: 'css/layout/default/styles.css'
