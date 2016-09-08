@@ -19,7 +19,7 @@ class CategoryControllerTest extends WebTestCase
     public function testEditCategory()
     {
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_catalog.entity.category.class')
+            $this->getContainer()->getParameter('oro_catalog.entity.category.class')
         );
 
         $category = $repository->findOneBy([]);

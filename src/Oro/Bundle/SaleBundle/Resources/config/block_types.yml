@@ -1,5 +1,5 @@
 services:
-    orob2b_sale.layout.type.quote_view_information:
+    oro_sale.layout.type.quote_view_information:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{quote: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
              - { name: layout.block_type, alias: quote_view_information }
 
-    orob2b_sale.layout.type.quote_products_container:
+    oro_sale.layout.type.quote_products_container:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{quoteProducts: {required: true}}]]
@@ -15,7 +15,7 @@ services:
         tags:
              - { name: layout.block_type, alias: quote_products_container }
 
-    orob2b_sale.layout.type.quote_choice_form_container:
+    oro_sale.layout.type.quote_choice_form_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{form: {required: true}, quoteDemand: {required: true}}]]
@@ -23,7 +23,7 @@ services:
         tags:
              - { name: layout.block_type, alias: quote_choice_form_container }
 
-    orob2b_sale.layout.type.units_request_for_quote:
+    oro_sale.layout.type.units_request_for_quote:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{units: {required: true}}]]

@@ -280,7 +280,7 @@ class QuoteControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_sale.entity.quote.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_sale.entity.quote.class'),
                 ]
             ),
             [],

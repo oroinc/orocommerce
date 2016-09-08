@@ -1,0 +1,121 @@
+system_configuration:
+    groups:
+        payment:
+            title: oro.payment.system_configuration.groups.payment.title
+        general:
+            title: oro.payment.system_configuration.groups.general.title
+        merchant_location:
+            title: oro.payment.system_configuration.groups.merchant_location.title
+
+        payment_term:
+            title: oro.payment.system_configuration.groups.payment_terms.title
+        payment_term_display:
+            title: oro.payment.system_configuration.groups.display_options.title
+
+    fields:
+        orob2b_payment.merchant_country:
+            data_type: string
+            type: oro_locale_country
+            options:
+                label: oro.payment.system_configuration.fields.merchant_country.label
+
+        # Payment Term
+        orob2b_payment.payment_term_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+                required: false
+
+        orob2b_payment.payment_term_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        orob2b_payment.payment_term_short_label:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        orob2b_payment.payment_term_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        orob2b_payment.payment_term_allowed_countries:
+            data_type: string
+            type: choice
+            priority: 60
+            options:
+                label: oro.payment.system_configuration.fields.allowed_countries.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    all: oro.payment.system_configuration.fields.allowed_countries.all
+                    selected: oro.payment.system_configuration.fields.allowed_countries.selected
+                attr:
+                    'data-page-component-module': 'oropayment/js/app/components/config-hide-fields-component'
+                    'data-dependency-id': 'payment_term_allowed_countries'
+
+        orob2b_payment.payment_term_selected_countries:
+            data_type: string
+            type: oro_locale_country
+            priority: 50
+            options:
+                label: oro.payment.system_configuration.fields.selected_countries.label
+                multiple: true
+                attr:
+                    'data-depends-on-field': 'payment_term_allowed_countries'
+                    'data-depends-on-field-value': 'selected'
+
+        orob2b_payment.payment_term_allowed_currencies:
+            data_type: array
+            type: oro_currency_selection
+            priority: 40
+            options:
+                label: oro.pricing.system_configuration.fields.enabled_currencies.label
+                required: true
+                multiple: true
+                constraints:
+                    - NotBlank: ~
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    payment:
+                        priority: 400
+                        children:
+                            general:
+                                priority: 100
+                                children:
+                                    merchant_location:
+                                        priority: 100
+                                        children:
+                                            - orob2b_payment.merchant_country
+                            payment_term:
+                                priority: 60
+                                children:
+                                    payment_term_display:
+                                        priority: 100
+                                        children:
+                                            - orob2b_payment.payment_term_enabled
+                                            - orob2b_payment.payment_term_label
+                                            - orob2b_payment.payment_term_short_label
+                                            - orob2b_payment.payment_term_sort_order
+                                            - orob2b_payment.payment_term_allowed_countries
+                                            - orob2b_payment.payment_term_selected_countries
+                                            - orob2b_payment.payment_term_allowed_currencies

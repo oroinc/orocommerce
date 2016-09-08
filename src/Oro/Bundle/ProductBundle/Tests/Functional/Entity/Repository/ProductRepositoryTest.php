@@ -27,7 +27,7 @@ class ProductRepositoryTest extends WebTestCase
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.entity.product.class')
+            $this->getContainer()->getParameter('oro_product.entity.product.class')
         );
     }
 

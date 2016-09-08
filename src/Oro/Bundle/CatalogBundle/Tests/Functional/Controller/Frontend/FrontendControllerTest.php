@@ -4,8 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Bundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -18,39 +17,30 @@ class FrontendControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
+        $this->loadFixtures([
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+        ]);
     }
 
     public function testIndex()
     {
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
-
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $menuHtml = $crawler->filter('ul.main-menu__list')->text();
+        $content = $result->getContent();
 
-        /** @var AccountUser $loggedUser */
-        $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $categories = $this->getContainer()->get('orob2b_catalog.provider.category_tree_provider')->getCategories(
-            $loggedUser,
-            null,
-            false
-        );
+        $this->assertNotEmpty($content);
+        $this->assertContains(LoadCategoryData::FIRST_LEVEL, $content);
+        $this->assertContains(LoadCategoryData::SECOND_LEVEL1, $content);
+        $this->assertContains(LoadCategoryData::SECOND_LEVEL2, $content);
+        $this->assertContains(LoadCategoryData::THIRD_LEVEL1, $content);
+        $this->assertContains(LoadCategoryData::THIRD_LEVEL2, $content);
+        $this->assertContains(LoadCategoryData::FOURTH_LEVEL1, $content);
+        $this->assertContains(LoadCategoryData::FOURTH_LEVEL2, $content);
+        $this->assertContains('list-slider-component', $content);
+        $this->assertContains('Featured Products', $content);
+        $this->assertContains('Top Selling Items', $content);
 
-        /** @var Category[] $categories */
-        $categories = $categories[0]->getChildCategories()->toArray();
-        // "categories_main_menu" layout block has option "max_size" with value 4
-        $categories = array_slice($categories, 0, 4);
-
-        foreach ($categories as $categoryFirstLevel) {
-            $this->assertContains((string)$categoryFirstLevel->getDefaultTitle(), $menuHtml);
-            foreach ($categoryFirstLevel->getChildCategories() as $categorySecondLevel) {
-                $this->assertContains((string)$categorySecondLevel->getDefaultTitle(), $menuHtml);
-                foreach ($categorySecondLevel->getChildCategories() as $categoryThirdLevel) {
-                    $this->assertContains((string)$categoryThirdLevel->getDefaultTitle(), $menuHtml);
-                }
-            }
-        }
     }
 }

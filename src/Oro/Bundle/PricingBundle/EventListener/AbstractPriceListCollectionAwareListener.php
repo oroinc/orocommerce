@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\Form\FormEvent;
-
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
-use Oro\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
+use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Symfony\Component\Form\FormEvent;
 
 abstract class AbstractPriceListCollectionAwareListener
 {
@@ -34,7 +33,7 @@ abstract class AbstractPriceListCollectionAwareListener
     protected $doctrineHelper;
 
     /**
-     * @var PriceListChangeTriggerHandler
+     * @var PriceListRelationTriggerHandler
      */
     protected $triggerHandler;
 
@@ -51,12 +50,12 @@ abstract class AbstractPriceListCollectionAwareListener
     /**
      * @param PriceListWithPriorityCollectionHandler $collectionHandler
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListChangeTriggerHandler $triggerHandler
+     * @param PriceListRelationTriggerHandler $triggerHandler
      */
     public function __construct(
         PriceListWithPriorityCollectionHandler $collectionHandler,
         DoctrineHelper $doctrineHelper,
-        PriceListChangeTriggerHandler $triggerHandler
+        PriceListRelationTriggerHandler $triggerHandler
     ) {
         $this->collectionHandler = $collectionHandler;
         $this->doctrineHelper = $doctrineHelper;

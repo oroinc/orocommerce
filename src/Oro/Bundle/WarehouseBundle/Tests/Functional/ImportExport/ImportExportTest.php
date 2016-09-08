@@ -218,7 +218,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $inventoryLevels = $this->client->getContainer()->get('oro_api.doctrine_helper')
             ->getEntityRepository(WarehouseInventoryLevel::class)
             ->findAll();
-        $formatter = $this->client->getContainer()->get('orob2b_product.formatter.product_unit_label');
+        $formatter = $this->client->getContainer()->get('oro_product.formatter.product_unit_label');
         $actualUnits = [];
         foreach ($inventoryLevels as $inventoryLevel) {
             /** @var WarehouseInventoryLevel $inventoryLevel */

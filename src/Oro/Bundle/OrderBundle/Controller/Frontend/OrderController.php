@@ -34,7 +34,7 @@ class OrderController extends AbstractOrderController
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
+            'entity_class' => $this->container->getParameter('oro_order.entity.order.class'),
         ];
     }
     
@@ -92,7 +92,7 @@ class OrderController extends AbstractOrderController
 //    public function createAction()
 //    {
 //        $order = new Order();
-//        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+//        $order->setWebsite($this->get('oro_website.manager')->getCurrentWebsite());
 //
 //        return $this->update($order);
 //    }
@@ -206,7 +206,7 @@ class OrderController extends AbstractOrderController
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 
     /**
@@ -214,6 +214,6 @@ class OrderController extends AbstractOrderController
      */
     protected function getFrontendOrderDataHandler()
     {
-        return $this->get('orob2b_order.request_handler.frontend_order_data_handler');
+        return $this->get('oro_order.request_handler.frontend_order_data_handler');
     }
 }

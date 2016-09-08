@@ -73,7 +73,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_paypal.payment_method.payflow_gateway.config'
-            - '@orob2b_payment.provider.payment_transaction'
+            - '@oro_payment.provider.payment_transaction'
         tags:
             - { name: orob2b_payment.payment_method_view }
 
@@ -99,7 +99,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_paypal.payment_method.paypal_payments_pro.config'
-            - '@orob2b_payment.provider.payment_transaction'
+            - '@oro_payment.provider.payment_transaction'
         tags:
             - { name: orob2b_payment.payment_method_view }
 

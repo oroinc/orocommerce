@@ -2,7 +2,6 @@
 .middlebar {
   min-height: 100px;
   padding: 20px 0 19px;
-  border-bottom: 1px solid $theme-lighter-gray-color;
 
   @media (max-width: $screen-md) {
     min-height: initial;
@@ -370,7 +369,7 @@
 
 /*===== START FOOTER =====*/
 .footer {
-  padding: 5rem 8rem 0 0;
+  padding-top: 5rem;
 
   background: $theme-lightest-gray-color;
 
@@ -380,12 +379,20 @@
 }
 
 .copy {
-  border-top: 1px solid $theme-lighter-gray-color;
+  margin: 0 -15px;
+  padding: 22px 15px;
 
-  color: $theme-slight-middle-gray-color;
   font-size: 12px;
-  line-height: 4.7;
+  line-height: normal;
   text-align: center;
+
+  border-top: 1px solid $theme-lighter-gray-color;
+  color: $theme-slight-middle-gray-color;
+
+  @media (max-width: $screen-sm) {
+    margin: 0;
+    padding: 22px 0;
+  }
 }
 /*===== END FOOTER =====*/
 
@@ -681,14 +688,40 @@
 .action-selectbox_custom_in-pager {
   display: inline-block;
   max-width: 165px;
-
+  &.sorting {
+    max-width: none;
+    line-height: 24px;
+  }
   .select2-container {
     a.select2-choice {
       padding: 8px !important;
-
-      .select2-chosen {
-        padding-right: 20px !important;
+    }
+  }
+  .b2b-sorting-select-control {
+    margin-right: 12px;
+    font-size: 14px;
+    .select2-container a.select2-choice {
+      line-height: 30px;
+      padding: 0 0 0 8px !important;
+      outline: 0 none;
+    }
+    a[class^="icon-"] {
+      text-decoration: none;
+      font-size: 12px;
+      height: 14px;
+      vertical-align: middle;
+      padding-left: 8px;
+      margin-left: 0;
+      color: #666;
+      cursor: pointer;
+      &:before {
+        vertical-align: middle;
       }
+    }
+    .sorting-label {
+      display: inline-block;
+      line-height: 23px;
+      vertical-align: middle;
     }
   }
 }
@@ -711,8 +744,8 @@
 
   &[disabled] {
     background: linear-gradient(to bottom,
-                rgba(255,255,255,1) 0%,
-                rgba(230,230,230,1) 100%);
+        rgba(255,255,255,1) 0%,
+        rgba(230,230,230,1) 100%);
   }
 }
 

@@ -325,7 +325,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $accountUser = $this->getAccountUser();
         $categories = $this->getContainer()
-            ->get('orob2b_catalog.provider.category_tree_provider')
+            ->get('oro_catalog.provider.category_tree_provider')
             ->getCategories($accountUser);
 
         $categoryTitles = [];

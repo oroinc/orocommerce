@@ -1,0 +1,58 @@
+{% block __oro_product_line_item_form__line_item_form_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': form.vars.id ~ '-product-id-{{ product.id }} %>',
+    }) %}
+    {{ block('form_start_widget') }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_fields_widget %}
+    {% if renderCache is not defined %}
+        {% set renderCache %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-item__qty__current-grid',
+                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component'
+            }) %}
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% endset %}
+        {% do block|merge_context({
+            renderCache: renderCache
+        }) %}
+    {% endif %}
+    {{ renderCache }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__qty product-item__qty_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' add-product-from-view-component '
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ UI.pinnedDropdownButton({
+                'html': block_widget(block),
+                'mobileEnabled': true,
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
+                'options': {
+                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
+                    'truncateLength': 25,
+                    'groupContainer': '<div id="add-to-shopping-list" class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
+                    'appendToBody': true
+                }
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

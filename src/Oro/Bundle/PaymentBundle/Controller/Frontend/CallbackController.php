@@ -34,7 +34,7 @@ class CallbackController extends Controller
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 
     /**
@@ -54,7 +54,7 @@ class CallbackController extends Controller
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 
     /**
@@ -77,6 +77,6 @@ class CallbackController extends Controller
         $event = new CallbackNotifyEvent($request->request->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 }
