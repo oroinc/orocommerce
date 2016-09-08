@@ -13,6 +13,9 @@ class OroFrontendNavigationBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface
 {
+    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME = 'oro_front_nav_menu_upd';
+    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_front_nav_menu_upd_title';
+    
     const MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
@@ -54,13 +57,13 @@ class OroFrontendNavigationBundleInstaller implements
     }
 
     /**
-     * Create oro_front_nav_menu_update table.
+     * Create oro_front_nav_menu_upd table.
      *
      * @param Schema $schema
      */
     protected function createOroFrontendNavigationMenuUpdateTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_front_nav_menu_update');
+        $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('key', 'string', ['length' => 100]);
         $table->addColumn('parent_key', 'string', ['length' => 100, 'notnull' => false]);
@@ -82,7 +85,7 @@ class OroFrontendNavigationBundleInstaller implements
      */
     protected function createOroFrontendNavigationMenuUpdateTitleTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_front_nav_menu_upd_title');
+        $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addColumn('menu_update_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['menu_update_id', 'localized_value_id']);
@@ -90,13 +93,13 @@ class OroFrontendNavigationBundleInstaller implements
     }
 
     /**
-     * Add oro_front_nav_menu_update foreign keys
+     * Add oro_front_nav_menu_upd foreign keys
      *
      * @param Schema $schema
      */
     protected function addOroFrontendNavigationMenuUpdateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_front_nav_menu_update');
+        $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
@@ -112,7 +115,7 @@ class OroFrontendNavigationBundleInstaller implements
      */
     protected function addOroFrontendNavigationMenuUpdateTitleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_front_nav_menu_upd_title');
+        $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
@@ -120,7 +123,7 @@ class OroFrontendNavigationBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_front_nav_menu_update'),
+            $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME),
             ['menu_update_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -134,7 +137,7 @@ class OroFrontendNavigationBundleInstaller implements
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            'oro_front_nav_menu_update',
+            self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME,
             'image',
             [],
             self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,
