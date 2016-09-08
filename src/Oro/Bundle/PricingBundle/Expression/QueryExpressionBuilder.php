@@ -3,180 +3,73 @@
 namespace Oro\Bundle\PricingBundle\Expression;
 
 use Doctrine\ORM\Query\Expr;
+use Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ConverterAwareInterface;
+use Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
+use Oro\Component\PhpUtils\ArrayUtil;
 
-class QueryExpressionBuilder
+class QueryExpressionBuilder implements QueryExpressionConverterInterface
 {
-    const PARAMETER_PREFIX = '_vn';
-
-    /**
-     * @var int
-     */
-    protected $paramCount = 0;
+    const CONVERTER = 'converter';
+    const SORT_ORDER = 'sort_order';
 
     /**
      * @var array
      */
-    protected static $exprMap = [
-        'and' => 'andX',
-        'or' => 'orX',
-        'like' => 'like',
-        'in' => 'in',
-        'not in' => 'notIn',
-        '+' => 'sum',
-        '-' => 'diff',
-        '*' => 'prod',
-        '/' => 'quot',
-        '>' => 'gt',
-        '>=' => 'gte',
-        '<' => 'lt',
-        '<=' => 'lte',
-        '==' => 'eq',
-        '!=' => 'neq'
-    ];
+    protected $registeredConverters = [];
 
     /**
-     * @param NodeInterface $node
-     * @param Expr $expr
-     * @param array $params
-     * @param array $aliasMapping
-     * @return Expr\Base|string
+     * @var array|null
+     */
+    protected $sortedConverters;
+
+    /**
+     * @param QueryExpressionConverterInterface $converter
+     * @param int $sortOrder
+     */
+    public function registerConverter(QueryExpressionConverterInterface $converter, $sortOrder = 0)
+    {
+        if ($converter instanceof ConverterAwareInterface) {
+            $converter->setConverter($this);
+        }
+
+        $this->registeredConverters[] = [
+            self::CONVERTER => $converter,
+            self::SORT_ORDER => $sortOrder
+        ];
+        $this->sortedConverters = null;
+    }
+
+    /**
+     * @return array|QueryExpressionConverterInterface[]
+     */
+    protected function getSortedConverters()
+    {
+        if (null === $this->sortedConverters) {
+            ArrayUtil::sortBy($this->registeredConverters, true, self::SORT_ORDER);
+            $this->sortedConverters = array_column($this->registeredConverters, self::CONVERTER);
+        }
+
+        return $this->sortedConverters;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
-        if ($node instanceof NameNode) {
-            return $this->convertNameNode($node, $aliasMapping);
-        }
-        if ($node instanceof RelationNode) {
-            return $this->convertRelationNode($node, $aliasMapping);
-        }
+        $convertedExpression = null;
 
-        if ($node instanceof UnaryNode) {
-            return $this->convertUnaryNode($node, $expr, $params, $aliasMapping);
-        }
-        if ($node instanceof BinaryNode) {
-            return $this->convertBinaryNode($node, $expr, $params, $aliasMapping);
+        foreach ($this->getSortedConverters() as $converter) {
+            $convertedExpression = $converter->convert($node, $expr, $params, $aliasMapping);
+            if ($convertedExpression !== null) {
+                break;
+            }
         }
 
-        if ($node instanceof ValueNode) {
-            return $this->convertValueNode($node, $params);
+        if (!$convertedExpression) {
+            throw new \InvalidArgumentException(sprintf('Unsupported node type %s', get_class($node)));
         }
 
-        throw new \InvalidArgumentException(sprintf('Unsupported node type %s', get_class($node)));
-    }
-
-    /**
-     * @param UnaryNode $node
-     * @param Expr $expr
-     * @param array $params
-     * @param array $aliasMapping
-     * @return Expr\Func|string
-     */
-    protected function convertUnaryNode(UnaryNode $node, Expr $expr, array &$params, array $aliasMapping)
-    {
-        $convertedNode = $this->convert($node->getNode(), $expr, $params, $aliasMapping);
-
-        switch ($node->getOperation()) {
-            case 'not':
-                return $expr->not($convertedNode);
-            case '-':
-                return '(-' . (string)$convertedNode . ')';
-            case '+':
-            default:
-                return $convertedNode;
-        }
-    }
-
-    /**
-     * @param BinaryNode $node
-     * @param Expr $expr
-     * @param array $params
-     * @param array $aliasMapping
-     * @return Expr\Andx|Expr\Orx|string
-     */
-    protected function convertBinaryNode(BinaryNode $node, Expr $expr, array &$params, array $aliasMapping)
-    {
-        if (!array_key_exists($node->getOperation(), self::$exprMap)) {
-            throw new \InvalidArgumentException(sprintf('Unsupported operation "%s"', $node->getOperation()));
-        }
-
-        $method = self::$exprMap[$node->getOperation()];
-
-        if ($method === 'in' && !$node->getRight() instanceof ValueNode) {
-            $method = 'isMemberOf';
-        }
-        if ($method === 'notIn' && !$node->getRight() instanceof ValueNode) {
-            return $expr->not(
-                $expr->isMemberOf(
-                    $this->convert($node->getLeft(), $expr, $params, $aliasMapping),
-                    $this->convert($node->getRight(), $expr, $params, $aliasMapping)
-                )
-            );
-        }
-
-        return $expr->$method(
-            $this->convert($node->getLeft(), $expr, $params, $aliasMapping),
-            $this->convert($node->getRight(), $expr, $params, $aliasMapping)
-        );
-    }
-
-    /**
-     * @param NameNode $node
-     * @param array $aliasMapping
-     * @return string
-     */
-    protected function convertNameNode(NameNode $node, array $aliasMapping)
-    {
-        if (!$container = $this->getMappedContainer($node, $aliasMapping)) {
-            $container = $node->getContainer();
-        }
-
-        return $node->getField() ? $container . '.' . $node->getField() : $container;
-    }
-
-    /**
-     * @param RelationNode $node
-     * @param array $aliasMapping
-     * @return string
-     */
-    protected function convertRelationNode(RelationNode $node, array $aliasMapping)
-    {
-        if (!$container = $this->getMappedContainer($node, $aliasMapping)) {
-            $container = $node->getContainer() . '.' . $node->getField();
-        }
-
-        return $container . '.' . $node->getRelationField();
-    }
-
-    /**
-     * @param ValueNode $node
-     * @param array $params
-     * @return string
-     */
-    protected function convertValueNode(ValueNode $node, array &$params)
-    {
-        $value = $node->getValue();
-        if (!is_numeric($value)) {
-            $param = self::PARAMETER_PREFIX . $this->paramCount;
-            $params[$param] = $value;
-            $value = ':' . $param;
-            $this->paramCount++;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param ContainerHolderNodeInterface $node
-     * @param array $aliasMapping
-     * @return string|null
-     */
-    protected function getMappedContainer(ContainerHolderNodeInterface $node, array $aliasMapping)
-    {
-        $aliasKey = $node->getResolvedContainer();
-        if (array_key_exists($aliasKey, $aliasMapping)) {
-            return $aliasMapping[$aliasKey];
-        }
-
-        return null;
+        return $convertedExpression;
     }
 }

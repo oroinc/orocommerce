@@ -759,9 +759,34 @@ services:
         arguments:
             - '@orob2b_pricing.provider.price_rule_fields_provider'
 
+    orob2b_pricing.expression.query_expression.converter.binary_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\BinaryNodeConverter'
+        public: false
+
+    orob2b_pricing.expression.query_expression.converter.name_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\NameNodeConverter'
+        public: false
+
+    orob2b_pricing.expression.query_expression.converter.relation_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\RelationNodeConverter'
+        public: false
+
+    orob2b_pricing.expression.query_expression.converter.unary_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\UnaryNodeConverter'
+        public: false
+
+    orob2b_pricing.expression.query_expression.converter.value_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ValueNodeConverter'
+        public: false
+
     orob2b_pricing.expression.query_expression_builder:
         class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
-        public: false
+        calls:
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.binary_node']]
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.name_node']]
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.relation_node']]
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.unary_node']]
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.value_node']]
 
     orob2b_pricing.query.price_list_expression_query_converter:
         class: 'Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
