@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -13,7 +14,7 @@ use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
- * @ORM\Table(name="oro_front_nav_menu_update")
+ * @ORM\Table(name="oro_front_nav_menu_upd")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -21,6 +22,9 @@ use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
  *          }
  *      }
  * )
+ *
+ * @method File getImage()
+ * @method MenuUpdate setImage(File $image)
  */
 class MenuUpdate extends ExtendMenuUpdate
 {
@@ -62,6 +66,9 @@ class MenuUpdate extends ExtendMenuUpdate
      */
     protected $website;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         parent::__construct();
@@ -76,8 +83,8 @@ class MenuUpdate extends ExtendMenuUpdate
     {
         return [
             'image'     => $this->getImage(),
-            'condition' => $this->condition,
-            'website'   => $this->website
+            'condition' => $this->getCondition(),
+            'website'   => $this->getWebsite()
         ];
     }
 
@@ -91,7 +98,7 @@ class MenuUpdate extends ExtendMenuUpdate
 
     /**
      * @param LocalizedFallbackValue $title
-     * @return $this
+     * @return MenuUpdate
      */
     public function addTitle(LocalizedFallbackValue $title)
     {
@@ -104,7 +111,7 @@ class MenuUpdate extends ExtendMenuUpdate
 
     /**
      * @param LocalizedFallbackValue $title
-     * @return $this
+     * @return MenuUpdate
      */
     public function removeTitle(LocalizedFallbackValue $title)
     {
