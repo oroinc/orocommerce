@@ -9,10 +9,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(
- *      name="orob2b_price_product",
+ *      name="oro_price_product",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_pricing_price_list_uidx",
+ *              name="oro_pricing_price_list_uidx",
  *              columns={"product_id", "price_list_id", "quantity", "unit_code", "currency"}
  *          )
  *      }
@@ -25,7 +25,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="shopping"
  *          }
  *      }
  * )

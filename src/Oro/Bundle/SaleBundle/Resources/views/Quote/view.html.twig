@@ -122,6 +122,19 @@
         {% endif %}
     {% endset %}
 
+    {% set paymentTerm %}
+        {% if entity.paymentTerm is not empty %}
+            {% if resource_granted('VIEW', entity.paymentTerm) %}
+                {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
+            {% else %}
+                {% set paymentTermView = entity.paymentTerm.label|escape %}
+            {% endif %}
+            {{ UI.renderHtmlProperty('oro.sale.quote.payment_term.label'|trans, paymentTermView) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('oro.sale.quote.payment_term.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
     {% set id = 'quote-view' %}
 
     {% set dataBlocks = [{
@@ -145,6 +158,11 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
         'subblocks': [{'data' : [shippingInformation]}]
+    }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.sale.quote.form.payment.label'|trans,
+        'subblocks': [{'data' : [paymentTerm]}]
     }]) %}
 
     {% set data = {'dataBlocks': dataBlocks} %}

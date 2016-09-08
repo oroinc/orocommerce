@@ -7,6 +7,7 @@ services:
         public: true
         arguments:
             - "@doctrine"
+            - "@orob2b_frontend.request.frontend_helper"
 
     orob2b_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
@@ -67,7 +68,6 @@ services:
         class: 'Oro\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
         arguments:
             - '@oro_config.global'
-            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
 

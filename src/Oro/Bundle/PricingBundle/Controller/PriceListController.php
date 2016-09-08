@@ -29,6 +29,13 @@ class PriceListController extends Controller
      */
     public function viewAction(PriceList $priceList)
     {
+        if (!$priceList->isActual()) {
+            $this->get('session')->getFlashBag()->add(
+                'warning',
+                $this->get('translator')->trans('oro.pricing.pricelist.not_actual.recalculation')
+            );
+        }
+
         return [
             'entity' => $priceList,
             'product_price_entity_class' => $this->container->getParameter('orob2b_pricing.entity.product_price.class')

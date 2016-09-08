@@ -2,3 +2,12 @@ services:
     oro_website_search.engine.orm_indexer:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer'
         parent: 'oro_website_search.search.indexer'
+
+    oro_website_search.engine:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
+        parent: 'oro_website_search.search.engine'
+        calls:
+            - [setRegistry, ['@doctrine']]
+            - [setDrivers, ['%oro_search.drivers%']]
+            - [setMapper, ['@oro_website_search.engine.mapper']]
+            - [setMappingProvider, ['@oro_website_search.provider.search_mapping']]

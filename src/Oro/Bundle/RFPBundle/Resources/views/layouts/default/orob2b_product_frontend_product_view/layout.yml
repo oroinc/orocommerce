@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'layout.html.twig'
+        - @add:
+            id: units_request_for_quote
+            parentId: product_prices
+            blockType: units_request_for_quote
+            options:
+                visible: '=data["feature"].isFeatureEnabled("rfp_frontend")'
+                units: '=data["product_units_without_prices"].getProductUnits(data["product"])'
+        - @add:
+            id: request_a_quote_form_button
+            parentId: line_item_buttons
+            blockType: block
+            options:
+                visible: '=data["product_units_without_prices"].getProductUnits(data["product"])!=null && data["feature"].isFeatureEnabled("rfp_frontend")'
+                vars:
+                    product: '=data["product"]'

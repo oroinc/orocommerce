@@ -18,6 +18,7 @@ class PaymentMethodRegistry
     /**
      * @param string $type
      * @return PaymentMethodInterface
+     * @throws \InvalidArgumentException
      */
     public function getPaymentMethod($type)
     {

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
@@ -36,9 +37,9 @@ class PriceListTreeHandlerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
+        $this->loadFixtures([LoadCombinedPriceLists::class]);
 
-        $this->websiteManager = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Manager\WebsiteManager')
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -50,8 +51,6 @@ class PriceListTreeHandlerTest extends WebTestCase
             $this->websiteManager,
             $this->configManager
         );
-        $class = $this->getContainer()->getParameter('orob2b_pricing.entity.combined_price_list.class');
-        $this->handler->setPriceListClass($class);
     }
 
     /**

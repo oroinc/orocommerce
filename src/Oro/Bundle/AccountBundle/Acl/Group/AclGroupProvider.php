@@ -3,7 +3,7 @@
 namespace Oro\Bundle\AccountBundle\Acl\Group;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\SecurityBundle\Acl\Group\AclGroupProviderInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -11,10 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AclGroupProvider implements AclGroupProviderInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritDoc}
@@ -44,11 +41,5 @@ class AclGroupProvider implements AclGroupProviderInterface, ContainerAwareInter
         }
 
         return $this->container->get('oro_security.security_facade');
-    }
-
-    /** {@inheritdoc} */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }

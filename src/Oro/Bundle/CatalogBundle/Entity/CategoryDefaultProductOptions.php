@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 
 /**
- * @ORM\Table(name="orob2b_category_def_prod_opts")
+ * @ORM\Table(name="oro_category_def_prod_opts")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */

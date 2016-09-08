@@ -23,33 +23,36 @@ class OrmIndexer extends AbstractIndexer
     {
         $entities = $this->convertToArray($entities);
 
-        if (empty($entities)) {
-            return true;
+        $sortedEntitiesData = [];
+        foreach ($entities as $entity) {
+            $entityClass = $this->doctrineHelper->getEntityClass($entity);
+
+            if ($this->mappingProvider->isClassSupported($entityClass)) {
+                $sortedEntitiesData[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            }
         }
 
-        $firstEntityClass = $this->doctrineHelper->getEntityClass(current($entities));
-        $entityIds = [];
-        foreach ($entities as $entity) {
-            if ($firstEntityClass !== $this->doctrineHelper->getEntityClass($entity)) {
-                throw new \InvalidArgumentException('Entities must be of the same type');
+        foreach ($sortedEntitiesData as $entityClass => $entityIds) {
+            $entityAlias = null;
+            if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+                $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
+                $entityAlias = $this->applyPlaceholders($entityAlias, $context);
             }
 
-            $entityIds[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            $this->getItemRepository()->removeEntities($entityIds, $entityClass, $entityAlias);
         }
-
-        $entityAlias = null;
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $entityAlias = $this->mappingProvider->getEntityAlias($firstEntityClass);
-            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
-        }
-
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-
-        /** @var WebsiteSearchIndexRepository $indexRepository */
-        $indexRepository = $entityManager->getRepository(Item::class);
-        $indexRepository->removeEntities($entityIds, $firstEntityClass, $entityAlias);
 
         return true;
+    }
+
+    /**
+     * @return WebsiteSearchIndexRepository
+     */
+    private function getItemRepository()
+    {
+        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
+
+        return $entityManager->getRepository(Item::class);
     }
 
     /**

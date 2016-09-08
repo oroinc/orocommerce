@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +30,8 @@ class OrderController extends AbstractOrderController
      *      id="orob2b_order_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
-     *      permission="VIEW"
+     *      permission="VIEW",
+     *      category="orders"
      * )
      *
      * @param Order $order
@@ -102,7 +105,7 @@ class OrderController extends AbstractOrderController
     public function createAction(Request $request)
     {
         $order = new Order();
-        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+        $order->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
         return $this->update($order, $request);
     }
 
