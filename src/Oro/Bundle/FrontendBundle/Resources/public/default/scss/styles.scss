@@ -60,5 +60,6 @@
 /* Commerce theme */
 
 @import 'components/commerce/commerce';
-@import 'components/embedded-list/embedded-list.scss';
-@import 'components/header/header.scss';
+@import 'components/embedded-list/embedded-list';
+@import 'components/header/header';
+@import 'components/grid';

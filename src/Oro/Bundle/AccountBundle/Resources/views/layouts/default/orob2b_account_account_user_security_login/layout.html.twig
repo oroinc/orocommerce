@@ -32,7 +32,7 @@
 
 {% block _login_form_remenber_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' grid__row grid__row--'
+        '~class': ' grid__row grid__row--offset-l'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -61,9 +61,21 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' grid__row grid__row--offset-none'
     }) %}
-
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="grid__group-column">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _login_form_register_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__row grid__row--offset-none'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="grid__group-column">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
