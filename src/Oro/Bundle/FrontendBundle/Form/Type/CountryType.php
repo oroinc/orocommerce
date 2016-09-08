@@ -19,7 +19,7 @@ class CountryType extends BaseCountryType
      */
     public function getBlockPrefix()
     {
-        return 'orob2b_country';
+        return 'oro_country';
     }
 
     /**

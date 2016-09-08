@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 class ProductController extends Controller
 {
     /**
-     * @Route("/sidebar", name="orob2b_pricing_frontend_product_sidebar")
+     * @Route("/sidebar", name="oro_pricing_frontend_product_sidebar")
      * @Template
      *
      * @return array

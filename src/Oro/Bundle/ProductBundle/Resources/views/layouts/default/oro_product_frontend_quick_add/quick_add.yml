@@ -1,0 +1,30 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'quick_add.html.twig'
+        - '@setFormTheme':
+            themes: 'form.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: 'oro.product.frontend.quick_add.title'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.product.frontend.quick_add.title'
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'quick-order'
+        - '@add':
+            id: quick_add_container
+            parentId: content
+            blockType: container
+        - '@add':
+            id: quick_add_import_button
+            parentId: page_title_container
+            blockType: block
+    imports:
+        -
+            id: oro_product_quick_add_form
+            root: quick_add_container

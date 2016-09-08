@@ -12,7 +12,7 @@ use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 
 class CheckoutAddressType extends AbstractOrderAddressType
 {
-    const NAME = 'orob2b_checkout_address';
+    const NAME = 'oro_checkout_address';
     const ENTER_MANUALLY = 0;
     const SHIPPING_ADDRESS_NAME = 'shipping_address';
 
@@ -56,8 +56,8 @@ class CheckoutAddressType extends AbstractOrderAddressType
             }
             $builder
                 ->add('accountAddress', 'choice', $accountAddressOptions)
-                ->add('country', 'orob2b_country', ['required' => true, 'label' => 'oro.address.country.label'])
-                ->add('region', 'orob2b_region', ['required' => false, 'label' => 'oro.address.region.label']);
+                ->add('country', 'oro_country', ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label']);
 
             if ($type === AddressType::TYPE_BILLING) {
                 $builder->get('firstName')->setRequired(true);

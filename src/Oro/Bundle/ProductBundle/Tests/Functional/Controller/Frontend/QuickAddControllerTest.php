@@ -59,13 +59,13 @@ abstract class QuickAddControllerTest extends WebTestCase
             ]
         ];
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains(htmlentities('Paste your order'), $crawler->html());
 
         $form = $crawler->selectButton('Verify Order')->form();
         $this->updateFormActionToDialog($form);
-        $form['orob2b_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
+        $form['oro_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
 
         $crawler = $this->client->submit($form);
 
@@ -75,7 +75,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         //test result form actions (create rfp, create order, add to shopping list)
         $resultForm = $crawler->selectButton('Cancel')->form();
         $this->updateFormActionToDialog($resultForm);
-        $resultForm['orob2b_product_quick_add[component]'] = $processorName;
+        $resultForm['oro_product_quick_add[component]'] = $processorName;
         $this->client->submit($resultForm);
         $response = $this->client->getResponse();
         $result = static::getJsonResponseContent($response, 200);
@@ -103,7 +103,7 @@ abstract class QuickAddControllerTest extends WebTestCase
      */
     public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
     {
-        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
         $this->assertContains('Import Excel .CSV File', $response->getContent());
@@ -111,7 +111,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_product_frontend_quick_add_import',
+                'oro_product_frontend_quick_add_import',
                 ['_widgetContainer' => 'dialog']
             )
         );
@@ -122,7 +122,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $this->updateFormActionToDialog($form);
 
         if (file_exists($file)) {
-            $form['orob2b_product_quick_add_import_from_file[file]']->upload($file);
+            $form['oro_product_quick_add_import_from_file[file]']->upload($file);
         }
 
         $crawler = $this->client->submit($form);

@@ -1,4 +1,4 @@
-{% macro orob2b_rfp_frontend_request_lineitem_requested_prototype(widget) %}
+{% macro oro_rfp_frontend_request_lineitem_requested_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -17,15 +17,15 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_rfp_request_widget %}
+{% block oro_rfp_request_widget %}
     <div class="rfp-request-widget" data-page-component-module="oroaccount/js/app/components/account-selection-component">
         {{ form(form) }}
     </div>
 {% endblock %}
 
-{% block orob2b_rfp_frontend_request_product_collection_widget %}
+{% block oro_rfp_frontend_request_product_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_frontend_request_lineitem_prototype(form, prototype_name) %}
+        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_prototype(form, prototype_name) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -48,7 +48,7 @@
 
                 {% if form.children|length %}
                     {% for key, child in form.children %}
-                        {{ _self.orob2b_rfp_frontend_request_lineitem_prototype(child, prototype_name, key) }}
+                        {{ _self.oro_rfp_frontend_request_lineitem_prototype(child, prototype_name, key) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -59,7 +59,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_frontend_request_lineitem_prototype(widget, prototype_name, key) %}
+{% macro oro_rfp_frontend_request_lineitem_prototype(widget, prototype_name, key) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -116,20 +116,20 @@
     </tbody>
 {% endmacro %}
 
-{% block orob2b_rfp_request_product_collection_widget %}
+{% block oro_rfp_request_product_collection_widget %}
     <div class="rfp-lineitems"
          data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/line-items-view'
          }|json_encode }}"
          data-layout="separate">
-        {{ block('orob2b_rfp_lineitem_collection_widget') }}
+        {{ block('oro_rfp_lineitem_collection_widget') }}
     </div>
 {% endblock %}
 
-{% block orob2b_rfp_lineitem_collection_widget %}
+{% block oro_rfp_lineitem_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_request_lineitem_prototype(form) %}
+        {% set prototype_html = _self.oro_rfp_request_lineitem_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -148,7 +148,7 @@
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_request_lineitem_prototype(child) }}
+                        {{ _self.oro_rfp_request_lineitem_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -160,7 +160,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_request_lineitem_prototype(widget) %}
+{% macro oro_rfp_request_lineitem_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -182,7 +182,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_rfp_frontend_request_product_widget %}
+{% block oro_rfp_frontend_request_product_widget %}
     <td class="rfp-lineitem-product">
         {{ form_widget(form.product) }}
         {{ form_errors(form.product) }}
@@ -193,7 +193,7 @@
     </td>
 {% endblock %}
 
-{% block orob2b_rfp_request_product_widget %}
+{% block oro_rfp_request_product_widget %}
     <td class="rfp-lineitem-product">
         {{ form_widget(form.product) }}
         {{ form_errors(form.product) }}
@@ -210,9 +210,9 @@
     </td>
 {% endblock %}
 
-{% block orob2b_rfp_request_frontend_product_item_collection_widget %}
+{% block oro_rfp_request_frontend_product_item_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -230,7 +230,7 @@
                 <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                        {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -242,9 +242,9 @@
     </div>
 {% endblock %}
 
-{% block orob2b_rfp_frontend_request_product_item_collection_widget %}
+{% block oro_rfp_frontend_request_product_item_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -269,7 +269,7 @@
                 data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                        {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -281,9 +281,9 @@
     </div>
 {% endblock %}
 
-{% block orob2b_rfp_request_product_item_collection_widget %}
+{% block oro_rfp_request_product_item_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = _self.oro_rfp_request_lineitem_requested_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -302,7 +302,7 @@
                 <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_request_lineitem_requested_prototype(child) }}
+                        {{ _self.oro_rfp_request_lineitem_requested_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -314,7 +314,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_request_lineitem_requested_prototype(widget) %}
+{% macro oro_rfp_request_lineitem_requested_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -331,7 +331,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_rfp_request_product_item_widget %}
+{% block oro_rfp_request_product_item_widget %}
     <td class="rfp-lineitem-requested-quantity">
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
@@ -350,7 +350,7 @@
     </td>
 {% endblock %}
 
-{% block _orob2b_order_type_lineItems_entry_offers_widget %}
+{% block _oro_order_type_lineItems_entry_offers_widget %}
     {% if offers is defined and offers|length %}
         {% set page_component_options = {
         offersSelector: '[name="%s"]'|format(full_name),
@@ -375,7 +375,7 @@
     {% endif %}
 {% endblock %}
 
-{% block _orob2b_order_type_lineItems_entry_offers_entry_row %}
+{% block _oro_order_type_lineItems_entry_offers_entry_row %}
     <td class="order-line-item-offers-radio">
         {{ form_widget(form, {
             attr: {
@@ -389,7 +389,7 @@
     <td class="order-line-item-offers-quantity">
         {% if offer.quantity is defined and offer.unit is defined %}
             <label for="{{ id }}">
-                {{ offer.quantity|orob2b_format_product_unit_code(offer.unit) }}
+                {{ offer.quantity|oro_format_product_unit_code(offer.unit) }}
             </label>
         {% endif %}
     </td>

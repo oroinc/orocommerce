@@ -18,9 +18,9 @@ use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 class AccountAddressController extends Controller
 {
     /**
-     * @Route("/address-book/{id}", name="orob2b_account_address_book", requirements={"id"="\d+"})
+     * @Route("/address-book/{id}", name="oro_account_address_book", requirements={"id"="\d+"})
      * @Template("OroAccountBundle:Address/widget:addressBook.html.twig")
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      *
      * @param Account $account
      * @return array
@@ -29,7 +29,7 @@ class AccountAddressController extends Controller
     {
         return [
             'entity' => $account,
-            'address_edit_acl_resource' => 'orob2b_account_update',
+            'address_edit_acl_resource' => 'oro_account_update',
             'options' => $this->getAddressBookOptions($account)
         ];
     }
@@ -37,11 +37,11 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-create",
-     *      name="orob2b_account_address_create",
+     *      name="oro_account_address_create",
      *      requirements={"entityId"="\d+"}
      * )
      * @Template("OroAccountBundle:Address/widget:update.html.twig")
-     * @AclAncestor("orob2b_account_create")
+     * @AclAncestor("oro_account_create")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
      * @param Account $account
@@ -55,11 +55,11 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-update/{id}",
-     *      name="orob2b_account_address_update",
+     *      name="oro_account_address_update",
      *      requirements={"entityId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
      * @Template("OroAccountBundle:Address/widget:update.html.twig")
-     * @AclAncestor("orob2b_account_update")
+     * @AclAncestor("oro_account_update")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
      * @param Account        $account
@@ -112,8 +112,8 @@ class AccountAddressController extends Controller
 
         $responseData['form'] = $form->createView();
         $responseData['routes'] = [
-            'create' => 'orob2b_account_address_create',
-            'update' => 'orob2b_account_address_update'
+            'create' => 'oro_account_address_create',
+            'update' => 'oro_account_address_update'
         ];
         return $responseData;
     }
@@ -124,11 +124,11 @@ class AccountAddressController extends Controller
      */
     protected function getAddressBookOptions($entity)
     {
-        $addressListUrl = $this->generateUrl('orob2b_api_account_get_account_addresses', [
+        $addressListUrl = $this->generateUrl('oro_api_account_get_account_addresses', [
             'entityId' => $entity->getId()
         ]);
 
-        $addressCreateUrl = $this->generateUrl('orob2b_account_address_create', [
+        $addressCreateUrl = $this->generateUrl('oro_account_address_create', [
             'entityId' => $entity->getId()
         ]);
 
@@ -139,7 +139,7 @@ class AccountAddressController extends Controller
             'entityId'               => $entity->getId(),
             'addressListUrl'         => $addressListUrl,
             'addressCreateUrl'       => $addressCreateUrl,
-            'addressUpdateRouteName' => 'orob2b_account_address_update',
+            'addressUpdateRouteName' => 'oro_account_address_update',
             'currentAddresses'       => $currentAddresses
         ];
     }

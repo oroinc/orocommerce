@@ -1,0 +1,49 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/quick_add_copy_paste.html.twig'
+        - '@setFormTheme':
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/form.html.twig'
+        - '@addTree':
+            items:
+                quick_add_copy_paste_form:
+                    blockType: container
+                quick_add_copy_paste_form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                quick_add_copy_paste_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                quick_add_copy_paste_form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                quick_add_copy_paste_form_buttons:
+                    blockType: container
+                quick_add_copy_paste_form_submit:
+                    blockType: button
+                    options:
+                        type: button
+                        action: submit
+                        text: oro.product.frontend.quick_add.continue.label
+                        style: dark
+                quick_add_copy_paste_title:
+                    blockType: text
+                    options:
+                        text: 'oro.product.frontend.quick_add.copy_paste.title'
+                quick_add_copy_paste_description:
+                    blockType: text
+                    options:
+                        text: 'oro.product.frontend.quick_add.copy_paste.description'
+            tree:
+                quick_add_container:
+                    quick_add_copy_paste_form:
+                        quick_add_copy_paste_form_start: ~
+                        quick_add_copy_paste_title: ~
+                        quick_add_copy_paste_description: ~
+                        quick_add_copy_paste_form_fields: ~
+                        quick_add_copy_paste_form_buttons:
+                            quick_add_copy_paste_form_submit: ~
+                        quick_add_copy_paste_form_end: ~

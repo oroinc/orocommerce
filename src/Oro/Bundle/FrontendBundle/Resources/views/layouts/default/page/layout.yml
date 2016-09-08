@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: orob2b_frontend.home_page.title
+            optionValue: oro_frontend.home_page.title
         - '@addTree':
             items:
                 wrapper:

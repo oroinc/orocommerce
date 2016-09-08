@@ -22,7 +22,7 @@ class RegionType extends BaseCountryType
      */
     public function getBlockPrefix()
     {
-        return 'orob2b_region';
+        return 'oro_region';
     }
 
     /**

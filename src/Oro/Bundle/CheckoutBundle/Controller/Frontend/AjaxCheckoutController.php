@@ -18,10 +18,10 @@ class AjaxCheckoutController extends Controller
     /**
      * @Route(
      *      "/get-totals-for-checkout/{entityId}",
-     *      name="orob2b_checkout_frontend_totals",
+     *      name="oro_checkout_frontend_totals",
      *      requirements={"entityId"="\d+"}
      * )
-     * @AclAncestor("orob2b_checkout_frontend_checkout")
+     * @AclAncestor("oro_checkout_frontend_checkout")
      *
      * @param Request $request
      * @param integer $entityId

@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class OrderLineItemsCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_order_line_items_collection';
+    const NAME = 'oro_order_line_items_collection';
 
     /**
      * {@inheritdoc}

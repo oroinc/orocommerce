@@ -44,8 +44,8 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $ext = parent::getExtensions();
         return array_merge($ext, [new PreloadedExtension(
             [
-            'orob2b_country' => new CountryType(),
-            'orob2b_region' => new RegionType(),
+            'oro_country' => new CountryType(),
+            'oro_region' => new RegionType(),
             ],
             ['form' => [new AdditionalAttrExtension()]]
         )]);

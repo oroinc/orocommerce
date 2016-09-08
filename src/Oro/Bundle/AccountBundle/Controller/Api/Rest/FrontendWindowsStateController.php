@@ -9,7 +9,7 @@ use Oro\Bundle\WindowsBundle\Controller\Api\WindowsStateController;
 
 /**
  * @RouteResource("windows")
- * @NamePrefix("orob2b_api_account_")
+ * @NamePrefix("oro_api_account_")
  */
 class FrontendWindowsStateController extends WindowsStateController
 {

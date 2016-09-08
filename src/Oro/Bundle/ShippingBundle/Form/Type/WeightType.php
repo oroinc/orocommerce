@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
 
 class WeightType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_weight';
+    const NAME = 'oro_shipping_weight';
 
     /** @var string */
     protected $dataClass;

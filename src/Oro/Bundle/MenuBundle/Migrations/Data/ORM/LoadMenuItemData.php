@@ -96,8 +96,8 @@ class LoadMenuItemData extends AbstractFixture implements
     {
         $item = $this->factory->createItem('quick-access');
         $item->addChild('Orders');
-        $item->addChild('Quotes', ['uri' => $this->router->generate('orob2b_sale_quote_frontend_index')]);
-        $item->addChild('Quick Order Form', ['uri' => $this->router->generate('orob2b_product_frontend_quick_add')]);
+        $item->addChild('Quotes', ['uri' => $this->router->generate('oro_sale_quote_frontend_index')]);
+        $item->addChild('Quick Order Form', ['uri' => $this->router->generate('oro_product_frontend_quick_add')]);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
@@ -141,12 +141,12 @@ class LoadMenuItemData extends AbstractFixture implements
         $itemMyAccount = $item->addChild('My Account');
         $itemMyAccount->addChild(
             'Sign Out',
-            ['uri' => $this->router->generate('orob2b_account_account_user_security_logout')]
+            ['uri' => $this->router->generate('oro_account_account_user_security_logout')]
         );
-        $itemMyAccount->addChild('View Cart', ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]);
+        $itemMyAccount->addChild('View Cart', ['uri' => $this->router->generate('oro_shopping_list_frontend_view')]);
         $itemMyAccount->addChild(
             'My Wishlist',
-            ['uri' => $this->router->generate('orob2b_shopping_list_frontend_view')]
+            ['uri' => $this->router->generate('oro_shopping_list_frontend_view')]
         );
         $itemMyAccount->addChild('Track My Order', ['uri' => '/shipping/tracking']);
         $itemMyAccount->addChild('Help', ['uri' => '/help']);

@@ -12,7 +12,7 @@
             'enabled': transitionData.isAllowed,
             'hasForm': transition.hasForm(),
             'transitionUrl': path(
-                'orob2b_checkout_frontend_checkout',
+                'oro_checkout_frontend_checkout',
                 {
                     id: checkout.id,
                     transition: transition.name
@@ -55,7 +55,7 @@
 {% block checkout_transition_back_widget %}
     {% if transitionData is defined and transitionData %}
     {% set transitionUrl = path(
-        'orob2b_checkout_frontend_checkout',
+        'oro_checkout_frontend_checkout',
         {
             id: checkout.id,
             transition: transitionData.transition.name
@@ -82,7 +82,7 @@
 {% block checkout_transition_step_edit_widget %}
     {% if transitionData is defined and transitionData %}
     {% set transitionUrl = path(
-        'orob2b_checkout_frontend_checkout',
+        'oro_checkout_frontend_checkout',
         {
             id: checkout.id,
             transition: transitionData.transition.name

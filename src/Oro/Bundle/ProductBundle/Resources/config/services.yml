@@ -72,8 +72,8 @@ services:
             - '%oro_product.entity.product.class%'
             - ["sku", "defaultName.string"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product, acl_resource: orob2b_product_view }
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_frontend, acl_resource: orob2b_product_frontend_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product, acl_resource: oro_product_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
@@ -129,13 +129,13 @@ services:
         arguments:
             - "@doctrine"
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+            - { name: validator.constraint_validator, alias: oro_product_product_by_sku_validator }
 
     oro_product.validator.product_image:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_image_validator }
+            - { name: validator.constraint_validator, alias: oro_product_image_validator }
 
     oro_product.validator.product_image_collection:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
@@ -144,7 +144,7 @@ services:
             - "@oro_layout.provider.image_type"
             - "@translator"
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
+            - { name: validator.constraint_validator, alias: oro_product_image_collection_validator }
 
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
@@ -223,7 +223,7 @@ services:
             - "@oro_config.manager"
             - "@doctrine"
         tags:
-            - {name: orob2b_product.default_product_unit_provider, priority: 0}
+            - {name: oro_product.default_product_unit_provider, priority: 0}
 
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
@@ -232,22 +232,22 @@ services:
             - "@oro_product.provider.custom_field_provider"
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_view, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_view, method: onResultAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_edit, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_view, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_view, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_edit, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_edit, method: onResultAfter }
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
+            - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
 
     oro_product.validator.product_variant_field:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
         arguments:
             - "@oro_product.provider.custom_field_provider"
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_variant_field }
+            - { name: validator.constraint_validator, alias: oro_product_variant_field }
 
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
@@ -282,7 +282,7 @@ services:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: "orob2b_product_visibility_limited" }
+            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
     oro_product.product.manager:
         class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'
@@ -294,7 +294,7 @@ services:
         arguments:
             - "@oro_product.model.product_visibility_query_builder_modifier"
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     oro_product.event_listener.abstract_product_select_db_query:
         abstract: true
@@ -307,9 +307,9 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
-            - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     oro_product.repository.product:
         class: Doctrine\ORM\EntityRepository
@@ -346,14 +346,14 @@ services:
         arguments:
             - '@oro_product.datagrid_theme_helper'
         tags:
-            - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
+            - { name: layout.data_provider, alias: oro_product_frontend_datagrid_row_view }
 
     oro_product.layout.data_provider.product_form:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
         tags:
-            - { name: layout.data_provider, alias: orob2b_product_form }
+            - { name: layout.data_provider, alias: oro_product_form }
 
     oro_product.api.processor.update_product.build_query:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'

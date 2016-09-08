@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DefaultProductUnitProvidersCompilerPass implements CompilerPassInterface
 {
-    const TAG = 'orob2b_product.default_product_unit_provider';
+    const TAG = 'oro_product.default_product_unit_provider';
     const SERVICE = 'oro_product.provider.default_product_unit_provider.chain';
 
     /**

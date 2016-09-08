@@ -31,7 +31,7 @@ define(function(require) {
             unitsSelect: '.quote-lineitem-offer-unit-select',
             productFreeFormInput: '.quote-lineitem-product-freeform-input',
             productReplacementFreeFormInput: '.quote-lineitem-productreplacement-freeform-input',
-            unitsRoute: 'orob2b_product_unit_product_units',
+            unitsRoute: 'oro_product_unit_product_units',
             compactUnits: false,
             addItemButton: '.add-list-item',
             productSelectLink: '.quote-lineitem-product-select-link',

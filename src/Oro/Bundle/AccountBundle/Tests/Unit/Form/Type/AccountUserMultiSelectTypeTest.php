@@ -39,7 +39,7 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'autocomplete_alias' => 'orob2b_account_account_user',
+                    'autocomplete_alias' => 'oro_account_account_user',
                     'configs' => [
                         'multiple' => true,
                         'component' => 'autocomplete-accountuser',

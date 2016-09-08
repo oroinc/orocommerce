@@ -86,7 +86,7 @@ services:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
         public: true
         tags:
-            - { name: form.type, alias: orob2b_frontend_install_configuration_web }
+            - { name: form.type, alias: oro_frontend_install_configuration_web }
 
     oro_frontend.form.type.extension.configuration.web:
         class: 'Oro\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'

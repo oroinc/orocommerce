@@ -150,21 +150,21 @@ services:
         arguments:
             - '@oro_shipping.repository.weight_unit'
             - '@oro_config.manager'
-            - 'orob2b_shipping.weight_units'
+            - 'oro_shipping.weight_units'
 
     oro_shipping.provider.measure_units.length:
         class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
         arguments:
             - '@oro_shipping.repository.length_unit'
             - '@oro_config.manager'
-            - 'orob2b_shipping.length_units'
+            - 'oro_shipping.length_units'
 
     oro_shipping.provider.measure_units.freight:
         class: 'Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider'
         arguments:
             - '@oro_shipping.repository.freight_class'
             - '@oro_config.manager'
-            - 'orob2b_shipping.freight_classes'
+            - 'oro_shipping.freight_classes'
 
     oro_shipping.extension.freight_classes:
         class: 'Oro\Bundle\ShippingBundle\Extension\FreightClassesExtension'
@@ -174,12 +174,12 @@ services:
     oro_shipping.validator.unique_product_unit_shipping_options:
         class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_shipping_unique_product_unit_shipping_options_validator }
+            - { name: validator.constraint_validator, alias: oro_shipping_unique_product_unit_shipping_options_validator }
 
     oro_shipping.validator.enabled_configuration_validation_group:
         class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_shipping_enabled_configuration_validation_group_validator }
+            - { name: validator.constraint_validator, alias: oro_shipping_enabled_configuration_validation_group_validator }
 
     oro_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
@@ -211,4 +211,4 @@ services:
         calls:
             - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }

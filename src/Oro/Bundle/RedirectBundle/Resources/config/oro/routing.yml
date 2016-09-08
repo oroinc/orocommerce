@@ -1,4 +1,4 @@
-orob2b_redirect_bundle_api:
+oro_redirect_bundle_api:
     resource:     "@OroRedirectBundle/Resources/config/oro/routing_api.yml"
     type: rest
     prefix: api/rest/{version}

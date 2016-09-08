@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\CMSBundle\Entity\Page:
-        alias:                          orob2b_cms_page
+        alias:                          oro_cms_page
         title_fields:                   [title]
         route:
-            name:                       orob2b_cms_page_view
+            name:                       oro_cms_page_view
             parameters:
                 id:                     id
         search_template:                OroCMSBundle:Page:searchResult.html.twig

@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class RequirePaymentRedirectEvent extends Event
 {
-    const EVENT_NAME = 'orob2b_payment.require_payment_redirect';
+    const EVENT_NAME = 'oro_payment.require_payment_redirect';
 
     /**
      * @var PaymentMethodInterface

@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class AccountGroupCPLUpdateEvent extends Event
 {
-    const NAME = 'orob2b_pricing.account_group.combined_price_list.update';
+    const NAME = 'oro_pricing.account_group.combined_price_list.update';
 
     /**
      * @var array

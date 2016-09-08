@@ -20,7 +20,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-        <a href="{{ path('orob2b_product_frontend_product_view', {id: product.id}) }}" class="view-product"
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"
            style="background-image: url('{{ Image.url(productImage, 'product_large') }}')">
         </a>
     </div>
@@ -42,7 +42,7 @@
         '~class': ' product-item__title product-item__title_{{ class_prefix }}'
     }) %}
     <h3 {{ block('block_attributes') }}>
-        <a href="{{ path('orob2b_product_frontend_product_view', {id: product.id}) }}"
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
            class="view-product">{{ product.getDefaultName }}</a>
     </h3>
 {% endblock %}
@@ -109,7 +109,7 @@
         '~class': ' product__view-details-link product__view-details-link_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="{{ path('orob2b_product_frontend_product_view', {id: product.id}) }}" class="view-product">
+        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product">
             <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
         </a>
     </div>

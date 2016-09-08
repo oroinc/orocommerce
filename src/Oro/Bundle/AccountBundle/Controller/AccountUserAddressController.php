@@ -18,9 +18,9 @@ use Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType;
 class AccountUserAddressController extends Controller
 {
     /**
-     * @Route("/address-book/{id}", name="orob2b_account_account_user_address_book", requirements={"id"="\d+"})
+     * @Route("/address-book/{id}", name="oro_account_account_user_address_book", requirements={"id"="\d+"})
      * @Template("OroAccountBundle:Address/widget:addressBook.html.twig")
-     * @AclAncestor("orob2b_account_account_user_view")
+     * @AclAncestor("oro_account_account_user_view")
      *
      * @param AccountUser $accountUser
      * @return array
@@ -29,7 +29,7 @@ class AccountUserAddressController extends Controller
     {
         return [
             'entity' => $accountUser,
-            'address_edit_acl_resource' => 'orob2b_account_account_user_update',
+            'address_edit_acl_resource' => 'oro_account_account_user_update',
             'options' => $this->getAddressBookOptions($accountUser)
         ];
     }
@@ -37,11 +37,11 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-create",
-     *      name="orob2b_account_account_user_address_create",
+     *      name="oro_account_account_user_address_create",
      *      requirements={"accountUserId"="\d+"}
      * )
      * @Template("OroAccountBundle:Address/widget:update.html.twig")
-     * @AclAncestor("orob2b_account_account_user_create")
+     * @AclAncestor("oro_account_account_user_create")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser $accountUser
@@ -55,11 +55,11 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-update/{id}",
-     *      name="orob2b_account_account_user_address_update",
+     *      name="oro_account_account_user_address_update",
      *      requirements={"accountUserId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
      * @Template("OroAccountBundle:Address/widget:update.html.twig")
-     * @AclAncestor("orob2b_account_account_user_update")
+     * @AclAncestor("oro_account_account_user_update")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser        $accountUser
@@ -114,8 +114,8 @@ class AccountUserAddressController extends Controller
 
         $responseData['form'] = $form->createView();
         $responseData['routes'] = [
-            'create' => 'orob2b_account_account_user_address_create',
-            'update' => 'orob2b_account_account_user_address_update'
+            'create' => 'oro_account_account_user_address_create',
+            'update' => 'oro_account_account_user_address_update'
         ];
         return $responseData;
     }
@@ -126,11 +126,11 @@ class AccountUserAddressController extends Controller
      */
     protected function getAddressBookOptions($entity)
     {
-        $addressListUrl = $this->generateUrl('orob2b_api_account_get_accountuser_addresses', [
+        $addressListUrl = $this->generateUrl('oro_api_account_get_accountuser_addresses', [
             'entityId' => $entity->getId()
         ]);
 
-        $addressCreateUrl = $this->generateUrl('orob2b_account_account_user_address_create', [
+        $addressCreateUrl = $this->generateUrl('oro_account_account_user_address_create', [
             'entityId' => $entity->getId()
         ]);
 
@@ -141,7 +141,7 @@ class AccountUserAddressController extends Controller
             'entityId'               => $entity->getId(),
             'addressListUrl'         => $addressListUrl,
             'addressCreateUrl'       => $addressCreateUrl,
-            'addressUpdateRouteName' => 'orob2b_account_account_user_address_update',
+            'addressUpdateRouteName' => 'oro_account_account_user_address_update',
             'currentAddresses'       => $currentAddresses
         ];
     }

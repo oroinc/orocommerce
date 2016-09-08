@@ -6,14 +6,14 @@ services:
         calls:
             - [setRequestStatusClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_default_request_status }
+            - { name: form.type, alias: oro_rfp_default_request_status }
 
     oro_rfp.form.type.request_status_with_deleted_select:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType'
         calls:
             - [setEntityClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_status_with_deleted_select }
+            - { name: form.type, alias: oro_rfp_request_status_with_deleted_select }
 
     # Request form types
     oro_rfp.form.type.request:
@@ -21,26 +21,26 @@ services:
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request }
+            - { name: form.type, alias: oro_rfp_request }
 
     oro_rfp.form.type.request_status_select:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType'
         calls:
             - [setEntityClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_status_select }
+            - { name: form.type, alias: oro_rfp_request_status_select }
 
     oro_rfp.form.type.user_select:
         class: 'Oro\Bundle\RFPBundle\Form\Type\UserSelectType'
         arguments:
             - "@doctrine"
         tags:
-            - { name: form.type, alias: orob2b_rfp_user_select }
+            - { name: form.type, alias: oro_rfp_user_select }
 
     oro_rfp.form.type.request_status_translation:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType'
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_status_translation }
+            - { name: form.type, alias: oro_rfp_request_status_translation }
 
     oro_rfp.form.type.request_status:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusType'
@@ -50,7 +50,7 @@ services:
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_status }
+            - { name: form.type, alias: oro_rfp_request_status }
 
     oro_rfp.form.type.request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductType'
@@ -59,29 +59,29 @@ services:
         calls:
             - [setDataClass, ['%oro_rfp.entity.request_product.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_product }
+            - { name: form.type, alias: oro_rfp_request_product }
 
     oro_rfp.form.type.request_product_item:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType'
         calls:
             - [setDataClass, ['%oro_rfp.entity.request_product_item.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_product_item }
+            - { name: form.type, alias: oro_rfp_request_product_item }
 
     oro_rfp.form.type.request_product_collection:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductCollectionType'
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_product_collection }
+            - { name: form.type, alias: oro_rfp_request_product_collection }
 
     oro_rfp.form.type.request_product_item_collection:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType'
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_product_item_collection }
+            - { name: form.type, alias: oro_rfp_request_product_item_collection }
 
     oro_rfp.form.type.frontend_request_product_item_collection:
             class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType'
             tags:
-                - { name: form.type, alias: orob2b_rfp_frontend_request_product_item_collection }
+                - { name: form.type, alias: oro_rfp_frontend_request_product_item_collection }
 
     oro_rfp.form.type.frontend_request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType'
@@ -92,32 +92,32 @@ services:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
             - [setRequestStatusClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_frontend_request }
+            - { name: form.type, alias: oro_rfp_frontend_request }
 
     oro_rfp.form.type.frontend_request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType'
         calls:
             - [setDataClass, ['%oro_rfp.entity.request_product.class%']]
         tags:
-            - { name: form.type, alias: orob2b_rfp_frontend_request_product }
+            - { name: form.type, alias: oro_rfp_frontend_request_product }
 
     oro_rfp.form.type.frontend_request_product_collection:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType'
         tags:
-            - { name: form.type, alias: orob2b_rfp_frontend_request_product_collection }
+            - { name: form.type, alias: oro_rfp_frontend_request_product_collection }
 
     oro_rfp.form.type.extension.frontend_request_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
-            - [setExtendedType, ['orob2b_rfp_frontend_request']]
+            - [setExtendedType, ['oro_rfp_frontend_request']]
             - [setConfigManager, ['@oro_config.manager']]
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]
             - [setContainer, ['@service_container']]
         tags:
-            - { name: form.type_extension, alias: orob2b_rfp_frontend_request }
+            - { name: form.type_extension, alias: oro_rfp_frontend_request }
 
     oro_rfp.form.type.extension.order_line_item_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension'
@@ -126,7 +126,7 @@ services:
             - "@oro_rfp.storage.offers_data_storage"
             - "@oro_rfp.storage.offers_form_storage"
         tags:
-            - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }
+            - { name: form.type_extension, alias: oro_order_line_item, priority: 5 }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.extension.order_data_storage:
@@ -136,12 +136,12 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.model.price_list_tree_handler'
         calls:
-            - [setExtendedType, ['orob2b_order_type']]
+            - [setExtendedType, ['oro_order_type']]
         tags:
-            - { name: form.type_extension, alias: orob2b_order_type }
+            - { name: form.type_extension, alias: oro_order_type }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.request_offers:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_offers }
+            - { name: form.type, alias: oro_rfp_request_offers }

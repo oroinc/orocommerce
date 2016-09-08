@@ -25,14 +25,14 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_line_items_totals }
+            - { name: layout.data_provider, alias: oro_checkout_line_items_totals }
 
     oro_checkout.layout.data_provider.totals:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider'
         arguments:
             - '@oro_checkout.provider.checkout_totals'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_totals }
+            - { name: layout.data_provider, alias: oro_checkout_totals }
 
     oro_checkout.layout.data_provider.transition_form:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
@@ -41,21 +41,21 @@ services:
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_transition_form }
+            - { name: layout.data_provider, alias: oro_checkout_transition_form }
 
     oro_checkout.layout.data_provider.checkout_steps:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider'
         arguments:
             - '@oro_workflow.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_steps }
+            - { name: layout.data_provider, alias: oro_checkout_steps }
 
     oro_checkout.layout.data_provider.transition:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider'
         arguments:
             - '@oro_workflow.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_transition }
+            - { name: layout.data_provider, alias: oro_checkout_transition }
 
     oro_checkout.model.action.get_order_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
@@ -78,7 +78,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout'
         calls:
             - [setCheckoutClass, ['%oro_checkout.entity.checkout.class%']]
-            - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
+            - [setCheckoutRoute, ['oro_checkout_frontend_checkout']]
         arguments:
             - '@oro_action.context_accessor'
             - '@doctrine'
@@ -117,8 +117,8 @@ services:
         calls:
             - [setCheckoutClassName, ['%oro_checkout.entity.checkout.class%']]
         tags:
-            - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
-            - {name: kernel.event_listener, event: orob2b_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
+            - {name: kernel.event_listener, event: oro_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+            - {name: kernel.event_listener, event: oro_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
 
     oro_checkout.event_listener.resolve_payment_term:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'
@@ -126,7 +126,7 @@ services:
             - '@request_stack'
             - '@event_dispatcher'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.resolve.payment_term, method: onResolvePaymentTerm }
+            - { name: kernel.event_listener, event: oro_payment.resolve.payment_term, method: onResolvePaymentTerm }
 
     oro_checkout.event_listener.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
@@ -142,7 +142,7 @@ services:
         public: false
         parent: oro.cache.abstract
         calls:
-            - [ setNamespace, [ 'orob2b_checkout_grid_totals_metadata' ] ]
+            - [ setNamespace, [ 'oro_checkout_grid_totals_metadata' ] ]
 
     oro_checkout.repository.checkout:
         class: Doctrine\ORM\EntityRepository
@@ -190,7 +190,7 @@ services:
         arguments:
             - '@oro_config.manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_separate_open_orders }
+            - { name: layout.data_provider, alias: oro_checkout_separate_open_orders }
 
     oro_checkout.migration.post_up.listener:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener'

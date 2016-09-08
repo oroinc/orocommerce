@@ -49,7 +49,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             'type' => 'window',
             'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
             'icon' => 'plus',
-            'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+            'route' => 'oro_shopping_list_add_products_to_new_massaction',
             'frontend_options' => [
                 'title' => $this->translator->trans('oro.shoppinglist.product.add_to_shopping_list.label'),
                 'regionEnabled' => false,

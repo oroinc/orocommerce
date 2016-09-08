@@ -17,7 +17,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 
 class ShippingRuleDestinationType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule_destination';
+    const NAME = 'oro_shipping_rule_destination';
 
     /**
      * @var AddressCountryAndRegionSubscriber
