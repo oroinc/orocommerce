@@ -4,8 +4,6 @@
 
     white-space: nowrap;
 
-    background: $base-white-color;
-
     &__text,
     &__select,
     &__badges {
@@ -17,6 +15,7 @@
     &__badges {
         position: absolute;
         top: 50%;
+        right: 10px;
 
         transform: translateY(-50%);
     }
@@ -30,7 +29,6 @@
     }
 
     &__select {
-        margin-right: 45px;
         min-width: 66px;
     }
 

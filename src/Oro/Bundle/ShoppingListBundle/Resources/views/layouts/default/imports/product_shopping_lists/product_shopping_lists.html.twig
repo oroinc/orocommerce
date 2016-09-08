@@ -97,7 +97,7 @@
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
-    <div>
+    <div class="shopping-lists-outer">
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">
             <tr class="shopping-lists-popup__item">
@@ -235,6 +235,50 @@
             </tr>
             <% }); %>
             </tbody>
+            <tfoot class="shopping-lists-popup__footer">
+                <tr class="shopping-lists-popup__item">
+                    <td class="shopping-lists-popup__list">
+                        <select class="oro-select2 oro-select2--size-s" name="list">
+                            <option value="0">Choose List</option>
+                        </select>
+                    </td>
+                    <td class="shopping-lists-popup__quantity">
+                        <div class="shopping-lists-units">
+                            <ul class="shopping-lists-modify"
+                                data-role="line-item-edit">
+                                <li class="shopping-lists-modify__text">
+                                    <input class="shopping-lists-modify__input input input_xs"
+                                           type="number"
+                                           value="qty"
+                                           name="quantity">
+                                </li>
+                                <li class="shopping-lists-modify__select">
+                                    <select class="oro-select2 oro-select2--size-s" name="unit">
+                                        <option value="pieces">Pieces</option>
+                                        <option value="boxes">Boxes</option>
+                                    </select>
+                                </li>
+                                <li class="shopping-lists-modify__badges">
+                                    <span class="shopping-lists-modify__edit">
+                                        <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                                type="button"
+                                                title="{{ 'Accept'|trans }}">
+                                                <i class="shopping-lists-modify__icon cf-check"></i>
+                                        </button>
+                                    </span>
+                                    <span class="shopping-lists-modify__edit">
+                                        <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                                type="button"
+                                                title="{{ 'Decline'|trans }}">
+                                                <i class="shopping-lists-modify__icon cf-clear"></i>
+                                        </button>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
         <div class="widget-actions">
             <button class="btn theme-btn btn-orange" type="reset">{{ 'Close'|trans }}</button>
