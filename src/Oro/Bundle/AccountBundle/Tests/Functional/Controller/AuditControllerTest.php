@@ -39,7 +39,7 @@ class AuditControllerTest extends WebTestCase
 
     public function testAuditHistory()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_account.entity.account_user.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_account.entity.account_user.class')) {
             $this->markTestSkipped('OroAccountBundle is not installed');
         }
 

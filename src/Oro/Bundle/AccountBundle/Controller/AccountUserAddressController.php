@@ -101,7 +101,7 @@ class AccountUserAddressController extends Controller
         $form = $this->createForm(AccountUserTypedAddressType::NAME, $address);
 
         $manager = $this->getDoctrine()->getManagerForClass(
-            $this->container->getParameter('orob2b_account.entity.account_user_address.class')
+            $this->container->getParameter('oro_account.entity.account_user_address.class')
         );
 
         $handler = new AddressHandler($form, $this->getRequest(), $manager);

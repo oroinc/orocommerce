@@ -56,7 +56,7 @@ class StartCheckoutTest extends WebTestCase
         $token = new UsernamePasswordToken($this->user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
-        $this->action = $this->client->getContainer()->get('orob2b_checkout.model.action.start_checkout');
+        $this->action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');
     }
 
     public function testExecute()

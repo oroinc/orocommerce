@@ -1,0 +1,213 @@
+.embedded-list {
+    position: relative;
+
+    &__label {
+        position: relative;
+
+        margin-top: 52px;
+
+        line-height: 20px;
+
+        text-align: center;
+
+        &::before {
+            position: absolute;
+            z-index: z('base');
+            top: 50%;
+            right: 0;
+            left: 0;
+
+            height: 1px;
+
+            content: '';
+
+            background: $theme-lighter-gray-color;
+        }
+    }
+
+    &__label-inner {
+        position: relative;
+        z-index: 2;
+
+        display: inline-block;
+
+        padding: 0 16px;
+
+        font-size: 18px;
+
+        vertical-align: top;
+        text-transform: uppercase;
+
+        background: $base-white-color;
+    }
+
+    &__container--tiles {
+        display: flex;
+
+        font-size: 0;
+
+        flex-wrap: wrap;
+
+        & .embedded-list__item {
+            display: inline-block;
+
+            font-size: $base-font-size;
+        }
+    }
+
+    &__container--slider {
+        // Hide content before slick slider is united
+        overflow: hidden;
+
+        margin: 0 0 0 -26px;
+
+        font-size: 0;
+
+        white-space: nowrap;
+
+        & .embedded-list__item {
+            display: inline-block;
+
+            font-size: $base-font-size;
+
+            vertical-align: top;
+            white-space: normal;
+        }
+
+        &::before {
+            position: absolute;
+            z-index: z('base') + 1;
+            left: -16px;
+
+            display: none;
+
+            width: 40px;
+            height: 100%;
+
+            content: '';
+
+            background: $base-white-color;
+        }
+
+        &.slick-initialized {
+            // Show content after slick slider is inited
+            overflow: visible;
+
+            &::before {
+                display: block;
+            }
+        }
+
+        & .slick-arrow {
+            position: absolute;
+            z-index: z('base') + 3;
+            top: 35%;
+
+            overflow: hidden;
+
+            width: 32px;
+            height: 32px;
+
+            font-size: 300px;
+
+            color: $base-white-color;
+            border: 0;
+            border-radius: 16px;
+            background: $base-font-color-lightest;
+
+            &::before {
+                display: block;
+
+                width: 12px;
+                height: 12px;
+
+                content: '';
+            }
+        }
+
+        & .slick-prev {
+            left: -16px;
+
+            &::before {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                transform: translate(-50%, -50%);
+
+                background: url('components/embedded-list/__arrow/embedded-list__arrow--prev.svg') 0 0 no-repeat;
+                background-size: cover;
+            }
+        }
+
+        & .slick-next {
+            right: -42px;
+
+            &::before {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                transform: translate(-50%, -50%);
+
+                background: url('components/embedded-list/__arrow/embedded-list__arrow--next.svg') 0 0 no-repeat;
+                background-size: cover;
+            }
+        }
+
+        & .slick-disabled {
+            cursor: default;
+
+            opacity: .5;
+        }
+
+        & .slick-dots {
+            position: absolute;
+            bottom: 0;
+
+            display: flex;
+
+            width: 63.46%;
+            margin: 0 auto 20px;
+
+            @include list-normalize();
+            justify-content: center;
+        }
+
+        & .slick-dots li button {
+            display: block;
+
+            width: 10px;
+            height: 10px;
+            margin-left: 8px;
+            padding: 0;
+
+            font-size: 0;
+
+            border: 1px solid $base-white-color;
+            border-radius: 5px;
+            background: transparent;
+        }
+
+        & .slick-dots li:first-child button {
+            margin-left: 0;
+        }
+
+        & .slick-dots .slick-active button {
+            background: $base-white-color;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .embedded-list {
+        &__label {
+            margin: 0;
+            margin-top: 20px;
+        }
+
+        &__label-inner {
+            font-size: $base-font-size;
+        }
+    }
+}

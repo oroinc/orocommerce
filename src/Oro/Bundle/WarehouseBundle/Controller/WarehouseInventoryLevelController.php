@@ -30,7 +30,7 @@ class WarehouseInventoryLevelController extends Controller
      */
     public function indexAction()
     {
-        $entityName = $this->container->getParameter('orob2b_warehouse.entity.warehouse_inventory_level.class');
+        $entityName = $this->container->getParameter('oro_warehouse.entity.warehouse_inventory_level.class');
 
         return [
             'entity_class' => $entityName,
@@ -73,7 +73,7 @@ class WarehouseInventoryLevelController extends Controller
             $form,
             $this->getDoctrine()->getManagerForClass('OroWarehouseBundle:WarehouseInventoryLevel'),
             $request,
-            $this->get('orob2b_product.service.quantity_rounding')
+            $this->get('oro_product.service.quantity_rounding')
         );
 
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -115,7 +115,7 @@ class WarehouseInventoryLevelController extends Controller
      */
     private function getAvailableWarehousesCount()
     {
-        $warehouseClass = $this->getParameter('orob2b_warehouse.entity.warehouse.class');
+        $warehouseClass = $this->getParameter('oro_warehouse.entity.warehouse.class');
 
         return $this->getDoctrine()
             ->getManagerForClass($warehouseClass)

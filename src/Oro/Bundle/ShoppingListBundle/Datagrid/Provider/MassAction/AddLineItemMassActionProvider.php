@@ -79,7 +79,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             'icon' => 'shopping-cart',
             'data_identifier' => 'product.id',
             'frontend_type' => 'add-products-mass',
-            'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+            'handler' => 'oro_shopping_list.mass_action.add_products_handler',
         ], $options);
     }
 

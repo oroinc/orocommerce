@@ -26,7 +26,7 @@ class ProductController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.entity.product.class'),
+            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
         ];
     }
 

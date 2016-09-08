@@ -31,7 +31,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
     public function testCreateOrder()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');
         }
 
@@ -62,7 +62,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
     public function testCreateRequest()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_rfp.entity.request.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_rfp.entity.request.class')) {
             $this->markTestSkipped('RFPBundle disabled');
         }
 

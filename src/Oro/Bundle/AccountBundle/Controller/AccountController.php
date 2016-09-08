@@ -25,7 +25,7 @@ class AccountController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class')
+            'entity_class' => $this->container->getParameter('oro_account.entity.account.class')
         ];
     }
 
@@ -121,7 +121,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account),
+            'treeData' => $this->get('oro_account.account_tree_handler')->createTree($account),
         ];
     }
 }

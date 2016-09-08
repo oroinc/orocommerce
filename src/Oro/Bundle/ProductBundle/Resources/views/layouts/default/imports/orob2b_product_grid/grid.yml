@@ -1,0 +1,51 @@
+layout:
+    imports:
+        -
+            id: datagrid_toolbar
+            root: product_grid_container
+        - datagrid_row_product
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'grid.html.twig'
+
+        - '@addTree':
+            items:
+                product_grid:
+                    blockType: product_datagrid
+                    options:
+                        grid_name: frontend-products-grid
+                        current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"].getDataGridTheme()'
+            tree:
+                product_grid_container:
+                    product_grid: ~
+
+        - '@setOption':
+            id: __datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls'
+
+        - '@setOption':
+            id: __datagrid_toolbar_tools_container
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls__item text-right'
+
+        - '@setOption':
+            id: __datagrid_toolbar_pagination
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls__item'
+
+        - '@setOption':
+            id: __datagrid_toolbar_sorting
+            optionName: visible
+            optionValue: true
+
+        - '@remove':
+            id: __datagrid_toolbar_actions
+
+        - '@add':
+            id: __datagrid_toolbar_display_options
+            parentId: __datagrid_toolbar
+            blockType: product_datagrid_options
+            options:
+                current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"].getDataGridTheme()'

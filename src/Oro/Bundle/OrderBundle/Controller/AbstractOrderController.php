@@ -13,6 +13,6 @@ abstract class AbstractOrderController extends Controller
      */
     protected function getOrderAddressSecurityProvider()
     {
-        return $this->get('orob2b_order.order.provider.order_address_security');
+        return $this->get('oro_order.order.provider.order_address_security');
     }
 }

@@ -28,7 +28,7 @@ class AjaxQuoteProductController extends Controller
      */
     public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, Request $request)
     {
-        $matcher = $this->get('orob2b_sale.service.quote_product_offer_matcher');
+        $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
         return new JsonResponse($this->createResponseData($offer));

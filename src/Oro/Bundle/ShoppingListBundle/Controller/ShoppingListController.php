@@ -62,7 +62,7 @@ class ShoppingListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+            'entity_class' => $this->container->getParameter('oro_shopping_list.entity.shopping_list.class')
         ];
     }
 
@@ -71,6 +71,6 @@ class ShoppingListController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

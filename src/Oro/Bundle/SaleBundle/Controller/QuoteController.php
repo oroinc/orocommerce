@@ -55,7 +55,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_sale.entity.quote.class')
+            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
         ];
     }
 
@@ -75,7 +75,7 @@ class QuoteController extends Controller
     public function createAction(Request $request)
     {
         $quote = new Quote();
-        $quote->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request);
@@ -83,7 +83,7 @@ class QuoteController extends Controller
 
         $this->createForm(QuoteType::NAME, $quote);
 
-        $quoteClass = $this->container->getParameter('orob2b_sale.entity.quote.class');
+        $quoteClass = $this->container->getParameter('oro_sale.entity.quote.class');
         $em = $this->get('doctrine')->getManagerForClass($quoteClass);
 
         $em->persist($quote);
@@ -176,7 +176,7 @@ class QuoteController extends Controller
      */
     protected function getQuoteProductPriceProvider()
     {
-        return $this->get('orob2b_sale.provider.quote_product_price');
+        return $this->get('oro_sale.provider.quote_product_price');
     }
 
     /**
@@ -184,7 +184,7 @@ class QuoteController extends Controller
      */
     protected function getQuoteAddressSecurityProvider()
     {
-        return $this->get('orob2b_sale.provider.quote_address_security');
+        return $this->get('oro_sale.provider.quote_address_security');
     }
 
     /**
@@ -192,6 +192,6 @@ class QuoteController extends Controller
      */
     protected function getQuoteHandler()
     {
-        return $this->get('orob2b_sale.service.quote_request_handler');
+        return $this->get('oro_sale.service.quote_request_handler');
     }
 }

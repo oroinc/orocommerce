@@ -23,15 +23,12 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
     }
 
-    public function testRedirectToProduct()
+    public function testIndexPage()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals(
-            $this->getUrl('orob2b_product_frontend_product_index'),
-            $this->client->getRequest()->getPathInfo()
-        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     public function testThemeSwitch()
@@ -43,8 +40,8 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme($layoutTheme);
 
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
-        $this->assertEquals('Products', $crawler->filter('title')->html());
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check that backend theme was not affected
         $crawler = $this->client->request(
@@ -60,11 +57,8 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
 
         $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $this->client->followRedirect();
-        $this->assertEquals(
-            $this->getUrl('orob2b_product_frontend_product_index'),
-            $this->client->getRequest()->getPathInfo()
-        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**

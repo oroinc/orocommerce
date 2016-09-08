@@ -14,6 +14,10 @@
 {% endblock %}
 
 {% block _header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' header'
+    }) %}
+
     <header{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </header>
@@ -184,6 +188,13 @@
 {% block _sticky_element_notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky-element-notification'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _sticky_header_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    'id': 'sticky-header-row'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
