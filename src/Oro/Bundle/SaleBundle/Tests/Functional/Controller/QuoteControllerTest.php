@@ -4,6 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -82,7 +84,8 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            LoadUserData::class,
+            LoadPaymentTermData::class,
         ]);
     }
 
@@ -154,15 +157,19 @@ class QuoteControllerTest extends WebTestCase
     {
         $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
         $owner      = $this->getUser(LoadUserData::USER2);
+        /** @var PaymentTerm $paymentTerm */
+        $paymentTerm = $this
+            ->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('orob2b_sale_quote[quoteProducts][0]');
-        $form['orob2b_sale_quote[owner]']      = $owner->getId();
-        $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
+        $form['orob2b_sale_quote[owner]'] = $owner->getId();
+        $form['orob2b_sale_quote[qid]'] = self::$qidUpdated;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
-        $form['orob2b_sale_quote[poNumber]']   = self::$poNumberUpdated;
-        $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntilUpdated;
+        $form['orob2b_sale_quote[poNumber]'] = self::$poNumberUpdated;
+        $form['orob2b_sale_quote[shipUntil]'] = self::$shipUntilUpdated;
+        $form['orob2b_sale_quote[paymentTerm]'] = $paymentTerm->getId();
 
         $form['orob2b_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
         $form['orob2b_sale_quote[assignedAccountUsers]'] = implode(',', [
@@ -192,6 +199,7 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(strtotime(self::$validUntilUpdated), $quote->getValidUntil()->getTimestamp());
         $this->assertEquals(self::$poNumberUpdated, $quote->getPoNumber());
         $this->assertEquals(strtotime(self::$shipUntilUpdated), $quote->getShipUntil()->getTimestamp());
+        $this->assertEquals($paymentTerm->getId(), $quote->getPaymentTerm()->getId());
 
         return $id;
     }
@@ -272,7 +280,7 @@ class QuoteControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_sale.entity.quote.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_sale.entity.quote.class'),
                 ]
             ),
             [],

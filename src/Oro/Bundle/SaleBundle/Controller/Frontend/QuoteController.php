@@ -64,7 +64,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_sale.entity.quote.class')
+            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
         ];
     }
 
@@ -170,6 +170,6 @@ class QuoteController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

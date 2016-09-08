@@ -25,7 +25,7 @@ class AccountTaxCodeController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_tax.entity.account_tax_code.class')
+            'entity_class' => $this->container->getParameter('oro_tax.entity.account_tax_code.class')
         ];
     }
 

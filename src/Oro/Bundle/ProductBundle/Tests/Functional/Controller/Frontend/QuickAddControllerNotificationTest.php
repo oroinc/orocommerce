@@ -106,7 +106,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
         $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
 
         /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_rfp.processor.quick_add');
+        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
 
         $this->client->followRedirects(true);
         $this->client->request(

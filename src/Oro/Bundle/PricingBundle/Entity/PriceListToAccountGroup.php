@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
- * @ORM\Table(name="orob2b_price_list_to_acc_group")
+ * @ORM\Table(name="oro_price_list_to_acc_group")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository")
  */
 class PriceListToAccountGroup extends BasePriceListRelation

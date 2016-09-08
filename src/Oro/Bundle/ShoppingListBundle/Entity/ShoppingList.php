@@ -21,9 +21,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(
- *      name="orob2b_shopping_list",
+ *      name="oro_shopping_list",
  *      indexes={
- *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
+ *          @ORM\Index(name="oro_shop_lst_created_at_idx", columns={"created_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
@@ -59,7 +59,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="shopping"
  *          }
  *      }
  * )

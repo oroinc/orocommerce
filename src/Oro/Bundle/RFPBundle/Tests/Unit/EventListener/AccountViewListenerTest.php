@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -34,6 +35,11 @@ class AccountViewListenerTest extends FormViewListenerTestCase
     /** @var ScrollData|\PHPUnit_Framework_MockObject_MockObject */
     protected $scrollData;
 
+    /**
+     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $featureChecker;
+
     protected function setUp()
     {
         parent::setUp();
@@ -56,15 +62,24 @@ class AccountViewListenerTest extends FormViewListenerTestCase
             ->method('render')
             ->willReturn(self::RENDER_HTML);
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->accountViewListener = new AccountViewListener(
             $this->translator,
             $this->doctrineHelper,
             $this->requestStack
         );
+        $this->accountViewListener->setFeatureChecker($this->featureChecker);
+        $this->accountViewListener->addFeature('rfp');
     }
 
     public function testOnAccountViewGetsIgnoredIfNoRequest()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
         $this->requestStack->expects($this->any())
             ->method('getCurrentRequest')
             ->willReturn(null);
@@ -76,6 +91,9 @@ class AccountViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountViewGetsIgnoredIfNoRequestId()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
         $this->event->expects($this->never())
             ->method('getEnvironment');
         $this->accountViewListener->onAccountView($this->event);
@@ -83,6 +101,9 @@ class AccountViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountViewGetsIgnoredIfNoEntityFound()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn(1);
@@ -97,6 +118,9 @@ class AccountViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountViewCreatesScrollBlock()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn(1);
@@ -121,6 +145,9 @@ class AccountViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountUserViewCreatesScrollBlock()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn(1);
@@ -140,6 +167,26 @@ class AccountViewListenerTest extends FormViewListenerTestCase
         $this->event->expects($this->once())
             ->method('getScrollData')
             ->willReturn($scrollData);
+        $this->accountViewListener->onAccountUserView($this->event);
+    }
+
+    public function testOnAccountViewDisabledFeature()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
+        $this->event->expects($this->never())
+            ->method('getEnvironment');
+        $this->accountViewListener->onAccountView($this->event);
+    }
+
+    public function testOnAccountUserViewDisabledFeature()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
+        $this->event->expects($this->never())
+            ->method('getEnvironment');
         $this->accountViewListener->onAccountUserView($this->event);
     }
 }

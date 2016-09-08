@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Component\Layout\ContextItemInterface;
 use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -22,7 +21,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
- * @ORM\Table(name="orob2b_checkout")
+ * @ORM\Table(name="oro_checkout")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -40,7 +39,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="checkout"
  *          }
  *      }
  * )
@@ -50,7 +50,6 @@ class Checkout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    ContextItemInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
     PaymentMethodAwareInterface
@@ -323,14 +322,6 @@ class Checkout implements
         $this->source = $source;
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toString()
-    {
-        return $this->id;
     }
 
     /**

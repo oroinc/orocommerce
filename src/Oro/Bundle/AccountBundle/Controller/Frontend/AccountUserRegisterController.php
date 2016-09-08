@@ -50,10 +50,10 @@ class AccountUserRegisterController extends Controller
      */
     protected function handleForm(Request $request)
     {
-        $form = $this->get('orob2b_account.provider.frontend_account_user_registration_form')
+        $form = $this->get('oro_account.provider.frontend_account_user_registration_form')
             ->getRegisterForm()
             ->getForm();
-        $userManager = $this->get('orob2b_account_user.manager');
+        $userManager = $this->get('oro_account_user.manager');
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
         if ($userManager->isConfirmationRequired()) {
@@ -83,7 +83,7 @@ class AccountUserRegisterController extends Controller
      */
     public function confirmEmailAction(Request $request)
     {
-        $userManager = $this->get('orob2b_account_user.manager');
+        $userManager = $this->get('oro_account_user.manager');
         /** @var AccountUser $accountUser */
         $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
         $token = $request->get('token');

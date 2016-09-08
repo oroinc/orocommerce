@@ -117,7 +117,7 @@ class WarehouseControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_warehouse.entity.warehouse.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_warehouse.entity.warehouse.class'),
                 ]
             ),
             [],

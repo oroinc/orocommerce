@@ -49,7 +49,7 @@ class RFPFrontendActionsTest extends WebTestCase
         ];
 
         /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_rfp.processor.quick_add');
+        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(

@@ -15,6 +15,8 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         $this->setSearchAutocompletePath('orob2b_frontend_autocomplete_search');
 
         parent::setUp();
+
+        $this->configScope = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 
     /**

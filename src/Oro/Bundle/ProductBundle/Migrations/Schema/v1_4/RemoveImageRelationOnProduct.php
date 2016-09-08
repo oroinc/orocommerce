@@ -39,7 +39,7 @@ class RemoveImageRelationOnProduct implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $productClass = $this->extendExtension->getEntityClassByTableName(self::PRODUCT_TABLE_NAME);
+        $productClass = $this->extendExtension->getEntityClassByTableName('oro_product');
         $productTable = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $productTable->removeForeignKey(self::PRODUCT_IMAGE_FK_NAME);
         $productTable->dropColumn(self::PRODUCT_IMAGE_FIELD_NAME);

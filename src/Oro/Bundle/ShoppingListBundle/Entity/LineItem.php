@@ -16,10 +16,10 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 
 /**
  * @ORM\Table(
- *      name="orob2b_shopping_list_line_item",
+ *      name="oro_shopping_list_line_item",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_shopping_list_line_item_uidx",
+ *              name="oro_shopping_list_line_item_uidx",
  *              columns={"product_id", "shopping_list_id", "unit_code"}
  *          )
  *      }
@@ -29,7 +29,8 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="shopping"
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",

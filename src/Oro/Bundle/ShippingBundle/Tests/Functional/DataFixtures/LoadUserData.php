@@ -31,19 +31,19 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
     protected $roles = [
         self::ROLE_VIEW => [
             [
-                'class' => 'orob2b_shipping.entity.shipping_rule.class',
+                'class' => 'oro_shipping.entity.shipping_rule.class',
                 'acls'  => ['VIEW_SYSTEM'],
             ],
         ],
         self::ROLE_EDIT => [
             [
-                'class' => 'orob2b_shipping.entity.shipping_rule.class',
+                'class' => 'oro_shipping.entity.shipping_rule.class',
                 'acls'  => ['EDIT_SYSTEM'],
             ],
         ],
         self::ROLE_CREATE => [
             [
-                'class' => 'orob2b_shipping.entity.shipping_rule.class',
+                'class' => 'oro_shipping.entity.shipping_rule.class',
                 'acls'  => ['CREATE_SYSTEM'],
             ],
         ],

@@ -77,7 +77,7 @@ class AjaxPriceListController extends Controller
     {
         return $this->container
             ->get('doctrine')
-            ->getRepository($this->container->getParameter('orob2b_pricing.entity.price_list.class'));
+            ->getRepository($this->container->getParameter('oro_pricing.entity.price_list.class'));
     }
 
     /**

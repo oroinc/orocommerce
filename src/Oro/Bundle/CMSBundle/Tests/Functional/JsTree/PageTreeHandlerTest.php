@@ -25,7 +25,7 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getHandlerId()
     {
-        return 'orob2b_cms.page_tree_handler';
+        return 'oro_cms.page_tree_handler';
     }
 
     /**
