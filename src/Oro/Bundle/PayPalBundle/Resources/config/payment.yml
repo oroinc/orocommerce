@@ -51,7 +51,7 @@ services:
             - '@oro_paypal.payment_method.payflow_express_checkout.config'
             - '@router'
             - '@oro_entity.doctrine_helper'
-            - '@oro_paypal.provider.extract_options_dispatcher'
+            - '@oro_paypal.provider.extract_options'
         tags:
             - { name: orob2b_payment.payment_method }
 
@@ -63,7 +63,7 @@ services:
             - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
             - '@router'
             - '@oro_entity.doctrine_helper'
-            - '@oro_paypal.provider.extract_options_dispatcher'
+            - '@oro_paypal.provider.extract_options'
         tags:
             - { name: orob2b_payment.payment_method }
 
