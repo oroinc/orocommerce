@@ -3,8 +3,10 @@
 namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Menu;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManager;
+
+use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\FrontendNavigationBundle\Menu\MenuUpdateProvider;
@@ -27,6 +29,11 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
+
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
 
     /**
      * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
@@ -52,6 +59,10 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->localizationHelper = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Helper\LocalizationHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -60,7 +71,12 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($this->manager);
 
-        $this->provider = new MenuUpdateProvider($this->securityFacade, $this->websiteManager, $this->registry);
+        $this->provider = new MenuUpdateProvider(
+            $this->securityFacade,
+            $this->websiteManager,
+            $this->registry,
+            $this->localizationHelper
+        );
     }
 
     public function testGetUpdates()
@@ -95,10 +111,22 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturn($menuUpdateRepository);
 
+        $update = $this->getMock('Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate');
+        $update->expects($this->once())
+            ->method('setTitle');
+        $update->expects($this->once())
+            ->method('getTitles')
+            ->willReturn($this->getMock('Doctrine\Common\Collections\Collection'));
+
+        $this->localizationHelper->expects($this->once())
+            ->method('getLocalizedValue')
+            ->willReturn('localized title');
+
         $menuUpdateRepository->expects($this->once())
             ->method('getUpdates')
-            ->with(self::MENU, $organization, $account, $accountUser, $website);
+            ->with(self::MENU, $organization, $account, $accountUser, $website)
+            ->willReturn([$update]);
 
-        $this->provider->getUpdates('user_menu');
+        $this->assertEquals([$update], $this->provider->getUpdates('user_menu'));
     }
 }

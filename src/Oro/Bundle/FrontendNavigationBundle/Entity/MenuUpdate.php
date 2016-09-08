@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\FrontendNavigationBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
@@ -60,6 +61,13 @@ class MenuUpdate extends ExtendMenuUpdate
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")")
      */
     protected $website;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->titles = new ArrayCollection();
+    }
 
     /**
      * {@inheritdoc}

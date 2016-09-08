@@ -4,6 +4,7 @@ namespace Oro\Bundle\FrontendNavigationBundle\Menu;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository;
@@ -26,18 +27,26 @@ class MenuUpdateProvider
     protected $registry;
 
     /**
+     * @var LocalizationHelper
+     */
+    protected $localizationHelper;
+
+    /**
      * @param SecurityFacade $securityFacade
      * @param WebsiteManager $websiteManager
      * @param ManagerRegistry $registry
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         SecurityFacade $securityFacade,
         WebsiteManager $websiteManager,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        LocalizationHelper $localizationHelper
     ) {
-        $this->securityFacade = $securityFacade;
-        $this->websiteManager = $websiteManager;
-        $this->registry = $registry;
+        $this->securityFacade     = $securityFacade;
+        $this->websiteManager     = $websiteManager;
+        $this->registry           = $registry;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -55,6 +64,11 @@ class MenuUpdateProvider
             ->getManagerForClass('OroFrontendNavigationBundle:MenuUpdate')
             ->getRepository('OroFrontendNavigationBundle:MenuUpdate');
 
-        return $menuUpdateRepository->getUpdates($menu, $organization, $account, $accountUser, $website);
+        $updates = $menuUpdateRepository->getUpdates($menu, $organization, $account, $accountUser, $website);
+        foreach ($updates as $update) {
+            $update->setTitle($this->localizationHelper->getLocalizedValue($update->getTitles()));
+        }
+
+        return $updates;
     }
 }
