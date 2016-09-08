@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity(
  *    repositoryClass="Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository"
  * )
- * @ORM\Table(name="orob2b_acc_grp_prod_vsb_resolv")
+ * @ORM\Table(name="oro_acc_grp_prod_vsb_resolv")
  */
 class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolved
 {

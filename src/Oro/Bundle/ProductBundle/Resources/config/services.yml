@@ -339,8 +339,8 @@ services:
             - '@oro_attachment.manager'
             - '@orob2b_product.formatter.product_unit_label'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after, method: onResultAfter }
 
     orob2b_product.layout.data_provider.frontend_datagrid_row_view:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'

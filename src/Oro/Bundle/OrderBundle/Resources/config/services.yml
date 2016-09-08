@@ -239,3 +239,8 @@ services:
             - '@orob2b_shipping.formatter.shipping_method_label'
         tags:
             - { name: layout.data_provider, alias: orob2b_order_frontend_shipping_method_provider }
+
+    oro_order.provider.privilege_category_provider:
+        class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category}

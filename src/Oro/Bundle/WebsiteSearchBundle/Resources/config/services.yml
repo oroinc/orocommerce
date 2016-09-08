@@ -80,6 +80,8 @@ services:
 
     oro_website_search.mock.engine:
         class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+        arguments:
+            - '@doctrine.orm.entity_manager'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory

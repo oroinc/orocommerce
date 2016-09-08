@@ -114,7 +114,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      * @param Response $result
      * @param string $dataFieldName
      * @param string[] $expectedProducts
-     * @return array
      */
     protected function assertResponseContainsProducts(Response $result, $dataFieldName, array $expectedProducts)
     {

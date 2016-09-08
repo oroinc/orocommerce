@@ -180,7 +180,8 @@ datagrid:
             query:
                 select:
                     - text.sku
-                    - text.name
+                    - text.name_LOCALIZATION_ID
+                    - text.all_text_LOCALIZATION_ID
                 from:
                     - { table: %orob2b_product.entity.product.class%, alias: product }
         columns:
@@ -205,17 +206,18 @@ datagrid:
                 frontend_type: datetime
         filters:
             columns:
+                all_text:
+                    type:      string
+                    data_name: all_text_LOCALIZATION_ID
+                    label:     oro.product.anything.label
                 sku:
                     type:      string
                     data_name: sku
                 name:
                     type:      string
-                    data_name: name
+                    data_name: name_LOCALIZATION_ID
         properties:
             id: ~
-            name:
-                type: localized_value
-                data_name: names
             view_link:
                 type:  url
                 route: orob2b_product_frontend_product_view
@@ -231,7 +233,9 @@ datagrid:
                     type: string
             default:
                 sku: DESC
-
+        options:
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
 
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view

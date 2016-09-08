@@ -19,6 +19,7 @@ config:
         'oroproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/oroproduct/js/content-processor/product-add-to-dropdown-button.js'
         'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/oroproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
+        'oroproduct/js/app/components/breadcrumbs-navigation-block': 'bundles/oroproduct/js/app/components/breadcrumbs-navigation-block.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

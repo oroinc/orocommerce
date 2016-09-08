@@ -4,7 +4,6 @@ define(function(require) {
 
     var PaymentSaveForLaterComponent;
     var $ = require('jquery');
-    var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
 
     var BaseComponent = require('oroui/js/app/components/base/component');

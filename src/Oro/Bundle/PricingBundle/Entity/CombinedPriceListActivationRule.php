@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_cpl_activation_rule")
+ * @ORM\Table(name="oro_cpl_activation_rule")
  * @ORM\Entity(
  *     repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository"
  * )
