@@ -337,7 +337,6 @@ services:
             - '@oro_product.datagrid_theme_helper'
             - '@doctrine'
             - '@oro_attachment.manager'
-            - '@oro_product.formatter.product_unit_label'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -373,3 +372,11 @@ services:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
+
+    oro_product.layout.data_provider.featured_products:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
+        arguments:
+            - "@oro_product.repository.product"
+            - "@oro_product.product.manager"
+        tags:
+            - { name: layout.data_provider, alias: featured_products }
