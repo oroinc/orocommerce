@@ -190,9 +190,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)
     {
+        $this->getSession()->getPage()->clickLink('Back');
         /** @var Form $form */
         $form = $this->createElement('OroForm');
-        $form->fillField('SELECT BILLING ADDRESS','Enter other address');
+        $form->fillField('SELECT SHIPPING ADDRESS','Enter other address');
         $form->fill($table);
+        $this->getSession()->getPage()->pressButton('Continue');
     }
 }

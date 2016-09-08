@@ -4,7 +4,7 @@ Feature: Applying shipping rules
   As administrator
   I need to be able change shipping methods rules and orders
 
-  Scenario: "SHIPPING  2A” > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
+  Scenario: "SHIPPING  2A" > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
     Given I login as AmandaRCole@example.org buyer
     And there is EUR currency in the system configuration
     When Buyer is on Checkout step on Shopping List 1
@@ -52,12 +52,13 @@ Feature: Applying shipping rules
       | ZIP2          | 10115,10116,10117 |
       | Congif Enable | true              |
       | Price         | 3                 |
+      | Type          | Per Order         |
       | HandlingFee   | 1.5               |
     Given Admin User edited "Shipping Rule 2" with next data:
       | Sort Order    | 2 |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then Shipping Type FlatRate is shown for Buyer selection
-    And  the order total is recalculated to <"€ 14.50">
+    Then Shipping Type "Flat Rate: €4.50" is shown for Buyer selection
+    And  the order total is recalculated to "€14.50"
 
   Scenario: "Shipping 2G" > LIST OF ZIP CODES FOR SHIPPING RULE #3 DOES NOT CONTAIN ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User edited "Shipping Rule 3" with next data:
@@ -82,8 +83,8 @@ Feature: Applying shipping rules
       | Price         | 1.5               |
       | HandlingFee   | 1.5               |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then Shipping Type FlatRate is shown for Buyer selection
-    And  the order total is recalculated to "€ 19.00"
+    Then Shipping Type "Flat Rate: €9.00" is shown for Buyer selection
+    And  the order total is recalculated to "€19.00"
 
   Scenario: "Shipping 2I" > SHIPPING RULE #5 IS APPLICABLE FOR ALL COUNTRIES. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule 5" with next data:
@@ -94,11 +95,11 @@ Feature: Applying shipping rules
       | Type          | Per Order |
       | Price         | 5         |
       | HandlingFee   | 1.5       |
-    When Buyer created order with next shipping address:
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    And Buyer created order with next shipping address:
       | Country       | Ukraine    |
       | City          | Kyiv       |
       | ZIP           | 01000      |
       | Street        | Hreschatik |
-    And Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then Shipping Type FlatRate is shown for Buyer selection
-    And  the order total is recalculated to "€ 16.50"
+    Then Shipping Type "Flat Rate: €6.50" is shown for Buyer selection
+    And  the order total is recalculated to "€16.50"
