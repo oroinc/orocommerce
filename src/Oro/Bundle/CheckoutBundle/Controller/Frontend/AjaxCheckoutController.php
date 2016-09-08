@@ -38,7 +38,7 @@ class AjaxCheckoutController extends Controller
         }
 
         $checkout->setShippingCost($this->getShippingCost($checkout, $request));
-        return new JsonResponse($this->get('orob2b_checkout.provider.checkout_totals')->getTotalsArray($checkout));
+        return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
     }
 
     /**
@@ -58,6 +58,6 @@ class AjaxCheckoutController extends Controller
         if (!$shippingRuleConfig) {
             return $checkout->getShippingCost();
         }
-        return $this->get('orob2b_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
+        return $this->get('oro_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
     }
 }

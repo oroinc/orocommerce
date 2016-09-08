@@ -42,7 +42,7 @@ class ProductControllerTest extends WebTestCase
 
         $content = $crawler->html();
 
-        $shoppingListClass = $this->getContainer()->getParameter('orob2b_shopping_list.entity.shopping_list.class');
+        $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
 
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getContainer()->get('doctrine')->getRepository($shoppingListClass)->findAll();

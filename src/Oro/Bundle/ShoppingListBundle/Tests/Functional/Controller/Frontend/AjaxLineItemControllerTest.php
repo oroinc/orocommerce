@@ -221,7 +221,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 ->getRepository(ShoppingListTotal::class)
                 ->findBy(['shoppingList' => $shoppingList]);
             $subtotalProvider = $this->getContainer()
-                ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
+                ->get('oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
             foreach ($totals as $total) {
                 $expectedSubtotal = $subtotalProvider
                     ->getSubtotalByCurrency($shoppingList, $total->getCurrency())
@@ -255,7 +255,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         $container = $this->getContainer();
         $manager = $container->get('doctrine')->getManagerForClass(
-            $container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+            $container->getParameter('oro_shopping_list.entity.shopping_list.class')
         );
 
         /** @var ShoppingList[] $shoppingLists */

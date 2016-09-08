@@ -1,7 +1,0 @@
-CheckoutStep:
-  class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-  selector: 'div[data-role="checkout-content"]'
-
-CheckoutStepTitle:
-  class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-  selector: 'h2.checkout__title'

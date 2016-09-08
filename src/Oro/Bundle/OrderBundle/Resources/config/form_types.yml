@@ -1,110 +1,110 @@
 services:
-    orob2b_order.form.type.order:
+    oro_order.form.type.order:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderType'
         arguments:
             - '@oro_security.security_facade'
-            - '@orob2b_order.order.provider.order_address_security'
-            - '@orob2b_payment.provider.payment_term'
-            - '@orob2b_order.handler.order_currency_handler'
-            - '@orob2b_order.form.type.event_listener.subtotals_subscriber'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_payment.provider.payment_term'
+            - '@oro_order.handler.order_currency_handler'
+            - '@oro_order.form.type.event_listener.subtotals_subscriber'
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order.class%']]
+            - [setDataClass, ['%oro_order.entity.order.class%']]
 
-    orob2b_order.form.type.frontend.order:
+    oro_order.form.type.frontend.order:
         class: 'Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType'
         arguments:
-            - '@orob2b_order.order.provider.order_address_security'
+            - '@oro_order.order.provider.order_address_security'
             - '@oro_security.security_facade'
-            - '@orob2b_payment.provider.payment_term'
-            - '@orob2b_pricing.provider.combined_product_price'
-            - '@orob2b_order.handler.order_currency_handler'
-            - '@orob2b_order.form.type.event_listener.subtotals_subscriber'
-            - '@orob2b_pricing.model.price_list_request_handler'
+            - '@oro_payment.provider.payment_term'
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_order.handler.order_currency_handler'
+            - '@oro_order.form.type.event_listener.subtotals_subscriber'
+            - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order.class%']]
+            - [setDataClass, ['%oro_order.entity.order.class%']]
 
-    orob2b_order.form.type.order_address:
+    oro_order.form.type.order_address:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressType'
         arguments:
             - '@oro_locale.formatter.address'
-            - '@orob2b_order.manager.order_address'
-            - '@orob2b_order.order.provider.order_address_security'
+            - '@oro_order.manager.order_address'
+            - '@oro_order.order.provider.order_address_security'
             - '@oro_importexport.serializer'
         tags:
             - { name: form.type, alias: orob2b_order_address_type }
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order_address.class%']]
+            - [setDataClass, ['%oro_order.entity.order_address.class%']]
 
-    orob2b_order.form.section.provider:
+    oro_order.form.section.provider:
         class: 'Oro\Bundle\OrderBundle\Form\Section\SectionProvider'
         public: false
 
-    orob2b_order.form.type.order_line_item:
+    oro_order.form.type.order_line_item:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType'
         arguments:
             - '@doctrine'
-            - '@orob2b_product.formatter.product_unit_label'
+            - '@oro_product.formatter.product_unit_label'
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order_line_item.class%']]
-            - [setProductUnitClass, ['%orob2b_product.entity.product_unit.class%']]
-            - [setSectionProvider, ['@orob2b_order.form.section.provider']]
+            - [setDataClass, ['%oro_order.entity.order_line_item.class%']]
+            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+            - [setSectionProvider, ['@oro_order.form.section.provider']]
         tags:
             - { name: form.type, alias: "orob2b_order_line_item" }
 
-    orob2b_order.form.type.order_line_item_collection:
+    oro_order.form.type.order_line_item_collection:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType'
         tags:
             - { name: form.type, alias: "orob2b_order_line_items_collection" }
 
-    orob2b_order.form.type.frontend.order_line_item:
+    oro_order.form.type.frontend.order_line_item:
         class: 'Oro\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType'
         arguments:
             - '@doctrine'
-            - '@orob2b_pricing.model.price_list_request_handler'
-            - '%orob2b_pricing.entity.combined_product_price.class%'
+            - '@oro_pricing.model.price_list_request_handler'
+            - '%oro_pricing.entity.combined_product_price.class%'
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order_line_item.class%']]
-            - [setSectionProvider, ['@orob2b_order.form.section.provider']]
+            - [setDataClass, ['%oro_order.entity.order_line_item.class%']]
+            - [setSectionProvider, ['@oro_order.form.section.provider']]
         tags:
             - { name: form.type, alias: orob2b_order_line_item_frontend }
 
-    orob2b_order.form.type.extension.frontend_order_data_storage:
+    oro_order.form.type.extension.frontend_order_data_storage:
         class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
-        parent: orob2b_product.form.type.extension.product_data_storage.abstract
+        parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order.class%']]
+            - [setDataClass, ['%oro_order.entity.order.class%']]
             - [setExtendedType, [orob2b_order_frontend_type]]
         tags:
             - { name: form.type_extension, alias: orob2b_order_frontend_type }
 
-    orob2b_order.form.type.extension.order_data_storage:
+    oro_order.form.type.extension.order_data_storage:
         class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
-        parent: orob2b_product.form.type.extension.product_data_storage.abstract
+        parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order.class%']]
+            - [setDataClass, ['%oro_order.entity.order.class%']]
             - [setExtendedType, [orob2b_order_type]]
         tags:
             - { name: form.type_extension, alias: orob2b_order_type }
 
-    orob2b_order.form.type.order_discount_item_collection:
+    oro_order.form.type.order_discount_item_collection:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType'
         tags:
             - { name: form.type, alias: "orob2b_order_discount_items_collection" }
 
-    orob2b_order.form.type.order_discount_item:
+    oro_order.form.type.order_discount_item:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType'
         calls:
-            - [setDataClass, ['%orob2b_order.entity.order_discount_item.class%']]
+            - [setDataClass, ['%oro_order.entity.order_discount_item.class%']]
         tags:
             - { name: form.type, alias: "orob2b_order_discount_item" }
 
-    orob2b_order.form.type.event_listener.subtotals_subscriber:
+    oro_order.form.type.event_listener.subtotals_subscriber:
         class: 'Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber'
         public: false
         arguments:
-            - '@orob2b_order.order.total.total_helper'
-            - '@orob2b_order.pricing.price_matcher'
+            - '@oro_order.order.total.total_helper'
+            - '@oro_order.pricing.price_matcher'

@@ -14,7 +14,7 @@ class AddProductsMassActionTest extends \PHPUnit_Framework_TestCase
         $options = $massAction->getOptions();
 
         $this->assertEquals('add-products-mass', $options['frontend_type']);
-        $this->assertEquals('orob2b_shopping_list.mass_action.add_products_handler', $options['handler']);
+        $this->assertEquals('oro_shopping_list.mass_action.add_products_handler', $options['handler']);
         $this->assertEquals('orob2b_shopping_list_add_products_massaction', $options['route']);
         $this->assertEmpty($options['route_parameters']);
         $this->assertEquals('ajax', $options['frontend_handle']);

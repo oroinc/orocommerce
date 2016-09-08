@@ -1,34 +1,34 @@
 services:
-    orob2b_payment.form.type.payment_term:
+    oro_payment.form.type.payment_term:
         class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermType'
-        arguments: ['%orob2b_payment.entity.payment_term.class%']
+        arguments: ['%oro_payment.entity.payment_term.class%']
         tags:
             - { name: form.type, alias: orob2b_payment_term }
         calls:
-            - [setAccountClass, ['%orob2b_account.entity.account.class%']]
-            - [setAccountGroupClass, ['%orob2b_account.entity.account_group.class%']]
+            - [setAccountClass, ['%oro_account.entity.account.class%']]
+            - [setAccountGroupClass, ['%oro_account.entity.account_group.class%']]
 
-    orob2b_payment.form.type.payment_term_select:
+    oro_payment.form.type.payment_term_select:
         class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType'
         tags:
             - { name: form.type, alias: orob2b_payment_term_select }
 
-    orob2b_payment.form.extension.abstract:
+    oro_payment.form.extension.abstract:
         class: 'Oro\Bundle\PaymentBundle\Form\Extension\AbstractPaymentTermExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@translator'
-            - '%orob2b_payment.entity.payment_term.class%'
+            - '%oro_payment.entity.payment_term.class%'
         abstract: true
 
-    orob2b_payment.form.extension.account_type:
+    oro_payment.form.extension.account_type:
         class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension'
-        parent: orob2b_payment.form.extension.abstract
+        parent: oro_payment.form.extension.abstract
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 
-    orob2b_payment.form.extension.account_group_type:
+    oro_payment.form.extension.account_group_type:
         class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension'
-        parent: orob2b_payment.form.extension.abstract
+        parent: oro_payment.form.extension.abstract
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }

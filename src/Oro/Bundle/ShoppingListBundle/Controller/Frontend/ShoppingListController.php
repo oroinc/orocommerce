@@ -62,7 +62,7 @@ class ShoppingListController extends Controller
                 if (!empty($this->container)) {
                     $shoppingList->setIsAllowedRFP(
                         $this->container
-                            ->get('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                            ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
                             ->isAllowedRFP($products)
                     );
                 }
@@ -102,7 +102,7 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->create();
 
         $response = $this->create($request, $shoppingList);
@@ -132,7 +132,7 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $request,
-            $this->get('orob2b_shopping_list.shopping_list.manager'),
+            $this->get('oro_shopping_list.shopping_list.manager'),
             $this->getDoctrine()
         );
 
@@ -161,6 +161,6 @@ class ShoppingListController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }
