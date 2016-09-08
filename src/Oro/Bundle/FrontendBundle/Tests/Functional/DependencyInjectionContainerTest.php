@@ -16,25 +16,31 @@ class DependencyInjectionContainerTest extends WebTestCase
         $this->initClient();
     }
 
-    public function testNotRecommendedClassParameters()
+    public function testParameterAndServiceNames()
     {
         /** @var Container $container */
         $container = $this->getContainer();
 
-        $notRecommendedClassParameters = [];
+        $invalidParameters = [];
         foreach (array_keys($container->getParameterBag()->all()) as $name) {
-            // orob2b*.class
-            if (strpos($name, 'orob2b') === 0 && substr($name, -6) === '.class') {
-                // not *.entity.* and not *.model.*
-                if (strpos($name, '.entity.') === false && strpos($name, '.model.') === false) {
-                    $notRecommendedClassParameters[] = $name;
-                }
+            if (strpos($name, 'orob2b') === 0) {
+                $invalidParameters[] = $name;
             }
         }
-
         $this->assertEmpty(
-            $notRecommendedClassParameters,
-            "Not recommended class parameters:\n" . implode("\n", $notRecommendedClassParameters)
+            $invalidParameters,
+            "Invalid parameter names:\n" . implode("\n", $invalidParameters)
+        );
+
+        $invalidServices = [];
+        foreach ($container->getServiceIds() as $name) {
+            if (strpos($name, 'orob2b') === 0) {
+                $invalidServices[] = $name;
+            }
+        }
+        $this->assertEmpty(
+            $invalidServices,
+            "Invalid service names:\n" . implode("\n", $invalidParameters)
         );
     }
 }

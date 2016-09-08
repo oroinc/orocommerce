@@ -18,7 +18,7 @@ class OrderControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');
         }
 

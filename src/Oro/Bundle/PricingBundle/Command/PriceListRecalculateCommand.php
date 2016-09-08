@@ -99,7 +99,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $this->buildPriceRulesForAllPriceLists();
 
         $output->writeln('<info>Start combining all Price Lists</info>');
-        $this->getContainer()->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+        $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->build(true);
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
@@ -137,9 +137,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $accounts = $this->getAccounts($input);
 
         $container = $this->getContainer();
-        $websiteCPLBuilder = $container->get('orob2b_pricing.builder.website_combined_price_list_builder');
-        $accountGroupCPLBuilder = $container->get('orob2b_pricing.builder.account_group_combined_price_list_builder');
-        $accountCPLBuilder = $container->get('orob2b_pricing.builder.account_combined_price_list_builder');
+        $websiteCPLBuilder = $container->get('oro_pricing.builder.website_combined_price_list_builder');
+        $accountGroupCPLBuilder = $container->get('oro_pricing.builder.account_group_combined_price_list_builder');
+        $accountCPLBuilder = $container->get('oro_pricing.builder.account_combined_price_list_builder');
 
         foreach ($websites as $website) {
             if (count($accountGroups) === 0 && count($accounts) === 0) {
@@ -180,10 +180,10 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function buildPriceRulesByPriceLists($priceLists)
     {
         /** @var ProductPriceBuilder $priceBuilder */
-        $priceBuilder = $this->getContainer()->get('orob2b_pricing.builder.product_price_builder');
+        $priceBuilder = $this->getContainer()->get('oro_pricing.builder.product_price_builder');
         /** @var PriceListProductAssignmentBuilder $assignmentBuilder */
         $assignmentBuilder = $this->getContainer()
-            ->get('orob2b_pricing.builder.price_list_product_assignment_builder');
+            ->get('oro_pricing.builder.price_list_product_assignment_builder');
 
         foreach ($priceLists as $priceList) {
             $assignmentBuilder->buildByPriceList($priceList);
@@ -203,7 +203,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
         $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceLists);
 
-        $priceResolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_price_resolver');
+        $priceResolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
         foreach ($cplIterator as $cpl) {
             $priceResolver->combinePrices($cpl);
         }

@@ -22,7 +22,7 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+        $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
             'orob2b_product_frontend_quick_add'
         );
@@ -39,7 +39,7 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
-        $collection = $this->get('orob2b_product.form_handler.quick_add')->processImport($request);
+        $collection = $this->get('oro_product.form_handler.quick_add')->processImport($request);
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -58,7 +58,7 @@ class QuickAddController extends Controller
      */
     public function copyPasteAction(Request $request)
     {
-        $collection = $this->get('orob2b_product.form_handler.quick_add')->processCopyPaste($request);
+        $collection = $this->get('oro_product.form_handler.quick_add')->processCopyPaste($request);
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -75,7 +75,7 @@ class QuickAddController extends Controller
      */
     public function validationResultAction(Request $request)
     {
-        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+        $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
             'orob2b_product_frontend_quick_add'
         );

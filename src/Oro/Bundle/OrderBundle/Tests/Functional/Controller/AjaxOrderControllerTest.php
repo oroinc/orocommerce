@@ -89,7 +89,7 @@ class AjaxOrderControllerTest extends WebTestCase
         /** @var AccountUser $order */
         $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
 
-        $website = $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->client->request(
             'GET',

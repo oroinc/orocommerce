@@ -19,7 +19,7 @@ datagrids:
                     - checkout.shippingMethod
                     - checkout.shippingMethodType
                 from:
-                    - { table: '%orob2b_checkout.entity.checkout.class%', alias: checkout }
+                    - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
                 join:
                     left:
                         - { join: checkout.accountUser, alias: account_user }

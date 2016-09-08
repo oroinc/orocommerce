@@ -67,7 +67,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
+                    - { table: %oro_tax.entity.product_tax_code.class%, alias: tax_code }
         columns:
             code:
                 label: oro.tax.producttaxcode.code.label
@@ -88,7 +88,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
+                    - { table: %oro_tax.entity.account_tax_code.class%, alias: tax_code }
         columns:
             code:
                 label: oro.tax.accounttaxcode.code.label
@@ -126,7 +126,7 @@ datagrids:
                     - tax.createdAt
                     - tax.updatedAt
                 from:
-                    - { table: %orob2b_tax.entity.tax.class%, alias: tax }
+                    - { table: %oro_tax.entity.tax.class%, alias: tax }
         columns:
             code:
                 label: oro.tax.code.label
@@ -209,7 +209,7 @@ datagrids:
                     - tax_rule.createdAt
                     - tax_rule.updatedAt
                 from:
-                    - { table: %orob2b_tax.entity.tax_rule.class%, alias: tax_rule }
+                    - { table: %oro_tax.entity.tax_rule.class%, alias: tax_rule }
                 join:
                     left:
                         - { join: tax_rule.accountTaxCode, alias: account_tax_code }
@@ -301,7 +301,7 @@ datagrids:
                     - jurisdiction.createdAt
                     - jurisdiction.updatedAt
                 from:
-                    - { table: %orob2b_tax.entity.tax_jurisdiction.class%, alias: jurisdiction }
+                    - { table: %oro_tax.entity.tax_jurisdiction.class%, alias: jurisdiction }
         columns:
             code:
                 label: oro.tax.taxjurisdiction.code.label
@@ -365,7 +365,7 @@ datagrids:
             query:
                 join:
                     left:
-                        - { join: %orob2b_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account_group MEMBER OF account_tax_code.accountGroups' }
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account_group MEMBER OF account_tax_code.accountGroups' }
                 where:
                     and:
                         - account_tax_code.id = :account_tax_code_id
@@ -391,7 +391,7 @@ datagrids:
             query:
                 join:
                     left:
-                        - { join: %orob2b_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
                 where:
                     and:
                         - account_tax_code.id = :account_tax_code_id
@@ -417,7 +417,7 @@ datagrids:
             query:
                 join:
                     left:
-                        - { join: %orob2b_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
+                        - { join: %oro_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
                 where:
                     and:
                         - product_tax_code.id = :product_tax_code_id

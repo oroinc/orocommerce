@@ -1,6 +1,6 @@
 datagrids:
     base-orders-grid:
-        extended_entity_name: %orob2b_order.entity.order.class%
+        extended_entity_name: %oro_order.entity.order.class%
         options:
             entityHint:        order
             entity_pagination: true
@@ -22,11 +22,11 @@ datagrids:
                     - order1.shippingMethod
                     - order1.shippingMethodType
                 from:
-                    - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                    - { table: %oro_order.entity.order.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.paymentTerm, alias: paymentTerm }
-                        - { join: '%orob2b_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%orob2b_order.entity.order.class%'" }
+                        - { join: '%oro_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%oro_order.entity.order.class%'" }
         properties:
             id: ~
             view_link:
@@ -164,7 +164,7 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
-                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
+                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 identifier:
                     type:      string
                     data_name: order1.identifier
@@ -179,7 +179,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
                     type:      number
                     data_name: order1.subtotal
@@ -330,7 +330,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
                     type:      number
                     data_name: order1.subtotal
@@ -353,7 +353,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_payment.entity.payment_term.class%
+                            class:    %oro_payment.entity.payment_term.class%
                             property: label
                             multiple: true
                 paymentStatus:
@@ -361,7 +361,7 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
-                            choices: "@orob2b_payment.formatter.payment_status_label->getAvailableStatuses"
+                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
 
                 poNumber:
                     type:      string
@@ -388,7 +388,7 @@ datagrids:
 
     embed-orders-grid:
         acl_resource: orob2b_order_view
-        extended_entity_name: %orob2b_order.entity.order.class%
+        extended_entity_name: %oro_order.entity.order.class%
         options:
             entityHint:        order
             entity_pagination: true
@@ -406,7 +406,7 @@ datagrids:
                     - order1.createdAt
                     - order1.updatedAt
                 from:
-                    - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                    - { table: %oro_order.entity.order.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.lineItems, alias: lineItems}
@@ -545,7 +545,7 @@ datagrids:
                     data_name: accountUserName
 
     base-order-line-items-grid:
-        extended_entity_name: %orob2b_order.entity.order_line_item.class%
+        extended_entity_name: %oro_order.entity.order_line_item.class%
         options:
             entityHint: order_line_item
         source:
@@ -559,7 +559,7 @@ datagrids:
                     - order_item.shipBy
                     - order_item.comment
                 from:
-                    - { table: %orob2b_order.entity.order_line_item.class%, alias: order_item }
+                    - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
                 join:
                     left:
                         - { join: order_item.product, alias: product }

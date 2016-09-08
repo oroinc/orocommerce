@@ -47,10 +47,10 @@ class AjaxProductShippingOptionsController extends Controller
         $activeShippingOptions->setProduct($product);
 
         /* @var $provider FreightClassesProvider */
-        $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
+        $provider = $this->get('oro_shipping.provider.measure_units.freight');
 
         /* @var $formatter UnitLabelFormatter */
-        $formatter = $this->get('orob2b_shipping.formatter.freight_class_label');
+        $formatter = $this->get('oro_shipping.formatter.freight_class_label');
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 

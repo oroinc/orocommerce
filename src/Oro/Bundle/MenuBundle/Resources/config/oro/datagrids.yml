@@ -1,6 +1,6 @@
 datagrids:
     menu-item-roots-grid:
-        extended_entity_name: %orob2b_menu.entity.menu_item.class%
+        extended_entity_name: %oro_menu.entity.menu_item.class%
         options:
             entityHint: menu_item
             entity_pagination: true
@@ -11,7 +11,7 @@ datagrids:
                 select:
                     - m.id
                 from:
-                    - { table: %orob2b_menu.entity.menu_item.class%, alias: m }
+                    - { table: %oro_menu.entity.menu_item.class%, alias: m }
                 where:
                     and:
                         - m.parent IS NULL

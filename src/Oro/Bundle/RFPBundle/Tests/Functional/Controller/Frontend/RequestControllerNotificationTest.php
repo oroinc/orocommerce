@@ -53,7 +53,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em = $this->client->getContainer()
             ->get('doctrine')
             ->getManagerForClass(User::class);
-        $this->website = $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }

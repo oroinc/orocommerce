@@ -173,7 +173,7 @@ class PageControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_cms.entity.page.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_cms.entity.page.class'),
                 ]
             ),
             [],

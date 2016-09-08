@@ -1,7 +1,7 @@
 datagrids:
     base-rfq-grid:
         acl_resource: orob2b_rfp_request_view
-        extended_entity_name: %orob2b_rfp.entity.request.class%
+        extended_entity_name: %oro_rfp.entity.request.class%
         options:
             entityHint:        request
             entity_pagination: true
@@ -17,7 +17,7 @@ datagrids:
                     - request.createdAt
                     - request.updatedAt
                 from:
-                    - { table: %orob2b_rfp.entity.request.class%, alias: request }
+                    - { table: %oro_rfp.entity.request.class%, alias: request }
                 join:
                     left:
                         - { join: request.status, alias: status }
@@ -105,7 +105,7 @@ datagrids:
                     options:
                         field_type: orob2b_rfp_request_status_with_deleted_select
                         field_options:
-                            class: %orob2b_rfp.entity.request.status.class%
+                            class: %oro_rfp.entity.request.status.class%
                             property: label
                 poNumber:
                     type:      string
@@ -140,7 +140,7 @@ datagrids:
                     options:
                         field_type: orob2b_rfp_request_status_with_deleted_select
                         field_options:
-                            class: %orob2b_rfp.entity.request.status.class%
+                            class: %oro_rfp.entity.request.status.class%
                             property: label
                 poNumber:
                     type:      string
@@ -253,7 +253,7 @@ datagrids:
                     options:
                         field_type: orob2b_rfp_request_status_with_deleted_select
                         field_options:
-                            class: %orob2b_rfp.entity.request.status.class%
+                            class: %oro_rfp.entity.request.status.class%
                             property: label
                 poNumber:
                     type:      string
@@ -270,7 +270,7 @@ datagrids:
 
     rfp-request-statuses-grid:
         acl_resource: orob2b_rfp_request_status_view
-        extended_entity_name: %orob2b_rfp.entity.request.status.class%
+        extended_entity_name: %oro_rfp.entity.request.status.class%
         options:
             entityHint:        status
             entity_pagination: true
@@ -284,7 +284,7 @@ datagrids:
                     - status.sortOrder
                     - status.deleted
                 from:
-                    - { table: %orob2b_rfp.entity.request.status.class%, alias: status }
+                    - { table: %oro_rfp.entity.request.status.class%, alias: status }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
@@ -366,10 +366,10 @@ datagrids:
                 label:         oro.grid.action.delete
                 icon:          trash
                 link:          delete_link
-        action_configuration: ['@orob2b_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
+        action_configuration: ['@oro_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
 
     frontend-requests-grid:
-        extended_entity_name: %orob2b_rfp.entity.request.class%
+        extended_entity_name: %oro_rfp.entity.request.class%
         options:
             entityHint:        request
             entity_pagination: true
@@ -386,7 +386,7 @@ datagrids:
                     - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - requestStatus.label as statusLabel
                 from:
-                    - { table: %orob2b_rfp.entity.request.class%, alias: request }
+                    - { table: %oro_rfp.entity.request.class%, alias: request }
                 join:
                     left:
                         - { join: request.accountUser, alias: requestAccountUser }
@@ -451,7 +451,7 @@ datagrids:
                 icon:           eye-open
                 rowAction:      true
                 acl_permission: ACCOUNT_VIEW
-                acl_class:      %orob2b_rfp.entity.request.class%
+                acl_class:      %oro_rfp.entity.request.class%
             update:
                 type:           navigate
                 label:          oro.grid.action.update
@@ -459,4 +459,4 @@ datagrids:
                 icon:           edit
                 rowAction:      true
                 acl_permission: ACCOUNT_EDIT
-                acl_class:      %orob2b_rfp.entity.request.class%
+                acl_class:      %oro_rfp.entity.request.class%

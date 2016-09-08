@@ -30,7 +30,7 @@ datagrids:
                     - internalRating.name as internal_rating_name
                     - internalRating.id as internal_rating_id
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                    - { table: %oro_account.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: account.group, alias: account_group }
@@ -70,7 +70,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_account.entity.account_group.class%
+                            class:    %oro_account.entity.account_group.class%
                             property: name
                 parent_name:
                     type:      string
@@ -109,7 +109,7 @@ datagrids:
                     - account_group.id
                     - account_group.name
                 from:
-                    - { table: %orob2b_account.entity.account_group.class%, alias: account_group }
+                    - { table: %oro_account.entity.account_group.class%, alias: account_group }
         columns:
             name:
                 label: oro.account.accountgroup.name.label
@@ -175,7 +175,7 @@ datagrids:
                     - account.name
                     - parent.name as parent_name
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                    - { table: %oro_account.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: account.parent, alias: parent }
@@ -274,7 +274,7 @@ datagrids:
                     excluded: '#groupRemoveAccounts'
 
     account-account-user-grid-no-filter-base:
-        entity_name: %orob2b_account.entity.account_user.class%
+        entity_name: %oro_account.entity.account_user.class%
         acl_resource: orob2b_account_account_user_view
         options:
             entityHint:        account user
@@ -290,7 +290,7 @@ datagrids:
                     - accountUser.enabled
                     - accountUser.confirmed
                 from:
-                    - { table: %orob2b_account.entity.account_user.class%, alias: accountUser }
+                    - { table: %oro_account.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
                 label: oro.account.accountuser.first_name.label
@@ -388,7 +388,7 @@ datagrids:
                 icon:          eye-open
                 acl_resource:  orob2b_account_account_user_view
                 rowAction:     true
-        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getUserPermissions"]
+        action_configuration: ['@oro_account.datagrid.action_permission_provider', "getUserPermissions"]
 
     account-user-by-account-grid:
         extends:  account-account-user-grid-base
@@ -461,7 +461,7 @@ datagrids:
                     - role.public
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
-                    - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
+                    - { table: %oro_account.entity.account_user_role.class%, alias: role }
         properties:
             id: ~
             view_link:
@@ -591,7 +591,7 @@ datagrids:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_role_delete
-        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getAccountUserRolePermission"]
+        action_configuration: ['@oro_account.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
@@ -637,7 +637,7 @@ datagrids:
                     - user.lastName
                     - user.email
                 from:
-                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                    - { table: %oro_account.entity.account_user.class%, alias: user }
         properties:
             id: ~
         filters:
@@ -703,7 +703,7 @@ datagrids:
                     data_name: accountName
 
     frontend-account-account-users-grid-basic:
-        entity_name: %orob2b_account.entity.account_user.class%
+        entity_name: %oro_account.entity.account_user.class%
         options:
             entityHint: account user
         acl_resource: orob2b_account_frontend_account_user_view
@@ -716,7 +716,7 @@ datagrids:
                     - user.email
                     - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
                 from:
-                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                    - { table: %oro_account.entity.account_user.class%, alias: user }
         sorters:
             columns:
                 fullName:
@@ -881,10 +881,10 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                    - { table: %oro_account.entity.account.class%, alias: account }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
+                        - { join: %oro_account.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -930,10 +930,10 @@ datagrids:
                     - accountGroup.id
                     - accountGroup.name
                 from:
-                    - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_account.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.category = :target_entity_id' }
+                        - { join: %oro_account.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.category = :target_entity_id' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -981,10 +981,10 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                    - { table: %oro_account.entity.account.class%, alias: account }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }
+                        - { join: %oro_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }
             bind_parameters:
                 - target_entity_id
                 - website_id
@@ -1032,10 +1032,10 @@ datagrids:
                     - accountGroup.id
                     - accountGroup.name
                 from:
-                    - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_account.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id AND visibilityAlias.website = :website_id' }
+                        - { join: %oro_account.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id AND visibilityAlias.website = :website_id' }
             bind_parameters:
                 - target_entity_id
                 - website_id
@@ -1111,7 +1111,7 @@ datagrids:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_delete
-        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getUserPermissions"]
+        action_configuration: ['@oro_account.datagrid.action_permission_provider', "getUserPermissions"]
 
     audit-grid:
         source:
@@ -1250,7 +1250,7 @@ datagrids:
             type: orm
             query:
                 from:
-                    - { table: %orob2b_account.entity.account_address.class%, alias: address }
+                    - { table: %oro_account.entity.account_address.class%, alias: address }
         properties:
             update_link:
                 type: url
@@ -1280,7 +1280,7 @@ datagrids:
             type: orm
             query:
                 from:
-                    - { table: %orob2b_account.entity.account_user_address.class%, alias: address }
+                    - { table: %oro_account.entity.account_user_address.class%, alias: address }
         properties:
             update_link:
                 type: url

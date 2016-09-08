@@ -217,7 +217,7 @@ workflows:
                 form_options:
                     init_actions:
                         - '@call_service_method':
-                            service: orob2b_checkout.action.default_shipping_method_setter
+                            service: oro_checkout.action.default_shipping_method_setter
                             method: setDefaultShippingMethod
                             method_parameters: [$checkout]
                     attribute_fields:
@@ -489,7 +489,7 @@ workflows:
                             shipping_rule_config: $shipping_rule_config
                 post_actions:
                     - '@call_service_method':
-                        service: orob2b_checkout.shipping_cost.calculator
+                        service: oro_checkout.shipping_cost.calculator
                         method: calculatePrice
                         method_parameters: [$checkout, $shipping_rule_config]
                         attribute: $checkout.shippingCost
@@ -517,7 +517,7 @@ workflows:
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
                     - '@call_service_method':
-                        service: orob2b_payment.provider.payment_term
+                        service: oro_payment.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@create_entity':
@@ -551,7 +551,7 @@ workflows:
                         method_parameters:
                             - $.result.lineItems
                     - '@call_service_method':
-                        service: orob2b_order.handler.order_totals_handler
+                        service: oro_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
                             - $.result.order
