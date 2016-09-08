@@ -1,12 +1,12 @@
 {% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
 
-{% block oro_country_widget %}
+{% block oro_frontend_country_widget %}
     <div class="checkout__form__select">
         {{ form_widget(form, {'class_prefix': 'checkout'}) }}
     </div>
 {% endblock %}
 
-{% block oro_region_widget %}
+{% block oro_frontend_region_widget %}
     {% set regionView = 'orocheckout/js/region/view' %}
     <div class="checkout__form__select">
         {{ block('oro_region_widget') }}

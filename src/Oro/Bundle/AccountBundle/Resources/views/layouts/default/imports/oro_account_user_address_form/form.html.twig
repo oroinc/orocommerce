@@ -144,7 +144,11 @@
     {{ parent() }}
 {% endblock %}
 
-{% block oro_country_widget %}
+{% block oro_frontend_region_widget %}
+    {{ block('oro_region_widget') }}
+{% endblock %}
+
+{% block oro_frontend_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
 

@@ -9,9 +9,9 @@ services:
     oro_frontend.form.type.country:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\CountryType'
         tags:
-            - { name: form.type, alias: oro_country }
+            - { name: form.type, alias: oro_frontend_country }
 
     oro_frontend.form.type.region:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\RegionType'
         tags:
-            - { name: form.type, alias: oro_region }
+            - { name: form.type, alias: oro_frontend_region }
