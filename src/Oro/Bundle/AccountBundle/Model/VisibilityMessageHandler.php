@@ -22,11 +22,11 @@ class VisibilityMessageHandler
     protected $scheduledMessages = [];
 
     /**
-     * @param VisibilityMessageFactory $messageFactory
+     * @param MessageFactoryInterface $messageFactory
      * @param MessageProducerInterface $messageProducer
      */
     public function __construct(
-        VisibilityMessageFactory $messageFactory,
+        MessageFactoryInterface $messageFactory,
         MessageProducerInterface $messageProducer
     ) {
         $this->messageFactory = $messageFactory;

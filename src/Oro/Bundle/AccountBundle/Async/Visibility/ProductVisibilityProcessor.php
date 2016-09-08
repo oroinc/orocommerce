@@ -4,7 +4,7 @@ namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class VisibilityEntityProcessor extends AbstractVisibilityProcessor
+class ProductVisibilityProcessor extends AbstractVisibilityProcessor
 {
     /**
      * @param object|VisibilityInterface $entity

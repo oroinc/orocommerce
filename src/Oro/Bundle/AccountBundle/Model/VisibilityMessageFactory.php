@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 
-class VisibilityMessageFactory
+class VisibilityMessageFactory implements MessageFactoryInterface
 {
     const ID = 'id';
     const ENTITY_CLASS_NAME = 'entity_class_name';
@@ -23,10 +23,9 @@ class VisibilityMessageFactory
     {
         $this->registry = $registry;
     }
-    
+
     /**
-     * @param object $visibility
-     * @return array
+     * {@inheritdoc}
      */
     public function createMessage($visibility)
     {
@@ -37,8 +36,7 @@ class VisibilityMessageFactory
     }
 
     /**
-     * @param array|null $data
-     * @return object
+     * {@inheritdoc}
      */
     public function getEntityFromMessage($data)
     {
@@ -53,7 +51,7 @@ class VisibilityMessageFactory
         if (!isset($data[self::ENTITY_CLASS_NAME]) || !$data[self::ENTITY_CLASS_NAME]) {
             throw new InvalidArgumentException('Visibility class name is required.');
         }
-        
+
         $visibility = $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
             ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);

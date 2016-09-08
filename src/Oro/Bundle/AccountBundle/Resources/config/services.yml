@@ -881,10 +881,36 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_account.product_visibility_message_factory:
+        class: 'Oro\Bundle\AccountBundle\Model\ProductVisibilityMessageFactory'
+        arguments:
+            - '@doctrine'
+
+    oro_account.category_visibility_message_factory:
+        class: 'Oro\Bundle\AccountBundle\Model\CategoryVisibilityMessageFactory'
+        arguments:
+            - '@doctrine'
+
     oro_account.visibility_message_handler:
         class: 'Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler'
         arguments:
             - '@oro_account.visibility_message_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_account.product_visibility_message_handler:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler'
+        arguments:
+            - '@oro_account.product_visibility_message_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_account.category_visibility_message_handler:
+        class: 'Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler'
+        arguments:
+            - '@oro_account.category_visibility_message_factory'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
@@ -899,7 +925,8 @@ services:
     oro_account.entity_listener.product_visibility_change:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\ProductVisibilityListener'
         public: false
-        parent: oro_account.entity_listener.abstract_visibility_listener
+        arguments:
+            - '@oro_account.product_visibility_message_handler'
         calls:
             - [setTopic, ['oro_account.visibility.resolve_product_visibility']]
         tags:
@@ -914,7 +941,8 @@ services:
     oro_account.entity_listener.category_visibility_change:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryVisibilityListener'
         public: false
-        parent: oro_account.entity_listener.abstract_visibility_listener
+        arguments:
+            - '@oro_account.category_visibility_message_handler'
         calls:
             - [setTopic, ['oro_account.visibility.change_category_visibility']]
         tags:
@@ -938,10 +966,10 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%orob2b_product.entity.product.class%', event: postPersist }
 
     oro_account.async.visibility.product_visibility_processor:
-        class: Oro\Bundle\AccountBundle\Async\Visibility\VisibilityEntityProcessor
+        class: Oro\Bundle\AccountBundle\Async\Visibility\ProductVisibilityProcessor
         arguments:
             - '@doctrine'
-            - '@oro_account.visibility_message_factory'
+            - '@oro_account.product_visibility_message_factory'
             - '@logger'
             - '@orob2b_account.visibility.cache.product.cache_builder'
             - '@oro_product.model.product_message_handler'
@@ -954,7 +982,7 @@ services:
         class: Oro\Bundle\AccountBundle\Async\Visibility\CategoryVisibilityProcessor
         arguments:
             - '@doctrine'
-            - '@oro_account.visibility_message_factory'
+            - '@oro_account.category_visibility_message_factory'
             - '@logger'
             - '@orob2b_account.visibility.cache.product.category.cache_builder'
             - '@oro_product.model.product_message_handler'

@@ -4,6 +4,7 @@ namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -42,13 +43,13 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 
     /**
      * @param RegistryInterface $registry
-     * @param VisibilityMessageFactory $messageFactory
+     * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
      */
     public function __construct(
         RegistryInterface $registry,
-        VisibilityMessageFactory $messageFactory,
+        MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder
     ) {

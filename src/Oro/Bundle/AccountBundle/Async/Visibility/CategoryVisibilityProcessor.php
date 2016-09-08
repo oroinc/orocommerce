@@ -4,7 +4,7 @@ namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Psr\Log\LoggerInterface;
@@ -20,14 +20,14 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
 
     /**
      * @param RegistryInterface $registry
-     * @param VisibilityMessageFactory $messageFactory
+     * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
      * @param ProductMessageHandler $productMessageHandler
      */
     public function __construct(
         RegistryInterface $registry,
-        VisibilityMessageFactory $messageFactory,
+        MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder,
         ProductMessageHandler $productMessageHandler
@@ -45,9 +45,6 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
         if ($entity instanceof CategoryVisibility) {
             /** @var $entity CategoryVisibility */
             foreach ($entity->getCategory()->getProducts() as $product) {
-                if ($product->getId() != 1) {
-                    continue;
-                }
                 $this->productMessageHandler->addProductMessageToSchedule(
                     'oro_account.visibility.change_product_category',
                     $product
