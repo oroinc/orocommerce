@@ -64,7 +64,7 @@
     <div {{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__radio">
             <label class="custom-radio" data-toggle="tooltip" title="Set as default">
-                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" value="id" checked="{{ shoppingList.isCurrent }}">
+                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" value="{{ shoppingList.id }}" {% if shoppingList.isCurrent %}checked{% endif %}>
                 <span class="custom-radio__text"></span>
             </label>
         </div>

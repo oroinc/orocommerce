@@ -21,6 +21,9 @@ define(function(require) {
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
+            this.$el.on({
+                change: this._onChangeCurrentShoppingList
+            }, 'input[name="shopping-list-dropdown-radio"]');
         },
 
         /**
@@ -34,6 +37,15 @@ define(function(require) {
             }
             this.$el.find('.shopping-list-dropdown__name-inner--' + this.shoppingListId)
                 .text(updateData.label);
+        },
+        
+        /**
+         * Change current shopping list event handler
+         *
+         * @param e
+         */
+        _onChangeCurrentShoppingList: function(e) {
+            mediator.trigger('shopping-list:change-current', e.target.value);
         },
 
         /**
