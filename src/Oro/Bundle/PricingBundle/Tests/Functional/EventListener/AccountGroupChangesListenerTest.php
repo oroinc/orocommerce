@@ -121,8 +121,10 @@ class AccountGroupChangesListenerTest extends WebTestCase
             $expectedMessages
         );
 
+        $actual = array_values(array_filter($this->messageProducer->getSentMessages(), function ($data) {
+            return $data['topic'] === Topics::REBUILD_PRICE_LISTS;
+        }));
 
-        $actual = $this->messageProducer->getSentMessages();
         $this->assertEquals(
             $expectedMessages,
             $actual,
