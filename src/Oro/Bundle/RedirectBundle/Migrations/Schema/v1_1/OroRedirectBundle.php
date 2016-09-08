@@ -4,12 +4,13 @@ namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\FrontendBundle\Migration\UpdatePrefixQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RenameTables implements Migration, RenameExtensionAwareInterface
+class OroRedirectBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -21,9 +22,9 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $extension = $this->renameExtension;
+        $this->renameExtension->renameTable($schema, $queries, 'orob2b_redirect_slug', 'oro_redirect_slug');
 
-        $extension->renameTable($schema, $queries, 'orob2b_redirect_slug', 'oro_redirect_slug');
+        $queries->addQuery(new UpdatePrefixQuery('oro_redirect_slug', 'route_name'));
     }
 
     /**
