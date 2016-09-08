@@ -100,7 +100,7 @@ class AccountAddressController extends Controller
             $form,
             $this->getRequest(),
             $this->getDoctrine()->getManagerForClass(
-                $this->container->getParameter('orob2b_account.entity.account_address.class')
+                $this->container->getParameter('oro_account.entity.account_address.class')
             )
         );
 

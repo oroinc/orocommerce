@@ -1,11 +1,11 @@
 services:
-    orob2b_website.form.type.websiite_entity_visibility_type:
+    oro_website.form.type.websiite_entity_visibility_type:
         class: 'Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
         arguments:
             - "@doctrine"
-            - "@orob2b_website.website.provider"
+            - "@oro_website.website.provider"
         tags:
             - { name: form.type, alias: orob2b_website_scoped_data_type }
         calls:
-            - [setWebsiteClass,['%orob2b_website.entity.website.class%']]
+            - [setWebsiteClass,['%oro_website.entity.website.class%']]
 

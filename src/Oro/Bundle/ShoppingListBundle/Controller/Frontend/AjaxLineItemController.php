@@ -47,7 +47,7 @@ class AjaxLineItemController extends Controller
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $lineItem = (new LineItem())
@@ -100,7 +100,7 @@ class AjaxLineItemController extends Controller
      */
     public function removeProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
 
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
@@ -164,7 +164,7 @@ class AjaxLineItemController extends Controller
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
         $form = $this->createForm(ShoppingListType::NAME);
-        $manager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $response = $this->get('oro_form.model.update_handler')->handleUpdate($manager->create(), $form, [], [], null);
 
         if ($form->isValid()) {
@@ -204,7 +204,7 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productShoppingLists = $this->get('orob2b_shopping_list.data_provider.product_shopping_lists')
+        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
             ->getProductUnitsQuantity($product);
 
         return [

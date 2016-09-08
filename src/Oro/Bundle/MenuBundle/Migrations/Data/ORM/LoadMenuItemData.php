@@ -56,8 +56,8 @@ class LoadMenuItemData extends AbstractFixture implements
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->factory = $container->get('orob2b_menu.menu.factory');
-        $this->menuItemManager = $container->get('orob2b_menu.entity.menu_item_manager');
+        $this->factory = $container->get('oro_menu.menu.factory');
+        $this->menuItemManager = $container->get('oro_menu.entity.menu_item_manager');
         $this->router = $container->get('router');
     }
 

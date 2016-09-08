@@ -1,5 +1,5 @@
 services:
-    orob2b_frontend.layout.type.exception:
+    oro_frontend.layout.type.exception:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{status_code: {required: true}, status_text: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
              - { name: layout.block_type, alias: exception }
 
-    orob2b_frontend.block_type.extension.button_style:
+    oro_frontend.block_type.extension.button_style:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
             - [setOptionsConfig, [{style: ~}]]
@@ -15,7 +15,7 @@ services:
         tags:
             - { name: layout.block_type_extension, alias: button }
 
-    orob2b_frontend.block_type.back_link:
+    oro_frontend.block_type.back_link:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{icon: {default: 'left-open-mini'}}]]
@@ -23,3 +23,20 @@ services:
             - [setParent, ['link']]
         tags:
             - { name: layout.block_type, alias: back_link }
+
+    oro_frontend.block_type.embedded_list:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        label: ~
+                        items: {required: true}
+                        items_data: {default: []}
+                        item_key: {default: item}
+                        use_slider: {default: false}
+                        slider_options: {default: {slidesToShow: 4}}
+            - [setName, ['embedded_list']]
+        tags:
+            - { name: layout.block_type, alias: embedded_list }

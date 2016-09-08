@@ -44,7 +44,7 @@ class WarehouseInventoryLevelController extends RestController implements ClassR
      */
     public function getManager()
     {
-        return $this->get('orob2b_warehouse.warehouse_inventory_level.manager.api');
+        return $this->get('oro_warehouse.warehouse_inventory_level.manager.api');
     }
 
     /**

@@ -10,7 +10,7 @@ operations:
         order: 20
         preactions:
             - '@call_service_method':
-                service: orob2b_payment.provider.payment_transaction
+                service: oro_payment.provider.payment_transaction
                 method: getActiveAuthorizePaymentTransaction
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction

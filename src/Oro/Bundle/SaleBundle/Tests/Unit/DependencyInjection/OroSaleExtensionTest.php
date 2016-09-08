@@ -12,20 +12,20 @@ class OroSaleExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroSaleExtension());
 
         $expectedParameters = [
-            'orob2b_sale.entity.quote.class',
+            'oro_sale.entity.quote.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             // validators
-            'orob2b_sale.validator.quote_product',
+            'oro_sale.validator.quote_product',
             // form types
-            'orob2b_sale.form.type.quote_product',
-            'orob2b_sale.form.type.quote_product_offer',
-            'orob2b_sale.form.type.quote_product_collection',
-            'orob2b_sale.form.type.quote_product_offer_collection',
+            'oro_sale.form.type.quote_product',
+            'oro_sale.form.type.quote_product_offer',
+            'oro_sale.form.type.quote_product_collection',
+            'oro_sale.form.type.quote_product_offer_collection',
             // twig extensions
-            'orob2b_sale.twig.quote',
+            'oro_sale.twig.quote',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

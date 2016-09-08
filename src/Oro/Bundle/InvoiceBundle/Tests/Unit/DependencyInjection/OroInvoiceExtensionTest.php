@@ -11,13 +11,13 @@ class OroInvoiceExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroInvoiceExtension());
 
         $expectedParameters = [
-            'orob2b_invoice.entity.invoice.class'
+            'oro_invoice.entity.invoice.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_invoice.form.type.invoice',
+            'oro_invoice.form.type.invoice',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

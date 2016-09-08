@@ -107,7 +107,7 @@ class AjaxQuoteController extends Controller
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get('orob2b_payment.provider.payment_term');
+        return $this->get('oro_payment.provider.payment_term');
     }
 
     /**
@@ -123,6 +123,6 @@ class AjaxQuoteController extends Controller
      */
     protected function getQuoteRequestHandler()
     {
-        return $this->get('orob2b_sale.service.quote_request_handler');
+        return $this->get('oro_sale.service.quote_request_handler');
     }
 }
