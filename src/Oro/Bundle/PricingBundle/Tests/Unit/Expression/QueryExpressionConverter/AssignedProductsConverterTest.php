@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Expression\BinaryNode;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
 use Oro\Bundle\PricingBundle\Expression\ValueNode;
@@ -31,6 +32,15 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->converter = new AssignedProductsConverter($this->fieldsProvider);
+    }
+
+    public function testConvertUnsupported()
+    {
+        $expr = new Expr();
+        $params = [];
+
+        $node = $this->getMock(NodeInterface::class);
+        $this->assertNull($this->converter->convert($node, $expr, $params));
     }
 
     /**

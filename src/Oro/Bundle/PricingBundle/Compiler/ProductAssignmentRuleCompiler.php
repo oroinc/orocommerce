@@ -19,6 +19,11 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     ];
 
     /**
+     * @var array
+     */
+    protected $processedRules = [];
+
+    /**
      * @param PriceList $priceList
      * @return QueryBuilder|null
      */
@@ -52,7 +57,8 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     protected function createQueryBuilder(PriceList $priceList)
     {
-        $node = $this->expressionParser->parse($priceList->getProductAssignmentRule());
+        $rule = $this->getProcessedAssignmentRule($priceList);
+        $node = $this->expressionParser->parse($rule);
         $source = $this->nodeConverter->convert($node);
 
         return $this->queryConverter->convert($source);
@@ -90,9 +96,10 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     protected function applyRuleConditions(QueryBuilder $qb, PriceList $priceList)
     {
         $params = [];
+        $rule = $this->getProcessedAssignmentRule($priceList);
         $qb->andWhere(
             $this->expressionBuilder->convert(
-                $this->expressionParser->parse($priceList->getProductAssignmentRule()),
+                $this->expressionParser->parse($rule),
                 $qb->expr(),
                 $params,
                 $this->queryConverter->getTableAliasByColumn()
@@ -132,5 +139,20 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
                     )
                 )
             );
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return string
+     */
+    protected function getProcessedAssignmentRule(PriceList $priceList)
+    {
+        $ruleKey = md5($priceList->getProductAssignmentRule());
+        if (!array_key_exists($ruleKey, $this->processedRules)) {
+            $this->processedRules[$ruleKey] = $this->expressionPreprocessor
+                ->process($priceList->getProductAssignmentRule());
+        }
+
+        return $this->processedRules[$ruleKey];
     }
 }

@@ -18,7 +18,7 @@ class QueryExpressionBuilder implements QueryExpressionConverterInterface
     protected $registeredConverters = [];
 
     /**
-     * @var array|null
+     * @var array|QueryExpressionConverterInterface[]|null
      */
     protected $sortedConverters;
 

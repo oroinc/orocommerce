@@ -708,6 +708,7 @@ services:
         abstract: true
         arguments:
             - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.expression.preprocessor'
             - '@orob2b_pricing.expression.node_to_query_designer_converter'
             - '@orob2b_pricing.query.price_list_expression_query_converter'
             - '@orob2b_pricing.expression.query_expression_builder'
@@ -794,6 +795,17 @@ services:
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.relation_node']]
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.unary_node']]
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.value_node']]
+
+    orob2b_pricing.expression.preprocessor.product_assignment_rule:
+        class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor
+        arguments:
+            - ['@doctrine']
+        public: false
+
+    orob2b_pricing.expression.preprocessor:
+        class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessor
+        calls:
+            - ['registerPreprocessor', ['@orob2b_pricing.expression.preprocessor.product_assignment_rule']]
 
     orob2b_pricing.query.price_list_expression_query_converter:
         class: 'Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
