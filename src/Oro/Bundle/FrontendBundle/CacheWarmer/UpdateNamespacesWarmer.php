@@ -81,7 +81,7 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             $this->fixStringPrefix($defaultConnection, 'acl_classes', 'class_type');
             $this->fixStringPrefix($defaultConnection, 'oro_email_template', 'content');
             $this->fixStringPrefix($defaultConnection, 'oro_navigation_title', 'route');
-            $this->fixStringPrefix($defaultConnection, 'oro_redirect_slug', 'route_name');
+            $this->fixStringPrefix($defaultConnection, 'orob2b_redirect_slug', 'route_name');
             $this->fixStringPrefix($searchConnection, 'oro_search_item', 'alias');
             $this->fixStringPrefix($searchConnection, 'oro_search_index_integer', 'field');
 
