@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -75,8 +75,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterNoUser($user)
     {
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\GridResultAfter')
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -132,8 +132,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityManager')
             ->willReturn($em);
 
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new GridResultAfter($datagrid, $records, $query);
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new OrmResultAfter($datagrid, $records, $query);
 
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
@@ -172,8 +172,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityManager')
             ->willReturn($em);
 
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new GridResultAfter($datagrid, $records, $query);
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new OrmResultAfter($datagrid, $records, $query);
 
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
@@ -238,8 +238,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityManager')
             ->willReturn($em);
 
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new GridResultAfter($datagrid, $records, $query);
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new OrmResultAfter($datagrid, $records, $query);
 
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
