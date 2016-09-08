@@ -793,6 +793,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }
 
+    oro_pricing.validator_constraints.price_rule_relation_expressions_validator:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator'
+        arguments:
+            - '@oro_pricing.expression.parser'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
+
     oro_pricing.hander.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         arguments:
