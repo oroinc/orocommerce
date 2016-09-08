@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class ResolverEventConnectorPass implements CompilerPassInterface
 {
     const TAG_NAME = 'orob2b_tax.resolver';
-    const CONNECTOR_CLASS = 'orob2b_tax.event.resolver_event_connector.common_class';
+    const CONNECTOR_CLASS = 'oro_tax.event.resolver_event_connector.common_class';
     const CONNECTOR_SERVICE_NAME_SUFFIX = 'event.resolver_event_connector';
 
     /** {@inheritdoc} */

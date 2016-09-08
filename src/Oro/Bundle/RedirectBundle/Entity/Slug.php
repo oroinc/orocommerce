@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
- * @ORM\Table(name="orob2b_redirect_slug")
+ * @ORM\Table(name="oro_redirect_slug")
  * @ORM\Entity
  * @Config(
  *      defaultValues={

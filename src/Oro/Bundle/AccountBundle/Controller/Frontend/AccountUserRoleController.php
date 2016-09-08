@@ -31,7 +31,7 @@ class AccountUserRoleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class'),
+            'entity_class' => $this->container->getParameter('oro_account.entity.account_user_role.class'),
         ];
     }
 
@@ -112,7 +112,7 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
+        $handler = $this->get('oro_account.form.handler.update_account_user_role_frontend');
         $form = $handler->createForm($role);
 
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(

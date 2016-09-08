@@ -38,7 +38,7 @@ class AclPermissionController extends Controller
 
         $chainMetadataProvider->stopProviderEmulation();
 
-        $prefixResolver = $this->get('orob2b_account.acl.resolver.role_translation_prefix');
+        $prefixResolver = $this->get('oro_account.acl.resolver.role_translation_prefix');
 
         return [
             'levels' => $levels,

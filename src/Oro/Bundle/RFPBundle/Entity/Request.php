@@ -22,7 +22,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 /**
  * Request
  *
- * @ORM\Table("orob2b_rfp_request")
+ * @ORM\Table("oro_rfp_request")
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_rfp_request_index",
@@ -34,7 +34,8 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="quotes"
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",

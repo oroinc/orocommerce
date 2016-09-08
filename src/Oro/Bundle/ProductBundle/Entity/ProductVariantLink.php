@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_product_variant_link")
+ * @ORM\Table(name="oro_product_variant_link")
  * @Config
  */
 class ProductVariantLink

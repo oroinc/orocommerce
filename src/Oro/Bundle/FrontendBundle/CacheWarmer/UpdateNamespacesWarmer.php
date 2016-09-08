@@ -4,6 +4,7 @@ namespace Oro\Bundle\FrontendBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
@@ -19,9 +20,9 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 class UpdateNamespacesWarmer implements CacheWarmerInterface
 {
     /**
-     * @var Connection
+     * @var ManagerRegistry
      */
-    protected $defaultConnection;
+    protected $managerRegistry;
 
     /**
      * @var ConfigManager
@@ -34,13 +35,13 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     protected $applicationInstalled;
 
     /**
-     * @param Connection $defaultConnection
+     * @param ManagerRegistry $managerRegistry
      * @param ConfigManager $configManager
      * @param $applicationInstalled
      */
-    public function __construct(Connection $defaultConnection, ConfigManager $configManager, $applicationInstalled)
+    public function __construct(ManagerRegistry $managerRegistry, ConfigManager $configManager, $applicationInstalled)
     {
-        $this->defaultConnection = $defaultConnection;
+        $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
         $this->applicationInstalled = $applicationInstalled;
     }
@@ -54,24 +55,39 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             return;
         }
 
-        if (!$this->isUpdateRequired()) {
+        /** @var Connection $defaultConnection */
+        $defaultConnection = $this->managerRegistry->getConnection();
+
+        if (!$this->isUpdateRequired($defaultConnection)) {
             return; // all data already was migrated
         }
 
-        $configConnection = $this->configManager->getEntityManager()->getConnection();
+        /** @var Connection $configConnection */
+        $configConnection = $this->managerRegistry->getConnection('config');
+        /** @var Connection $searchConnection */
+        $searchConnection = $this->managerRegistry->getConnection('search');
 
-        $this->defaultConnection->beginTransaction();
+        $defaultConnection->beginTransaction();
         $configConnection->beginTransaction();
+        $searchConnection->beginTransaction();
         try {
-            $this->updateMigrationTables();
-            $this->updateAclClassesTable();
-            $this->updateEntityConfigTable();
-            $this->updateEntityConfigFieldTables();
-            $this->defaultConnection->commit();
+            $this->fixClassNames($defaultConnection, 'oro_migrations', 'bundle');
+            $this->fixClassNames($defaultConnection, 'oro_migrations_data', 'class_name');
+            $this->fixClassNames($defaultConnection, 'acl_classes', 'class_type');
+            $this->fixClassNames($defaultConnection, 'oro_security_permission_entity', 'name');
+            $this->fixClassNames($defaultConnection, 'oro_email_template', 'entityname');
+            $this->fixClassNames($searchConnection, 'oro_search_item', 'entity');
+
+            $this->updateEntityConfigTable($configConnection);
+            $this->updateEntityConfigFieldTables($configConnection);
+
+            $defaultConnection->commit();
             $configConnection->commit();
+            $searchConnection->commit();
         } catch (\Exception $e) {
-            $this->defaultConnection->rollBack();
+            $defaultConnection->rollBack();
             $configConnection->rollBack();
+            $searchConnection->rollBack();
             throw $e;
         }
 
@@ -89,12 +105,10 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     /**
      * @return bool
      */
-    protected function isUpdateRequired()
+    protected function isUpdateRequired(Connection $defaultConnection)
     {
         try {
-            $id = $this->defaultConnection->fetchColumn(
-                "SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1"
-            );
+            $id = $defaultConnection->fetchColumn("SELECT id FROM oro_migrations WHERE bundle LIKE 'OroB2B%' LIMIT 1");
         } catch (\Exception $e) {
             return false;
         }
@@ -102,56 +116,11 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         return !empty($id);
     }
 
-    protected function updateMigrationTables()
+    /**
+     * @param Connection $configConnection
+     */
+    protected function updateEntityConfigTable(Connection $configConnection)
     {
-        $migrations = $this->defaultConnection->fetchAll(
-            "SELECT id, bundle FROM oro_migrations WHERE bundle LIKE 'OroB2B%'"
-        );
-        foreach ($migrations as $migration) {
-            $id = $migration['id'];
-            $bundle = $migration['bundle'];
-            $bundle = preg_replace('/^OroB2B/', 'Oro', $bundle, 1);
-            $this->defaultConnection->executeQuery(
-                'UPDATE oro_migrations SET bundle = ? WHERE id = ?',
-                [$bundle, $id]
-            );
-        }
-
-        $fixtures = $this->defaultConnection->fetchAll(
-            "SELECT id, class_name FROM oro_migrations_data WHERE class_name LIKE 'OroB2B%'"
-        );
-        foreach ($fixtures as $fixture) {
-            $id = $fixture['id'];
-            $className = $fixture['class_name'];
-            $className = $this->replaceStringValue($className);
-
-            $this->defaultConnection->executeQuery(
-                'UPDATE oro_migrations_data SET class_name = ? WHERE id = ?',
-                [$className, $id]
-            );
-        }
-    }
-
-    protected function updateAclClassesTable()
-    {
-        $classes = $this->defaultConnection->fetchAll(
-            "SELECT id, class_type FROM acl_classes WHERE class_type LIKE 'OroB2B%'"
-        );
-        foreach ($classes as $class) {
-            $id = $class['id'];
-            $classType = $class['class_type'];
-            $classType = preg_replace('/^OroB2B/', 'Oro', $classType, 1);
-            $this->defaultConnection->executeQuery(
-                'UPDATE acl_classes SET class_type = ? WHERE id = ?',
-                [$classType, $id]
-            );
-        }
-    }
-
-    protected function updateEntityConfigTable()
-    {
-        $configConnection = $this->configManager->getEntityManager()->getConnection();
-
         $entities = $configConnection->fetchAll('SELECT id, class_name, data FROM oro_entity_config');
         foreach ($entities as $entity) {
             $id = $entity['id'];
@@ -172,10 +141,11 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         }
     }
 
-    protected function updateEntityConfigFieldTables()
+    /**
+     * @param Connection $configConnection
+     */
+    protected function updateEntityConfigFieldTables(Connection $configConnection)
     {
-        $configConnection = $this->configManager->getEntityManager()->getConnection();
-
         $fields = $configConnection->fetchAll('SELECT id, data FROM oro_entity_config_field');
         foreach ($fields as $field) {
             $id = $field['id'];
@@ -207,6 +177,22 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
                 $parameters = [$value, $id];
                 $configConnection->executeUpdate($sql, $parameters);
             }
+        }
+    }
+
+    /**
+     * @param Connection $connection
+     * @param string $table
+     * @param string $column
+     */
+    protected function fixClassNames(Connection $connection, $table, $column)
+    {
+        $rows = $connection->fetchAll("SELECT id, $column FROM $table WHERE $column LIKE 'OroB2B%'");
+        foreach ($rows as $row) {
+            $id = $row['id'];
+            $className = $row[$column];
+            $className = preg_replace('/^OroB2B/', 'Oro', $className, 1);
+            $connection->executeQuery("UPDATE $table SET $column = ? WHERE id = ?", [$className, $id]);
         }
     }
 

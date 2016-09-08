@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -11,9 +12,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const LANDING_PAGE_TABLE_NAME = 'orob2b_cms_page';
+    const PRODUCT_TABLE_NAME = 'oro_product';
+    const CATEGORY_TABLE_NAME = 'oro_catalog_category';
+    const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
     /** @var ExtendExtension */
@@ -32,7 +33,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -89,7 +90,11 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'cascade' => ['all'],
+                ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
             ]

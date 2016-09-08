@@ -1,5 +1,5 @@
 services:
-    orob2b_pricing.layout.type.product_prices:
+    oro_pricing.layout.type.product_prices:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{prices: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
              - { name: layout.block_type, alias: product_prices }
 
-    orob2b_pricing.block_type.currency_switcher:
+    oro_pricing.block_type.currency_switcher:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             -
@@ -20,7 +20,7 @@ services:
         tags:
              - { name: layout.block_type, alias: currency_switcher }
 
-    orob2b_pricing.layout.type.totals:
+    oro_pricing.layout.type.totals:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             -

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ComponentProcessorPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'orob2b_product.component_processor.registry';
+    const REGISTRY_SERVICE = 'oro_product.component_processor.registry';
     const TAG = 'orob2b_product.quick_add_processor';
 
     /**

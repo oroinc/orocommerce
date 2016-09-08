@@ -106,6 +106,12 @@
                             <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
+                        {% if quote.paymentTerm is not empty %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.payment_term.label'|trans }}</td>
+                                <td>{{ quote.paymentTerm.label|escape }}</td>
+                            </tr>
+                        {% endif %}
                         {{ block_widget(block) }}
                         </tbody>
                     </table>

@@ -13,4 +13,4 @@ layout:
                 top_nav_controls:
                     top_sign_in: ~
 
-    conditions: '!context["logged_user"]'
+    conditions: '!context["is_logged_in"]'

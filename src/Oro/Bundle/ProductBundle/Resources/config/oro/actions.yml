@@ -49,7 +49,7 @@ action_groups:
         acl_resource: orob2b_product_create
         actions:
             - '@call_service_method':
-                service: orob2b_product.service.duplicator
+                service: oro_product.service.duplicator
                 method: duplicate
                 method_parameters: [$.data]
                 attribute: $.productCopy

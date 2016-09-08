@@ -25,7 +25,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getHandlerId()
     {
-        return 'orob2b_catalog.category_tree_handler';
+        return 'oro_catalog.category_tree_handler';
     }
 
     /**

@@ -25,7 +25,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
+ * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_order_index",
@@ -54,13 +54,15 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="orders"
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)

@@ -62,7 +62,7 @@ class RequestController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class'),
+            'entity_class' => $this->container->getParameter('oro_rfp.entity.request.class'),
         ];
     }
 

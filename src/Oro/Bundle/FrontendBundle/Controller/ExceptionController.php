@@ -32,7 +32,7 @@ class ExceptionController extends BaseExceptionController
      */
     protected function isLayoutRendering(Request $request)
     {
-        return $this->container->get('orob2b_frontend.request.frontend_helper')->isFrontendRequest($request)
+        return $this->container->get('oro_frontend.request.frontend_helper')->isFrontendRequest($request)
             && $request->getRequestFormat() === 'html'
             && !$this->showException($request);
     }

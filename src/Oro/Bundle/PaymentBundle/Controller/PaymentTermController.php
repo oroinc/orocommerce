@@ -47,7 +47,7 @@ class PaymentTermController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_payment.entity.payment_term.class')
+            'entity_class' => $this->container->getParameter('oro_payment.entity.payment_term.class')
         ];
     }
 

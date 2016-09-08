@@ -86,7 +86,7 @@ class CategoryHandler
         if ($category->getDefaultProductOptions()) {
             $category->getDefaultProductOptions()->updateUnitPrecision();
         }
-        
+
         $this->manager->persist($category);
         $this->manager->flush();
     }
@@ -109,8 +109,13 @@ class CategoryHandler
             $category->addProduct($product);
 
             if ($productCategory instanceof Category) {
+                $categoriesToUpdate = [$productCategory];
+                if ($category->getId() !== null) {
+                    $categoriesToUpdate[] = $category;
+                }
                 // both categories must be updated in the same flush
-                $this->manager->flush([$productCategory, $category]);
+                //EDIT: we will flush $category only if it is an existing one, not a category that is now added
+                $this->manager->flush($categoriesToUpdate);
             }
         }
     }
