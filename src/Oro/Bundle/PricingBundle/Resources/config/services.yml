@@ -750,11 +750,8 @@ services:
         arguments:
             - '@oro_pricing.expression.expression_language_converter'
         calls:
-            - [addNameMapping, ['product', '%oro_product.entity.product.class%']]
-            - [addNameMapping, ['pricelist', '%oro_pricing.entity.product_price.class%']]
-            - [addExpressionMapping, ['PriceList.price.currency', 'pricelist.currency']]
-            - [addExpressionMapping, ['PriceList.price.value', 'pricelist.value']]
-            - [addExpressionMapping, ['PriceList.price', 'pricelist.value']]
+            - [addNameMapping, ['product', '%orob2b_product.entity.product.class%']]
+            - [addNameMapping, ['pricelist', '%orob2b_pricing.entity.price_list.class%']]
 
     oro_pricing.expression.node_to_query_designer_converter:
         class: 'Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
