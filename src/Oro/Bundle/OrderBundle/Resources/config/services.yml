@@ -244,3 +244,8 @@ services:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_order.layout.provider.top_selling_items:
+        parent: oro_product.layout.data_provider.featured_products
+        tags:
+            - { name: layout.data_provider, alias: top_selling_items }

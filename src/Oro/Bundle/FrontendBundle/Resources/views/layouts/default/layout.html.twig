@@ -130,3 +130,46 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block embedded_list_widget %}
+    <div class="embedded-list">
+        {% set attr = layout_attr_defaults(attr, {
+            'class': 'embedded-list__container'
+        }) %}
+
+        {% if use_slider %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+                '~data-page-component-options': slider_options,
+                '~class': ' embedded-list__container--slider'
+            }) %}
+        {% else %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' embedded-list__container--tiles'
+            }) %}
+        {% endif %}
+
+        {% if label is defined %}
+            <h2 class="embedded-list__label">
+                <span class="embedded-list__label-inner">{{ label|trans }}</span>
+            </h2>
+        {% endif %}
+
+        <div {{ block('block_attributes') }}>
+            {% for item in items %}
+                <div class="embedded-list__item">
+                    {% set context = {
+                        (item_key): item
+                    } %}
+                    {% for dataKey, dataValue in items_data %}
+                        {% set context = context|merge({
+                            (dataKey): dataValue[item.id]|default(null)
+                        }) %}
+                    {% endfor %}
+                    {% do block|merge_context(context) %}
+                    {{ block('container_widget') }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
