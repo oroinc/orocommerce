@@ -211,30 +211,10 @@ class PriceListRuleCompilerTest extends WebTestCase
                 $priceList->getId(),
                 'liter',
                 'USD',
-                '10',
-                'product.1',
-                $priceRule->getId(),
-                '23.2',
-            ],
-            [
-                $product1->getId(),
-                $priceList->getId(),
-                'liter',
-                'USD',
                 '1',
                 'product.1',
                 $priceRule->getId(),
                 '21',
-            ],
-            [
-                $product1->getId(),
-                $priceList->getId(),
-                'bottle',
-                'EUR',
-                '11',
-                'product.1',
-                $priceRule->getId(),
-                '32.2',
             ],
             [
                 $product1->getId(),
@@ -250,7 +230,6 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $q = $qb->getQuery()->getSQL();
         $this->assertEquals($expected, $actual);
     }
 
