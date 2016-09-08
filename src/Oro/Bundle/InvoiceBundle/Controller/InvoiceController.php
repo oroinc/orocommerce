@@ -31,7 +31,7 @@ class InvoiceController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_invoice.entity.invoice.class'),
+            'entity_class' => $this->container->getParameter('oro_invoice.entity.invoice.class'),
             'gridName' => 'invoices-grid'
         ];
     }
@@ -90,7 +90,7 @@ class InvoiceController extends Controller
     public function createAction()
     {
         $invoice = new Invoice();
-        $invoice->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
+        $invoice->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         //TODO: BB-3824 Change the getting currency from system configuration
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
 
@@ -174,9 +174,9 @@ class InvoiceController extends Controller
         );
 
         if ($productIds) {
-            $tierPrices = $this->get('orob2b_pricing.provider.combined_product_price')
+            $tierPrices = $this->get('oro_pricing.provider.combined_product_price')
                 ->getPriceByPriceListIdAndProductIds(
-                    $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
+                    $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
                     $productIds->toArray(),
                     $invoice->getCurrency()
                 );
@@ -209,9 +209,9 @@ class InvoiceController extends Controller
         );
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->get('orob2b_pricing.provider.combined_product_price')->getMatchedPrices(
+            $matchedPrices = $this->get('oro_pricing.provider.combined_product_price')->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
-                $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()
+                $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
             );
         }
 
@@ -233,6 +233,6 @@ class InvoiceController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

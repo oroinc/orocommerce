@@ -50,6 +50,6 @@ class AjaxOrderController extends BaseAjaxOrderController
      */
     protected function getOrderHandler()
     {
-        return $this->get('orob2b_order.request_handler.frontend_order_data_handler');
+        return $this->get('oro_order.request_handler.frontend_order_data_handler');
     }
 }

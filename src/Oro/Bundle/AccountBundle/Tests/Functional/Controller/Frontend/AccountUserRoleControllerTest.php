@@ -77,8 +77,8 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function warmUpAces()
     {
         $classes = [
-            $this->getContainer()->getParameter('orob2b_account.entity.account_user.class'),
-            $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class'),
+            $this->getContainer()->getParameter('oro_account.entity.account_user.class'),
+            $this->getContainer()->getParameter('oro_account.entity.account_user_role.class'),
         ];
 
         /** @var AclManager $aclManager */

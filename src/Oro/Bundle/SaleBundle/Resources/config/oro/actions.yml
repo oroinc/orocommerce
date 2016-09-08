@@ -66,7 +66,7 @@ operations:
         form_init:
             - '@call_service_method':
                 attribute: $.email
-                service: orob2b_sale.helper.notification
+                service: oro_sale.helper.notification
                 method: getEmailModel
                 method_parameters: [$.data]
             - '@call_service_method':
@@ -109,7 +109,7 @@ operations:
                             data:
                                 quote: $.data
                     - '@call_service_method':
-                        service: orob2b_sale.manager.quote_demand_manager
+                        service: oro_sale.manager.quote_demand_manager
                         method: recalculateSubtotals
                         method_parameters: [$.quoteDemand]
                     - '@flush_entity': $.quoteDemand
@@ -137,7 +137,7 @@ action_groups:
         acl_resource: oro_email_email_create
         actions:
             - '@call_service_method':
-                service: orob2b_sale.helper.notification
+                service: oro_sale.helper.notification
                 method: send
                 method_parameters: [$.email, $.data]
 

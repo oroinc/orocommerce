@@ -1,6 +1,6 @@
 services:
     #EventListeners
-    orob2b_seo.event_listener.product_form_view:
+    oro_seo.event_listener.product_form_view:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener'
         arguments:
             - '@request_stack'
@@ -10,7 +10,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
-    orob2b_seo.event_listener.category_form_view:
+    oro_seo.event_listener.category_form_view:
         class: 'Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener'
         arguments:
             - '@request_stack'
@@ -19,7 +19,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
-    orob2b_seo.event_listener.page_form_view:
+    oro_seo.event_listener.page_form_view:
         class: 'Oro\Bundle\SEOBundle\EventListener\PageFormViewListener'
         arguments:
             - '@request_stack'
@@ -30,17 +30,17 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onPageEdit }
 
     #Forms
-    orob2b_seo.form.extension.page_type:
+    oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
         tags:
             - { name: form.type_extension, alias: orob2b_cms_page }
 
-    orob2b_seo.form.extension.product_type:
+    oro_seo.form.extension.product_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
-    orob2b_seo.form.extension.category_type:
+    oro_seo.form.extension.category_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }

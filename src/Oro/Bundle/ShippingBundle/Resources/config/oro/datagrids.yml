@@ -1,7 +1,7 @@
 datagrids:
     shipping-rule-grid:
         acl_resource: orob2b_shipping_rule_view
-        extended_entity_name: %orob2b_shipping.entity.shipping_rule.class%
+        extended_entity_name: %oro_shipping.entity.shipping_rule.class%
         options:
             entityHint:        shipping rule
             entity_pagination: true
@@ -17,7 +17,7 @@ datagrids:
                     - shipping_rule.currency
                     - shipping_rule.conditions
                 from:
-                    - { table: %orob2b_shipping.entity.shipping_rule.class%, alias: shipping_rule }
+                    - { table: %oro_shipping.entity.shipping_rule.class%, alias: shipping_rule }
 
         columns:
             id:
@@ -143,12 +143,12 @@ datagrids:
                 acl_resource: orob2b_shipping_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         ok
-                entity_name:  %orob2b_shipping.entity.shipping_rule.class%
+                entity_name:  %oro_shipping.entity.shipping_rule.class%
                 data_identifier: shipping_rule.id
             disable:
                 type:         shippingruledisable
                 acl_resource: orob2b_shipping_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         remove
-                entity_name:  %orob2b_shipping.entity.shipping_rule.class%
+                entity_name:  %oro_shipping.entity.shipping_rule.class%
                 data_identifier: shipping_rule.id

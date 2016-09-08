@@ -168,7 +168,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      */
     protected function getAccountManager()
     {
-        return $this->get('orob2b_account.manager.account.api.attribute');
+        return $this->get('oro_account.manager.account.api.attribute');
     }
 
     /**
@@ -176,7 +176,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      */
     public function getManager()
     {
-        return $this->get('orob2b_account.account_address.manager.api');
+        return $this->get('oro_account.account_address.manager.api');
     }
 
     /**

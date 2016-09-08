@@ -29,7 +29,7 @@ class PaymentTransactionProviderTest extends WebTestCase
             ]
         );
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')
             ->setToken(new UsernamePasswordToken(self::USER_NAME, self::AUTH_PW, 'user'));
@@ -56,7 +56,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
@@ -88,7 +88,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
@@ -112,7 +112,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
@@ -132,7 +132,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')->setToken(null);
 
@@ -150,7 +150,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
@@ -180,7 +180,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     {
         $this->initClient();
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
         /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
         $logger = $this->getMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');
@@ -197,7 +197,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     {
         $this->initClient();
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
@@ -211,7 +211,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     {
         $this->initClient();
 
-        $paymentTransactionProvider = $this->getContainer()->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
         /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
         $logger = $this->getMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');

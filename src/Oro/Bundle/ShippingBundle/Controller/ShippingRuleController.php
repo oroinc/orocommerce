@@ -27,7 +27,7 @@ class ShippingRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_shipping.entity.shipping_rule.class')
+            'entity_class' => $this->container->getParameter('oro_shipping.entity.shipping_rule.class')
         ];
     }
 

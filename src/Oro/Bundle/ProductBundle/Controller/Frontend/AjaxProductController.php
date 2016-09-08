@@ -35,7 +35,7 @@ class AjaxProductController extends Controller
 
         $queryBuilder = $this->getProductRepository()->getFilterProductWithNamesQueryBuilder($skus);
         /** @var Product[] $products */
-        $products = $this->container->get('orob2b_product.product.manager')
+        $products = $this->container->get('oro_product.product.manager')
             ->restrictQueryBuilder($queryBuilder, [])->getQuery()->getResult();
 
         foreach ($products as $product) {
@@ -52,7 +52,7 @@ class AjaxProductController extends Controller
      */
     protected function getProductRepository()
     {
-        $productClass = $this->container->getParameter('orob2b_product.entity.product.class');
+        $productClass = $this->container->getParameter('oro_product.entity.product.class');
 
         return $this->getDoctrine()->getManagerForClass($productClass)->getRepository($productClass);
     }

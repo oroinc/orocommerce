@@ -29,7 +29,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testCreateOrder()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');
         }
 

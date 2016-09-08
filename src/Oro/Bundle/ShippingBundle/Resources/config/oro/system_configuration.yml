@@ -21,7 +21,7 @@ system_configuration:
                 label: oro.shipping.system_configuration.fields.length_units.label
                 multiple: true
                 full_list: true
-                data_transformer: orob2b_shipping.form.data_transformer.length_unit
+                data_transformer: oro_shipping.form.data_transformer.length_unit
                 constraints:
                     - NotBlank: ~
         orob2b_shipping.weight_units:
@@ -31,7 +31,7 @@ system_configuration:
                 label: oro.shipping.system_configuration.fields.weight_units.label
                 multiple: true
                 full_list: true
-                data_transformer: orob2b_shipping.form.data_transformer.weight_unit
+                data_transformer: oro_shipping.form.data_transformer.weight_unit
                 constraints:
                     - NotBlank: ~
         orob2b_shipping.freight_classes:
@@ -41,7 +41,7 @@ system_configuration:
                 label: oro.shipping.system_configuration.fields.freight_classes.label
                 multiple: true
                 full_list: true
-                data_transformer: orob2b_shipping.form.data_transformer.freight_class
+                data_transformer: oro_shipping.form.data_transformer.freight_class
                 constraints:
                     - NotBlank: ~
     tree:

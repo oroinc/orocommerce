@@ -40,7 +40,7 @@ trait MessageQueueTrait
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('orob2b_pricing.price_list_trigger_handler')
+        self::getContainer()->get('oro_pricing.price_list_trigger_handler')
             ->sendScheduledTriggers();
     }
 

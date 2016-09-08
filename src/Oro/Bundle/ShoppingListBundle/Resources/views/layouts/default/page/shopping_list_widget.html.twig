@@ -12,12 +12,12 @@
         class: attr.class|default('') ~ " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
     })) %}
 
-    <li {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </li>
+    </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_widget %}
+{% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
         <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
             <i class="cf-clipboard"></i>
@@ -30,7 +30,7 @@
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_widget %}
+{% block _main_menu_shopping_lists_dropdown_content_widget %}
     {% set attr = attr|merge({
         id: 'order-widget-dropdown',
         class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode"
@@ -41,7 +41,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_container_widget %}
+{% block _main_menu_shopping_lists_dropdown_container_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " widget__container"
     }) %}
@@ -56,7 +56,22 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_item_widget %}
+{% block _main_menu_shopping_lists_dropdown_container_sync_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " widget__container"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {% for shoppingList in shoppingLists -%}
+            {% do block|merge_context({
+                shoppingList: shoppingList
+            }) %}
+            {{ block('container_widget') }}
+        {%- endfor %}
+    </div>
+{% endblock %}
+
+{% block shopping_list_dropdown_item_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " order-widget__item"
     }) %}
@@ -82,7 +97,7 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_shopping_lists_widget_content_new_item_btn_widget %}
+{% block shopping_list_dropdown_create_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {{ UI.clientLink({
         'aCss': 'order-widget__create-btn',

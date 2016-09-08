@@ -1,4 +1,5 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
+    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% set shoppingListsTemplate %}
         {% spaceless %}
             {{ block_widget(block) }}
@@ -10,9 +11,9 @@
         '~data-page-component-options': {
             view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
             modelAttr: {
-                shopping_lists: shoppingLists
+                shopping_lists: productShoppingLists
             },
-            template: shoppingListsTemplate
+            template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
         },
         'data-product-shopping-lists': ''
     }) %}
@@ -71,6 +72,7 @@
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
+    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
     {% set shoppingListsTemplate %}
         {% spaceless %}
             {{ block_widget(block) }}
@@ -82,7 +84,7 @@
             type: 'product-shopping-lists',
             createOnEvent: 'click',
             options: {
-                template: shoppingListsTemplate,
+                template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>'),
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                     enable: resource_granted('orob2b_shopping_list_frontend_update'),

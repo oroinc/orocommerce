@@ -18,6 +18,6 @@ class SidebarController extends BaseController
      */
     protected function getSidebarStateClass()
     {
-        return $this->getParameter('orob2b_account.entity.sidebar_state.class');
+        return $this->getParameter('oro_account.entity.sidebar_state.class');
     }
 }
