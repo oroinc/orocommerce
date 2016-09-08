@@ -8,9 +8,9 @@ use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -113,7 +113,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function submitWithPermissionAndCustomFieldsAndAccountAddressProvider()
     {
