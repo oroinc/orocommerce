@@ -30,6 +30,16 @@
     </div>
 {% endblock %}
 
+{% block _login_form_remenber_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' grid__row grid__row--'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _login_form_password_widget %}
     {% set label_attr = layout_attr_defaults(attr, {
         '~class': " label label--full"
