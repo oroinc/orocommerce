@@ -27,11 +27,9 @@ class OrmIndexer extends AbstractIndexer
         foreach ($entities as $entity) {
             $entityClass = $this->doctrineHelper->getEntityClass($entity);
 
-            if (!$this->mappingProvider->isClassSupported($entityClass)) {
-                continue;
+            if ($this->mappingProvider->isClassSupported($entityClass)) {
+                $sortedEntitiesData[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
             }
-
-            $sortedEntitiesData[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
         }
 
         foreach ($sortedEntitiesData as $entityClass => $entityIds) {
