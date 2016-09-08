@@ -56,3 +56,15 @@
     @include success-state;
   }
 }
+
+@mixin breakpoint($type) {
+  $breakpoints: (
+    'desktop': '(min-width: ' + $breakpoint-desktop + ')',
+    'tablet': '(max-width: ' +  $breakpoint-tablet + ')',
+    'mobile': '(max-width: ' + $breakpoint-mobile + ')'
+  );
+
+  @media #{map-get($breakpoints, $type)} {
+    @content;
+  }
+}
