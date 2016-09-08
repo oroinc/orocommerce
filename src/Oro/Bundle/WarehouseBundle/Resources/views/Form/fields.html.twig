@@ -19,7 +19,7 @@
 
 {% block oro_warehouse_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob_warehouse_collection_prototype(form) %}
+        {% set prototype_html = _self.oro_warehouse_collection_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -38,7 +38,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob_warehouse_collection_prototype(child) }}
+                            {{ _self.oro_warehouse_collection_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -51,7 +51,7 @@
     </div>
 {% endblock %}
 
-{% macro orob_warehouse_collection_prototype(widget) %}
+{% macro oro_warehouse_collection_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}

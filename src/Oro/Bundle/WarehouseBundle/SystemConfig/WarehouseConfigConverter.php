@@ -86,14 +86,9 @@ class WarehouseConfigConverter
      */
     protected function createWarehouseConfig(array $config, $warehouses)
     {
-        $configModel = new WarehouseConfig();
-
         foreach ($warehouses as $warehouse) {
             if ($config[self::WAREHOUSE_KEY] === $warehouse->getId()) {
-                $configModel->setWarehouse($warehouse)
-                    ->setPriority($config[self::PRIORITY_KEY]);
-
-                return $configModel;
+                return new WarehouseConfig($warehouse, $config[self::PRIORITY_KEY]);
             }
         }
 

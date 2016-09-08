@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -34,24 +32,13 @@ class WarehouseCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'website' => null,
                 'type' => WarehouseSelectWithPriorityType::NAME,
                 'mapped' => false,
                 'label' => false,
-                'handle_primary' => false,
                 'constraints' => [new UniqueWarehouse()],
                 'required' => false,
-                'render_as_widget' => false,
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['render_as_widget'] = $options['render_as_widget'];
     }
 
     /**

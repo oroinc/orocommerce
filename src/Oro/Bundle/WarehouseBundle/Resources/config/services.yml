@@ -41,7 +41,7 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%orob2b_warehouse.entity.warehouse_inventory_level.class%' }
 
-    orob2b_warehouse.form.autocomplete.warehouse.search_handler:
+    oro_warehouse.form.autocomplete.warehouse.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -50,12 +50,12 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_warehouse, acl_resource: orob2b_warehouse_view }
 
-    orob_warehouse.validator.unique_warehouse:
+    oro_warehouse.validator.unique_warehouse:
         class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
 
-    orob_warehouse.event_listener.system_config:
+    oro_warehouse.event_listener.system_config:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
         arguments:
             - '@oro_warehouse.system_config_converter'

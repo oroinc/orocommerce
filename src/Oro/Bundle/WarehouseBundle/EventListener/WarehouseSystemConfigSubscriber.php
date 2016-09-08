@@ -16,11 +16,6 @@ class WarehouseSystemConfigSubscriber
     protected $converter;
 
     /**
-     * @var boolean
-     */
-    protected $isApplicable;
-
-    /**
      * @param WarehouseConfigConverter $converter
      */
     public function __construct(WarehouseConfigConverter $converter)
@@ -30,7 +25,6 @@ class WarehouseSystemConfigSubscriber
 
     /**
      * @param ConfigSettingsUpdateEvent $event
-     * @return array
      */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
@@ -62,9 +56,7 @@ class WarehouseSystemConfigSubscriber
      */
     protected function isSettingsApplicable(array $settings, $settingsKey)
     {
-        $this->isApplicable = is_array($settings) && array_key_exists($settingsKey, $settings);
-
-        return $this->isApplicable;
+        return is_array($settings) && array_key_exists($settingsKey, $settings);
     }
 
     /**

@@ -27,7 +27,6 @@ class WarehouseSelectWithPriorityType extends AbstractType
                     'empty_data' => null,
                     'required' => true,
                     'label' => 'oro.warehouse.entity_label',
-                    'create_enabled' => false,
                     'constraints' => [new NotBlank()],
                 ]
             )

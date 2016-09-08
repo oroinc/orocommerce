@@ -17,14 +17,10 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-
         $rootNode = $treeBuilder->root(OroWarehouseExtension::ALIAS);
-
         SettingsBuilder::append(
             $rootNode,
-            [
-                self::ENABLED_WAREHOUSES => [ 'type' => 'array', 'value' => []],
-            ]
+            [self::ENABLED_WAREHOUSES => [ 'type' => 'array', 'value' => []]]
         );
 
         return $treeBuilder;

@@ -32,12 +32,9 @@ class WarehouseSystemConfigType extends AbstractType
             'options' => [
                 'data_class' => $this->warehouseConfigClassName,
             ],
-            'allow_add_after' => false,
-            'show_form_when_empty' => true,
             'allow_add' => true,
             'mapped' => true,
             'label' => false,
-            'error_bubbling' => false
         ]);
     }
 
