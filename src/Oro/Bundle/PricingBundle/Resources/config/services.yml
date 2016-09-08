@@ -799,7 +799,7 @@ services:
     orob2b_pricing.expression.preprocessor.product_assignment_rule:
         class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor
         arguments:
-            - ['@doctrine']
+            - '@doctrine'
         public: false
 
     orob2b_pricing.expression.preprocessor:
