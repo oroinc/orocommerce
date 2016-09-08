@@ -17,7 +17,7 @@ class AddProductsMassAction extends AjaxMassAction
         }
 
         if (!isset($options['handler'])) {
-            $options['handler'] = 'orob2b_shopping_list.mass_action.add_products_handler';
+            $options['handler'] = 'oro_shopping_list.mass_action.add_products_handler';
         }
 
         if (!isset($options['route'])) {

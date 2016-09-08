@@ -16,14 +16,14 @@ class OroOrderExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroOrderExtension());
 
         $expectedParameters = [
-            'orob2b_order.entity.order.class',
+            'oro_order.entity.order.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_order.form.type.order',
-            'orob2b_order.order.manager.api',
-            'orob2b_order.layout.provider.order_shipping_method',
+            'oro_order.form.type.order',
+            'oro_order.order.manager.api',
+            'oro_order.layout.provider.order_shipping_method',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

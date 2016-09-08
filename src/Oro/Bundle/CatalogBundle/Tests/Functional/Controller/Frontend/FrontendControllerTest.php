@@ -32,7 +32,7 @@ class FrontendControllerTest extends WebTestCase
 
         /** @var AccountUser $loggedUser */
         $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $categories = $this->getContainer()->get('orob2b_catalog.provider.category_tree_provider')->getCategories(
+        $categories = $this->getContainer()->get('oro_catalog.provider.category_tree_provider')->getCategories(
             $loggedUser,
             null,
             false

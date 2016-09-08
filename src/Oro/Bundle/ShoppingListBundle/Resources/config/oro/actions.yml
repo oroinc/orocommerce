@@ -10,7 +10,7 @@ operations:
             icon: icon-briefcase
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.service.product_data_storage
+                service: oro_shopping_list.service.product_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
             - '@redirect':
@@ -55,11 +55,11 @@ operations:
             template: OroShoppingListBundle:Action:buttons.html.twig
         preactions:
             - '@call_service_method':
-                service: orob2b_shopping_list.shopping_list.manager
+                service: oro_shopping_list.shopping_list.manager
                 method: getShoppingLists
                 attribute: $.shoppingLists
             - '@call_service_method':
-                service: orob2b_shopping_list.processor.quick_add
+                service: oro_shopping_list.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
@@ -96,7 +96,7 @@ operations:
                 component_name: '[name$="[component]"]'
         preactions:
             - '@call_service_method':
-                service: orob2b_shopping_list.processor.quick_add_to_checkout
+                service: oro_shopping_list.processor.quick_add_to_checkout
                 method: isAllowed
                 attribute: $.isAllowed
         preconditions:
@@ -123,7 +123,7 @@ operations:
         form_init:
             - '@get_active_user': $.currentUser
             - '@call_service_method':
-                service: orob2b_shopping_list.handler.shopping_list_line_item
+                service: oro_shopping_list.handler.shopping_list_line_item
                 method: prepareLineItemWithProduct
                 method_parameters: [$.currentUser, $.data]
                 attribute: $.lineItem
@@ -213,7 +213,7 @@ operations:
             - '@assign_value': [$.lineItem.shoppingList, $.data.shoppingList]
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.manager.shopping_list_total
+                service: oro_shopping_list.manager.shopping_list_total
                 method: recalculateTotals
                 method_parameters: [$.data.shoppingList, true]
             - '@flash_message':
@@ -236,7 +236,7 @@ operations:
                 - '@equal': [$.data.isAllowedRFP, true]
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.service.product_data_storage
+                service: oro_shopping_list.service.product_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
             - '@redirect':
@@ -261,7 +261,7 @@ operations:
             - shopping-list-line-items-grid
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.manager.shopping_list_total
+                service: oro_shopping_list.manager.shopping_list_total
                 method: recalculateTotals
                 method_parameters: [$.data.shoppingList, true]
 
@@ -275,11 +275,11 @@ action_groups:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.handler.shopping_list_line_item
+                service: oro_shopping_list.handler.shopping_list_line_item
                 method: processLineItem
                 method_parameters: [$.line_item, $.form]
             - '@call_service_method':
-                service: orob2b_shopping_list.service.message_generator
+                service: oro_shopping_list.service.message_generator
                 method: getSuccessMessage
                 method_parameters: [$.line_item.shoppingList.id, 1, oro.shoppinglist.lineitem.flash.added]
                 attribute: $.successMessage
@@ -293,6 +293,6 @@ action_groups:
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
             - '@call_service_method':
-                service: orob2b_shopping_list.shopping_list.manager
+                service: oro_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]

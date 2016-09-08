@@ -45,7 +45,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         );
 
         $this->registry = $this->getContainer()->get('doctrine');
-        $this->compiler = $this->getContainer()->get('orob2b_pricing.compiler.price_list_rule_compiler');
+        $this->compiler = $this->getContainer()->get('oro_pricing.compiler.price_list_rule_compiler');
     }
 
     public function testApplyRuleConditions()

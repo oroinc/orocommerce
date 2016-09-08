@@ -49,7 +49,7 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user.class')
+            'entity_class' => $this->container->getParameter('oro_account.entity.account_user.class')
         ];
     }
 
@@ -102,13 +102,13 @@ class AccountUserController extends Controller
      */
     protected function update(AccountUser $accountUser, Request $request)
     {
-        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+        $form = $this->get('oro_account.provider.frontend_account_user_form')
             ->getAccountUserForm($accountUser)
             ->getForm();
         $handler = new AccountUserHandler(
             $form,
             $request,
-            $this->get('orob2b_account_user.manager'),
+            $this->get('oro_account_user.manager'),
             $this->get('oro_security.security_facade'),
             $this->get('translator'),
             $this->get('logger')

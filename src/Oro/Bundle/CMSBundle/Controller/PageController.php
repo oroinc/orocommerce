@@ -61,7 +61,7 @@ class PageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_cms.entity.page.class')
+            'entity_class' => $this->container->getParameter('oro_cms.entity.page.class')
         ];
     }
 
@@ -120,7 +120,7 @@ class PageController extends Controller
             $form,
             $this->getRequest(),
             $this->getDoctrine()->getManagerForClass('OroCMSBundle:Page'),
-            $this->get('orob2b_redirect.slug.manager')
+            $this->get('oro_redirect.slug.manager')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

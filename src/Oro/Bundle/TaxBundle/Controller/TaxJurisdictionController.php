@@ -25,7 +25,7 @@ class TaxJurisdictionController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_tax.entity.tax_jurisdiction.class')
+            'entity_class' => $this->container->getParameter('oro_tax.entity.tax_jurisdiction.class')
         ];
     }
 

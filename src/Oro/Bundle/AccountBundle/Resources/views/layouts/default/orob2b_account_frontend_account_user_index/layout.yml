@@ -1,10 +1,12 @@
 layout:
     imports:
         - orob2b_account_menu
-    actions:
-        - '@setBlockTheme':
-            themes: 'OroAccountBundle:layouts:default/orob2b_account_frontend_account_user_index/layout.html.twig'
+        -
+            id: orob2b_account_user_grid
+            root: content
+            namespace: account_users
 
+    actions:
         - '@appendOption':
             id: title
             optionName: value
@@ -21,25 +23,3 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'account-users'
-
-        - '@setOption':
-            id: datagrid_toolbar_button_container
-            optionName: visible
-            optionValue: true
-
-        - '@add':
-            id: create_account_user_button
-            parentId: datagrid_toolbar_button_container
-            blockType: action_combined_buttons
-            options:
-                actions: '=data["actions"].getAll()'
-                entityClass: '=data["action_buttons"].getEntityClass("Oro\Bundle\AccountBundle\Entity\AccountUser")'
-                dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                executionRoute: '=data["action_buttons"].getExecutionRoute()'
-
-        - '@add':
-            id: account_users
-            parentId: content
-            blockType: datagrid
-            options:
-                grid_name: frontend-account-account-user-grid

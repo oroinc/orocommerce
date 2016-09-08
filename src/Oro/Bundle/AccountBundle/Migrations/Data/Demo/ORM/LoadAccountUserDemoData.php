@@ -46,7 +46,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
         /** @var \Oro\Bundle\AccountBundle\Entity\AccountUserManager $userManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
