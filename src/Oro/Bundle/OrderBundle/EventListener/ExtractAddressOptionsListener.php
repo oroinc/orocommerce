@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
-use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 
-class ExtractShippingAddressOptionsListener
+class ExtractAddressOptionsListener
 {
     /**
-     * @param ExtractShippingAddressOptionsEvent $event
+     * @param ExtractAddressOptionsEvent $event
      */
-    public function onExtractShippingAddressOptions(ExtractShippingAddressOptionsEvent $event)
+    public function onExtractShippingAddressOptions(ExtractAddressOptionsEvent $event)
     {
-        /** @var OrderAddress $entity */
+        /** @var AbstractAddress $entity */
         $entity = $event->getEntity();
         $options = [
             (string)$entity->getFirstName(),

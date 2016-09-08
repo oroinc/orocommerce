@@ -3,10 +3,10 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\EventListener\ExtractShippingAddressOptionsListener;
-use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
+use Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener;
+use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 
-class ExtractShippingAddressOptionsListenerTest extends \PHPUnit_Framework_TestCase
+class ExtractAddressOptionsListenerTest extends \PHPUnit_Framework_TestCase
 {
     public function testOnExtractShippingAddressOptions()
     {
@@ -28,8 +28,8 @@ class ExtractShippingAddressOptionsListenerTest extends \PHPUnit_Framework_TestC
         $address->setCity($expected['key5']);
         $address->setCountry($expected['key8']);
 
-        $event = new ExtractShippingAddressOptionsEvent($address, array_keys($expected));
-        $listener = new ExtractShippingAddressOptionsListener();
+        $event = new ExtractAddressOptionsEvent($address, array_keys($expected));
+        $listener = new ExtractAddressOptionsListener();
         $listener->onExtractShippingAddressOptions($event);
         $this->assertEquals($expected, $event->getOptions());
     }

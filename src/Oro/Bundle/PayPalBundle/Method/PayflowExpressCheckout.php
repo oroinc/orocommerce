@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -17,7 +18,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsDispatcherProvider;
+use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
@@ -41,28 +42,28 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     /** @var PayflowExpressCheckoutConfigInterface */
     protected $config;
 
-    /** @var ExtractOptionsDispatcherProvider */
-    protected $dispatcherProvider;
+    /** @var ExtractOptionsProvider */
+    protected $optionsProvider;
 
     /**
      * @param Gateway $gateway
      * @param PayflowExpressCheckoutConfigInterface $config
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
-     * @param ExtractOptionsDispatcherProvider $dispatcherProvider
+     * @param ExtractOptionsProvider $optionsProvider
      */
     public function __construct(
         Gateway $gateway,
         PayflowExpressCheckoutConfigInterface $config,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
-        ExtractOptionsDispatcherProvider $dispatcherProvider
+        ExtractOptionsProvider $optionsProvider
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
-        $this->dispatcherProvider = $dispatcherProvider;
+        $this->optionsProvider = $optionsProvider;
     }
 
     /**
@@ -360,6 +361,10 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             return [];
         }
 
+        if (!$shippingAddress instanceof AbstractAddress) {
+            return [];
+        }
+
         $keys = [
             Option\ShippingAddress::SHIPTOFIRSTNAME,
             Option\ShippingAddress::SHIPTOLASTNAME,
@@ -373,7 +378,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
 
         $class = $this->doctrineHelper->getEntityClass($shippingAddress);
 
-        return $this->dispatcherProvider->getShippingAddressOptions($class, $shippingAddress, $keys);
+        return $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress, $keys);
     }
 
     /**
@@ -401,7 +406,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             Option\LineItems::COST,
             Option\LineItems::QTY
         ];
-        $options = $this->dispatcherProvider->getLineItemPaymentOptions($entity, $keys);
+        $options = $this->optionsProvider->getLineItemPaymentOptions($entity, $keys);
         array_walk_recursive($options, function (&$value, $key) {
             if ($key == Option\LineItems::NAME) {
                 $value = $this->truncateString($value, 36);

@@ -2,29 +2,29 @@
 
 namespace Oro\Bundle\PayPalBundle\Provider;
 
-use Oro\Bundle\EntityBundle\Provider\EntityAliasProviderInterface;
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
-use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
+use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ExtractOptionsDispatcherProvider
+class ExtractOptionsProvider
 {
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    /** @var EntityAliasProviderInterface */
-    protected $aliasProvider;
+    /** @var EntityAliasResolver */
+    protected $aliasResolver;
 
     /**
      * @param EventDispatcherInterface $dispatcher
-     * @param EntityAliasProviderInterface $aliasProvider
+     * @param EntityAliasResolver $aliasResolver
      */
-    public function __construct(EventDispatcherInterface $dispatcher, EntityAliasProviderInterface $aliasProvider)
+    public function __construct(EventDispatcherInterface $dispatcher, EntityAliasResolver $aliasResolver)
     {
         $this->dispatcher = $dispatcher;
-        $this->aliasProvider = $aliasProvider;
+        $this->aliasResolver = $aliasResolver;
     }
 
     /**
@@ -35,10 +35,10 @@ class ExtractOptionsDispatcherProvider
      */
     public function getShippingAddressOptions($classname, $entity, array $keys)
     {
-        $event = new ExtractShippingAddressOptionsEvent($entity, $keys);
-        $entityAlias = $this->aliasProvider->getEntityAlias($classname);
+        $event = new ExtractAddressOptionsEvent($entity, $keys);
+        $entityAlias = $this->aliasResolver->getAlias($classname);
         $this->dispatcher->dispatch(
-            sprintf('%s.%s', ExtractShippingAddressOptionsEvent::NAME, $entityAlias->getAlias()),
+            sprintf('%s.%s', ExtractAddressOptionsEvent::NAME, $entityAlias),
             $event
         );
 

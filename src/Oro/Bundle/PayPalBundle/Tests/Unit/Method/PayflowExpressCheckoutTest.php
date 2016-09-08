@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
@@ -9,7 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsDispatcherProvider;
+use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\Routing\RouterInterface;
@@ -42,8 +43,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     /** @var PayflowExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
-    /** @var ExtractOptionsDispatcherProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $dispatcherProviderMock;
+    /** @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $optionsProviderMock;
 
     protected function setUp()
     {
@@ -55,7 +56,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
-        $this->dispatcherProviderMock = $this->getMockBuilder(ExtractOptionsDispatcherProvider::class)
+        $this->optionsProviderMock = $this->getMockBuilder(ExtractOptionsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -64,7 +65,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->paymentConfig,
             $this->router,
             $this->doctrineHelper,
-            $this->dispatcherProviderMock
+            $this->optionsProviderMock
         );
     }
 
@@ -267,10 +268,10 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->doctrineHelper->expects($this->once())->method('getEntityClass')->with($entity->getShippingAddress())
-            ->willReturn(EntityStub::class);
+            ->willReturn(AbstractAddress::class);
 
-        $this->dispatcherProviderMock->expects($this->once())->method('getShippingAddressOptions')
-            ->with(EntityStub::class, $entity->getShippingAddress(), $addressKeys)
+        $this->optionsProviderMock->expects($this->once())->method('getShippingAddressOptions')
+            ->with(AbstractAddress::class, $entity->getShippingAddress(), $addressKeys)
             ->willReturn($this->getShippingAddressOptions());
     }
 
@@ -287,7 +288,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         unset($options['ITEMAMT']);
 
-        $this->dispatcherProviderMock->expects($this->once())->method('getLineItemPaymentOptions')
+        $this->optionsProviderMock->expects($this->once())->method('getLineItemPaymentOptions')
             ->with($entity, $keys)
             ->willReturn([array_combine($keys, $options)]);
     }
@@ -435,11 +436,14 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturnOnConsecutiveCalls('callbackReturnUrl', 'callbackErrorUrl');
 
         $entityStub = $this->getEntity();
-        $this->doctrineHelper->expects($this->exactly(2))
+        $this->doctrineHelper
+            ->expects($this->exactly(2))
             ->method('getEntityReference')
             ->willReturnOnConsecutiveCalls($entity, $entityStub);
 
-        $this->dispatcherProviderMock->expects($this->exactly($calls))->method('getLineItemPaymentOptions')
+        $this->optionsProviderMock
+            ->expects($this->exactly($calls))
+            ->method('getLineItemPaymentOptions')
             ->willReturn([]);
 
         $this->configureShippingAddressOptions();
@@ -460,7 +464,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                     $this->getShippingAddressOptions()
                 ),
                 'getLineItemPaymentOptions calls' => 0
-
 
             ],
             'lineItem without product' => [
@@ -742,7 +745,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEntity()
     {
-        return new EntityStub();
+        /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
+        $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
+        return new EntityStub($abstractAddressMock);
     }
 
     protected function configCredentials()

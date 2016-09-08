@@ -2,31 +2,33 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\EntityBundle\Model\EntityAlias;
-use Oro\Bundle\EntityBundle\Provider\EntityAliasProviderInterface;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
-use Oro\Bundle\PaymentBundle\Event\ExtractShippingAddressOptionsEvent;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsDispatcherProvider;
+use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
+use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PayPalBundle\Tests\Unit\Method\EntityStub;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ExtractOptionsDispatcherProviderTest extends \PHPUnit_Framework_TestCase
+class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $dispatcherMock;
 
-    /** @var EntityAliasProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
     private $aliasProviderMock;
 
-    /** @var ExtractOptionsDispatcherProvider */
+    /** @var ExtractOptionsProvider */
     private $provider;
 
     protected function setUp()
     {
         $this->dispatcherMock = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
-        $this->aliasProviderMock = $this->getMockBuilder(EntityAliasProviderInterface::class)->getMock();
-        $this->provider = new ExtractOptionsDispatcherProvider($this->dispatcherMock, $this->aliasProviderMock);
+        $this->aliasProviderMock = $this->getMockBuilder(EntityAliasResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->provider = new ExtractOptionsProvider($this->dispatcherMock, $this->aliasProviderMock);
     }
 
     public function testGetShippingAddressOptions()
@@ -34,21 +36,23 @@ class ExtractOptionsDispatcherProviderTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $classname = \stdClass::class;
         $keys = [];
-        $entityAlias = new EntityAlias('stdclass', 'stdclasses');
-        $event = new ExtractShippingAddressOptionsEvent($entity, $keys);
+        $entityAlias = 'stdclass';
+        $event = new ExtractAddressOptionsEvent($entity, $keys);
 
-        $this->aliasProviderMock->expects($this->once())->method('getEntityAlias')->with($classname)
+        $this->aliasProviderMock->expects($this->once())->method('getAlias')->with($classname)
             ->willReturn($entityAlias);
 
         $this->dispatcherMock->expects($this->once())->method('dispatch')
-            ->with(ExtractShippingAddressOptionsEvent::NAME . '.' . $entityAlias->getAlias(), $event);
+            ->with(ExtractAddressOptionsEvent::NAME . '.stdclass', $event);
 
         $this->provider->getShippingAddressOptions($classname, $entity, $keys);
     }
 
     public function testGetLineItemPaymentOptions()
     {
-        $entity = new EntityStub();
+        /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
+        $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
+        $entity = new EntityStub($abstractAddressMock);
         $event = new ExtractLineItemPaymentOptionsEvent($entity, []);
 
         $this->dispatcherMock->expects($this->once())->method('dispatch')

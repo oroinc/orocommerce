@@ -103,10 +103,10 @@ services:
         tags:
             - { name: orob2b_payment.payment_method_view }
 
-    oro_paypal.provider.extract_options_dispatcher:
-        class: 'Oro\Bundle\PayPalBundle\Provider\ExtractOptionsDispatcherProvider'
+    oro_paypal.provider.extract_options:
+        class: 'Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider'
         public: false
         arguments:
             - '@event_dispatcher'
-            - '@oro_entity.entity_alias_provider'
+            - '@oro_entity.entity_alias_resolver'
 

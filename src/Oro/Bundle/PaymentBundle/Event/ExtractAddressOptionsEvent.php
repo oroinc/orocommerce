@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-class ExtractShippingAddressOptionsEvent extends AbstractExtractOptionsEvent
+class ExtractAddressOptionsEvent extends AbstractExtractOptionsEvent
 {
-    const NAME = 'oro_payment.event.extract_shipping_address_options';
+    const NAME = 'oro_payment.event.extract_address_options';
 
     /** @var object */
     protected $entity;

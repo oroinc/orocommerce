@@ -2,21 +2,23 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 class EntityStub implements LineItemsAwareInterface
 {
-    /** @var \stdClass */
+    /** @var AbstractAddress */
     protected $shippingAddress;
 
     /**
      * Fill shippingAddress field with dummy object
+     * @param AbstractAddress $abstractAddress
      */
-    public function __construct()
+    public function __construct(AbstractAddress $abstractAddress)
     {
-        $this->shippingAddress = new \stdClass();
+        $this->shippingAddress = $abstractAddress;
     }
 
     /**
