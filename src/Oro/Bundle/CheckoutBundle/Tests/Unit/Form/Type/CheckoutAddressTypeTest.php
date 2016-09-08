@@ -35,7 +35,6 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $this->assertEquals('oro_address', $this->formType->getParent());
     }
 
-
     /**
      * {@inheritdoc}
      */

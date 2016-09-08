@@ -24,7 +24,7 @@ class RouterTest extends WebTestCase
         $declaredRoutes = $declaredRoutesProperty->getValue();
 
         $invalidRoutes = array_filter(
-            array_keys(iterator_to_array($routes->getIterator())),
+            array_keys($declaredRoutes),
             function ($name) {
                 return strpos($name, 'orob2b') === 0;
             }
