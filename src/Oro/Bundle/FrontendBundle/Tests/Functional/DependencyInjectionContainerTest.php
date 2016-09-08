@@ -21,23 +21,23 @@ class DependencyInjectionContainerTest extends WebTestCase
         /** @var Container $container */
         $container = $this->getContainer();
 
-        $invalidParameters = [];
-        foreach (array_keys($container->getParameterBag()->all()) as $name) {
-            if (strpos($name, 'orob2b') === 0) {
-                $invalidParameters[] = $name;
+        $invalidParameters = array_filter(
+            array_keys($container->getParameterBag()->all()),
+            function ($name) {
+                return strpos($name, 'orob2b') === 0;
             }
-        }
+        );
         $this->assertEmpty(
             $invalidParameters,
             "Invalid parameter names:\n" . implode("\n", $invalidParameters)
         );
 
-        $invalidServices = [];
-        foreach ($container->getServiceIds() as $name) {
-            if (strpos($name, 'orob2b') === 0) {
-                $invalidServices[] = $name;
+        $invalidServices = array_filter(
+            $container->getServiceIds(),
+            function ($name) {
+                return strpos($name, 'orob2b') === 0;
             }
-        }
+        );
         $this->assertEmpty(
             $invalidServices,
             "Invalid service names:\n" . implode("\n", $invalidParameters)
