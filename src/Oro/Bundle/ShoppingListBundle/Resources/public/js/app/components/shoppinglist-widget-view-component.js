@@ -11,7 +11,10 @@ define(function(require) {
 
         shoppingListId: null,
 
+        currentShoppingListId: null,
+
         eventChannelId: null,
+
         /**
          * @param {Object} options
          */
@@ -19,10 +22,12 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
+            this.currentShoppingListId = this.initCurrentShoppingListId();
+            this.setCurrentShoppingListUrl = options.setCurrentShoppingListUrl;
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
             this.$el.on({
-                change: this._onChangeCurrentShoppingList
+                change: this._onChangeCurrentShoppingList.bind(this)
             }, 'input[name="shopping-list-dropdown-radio"]');
         },
 
@@ -45,7 +50,52 @@ define(function(require) {
          * @param e
          */
         _onChangeCurrentShoppingList: function(e) {
-            mediator.trigger('shopping-list:change-current', e.target.value);
+            var currentId = e.target.value,
+                shoppingListData,
+                _self = this;
+
+            $.ajax({
+                method: 'POST',
+                url: this.setCurrentShoppingListUrl,
+                //dataType: 'json',
+                data: {
+                    id: currentId
+                },
+                success: function(response) {
+                    _self.currentShoppingListId = currentId;
+
+                    mediator.trigger('shopping-list:change-current', _self.currentShoppingListId);
+                    shoppingListData = _self.getShoppingListData(_self.currentShoppingListId);
+                    mediator.execute(
+                        'showFlashMessage',
+                        'success',
+                        'Shopping list "<a href="' + shoppingListData.url + '">' + shoppingListData.text + '</a>" was set as default'
+                    );
+                },
+                error: function(xhr) {
+                    mediator.trigger('shopping-list:updated');
+                    mediator.execute(
+                        'showFlashMessage',
+                        'error',
+                        'Shopping list cannot be set as default'
+                    );
+                }
+            });
+        },
+
+        /**
+         * Retrieving the shopping list ID from another component.
+         *
+         * @param id
+         * @return shoppingListData
+         */
+        getShoppingListData: function(id) {
+            var shoppingListData = {};
+
+            shoppingListData.url = this.$el.find('.shopping-list-dropdown__link--' + id).attr('href');
+            shoppingListData.text = this.$el.find('.shopping-list-dropdown__name-inner--' + id).text();
+
+            return shoppingListData;
         },
 
         /**
@@ -55,6 +105,11 @@ define(function(require) {
          */
         getShoppingListId: function(id) {
             this.shoppingListId = id;
+        },
+
+        initCurrentShoppingListId: function() {
+            var checkedEl = this.$el.find('input[name="shopping-list-dropdown-radio"]:checked');
+            return checkedEl.length ? checkedEl.val() : null;
         },
 
         dispose: function() {

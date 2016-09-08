@@ -5,7 +5,8 @@
             view: 'oroui/js/app/views/layout-subtree-view',
             rootId : block.vars.id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
-            eventChannelId: 'shopping-list-title'
+            eventChannelId: 'shopping-list-title',
+            setCurrentShoppingListUrl: path('orob2b_product_frontend_product_index')|default('')
         },
         'data-dropdown-trigger': true
     }|merge(attr|merge({
@@ -68,7 +69,7 @@
                 <span class="custom-radio__text"></span>
             </label>
         </div>
-        <a class="shopping-list-dropdown__link" href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
+        <a class="shopping-list-dropdown__link shopping-list-dropdown__link--{{ shoppingList.id }}" href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
             <span class="shopping-list-dropdown__title">
                 <span class="shopping-list-dropdown__name">
                     <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}" title="{{ shoppingList.label }}">{{ shoppingList.label }}</span>
