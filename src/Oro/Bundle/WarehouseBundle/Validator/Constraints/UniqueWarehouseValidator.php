@@ -60,7 +60,7 @@ class UniqueWarehouseValidator extends ConstraintValidator
     protected function getViolationPath($item, $index)
     {
         if ($item instanceof WarehouseConfig) {
-            return "[$index].".self::WAREHOUSE_KEY;
+            return "[$index]." . self::WAREHOUSE_KEY;
         }
 
         return '';

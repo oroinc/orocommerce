@@ -93,8 +93,6 @@ class WarehouseCollectionType extends AbstractType
             }
         }
 
-//        $data = $this->reorderData($data, $event->getForm());
-
         $event->setData($data);
     }
 

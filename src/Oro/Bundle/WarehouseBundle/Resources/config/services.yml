@@ -54,3 +54,18 @@ services:
         class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
+
+    orob_warehouse.event_listener.system_config:
+        class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
+        arguments:
+            - '@oro_warehouse.system_config_converter'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_warehouse.system_config_converter:
+        class: 'Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_warehouse.entity.warehouse.class%'
