@@ -143,15 +143,25 @@ class ProductSearchGridTest extends WebTestCase
 
     public function testPagination()
     {
-        // getting SKU of first item on first page
-        $data = $this->getDatagridData('frontend-product-search-grid', [], [], 1);
-        $sku1 = $data[0]['sku'];
+        $first2Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 1,
+            '[_per_page]' => 2,
+        ]);
+        $first2Skus = array_column($first2Rows, 'sku');
 
-        // getting SKU of first item on second page
-        $data = $this->getDatagridData('frontend-product-search-grid', [], [], 2);
-        $sku2 = $data[0]['sku'];
+        $second2Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 2,
+            '[_per_page]' => 2,
+        ]);
+        $second2Skus = array_column($second2Rows, 'sku');
 
-        $this->assertNotEquals($sku1, $sku2);
+        $first4Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 1,
+            '[_per_page]' => 4,
+        ]);
+        $first4Skus = array_column($first4Rows, 'sku');
+
+        $this->assertEquals($first4Skus, array_merge($first2Skus, $second2Skus));
     }
 
     /**
@@ -161,7 +171,7 @@ class ProductSearchGridTest extends WebTestCase
      * @param int|null $page
      * @return array
      */
-    protected function getDatagridData($gridName, array $filters = [], array $sorters = [], $page = null)
+    protected function getDatagridData($gridName, array $filters = [], array $sorters = [], array $pager = [])
     {
         $gridParameters = ['gridName' => $gridName];
 
@@ -172,8 +182,8 @@ class ProductSearchGridTest extends WebTestCase
         foreach ($sorters as $sorter => $value) {
             $result[$gridName . '[_sort_by]' . $sorter] = $value;
         }
-        if ($page !== null) {
-            $result[$gridName . '[_pager][_page]'] = (int) $page;
+        foreach ($pager as $param => $value) {
+            $result[$gridName . '[_pager]' . $param] = $value;
         }
 
         $response = $this->client->requestFrontendGrid($gridParameters, $result);
