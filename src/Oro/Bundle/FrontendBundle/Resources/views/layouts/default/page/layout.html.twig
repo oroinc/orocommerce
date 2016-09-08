@@ -191,3 +191,10 @@
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
+
+{% block _sticky_header_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    'id': 'sticky-header-row'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}

@@ -95,9 +95,3 @@
     @content;
   }
 }
-
-@mixin breakpoint-old($device-width) {
-  @media (max-width: #{$device-width}) {
-    @content;
-  }
-}

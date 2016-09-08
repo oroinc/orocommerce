@@ -84,6 +84,29 @@
     }
 }
 
+
+@include breakpoint('tablet') {
+    .hero-promo-item {
+        margin-top: 0;
+
+        &__pretitle {
+            font-size: $base-font-size;
+        }
+
+        &__title {
+            font-size: $base-font-size;
+            line-height: 1.3;
+        }
+
+        &__view-btn.btn.theme-btn {
+            padding: 0 6px;
+
+            font-size: $base-font-size;
+            line-height: 2.1;
+        }
+    }
+}
+
 @include breakpoint('mobile') {
     .hero-promo-item {
         margin-top: 0;

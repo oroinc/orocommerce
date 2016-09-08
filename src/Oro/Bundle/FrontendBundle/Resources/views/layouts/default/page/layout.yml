@@ -49,6 +49,11 @@ layout:
             id: require_js_config
             parentId: require_js
             blockType: block
+
+        - '@add':
+            id: sticky_header_row
+            parentId: sticky_panel_content
+            blockType: block
         - '@add':
             id: sticky_element_notification
             parentId: sticky_panel_content

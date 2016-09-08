@@ -1,9 +1,13 @@
 .hero-promo {
-    & .embedded-list__container--slider {
+    .embedded-list__container--slider {
         margin-left: 0;
     }
 
-    & .embedded-list__container--slider::before {
+    .embedded-list__container--slider::before {
         display: none;
+    }
+
+    .slick-dots {
+        bottom: $offset-y-m;
     }
 }
