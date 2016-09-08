@@ -45,10 +45,10 @@ services:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%orob2b_warehouse.entity.warehouse.class%'
+            - '%oro_warehouse.entity.warehouse.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_warehouse, acl_resource: orob2b_warehouse_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_warehouse, acl_resource: oro_warehouse_view }
 
     oro_warehouse.validator.unique_warehouse:
         class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
@@ -68,4 +68,4 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%orob2b_warehouse.entity.warehouse.class%'
+            - '%oro_warehouse.entity.warehouse.class%'

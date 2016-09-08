@@ -18,7 +18,7 @@ class WarehouseSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_warehouse',
+                'autocomplete_alias' => 'oro_warehouse',
                 'configs' => [
                     'placeholder' => 'oro.warehouse.form.choose_warehouse'
                 ]
