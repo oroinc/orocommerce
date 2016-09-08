@@ -11,7 +11,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
  * @ORM\Table(name="oro_front_nav_menu_update")
  * @Config(
  *      defaultValues={
@@ -23,7 +23,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class MenuUpdate extends ExtendMenuUpdate
 {
-    const OWNERSHIP_WEBSITE      = 3;
     const OWNERSHIP_ACCOUNT      = 4;
     const OWNERSHIP_ACCOUNT_USER = 5;
 
@@ -50,7 +49,7 @@ class MenuUpdate extends ExtendMenuUpdate
     /**
      * @var string
      *
-     * @ORM\Column(name="condition", type="string", length=512, nullable=true)
+     * @ORM\Column(name="`condition`", type="string", length=512, nullable=true)
      */
     protected $condition;
 
