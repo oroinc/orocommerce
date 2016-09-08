@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class DuplicatorFilterPass implements CompilerPassInterface
 {
     const TAG_NAME = 'orob2b_rfp.duplicate.filter_type';
-    const FACTORY_SERVICE_ID = 'orob2b_rfp.factory.duplicator_filter_factory';
+    const FACTORY_SERVICE_ID = 'oro_rfp.factory.duplicator_filter_factory';
 
     /**
      * You can modify the container here before it is dumped to PHP code.

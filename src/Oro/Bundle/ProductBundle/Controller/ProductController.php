@@ -83,7 +83,7 @@ class ProductController extends Controller
         );
 
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.entity.product.class'),
+            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
             'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }
@@ -148,7 +148,7 @@ class ProductController extends Controller
      */
     protected function update(Product $product)
     {
-        return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
+        return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),
             function (Product $product) {
@@ -209,7 +209,7 @@ class ProductController extends Controller
             ];
         }
 
-        return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
+        return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),
             function (Product $product) {

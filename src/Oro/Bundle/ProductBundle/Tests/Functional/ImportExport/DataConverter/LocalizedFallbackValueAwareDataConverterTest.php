@@ -48,7 +48,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToImportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         $this->converter->setEntityName($productClass);
 
@@ -94,7 +94,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         $this->converter->setEntityName($productClass);
 

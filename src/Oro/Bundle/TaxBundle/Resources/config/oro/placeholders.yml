@@ -20,34 +20,34 @@ placeholders:
     items:
         orob2b_pricing_tax_totals:
             template: OroTaxBundle::placeholder.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_unitPriceIncludingTax_after_item:
             template: OroTaxBundle:Order:Form/unitPriceIncludingTax.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_unitPriceExcludingTax_after_item:
             template: OroTaxBundle:Order:Form/unitPriceExcludingTax.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_unitPriceTaxAmount_after_item:
             template: OroTaxBundle:Order:Form/unitPriceTaxAmount.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_rowTotalIncludingTax_after_item:
             template: OroTaxBundle:Order:Form/rowTotalIncludingTax.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_rowTotalExcludingTax_after_item:
             template: OroTaxBundle:Order:Form/rowTotalExcludingTax.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_rowTotalTaxAmount_after_item:
             template: OroTaxBundle:Order:Form/rowTotalTaxAmount.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_taxes_after_item:
             template: OroTaxBundle:Order:Form/taxes.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_taxes_totals_template:
             template: OroTaxBundle:Js:totals.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_taxes_item_taxes_template:
             template: OroTaxBundle:Js:item_taxes.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_taxes_item_items_template:
             template: OroTaxBundle:Js:item_items.html.twig
-            applicable: "@orob2b_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"

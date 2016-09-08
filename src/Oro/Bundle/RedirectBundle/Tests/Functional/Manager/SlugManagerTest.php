@@ -27,7 +27,7 @@ class SlugManagerTest extends WebTestCase
     {
         $this->initClient();
         $this->registry    = $this->getContainer()->get('doctrine');
-        $this->slugManager = $this->getContainer()->get('orob2b_redirect.slug.manager');
+        $this->slugManager = $this->getContainer()->get('oro_redirect.slug.manager');
     }
 
     public function testMakeUrlUnique()

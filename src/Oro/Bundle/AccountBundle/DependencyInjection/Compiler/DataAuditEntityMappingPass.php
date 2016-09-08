@@ -19,13 +19,13 @@ class DataAuditEntityMappingPass implements CompilerPassInterface
         }
 
         $mapperDefinition = $container->getDefinition(self::MAPPER_SERVICE);
-        $accountUserClass = $container->getParameter('orob2b_account.entity.account_user.class');
+        $accountUserClass = $container->getParameter('oro_account.entity.account_user.class');
 
         $mapperDefinition->addMethodCall(
             'addAuditEntryClass',
             [
                 $accountUserClass,
-                $container->getParameter('orob2b_account.entity.audit.class'),
+                $container->getParameter('oro_account.entity.audit.class'),
             ]
         );
 

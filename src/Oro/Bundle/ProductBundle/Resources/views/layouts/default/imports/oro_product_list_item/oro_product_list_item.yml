@@ -1,0 +1,72 @@
+layout:
+    imports:
+        -
+            id: oro_product_line_item_form
+            root: __product_secondary_content_second_container
+            namespace: product
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_list_item.html.twig'
+        - '@addTree':
+            items:
+                __product:
+                    blockType: container
+                __product_image_holder:
+                    blockType: container
+                __product_quick_view:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                __product_title:
+                    blockType: block
+                __product_primary_content_container:
+                    blockType: container
+                __product_number:
+                    blockType: block
+                __product_specification:
+                    blockType: container
+                __product_sku_container:
+                    blockType: container
+                __product_sku:
+                    blockType: block
+                __product_mfg:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                __product_short_description:
+                    blockType: block
+                __product_details:
+                    blockType: block
+                __product_secondary_content_container:
+                    blockType: container
+                __product_secondary_content_first_container:
+                    blockType: container
+                __product_specification_delivery:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                __product_secondary_content_second_container:
+                    blockType: container
+                __product_more_info:
+                    blockType: block
+                    options:
+                        visible: '=false'
+            tree:
+                __root:
+                    __product:
+                        __product_image_holder:
+                            __product_quick_view: ~
+                        __product_title: ~
+                        __product_primary_content_container:
+                            __product_number: ~
+                            __product_specification:
+                                __product_sku_container:
+                                    __product_sku: ~
+                                    __product_mfg: ~
+                            __product_short_description: ~
+                            __product_details: ~
+                        __product_secondary_content_container:
+                            __product_secondary_content_first_container:
+                                __product_specification_delivery: ~
+                            __product_secondary_content_second_container:
+                                __product_more_info: ~

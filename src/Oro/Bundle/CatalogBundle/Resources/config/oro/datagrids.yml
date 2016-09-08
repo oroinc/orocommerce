@@ -1,7 +1,7 @@
 datagrids:
     category-products-grid:
         acl_resource: orob2b_product_update
-        extended_entity_name: %orob2b_product.entity.product.class%
+        extended_entity_name: %oro_product.entity.product.class%
         source:
             type:         orm
             query:
@@ -26,11 +26,11 @@ datagrids:
                             END
                         ) as inCategory
                 from:
-                    - { table: %orob2b_product.entity.product.class%, alias: product }
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         -
-                            join: %orob2b_catalog.entity.category.class%
+                            join: %oro_catalog.entity.category.class%
                             alias: productCategory
                             conditionType: WITH
                             condition: 'productCategory = :category_id'
@@ -54,7 +54,7 @@ datagrids:
             status:
                 label:         oro.product.status.label
                 frontend_type: select
-                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -104,7 +104,7 @@ datagrids:
                     type: choice
                     options:
                         field_options:
-                            choices: "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                            choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

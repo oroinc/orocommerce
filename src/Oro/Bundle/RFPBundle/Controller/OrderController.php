@@ -41,8 +41,8 @@ class OrderController extends Controller
             $offers[] = $itemOffers;
         }
 
-        $this->get('orob2b_product.storage.product_data_storage')->set($data);
-        $this->get('orob2b_rfp.storage.offers_data_storage')->set($offers);
+        $this->get('oro_product.storage.product_data_storage')->set($data);
+        $this->get('oro_rfp.storage.offers_data_storage')->set($offers);
 
         return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }

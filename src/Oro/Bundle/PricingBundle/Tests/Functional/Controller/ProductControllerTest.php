@@ -47,7 +47,7 @@ class ProductControllerTest extends WebTestCase
 
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $defaultPriceList */
         $defaultPriceList = $repository->getDefault();
@@ -71,7 +71,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
@@ -99,7 +99,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
@@ -135,7 +135,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);

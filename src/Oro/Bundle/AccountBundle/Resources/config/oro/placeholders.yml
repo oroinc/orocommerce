@@ -61,45 +61,45 @@ placeholders:
     items:
         frontend_menu:
             template: OroAccountBundle:Menu:frontendMenu.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isFrontendApplicable()"
+            applicable: "@oro_account.placeholder.filter->isFrontendApplicable()"
         account_user_login:
             template: OroAccountBundle:Menu:menuLogin.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isLoginRequired()"
+            applicable: "@oro_account.placeholder.filter->isLoginRequired()"
         account_menu_user:
             template: OroAccountBundle:Menu:menuProfile.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         account_dots_menu:
             template: OroAccountBundle:ApplicationMenu:dotsMenu.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         account_pin_tabs_list:
             template: OroAccountBundle:Menu:pinTabsList.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         account_pin_button:
             template: OroAccountBundle:ApplicationMenu:pinButton.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         frontend_sidebar:
             template: OroAccountBundle:Sidebar:sidebar.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         page_state_routes:
             template: OroAccountBundle:Pagestate:pagestate.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         entity_pagination_frontend_view:
             template: OroAccountBundle:EntityPagination:viewPagination.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         entity_pagination_frontend_edit:
             template: OroAccountBundle:EntityPagination:editPagination.html.twig
-            applicable: "@orob2b_account.placeholder.filter->isUserApplicable()"
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
         product_visibility_button:
             template: OroAccountBundle:ProductVisibility:button.html.twig
             applicable:
-                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.entity.product.class%)"
-                - "@orob2b_frontend.placeholder.filter->isBackendRoute()"
+                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_product.entity.product.class%)"
+                - "@oro_frontend.placeholder.filter->isBackendRoute()"
         frontend_window_bundle_js:
             template: OroAccountBundle:Windows:javascript.html.twig
-            applicable: "@orob2b_frontend.placeholder.filter->isFrontendRoute()"
+            applicable: "@oro_frontend.placeholder.filter->isFrontendRoute()"
         frontend_change_history_link:
             template: OroAccountBundle:DataAudit:change_history_link.html.twig
             applicable:
                 - "@oro_dataaudit.placeholder.filter->isEntityAuditable($entity$, $audit_show_change_history$)"
-                - "@orob2b_account.placeholder.filter->isUserApplicable()"
+                - "@oro_account.placeholder.filter->isUserApplicable()"
             acl: orob2b_account_dataaudit_history

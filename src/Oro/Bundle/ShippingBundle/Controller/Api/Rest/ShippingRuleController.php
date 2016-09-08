@@ -144,7 +144,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      */
     public function getManager()
     {
-        return $this->get('orob2b_shipping.shipping_rule.manager.api');
+        return $this->get('oro_shipping.shipping_rule.manager.api');
     }
 
     /**

@@ -30,7 +30,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
             true
         );
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
-        $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler')->sendScheduledTriggers();
+        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
         $this->messageProducer->clear();
         $this->messageProducer->enable();
     }

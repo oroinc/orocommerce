@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class WindowsStateManagerPass implements CompilerPassInterface
 {
     const WINDOWS_STATE_REGISTRY = 'oro_windows.manager.windows_state_registry';
-    const COMMERCE_WINDOWS_STATE = 'orob2b_account.manager.windows_state';
+    const COMMERCE_WINDOWS_STATE = 'oro_account.manager.windows_state';
 
     /**
      * {@inheritdoc}

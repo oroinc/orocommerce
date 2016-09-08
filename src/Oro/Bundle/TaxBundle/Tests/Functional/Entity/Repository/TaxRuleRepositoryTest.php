@@ -105,7 +105,7 @@ class TaxRuleRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_tax.entity.tax_rule.class')
+            $this->getContainer()->getParameter('oro_tax.entity.tax_rule.class')
         );
     }
 }

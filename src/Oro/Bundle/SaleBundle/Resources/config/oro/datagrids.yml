@@ -1,7 +1,7 @@
 datagrids:
     base-quote-grid:
         acl_resource: orob2b_sale_quote_view
-        extended_entity_name: %orob2b_sale.entity.quote.class%
+        extended_entity_name: %oro_sale.entity.quote.class%
         options:
             entityHint:        quote
             entity_pagination: true
@@ -20,7 +20,7 @@ datagrids:
                     - quote.locked
                     - quote.expired
                 from:
-                    - { table: %orob2b_sale.entity.quote.class%, alias: quote }
+                    - { table: %oro_sale.entity.quote.class%, alias: quote }
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
@@ -243,7 +243,7 @@ datagrids:
 
     frontend-quotes-grid:
         acl_resource: orob2b_sale_quote_frontend_index
-        extended_entity_name: %orob2b_sale.entity.quote.class%
+        extended_entity_name: %oro_sale.entity.quote.class%
         options:
             entityHint:        quote
             entity_pagination: true
@@ -261,7 +261,7 @@ datagrids:
                     - quote.poNumber
                     - quote.shipUntil
                 from:
-                    - { table: %orob2b_sale.entity.quote.class%, alias: quote }
+                    - { table: %oro_sale.entity.quote.class%, alias: quote }
                 join:
                     left:
                         - { join: quote.accountUser, alias: quoteAccountUser }
@@ -313,7 +313,7 @@ datagrids:
                     data_name: quote.accountUser
                     options:
                         field_options:
-                            class:      %orob2b_account.entity.account_user.class%
+                            class:      %oro_account.entity.account_user.class%
                             multiple:   false
                 poNumber:
                     type:      string

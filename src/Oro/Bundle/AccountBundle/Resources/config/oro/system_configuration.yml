@@ -32,7 +32,7 @@ system_configuration:
             options:
                 label: oro.account.system_configuration.fields.registration_allowed.label
                 tooltip: oro.account.system_configuration.fields.registration_allowed.tooltip
-                required: true
+                required: false
         oro_b2b_account.confirmation_required:
             data_type: boolean
             type: oro_config_checkbox
@@ -40,7 +40,7 @@ system_configuration:
             options:
                 label: oro.account.system_configuration.fields.confirmation_required.label
                 tooltip: oro.account.system_configuration.fields.confirmation_required.tooltip
-                required: true
+                required: false
         oro_b2b_account.send_password_in_welcome_email:
             data_type: boolean
             type: oro_config_checkbox
@@ -48,7 +48,7 @@ system_configuration:
             options:
                 label: oro.account.system_configuration.fields.send_password_in_welcome_email.label
                 tooltip: oro.account.system_configuration.fields.send_password_in_welcome_email.tooltip
-                required: true
+                required: false
         oro_b2b_account.category_visibility:
             data_type: string
             type: orob2b_account_catalog_default_visibility
