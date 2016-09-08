@@ -17,6 +17,9 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         productAssignmentRule:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true
+                allowedFields:
+                    Oro\Bundle\PricingBundle\Entity\PriceList:
+                        - 'assignedProducts'
             - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
 
 Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
@@ -62,6 +65,9 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
         ruleCondition:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true
+                allowedFields:
+                    Oro\Bundle\PricingBundle\Entity\PriceList:
+                        - 'assignedProducts'
             - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
         rule:
             - NotBlank: ~

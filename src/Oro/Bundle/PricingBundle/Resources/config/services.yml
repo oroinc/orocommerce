@@ -779,9 +779,16 @@ services:
         class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ValueNodeConverter'
         public: false
 
+    orob2b_pricing.expression.query_expression.converter.assigned_products:
+        class: Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter
+        arguments:
+            - '@orob2b_pricing.provider.price_rule_fields_provider'
+        public: false
+
     orob2b_pricing.expression.query_expression_builder:
         class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
         calls:
+            - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.assigned_products', 10]]
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.binary_node']]
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.name_node']]
             - ['registerConverter', ['@orob2b_pricing.expression.query_expression.converter.relation_node']]

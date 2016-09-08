@@ -47,13 +47,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $fields) {
                 try {
-                    $supportedFields = $this->priceRuleFieldsProvider->getFields(
-                        $class,
-                        $constraint->numericOnly,
-                        $constraint->withRelations
-                    );
-                    // Add possibility lexemes without fields
-                    $supportedFields[] = null;
+                    $supportedFields = $this->getSupportedFields($constraint, $class);
                     $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
                 } catch (\InvalidArgumentException $ex) {
                     if (strpos($class, '::') !== false) {
@@ -73,5 +67,26 @@ class PriceRuleExpressionValidator extends ConstraintValidator
         } catch (SyntaxError $ex) {
             $this->context->addViolation($ex->getMessage());
         }
+    }
+
+    /**
+     * @param PriceRuleExpression|Constraint $constraint
+     * @param string $class
+     * @return array
+     */
+    protected function getSupportedFields(Constraint $constraint, $class)
+    {
+        $supportedFields = $this->priceRuleFieldsProvider->getFields(
+            $class,
+            $constraint->numericOnly,
+            $constraint->withRelations
+        );
+        if (array_key_exists($class, $constraint->allowedFields)) {
+            $supportedFields = array_merge($supportedFields, $constraint->allowedFields[$class]);
+        }
+        // Add possibility lexemes without fields
+        $supportedFields[] = null;
+
+        return $supportedFields;
     }
 }
