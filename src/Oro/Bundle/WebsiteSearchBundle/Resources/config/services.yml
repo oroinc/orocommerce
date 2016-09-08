@@ -111,3 +111,4 @@ services:
             - '@doctrine.dbal.default_connection'
             - '%oro_search.drivers%'
             - '%oro_website_search.index_text_table_name%'
+            - '%oro_website_search.index_text_table_name%_v_idx'
