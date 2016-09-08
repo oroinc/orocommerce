@@ -23,12 +23,12 @@ class RouterTest extends WebTestCase
         $declaredRoutesProperty->setAccessible(true);
         $declaredRoutes = $declaredRoutesProperty->getValue();
 
-        $invalidRoutes = [];
-        foreach (array_keys($declaredRoutes) as $name) {
-            if (strpos($name, 'orob2b') === 0) {
-                $invalidRoutes[] = $name;
+        $invalidRoutes = array_filter(
+            array_keys(iterator_to_array($routes->getIterator())),
+            function ($name) {
+                return strpos($name, 'orob2b') === 0;
             }
-        }
+        );
         $this->assertEmpty(
             $invalidRoutes,
             "Invalid route names:\n" . implode("\n", $invalidRoutes)
