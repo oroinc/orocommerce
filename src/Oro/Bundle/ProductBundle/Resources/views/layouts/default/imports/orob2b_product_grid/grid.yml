@@ -2,7 +2,8 @@ layout:
     imports:
         -
             id: datagrid_toolbar
-            root: __root
+            root: product_grid_container
+        - datagrid_row_product
 
     actions:
         - '@setBlockTheme':
@@ -10,15 +11,14 @@ layout:
 
         - '@addTree':
             items:
-                __grid:
+                product_grid:
                     blockType: product_datagrid
                     options:
                         grid_name: frontend-products-grid
                         current_row_view: '=data["orob2b_product_frontend_datagrid_row_view"].getDataGridTheme()'
-                        split_to_cells: true
             tree:
-                __root:
-                    __grid: ~
+                product_grid_container:
+                    product_grid: ~
 
         - '@setOption':
             id: __datagrid_toolbar

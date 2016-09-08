@@ -16,3 +16,20 @@ services:
             - '@oro_catalog.provider.category_tree_provider'
         tags:
             - { name: layout.data_provider, alias: category }
+
+    oro_catalog.layout.data_provider.featured_categories:
+        class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider'
+        public: true
+        arguments:
+            - "@oro_catalog.provider.category_tree_provider"
+        tags:
+            - { name: layout.data_provider, alias: featured_categories }
+
+    oro_catalog.layout.data_provider.featured_categories_products:
+        class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider'
+        public: true
+        arguments:
+            - "@oro_catalog.repository.category"
+            - "@oro_product.product.manager"
+        tags:
+            - { name: layout.data_provider, alias: categories_products }
