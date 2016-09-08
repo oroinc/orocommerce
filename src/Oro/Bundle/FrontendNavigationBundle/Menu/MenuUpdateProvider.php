@@ -7,9 +7,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\NavigationBundle\Provider\MenuUpdateProviderInterface;
 use Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository;
 
-class MenuUpdateProvider
+class MenuUpdateProvider implements MenuUpdateProviderInterface
 {
     /**
      * @var SecurityFacade
