@@ -1,6 +1,6 @@
 {% block _login_page_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block _login_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " {{ class_prefix }}__form-container form-container-x6"
     }) %}
     <div{{ block('block_attributes') }}>
         <form id="form-login"
@@ -28,15 +28,15 @@
 {% endblock %}
 
 {% block _login_form_label_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__title"
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " {{ class_prefix }}__title"
     }) %}
     <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
 {% endblock %}
 
 {% block _login_form_error_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " notification notification_xmd notification_error notification-radiused mb1-md"
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " notification notification_xmd notification_error notification-radiused mb1-md"
     }) %}
     <div{{ block('block_attributes') }}>
         <div>
@@ -49,15 +49,14 @@
 {% endblock %}
 
 {% block _login_form_username_widget %}
-    {% set attr = {
+    {% set attr = layout_attr_defaults(attr, {
         required: 'required',
         autofocus: true,
-        'data-validation': {"NotBlank":{"payload":null}}|json_encode
-    }|merge(attr)|merge({
-        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+        'data-validation': {"NotBlank":{"payload":null}}|json_encode,
+        '~class': " input input_block input_md {{ class_prefix }}__form__input"
     }) %}
-    {% set label_attr = label_attr|merge({
-        class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " {{ class_prefix }}__form__label"
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col_x12">
@@ -70,14 +69,13 @@
 {% endblock %}
 
 {% block _login_form_password_widget %}
-    {% set attr = {
+    {% set attr = layout_attr_defaults(attr, {
         required: 'required',
-        'data-validation': {"NotBlank":{"payload":null}}|json_encode
-    }|merge(attr)|merge({
-        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+        'data-validation': {"NotBlank":{"payload":null}}|json_encode,
+        '~class': " input input_block input_md {{ class_prefix }}__form__input"
     }) %}
-    {% set label_attr = label_attr|merge({
-        class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " {{ class_prefix }}__form__label"
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col_x12">
@@ -90,10 +88,9 @@
 {% endblock %}
 
 {% block _login_form_remember_widget %}
-    {% set label_attr = {
-        'data-checkbox': null
-    }|merge(label_attr)|merge({
-        class: label_attr.class|default('') ~ " checkbox_custom checkbox_custom_blue",
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " checkbox_custom checkbox_custom_blue",
+        'data-checkbox': null,
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col">
