@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
