@@ -14,8 +14,8 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $node = new Expression\BinaryNode(
             new Expression\BinaryNode(
                 new Expression\BinaryNode(
-                    new Expression\NameNode('pl', 'currency'),
-                    new Expression\ValueNode('USD'),
+                    new Expression\NameNode('pl', 'active', 42),
+                    new Expression\ValueNode(true),
                     '=='
                 ),
                 new Expression\BinaryNode(
@@ -33,8 +33,8 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
                         new Expression\BinaryNode(
                             new Expression\ValueNode(1),
                             new Expression\BinaryNode(
-                                new Expression\NameNode('pl', 'someAttr'),
-                                new Expression\NameNode('c', 'maxMargin'),
+                                new Expression\NameNode('pl', 'someAttr', 3),
+                                new Expression\RelationNode('pl', 'prices', 'value', 42),
                                 '*'
                             ),
                             '-'
@@ -70,7 +70,9 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
 
         $aliasMap = [
-            'pl' => 'mapPL',
+            'pl|42' => 'mapPL42',
+            'pl::prices|42' => 'mapPrice42',
+            'pl|3' => 'mapPL3',
             'c' => 'mapC',
             'p' => 'mapP',
             'p::MSRP' => 'mapMSRP'
@@ -81,11 +83,11 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $actual = $converter->convert($node, $expr, $params, $aliasMap);
 
         $this->assertEquals(
-            '(mapPL.currency = :_vn0 AND mapP.margin * 10 ' .
-            '> (130 * mapC.minMargin) + (1 - (mapPL.someAttr * mapC.maxMargin))) ' .
+            '(mapPL42.active = :_vn0 AND mapP.margin * 10 ' .
+            '> (130 * mapC.minMargin) + (1 - (mapPL3.someAttr * mapPrice42.value))) ' .
             'OR (mapC = (-mapP.MSRP) AND NOT(mapMSRP.currency LIKE :_vn1))',
             (string)$actual
         );
-        $this->assertEquals(['_vn0' => 'USD', '_vn1' => 'U'], $params);
+        $this->assertEquals(['_vn0' => true, '_vn1' => 'U'], $params);
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use Oro\Bundle\PricingBundle\Expression;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +59,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseException($expression, $exceptionMessage)
     {
-        $this->setExpectedException(\RuntimeException::class, $exceptionMessage);
+        $this->setExpectedException(SyntaxError::class, $exceptionMessage);
         $this->expressionParser->parse($expression);
     }
 
@@ -79,9 +80,6 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'PriceList.category.relation.id', 'Relations of related entities are not allowed to be used'
-            ],
-            [
-                'PriceList', 'At least one field must be present in expression'
             ],
             [
                 'PriceList.value(1)', 'Function calls are not supported'
