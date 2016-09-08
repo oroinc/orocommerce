@@ -76,16 +76,16 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $addressType
     ) {
         $accountAddressIdentifier = $submittedData['accountAddress'];
-        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
+        $this->serializer->expects($this->once())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
             ->willReturn(['group_name' => [$accountAddressIdentifier => $savedAddress]]);
 
-        $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
+        $this->orderAddressManager->expects($this->once())->method('getEntityByIdentifier')
             ->willReturn($savedAddress);
 
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+        $this->orderAddressManager->expects($this->once())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
                     function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
