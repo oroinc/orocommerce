@@ -16,10 +16,15 @@ class RouterTest extends WebTestCase
 
     public function testRouteNames()
     {
-        $routes = $this->getContainer()->get('router')->getRouteCollection();
+        $generator = $this->getContainer()->get('router')->getGenerator();
+        $this->assertInstanceOf('\appTestUrlGenerator', $generator);
+
+        $declaredRoutesProperty = new \ReflectionProperty(get_class($generator), 'declaredRoutes');
+        $declaredRoutesProperty->setAccessible(true);
+        $declaredRoutes = $declaredRoutesProperty->getValue();
 
         $invalidRoutes = array_filter(
-            array_keys(iterator_to_array($routes->getIterator())),
+            array_keys($declaredRoutes),
             function ($name) {
                 return strpos($name, 'orob2b') === 0;
             }
