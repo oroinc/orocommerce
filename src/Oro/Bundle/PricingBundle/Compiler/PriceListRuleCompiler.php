@@ -150,12 +150,18 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $params = [];
         $priceValue = (string)$this->getValueByExpression($qb, $rule->getRule(), $params);
 
-        $currencyValue = (string)$qb->expr()->literal($rule->getCurrency());
-        $quantityValue = (string)$qb->expr()->literal($rule->getQuantity());
-
         if ($rule->getCurrencyExpression()) {
             $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
+        } else {
+            $currencyValue = (string)$qb->expr()->literal($rule->getCurrency());
         }
+
+        if ($rule->getQuantityExpression()) {
+            $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
+        } else {
+            $quantityValue = (string)$qb->expr()->literal($rule->getQuantity());
+        }
+
         if ($rule->getProductUnitExpression()) {
             $unitValue = sprintf(
                 'IDENTITY(%s)',
@@ -168,9 +174,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         } else {
             $unitValue = (string)$qb->expr()->literal($rule->getProductUnit()->getCode());
         }
-        if ($rule->getQuantityExpression()) {
-            $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
-        }
+
         $this->qbSelectPart = [
             'product' => $rootAlias.'.id',
             'productSku' => $rootAlias.'.sku',
@@ -427,13 +431,26 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             }
         }
 
-        // filter conditions, to avoid expressions like: "product.msrp.currency == product.msrp.currency "
-        $generatedConditions = array_filter(
-            $generatedConditions,
+        return implode(' and ', $this->getFilteredAdditionalConditions($generatedConditions));
+    }
+
+    /**
+     * Filter pointless conditions.
+     *
+     * Avoid expressions like: "product.msrp.currency == product.msrp.currency"
+     *
+     * @param array $conditions
+     * @return array
+     */
+    protected function getFilteredAdditionalConditions(array $conditions)
+    {
+        return array_filter(
+            $conditions,
             function ($condition) {
                 if (null === $condition) {
                     return false;
                 }
+
                 $parts = explode('==', $condition);
                 if (count($parts) < 2 || trim($parts[0]) === trim($parts[1])) {
                     return false;
@@ -442,7 +459,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                 return true;
             }
         );
-        return implode(' and ', $generatedConditions);
     }
 
     /**
@@ -526,7 +542,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                         $node->getRelationField()
                     );
                 } else {
-                     return sprintf(
+                    return sprintf(
                         '%s.%s.%s',
                         $nodeRoot,
                         $node->getField(),
