@@ -55,6 +55,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $usedPriceRelations = [];
 
     /**
+     * @var array
+     */
+    protected $qbSelectPart = [];
+
+    /**
      * @param PriceRuleFieldsProvider $fieldsProvider
      */
     public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
@@ -166,19 +171,17 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($rule->getQuantityExpression()) {
             $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), $params);
         }
-        $this->addSelectInOrder(
-            $qb,
-            [
-                'product' => $rootAlias . '.id',
-                'productSku' => $rootAlias . '.sku',
-                'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
-                'unit' => $unitValue,
-                'currency' => $currencyValue,
-                'quantity' => $quantityValue,
-                'priceRule' => (string)$qb->expr()->literal($rule->getId()),
-                'value' => $priceValue,
-            ]
-        );
+        $this->qbSelectPart = [
+            'product' => $rootAlias.'.id',
+            'productSku' => $rootAlias.'.sku',
+            'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
+            'unit' => $unitValue,
+            'currency' => $currencyValue,
+            'quantity' => $quantityValue,
+            'priceRule' => (string)$qb->expr()->literal($rule->getId()),
+            'value' => $priceValue,
+        ];
+        $this->addSelectInOrder($qb, $this->qbSelectPart);
         $qb->andWhere($qb->expr()->gte($priceValue, 0));
         $this->applyParameters($qb, $params);
     }
@@ -242,16 +245,15 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder();
-        $select = $qb->getDQLPart('select')[0]->getParts();
         $subQb->from(ProductPrice::class, 'productPriceManual')
             ->select('productPriceManual')
             ->where(
                 $subQb->expr()->andX(
                     $subQb->expr()->eq('productPriceManual.product', $rootAlias),
                     $subQb->expr()->eq('productPriceManual.priceList', ':priceListManual'),
-                    sprintf('productPriceManual.unit = %s', $select[2]),
-                    sprintf('productPriceManual.currency = %s', $select[3]),
-                    sprintf('productPriceManual.quantity = %s', $select[4])
+                    sprintf('productPriceManual.unit = %s', $this->qbSelectPart['unit']),
+                    sprintf('productPriceManual.currency = %s', $this->qbSelectPart['currency']),
+                    sprintf('productPriceManual.quantity = %s', $this->qbSelectPart['quantity'])
                 )
             );
 
@@ -320,6 +322,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
+     * In query result set all joined relations should have currency allowed in price list
+     *
      * @param QueryBuilder $qb
      * @param PriceRule $rule
      * @param string $rootAlias
@@ -423,6 +427,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             }
         }
 
+        // filter conditions, to avoid expressions like: "product.msrp.currency == product.msrp.currency "
         $generatedConditions = array_filter(
             $generatedConditions,
             function ($condition) {
@@ -445,7 +450,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      *
      * Return condition string in format "root.field.relationField == ?"
      * or "root[containerId].field.relationField == ?" if container is not null,
-     * where ? is string or number depend on field type
+     * where ? is string or number depend on field type in case when rule expression is defined,
+     * this expression is used
      *
      * @param PriceRule $rule
      * @param string $root
@@ -500,6 +506,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
+     * Here we assume that quantity expression should use only one relation
+     *
      * @param PriceRule $rule
      * @return string
      */
