@@ -55,7 +55,7 @@ define(function(require) {
 
             $.ajax({
                 method: 'POST',
-                url: this.setCurrentShoppingListUrl,
+                url: this.setCurrentShoppingListRoute,
                 //dataType: 'json',
                 data: {
                     id: shoppingList.id
