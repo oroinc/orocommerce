@@ -14,7 +14,7 @@ use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 class RequestType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request';
+    const NAME = 'oro_rfp_request';
 
     /**
      * @var string

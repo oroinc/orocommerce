@@ -60,7 +60,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
+        $this->assertEquals('oro_sale_quote_product_offer', $this->formType->getName());
     }
 
     /**

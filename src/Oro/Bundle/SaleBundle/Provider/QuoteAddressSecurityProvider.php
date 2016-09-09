@@ -9,7 +9,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_quote_address_%s_allow_manual';
+    const MANUAL_EDIT_ACTION = 'oro_quote_address_%s_allow_manual';
 
     /** @var SecurityFacade */
     protected $securityFacade;

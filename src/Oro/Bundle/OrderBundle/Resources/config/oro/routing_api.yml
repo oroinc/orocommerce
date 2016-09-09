@@ -1,4 +1,4 @@
-orob2b_order_api_frontend:
+oro_order_api_frontend:
     resource: "@OroOrderBundle/Controller/Frontend/Api/Rest/OrderController.php"
     type:     rest
     options:

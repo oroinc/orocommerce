@@ -1,7 +1,7 @@
-{% block orob2b_tax_zip_code_collection_type_widget %}
+{% block oro_tax_zip_code_collection_type_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_tax_zip_code_collection_prototype(form) %}
+            {% set prototype_html = _self.oro_tax_zip_code_collection_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
@@ -20,7 +20,7 @@
                     <tbody class="tax-zip-code-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_tax_zip_code_collection_prototype(child) }}
+                            {{ _self.oro_tax_zip_code_collection_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -37,7 +37,7 @@
     {% endspaceless %}
 {% endblock %}
 
-{% macro orob2b_tax_zip_code_collection_prototype(widget) %}
+{% macro oro_tax_zip_code_collection_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -54,16 +54,16 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_tax_zip_code_type_widget %}
+{% block oro_tax_zip_code_type_widget %}
     <td>{{ form_widget(form.zipRangeStart) }} {{ form_errors(form.zipRangeStart) }}</td>
     <td> - </td>
     <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
 
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_country_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_region_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_region_text_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_option_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_oro_tax___use_as_base_exclusions_value_entry_country_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_oro_tax___use_as_base_exclusions_value_entry_region_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_oro_tax___use_as_base_exclusions_value_entry_region_text_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_oro_tax___use_as_base_exclusions_value_entry_option_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
 
 {% macro oro_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -92,7 +92,7 @@
     </div>
 {% endmacro %}
 
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_widget %}
+{% block _tax_calculation_oro_tax___use_as_base_exclusions_value_widget %}
     {% spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = _self.oro_collection_item_prototype(form) %}
@@ -126,7 +126,7 @@
     <div class="controls tax-address {{ form.vars.name }}">{{ form_widget(form, attrs) }}</div>
 {% endmacro %}
 
-{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_oro_tax___origin_address_value_country_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_oro_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_oro_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_oro_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}

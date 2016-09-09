@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutStateDiffCompilerPass implements CompilerPassInterface
 {
-    const CHECKOUT_STATE_DIFF_REGISTRY = 'orob2b_checkout.workflow_state.mapper.registry.checkout_state_diff';
+    const CHECKOUT_STATE_DIFF_REGISTRY = 'oro_checkout.workflow_state.mapper.registry.checkout_state_diff';
     const CHECKOUT_STATE_DIFF_MAPPER_TAG = 'checkout.workflow_state.mapper';
 
     /**

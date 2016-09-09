@@ -10,8 +10,8 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
 class RFPFormProvider extends AbstractFormProvider
 {
-    const RFP_REQUEST_CREATE_ROUTE_NAME = 'orob2b_rfp_frontend_request_create';
-    const RFP_REQUEST_UPDATE_ROUTE_NAME = 'orob2b_rfp_frontend_request_update';
+    const RFP_REQUEST_CREATE_ROUTE_NAME = 'oro_rfp_frontend_request_create';
+    const RFP_REQUEST_UPDATE_ROUTE_NAME = 'oro_rfp_frontend_request_update';
 
     /**
      * @param Request $request

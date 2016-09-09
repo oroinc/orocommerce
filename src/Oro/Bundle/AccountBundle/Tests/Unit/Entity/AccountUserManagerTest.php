@@ -67,7 +67,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
                             $this->configManager
                         ],
                         [
-                            'orob2b_account.mailer.processor',
+                            'oro_account.mailer.processor',
                             ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                             $this->emailProcessor
                         ]

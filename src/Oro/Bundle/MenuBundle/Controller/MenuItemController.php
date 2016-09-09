@@ -17,10 +17,10 @@ use Oro\Bundle\MenuBundle\Entity\MenuItem;
 class MenuItemController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_menu_item_roots")
+     * @Route("/", name="oro_menu_item_roots")
      * @Template
      * @Acl(
-     *      id="orob2b_menu_item_view",
+     *      id="oro_menu_item_view",
      *      type="entity",
      *      class="OroMenuBundle:MenuItem",
      *      permission="VIEW"
@@ -32,9 +32,9 @@ class MenuItemController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_menu_item_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_menu_item_view", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_menu_item_view")
+     * @AclAncestor("oro_menu_item_view")
      * @param MenuItem $menuItem
      * @return array|RedirectResponse
      */
@@ -48,9 +48,9 @@ class MenuItemController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_menu_item_create_root")
+     * @Route("/create", name="oro_menu_item_create_root")
      * @Acl(
-     *      id="orob2b_menu_item_create_root",
+     *      id="oro_menu_item_create_root",
      *      type="entity",
      *      class="OroMenuBundle:MenuItem",
      *      permission="CREATE"
@@ -67,19 +67,19 @@ class MenuItemController extends Controller
             $form,
             function (MenuItem $menuItem) {
                 return [
-                    'route' => 'orob2b_menu_item_view',
+                    'route' => 'oro_menu_item_view',
                     'parameters' => ['id' => $menuItem->getId()],
                 ];
             },
-            ['route' => 'orob2b_menu_item_roots'],
+            ['route' => 'oro_menu_item_roots'],
             $this->get('translator')->trans('oro.menu.controller.menuitem.root.saved.message')
         );
     }
 
     /**
-     * @Route("/create/{id}", name="orob2b_menu_item_create")
+     * @Route("/create/{id}", name="oro_menu_item_create")
      * @Acl(
-     *      id="orob2b_menu_item_create",
+     *      id="oro_menu_item_create",
      *      type="entity",
      *      class="OroMenuBundle:MenuItem",
      *      permission="CREATE"
@@ -99,10 +99,10 @@ class MenuItemController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_menu_item_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_menu_item_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_menu_item_update",
+     *      id="oro_menu_item_update",
      *      type="entity",
      *      class="OroMenuBundle:MenuItem",
      *      permission="EDIT"
@@ -138,12 +138,12 @@ class MenuItemController extends Controller
             $form,
             function (MenuItem $menuItem) {
                 return [
-                    'route' => 'orob2b_menu_item_update',
+                    'route' => 'oro_menu_item_update',
                     'parameters' => ['id' => $menuItem->getId()],
                 ];
             },
             [
-                'route' => 'orob2b_menu_item_view',
+                'route' => 'oro_menu_item_view',
                 'parameters' => ['id' => $rootId]
             ],
             $this->get('translator')->trans('oro.menu.controller.menuitem.saved.message'),

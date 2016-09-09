@@ -1,5 +1,5 @@
 services:
-    orob2b_menu.layout.block_type.menu:
+    oro_menu.layout.block_type.menu:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setName, ['menu']]

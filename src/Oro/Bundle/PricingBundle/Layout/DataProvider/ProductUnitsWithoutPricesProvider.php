@@ -35,11 +35,11 @@ class ProductUnitsWithoutPricesProvider
     public function getProductUnits(Product $product)
     {
         if (!array_key_exists($product->getId(), $this->productUnits)) {
-            $prices = $this->pricesProvider->getProductPrices($product);
+            $prices = $this->pricesProvider->getByProduct($product);
 
             $unitWithPrices = [];
             foreach ($prices as $price) {
-                $unitWithPrices[] = $price->getUnit();
+                $unitWithPrices[] = $price['unit'];
             }
             $units = $product->getUnitPrecisions()->map(
                 function (ProductUnitPrecision $unitPrecision) {

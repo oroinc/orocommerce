@@ -1,16 +1,16 @@
 operations:
-    orob2b_order_capture:
+    oro_order_capture:
         label: oro.payment.capture
         button_options:
             icon: icon-credit-card
         applications: [default]
         routes:
-            - orob2b_order_view
-        acl_resource: orob2b_payment_transaction
+            - oro_order_view
+        acl_resource: oro_payment_transaction
         order: 20
         preactions:
             - '@call_service_method':
-                service: orob2b_payment.provider.payment_transaction
+                service: oro_payment.provider.payment_transaction
                 method: getActiveAuthorizePaymentTransaction
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction
@@ -44,7 +44,7 @@ operations:
         exclude_datagrids:
             - order-line-items-grid
 
-    orob2b_order_update_order:
+    oro_order_update_order:
         extends: UPDATE
         replace:
             - for_all_datagrids
@@ -55,7 +55,7 @@ operations:
         datagrids:
             - account-user-orders-grid
 
-    orob2b_order_delete_order:
+    oro_order_delete_order:
         extends: DELETE
         replace:
             - for_all_datagrids

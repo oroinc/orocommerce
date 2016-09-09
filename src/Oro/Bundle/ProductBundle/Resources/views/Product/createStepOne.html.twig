@@ -3,17 +3,17 @@
 
 {% oro_title_set({params : {} }) %}
 
-{% set formAction = path('orob2b_product_create')  %}
+{% set formAction = path('oro_product_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_product_index')) }}
+    {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.buttonType({
         'type': 'submit',
         'class': 'btn-success main-group',
         'label': 'oro.product.ui.continue'|trans,
-        'action': 'orob2b_product_create'
+        'action': 'oro_product_create'
     }) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}

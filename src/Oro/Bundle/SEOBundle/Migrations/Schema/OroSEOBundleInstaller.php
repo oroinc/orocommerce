@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -32,7 +33,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -89,7 +90,11 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'cascade' => ['all'],
+                ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
             ]

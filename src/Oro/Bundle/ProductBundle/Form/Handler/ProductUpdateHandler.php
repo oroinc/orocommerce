@@ -79,12 +79,12 @@ class ProductUpdateHandler extends UpdateHandler
         if ($result instanceof RedirectResponse && $this->isSaveAndDuplicateAction()) {
             $saveMessage = $this->translator->trans('oro.product.controller.product.saved_and_duplicated.message');
             $this->session->getFlashBag()->set('success', $saveMessage);
-            if ($actionGroup = $this->actionGroupRegistry->findByName('orob2b_product_duplicate')) {
+            if ($actionGroup = $this->actionGroupRegistry->findByName('oro_product_duplicate')) {
                 $actionData = $actionGroup->execute(new ActionData(['data' => $entity]));
                 /** @var Product $productCopy */
                 if ($productCopy = $actionData->offsetGet('productCopy')) {
                     return new RedirectResponse(
-                        $this->symfonyRouter->generate('orob2b_product_view', ['id' => $productCopy->getId()])
+                        $this->symfonyRouter->generate('oro_product_view', ['id' => $productCopy->getId()])
                     );
                 }
             }

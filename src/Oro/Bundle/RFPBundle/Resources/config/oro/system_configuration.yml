@@ -1,0 +1,104 @@
+system_configuration:
+    groups:
+        sales:
+            title: oro.rfp.system_configuration.groups.sales.title
+            icon: icon-file
+        rfq:
+            title: oro.rfp.system_configuration.groups.rfq.title
+            icon: icon-file
+            page_reload: true
+        rfp_requeststatus_settings:
+            priority: 200
+            title: oro.rfp.system_configuration.groups.requeststatus.title
+        rfp_notifications:
+            priority: 100
+            title: oro.rfp.system_configuration.groups.notifications.title
+    fields:
+        oro_b2b_rfp.default_request_status:
+            ui_only: true
+            data_type: string
+            type: oro_rfp_default_request_status
+            options:
+                label: oro.rfp.system_configuration.fields.requeststatus_default.title
+        oro_b2b_rfp.backend_product_visibility:
+            data_type: array
+            type: oro_product_inventory_status_select
+            options:
+                label: oro.rfp.system_configuration.fields.backend_product_visibility.title
+        oro_b2b_rfp.frontend_product_visibility:
+            data_type: array
+            type: oro_product_inventory_status_select
+            options:
+                label: oro.rfp.system_configuration.fields.frontend_product_visibility.title
+        oro_b2b_rfp.notify_assigned_sales_reps_of_the_account:
+            data_type: string
+            type: choice
+            options:
+                label: oro.rfp.system_configuration.fields.notification.sales_reps.label
+                choices:
+                    always: oro.rfp.system_configuration.fields.notification.sales_reps.always_notify_sale_reps_of_account
+                    noSaleReps: oro.rfp.system_configuration.fields.notification.sales_reps.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_rfp.notify_owner_of_account_user_record:
+            data_type: string
+            type: choice
+            options:
+                label: oro.rfp.system_configuration.fields.notification.account_user_record.label
+                choices:
+                    always: oro.rfp.system_configuration.fields.notification.account_user_record.always_notify_owner
+                    noSaleReps: oro.rfp.system_configuration.fields.notification.account_user_record.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_rfp.notify_owner_of_account:
+            data_type: string
+            type: choice
+            options:
+                label: oro.rfp.system_configuration.fields.notification.account.label
+                choices:
+                    always: oro.rfp.system_configuration.fields.notification.account.always_notify_owner
+                    noSaleReps: oro.rfp.system_configuration.fields.notification.account.if_no_sales_reps_assigned
+                constraints:
+                    - NotBlank: ~
+        oro_b2b_rfp.feature_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.rfp.system_configuration.fields.feature_enabled.label
+        oro_b2b_rfp.frontend_feature_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.rfp.system_configuration.fields.frontend_feature_enabled.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    sales:
+                        priority: 600
+                        children:
+                            rfq:
+                                children:
+                                    rfp_requeststatus_settings:
+                                        children:
+                                            - oro_b2b_rfp.feature_enabled
+                                            - oro_b2b_rfp.frontend_feature_enabled
+                                            - oro_b2b_rfp.default_request_status
+                                    rfp_notifications:
+                                        children:
+                                            - oro_b2b_rfp.notify_assigned_sales_reps_of_the_account
+                                            - oro_b2b_rfp.notify_owner_of_account_user_record
+                                            - oro_b2b_rfp.notify_owner_of_account
+                    product_inventory:
+                        children:
+                            allowed_statuses:
+                                children:
+                                    frontend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_rfp.frontend_product_visibility
+                                    backend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_rfp.backend_product_visibility

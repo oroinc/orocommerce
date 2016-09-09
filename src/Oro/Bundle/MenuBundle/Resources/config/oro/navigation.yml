@@ -1,0 +1,23 @@
+navigation:
+    menu_config:
+        items:
+            menu_roots_list:
+                label: 'oro.menu.menuitem.roots_plural_label'
+                route: 'oro_menu_item_roots'
+                extras:
+                    position: 90
+                    routes: ['/^oro_menu_\w+$/']
+
+        tree:
+            application_menu:
+                children:
+                    system_tab:
+                        children:
+                            menu_roots_list: ~
+
+    titles:
+        oro_menu_item_roots: ~
+        oro_menu_item_view: '%%title%%'
+        oro_menu_item_update: '%%title%% - oro.ui.edit'
+        oro_menu_item_create: 'oro.ui.create_entity'
+        oro_menu_item_create_root: 'oro.ui.create_entity'

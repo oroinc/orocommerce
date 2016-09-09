@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroTaxExtension extends Extension
 {
-    const ALIAS = 'orob2b_tax';
+    const ALIAS = 'oro_tax';
 
     /**
      * {@inheritDoc}

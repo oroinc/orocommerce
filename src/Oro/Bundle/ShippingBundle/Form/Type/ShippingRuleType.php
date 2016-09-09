@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule';
+    const NAME = 'oro_shipping_rule';
 
     /**
      * {@inheritdoc}

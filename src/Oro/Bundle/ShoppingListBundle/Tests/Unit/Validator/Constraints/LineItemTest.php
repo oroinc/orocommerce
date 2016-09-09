@@ -26,6 +26,6 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
 
     public function testValidatedBy()
     {
-        $this->assertEquals('orob2b_shopping_list_line_item_validator', $this->constraint->validatedBy());
+        $this->assertEquals('oro_shopping_list_line_item_validator', $this->constraint->validatedBy());
     }
 }

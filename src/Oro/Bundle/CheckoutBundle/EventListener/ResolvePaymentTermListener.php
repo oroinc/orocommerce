@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
 class ResolvePaymentTermListener
 {
-    const CHECKOUT_ROUTE = 'orob2b_checkout_frontend_checkout';
+    const CHECKOUT_ROUTE = 'oro_checkout_frontend_checkout';
 
     /** @var RequestStack */
     protected $requestStack;

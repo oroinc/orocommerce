@@ -14,7 +14,7 @@ use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceType extends AbstractType
 {
-    const NAME = 'orob2b_invoice_type';
+    const NAME = 'oro_invoice_type';
 
     /**
      * @var string

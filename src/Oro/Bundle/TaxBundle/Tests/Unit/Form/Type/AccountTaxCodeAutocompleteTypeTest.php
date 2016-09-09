@@ -40,7 +40,7 @@ class AccountTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_account_tax_code_autocomplete', $this->formType->getName());
+        $this->assertEquals('oro_account_tax_code_autocomplete', $this->formType->getName());
     }
 
     public function testGetParent()
@@ -55,7 +55,7 @@ class AccountTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('autocomplete_alias', $options);
-        $this->assertEquals('orob2b_account_tax_code', $options['autocomplete_alias']);
+        $this->assertEquals('oro_account_tax_code', $options['autocomplete_alias']);
         $this->assertArrayHasKey('grid_name', $options);
         $this->assertEquals('accounts-tax-code-select-grid', $options['grid_name']);
     }

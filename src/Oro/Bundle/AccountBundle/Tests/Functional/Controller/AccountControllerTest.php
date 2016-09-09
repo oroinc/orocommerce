@@ -34,7 +34,7 @@ class AccountControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('account-accounts-grid', $crawler->html());
@@ -45,7 +45,7 @@ class AccountControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -76,7 +76,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $id])
+            $this->getUrl('oro_account_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -100,7 +100,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_view', ['id' => $id])
+            $this->getUrl('oro_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -135,11 +135,11 @@ class AccountControllerTest extends WebTestCase
     ) {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_account_type[name]' => $name,
-                'orob2b_account_type[parent]' => $parent->getId(),
-                'orob2b_account_type[group]' => $group->getId(),
-                'orob2b_account_type[internal_rating]' => $internalRating->getId(),
-                'orob2b_account_type[salesRepresentatives]' => implode(',', [
+                'oro_account_type[name]' => $name,
+                'oro_account_type[parent]' => $parent->getId(),
+                'oro_account_type[group]' => $group->getId(),
+                'oro_account_type[internal_rating]' => $internalRating->getId(),
+                'oro_account_type[salesRepresentatives]' => implode(',', [
                     $this->getReference(LoadUserData::USER1)->getId(),
                     $this->getReference(LoadUserData::USER2)->getId()
                 ])

@@ -14,7 +14,7 @@ class QuoteProduct extends Constraint
     /**
      * @var string
      */
-    public $service = 'orob2b_sale.validator.quote_product';
+    public $service = 'oro_sale.validator.quote_product';
 
     /**
      * {@inheritdoc}

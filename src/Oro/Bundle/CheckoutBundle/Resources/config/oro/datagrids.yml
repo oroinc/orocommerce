@@ -1,0 +1,128 @@
+datagrids:
+    frontend-checkouts-grid:
+        update: false
+        delete: false
+        source:
+            type: orm
+            query:
+                select:
+                    - checkout.id
+                    - checkout.createdAt
+                    - checkout.updatedAt
+                    - CONCAT(account_user.firstName, ' ', account_user.lastName) as accountUserName
+                    - checkout.paymentMethod
+                    - checkout.poNumber
+                    - checkout.shipUntil
+                    - checkout.shippingEstimateAmount
+                    - checkout.shippingEstimateCurrency
+                    - checkout.customerNotes
+                    - checkout.shippingMethod
+                    - checkout.shippingMethodType
+                from:
+                    - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
+                join:
+                    left:
+                        - { join: checkout.accountUser, alias: account_user }
+        columns:
+            accountUserName:
+                label: oro.checkout.ordered_by.label
+                order: 0
+            startedFrom:
+                label: oro.checkout.started_from.label
+                type: twig
+                frontend_type: html
+                template: OroCheckoutBundle:Checkout:Datagrid/startedFrom.html.twig
+                order: 10
+            itemsCount:
+                label: oro.checkout.line_items_count.label
+                order: 20
+            createdAt:
+                label: oro.checkout.created_at.label
+                frontend_type: datetime
+                order: 30
+            updatedAt:
+                label: oro.checkout.updated_at.label
+                frontend_type: datetime
+                order: 40
+            paymentMethod:
+                label: oro.checkout.payment_method.label
+                type: twig
+                frontend_type: html
+                template: OroCheckoutBundle:Checkout:Datagrid/paymentMethod.html.twig
+                order: 50
+            poNumber:
+                label: oro.checkout.po_number.label
+                renderable: false
+                order: 60
+            shipUntil:
+                label: oro.checkout.ship_until.label
+                frontend_type: date
+                renderable: false
+                order: 70
+            shippingCost:
+                label: oro.checkout.shipping_cost.label
+                type: twig
+                frontend_type: html
+                template: OroCheckoutBundle:Checkout:Datagrid/shippingCost.html.twig
+                renderable: false
+                order: 80
+            customerNotes:
+                label: oro.checkout.customer_notes.label
+                renderable: false
+                order: 90
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                order: 100
+        sorters:
+            columns:
+                createdAt:
+                    data_name: checkout.createdAt
+                updatedAt:
+                    data_name: checkout.updatedAt
+                accountUserName:
+                    data_name: accountUserName
+                paymentMethod:
+                    data_name: checkout.paymentMethod
+                poNumber:
+                    data_name: checkout.poNumber
+                shipUntil:
+                    data_name: checkout.shipUntil
+                shippingCost:
+                    data_name: checkout.shippingCost
+                customerNotes:
+                    data_name: checkout.customerNotes
+        filters:
+            columns:
+                createdAt:
+                    type: datetime
+                    data_name: checkout.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: checkout.updatedAt
+                accountUserName:
+                    type: string
+                    data_name: accountUserName
+                poNumber:
+                    type: string
+                    data_name: checkout.poNumber
+                shipUntil:
+                    type: date
+                    data_name: checkout.shipUntil
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_checkout_frontend_checkout
+                params:
+                    - id
+        actions:
+            view:
+                type: navigate
+                label: oro.checkout.grid.checkout_link.label
+                link: view_link
+                icon: shopping-cart
+                acl_resource: oro_checkout_frontend_checkout
+                rowAction: true

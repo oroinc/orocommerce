@@ -35,8 +35,8 @@ class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInte
      */
     public function getDefaultProductUnitPrecision()
     {
-        $defaultUnitValue = $this->configManager->get('orob2b_product.default_unit');
-        $defaultUnitPrecision = (int)$this->configManager->get('orob2b_product.default_unit_precision');
+        $defaultUnitValue = $this->configManager->get('oro_product.default_unit');
+        $defaultUnitPrecision = (int)$this->configManager->get('oro_product.default_unit_precision');
 
         $unit = $this->registry
             ->getManagerForClass('OroProductBundle:ProductUnit')

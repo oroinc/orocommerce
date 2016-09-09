@@ -8,7 +8,7 @@ use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 
 class CategoryExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_catalog_category_extension';
+    const NAME = 'oro_catalog_category_extension';
 
     /**
      * @var CategoryTreeHandler
@@ -44,7 +44,7 @@ class CategoryExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('orob2b_category_list', [$this, 'getCategoryList']),
+            new \Twig_SimpleFunction('oro_category_list', [$this, 'getCategoryList']),
         ];
     }
 

@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
@@ -37,26 +38,18 @@ class FrontendProductDatagridListener
     protected $attachmentManager;
 
     /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $unitFormatter;
-
-    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
-     * @param ProductUnitLabelFormatter $unitFormatter
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
-        AttachmentManager $attachmentManager,
-        ProductUnitLabelFormatter $unitFormatter
+        AttachmentManager $attachmentManager
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
-        $this->unitFormatter = $unitFormatter;
     }
 
     /**
@@ -208,7 +201,7 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $productUnits)) {
                 foreach ($productUnits[$productId] as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
+                    $units[] = $unitCode;
                 }
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);

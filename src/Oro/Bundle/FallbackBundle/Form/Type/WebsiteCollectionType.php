@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_fallback_website_collection';
+    const NAME = 'oro_fallback_website_collection';
 
     /**
      * @var ManagerRegistry

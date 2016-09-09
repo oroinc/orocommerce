@@ -36,7 +36,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_get_account', ['id' => $id])
+            $this->getUrl('oro_account_account_user_get_account', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

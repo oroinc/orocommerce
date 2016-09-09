@@ -20,7 +20,7 @@ class FrontendWebTestCase extends WebTestCase
         $client = parent::initClient($options, $server, $force);
 
         if (!$this->storedWebsiteManager) {
-            $this->storedWebsiteManager = $this->client->getContainer()->get('orob2b_website.manager');
+            $this->storedWebsiteManager = $this->client->getContainer()->get('oro_website.manager');
         }
 
         return $client;
@@ -29,7 +29,7 @@ class FrontendWebTestCase extends WebTestCase
     protected function tearDown()
     {
         if ($this->storedWebsiteManager) {
-            $this->client->getContainer()->set('orob2b_website.manager', $this->storedWebsiteManager);
+            $this->client->getContainer()->set('oro_website.manager', $this->storedWebsiteManager);
             unset($this->storedWebsiteManager);
         }
 
@@ -61,6 +61,6 @@ class FrontendWebTestCase extends WebTestCase
         $managerMock->expects($this->any())
             ->method('getDefaultWebsite')
             ->willReturn($defaultWebsite);
-        $this->client->getContainer()->set('orob2b_website.manager', $managerMock);
+        $this->client->getContainer()->set('oro_website.manager', $managerMock);
     }
 }

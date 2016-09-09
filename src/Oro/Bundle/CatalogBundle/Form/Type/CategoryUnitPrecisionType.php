@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class CategoryUnitPrecisionType extends AbstractType
 {
-    const NAME = 'orob2b_catalog_category_unit_precision';
+    const NAME = 'oro_catalog_category_unit_precision';
 
     /**
      * @var string
