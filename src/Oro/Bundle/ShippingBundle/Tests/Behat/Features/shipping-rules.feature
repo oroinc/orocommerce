@@ -4,7 +4,7 @@ Feature: Applying shipping rules
   As administrator
   I need to be able change shipping methods rules and orders
 
-  Scenario: "SHIPPING  2A" > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
+  Scenario: "SHIPPING 2A" > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
     Given I login as AmandaRCole@example.org buyer
     And there is EUR currency in the system configuration
     When Buyer is on Checkout step on Shopping List 1

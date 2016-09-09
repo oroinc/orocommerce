@@ -123,7 +123,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 5
         unit: '@item'
         value: 2
-        currency:  'EUR'
+        currency: 'EUR'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice1:

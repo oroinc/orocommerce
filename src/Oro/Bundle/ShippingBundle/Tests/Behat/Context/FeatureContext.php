@@ -207,6 +207,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var Form $form */
         $form = $this->createElement('Address');
         $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
+        /** @var @var int $row */
+        if ($row = array_search('Country', $table->getColumn(0))) {
+            $form->fillField('Country', $table->getRow($row)[1]);
+            $this->waitForAjax();
+        }
         $form->fill($table);
         $this->getSession()->getPage()->pressButton('Continue');
     }
