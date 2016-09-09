@@ -11,12 +11,15 @@ oro:
             shipping_account_name.label: Shipping Account Name
             shipping_account_number.label: Shipping Account Number
             pickup_type.label: Pickup Type
-            unit_of_weight.label: Unit Of Weight
+            unit_of_weight:
+                label: Unit Of Weight
+                kgs.label: Kilogram
+                lbs.label: Pound
             country.label: Country
-        shipping_service:
-            label: Shipping Service
-            plural_label: Shipping Services
-            blank: Should be configured at least one Shipping Service
+            shipping_service:
+                label: Shipping Service
+                plural_label: Shipping Services
+                blank: Should be configured at least one Shipping Service
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge

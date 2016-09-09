@@ -24,11 +24,9 @@ class UPSTransport extends Transport
         '19' => 'Letter Center'
     ];
     
-    const UNITS_OF_WEIGHT = [
-        'LBS' => 'LBS',
-        'KGS' => 'KGS'
-    ];
-    
+    const UNIT_OF_WEIGHT_KGS = 'KGS';
+    const UNIT_OF_WEIGHT_LBS = 'LBS';
+
     /**
      * @var string
      *
