@@ -1,10 +1,10 @@
 services:
-    oro.frontend_navigation.menu_update_provider:
-        class: Oro\Bundle\FrontendNavigationBundle\Menu\MenuUpdateProvider
+    oro_frontend_navigation.menu_update_provider.frontend:
+        class: Oro\Bundle\FrontendNavigationBundle\Provider\MenuUpdateProvider
         arguments:
             - '@oro_security.security_facade'
+            - '@oro_entity.doctrine_helper'
             - '@orob2b_website.manager'
-            - '@doctrine'
             - '@oro_locale.helper.localization'
         tags:
-            - { name: oro_navigation.menu_update_provider }
+            - { name: oro_navigation.menu_update_provider, area: frontend }

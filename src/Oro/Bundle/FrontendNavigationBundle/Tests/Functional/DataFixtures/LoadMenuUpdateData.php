@@ -16,6 +16,9 @@ class LoadMenuUpdateData extends AbstractFixture implements DependentFixtureInte
     const ORGANIZATION = 'default_organization';
     const ACCOUNT = 'account.level_1';
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies()
     {
         return [
