@@ -3,15 +3,23 @@
 namespace Oro\Bundle\AccountBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityMessageFactory implements MessageFactoryInterface
 {
-    const CATEGORY = 'category';
-
+    const ID = 'id';
+    const ENTITY_CLASS_NAME = 'entity';
+    const CATEGORY_ID = 'category';
+    const ACCOUNT_ID = 'account';
+    const ACCOUNT_GROUP_ID = 'account_group';
     /**
      * @var ManagerRegistry
      */
@@ -26,14 +34,27 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
     }
 
     /**
-     * @param object|CategoryVisibility $visibility
+     * @param object|VisibilityInterface $visibility
      * @return array
      */
     public function createMessage($visibility)
     {
-        return [
-            self::CATEGORY => $visibility->getCategory()->getId(),
-        ];
+        $entityClass = ClassUtils::getClass($visibility);
+        switch ($entityClass) {
+            case CategoryVisibility::class:
+                $message = $this->categoryVisibilityToArray($visibility);
+                break;
+            case AccountCategoryVisibility::class:
+                $message = $this->accountCategoryVisibilityToArray($visibility);
+                break;
+            case AccountGroupCategoryVisibility::class:
+                $message = $this->accountGroupCategoryVisibilityToArray($visibility);
+                break;
+            default:
+                throw new InvalidArgumentException('Unsupported entity class');
+        }
+
+        return $message;
     }
 
     /**
@@ -44,13 +65,28 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         if (!is_array($data) || empty($data)) {
             throw new InvalidArgumentException('Message should not be empty.');
         }
+        if (empty($data[self::ENTITY_CLASS_NAME])) {
+            throw new InvalidArgumentException('Message should contain entity name.');
+        }
+        if (empty($data[self::ID])) {
+            throw new InvalidArgumentException('Message should contain entity id.');
+        }
 
-        $visibility = $this->registry->getManagerForClass(CategoryVisibility::class)
-            ->getRepository(CategoryVisibility::class)
-            ->findOneBy(['category' => $data[self::CATEGORY]]);
-
+        $visibility = $this->registry->getManagerForClass($data[self::ENTITY_CLASS_NAME])
+            ->getRepository($data[self::ENTITY_CLASS_NAME])
+            ->find($data[self::ID]);
         if (!$visibility) {
-            $visibility = $this->createDefaultVisibility($data);
+            switch ($data[self::ENTITY_CLASS_NAME]) {
+                case CategoryVisibility::class:
+                    $visibility = $this->createDefaultCategoryVisibility($data);
+                    break;
+                case AccountCategoryVisibility::class:
+                    $visibility = $this->createDefaultAccountCategoryVisibility($data);
+                    break;
+                case AccountGroupCategoryVisibility::class:
+                    $visibility = $this->createDefaultAccountGroupCategoryVisibility($data);
+                    break;
+            }
         }
 
         return $visibility;
@@ -58,13 +94,13 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
 
     /**
      * @param array $data
-     * @return ProductVisibility
+     * @return CategoryVisibility
      */
-    protected function createDefaultVisibility(array $data)
+    protected function createDefaultCategoryVisibility(array $data)
     {
         $category = $this->registry->getManagerForClass(Category::class)
             ->getRepository(Category::class)
-            ->find($data[self::CATEGORY]);
+            ->find($data[self::CATEGORY_ID]);
         if (!$category) {
             throw new InvalidArgumentException('Required objects was not found.');
         }
@@ -73,5 +109,88 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $visibility->setVisibility(CategoryVisibility::getDefault($category));
 
         return $visibility;
+    }
+
+    /**
+     * @param array $data
+     * @return AccountCategoryVisibility
+     */
+    protected function createDefaultAccountCategoryVisibility(array $data)
+    {
+        $category = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->find($data[self::CATEGORY_ID]);
+        $account = $this->registry->getManagerForClass(Account::class)
+            ->getRepository(Account::class)
+            ->find($data[self::ACCOUNT_ID]);
+        if (!$category || !$account) {
+            throw new InvalidArgumentException('Required objects was not found.');
+        }
+        $visibility = new AccountCategoryVisibility();
+        $visibility->setCategory($category);
+        $visibility->setAccount($account);
+        $visibility->setVisibility(AccountCategoryVisibility::getDefault($category));
+
+        return $visibility;
+    }
+
+    /**
+     * @param array $data
+     * @return AccountGroupCategoryVisibility
+     */
+    protected function createDefaultAccountGroupCategoryVisibility(array $data)
+    {
+        $category = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->find($data[self::CATEGORY_ID]);
+        $accountGroup = $this->registry->getManagerForClass(AccountGroup::class)
+            ->getRepository(AccountGroup::class)
+            ->find($data[self::ACCOUNT_GROUP_ID]);
+        if (!$category || !$accountGroup) {
+            throw new InvalidArgumentException('Required objects was not found.');
+        }
+        $visibility = new AccountGroupCategoryVisibility();
+        $visibility->setCategory($category);
+        $visibility->setAccountGroup($accountGroup);
+        $visibility->setVisibility(AccountGroupCategoryVisibility::getDefault($category));
+
+        return $visibility;
+    }
+
+    /**
+     * @param VisibilityInterface|CategoryVisibility $visibility
+     * @return array
+     */
+    protected function categoryVisibilityToArray(VisibilityInterface $visibility)
+    {
+        return [
+            self::ID => $visibility->getId(),
+            self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
+            self::CATEGORY_ID => $visibility->getCategory()->getId(),
+        ];
+    }
+
+    /**
+     * @param VisibilityInterface|AccountCategoryVisibility $visibility
+     * @return array
+     */
+    protected function accountCategoryVisibilityToArray(VisibilityInterface $visibility)
+    {
+        $data = $this->categoryVisibilityToArray($visibility);
+        $data[self::ACCOUNT_ID] = $visibility->getAccount()->getId();
+
+        return $data;
+    }
+
+    /**
+     * @param VisibilityInterface|AccountGroupCategoryVisibility $visibility
+     * @return array
+     */
+    protected function accountGroupCategoryVisibilityToArray(VisibilityInterface $visibility)
+    {
+        $data = $this->categoryVisibilityToArray($visibility);
+        $data[self::ACCOUNT_GROUP_ID] = $visibility->getAccountGroup()->getId();
+
+        return $data;
     }
 }

@@ -44,14 +44,14 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
     {
         $entityClass = ClassUtils::getClass($visibility);
         switch ($entityClass) {
+            case ProductVisibility::class:
+                $message = $this->productVisibilityToArray($visibility);
+                break;
             case AccountProductVisibility::class:
                 $message = $this->accountProductVisibilityToArray($visibility);
                 break;
             case AccountGroupProductVisibility::class:
                 $message = $this->accountGroupProductVisibilityToArray($visibility);
-                break;
-            case ProductVisibility::class:
-                $message = $this->productVisibilityToArray($visibility);
                 break;
             default:
                 throw new InvalidArgumentException('Unsupported entity class');
