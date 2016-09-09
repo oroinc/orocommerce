@@ -138,11 +138,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
 
-
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('System/Shipping Rules');
         $this->waitForAjax();
+
         $this->getSession()->getPage()->clickLink('Create Shipping Rule');
         $this->waitForAjax();
 
@@ -190,11 +190,14 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)
     {
-        $this->getSession()->getPage()->clickLink('Back');
-        $this->waitForAjax();
         /** @var checkoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
+        $checkoutStep->assertTitle('Shipping Method');
+
+        $this->getSession()->getPage()->clickLink('Back');
+        $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Information');
+        
         /** @var Form $form */
         $form = $this->createElement('Address');
         $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');

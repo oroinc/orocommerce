@@ -33,7 +33,6 @@ Feature: Applying shipping rules
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
-
   Scenario: "SHIPPING 2E" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
     Given Admin User Created "Shipping Rule 2" with next data:
       | Currency      | EUR       |
@@ -47,8 +46,7 @@ Feature: Applying shipping rules
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
     And  the order total is recalculated to "€14.00"
-
-
+    
   Scenario: "Shipping 2F" > List of ZIP codes for Shipping Rule #3 contains ZIP Code for Order. Priority - Major
     Given Admin User created "Shipping Rule 3" with next data:
       | Enabled       | true              |
