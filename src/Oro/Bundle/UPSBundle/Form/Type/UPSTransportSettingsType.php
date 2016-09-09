@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -21,14 +21,13 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class UPSTransportSettingsType extends AbstractType
 {
-    const NAME = 'oro_ups_transport_settings_type';
+    const NAME = 'oro_ups_transport_settings';
 
     /**
      * @var TransportInterface
@@ -66,14 +65,6 @@ class UPSTransportSettingsType extends AbstractType
     }
 
     /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
      * {@inheritdoc}
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
@@ -84,20 +75,25 @@ class UPSTransportSettingsType extends AbstractType
         $builder->add(
             'baseUrl',
             TextType::class,
-            ['label' => 'oro.ups.transport.base_url.label', 'required' => true]
+            [
+                'label' => 'oro.ups.transport.base_url.label',
+                'required' => true
+            ]
         );
         $builder->add(
             'apiUser',
             TextType::class,
-            ['label' => 'oro.ups.transport.api_user.label', 'required' => true]
+            [
+                'label' => 'oro.ups.transport.api_user.label',
+                'required' => true
+            ]
         );
         $builder->add(
             'apiPassword',
             PasswordType::class,
             [
                 'label' => 'oro.ups.transport.api_password.label',
-                'required' => true,
-                'constraints' => [new NotBlank()]
+                'required' => true
             ]
         );
         $builder->add(
@@ -105,8 +101,7 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
-                'required' => true,
-                'constraints' => [new NotBlank()]
+                'required' => true
             ]
         );
         $builder->add(
@@ -114,8 +109,7 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_name.label',
-                'required' => true,
-                'constraints' => [new NotBlank()]
+                'required' => true
             ]
         );
         $builder->add(
@@ -123,35 +117,25 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_number.label',
-                'required' => true,
-                'constraints' => [new NotBlank()]
+                'required' => true
             ]
         );
         $builder->add(
             'pickupType',
             ChoiceType::class,
             [
+                'label' => 'oro.ups.transport.pickup_type.label',
                 'required' => true,
-                'choices' => [
-                    '01' => 'Regular Daily Pickup',
-                    '03' => 'Customer Counter',
-                    '06' => 'One Time Pickup',
-                    '07' => 'On Call Air',
-                    '19' => 'Letter Center'
-                ],
-                'constraints' => [new NotBlank()],
+                'choices' => UPSTransport::PICKUP_TYPES
             ]
         );
         $builder->add(
             'unitOfWeight',
             ChoiceType::class,
             [
+                'label' => 'oro.ups.transport.unit_of_weight.label',
                 'required' => true,
-                'choices' => [
-                    'KGS' => 'KGS',
-                    'LPS' => 'LPS'
-                ],
-                'constraints' => [new NotBlank()],
+                'choices' => UPSTransport::UNITS_OF_WEIGHT,
             ]
         );
         $builder->add(
@@ -160,7 +144,6 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.country.label',
                 'required' => true,
-                'constraints' => [new NotBlank()],
             ]
         );
         $builder->add(
@@ -169,7 +152,6 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.shipping_service.plural_label',
                 'required' => true,
-                'mapped' => true,
                 'multiple' => true,
                 'class' => 'Oro\Bundle\UPSBundle\Entity\ShippingService',
             ]
@@ -191,16 +173,10 @@ class UPSTransportSettingsType extends AbstractType
                 ->shippingOriginProvider
                 ->getSystemShippingOrigin()
                 ->getCountry();
-            
+
             $country = $this->getCountry($countryCode);
             if (null !== $country) {
                 $transport->setCountry($country);
-
-                if ($country === 'US') {
-                    $transport->setUnitOfWeight('LPS');
-                } else {
-                    $transport->setUnitOfWeight('KGS');
-                }
                 $event->setData($transport);
             }
         }
@@ -229,14 +205,6 @@ class UPSTransportSettingsType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN()
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

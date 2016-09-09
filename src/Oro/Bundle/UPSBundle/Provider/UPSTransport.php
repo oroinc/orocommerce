@@ -8,6 +8,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
+use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 
@@ -61,7 +62,7 @@ class UPSTransport extends AbstractRestTransport
      */
     public function getSettingsFormType()
     {
-        return 'oro_ups_transport_settings_type';
+        return UPSTransportSettingsType::class;
     }
 
     /**

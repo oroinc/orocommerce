@@ -18,6 +18,19 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
  */
 class UPSTransport extends Transport
 {
+    const PICKUP_TYPES = [
+        '01' => 'Regular Daily Pickup',
+        '03' => 'Customer Counter',
+        '06' => 'One Time Pickup',
+        '07' => 'On Call Air',
+        '19' => 'Letter Center'
+    ];
+    
+    const UNITS_OF_WEIGHT = [
+        'LBS' => 'LBS',
+        'KGS' => 'KGS'
+    ];
+    
     /**
      * @var string
      *

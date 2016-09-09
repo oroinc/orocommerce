@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
+use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
@@ -51,7 +52,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSettingsFormType()
     {
-        static::assertEquals('oro_ups_transport_settings_type', $this->transport->getSettingsFormType());
+        static::assertEquals(UPSTransportSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()

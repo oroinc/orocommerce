@@ -10,6 +10,8 @@ oro:
       api_key.label: API Key
       shipping_account_name.label: Shipping Account Name
       shipping_account_number.label: Shipping Account Number
+      pickup_type.label: Pickup Type
+      unit_of_weight.label: Unit Of Weight
       country.label: Country
       shipping_service:
         label: Shipping Service

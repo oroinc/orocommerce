@@ -70,7 +70,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             $this->shippingOriginProvider,
             $this->doctrineHelper
         );
-        $this->formType->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
     }
@@ -230,7 +229,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'service without value' => [
                 'defaultData'   => new UPSTransport(),
                 'submittedData' => [],
-                'isValid' => false,
+                'isValid' => true,
                 'expectedData'  => (new UPSTransport())
             ],
             'service with value' => [
@@ -243,7 +242,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'shippingAccountName' => 'name',
                     'shippingAccountNumber' => 'number',
                     'pickupType' => '01',
-                    'unitOfWeight' => 'LPS',
+                    'unitOfWeight' => 'KGS',
                     'country' => 'US',
                     'applicableShippingServices' => [1]
                 ],
@@ -256,7 +255,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     ->setShippingAccountName('name')
                     ->setShippingAccountNumber('number')
                     ->setPickupType('01')
-                    ->setUnitOfWeight('LPS')
+                    ->setUnitOfWeight('KGS')
                     ->setCountry(new Country('US'))
                     ->addApplicableShippingService($expectedShippingService)
             ]
@@ -274,11 +273,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ]);
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        static::assertEquals(UPSTransportSettingsType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()

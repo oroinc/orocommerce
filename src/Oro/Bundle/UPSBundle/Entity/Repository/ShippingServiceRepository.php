@@ -15,13 +15,12 @@ class ShippingServiceRepository extends EntityRepository
      */
     public function getShippingServicesByCountry(Country $country)
     {
-        $result = $this
+        return $this
             ->createQueryBuilder('shippingService')
             ->andWhere('shippingService.country = :country')
             ->orderBy('shippingService.description')
             ->setParameter(':country', $country->getIso2Code())
             ->getQuery()
             ->getResult();
-        return $result;
     }
 }
