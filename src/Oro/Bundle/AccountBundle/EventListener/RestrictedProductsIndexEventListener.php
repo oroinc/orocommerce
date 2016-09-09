@@ -17,8 +17,6 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
 class RestrictedProductsIndexEventListener
 {
-    const ACCOUNT_ALIAS = 'account';
-
     /** @var ConfigManager  */
     private $configManager;
 
@@ -196,14 +194,14 @@ TERM;
         $qb
             ->leftJoin(
                 Account::class,
-                self::ACCOUNT_ALIAS,
+                'account',
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq(
                         'account_group_product_visibility_resolved.accountGroup',
-                        self::ACCOUNT_ALIAS . '.group'
+                        'account.group'
                     ),
-                    $qb->expr()->eq('account_product_visibility_resolved.account', self::ACCOUNT_ALIAS)
+                    $qb->expr()->eq('account_product_visibility_resolved.account', 'account')
                 )
             );
     }
