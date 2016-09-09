@@ -61,12 +61,8 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['test_name' => $this->method], $this->registry->getShippingMethods());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Shipping method "wrong_name" is missing. Registered shipping methods are ""
-     */
-    public function testRegistryException()
+    public function testRegistryWrongMethod()
     {
-        $this->registry->getShippingMethod('wrong_name');
+        $this->assertNull($this->registry->getShippingMethod('wrong_name'));
     }
 }

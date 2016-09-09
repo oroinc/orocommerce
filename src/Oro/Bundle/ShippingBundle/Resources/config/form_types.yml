@@ -69,7 +69,7 @@ services:
             - '@orob2b_shipping.shipping_method.registry'
             - '@translator'
         tags:
-            - { name: form.type, alias: orob2b_shipping_rule }
+            - { name: form.type }
 
     orob2b_shipping.form.type.rule_method_type_config_collection:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType
@@ -108,6 +108,11 @@ services:
 
     oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber:
         class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber'
+        arguments:
+            - '@orob2b_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
         arguments:
             - '@orob2b_shipping.shipping_method.registry'
 
@@ -151,3 +156,10 @@ services:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+
+    oro_shipping.form.type.rule_method_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber'
+        tags:
+            - { name: form.type }

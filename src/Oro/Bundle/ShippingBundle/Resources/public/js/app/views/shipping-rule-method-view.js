@@ -83,7 +83,7 @@ define([
                 }
                 methods.push($(element).find('input[data-name="field__method"]').val());
             });
-            if (methods.length === Object.keys(this.options.methods).length) {
+            if (methods.length >= Object.keys(this.options.methods).length) {
                 $(this.el).hide();
                 return;
             }

@@ -29,14 +29,7 @@ class ShippingMethodRegistry
             return $this->shippingMethods[$name];
         }
 
-        // TODO: return null instead of exception, will be fixed during BB-2812
-        throw new \InvalidArgumentException(
-            sprintf(
-                'Shipping method "%s" is missing. Registered shipping methods are "%s"',
-                $name,
-                implode(', ', array_keys($this->shippingMethods))
-            )
-        );
+        return null;
     }
 
     /**
