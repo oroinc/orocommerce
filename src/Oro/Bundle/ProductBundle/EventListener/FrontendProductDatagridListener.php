@@ -139,9 +139,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      */
-    public function onResultAfter(GridResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -23,9 +23,9 @@ class OrderDatagridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      */
-    public function onResultAfter(GridResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event)
     {
         $orderIds = [];
         /** @var ResultRecord[] $records */

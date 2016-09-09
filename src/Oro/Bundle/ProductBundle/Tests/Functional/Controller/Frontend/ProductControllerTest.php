@@ -63,21 +63,22 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexAction()
     {
-        // temporary commented due the usage
-        // of mock search engine
-        
-//        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
-//        $result = $this->client->getResponse();
-//        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-//        $content = $result->getContent();
-//        $this->assertNotEmpty($content);
-//        $this->assertContains(LoadProductData::PRODUCT_1, $content);
-//        $this->assertContains(LoadProductData::PRODUCT_2, $content);
-//        $this->assertContains(LoadProductData::PRODUCT_3, $content);
+        $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
+
+        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $content = $result->getContent();
+        $this->assertNotEmpty($content);
+        $this->assertContains(LoadProductData::PRODUCT_1, $content);
+        $this->assertContains(LoadProductData::PRODUCT_2, $content);
+        $this->assertContains(LoadProductData::PRODUCT_3, $content);
     }
 
     public function testIndexDatagridViews()
     {
+        $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
+
         // default view is DataGridThemeHelper::VIEW_GRID
         $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);

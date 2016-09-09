@@ -328,7 +328,7 @@ datagrids:
                 visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
- frontend-product-search-grid:
+    frontend-product-search-grid:
         source:
             type: search
             search_index: website
@@ -338,7 +338,7 @@ datagrids:
                     - text.name_LOCALIZATION_ID
                     - text.all_text_LOCALIZATION_ID
                 from:
-                    - { table: %orob2b_product.entity.product.class%, alias: product }
+                    - { table: %oro_product.entity.product.class%, alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -352,7 +352,7 @@ datagrids:
             status:
                 label:         orobproduct.status.label
                 frontend_type: select
-                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -375,7 +375,7 @@ datagrids:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_product_frontend_product_view
+                route: oro_product_frontend_product_view
                 params: [ id ]
         sorters:
             toolbar_sorting: true

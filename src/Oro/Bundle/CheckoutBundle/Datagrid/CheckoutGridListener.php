@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\Cache;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
@@ -108,9 +108,9 @@ class CheckoutGridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      */
-    public function onResultAfter(GridResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
