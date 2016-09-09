@@ -25,6 +25,14 @@ Feature: Applying shipping rules
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
+  Scenario: "SHIPPING 2D" > Different countries for Shipping Rule #1 and Order. *Priority - Major*
+    Given Admin User edited "Shipping Rule 1" with next data:
+      | Enabled  | true    |
+      | Currency | EUR     |
+      | Country  | Ukraine |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Then There is no shipping method available for this order
+
 
   Scenario: "SHIPPING 2E" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
     Given Admin User Created "Shipping Rule 2" with next data:
@@ -64,7 +72,7 @@ Feature: Applying shipping rules
     Given Admin User edited "Shipping Rule 3" with next data:
       | ZIP           | 10114,10116,10117 |
       | ZIP1          | 10114,10116,10117 |
-    Given Admin User edited "Shipping Rule 2" with next data:
+    And Admin User edited "Shipping Rule 2" with next data:
       | Enabled    | false |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
@@ -96,10 +104,11 @@ Feature: Applying shipping rules
       | Price         | 5         |
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    And Buyer created order with next shipping address:
-      | Country       | Ukraine    |
-      | City          | Kyiv       |
-      | ZIP           | 01000      |
-      | Street        | Hreschatik |
+    Given Buyer created order with next shipping address:
+      | Country         | Ukraine              |
+      | City            | Kyiv                 |
+      | State           | Kyïvs'ka mis'ka rada |
+      | Zip/postal code | 01000                |
+      | Street          | Hreschatik           |
     Then Shipping Type "Flat Rate: €6.50" is shown for Buyer selection
     And  the order total is recalculated to "€16.50"
