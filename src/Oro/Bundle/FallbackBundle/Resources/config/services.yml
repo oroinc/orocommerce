@@ -6,9 +6,9 @@ services:
         calls:
             - [setWebsiteClass, ['%oro_website.entity.website.class%']]
         tags:
-            - { name: form.type, alias: orob2b_fallback_website_collection }
+            - { name: form.type, alias: oro_fallback_website_collection }
 
     oro_fallback.form.type.website_property:
         class: 'Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType'
         tags:
-            - { name: form.type, alias: orob2b_fallback_website_property }
+            - { name: form.type, alias: oro_fallback_website_property }

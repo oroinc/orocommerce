@@ -9,7 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class ProductVisibilityType extends AbstractType
 {
-    const NAME = 'orob2b_account_product_default_visibility';
+    const NAME = 'oro_account_product_default_visibility';
 
     /**
      * {@inheritdoc}

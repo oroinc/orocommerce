@@ -16,9 +16,9 @@ use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
 class TaxRuleController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_tax_rule_index")
+     * @Route("/", name="oro_tax_rule_index")
      * @Template
-     * @AclAncestor("orob2b_tax_rule_view")
+     * @AclAncestor("oro_tax_rule_view")
      *
      * @return array
      */
@@ -30,10 +30,10 @@ class TaxRuleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_tax_rule_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_tax_rule_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_rule_view",
+     *      id="oro_tax_rule_view",
      *      type="entity",
      *      class="OroTaxBundle:TaxRule",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class TaxRuleController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_tax_rule_create")
+     * @Route("/create", name="oro_tax_rule_create")
      * @Template("OroTaxBundle:TaxRule:update.html.twig")
      * @Acl(
-     *      id="orob2b_tax_rule_create",
+     *      id="oro_tax_rule_create",
      *      type="entity",
      *      class="OroTaxBundle:TaxRule",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class TaxRuleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_tax_rule_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_tax_rule_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_rule_update",
+     *      id="oro_tax_rule_update",
      *      type="entity",
      *      class="OroTaxBundle:TaxRule",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class TaxRuleController extends Controller
             $this->createForm(TaxRuleType::NAME, $taxRule),
             function (TaxRule $taxRule) {
                 return [
-                    'route' => 'orob2b_tax_rule_update',
+                    'route' => 'oro_tax_rule_update',
                     'parameters' => ['id' => $taxRule->getId()]
                 ];
             },
             function (TaxRule $taxRule) {
                 return [
-                    'route' => 'orob2b_tax_rule_view',
+                    'route' => 'oro_tax_rule_view',
                     'parameters' => ['id' => $taxRule->getId()]
                 ];
             },

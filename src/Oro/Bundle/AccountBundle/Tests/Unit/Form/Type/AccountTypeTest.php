@@ -263,7 +263,7 @@ class AccountTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_account_type', $this->formType->getName());
+        $this->assertEquals('oro_account_type', $this->formType->getName());
     }
 
     /**

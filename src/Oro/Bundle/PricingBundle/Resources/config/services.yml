@@ -46,7 +46,7 @@ services:
             - '%oro_pricing.entity.price_list.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_pricing_price_list, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
@@ -213,7 +213,7 @@ services:
     oro_pricing.validator.unique_product_prices:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_unique_product_prices_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_unique_product_prices_validator }
 
     oro_pricing.event_listener.form_view:
         class: 'Oro\Bundle\PricingBundle\EventListener\FormViewListener'
@@ -344,19 +344,19 @@ services:
     oro_pricing.validator.product_price_allowed_units:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_allowed_units_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_product_price_allowed_units_validator }
 
     oro_pricing.validator.product_price_currency:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_product_price_currency_validator }
 
     oro_pricing.validator.price_list_product_prices_currency:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator'
         arguments:
             - '@doctrine'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_price_list_product_prices_currency_validator }
 
     oro_pricing.validator.default_currency:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
@@ -364,19 +364,19 @@ services:
         arguments:
             - "@oro_config.manager"
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_default_currency_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_default_currency_validator }
 
     oro_pricing.validator.dates_chain:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
         arguments:
             - '@property_accessor'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_dates_chain_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_dates_chain_validator }
 
     oro_pricing.validator.schedules_intersection:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_schedules_intersection_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_schedules_intersection_validator }
 
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
@@ -453,7 +453,7 @@ services:
             - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
             - [setDoctrineHelper,  ['@oro_entity.doctrine_helper']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 
     oro_pricing.model.frontend_product_list_modifier:
         class: 'Oro\Bundle\PricingBundle\Model\FrontendProductListModifier'
@@ -478,7 +478,7 @@ services:
             - '@oro_pricing.model.frontend_product_list_modifier'
             - '@doctrine'
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     oro_pricing.rounding.price_rounding_service:
         class: 'Oro\Bundle\PricingBundle\Rounding\PriceRoundingService'
@@ -503,9 +503,9 @@ services:
             - '@oro_pricing.price_list_relation_trigger_handler'
             - '@oro_pricing.hander.price_rule_lexeme_handler'
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.orob2b_pricing_price_list, method: beforeSubmit }
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_pricing_price_list, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_pricing_price_list, method: afterFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_pricing_price_list, method: beforeSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_pricing_price_list, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_pricing_price_list, method: afterFlush }
 
     oro_pricing.system_config_converter:
         class: 'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'
@@ -517,14 +517,14 @@ services:
     oro_pricing.validator.unique_price_list:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_unique_price_list_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_unique_price_list_validator }
 
     oro_pricing.validator.price_for_product_unit_exists:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExistsValidator'
         arguments:
             - '@doctrine'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_pricing_price_for_product_unit_exists_validator }
+            - { name: validator.constraint_validator, alias: oro_pricing_price_for_product_unit_exists_validator }
 
     oro_pricing.entity_listener.product_price:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener'
@@ -631,7 +631,7 @@ services:
             - '@oro_pricing.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: orob2b_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, priority: 0 }
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
@@ -646,7 +646,7 @@ services:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
         tags:
-            - { name: orob2b_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, priority: 0 }
 
     oro_pricing.price_list_with_priority_collection.handler:
         class: 'Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler'
@@ -662,8 +662,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: kernel.event_listener, event: orob2b_account.account_group.before_flush, method: onPostSubmit }
-            - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
+            - { name: kernel.event_listener, event: oro_account.account_group.before_flush, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_account.account_group.pre_remove, method: onGroupRemove }
 
     oro_pricing.entity_listener.account:
         class: 'Oro\Bundle\PricingBundle\EventListener\AccountListener'
@@ -672,8 +672,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_account_type, method: onPostSubmit }
-            - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onAccountGroupChange }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_account_type, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_account.account.on_account_group_change, method: onAccountGroupChange }
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'

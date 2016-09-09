@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 {
-    const NAME = 'orob2b_shopping_list_quick_add_processor';
+    const NAME = 'oro_shopping_list_quick_add_processor';
 
     /**
      * {@inheritdoc}

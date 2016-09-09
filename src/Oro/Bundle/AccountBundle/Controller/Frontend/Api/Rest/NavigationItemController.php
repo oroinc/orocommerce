@@ -9,7 +9,7 @@ use Oro\Bundle\NavigationBundle\Controller\Api\NavigationItemController as BaseN
 
 /**
  * @RouteResource("navigationitems")
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class NavigationItemController extends BaseNavigationItemController
 {

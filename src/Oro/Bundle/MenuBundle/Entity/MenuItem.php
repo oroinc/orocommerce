@@ -19,7 +19,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\EntityListeners({ "Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_menu_item_roots",
+ *      routeName="oro_menu_item_roots",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-th"
@@ -31,7 +31,7 @@ class MenuItem extends ExtendMenuItem
 {
     use TreeTrait;
 
-    const LOCALE_OPTION = 'orob2b_website_locale';
+    const LOCALE_OPTION = 'oro_website_locale';
 
     /**
      * @var integer

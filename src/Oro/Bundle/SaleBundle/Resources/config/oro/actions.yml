@@ -1,10 +1,10 @@
 operations:
-    orob2b_sale_expire_quote:
+    oro_sale_expire_quote:
         label: oro.sale.quote.actions.quote_expire
         enabled: true
         applications: [default]
         routes:
-            - orob2b_sale_quote_view
+            - oro_sale_quote_view
         datagrids:
             - quotes-grid
         order: 40
@@ -18,7 +18,7 @@ operations:
             '@equal': [$expired, false]
         actions:
             - '@run_action_group':
-                action_group: orob2b_sale_expire_quote
+                action_group: oro_sale_expire_quote
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
@@ -27,13 +27,13 @@ operations:
                 message_parameters:
                     id: $id
             - '@redirect':
-                route: 'orob2b_sale_quote_index'
+                route: 'oro_sale_quote_index'
 
-    orob2b_sale_notify_customer_by_email:
+    oro_sale_notify_customer_by_email:
         label: oro.sale.quote.notify_customer.by_email.link.text
         applications: [default]
         routes:
-            - orob2b_sale_quote_view
+            - oro_sale_quote_view
         order: 20
         acl_resource: oro_email_email_create
 
@@ -77,16 +77,16 @@ operations:
 
         actions:
             - '@run_action_group':
-                action_group: orob2b_sale_notify_customer_by_email
+                action_group: oro_sale_notify_customer_by_email
                 parameters_mapping:
                     data: $.data
                     email: $.email
 
-    orob2b_sale_frontend_quote_change:
+    oro_sale_frontend_quote_change:
         label: oro.frontend.sale.btn.accept_quote_create_order
         applications: [commerce]
         routes:
-            - orob2b_sale_quote_frontend_view
+            - oro_sale_quote_frontend_view
         order: 20
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
@@ -114,11 +114,11 @@ operations:
                         method_parameters: [$.quoteDemand]
                     - '@flush_entity': $.quoteDemand
             - '@redirect':
-                 route: 'orob2b_sale_quote_frontend_choice'
+                 route: 'oro_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}
 
 action_groups:
-    orob2b_sale_expire_quote:
+    oro_sale_expire_quote:
         parameters:
             data:
                 type: Oro\Bundle\SaleBundle\Entity\Quote
@@ -128,7 +128,7 @@ action_groups:
             - '@assign_value': [$.data.expired, true]
             - '@flush_entity': $.data
 
-    orob2b_sale_notify_customer_by_email:
+    oro_sale_notify_customer_by_email:
         parameters:
             data:
                 type: Oro\Bundle\SaleBundle\Entity\Quote
@@ -141,7 +141,7 @@ action_groups:
                 method: send
                 method_parameters: [$.email, $.data]
 
-    orob2b_sale_send_no_quote_alert:
+    oro_sale_send_no_quote_alert:
         parameters:
             data:
                 type: Oro\Bundle\RFPBundle\Entity\Request
@@ -177,14 +177,14 @@ action_groups:
                             template: 'request_no_quote_alert'
                             entity: $.data
 
-    orob2b_sale_frontend_quote_accept_and_submit_to_order:
+    oro_sale_frontend_quote_accept_and_submit_to_order:
         parameters:
             data:
                 type: Oro\Bundle\SaleBundle\Entity\QuoteDemand
         actions:
             - '@assign_url':
                 attribute: $.editLink
-                route: orob2b_sale_quote_frontend_choice
+                route: oro_sale_quote_frontend_choice
                 route_parameters: { 'id': $.data.id }
             - '@assign_value':
                 conditions:

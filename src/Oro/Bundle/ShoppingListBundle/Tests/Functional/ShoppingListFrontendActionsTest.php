@@ -39,7 +39,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeOperation($shoppingList, 'orob2b_shoppinglist_frontend_createorder');
+        $this->executeOperation($shoppingList, 'oro_shoppinglist_frontend_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -48,13 +48,13 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->assertStringStartsWith(
-            $this->getUrl('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $this->getUrl('oro_order_frontend_create', [ProductDataStorage::STORAGE_KEY => 1]),
             $data['redirectUrl']
         );
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $content = $crawler->filter('[data-ftid=orob2b_order_frontend_type_lineItems]')->html();
+        $content = $crawler->filter('[data-ftid=oro_order_frontend_type_lineItems]')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
         }
@@ -70,7 +70,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeOperation($shoppingList, 'orob2b_shoppinglist_frontend_request_quote');
+        $this->executeOperation($shoppingList, 'oro_shoppinglist_frontend_request_quote');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -79,13 +79,13 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->assertStringStartsWith(
-            $this->getUrl('orob2b_rfp_frontend_request_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $this->getUrl('oro_rfp_frontend_request_create', [ProductDataStorage::STORAGE_KEY => 1]),
             $data['redirectUrl']
         );
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $lineItems = $crawler->filter('[data-ftid=orob2b_rfp_frontend_request_requestProducts]');
+        $lineItems = $crawler->filter('[data-ftid=oro_rfp_frontend_request_requestProducts]');
         $this->assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
@@ -103,7 +103,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
             $operationName,
             $shoppingList->getId(),
             'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
-            ['route' => 'orob2b_shopping_list_frontend_view']
+            ['route' => 'oro_shopping_list_frontend_view']
         );
     }
 }

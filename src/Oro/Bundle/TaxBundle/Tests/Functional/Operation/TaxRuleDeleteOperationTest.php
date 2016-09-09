@@ -27,6 +27,6 @@ class TaxRuleDeleteOperationTest extends ActionTestCase
             LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1
         );
 
-        $this->assertDeleteOperation($taxRule->getId(), 'oro_tax.entity.tax_rule.class', 'orob2b_tax_rule_index');
+        $this->assertDeleteOperation($taxRule->getId(), 'oro_tax.entity.tax_rule.class', 'oro_tax_rule_index');
     }
 }

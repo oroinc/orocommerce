@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 
 class ProductImageType extends AbstractType
 {
-    const NAME = 'orob2b_product_image';
+    const NAME = 'oro_product_image';
 
     /**
      * {@inheritdoc}

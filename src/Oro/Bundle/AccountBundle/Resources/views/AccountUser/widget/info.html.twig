@@ -27,10 +27,10 @@
             {{ UI.renderHtmlProperty('oro.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
             {% if entity.account %}
-                {{ UI.renderHtmlProperty('oro.account.accountuser.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'orob2b_account_view')) }}
+                {{ UI.renderHtmlProperty('oro.account.accountuser.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'oro_account_view')) }}
             {% endif %}
 
-            {% if resource_granted('orob2b_account_account_user_role_view') %}
+            {% if resource_granted('oro_account_account_user_role_view') %}
                 {% set roles = [] %}
                 {% for entityRole in entity.roles %}
                     {% set roles = roles|merge([entityRole.label]) %}

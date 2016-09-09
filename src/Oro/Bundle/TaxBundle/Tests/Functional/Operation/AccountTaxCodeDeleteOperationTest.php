@@ -28,7 +28,7 @@ class AccountTaxCodeDeleteOperationTest extends ActionTestCase
         $this->assertDeleteOperation(
             $accountTaxCode->getId(),
             'oro_tax.entity.account_tax_code.class',
-            'orob2b_tax_account_tax_code_index'
+            'oro_tax_account_tax_code_index'
         );
     }
 }

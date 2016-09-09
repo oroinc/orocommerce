@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 
 class ShippingOptionLabelExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_shipping_option_label';
+    const NAME = 'oro_shipping_option_label';
 
     /** @var UnitLabelFormatter */
     protected $lengthUnitLabelFormatter;
@@ -39,17 +39,17 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_length_unit_format_label',
+                'oro_length_unit_format_label',
                 [$this->lengthUnitLabelFormatter, 'format'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_weight_unit_format_label',
+                'oro_weight_unit_format_label',
                 [$this->weightUnitLabelFormatter, 'format'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_freight_class_format_label',
+                'oro_freight_class_format_label',
                 [$this->freightClassLabelFormatter, 'format'],
                 ['is_safe' => ['html']]
             ),

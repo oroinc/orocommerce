@@ -1,8 +1,8 @@
 operations:
-    orob2b_pricing_add_product_price:
+    oro_pricing_add_product_price:
         label: oro.pricing.add_product_price
         applications: [default]
-        routes: [orob2b_pricing_price_list_view]
+        routes: [oro_pricing_price_list_view]
         order: 10
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
 
@@ -28,7 +28,7 @@ operations:
         form_options:
             attribute_fields:
                 price:
-                    form_type: orob2b_pricing_price_list_product_price
+                    form_type: oro_pricing_price_list_product_price
                     options:
                         required: true
             attribute_default_values:
@@ -42,7 +42,7 @@ operations:
 
         actions:
             - '@run_action_group':
-                action_group: orob2b_pricing_add_product_price
+                action_group: oro_pricing_add_product_price
                 parameters_mapping:
                     data: $.data
                     price: $.price
@@ -64,9 +64,9 @@ operations:
             - pricing-price-list-select-grid
             - product-prices-grid
 
-    orob2b_pricing_price_list_set_active:
+    oro_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
-        routes: [orob2b_pricing_price_list_view]
+        routes: [oro_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -89,9 +89,9 @@ operations:
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
-    orob2b_pricing_price_list_disable:
+    oro_pricing_price_list_disable:
         label: oro.pricing.pricelist.status.disable
-        routes: [orob2b_pricing_price_list_view]
+        routes: [oro_pricing_price_list_view]
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -114,9 +114,9 @@ operations:
                 method: handlePriceListStatusChange
                 method_parameters: [$.entity]
 
-    orob2b_pricing_price_list_duplicate:
+    oro_pricing_price_list_duplicate:
         label: oro.pricing.pricelist.duplicate.label
-        routes: [orob2b_pricing_price_list_view]
+        routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
             icon: icon-copy
@@ -157,11 +157,11 @@ operations:
                 message: oro.pricing.pricelist.duplicate.message
                 type: 'success'
             - '@redirect':
-                route: 'orob2b_pricing_price_list_view'
+                route: 'oro_pricing_price_list_view'
                 route_parameters:
                     id: $.newPriceList.id
 
-    orob2b_pricing_delete_product_price:
+    oro_pricing_delete_product_price:
         extends: DELETE
         replace:
             - for_all_datagrids
@@ -172,9 +172,9 @@ operations:
         datagrids:
             - price-list-product-prices-grid
 
-    orob2b_pricing_recalculate_price_list:
+    oro_pricing_recalculate_price_list:
         label: oro.pricing.pricelist.recalculate.label
-        routes: [orob2b_pricing_price_list_view]
+        routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
             icon: icon-money
@@ -194,7 +194,7 @@ operations:
                 type: 'success'
 
 action_groups:
-    orob2b_pricing_add_product_price:
+    oro_pricing_add_product_price:
         parameters:
             data:
                 type: Oro\Bundle\PricingBundle\Entity\PriceList

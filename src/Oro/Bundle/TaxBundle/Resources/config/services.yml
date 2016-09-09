@@ -21,7 +21,7 @@ services:
             - '%oro_tax.entity.product_tax_code.class%'
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_tax_code }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
     oro_tax.form.autocomplete.account_tax_code.search_handler:
         public: false
@@ -30,7 +30,7 @@ services:
             - '%oro_tax.entity.account_tax_code.class%'
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_tax_code }
 
     oro_tax.event_listener.abstract_form_view:
         public: false
@@ -80,7 +80,7 @@ services:
             - '%oro_tax.entity.tax.class%'
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_autocomplete, acl_resource: orob2b_tax_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_tax_autocomplete, acl_resource: oro_tax_view }
 
     oro_tax.form.autocomplete.tax_jurisdiction.search_handler:
         public: false
@@ -89,12 +89,12 @@ services:
             - '%oro_tax.entity.tax_jurisdiction.class%'
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_jurisdiction_autocomplete, acl_resource: orob2b_tax_jurisdiction_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_tax_jurisdiction_autocomplete, acl_resource: oro_tax_jurisdiction_view }
 
     oro_tax.validator.zip_code_fields:
         class: 'Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
+            - { name: validator.constraint_validator, alias: oro_tax_zip_code_fields }
 
     oro_tax.event_listener.account_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
@@ -177,7 +177,7 @@ services:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_order.pricing.price_matcher'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -128 }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
 
     oro_tax.provider.tax_provider_registry:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry'
@@ -186,7 +186,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider'
         public: false
         tags:
-            - { name: orob2b_tax.tax_provider, priority: 255 }
+            - { name: oro_tax.tax_provider, priority: 255 }
 
     oro_tax.transformer.tax_value:
         class: 'Oro\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer'
@@ -251,7 +251,7 @@ services:
         calls:
             - [setOrderLineItemMapper,  ["@oro_tax.order_tax.mapper.order_line_item_mapper"]]
         tags:
-            - { name: orob2b_tax.tax_mapper }
+            - { name: oro_tax.tax_mapper }
 
     oro_tax.order_tax.mapper.order_line_item_mapper:
         class: 'Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper'
@@ -261,7 +261,7 @@ services:
             - '@oro_tax.provider.taxation_address_provider'
             - '%oro_order.entity.order_line_item.class%'
         tags:
-            - { name: orob2b_tax.tax_mapper }
+            - { name: oro_tax.tax_mapper }
 
     oro_tax.order_tax.context_handler.order_line_item_handler:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
@@ -272,7 +272,7 @@ services:
             - '%oro_tax.entity.account_tax_code.class%'
             - '%oro_order.entity.order_line_item.class%'
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.mapper.context, method: onContextEvent }
+            - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
     oro_tax.provider.taxation_settings_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
@@ -348,25 +348,25 @@ services:
             - "@oro_tax.provider.taxation_settings_provider"
             - "@oro_tax.resolver.rounding"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after }
 
     oro_tax.resolver.shipping:
         class: 'Oro\Bundle\TaxBundle\Resolver\ShippingResolver'
         public: false
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after }
 
     oro_tax.resolver.rounding:
         class: 'Oro\Bundle\TaxBundle\Resolver\RoundingResolver'
         public: false
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -255 }
 
     oro_tax.resolver.currency:
         class: 'Oro\Bundle\TaxBundle\Resolver\CurrencyResolver'
         public: false
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -255 }
 
     oro_tax.resolver.customer_address.item:
         class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver'
@@ -376,7 +376,7 @@ services:
             - "@oro_tax.resolver.row_total"
             - "@oro_tax.matcher.zip_code_matcher"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -255 }
 
     oro_tax.resolver.customer_address:
         class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver'
@@ -384,7 +384,7 @@ services:
         arguments:
             - "@oro_tax.resolver.customer_address.item"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -255 }
 
     oro_tax.resolver.eu_item_digital:
         class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver'
@@ -394,7 +394,7 @@ services:
             - "@oro_tax.resolver.row_total"
             - "@oro_tax.matcher.country_matcher"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: oro_tax.resolver, event: oro_tax.resolve }
 
     oro_tax.resolver.eu_digital:
         class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver'
@@ -402,13 +402,13 @@ services:
         arguments:
             - "@oro_tax.resolver.eu_item_digital"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: oro_tax.resolver, event: oro_tax.resolve }
 
     oro_tax.resolver.us_sales_tax_digital.item:
         class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver'
         public: false
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: oro_tax.resolver, event: oro_tax.resolve }
 
     oro_tax.resolver.us_sales_tax_digital:
         class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver'
@@ -416,7 +416,7 @@ services:
         arguments:
             - "@oro_tax.resolver.us_sales_tax_digital.item"
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: oro_tax.resolver, event: oro_tax.resolve }
 
     oro_tax.event_listener.tax_value:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxValueListener'
@@ -471,4 +471,4 @@ services:
             - '@oro_tax.manager.tax_manager'
             - '@oro_tax.factory.tax'
         tags:
-            - { name: orob2b_pricing.subtotal_provider, priority: 20 }
+            - { name: oro_pricing.subtotal_provider, priority: 20 }

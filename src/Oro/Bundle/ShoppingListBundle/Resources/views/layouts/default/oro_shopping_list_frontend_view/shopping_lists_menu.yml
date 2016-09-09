@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'shopping_lists_menu.html.twig'
+        - '@addTree':
+            items:
+                shopping_lists_menu:
+                    blockType: shopping_lists_menu
+                    options:
+                        visible: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists() != null'
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        selectedShoppingList: '=data["entity"]'
+                shopping_lists_menu_item:
+                    blockType: block
+            tree:
+                sidebar_left:
+                    shopping_lists_menu:
+                        shopping_lists_menu_item: ~

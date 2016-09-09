@@ -1,6 +1,6 @@
 datagrids:
     base-quote-grid:
-        acl_resource: orob2b_sale_quote_view
+        acl_resource: oro_sale_quote_view
         extended_entity_name: %oro_sale.entity.quote.class%
         options:
             entityHint:        quote
@@ -53,7 +53,7 @@ datagrids:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_sale_quote_view
+                route: oro_sale_quote_view
                 params: [ id ]
         sorters:
             columns:
@@ -83,7 +83,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_sale_quote_view
+                acl_resource:  oro_sale_quote_view
                 rowAction:     true
 
     account-view-quote-grid:
@@ -242,7 +242,7 @@ datagrids:
                     data_name: quote.updatedAt
 
     frontend-quotes-grid:
-        acl_resource: orob2b_sale_quote_frontend_index
+        acl_resource: oro_sale_quote_frontend_index
         extended_entity_name: %oro_sale.entity.quote.class%
         options:
             entityHint:        quote
@@ -285,7 +285,7 @@ datagrids:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_sale_quote_frontend_view
+                route: oro_sale_quote_frontend_view
                 params: [ id ]
         sorters:
             columns:

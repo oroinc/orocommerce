@@ -25,7 +25,7 @@ class FrontendControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();

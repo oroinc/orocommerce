@@ -15,7 +15,7 @@ use Oro\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AccountTypedAddressWithDefaultType extends AbstractType
 {
-    const NAME = 'orob2b_account_typed_address_with_default';
+    const NAME = 'oro_account_typed_address_with_default';
 
     /** @var ManagerRegistry */
     protected $registry;

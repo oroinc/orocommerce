@@ -93,7 +93,7 @@ class WebsiteScopedDataHandlerTest extends FormHandlerTestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with('orob2b_product.product.edit', new AfterFormProcessEvent($this->form, $this->entity));
+            ->with('oro_product.product.edit', new AfterFormProcessEvent($this->form, $this->entity));
 
         $this->assertTrue($this->handler->process($this->entity));
     }

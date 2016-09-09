@@ -12,7 +12,7 @@ use Oro\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 
 class AccountAclAccessLevelTextType extends AbstractType
 {
-    const NAME = 'orob2b_account_acl_access_level_text';
+    const NAME = 'oro_account_acl_access_level_text';
 
     /**
      * @var RoleTranslationPrefixResolver

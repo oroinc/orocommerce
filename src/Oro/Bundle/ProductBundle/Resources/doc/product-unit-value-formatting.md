@@ -38,7 +38,7 @@ PHP Name Formatter
 
 **Class:** Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
 
-**Service id:** orob2b_product.formatter.product_unit_value
+**Service id:** oro_product.formatter.product_unit_value
 
 Formats product unit value based on given product unit.
 
@@ -71,7 +71,7 @@ Code:
 // $unit implements ProductUnit
 $unit->setCode('kg');
 
-$formatter = $this->container->get('orob2b_product.formatter.product_unit_value');
+$formatter = $this->container->get('oro_product.formatter.product_unit_value');
 echo $formatter->format(5, $unit);
 ```
 
@@ -108,7 +108,7 @@ Code:
 // $unit implements ProductUnit
 $unit->setCode('kg');
 
-$formatter = $this->container->get('orob2b_product.formatter.product_unit_value');
+$formatter = $this->container->get('oro_product.formatter.product_unit_value');
 echo $formatter->formatShort(5, $unit);
 ```
 
@@ -124,19 +124,19 @@ Twig
 Filters
 -------
 
-### orob2b_format_product_unit_value
+### oro_format_product_unit_value
 
 This filter use *format* method from product unit value formatter, and has same logic.
 
 ```
-{{ value|orob2b_format_product_unit_value(unit) }}
+{{ value|oro_format_product_unit_value(unit) }}
 ```
 
 
-### orob2b_format_short_product_unit_value
+### oro_format_short_product_unit_value
 
 This filter use *formatShort* method from product unit value formatter, and has same logic.
 
 ```
-{{ value|orob2b_format_short_product_unit_value(unit) }}
+{{ value|oro_format_short_product_unit_value(unit) }}
 ```

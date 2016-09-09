@@ -1,5 +1,5 @@
 acls:
-    orob2b_alternativecheckout_checkout_approve:
+    oro_alternativecheckout_checkout_approve:
         label: oro.alternativecheckout.security.permission.checkout_approve
         type: action
         group_name: "commerce"

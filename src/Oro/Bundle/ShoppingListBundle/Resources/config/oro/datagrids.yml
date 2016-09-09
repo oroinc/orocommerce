@@ -1,6 +1,6 @@
 datagrids:
     shopping-list-grid:
-        acl_resource: orob2b_shopping_list_view
+        acl_resource: oro_shopping_list_view
         extended_entity_name: %oro_shopping_list.entity.shopping_list.class%
         options:
             entityHint:        shopping list
@@ -52,7 +52,7 @@ datagrids:
         properties:
             view_link:
                 type:  url
-                route: orob2b_shopping_list_view
+                route: oro_shopping_list_view
                 params: [ id ]
         sorters:
             columns:
@@ -101,11 +101,11 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_shopping_list_view
+                acl_resource:  oro_shopping_list_view
                 rowAction:     true
 
     shopping-list-line-items-grid:
-        acl_resource:      orob2b_shopping_list_view
+        acl_resource:      oro_shopping_list_view
         extended_entity_name: %oro_shopping_list.entity.line_item.class%
         options:
             entityHint:        line item
@@ -170,7 +170,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: orob2b_product_unit_selection
+                        field_type: oro_product_unit_selection
         properties:
             id: ~
             productId: ~
@@ -179,7 +179,7 @@ datagrids:
                 data_name: product.names
             view_product_link:
                 type:  url
-                route: orob2b_product_view
+                route: oro_product_view
                 params:
                     id: productId
         actions:
@@ -188,5 +188,5 @@ datagrids:
                 label:         oro.shoppinglist.lineitem.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
-                acl_resource:  orob2b_product_view
+                acl_resource:  oro_product_view
                 rowAction:     true

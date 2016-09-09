@@ -20,7 +20,7 @@ class PageControllerTest extends WebTestCase
     {
         $page = $this->getPage();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_view', ['id' => $page->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_view', ['id' => $page->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
     }
@@ -29,18 +29,18 @@ class PageControllerTest extends WebTestCase
     {
         $page = $this->getPage();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_update', ['id' => $page->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_catalog_category' => ['_token' => $crfToken],
+            'oro_catalog_category' => ['_token' => $crfToken],
         ];
-        $parameters['orob2b_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
-        $parameters['orob2b_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
-        $parameters['orob2b_cms_page']['metaKeywords']['values']['default'] = LoadPageMetaData::META_KEYWORDS;
+        $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
+        $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
+        $parameters['oro_cms_page']['metaKeywords']['values']['default'] = LoadPageMetaData::META_KEYWORDS;
 
         $form = $crawler->selectButton('Save')->form();
 

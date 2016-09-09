@@ -55,7 +55,7 @@ class ShoppingListControllerTest extends WebTestCase
         // assert current shopping list
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view')
+            $this->getUrl('oro_shopping_list_frontend_view')
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
@@ -80,7 +80,7 @@ class ShoppingListControllerTest extends WebTestCase
         $shoppingList1 = $this->getReference($shoppingList);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
         );
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
@@ -133,7 +133,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testQuickAdd()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Product $product */
@@ -165,7 +165,7 @@ class ShoppingListControllerTest extends WebTestCase
         array $products,
         $shippingListId = null
     ) {
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
         $processor = $this->getContainer()->get('oro_shopping_list.processor.quick_add');
 
         $this->client->followRedirects(true);
@@ -174,8 +174,8 @@ class ShoppingListControllerTest extends WebTestCase
             $form->getMethod(),
             $form->getUri(),
             [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
+                'oro_product_quick_add' => [
+                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
                     'component' => $processor->getName(),
                     'additional' => $shippingListId
