@@ -73,7 +73,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEmpty($this->getAccountUser(['email' => self::EMAIL]));
-        $this->assertContains('The password fields must match.', $crawler->filter('.notification_error')->html());
+        $this->assertContains('The password fields must match.', $crawler->html());
     }
 
     /**
@@ -188,7 +188,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->followRedirect();
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
         $this->assertContains('Please check your email to complete registration', $crawler->html());
 
@@ -258,7 +258,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
 
         $forgotPasswordLink = $crawler->filter('a:contains("Forgot Your Password?")')->link();
@@ -306,7 +306,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
         $this->assertContains('Password was created successfully.', $crawler->html());
     }

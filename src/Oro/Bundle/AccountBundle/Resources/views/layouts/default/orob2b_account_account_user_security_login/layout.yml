@@ -4,9 +4,12 @@ layout:
             themes: 'layout.html.twig'
         - '@move':
             id: notification
-            parentId: body
+            parentId: wrapper
+        - '@move':
+            id: sticky_panel
+            parentId: wrapper
         - '@remove':
-            id: wrapper
+            id: main
         - '@setOption':
             id: login_form_submit
             optionName: attr.class
