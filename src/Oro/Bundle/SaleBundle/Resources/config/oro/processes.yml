@@ -22,7 +22,7 @@ processes:
                     value: $.quote
                     actions:
                         - '@run_action_group':
-                            action_group: orob2b_sale_expire_quote
+                            action_group: oro_sale_expire_quote
                             parameters_mapping:
                                 data: $.quote
 
@@ -41,7 +41,7 @@ processes:
                     value: $.request
                     actions:
                         - '@run_action_group':
-                            action_group: orob2b_sale_send_no_quote_alert
+                            action_group: oro_sale_send_no_quote_alert
                             parameters_mapping:
                                 data: $.request
     triggers:

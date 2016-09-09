@@ -15,7 +15,7 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
     /**
      * @Route(
      *      "/product-units/{id}",
-     *      name="orob2b_product_frontend_ajaxproductunit_productunits",
+     *      name="oro_product_frontend_ajaxproductunit_productunits",
      *      requirements={"id"="\d+"}
      * )
      *

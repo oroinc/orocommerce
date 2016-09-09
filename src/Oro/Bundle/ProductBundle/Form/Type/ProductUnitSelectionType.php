@@ -19,7 +19,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_product_unit_selection';
+    const NAME = 'oro_product_unit_selection';
 
     /**
      * @var TranslatorInterface

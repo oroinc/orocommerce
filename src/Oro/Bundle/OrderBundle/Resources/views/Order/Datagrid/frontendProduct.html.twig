@@ -1,9 +1,9 @@
 {% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
 <h3 class="product-item__title product-item__title_in-cart mb1-md">
     {% if isFreeFormProduct %}
-        <a href="{{ path('orob2b_product_frontend_product_view', {'id': record.getValue('id')}) }}">{{ record.getValue('freeFormProduct') }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': record.getValue('id')}) }}">{{ record.getValue('freeFormProduct') }}</a>
     {% else %}
-        <a href="{{ path('orob2b_product_frontend_product_view', {'id': record.getValue('id')}) }}">{{ record.getValue('productName') }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': record.getValue('id')}) }}">{{ record.getValue('productName') }}</a>
     {% endif %}
 </h3>
 <div>{{ 'oro.order.orderlineitem.frontend.order.view.label'|trans }}{{ record.getValue('id') }}</div>

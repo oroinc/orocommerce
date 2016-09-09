@@ -1,0 +1,6 @@
+{% block __oro_account_user_role_grid__datagrid_toolbar_button_container_create_account_user_role_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ "text-right"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

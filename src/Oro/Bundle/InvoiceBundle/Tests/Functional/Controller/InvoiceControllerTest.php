@@ -37,7 +37,7 @@ class InvoiceControllerTest extends WebTestCase
     public function getSubmittedData($form, $account, $today, $lineItems, $poNumber)
     {
         return [
-            '_token' => $form['orob2b_invoice_type[_token]']->getValue(),
+            '_token' => $form['oro_invoice_type[_token]']->getValue(),
             'owner' => $this->getCurrentUser()->getId(),
             'account' => $account->getId(),
             'poNumber' => $poNumber,
@@ -66,7 +66,7 @@ class InvoiceControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_invoice_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('invoices-grid', $crawler->html());
@@ -79,7 +79,7 @@ class InvoiceControllerTest extends WebTestCase
     public function testCreate()
     {
         $today = (new \DateTime('now'))->format('Y-m-d');
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_invoice_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -105,7 +105,7 @@ class InvoiceControllerTest extends WebTestCase
         ];
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_invoice_type' => $this->getSubmittedData($form, $account, $today, $lineItems, self::PO_NUMBER),
+            'oro_invoice_type' => $this->getSubmittedData($form, $account, $today, $lineItems, self::PO_NUMBER),
         ];
 
         $this->client->followRedirects(true);
@@ -149,7 +149,7 @@ class InvoiceControllerTest extends WebTestCase
     public function testUpdateLineItems($id)
     {
         $today = (new \DateTime('now'))->format('Y-m-d');
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_invoice_update', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -187,7 +187,7 @@ class InvoiceControllerTest extends WebTestCase
         ];
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_invoice_type' => $this->getSubmittedData(
+            'oro_invoice_type' => $this->getSubmittedData(
                 $form,
                 $account,
                 $today,
@@ -248,7 +248,7 @@ class InvoiceControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_invoice_view', ['id' => $id])
+            $this->getUrl('oro_invoice_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -289,29 +289,29 @@ class InvoiceControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'product' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][product]"]')
+                'product' => $crawler->filter('input[name="oro_invoice_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
                 'freeFormProduct' => $crawler
-                    ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][freeFormProduct]"]')
+                    ->filter('input[name="oro_invoice_type[lineItems]['.$i.'][freeFormProduct]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][quantity]"]')
+                'quantity' => $crawler->filter('input[name="oro_invoice_type[lineItems]['.$i.'][quantity]"]')
                     ->extract('value')[0],
                 'productUnit' => $crawler
-                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][productUnit]"] :selected')
+                    ->filter('select[name="oro_invoice_type[lineItems]['.$i.'][productUnit]"] :selected')
                     ->html(),
                 'price' => [
                     'value' => $crawler
-                        ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][value]"]')
+                        ->filter('input[name="oro_invoice_type[lineItems]['.$i.'][price][value]"]')
                         ->extract('value')[0],
                     'currency' => $crawler
-                        ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][currency]"]')
+                        ->filter('input[name="oro_invoice_type[lineItems]['.$i.'][price][currency]"]')
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
-                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][priceType]"] :selected')
+                    ->filter('select[name="oro_invoice_type[lineItems]['.$i.'][priceType]"] :selected')
                     ->html(),
                 'sortOrder' => $crawler
-                    ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][sortOrder]"]')
+                    ->filter('input[name="oro_invoice_type[lineItems]['.$i.'][sortOrder]"]')
                     ->extract('value')[0],
             ];
         }

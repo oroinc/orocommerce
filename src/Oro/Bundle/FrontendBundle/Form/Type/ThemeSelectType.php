@@ -12,7 +12,7 @@ use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
 class ThemeSelectType extends AbstractType
 {
-    const NAME = 'orob2b_frontend_theme_select';
+    const NAME = 'oro_frontend_theme_select';
     const GROUP = 'commerce';
 
     /**

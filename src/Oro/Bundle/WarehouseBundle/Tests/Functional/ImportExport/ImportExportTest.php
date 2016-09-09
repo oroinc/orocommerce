@@ -69,7 +69,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function strategyDataProvider()
     {
         return [
-            'warehouse inventory level' => ['orob2b_warehouse.warehouse_inventory_level'],
+            'warehouse inventory level' => ['oro_warehouse.warehouse_inventory_level'],
         ];
     }
 
@@ -157,7 +157,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'orob2b_warehouse.detailed_inventory_levels_template',
+                'oro_warehouse.detailed_inventory_levels_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
@@ -173,7 +173,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function testExportInventoryStatusesOnly()
     {
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
-            'orob2b_product.inventory_status_only',
+            'oro_product.inventory_status_only',
             $this->inventoryStatusOnlyHeader
         );
 
@@ -193,7 +193,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function testExportDetailedInventoryLevel()
     {
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
-            'orob2b_warehouse.detailed_inventory_levels',
+            'oro_warehouse.detailed_inventory_levels',
             $this->inventoryLevelHeader
         );
 
@@ -269,7 +269,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $this->client->useHashNavigation(false);
         $parameters = $this->getDefaultRequestParameters();
-        $parameters['processorAlias'] = 'orob2b_warehouse.detailed_inventory_levels_template';
+        $parameters['processorAlias'] = 'oro_warehouse.detailed_inventory_levels_template';
 
         $crawler = $this->client->request(
             'GET',
@@ -295,8 +295,8 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function exportTemplateDataProvider()
     {
         return [
-            ['orob2b_product.inventory_status_only_template', $this->inventoryStatusOnlyHeader],
-            ['orob2b_warehouse.detailed_inventory_levels_template', $this->inventoryLevelHeader]
+            ['oro_product.inventory_status_only_template', $this->inventoryStatusOnlyHeader],
+            ['oro_warehouse.detailed_inventory_levels_template', $this->inventoryLevelHeader]
         ];
     }
 
@@ -343,7 +343,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             '_widgetContainer' => 'dialog',
             '_wid' => uniqid('abc', true),
             'entity' => WarehouseInventoryLevel::class,
-            'processorAlias' => 'orob2b_warehouse_detailed_inventory_levels'
+            'processorAlias' => 'oro_warehouse_detailed_inventory_levels'
         ];
     }
 
@@ -361,7 +361,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $configuration = [
             'import_validation' => [
-                'processorAlias' => 'orob2b_warehouse.warehouse_inventory_level',
+                'processorAlias' => 'oro_warehouse.warehouse_inventory_level',
                 'entityName' => WarehouseInventoryLevel::class,
                 'filePath' => $filePath,
             ],

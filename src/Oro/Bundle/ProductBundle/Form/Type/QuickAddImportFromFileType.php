@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class QuickAddImportFromFileType extends AbstractType
 {
-    const NAME = 'orob2b_product_quick_add_import_from_file';
+    const NAME = 'oro_product_quick_add_import_from_file';
     const FILE_FIELD_NAME = 'file';
 
     /**

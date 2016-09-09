@@ -16,9 +16,9 @@ use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 class TaxJurisdictionController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_tax_jurisdiction_index")
+     * @Route("/", name="oro_tax_jurisdiction_index")
      * @Template
-     * @AclAncestor("orob2b_tax_jurisdiction_view")
+     * @AclAncestor("oro_tax_jurisdiction_view")
      *
      * @return array
      */
@@ -30,10 +30,10 @@ class TaxJurisdictionController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_tax_jurisdiction_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_tax_jurisdiction_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_jurisdiction_view",
+     *      id="oro_tax_jurisdiction_view",
      *      type="entity",
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class TaxJurisdictionController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_tax_jurisdiction_create")
+     * @Route("/create", name="oro_tax_jurisdiction_create")
      * @Template("OroTaxBundle:TaxJurisdiction:update.html.twig")
      * @Acl(
-     *      id="orob2b_tax_jurisdiction_create",
+     *      id="oro_tax_jurisdiction_create",
      *      type="entity",
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class TaxJurisdictionController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_tax_jurisdiction_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_tax_jurisdiction_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_jurisdiction_update",
+     *      id="oro_tax_jurisdiction_update",
      *      type="entity",
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class TaxJurisdictionController extends Controller
             $this->createForm(TaxJurisdictionType::NAME, $taxJurisdiction),
             function (TaxJurisdiction $taxJurisdiction) {
                 return [
-                    'route' => 'orob2b_tax_jurisdiction_update',
+                    'route' => 'oro_tax_jurisdiction_update',
                     'parameters' => ['id' => $taxJurisdiction->getId()]
                 ];
             },
             function (TaxJurisdiction $taxJurisdiction) {
                 return [
-                    'route' => 'orob2b_tax_jurisdiction_view',
+                    'route' => 'oro_tax_jurisdiction_view',
                     'parameters' => ['id' => $taxJurisdiction->getId()]
                 ];
             },

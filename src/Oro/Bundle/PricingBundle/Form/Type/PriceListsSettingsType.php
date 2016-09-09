@@ -10,7 +10,7 @@ use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class PriceListsSettingsType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_lists_settings';
+    const NAME = 'oro_pricing_price_lists_settings';
 
     // fields
     const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';

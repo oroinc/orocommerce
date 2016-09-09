@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_shopping_list_index'),
+        'indexPath': path('oro_shopping_list_index'),
         'indexLabel': 'oro.shoppinglist.entity_plural_label'|trans,
         'entityTitle': entity.label|default('N/A'|trans)
     } %}
@@ -18,7 +18,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.shoppinglist.widgets.shopping_list_information'|trans,
-            'url': path('orob2b_shopping_list_info', {id: entity.id})
+            'url': path('oro_shopping_list_info', {id: entity.id})
         }) }}
     {% endset %}
 
@@ -27,7 +27,7 @@
     {% set subtotals %}
         {% include 'OroPricingBundle:Totals:totals.html.twig' with {
             options: {
-                route: 'orob2b_pricing_entity_totals',
+                route: 'oro_pricing_entity_totals',
                 method: 'GET',
                 events: [
                     'datagrid:doRefresh:shopping-list-line-items-grid',

@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\TaxBundle\Entity\Tax:
-        alias:                          orob2b_tax
+        alias:                          oro_tax
         title_fields:                   [code]
         route:
-            name:                       orob2b_tax_view
+            name:                       oro_tax_view
             parameters:
                 id:                     id
         search_template:                OroTaxBundle:Tax:searchResult.html.twig
@@ -18,7 +18,7 @@ search:
                 target_fields:          [description]
 
     Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
-        alias:            orob2b_product_tax_code
+        alias:            oro_product_tax_code
         search_template:  OroTaxBundle:ProductTaxCode:searchResult.html.twig
         fields:
             -
@@ -31,7 +31,7 @@ search:
                 target_fields:          [description]
 
     Oro\Bundle\TaxBundle\Entity\AccountTaxCode:
-        alias:            orob2b_account_tax_code
+        alias:            oro_account_tax_code
         search_template:  OroTaxBundle:AccountTaxCode:searchResult.html.twig
         fields:
             -
@@ -44,10 +44,10 @@ search:
                 target_fields:          [description]
 
     Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
-        alias:                          orob2b_tax_jurisdiction
+        alias:                          oro_tax_jurisdiction
         title_fields:                   [code]
         route:
-            name:                       orob2b_tax_jurisdiction_view
+            name:                       oro_tax_jurisdiction_view
             parameters:
                 id:                     id
         search_template:                OroTaxBundle:TaxJurisdiction:searchResult.html.twig

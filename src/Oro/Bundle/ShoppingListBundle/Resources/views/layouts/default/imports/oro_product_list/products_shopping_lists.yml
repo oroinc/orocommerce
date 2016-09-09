@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setOption':
+            id: __products
+            optionName: items_data.productShoppingLists
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProducts(items)'
+    conditions: 'context["is_logged_in"]'

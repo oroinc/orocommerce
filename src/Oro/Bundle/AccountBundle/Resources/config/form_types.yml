@@ -6,7 +6,7 @@ services:
         calls:
             - [setAddressClass, ['%oro_account.entity.account_address.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_type }
+            - { name: form.type, alias: oro_account_type }
 
     oro_account.form.type.account_group:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountGroupType'
@@ -14,37 +14,37 @@ services:
             - [setDataClass, ['%oro_account.entity.account_group.class%']]
             - [setAccountClass, ['%oro_account.entity.account.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_group_type }
+            - { name: form.type, alias: oro_account_group_type }
 
     oro_account.form.type.account_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_select }
+            - { name: form.type, alias: oro_account_select }
 
     oro_account.form.type.account_group_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountGroupSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_group_select }
+            - { name: form.type, alias: oro_account_group_select }
 
     oro_account.form.type.parent_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\ParentAccountSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_parent_select }
+            - { name: form.type, alias: oro_account_parent_select }
 
     oro_account.form.type.account_user_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_select }
+            - { name: form.type, alias: oro_account_account_user_select }
 
     oro_account.form.type.account_user_multiselect_type:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_multiselect }
+            - { name: form.type, alias: oro_account_account_user_multiselect }
 
     oro_account.form.type.frontend.account_user_multiselect_type:
         class: 'Oro\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType'
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user_multiselect }
+            - { name: form.type, alias: oro_account_frontend_account_user_multiselect }
 
     oro_account.form.type.account_user:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserType'
@@ -54,7 +54,7 @@ services:
             - [setDataClass, ['%oro_account.entity.account_user.class%']]
             - [setAddressClass, ['%oro_account.entity.account_user_address.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_account_user }
+            - { name: form.type, alias: oro_account_account_user }
 
     oro_account.form.type.account_user_role_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType'
@@ -63,28 +63,28 @@ services:
         calls:
             - [setRoleClass, ['%oro_account.entity.account_user_role.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_role_select }
+            - { name: form.type, alias: oro_account_account_user_role_select }
 
     oro_account.form.type.account_user_role:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserRoleType'
         calls:
             - [setDataClass, ['%oro_account.entity.account_user_role.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_role }
+            - { name: form.type, alias: oro_account_account_user_role }
 
     oro_account.form.type.frontend.account_user_role:
         class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType'
         calls:
             - [setDataClass, ['%oro_account.entity.account_user_role.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user_role }
+            - { name: form.type, alias: oro_account_frontend_account_user_role }
 
     oro_account.form.type.frontend.account_user_profile:
         class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType'
         calls:
             - [setDataClass, ['%oro_account.entity.account_user.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user_profile }
+            - { name: form.type, alias: oro_account_frontend_account_user_profile }
 
     oro_account.form.type.frontend.account_user:
         class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserType'
@@ -93,7 +93,7 @@ services:
         calls:
             - [setAccountUserClass, ['%oro_account.entity.account_user.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user }
+            - { name: form.type, alias: oro_account_frontend_account_user }
 
     oro_account.form.type.frontend.account_user_role_select:
         class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType'
@@ -103,7 +103,7 @@ services:
         calls:
             - [setRoleClass, ['%oro_account.entity.account_user_role.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user_role_select }
+            - { name: form.type, alias: oro_account_frontend_account_user_role_select }
 
     oro_account.form.type.frontend.account_user.register:
         class: 'Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType'
@@ -113,19 +113,19 @@ services:
         calls:
             - [setDataClass, ['%oro_account.entity.account_user.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_frontend_account_user_register }
+            - { name: form.type, alias: oro_account_frontend_account_user_register }
 
     oro_account.form.type.frontend.account_user.password_request:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType'
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_password_request }
+            - { name: form.type, alias: oro_account_account_user_password_request }
 
     oro_account.form.type.frontend.account_user.password_reset:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType'
         calls:
             - [setDataClass, ['%oro_account.entity.account_user.class%']]
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_password_reset }
+            - { name: form.type, alias: oro_account_account_user_password_reset }
 
     oro_account.form.handler.update_account_user_role:
         parent: oro_user.form.handler.abstract.acl_role
@@ -152,7 +152,7 @@ services:
              - [setDataClass, ['%oro_account.entity.account_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: orob2b_account_typed_address}
+             - { name: form.type, alias: oro_account_typed_address}
 
     oro_account.form.type.account_user_typed_address:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType'
@@ -160,7 +160,7 @@ services:
              - [setDataClass, ['%oro_account.entity.account_user_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: orob2b_account_account_user_typed_address}
+             - { name: form.type, alias: oro_account_account_user_typed_address}
 
     oro_account.form.type.typed_address_with_default:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType'
@@ -168,14 +168,14 @@ services:
         calls:
              - [setRegistry, ['@doctrine']]
         tags:
-             - { name: form.type, alias: orob2b_account_typed_address_with_default}
+             - { name: form.type, alias: oro_account_typed_address_with_default}
 
     oro_account.form.type.acl_access_level_text:
         class: 'Oro\Bundle\AccountBundle\Form\Type\AccountAclAccessLevelTextType'
         arguments:
             - '@oro_account.acl.resolver.role_translation_prefix'
         tags:
-             - { name: form.type, alias: orob2b_account_acl_access_level_text }
+             - { name: form.type, alias: oro_account_acl_access_level_text }
 
     oro_account.form.extension.acl_permission:
         class: 'Oro\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension'
@@ -201,7 +201,7 @@ services:
     oro_account.form.extension.category_type:
         class: 'Oro\Bundle\AccountBundle\Form\Extension\CategoryFormExtension'
         tags:
-            - { name: form.type_extension, alias: orob2b_catalog_category }
+            - { name: form.type_extension, alias: oro_catalog_category }
         calls:
             - [setVisibilityToAllClass, ['%oro_account.entity.category_visibility.class%']]
             - [setVisibilityToAccountGroupClass,['%oro_account.entity.account_group_category_visibility.class%']]
@@ -210,12 +210,12 @@ services:
     oro_account.form.type.catalog_visibility:
         class: 'Oro\Bundle\AccountBundle\Form\Type\CatalogVisibilityType'
         tags:
-            - { name: form.type, alias: orob2b_account_catalog_default_visibility }
+            - { name: form.type, alias: oro_account_catalog_default_visibility }
 
     oro_account.form.type.product_visibility:
         class: 'Oro\Bundle\AccountBundle\Form\Type\ProductVisibilityType'
         tags:
-            - { name: form.type, alias: orob2b_account_product_default_visibility }
+            - { name: form.type, alias: oro_account_product_default_visibility }
 
     oro_account.form.extension.select_or_create_inline:
         class: 'Oro\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
@@ -229,7 +229,7 @@ services:
         arguments:
             - '@security.token_storage'
         tags:
-            - { name: form.type_extension, alias: orob2b_product_select }
+            - { name: form.type_extension, alias: oro_product_select }
 
     oro_account.form.extension.address:
         class: 'Oro\Bundle\AccountBundle\Form\Extension\AddressExtension'
@@ -244,7 +244,7 @@ services:
             - '@oro_account.form.event_listener.category.post_set_data'
             - '@oro_account.provider.visibility_choices'
         tags:
-            - { name: form.type, alias: orob2b_account_entity_visibility_type }
+            - { name: form.type, alias: oro_account_entity_visibility_type }
         calls:
             - [setAccountClass,['%oro_account.entity.account.class%']]
             - [setAccountGroupClass,['%oro_account.entity.account_group.class%']]

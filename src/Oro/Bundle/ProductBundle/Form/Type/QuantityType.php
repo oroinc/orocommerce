@@ -15,7 +15,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class QuantityType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_quantity';
+    const NAME = 'oro_quantity';
 
     /** @var RoundingServiceInterface */
     protected $roundingService;

@@ -15,7 +15,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @RouteResource("shoppinglist")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class ShoppingListController extends RestController implements ClassResourceInterface
 {
@@ -25,7 +25,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_delete",
+     *      id="oro_shopping_list_frontend_delete",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="DELETE",

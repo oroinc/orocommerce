@@ -31,7 +31,7 @@ class TaxJurisdictionDeleteOperationTest extends ActionTestCase
         $this->assertDeleteOperation(
             $taxJurisdiction->getId(),
             'oro_tax.entity.tax_jurisdiction.class',
-            'orob2b_tax_jurisdiction_index'
+            'oro_tax_jurisdiction_index'
         );
     }
 }

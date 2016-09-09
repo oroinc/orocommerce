@@ -1,4 +1,4 @@
-{% block orob2b_pricing_product_price_widget %}
+{% block oro_pricing_product_price_widget %}
     <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component">
         <div class="row">
             <div class="small-row">
@@ -30,7 +30,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_pricing_product_price_collection_widget %}
+{% block oro_pricing_product_price_collection_widget %}
     <div data-page-component-module="oropricing/js/app/components/product-unit-precision-limitations-component"
          class="product-price-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
@@ -38,19 +38,19 @@
     </div>
 {% endblock %}
 
-{% block orob2b_pricing_price_list_collection_row %}
+{% block oro_pricing_price_list_collection_row %}
     {% if render_as_widget %}
         <div class="price-list-collection-as-widget">
-            {{ block('orob2b_pricing_price_list_collection_widget') }}
+            {{ block('oro_pricing_price_list_collection_widget') }}
         </div>
     {% else %}
         {{ block('form_row') }}
     {% endif %}
 {% endblock %}
 
-{% block orob2b_pricing_price_list_collection_widget %}
+{% block oro_pricing_price_list_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_pricing_price_list_collection_prototype(form) %}
+        {% set prototype_html = _self.oro_pricing_price_list_collection_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
@@ -70,7 +70,7 @@
                     <tbody class="pricing-price-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_pricing_price_list_collection_prototype(child) }}
+                            {{ _self.oro_pricing_price_list_collection_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -83,7 +83,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_pricing_price_list_collection_prototype(widget) %}
+{% macro oro_pricing_price_list_collection_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -100,7 +100,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_pricing_price_list_select_with_priority_widget %}
+{% block oro_pricing_price_list_select_with_priority_widget %}
     <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
     <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}{{ form_errors(form.priority) }}</td>
     <td>{{ form_widget(form.mergeAllowed, { 'attr': {'class': 'mergeAllowed'} }) }}{{ form_errors(form.mergeAllowed) }}</td>
@@ -135,7 +135,7 @@
     </tr>
 {% endmacro %}
 
-{% block _orob2b_pricing_price_list_schedules_widget %}
+{% block _oro_pricing_price_list_schedules_widget %}
     {% spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = _self.pl_schedule_collection_item_prototype(form) %}
@@ -179,7 +179,7 @@
 {% endblock %}
 
 {# --------------------------- Product Price Attributes ------------------------------------------------------ #}
-{% block orob2b_pricing_product_attribute_price_collection_widget %}
+{% block oro_pricing_product_attribute_price_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
     <div class="pricing-price-attribute">
@@ -220,7 +220,7 @@
 {% endblock %}
 
 {# --------------------------- Price Rules ------------------------------------------------------ #}
-{% macro orob2b_pricing_price_rule_widget_prototype(widget) %}
+{% macro oro_pricing_price_rule_widget_prototype(widget) %}
     {% spaceless %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
@@ -248,10 +248,10 @@
     {% endspaceless %}
 {% endmacro %}
 
-{% block _orob2b_pricing_price_list_priceRules_widget %}
+{% block _oro_pricing_price_list_priceRules_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_pricing_price_rule_widget_prototype(form) %}
+            {% set prototype_html = _self.oro_pricing_price_rule_widget_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
@@ -300,7 +300,7 @@
             >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_pricing_price_rule_widget_prototype(child) }}
+                            {{ _self.oro_pricing_price_rule_widget_prototype(child) }}
                         {% endfor %}
                     {% endif %}
             </div>

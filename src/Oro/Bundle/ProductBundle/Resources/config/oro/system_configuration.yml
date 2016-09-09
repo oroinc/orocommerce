@@ -20,7 +20,7 @@ system_configuration:
         backend_inventory_statuses_visibility:
             title: oro.product.system_configuration.groups.backend_inventory_statuses_visibility.title
     fields:
-        orob2b_product.unit_rounding_type:
+        oro_product.unit_rounding_type:
             data_type: string
             type: choice
             priority: 10
@@ -37,20 +37,20 @@ system_configuration:
                     5: oro.product.rounding.type.half_down.label
                     6: oro.product.rounding.type.half_up.label
 
-        orob2b_product.general_frontend_product_visibility:
+        oro_product.general_frontend_product_visibility:
             data_type: array
-            type: orob2b_product_inventory_status_select
+            type: oro_product_inventory_status_select
             options:
                 label: oro.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
 
-        orob2b_product.default_unit:
+        oro_product.default_unit:
             data_type: string
-            type: orob2b_product_units
+            type: oro_product_units
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.default_unit.label
 
-        orob2b_product.default_unit_precision:
+        oro_product.default_unit_precision:
             data_type: integer
             type: integer
             priority: 10
@@ -69,11 +69,11 @@ system_configuration:
                                 children:
                                     product_unit_rounding:
                                         children:
-                                            - orob2b_product.unit_rounding_type
+                                            - oro_product.unit_rounding_type
                                     default_product_unit:
                                         children:
-                                            - orob2b_product.default_unit
-                                            - orob2b_product.default_unit_precision
+                                            - oro_product.default_unit
+                                            - oro_product.default_unit_precision
                     product_inventory:
                         priority: 650
                         children:
@@ -82,4 +82,4 @@ system_configuration:
                                 children:
                                     frontend_inventory_statuses_visibility:
                                         children:
-                                            - orob2b_product.general_frontend_product_visibility
+                                            - oro_product.general_frontend_product_visibility

@@ -25,19 +25,19 @@ class CategoryControllerTest extends WebTestCase
         $category = $repository->findOneBy([]);
 
         $id = $category->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
 
         $this->checkSeoSectionExistence($crawler);
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_catalog_category' => ['_token' => $crfToken],
+            'oro_catalog_category' => ['_token' => $crfToken],
         ];
-        $parameters['orob2b_catalog_category']['metaTitles']['values']['default'] = LoadCategoryMetaData::META_TITLES;
-        $parameters['orob2b_catalog_category']['metaDescriptions']['values']['default'] =
+        $parameters['oro_catalog_category']['metaTitles']['values']['default'] = LoadCategoryMetaData::META_TITLES;
+        $parameters['oro_catalog_category']['metaDescriptions']['values']['default'] =
             LoadCategoryMetaData::META_DESCRIPTIONS;
-        $parameters['orob2b_catalog_category']['metaKeywords']['values']['default'] =
+        $parameters['oro_catalog_category']['metaKeywords']['values']['default'] =
             LoadCategoryMetaData::META_KEYWORDS;
 
         $form = $crawler->selectButton('Save')->form();
