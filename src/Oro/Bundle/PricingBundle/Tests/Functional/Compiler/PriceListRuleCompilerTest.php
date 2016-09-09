@@ -175,6 +175,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function testApplyRuleConditionsWithTwoBaseRelations()
     {
+        $this->markTestIncomplete('Will be enhanced in BB-4368');
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
