@@ -503,7 +503,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                 break;
 
             case 'quantity':
-                if ($rule->getProductUnitExpression()) {
+                if ($rule->getQuantityExpression()) {
                     $conditionTemplate .= '%4$s';
                     $conditionVariables[] = $this->getBaseQuantityExpression($rule);
                 } else {
