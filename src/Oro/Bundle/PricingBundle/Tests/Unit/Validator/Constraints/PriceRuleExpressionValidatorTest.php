@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
@@ -19,6 +20,11 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $parser;
 
     /**
+     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $preprocessor;
+
+    /**
      * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldsProvider;
@@ -33,10 +39,15 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
         $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
         $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
-        $this->expressionValidator = new PriceRuleExpressionValidator($this->parser, $this->fieldsProvider);
+        $this->expressionValidator = new PriceRuleExpressionValidator(
+            $this->parser,
+            $this->preprocessor,
+            $this->fieldsProvider
+        );
     }
 
     /**
@@ -85,6 +96,11 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $value = 'product.additionalField';
 
+        $this->preprocessor->expects($this->any())
+            ->method('process')
+            ->with($value)
+            ->willReturnArgument(0);
+
         $this->expressionValidator->initialize($context);
         $this->expressionValidator->validate($value, $constraint);
     }
@@ -99,6 +115,10 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = $this->getMockBuilder(PriceRuleExpression::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->preprocessor->expects($this->any())
+            ->method('process')
+            ->with($value)
+            ->willReturnArgument(0);
         $this->expressionValidator->initialize($context);
         $this->expressionValidator->validate($value, $constraint);
     }

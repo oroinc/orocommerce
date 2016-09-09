@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 
 class PriceRuleExpressionValidator extends ConstraintValidator
 {
@@ -22,13 +22,23 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     protected $priceRuleFieldsProvider;
 
     /**
+     * @var ExpressionPreprocessorInterface
+     */
+    protected $preprocessor;
+
+    /**
      * @param ExpressionParser $parser
+     * @param ExpressionPreprocessorInterface $preprocessor
      * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
      */
-    public function __construct(ExpressionParser $parser, PriceRuleFieldsProvider $priceRuleFieldsProvider)
-    {
+    public function __construct(
+        ExpressionParser $parser,
+        ExpressionPreprocessorInterface $preprocessor,
+        PriceRuleFieldsProvider $priceRuleFieldsProvider
+    ) {
         $this->parser = $parser;
         $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
+        $this->preprocessor = $preprocessor;
     }
 
     /**
@@ -44,6 +54,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
         }
         try {
             $unsupportedFields = [];
+            $value = $this->preprocessor->process($value);
             $lexemesInfo = $this->parser->getUsedLexemes($value);
             foreach ($lexemesInfo as $class => $fields) {
                 try {

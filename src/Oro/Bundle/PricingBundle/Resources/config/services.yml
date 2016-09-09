@@ -822,6 +822,7 @@ services:
         public: true
         arguments:
             - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.expression.preprocessor'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.logical_expression_validator }
 
@@ -830,6 +831,7 @@ services:
         public: true
         arguments:
             - '@orob2b_pricing.expression.parser'
+            - '@orob2b_pricing.expression.preprocessor'
             - '@orob2b_pricing.provider.price_rule_fields_provider'
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing.validator_constraints.price_rule_expression_validator }
