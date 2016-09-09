@@ -28,8 +28,8 @@ use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
  */
 class MenuUpdate extends ExtendMenuUpdate
 {
-    const OWNERSHIP_ACCOUNT      = 4;
-    const OWNERSHIP_ACCOUNT_USER = 5;
+    const OWNERSHIP_ACCOUNT      = 3;
+    const OWNERSHIP_ACCOUNT_USER = 4;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
