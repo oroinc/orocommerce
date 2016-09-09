@@ -93,7 +93,7 @@ define([
                     var arr = [0];
 
                     _.each(string, function(char, i) {
-                        if (self.isSpace(char)) {
+                        if (/^\s$/.test(char)) {
                             arr.push(i + 1);
                         }
                     });
@@ -116,11 +116,11 @@ define([
 
                     return {
                         position: arr[index] === position ? null : arr[index - 1],
-                        index: index
+                        nextPosition: arr[index] - 1
                     };
 
                 })(separatorsPositions, caretPosition),
-                wordUnderCaret = this.getStringPart(value, nearestSeparator.position, separatorsPositions[nearestSeparator.index] - 1),
+                wordUnderCaret = this.getStringPart(value, nearestSeparator.position, nearestSeparator.nextPosition),
                 suggested = (function(word, ref) {
                     return _.filter(self.getPathsArray(ref.data), function(item) {
                         return item.indexOf(word) === 0;
@@ -140,7 +140,7 @@ define([
 
                 if (_.isArray(item)) {
                     arr = _.union(arr, self.getPathsArray(item, name, baseArr || src));
-                } else if (_.isString(item) && _.isArray(baseArr[item])) {
+                } else if (baseArr && _.isString(item) && _.isArray(baseArr[item])) {
                     arr = _.union(arr, self.getPathsArray(baseArr[item], subName, baseArr || src));
                 } else {
                     arr.push(subName);
@@ -152,10 +152,6 @@ define([
 
         getStringPart: function(string, startPos, endPos) {
             return _.isNull(startPos) ? null : string.substr(startPos, endPos - startPos);
-        },
-
-        isSpace: function(char) {
-            return /^\s$/.test(char);
         },
 
         getRegexp: function(opsArr) {
