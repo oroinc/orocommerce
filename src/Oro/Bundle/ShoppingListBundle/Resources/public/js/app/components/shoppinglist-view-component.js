@@ -14,7 +14,7 @@ define(function(require) {
         initialize: function(options) {
             mediator.on('shopping-list:created', function() {
                 mediator.execute('redirectTo', {
-                    url: routing.generate('orob2b_shopping_list_frontend_view')
+                    url: routing.generate('oro_shopping_list_frontend_view')
                 }, {
                     redirect: true
                 });

@@ -27,7 +27,7 @@ class PaymentTermControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_payment_term_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_payment_term_index'));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -41,13 +41,13 @@ class PaymentTermControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_payment_term_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_payment_term_create'));
 
         /** @var Form $form */
         $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
-        $createForm['orob2b_payment_term[label]'] = self::TERM_LABEL_NEW;
-        $createForm['orob2b_payment_term[appendAccounts]'] = $this->getReference('account.level_1')->getId();
-        $createForm['orob2b_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group1')->getId();
+        $createForm['oro_payment_term[label]'] = self::TERM_LABEL_NEW;
+        $createForm['oro_payment_term[appendAccounts]'] = $this->getReference('account.level_1')->getId();
+        $createForm['oro_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group1')->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($createForm);
@@ -80,16 +80,16 @@ class PaymentTermControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_payment_term_update', ['id' => $id])
+            $this->getUrl('oro_payment_term_update', ['id' => $id])
         );
 
         /** @var Form $form */
         $updateForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
-        $updateForm['orob2b_payment_term[label]'] = self::TERM_LABEL_UPDATED;
-        $updateForm['orob2b_payment_term[appendAccounts]'] = $this->getReference('account.orphan')->getId();
-        $updateForm['orob2b_payment_term[removeAccounts]'] = $this->getReference('account.level_1')->getId();
-        $updateForm['orob2b_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group2')->getId();
-        $updateForm['orob2b_payment_term[removeAccountGroups]'] = $this->getReference('account_group.group1')->getId();
+        $updateForm['oro_payment_term[label]'] = self::TERM_LABEL_UPDATED;
+        $updateForm['oro_payment_term[appendAccounts]'] = $this->getReference('account.orphan')->getId();
+        $updateForm['oro_payment_term[removeAccounts]'] = $this->getReference('account.level_1')->getId();
+        $updateForm['oro_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group2')->getId();
+        $updateForm['oro_payment_term[removeAccountGroups]'] = $this->getReference('account_group.group1')->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($updateForm);
@@ -121,7 +121,7 @@ class PaymentTermControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermId])
+            $this->getUrl('oro_payment_term_view', ['id' => $paymentTermId])
         );
 
         $result = $this->client->getResponse();
@@ -139,7 +139,7 @@ class PaymentTermControllerTest extends WebTestCase
     {
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_paymentterm', ['id' => $paymentTermId]),
+            $this->getUrl('oro_api_delete_paymentterm', ['id' => $paymentTermId]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -148,7 +148,7 @@ class PaymentTermControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
 
-        $this->client->request('GET', $this->getUrl('orob2b_payment_term_view', ['id' => $paymentTermId]));
+        $this->client->request('GET', $this->getUrl('oro_payment_term_view', ['id' => $paymentTermId]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);

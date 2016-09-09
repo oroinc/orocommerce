@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AccountUserPasswordResetType extends AbstractType
 {
-    const NAME = 'orob2b_account_account_user_password_reset';
+    const NAME = 'oro_account_account_user_password_reset';
 
     /**
      * @var string

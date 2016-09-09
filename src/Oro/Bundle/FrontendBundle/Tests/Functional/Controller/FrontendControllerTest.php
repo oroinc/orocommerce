@@ -25,7 +25,7 @@ class FrontendControllerTest extends WebTestCase
 
     public function testIndexPage()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -39,7 +39,7 @@ class FrontendControllerTest extends WebTestCase
         $layoutTheme = 'default';
         $this->setTheme($layoutTheme);
 
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -56,7 +56,7 @@ class FrontendControllerTest extends WebTestCase
         // Check that after selecting of layout there is an ability to switch to oro theme
         $this->setTheme(self::DEFAULT_THEME);
 
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }

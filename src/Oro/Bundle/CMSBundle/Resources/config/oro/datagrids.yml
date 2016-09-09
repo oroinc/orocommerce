@@ -1,6 +1,6 @@
 datagrids:
     cms-login-page-grid:
-        acl_resource: orob2b_cms_loginpage_view
+        acl_resource: oro_cms_loginpage_view
         options:
             entity_pagination: true
             entityHint:        login page
@@ -17,7 +17,7 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route:  orob2b_cms_loginpage_view
+                route:  oro_cms_loginpage_view
                 params: [ id ]
         actions:
             view:
@@ -25,5 +25,5 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_cms_loginpage_view
+                acl_resource:  oro_cms_loginpage_view
                 rowAction:     true

@@ -4,7 +4,7 @@ placeholders:
             items:
                 line_item_templates: ~
 
-        orob2b_product_quick_add_buttons:
+        oro_product_quick_add_buttons:
             items:
                 order_quick_add: ~
 

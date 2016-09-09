@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 
 class ParentAccountSelectType extends AbstractType
 {
-    const NAME = 'orob2b_account_parent_select';
+    const NAME = 'oro_account_parent_select';
 
     /**
      * {@inheritdoc}
@@ -20,7 +20,7 @@ class ParentAccountSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_account_parent',
+                'autocomplete_alias' => 'oro_account_parent',
                 'configs' => [
                     'component' => 'autocomplete-entity-parent',
                     'placeholder' => 'oro.account.form.choose_parent'

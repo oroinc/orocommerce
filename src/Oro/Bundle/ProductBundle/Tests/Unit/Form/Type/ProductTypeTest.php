@@ -368,7 +368,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_product', $this->type->getName());
+        $this->assertEquals('oro_product', $this->type->getName());
     }
 
     /**

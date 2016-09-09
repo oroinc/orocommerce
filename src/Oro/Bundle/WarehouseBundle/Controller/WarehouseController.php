@@ -16,10 +16,10 @@ use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
 class WarehouseController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_warehouse_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_warehouse_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_warehouse_view",
+     *      id="oro_warehouse_view",
      *      type="entity",
      *      class="OroWarehouseBundle:Warehouse",
      *      permission="VIEW"
@@ -37,9 +37,9 @@ class WarehouseController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_warehouse_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_warehouse_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_warehouse_view")
+     * @AclAncestor("oro_warehouse_view")
      *
      * @param Warehouse $warehouse
      *
@@ -53,9 +53,9 @@ class WarehouseController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_warehouse_index")
+     * @Route("/", name="oro_warehouse_index")
      * @Template
-     * @AclAncestor("orob2b_warehouse_view")
+     * @AclAncestor("oro_warehouse_view")
      *
      * @return array
      */
@@ -69,10 +69,10 @@ class WarehouseController extends Controller
     /**
      * Create warehouse
      *
-     * @Route("/create", name="orob2b_warehouse_create")
+     * @Route("/create", name="oro_warehouse_create")
      * @Template("OroWarehouseBundle:Warehouse:update.html.twig")
      * @Acl(
-     *      id="orob2b_warehouse_create",
+     *      id="oro_warehouse_create",
      *      type="entity",
      *      class="OroWarehouseBundle:Warehouse",
      *      permission="CREATE"
@@ -88,10 +88,10 @@ class WarehouseController extends Controller
     /**
      * Edit warehouse form
      *
-     * @Route("/update/{id}", name="orob2b_warehouse_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_warehouse_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_warehouse_update",
+     *      id="oro_warehouse_update",
      *      type="entity",
      *      class="OroWarehouseBundle:Warehouse",
      *      permission="EDIT"
@@ -120,13 +120,13 @@ class WarehouseController extends Controller
             $form,
             function (Warehouse $warehouse) {
                 return [
-                    'route' => 'orob2b_warehouse_update',
+                    'route' => 'oro_warehouse_update',
                     'parameters' => ['id' => $warehouse->getId()]
                 ];
             },
             function (Warehouse $warehouse) {
                 return [
-                    'route' => 'orob2b_warehouse_view',
+                    'route' => 'oro_warehouse_view',
                     'parameters' => ['id' => $warehouse->getId()]
                 ];
             },

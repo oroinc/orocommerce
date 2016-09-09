@@ -154,7 +154,7 @@ class OrderTypeTest extends TypeTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_order_type', $this->type->getName());
+        $this->assertEquals('oro_order_type', $this->type->getName());
     }
 
     /**
@@ -375,7 +375,7 @@ class OrderTypeTest extends TypeTestCase
             ->securityFacade
             ->expects($this->once())
             ->method('isGranted')
-            ->with('orob2b_order_payment_term_account_can_override')
+            ->with('oro_order_payment_term_account_can_override')
             ->willReturn(true);
         $accountPaymentTerm->expects($this->once())->method('getId')->willReturn(10);
         $accountGroupPaymentTerm->expects($this->once())->method('getId')->willReturn(100);
@@ -411,7 +411,7 @@ class OrderTypeTest extends TypeTestCase
             ->securityFacade
             ->expects($this->once())
             ->method('isGranted')
-            ->with('orob2b_order_payment_term_account_can_override')
+            ->with('oro_order_payment_term_account_can_override')
             ->willReturn(false);
         $this->paymentTermProvider->expects($this->never())->method('getAccountPaymentTerm');
         $this->paymentTermProvider->expects($this->never())->method('getAccountGroupPaymentTerm');

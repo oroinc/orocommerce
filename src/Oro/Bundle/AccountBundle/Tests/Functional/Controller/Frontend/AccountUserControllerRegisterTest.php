@@ -47,15 +47,15 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     public function testRegisterPasswordMismatch()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Create An Account')->form();
 
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'oro_account_frontend_account_user_register' => [
+                '_token' => $form->get('oro_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Jim',
                 'lastName' => 'Brown',
@@ -88,7 +88,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->configManager->set('oro_b2b_account.send_password_in_welcome_email', $withPassword);
         $this->configManager->flush();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -107,7 +107,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertContains($email, $message->getBody());
         $this->assertContains(
             trim($this->configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('orob2b_account_account_user_security_login'),
+            . $this->getUrl('oro_account_account_user_security_login'),
             $message->getBody()
         );
 
@@ -149,7 +149,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         $this->configManager->set('oro_b2b_account.confirmation_required', true);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -171,7 +171,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $confirmMessage = 'Please follow this link to confirm your email address: <a href="'
             . trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
-                'orob2b_account_frontend_account_user_confirmation',
+                'oro_account_frontend_account_user_confirmation',
                 [
                     'username' => $user->getUsername(),
                     'token' => $user->getConfirmationToken()
@@ -198,7 +198,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_frontend_account_user_confirmation',
+                'oro_account_frontend_account_user_confirmation',
                 [
                     'username' => $user->getUsername(),
                     'token' => $user->getConfirmationToken()
@@ -221,14 +221,14 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testRegisterExistingEmail()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'oro_account_frontend_account_user_register' => [
+                '_token' => $form->get('oro_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Created',
                 'lastName' => 'User',
@@ -253,7 +253,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testResetPassword()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_login'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_security_login'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
@@ -275,7 +275,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_frontend_account_user_password_reset',
+                'oro_account_frontend_account_user_password_reset',
                 [
                     'token' => $user->getConfirmationToken(),
                     'username' => $user->getUsername()
@@ -290,8 +290,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $form = $crawler->selectButton('Create')->form();
 
         $submittedData = [
-            'orob2b_account_account_user_password_reset' => [
-                '_token' => $form->get('orob2b_account_account_user_password_reset[_token]')->getValue(),
+            'oro_account_account_user_password_reset' => [
+                '_token' => $form->get('oro_account_account_user_password_reset[_token]')->getValue(),
                 'plainPassword' => [
                     'first' => '654321',
                     'second' => '654321'
@@ -333,8 +333,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'oro_account_frontend_account_user_register' => [
+                '_token' => $form->get('oro_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'First Name',
                 'lastName' => 'Last Name',
@@ -359,8 +359,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $unknownEmail = 'unknown@example.com';
         $form = $crawler->selectButton('Request')->form();
         $submittedData = [
-            'orob2b_account_account_user_password_request' => [
-                '_token' => $form->get('orob2b_account_account_user_password_request[_token]')->getValue(),
+            'oro_account_account_user_password_request' => [
+                '_token' => $form->get('oro_account_account_user_password_request[_token]')->getValue(),
                 'email' => $unknownEmail
             ]
         ];
@@ -382,8 +382,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         $form = $crawler->selectButton('Request')->form();
         $submittedData = [
-            'orob2b_account_account_user_password_request' => [
-                '_token' => $form->get('orob2b_account_account_user_password_request[_token]')->getValue(),
+            'oro_account_account_user_password_request' => [
+                '_token' => $form->get('oro_account_account_user_password_request[_token]')->getValue(),
                 'email' => self::EMAIL
             ]
         ];
@@ -407,7 +407,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $user = $this->getAccountUser(['email' => self::EMAIL]);
         $resetUrl = trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
-                'orob2b_account_frontend_account_user_password_reset',
+                'oro_account_frontend_account_user_password_reset',
                 [
                     'token' => $user->getConfirmationToken(),
                     'username' => $user->getUsername()

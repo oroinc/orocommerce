@@ -1,7 +1,7 @@
 datagrids:
     invoices-grid:
         source:
-            acl_resource: orob2b_invoice_view
+            acl_resource: oro_invoice_view
             type: orm
             query:
                 select:
@@ -108,7 +108,7 @@ datagrids:
         properties:
             id: ~
             view_link:
-                route:         orob2b_invoice_view
+                route:         oro_invoice_view
                 type:  url
                 params: [ id ]
         actions:
@@ -118,4 +118,4 @@ datagrids:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
-                acl_resource:  orob2b_invoice_view
+                acl_resource:  oro_invoice_view

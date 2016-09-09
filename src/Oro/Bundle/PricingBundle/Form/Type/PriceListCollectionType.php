@@ -19,7 +19,7 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_collection';
+    const NAME = 'oro_pricing_price_list_collection';
     const DEFAULT_ORDER = Criteria::DESC;
 
     /**

@@ -20,7 +20,7 @@ class SystemConfigurationTest extends WebTestCase
 
     protected function tearDown()
     {
-        $this->configManager->reset('orob2b_shipping.shipping_origin');
+        $this->configManager->reset('oro_shipping.shipping_origin');
         $this->configManager->flush();
 
         parent::tearDown();
@@ -44,7 +44,7 @@ class SystemConfigurationTest extends WebTestCase
             $form->getPhpValues(),
             [
                 'shipping_origin' => [
-                    'orob2b_shipping___shipping_origin' => [
+                    'oro_shipping___shipping_origin' => [
                         'use_parent_scope_value' => false,
                         'value' => [
                             'country' => 'US',
@@ -77,7 +77,7 @@ class SystemConfigurationTest extends WebTestCase
                 'street' => 'street2',
                 'street2' => 'street3',
             ],
-            $this->configManager->get('orob2b_shipping.shipping_origin')
+            $this->configManager->get('oro_shipping.shipping_origin')
         );
     }
 }

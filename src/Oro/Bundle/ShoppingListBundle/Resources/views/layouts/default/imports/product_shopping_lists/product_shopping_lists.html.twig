@@ -87,7 +87,7 @@
                 template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>'),
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                    enable: resource_granted('oro_shopping_list_frontend_update'),
                 }
             }
         },
@@ -124,7 +124,7 @@
                                 options: {
                                     view: 'oroproduct/js/app/views/product-quantity-editable-view',
                                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                    enable: resource_granted('oro_shopping_list_frontend_update'),
                                     elements: {
                                         saveButton: '[data-role="accept"]',
                                         quantity: '[data-role="field__quantity"]',
@@ -134,7 +134,7 @@
                                         default_route_parameters: {
                                             id: '<%=lineItem.line_item_id %>'
                                         },
-                                        route: 'orob2b_api_shopping_list_frontend_put_line_item'
+                                        route: 'oro_api_shopping_list_frontend_put_line_item'
                                     },
                                     validation: {
                                         showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
@@ -168,7 +168,7 @@
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                                             module: 'orofrontend/js/app/components/delete-item-component',
                                                             options: {
-                                                                route: 'orob2b_api_shopping_list_frontend_delete_line_item',
+                                                                route: 'oro_api_shopping_list_frontend_delete_line_item',
                                                                 routeParams: {
                                                                     id: '<%= lineItem.line_item_id %>'
                                                                 },

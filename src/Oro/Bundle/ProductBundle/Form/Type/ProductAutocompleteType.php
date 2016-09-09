@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 
 class ProductAutocompleteType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_product_autocomplete';
+    const NAME = 'oro_product_autocomplete';
 
     /**
      * {@inheritdoc}
@@ -44,9 +44,9 @@ class ProductAutocompleteType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'autocomplete' => [
-                    'route_name' => 'orob2b_frontend_autocomplete_search',
+                    'route_name' => 'oro_frontend_autocomplete_search',
                     'route_parameters' => [
-                        'name' => 'orob2b_product_visibility_limited',
+                        'name' => 'oro_product_visibility_limited',
                     ],
                     'selection_template_twig' =>
                         'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',

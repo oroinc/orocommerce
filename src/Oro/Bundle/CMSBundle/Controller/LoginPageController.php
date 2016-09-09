@@ -16,9 +16,9 @@ use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 class LoginPageController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_cms_loginpage_index")
+     * @Route("/", name="oro_cms_loginpage_index")
      * @Template("OroCMSBundle:LoginPage:index.html.twig")
-     * @AclAncestor("orob2b_cms_loginpage_view")
+     * @AclAncestor("oro_cms_loginpage_view")
      *
      * @return array
      */
@@ -30,10 +30,10 @@ class LoginPageController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_cms_loginpage_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_cms_loginpage_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_cms_loginpage_view",
+     *      id="oro_cms_loginpage_view",
      *      type="entity",
      *      class="OroCMSBundle:LoginPage",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class LoginPageController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_cms_loginpage_create")
+     * @Route("/create", name="oro_cms_loginpage_create")
      * @Template("OroCMSBundle:LoginPage:update.html.twig")
      * @Acl(
-     *      id="orob2b_cms_loginpage_create",
+     *      id="oro_cms_loginpage_create",
      *      type="entity",
      *      class="OroCMSBundle:LoginPage",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class LoginPageController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_cms_loginpage_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_cms_loginpage_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_cms_loginpage_update",
+     *      id="oro_cms_loginpage_update",
      *      type="entity",
      *      class="OroCMSBundle:LoginPage",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class LoginPageController extends Controller
             $this->createForm(LoginPageType::NAME, $loginPage),
             function (LoginPage $loginPage) {
                 return [
-                    'route' => 'orob2b_cms_loginpage_update',
+                    'route' => 'oro_cms_loginpage_update',
                     'parameters' => ['id' => $loginPage->getId()]
                 ];
             },
             function (LoginPage $loginPage) {
                 return [
-                    'route' => 'orob2b_cms_loginpage_view',
+                    'route' => 'oro_cms_loginpage_view',
                     'parameters' => ['id' => $loginPage->getId()]
                 ];
             },

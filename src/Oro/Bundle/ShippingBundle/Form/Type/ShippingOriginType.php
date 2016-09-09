@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 
 class ShippingOriginType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_origin';
+    const NAME = 'oro_shipping_origin';
 
     /** @var string */
     protected $dataClass;

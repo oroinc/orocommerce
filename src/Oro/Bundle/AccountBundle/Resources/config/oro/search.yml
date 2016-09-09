@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\AccountBundle\Entity\Account:
-        alias:                          orob2b_account
+        alias:                          oro_account
         title_fields:                   [name]
         route:
-            name:                       orob2b_account_view
+            name:                       oro_account_view
             parameters:
                 id:                     id
         search_template:                OroAccountBundle:Account:searchResult.html.twig
@@ -22,10 +22,10 @@ search:
                         target_fields:  [group]
 
     Oro\Bundle\AccountBundle\Entity\AccountGroup:
-        alias:                          orob2b_account_group
+        alias:                          oro_account_group
         title_fields:                   [name]
         route:
-            name:                       orob2b_account_group_view
+            name:                       oro_account_group_view
             parameters:
                 id:                     id
         search_template:                OroAccountBundle:AccountGroup:searchResult.html.twig
@@ -36,11 +36,11 @@ search:
                 target_fields:          [name]
 
     Oro\Bundle\AccountBundle\Entity\AccountUser:
-        alias: orob2b_account_account_user
+        alias: oro_account_account_user
         label: oro.account.accountuser.entity_plural_label
         title_fields: [email]
         route:
-            name: orob2b_account_account_user_view
+            name: oro_account_account_user_view
             parameters:
                 id: id
         search_template: OroAccountBundle:AccountUser:searchResult.html.twig
@@ -59,11 +59,11 @@ search:
                 target_fields: [lastName]
 
     Oro\Bundle\AccountBundle\Entity\AccountUserRole:
-        alias: orob2b_account_account_user_role
+        alias: oro_account_account_user_role
         label: oro.account.accountuserrole.entity_plural_label
         title_fields: [label]
         route:
-            name: orob2b_account_account_user_role_update
+            name: oro_account_account_user_role_update
             parameters:
                 id: id
         search_template: OroAccountBundle:AccountUserRole:searchResult.html.twig

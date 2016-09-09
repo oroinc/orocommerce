@@ -16,10 +16,10 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 class CategoryController extends Controller
 {
     /**
-     * @Route("/create/{id}", name="orob2b_catalog_category_create", requirements={"id"="\d+"})
+     * @Route("/create/{id}", name="oro_catalog_category_create", requirements={"id"="\d+"})
      * @Template("OroCatalogBundle:Category:update.html.twig")
      * @Acl(
-     *      id="orob2b_catalog_category_create",
+     *      id="oro_catalog_category_create",
      *      type="entity",
      *      class="OroCatalogBundle:Category",
      *      permission="CREATE"
@@ -36,10 +36,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_catalog_category_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_catalog_category_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_catalog_category_update",
+     *      id="oro_catalog_category_update",
      *      type="entity",
      *      class="OroCatalogBundle:Category",
      *      permission="EDIT"
@@ -53,10 +53,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_catalog_category_index")
+     * @Route("/", name="oro_catalog_category_index")
      * @Template
      * @Acl(
-     *      id="orob2b_catalog_category_view",
+     *      id="oro_catalog_category_view",
      *      type="entity",
      *      class="OroCatalogBundle:Category",
      *      permission="VIEW"
@@ -90,13 +90,13 @@ class CategoryController extends Controller
             $form,
             function (Category $category) {
                 return array(
-                    'route' => 'orob2b_catalog_category_update',
+                    'route' => 'oro_catalog_category_update',
                     'parameters' => array('id' => $category->getId())
                 );
             },
             function () {
                 return array(
-                    'route' => 'orob2b_catalog_category_index',
+                    'route' => 'oro_catalog_category_index',
                 );
             },
             $this->get('translator')->trans('oro.catalog.controller.category.saved.message'),

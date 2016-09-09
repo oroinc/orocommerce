@@ -16,6 +16,6 @@ class ProductBySku extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_product_product_by_sku_validator';
+        return 'oro_product_product_by_sku_validator';
     }
 }

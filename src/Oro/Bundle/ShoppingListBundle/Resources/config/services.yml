@@ -9,7 +9,7 @@ services:
         arguments:
             - "@doctrine"
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_shopping_list_line_item_validator }
+            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
@@ -73,7 +73,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor'
         parent: oro_shopping_list.processor.abstract_quick_add
         tags:
-            - { name: orob2b_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor }
 
     oro_shopping_list.processor.quick_add_to_checkout:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
@@ -83,9 +83,9 @@ services:
             - [setOperationManager, ['@oro_action.operation_manager']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setOperationName, ['orob2b_shoppinglist_frontend_createorder']]
+            - [setOperationName, ['oro_shoppinglist_frontend_createorder']]
         tags:
-            - { name: orob2b_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor }
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'
@@ -99,14 +99,14 @@ services:
             - [setScope, ['shopping_list']]
             - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     oro_shopping_list.layout.data_provider.shopping_list_form:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider'
         arguments:
             - "@form.factory"
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_shopping_list_form }
+            - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
     oro_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
@@ -118,7 +118,7 @@ services:
         calls:
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_account_user_shopping_lists }
+            - { name: layout.data_provider, alias: oro_shopping_list_account_user_shopping_lists }
 
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
@@ -127,7 +127,7 @@ services:
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products }
+            - { name: layout.data_provider, alias: oro_shopping_list_products }
 
     oro_shopping_list.data_provider.frontend_product_prices:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
@@ -145,7 +145,7 @@ services:
             - "@oro_pricing.model.price_list_request_handler"
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
+            - { name: layout.data_provider, alias: oro_shopping_list_products_units }
 
     oro_shopping_list.action.datagrid.mass_action_provider:
         class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
@@ -153,7 +153,7 @@ services:
             - "@oro_shopping_list.shopping_list.manager"
             - "@translator"
         tags:
-            - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
+            - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
 
     oro_shopping_list.data_provider.checkout_line_item:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
@@ -184,12 +184,11 @@ services:
         arguments:
             - '@oro_shopping_list.data_provider.product_shopping_lists'
         tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_product_units_quantity }
+            - { name: layout.data_provider, alias: oro_shopping_list_product_units_quantity }
 
     oro_shopping_list.repository.line_item:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'
+        parent: oro_entity.abstract_repository
         arguments:
             - '%oro_shopping_list.entity.line_item.class%'
 

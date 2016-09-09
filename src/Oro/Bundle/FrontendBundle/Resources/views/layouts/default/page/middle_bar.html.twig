@@ -15,14 +15,14 @@
     }) %}
     <div {{ block('block_attributes') }}>
         {# In home page #}
-        {% if app.request.attributes.get('_route') == 'orob2b_frontend_root' %}
+        {% if app.request.attributes.get('_route') == 'oro_frontend_root' %}
             <img
                 src="{% image '@OroFrontendBundle/Resources/public/default/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}"
                 class="logo"
                 alt="logo"
             >
         {% else %}
-            <a href="{{ path('orob2b_frontend_root') }}" class="logo" style="background: url('{% image '@OroFrontendBundle/Resources/public/default/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}') no-repeat;">OROCommerce</a>
+            <a href="{{ path('oro_frontend_root') }}" class="logo" style="background: url('{% image '@OroFrontendBundle/Resources/public/default/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}') no-repeat;">OROCommerce</a>
         {% endif %}
     </div>
 {% endblock %}

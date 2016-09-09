@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class PaymentMethodViewPass implements CompilerPassInterface
 {
     const REGISTRY_SERVICE = 'oro_payment.payment_method.view.registry';
-    const TAG = 'orob2b_payment.payment_method_view';
+    const TAG = 'oro_payment.payment_method_view';
 
     /**
      * {@inheritdoc}

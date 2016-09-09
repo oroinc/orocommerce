@@ -8,12 +8,12 @@ services:
         calls:
             - [setDataClass, ['%oro_invoice.entity.invoice.class%']]
         tags:
-            - { name: form.type, alias: orob2b_invoice_type }
+            - { name: form.type, alias: oro_invoice_type }
 
     oro_invoice.form.type.invoice_line_item_collection:
         class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemsCollectionType'
         tags:
-            - { name: form.type, alias: "orob2b_invoice_line_items_collection" }
+            - { name: form.type, alias: "oro_invoice_line_items_collection" }
 
     oro_invoice.form.type.invoice_line_item:
         class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
@@ -25,7 +25,7 @@ services:
             - [setDataClass, ['%oro_invoice.entity.invoice_line_item.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
         tags:
-            - { name: form.type, alias: "orob2b_invoice_line_item" }
+            - { name: form.type, alias: "oro_invoice_line_item" }
 
     oro_invoice.doctrine.orm.invoice_number_generator:
         class: 'Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator'
@@ -43,11 +43,11 @@ services:
         arguments:
             - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_invoice_type, method: beforeFlush}
 
     oro_invoice.event_listener.total_calculate_listener:
         class: 'Oro\Bundle\InvoiceBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
         tags:
-            - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

@@ -20,9 +20,9 @@ use Oro\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 class ProductVisibilityController extends Controller
 {
     /**
-     * @Route("/edit/{id}", name="orob2b_product_visibility_edit", requirements={"id"="\d+"})
+     * @Route("/edit/{id}", name="oro_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_product_update")
+     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
@@ -44,13 +44,13 @@ class ProductVisibilityController extends Controller
             $form,
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_visibility_edit',
+                    'route' => 'oro_product_visibility_edit',
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_view',
+                    'route' => 'oro_product_view',
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
@@ -62,12 +62,12 @@ class ProductVisibilityController extends Controller
     /**
      * @Route(
      *      "/edit/{productId}/website/{id}",
-     *      name="orob2b_product_visibility_website",
+     *      name="oro_product_visibility_website",
      *      requirements={"productId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("product", options={"id" = "productId"})
      * @Template("OroAccountBundle:ProductVisibility/widget:website.html.twig")
-     * @AclAncestor("orob2b_product_update")
+     * @AclAncestor("oro_product_update")
      *
      * @param Product $product
      * @param Website $website
