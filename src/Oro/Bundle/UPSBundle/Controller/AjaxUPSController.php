@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\UPSBundle\Controller;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
-use Oro\Bundle\AddressBundle\Entity\Country;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

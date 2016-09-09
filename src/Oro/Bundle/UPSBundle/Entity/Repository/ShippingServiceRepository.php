@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 
 class ShippingServiceRepository extends EntityRepository

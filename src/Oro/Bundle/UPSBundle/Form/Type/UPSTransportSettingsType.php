@@ -8,10 +8,8 @@ use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -59,7 +57,7 @@ class UPSTransportSettingsType extends AbstractType
         ShippingOriginProvider $shippingOriginProvider,
         DoctrineHelper $doctrineHelper
     ) {
-        $this->transport  = $transport;
+        $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
     }

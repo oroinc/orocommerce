@@ -141,7 +141,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'entity' =>$entityType,
+                    'entity' => $entityType,
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'translatable_entity' => $translatableEntity,
                 ],
@@ -233,12 +233,12 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 'expectedData'  => (new UPSTransport())
             ],
             'service with value' => [
-                'defaultData'   => new UPSTransport(),
+                'defaultData' => new UPSTransport(),
                 'submittedData' => [
                     'baseUrl' => 'http://ups.com',
                     'apiUser' => 'user',
                     'apiPassword' => 'password',
-                    'apiKey'=> 'key',
+                    'apiKey' => 'key',
                     'shippingAccountName' => 'name',
                     'shippingAccountNumber' => 'number',
                     'pickupType' => '01',
@@ -247,7 +247,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'applicableShippingServices' => [1]
                 ],
                 'isValid' => true,
-                'expectedData'  => (new UPSTransport())
+                'expectedData' => (new UPSTransport())
                     ->setBaseUrl('http://ups.com')
                     ->setApiUser('user')
                     ->setApiPassword('password')

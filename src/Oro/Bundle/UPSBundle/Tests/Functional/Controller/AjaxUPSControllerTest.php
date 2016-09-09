@@ -70,7 +70,6 @@ class AjaxUPSControllerTest extends WebTestCase
         ];
     }
 
-
     /**
      * @param array $rules
      * @return array
