@@ -33,17 +33,20 @@ class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
             }
         }
 
-        if (count($enabledRules) < $constraint->min) {
+        $count = count($enabledRules);
+
+        if ($count < $constraint->min) {
             if ($this->context instanceof ExecutionContextInterface) {
-                $this->context->buildViolation($constraint->message, ['{{ limit }}' => $constraint->min])
-                    ->atPath('configurations')
-                    ->addViolation();
+                $builder = $this->context->buildViolation($constraint->message);
             } else {
-                $this->buildViolation($constraint->message)
-                    ->setParameter('{{ limit }}', $constraint->min)
-                    ->atPath('configurations')
-                    ->addViolation();
+                $builder = $this->buildViolation($constraint->message);
             }
+            $builder
+                ->setParameter('{{ count }}', $count)
+                ->setParameter('{{ limit }}', $constraint->min)
+                ->setPlural((int)$constraint->min)
+                ->atPath('configurations')
+                ->addViolation();
         }
     }
 }

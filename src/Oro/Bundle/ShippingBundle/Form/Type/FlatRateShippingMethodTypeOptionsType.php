@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class FlatRateShippingMethodTypeOptionsType extends AbstractType
 {
@@ -43,10 +44,11 @@ class FlatRateShippingMethodTypeOptionsType extends AbstractType
             ->add(FlatRateShippingMethodType::PRICE_OPTION, NumberType::class, array_merge([
                 'required' => true,
                 'label' => 'oro.shipping.method.flat_rate.price.label',
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateShippingMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
                 'label' => 'oro.shipping.method.flat_rate.handling_fee.label',
+                'constraints' => [new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateShippingMethodType::TYPE_OPTION, ChoiceType::class, [
                 'required' => true,
