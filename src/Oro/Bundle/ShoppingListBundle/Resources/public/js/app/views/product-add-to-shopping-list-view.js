@@ -59,6 +59,7 @@ define(function(require) {
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
+            mediator.on('shopping-list:change-current', this._onChangeCurrentShoppingList, this);
             if (this.model) {
                 this.model.on('change:shopping_lists', this._onModelChanged, this);
                 this.model.on('change:unit', this._onModelChanged, this);
@@ -196,6 +197,30 @@ define(function(require) {
             }
         },
 
+        _onChangeCurrentShoppingList: function(shoppingList) {
+            var modelCurrentShoppingLists = this.findCurrentShoppingList();
+            var modelNewCurrentShoppingLists = this.findShoppingList(shoppingList.id);
+
+            if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
+                this.dropdownWidget.main.data({
+                    shoppinglist: shoppingList
+                });
+                this.dropdownWidget.main.data('clone').data({
+                    shoppinglist: shoppingList
+                });
+            }
+
+            if (modelCurrentShoppingLists || modelNewCurrentShoppingLists) {
+                if (modelCurrentShoppingLists) {
+                    modelCurrentShoppingLists.is_current = false;
+                }
+                if (modelNewCurrentShoppingLists) {
+                    modelNewCurrentShoppingLists.is_current = true;
+                }
+                this.model.trigger('change:shopping_lists');
+            }
+        },
+
         _editLineItem: function(lineItemId) {
             this._setEditLineItem(lineItemId);
             this.updateMainButton();
@@ -320,6 +345,12 @@ define(function(require) {
         findCurrentShoppingList: function() {
             return _.find(this.model.get('shopping_lists'), function(list) {
                 return list.is_current;
+            }) || null;
+        },
+
+        findShoppingList: function(id) {
+            return _.find(this.model.get('shopping_lists'), function(list) {
+                return list.shopping_list_id == id;
             }) || null;
         },
 
