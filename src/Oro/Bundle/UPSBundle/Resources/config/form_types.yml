@@ -17,3 +17,10 @@ services:
         class: 'Oro\Bundle\UPSBundle\Form\Type\ShippingServiceCollectionType'
         tags:
             - { name: form.type, alias: oro_ups_shipping_service_collection }
+
+    oro_ups.form.type.shipping_method_config_options:
+        class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType
+        arguments:
+            - '@orob2b_pricing.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
