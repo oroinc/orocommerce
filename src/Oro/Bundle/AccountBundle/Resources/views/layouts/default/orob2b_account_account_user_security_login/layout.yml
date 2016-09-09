@@ -2,10 +2,14 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@setFormTheme':
-            themes: 'form_theme.html.twig'
+        - '@move':
+            id: notification
+            parentId: wrapper
+        - '@move':
+            id: sticky_panel
+            parentId: wrapper
         - '@remove':
-            id: wrapper
+            id: main
         - '@setOption':
             id: login_form_submit
             optionName: attr.class
