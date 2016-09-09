@@ -54,8 +54,10 @@ oro:
 
         manage_inventory:
             label:
-                yes: Yes
-                no: No
+                'true': Yes
+                'false': No
+                1: Yes
+                0: No
 
         fallback:
             systemConfig: System Defaults

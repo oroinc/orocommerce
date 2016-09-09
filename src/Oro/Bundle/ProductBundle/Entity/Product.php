@@ -404,16 +404,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * @var EntityFieldFallbackValue
      *
      * @ORM\OneToOne(targetEntity="Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue", cascade={"All"})
-     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *     defaultValues={
      *          "fallback": {
-     *              "category" : {
-     *                  "fieldName": "manageInventory"
-     *              },
-     *              "systemConfig": {
-     *                  "fieldName": "manageInventory",
-     *                  "configName": "orob2b_product.manage_inventory"
+     *              "fallbackType": "boolean",
+     *              "fallbackList": {
+     *                  "category" : {
+     *                      "fieldName": "manageInventory"
+     *                  },
+     *                  "systemConfig": {
+     *                      "configName": "orob2b_product.manage_inventory"
+     *                  }
      *              }
      *          }
      *     }
@@ -478,7 +480,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
     /**
      * @param string $sku
-     *
      * @return $this
      */
     public function setSku($sku)

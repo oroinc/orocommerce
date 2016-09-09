@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Fallback\Provider;
+namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityBundle\Exception\InvalidFallbackArgumentException;
 
-class ProductCategoryFallbackProvider extends AbstractEntityFallbackProvider
+class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
     /**
      * @var DoctrineHelper
@@ -31,9 +31,7 @@ class ProductCategoryFallbackProvider extends AbstractEntityFallbackProvider
      */
     public function getFallbackHolderEntity(
         $object,
-        $objectFieldName,
-        EntityFieldFallbackValue $objectFallbackValue,
-        $fallbackConfig
+        $objectFieldName
     ) {
         if (!$object instanceof Product) {
             throw new InvalidFallbackArgumentException(get_class($object), get_class($this));

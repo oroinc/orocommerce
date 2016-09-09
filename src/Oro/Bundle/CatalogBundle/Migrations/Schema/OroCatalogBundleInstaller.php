@@ -327,10 +327,10 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('manage_inventory_fallback_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['manage_inventory_fallback_id'], 'UNIQ_FBD712DDA4E4A513');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_entity_field_fallback_val'),
+            $schema->getTable('oro_entity_fallback_value'),
             ['manage_inventory_fallback_id'],
             ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => 'CASCADE']
         );
     }
 }

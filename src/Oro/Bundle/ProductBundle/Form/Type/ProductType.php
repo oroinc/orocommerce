@@ -121,21 +121,7 @@ class ProductType extends AbstractType
                 EntityFieldFallbackValueType::NAME,
                 [
                     'label' => 'oro.product.manage_inventory.label',
-                    'parent_object' => $builder->getData(),
                     'fallback_translation_prefix' => 'oro.product.fallback',
-                    'value_type' => ChoiceType::class,
-                    'value_options' => [
-                        'expanded' => false,
-                        'choices' => $this->getManageInventoryChoices(),
-                        'empty_value' => false,
-                    ],
-                    'fallback_type' => ChoiceType::class,
-                    'fallback_options' => [
-                        'empty_value' => false,
-                    ],
-                    'use_fallback_options' => [
-                        'empty_data' => true
-                    ]
                 ]
             )
             ->add(
@@ -277,16 +263,5 @@ class ProductType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getManageInventoryChoices()
-    {
-        return [
-            'no' => 'oro.product.manage_inventory.label.no',
-            'yes' => 'oro.product.manage_inventory.label.yes',
-        ];
     }
 }

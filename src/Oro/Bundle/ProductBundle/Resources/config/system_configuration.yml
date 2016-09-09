@@ -69,8 +69,8 @@ oro_system_configuration:
                 label: oro.product.system_configuration.fields.manage_inventory.label
                 choice_translation_domain: messages
                 choices:
-                    no: oro.product.manage_inventory.label.no
-                    yes: oro.product.manage_inventory.label.yes
+                    false: oro.product.manage_inventory.label.false
+                    true: oro.product.manage_inventory.label.true
 
     tree:
         system_configuration:

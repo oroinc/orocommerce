@@ -156,22 +156,7 @@ class CategoryType extends AbstractType
                 'manageInventory',
                 EntityFieldFallbackValueType::NAME,
                 [
-                    'parent_object' => $builder->getData(),
                     'fallback_translation_prefix' => 'oro.catalog.fallback',
-                    'value_type' => ChoiceType::class,
-                    'value_options' => [
-                        'expanded' => false,
-                        'choices' => $this->getManageInventoryChoices(),
-                        'empty_value' => false,
-                    ],
-                    'fallback_type' => ChoiceType::class,
-                    'fallback_choice_filter' => function ($choices) use ($category) {
-                        if (array_key_exists(ParentCategoryFallbackProvider::ID, $choices) && !$category->getParentCategory()) {
-                            unset($choices[ParentCategoryFallbackProvider::ID]);
-                        }
-
-                        return $choices;
-                    },
                 ]
             );
     }
@@ -210,8 +195,8 @@ class CategoryType extends AbstractType
     protected function getManageInventoryChoices()
     {
         return [
-            'no' => 'oro.catalog.manage_inventory.label.no',
-            'yes' => 'oro.catalog.manage_inventory.label.yes',
+            false => 'oro.catalog.manage_inventory.label.no',
+            true => 'oro.catalog.manage_inventory.label.yes',
         ];
     }
 }

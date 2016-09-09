@@ -237,16 +237,18 @@ class Category extends ExtendCategory
      * @var EntityFieldFallbackValue
      *
      * @ORM\OneToOne(targetEntity="Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue", cascade={"All"})
-     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *     defaultValues={
      *          "fallback": {
-     *              "systemConfig" : {
-     *                  "fieldName": "manageInventory",
-     *                  "configName": "orob2b_product.manage_inventory"
-     *              },
-     *              "parentCategory": {
-     *                  "fieldName": "manageInventory"
+     *              "fallbackType": "boolean",
+     *              "fallbackList": {
+     *                  "systemConfig" : {
+     *                      "configName": "orob2b_product.manage_inventory"
+     *                  },
+     *                  "parentCategory": {
+     *                      "fieldName": "manageInventory"
+     *                  }
      *              }
      *          }
      *     }
