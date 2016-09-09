@@ -3,7 +3,7 @@ search:
         alias:                          oro_warehouse
         title_fields:                   [name]
         route:
-            name:                       orob2b_warehouse_view
+            name:                       oro_warehouse_view
             parameters:
                 id:                     id
         search_template:                OroWarehouseBundle:Warehouse:searchResult.html.twig
