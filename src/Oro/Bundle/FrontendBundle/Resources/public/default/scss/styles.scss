@@ -1,4 +1,17 @@
-@import '_legacy/legacy';
+/*Reset*/
+@import './shared/_reset';
+
+/*Variables & mixins & helpers*/
+@import './shared/_vars';
+@import './shared/_helpers';
+@import './shared/_mixins';
+@import './components/commerce/partials/variables';
+@import './components/commerce/partials/mixins';
+
+//fonts
+@import './shared/_fonts';
+
+@import '_legacy/_legacy';
 
 @import 'base/base';
 
