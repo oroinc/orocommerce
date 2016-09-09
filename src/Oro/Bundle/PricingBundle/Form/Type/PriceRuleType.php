@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceRuleType extends AbstractType
 {
@@ -17,8 +16,11 @@ class PriceRuleType extends AbstractType
     const RULE = 'rule';
     const RULE_CONDITION = 'ruleCondition';
     const CURRENCY = 'currency';
+    const CURRENCY_EXPRESSION = 'currencyExpression';
     const PRODUCT_UNIT = 'productUnit';
+    const PRODUCT_UNIT_EXPRESSION = 'productUnitExpression';
     const QUANTITY = 'quantity';
+    const QUANTITY_EXPRESSION = 'quantityExpression';
     const PRIORITY = 'priority';
 
     /**
@@ -47,7 +49,7 @@ class PriceRuleType extends AbstractType
                 self::CURRENCY,
                 CurrencySelectionType::NAME,
                 [
-                    'label' => 'oro.pricing.pricerule.rule_condition.label'
+                    'label' => 'oro.pricing.pricerule.currency.label'
                 ]
             )
             ->add(
@@ -71,7 +73,29 @@ class PriceRuleType extends AbstractType
                 [
                     'label' => 'oro.pricing.pricerule.priority.label'
                 ]
-            );
+            )
+            ->add(
+                self::QUANTITY_EXPRESSION,
+                'text',
+                [
+                    'label' => 'oro.pricing.pricerule.quantity_expression.label'
+                ]
+            )
+            ->add(
+                self::CURRENCY_EXPRESSION,
+                'text',
+                [
+                    'label' => 'oro.pricing.pricerule.currency_expression.label'
+                ]
+            )
+            ->add(
+                self::PRODUCT_UNIT_EXPRESSION,
+                'text',
+                [
+                    'label' => 'oro.pricing.pricerule.product_unit_expression.label'
+                ]
+            )
+        ;
     }
 
     /**

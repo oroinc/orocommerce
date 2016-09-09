@@ -229,18 +229,21 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <div class="price_rule"  data-content>
-        <div class="price_rule__row clearfix">
-            <span class="price_rule__title">Price for quantity: </span>
-            <div class="price_rule__quantity">{{ form_widget(form.quantity) }}</div>
-            <div class="price_rule__unit">{{ form_widget(form.productUnit) }}</div>
-            <span> in</span>
-            <div class="price_rule__currency">{{ form_widget(form.currency) }}
-            </div><button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+    <div class="price-rule row"  data-content>
+        <div class="span7">
+            <div>{{ form_row(form.rule) }}</div>
+            <div>{{ form_row(form.ruleCondition) }}</div>
+            <div class="price-rule__priority">{{ form_row(form.priority) }}</div>
         </div>
-        <div>{{ form_row(form.rule) }}</div>
-        <div>{{ form_row(form.ruleCondition) }}</div>
-        <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
+        <div class="span5">
+            <div>{{ form_row(form.quantity) }}</div>
+            <div>{{ form_row(form.quantityExpression) }}</div>
+            <div>{{ form_row(form.productUnit) }}</div>
+            <div>{{ form_row(form.productUnitExpression) }}</div>
+            <div>{{ form_row(form.currency) }}</div>
+            <div>{{ form_row(form.currencyExpression) }}</div>
+        </div>
+        <button type="button" class="removeRow btn icons-holder price-rule__remove_btn"><i class="icon-remove"></i></button>
     </div>
     {% endspaceless %}
 {% endmacro %}
@@ -254,49 +257,36 @@
         {% set id = id ~ '_collection' %}
         <style>
             {# temporary styles should be removed after new disign implemented #}
-            .price_rule {
+            .price-rule {
+                width: 940px;
                 margin-bottom: 50px !important;
             }
 
-            .price_rule textarea {
-                height: 60px;
+            .price-rule textarea {
+                height: 90px;
                 width: 323px;
             }
 
-            .price_rule__row {
-                vertical-align: middle;
-                line-height: 30px;
-                margin: 0 0 10px 0;
+            .price-rule input, .price-rule select {
+                width: 200px !important;
             }
 
-            .price_rule__row > * {
-                display: inline-block;
-                float: left;
-                margin-right: 7px;
-            }
-
-            .price_rule__row .price_rule__quantity input{
-                width: 30px !important;
-                margin-left: 10px;
-            }
-
-            .price_rule__row .price_rule__title{
-                margin: 0 15px 0 43px;
-            }
-
-            .price_rule__unit select{
-                width: 90px;
-            }
-
-            .price_rule__currency select{
-                width: 90px;
-            }
-
-            .price_rule__priority input{
+            .price-rule__priority input{
                 width: 323px !important;
             }
 
-            .price_rules__add_btn{
+            .price-rule .selector, .price-rule select {
+                margin-left: 0 !important;
+            }
+
+            .price-rule__remove_btn {
+                position: absolute !important;
+                left: 950px;
+                top: 0;
+                padding-left: 18px;
+            }
+
+            .price-rules__add_btn {
                 margin-left: 170px;
             }
         </style>
@@ -314,7 +304,7 @@
                         {% endfor %}
                     {% endif %}
             </div>
-            <div class="price_rules__add_btn">
+            <div class="price-rules__add_btn">
                 <a class="btn add-list-item" href="javascript: void(0);">
                     <i class="icon-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}
                 </a>
