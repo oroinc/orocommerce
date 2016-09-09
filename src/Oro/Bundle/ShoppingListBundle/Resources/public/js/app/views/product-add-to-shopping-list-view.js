@@ -203,11 +203,12 @@ define(function(require) {
 
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
                 this.dropdownWidget.main.data({
-                    shoppinglist: shoppingList
+                    shoppinglist: _.pick(shoppingList, 'id', 'label')
                 });
                 this.dropdownWidget.main.data('clone').data({
-                    shoppinglist: shoppingList
+                    shoppinglist: _.pick(shoppingList, 'id', 'label')
                 });
+                this.updateMainButton();
             }
 
             if (modelCurrentShoppingLists || modelNewCurrentShoppingLists) {
