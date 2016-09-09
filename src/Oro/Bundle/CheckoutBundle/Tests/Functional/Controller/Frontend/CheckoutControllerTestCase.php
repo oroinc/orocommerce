@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -174,7 +175,9 @@ abstract class CheckoutControllerTestCase extends WebTestCase
         /** @var ShippingRuleMethodConfig $shippingRuleConfig */
         $shippingRuleConfig = $shippingRule->getMethodConfigs()->first();
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = null;
+        /** @var ShippingRuleMethodTypeConfig $type */
+        $type = $shippingRuleConfig->getTypeConfigs()->first();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $type->getType();
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
