@@ -1,6 +1,6 @@
 datagrids:
     category-products-grid:
-        acl_resource: orob2b_product_update
+        acl_resource: oro_product_update
         extended_entity_name: %oro_product.entity.product.class%
         source:
             type:         orm

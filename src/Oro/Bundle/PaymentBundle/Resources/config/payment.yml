@@ -24,7 +24,7 @@ services:
             - '@property_accessor'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_payment.payment_method.view.payment_term:
         class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentTermView'
@@ -34,4 +34,4 @@ services:
             - '@translator'
             - '@oro_payment.payment_method.payment_term.config'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }

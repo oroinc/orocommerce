@@ -23,7 +23,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeOperation($user, 'orob2b_account_accountuser_confirm');
+        $this->executeOperation($user, 'oro_account_accountuser_confirm');
 
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
@@ -44,7 +44,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.manager');
         $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('orob2b_account_account_user_security_login');
+            . $this->getUrl('oro_account_account_user_security_login');
 
         $this->assertContains($loginUrl, $message->getBody());
 
@@ -66,7 +66,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeOperation($user, 'orob2b_account_accountuser_sendconfirmation');
+        $this->executeOperation($user, 'oro_account_accountuser_sendconfirmation');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

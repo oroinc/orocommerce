@@ -17,8 +17,8 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 class AjaxOrderController extends Controller
 {
     /**
-     * @Route("/entry-point/{id}", name="orob2b_order_entry_point", defaults={"id" = 0})
-     * @AclAncestor("orob2b_order_update")
+     * @Route("/entry-point/{id}", name="oro_order_entry_point", defaults={"id" = 0})
+     * @AclAncestor("oro_order_update")
      *
      * @param Request $request
      * @param Order|null $order

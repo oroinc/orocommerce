@@ -29,7 +29,7 @@ class AddressExtension extends AbstractTypeExtension
     public function configureOptions(OptionsResolver $resolver)
     {
         if ($this->isFrontend()) {
-            $resolver->setDefault('region_route', 'orob2b_api_frontend_country_get_regions');
+            $resolver->setDefault('region_route', 'oro_api_frontend_country_get_regions');
         }
     }
 

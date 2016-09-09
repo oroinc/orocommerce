@@ -3,15 +3,15 @@ navigation:
         items:
             master_catalog:
                 label:           'oro.catalog.menu.master_catalog.label'
-                route:           'orob2b_catalog_category_index'
+                route:           'oro_catalog_category_index'
                 extras:
                     position:    10
-                    routes:      ['/^orob2b_catalog_category/']
+                    routes:      ['/^oro_catalog_category/']
                     description: 'oro.catalog.menu.master_catalog.description'
 
             shortcut_master_catalog:
                 label:           'oro.catalog.menu.master_catalog.label'
-                route:           'orob2b_catalog_category_index'
+                route:           'oro_catalog_category_index'
                 extras:
                     description: 'oro.catalog.menu.shortcut_master_catalog.description'
 
@@ -26,6 +26,6 @@ navigation:
                     shortcut_master_catalog: ~
 
     titles:
-        orob2b_catalog_category_index:  ~
-        orob2b_catalog_category_update: '%%title%% - Edit'
-        orob2b_catalog_category_create: 'Create Category'
+        oro_catalog_category_index:  ~
+        oro_catalog_category_update: '%%title%% - Edit'
+        oro_catalog_category_create: 'Create Category'

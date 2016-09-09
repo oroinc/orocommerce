@@ -145,7 +145,7 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
-                            form_type: orob2b_checkout_address
+                            form_type: oro_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -161,7 +161,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
+                            form_type: oro_ship_to_billing_address
                             options:
                                 label: Ship to this address
                         state_token:
@@ -184,7 +184,7 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         shipping_address:
-                            form_type: orob2b_checkout_address
+                            form_type: oro_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -200,7 +200,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
+                            form_type: oro_ship_to_billing_address
                             options:
                                 label: Use billing address
                         state_token:
@@ -697,12 +697,12 @@ workflows:
                             - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                             - '@assign_url':
                                 attribute: $.result.successUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $.id
                             - '@assign_url':
                                 attribute: $.result.failureUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $.id
                                     transition: 'payment_error'
@@ -871,19 +871,19 @@ workflows:
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $.id
                                     transition: 'payment_error'
                             - '@assign_url':
                                 attribute: $.result.failedShippingAddressUrl
-                                route: orob2b_checkout_frontend_checkout
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $.id
                                     transition: 'back_to_shipping_address_on_fail_address'
@@ -905,7 +905,7 @@ workflows:
                                 - '@payment_method_supports':
                                     payment_method: $payment_method
                                     action: 'validate'
-                        route: orob2b_checkout_frontend_checkout
+                        route: oro_checkout_frontend_checkout
                         route_parameters:
                             id: $.id
                             transition: finish_checkout
@@ -917,7 +917,7 @@ workflows:
                                 - '@payment_method_supports':
                                     payment_method: $payment_method
                                     action: 'validate'
-                        route: orob2b_checkout_frontend_checkout
+                        route: oro_checkout_frontend_checkout
                         route_parameters:
                             id: $.id
                             transition: payment_error
@@ -943,7 +943,7 @@ workflows:
                                 - '@equal': [$checkout.saveBillingAddress, true]
                                 - '@empty': $order.billingAddress.accountAddress
                                 - '@empty': $order.billingAddress.accountUserAddress
-                                - '@acl_granted': 'orob2b_order_address_billing_allow_manual'
+                                - '@acl_granted': 'oro_order_address_billing_allow_manual'
                         actions:
                             - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
@@ -989,7 +989,7 @@ workflows:
                                 - '@equal': [$checkout.saveShippingAddress, true]
                                 - '@empty': $order.shippingAddress.accountAddress
                                 - '@empty': $order.shippingAddress.accountUserAddress
-                                - '@acl_granted': 'orob2b_order_address_shipping_allow_manual'
+                                - '@acl_granted': 'oro_order_address_shipping_allow_manual'
                         actions:
                             - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
@@ -1056,7 +1056,7 @@ workflows:
                     - '@remove_entity': $checkout.shippingAddress
                     - '@remove_entity': $checkout
                     - '@redirect':
-                        route: orob2b_order_frontend_success
+                        route: oro_order_frontend_success
                         route_parameters:
                             id: $order.id
 

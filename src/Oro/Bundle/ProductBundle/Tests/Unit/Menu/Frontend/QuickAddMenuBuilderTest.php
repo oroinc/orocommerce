@@ -49,7 +49,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
                 ->with(
                     'oro.product.frontend.quick_add.title',
                     [
-                        'route' => 'orob2b_product_frontend_quick_add',
+                        'route' => 'oro_product_frontend_quick_add',
                         'extras' => [
                             'position' => 500,
                             'description' => 'oro.product.frontend.quick_add.description',

@@ -18,7 +18,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 
 class OrderDiscountItemType extends AbstractType
 {
-    const NAME = 'orob2b_order_discount_item';
+    const NAME = 'oro_order_discount_item';
 
     /**
      * @var string

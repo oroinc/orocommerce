@@ -12,10 +12,10 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 class OpenOrdersController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_checkout_frontend_open_orders")
+     * @Route("/", name="oro_checkout_frontend_open_orders")
      * @Layout()
      * @Acl(
-     *      id="orob2b_order_frontend_view",
+     *      id="oro_order_frontend_view",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
      *      permission="ACCOUNT_VIEW",

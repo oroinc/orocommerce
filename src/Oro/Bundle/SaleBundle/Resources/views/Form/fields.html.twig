@@ -1,10 +1,10 @@
-{% block orob2b_sale_quote_product_collection_row %}
+{% block oro_sale_quote_product_collection_row %}
     {{ form_widget(form) }}
 {% endblock %}
 
-{% block orob2b_sale_quote_product_collection_widget %}
+{% block oro_sale_quote_product_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_sale_quote_lineitem_prototype(form) %}
+        {% set prototype_html = _self.oro_sale_quote_lineitem_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -25,7 +25,7 @@
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} class="1">
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_sale_quote_lineitem_prototype(child) }}
+                        {{ _self.oro_sale_quote_lineitem_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -37,7 +37,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_sale_quote_lineitem_prototype(widget) %}
+{% macro oro_sale_quote_lineitem_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -57,7 +57,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_sale_quote_product_widget %}
+{% block oro_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' quote-lineitem-widget control-group'}) %}
 
     {% set commentAccount = form.vars.value.commentAccount|default(null) %}
@@ -111,7 +111,7 @@
         {{ form_widget(form.type) }}
     </td>
     <td class="quote-lineitem-requested">
-        {{ block('orob2b_sale_quote_product_request_collection') }}
+        {{ block('oro_sale_quote_product_request_collection') }}
     </td>
     <td class="quote-lineitem-offers">
         {{ form_widget(form.quoteProductOffers) }}
@@ -135,7 +135,7 @@
     </td>
 {% endblock %}
 
-{% block orob2b_sale_quote_product_request_collection %}
+{% block oro_sale_quote_product_request_collection %}
     {% if quoteProductRequests|length %}
         <table class="quote-lineitem-requests-widget table-bordered">
             <thead>
@@ -165,9 +165,9 @@
     {% endif %}
 {% endblock %}
 
-{% block orob2b_sale_quote_product_offer_collection_widget %}
+{% block oro_sale_quote_product_offer_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_sale_quote_product_offer_prototype(form, true) %}
+        {% set prototype_html = _self.oro_sale_quote_product_offer_prototype(form, true) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -186,7 +186,7 @@
                 <tbody class="quote-lineitem-offers-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_sale_quote_product_offer_prototype(child) }}
+                        {{ _self.oro_sale_quote_product_offer_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -198,7 +198,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_sale_quote_product_offer_prototype(widget, prototype) %}
+{% macro oro_sale_quote_product_offer_prototype(widget, prototype) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -231,7 +231,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_sale_quote_product_offer_widget %}
+{% block oro_sale_quote_product_offer_widget %}
     <td class="quote-lineitem-offers-quantity">
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
@@ -259,7 +259,7 @@
     </td>
 {% endblock %}
 
-{% block orob2b_quote_address_type_widget %}
+{% block oro_quote_address_type_widget %}
     {% if form.parent is not empty %}
         <div {{ block('widget_container_attributes') }}>
             {{ form_row(form.accountAddress) }}

@@ -34,7 +34,7 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
 
     public function testGetShoppingLists()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         $actual = $this->dataProvider->getShoppingLists();
 

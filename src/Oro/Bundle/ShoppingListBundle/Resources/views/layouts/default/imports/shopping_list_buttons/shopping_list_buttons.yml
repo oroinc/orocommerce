@@ -9,6 +9,6 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                visible: '=data["acl"].isGranted("orob2b_shopping_list_line_item_frontend_add")'
-                shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                visible: '=data["acl"].isGranted("oro_shopping_list_line_item_frontend_add")'
+                shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
     conditions: 'context["is_logged_in"]'

@@ -1,16 +1,16 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_cms_loginpage_update', {id: entity.id}) : path('orob2b_cms_loginpage_create') %}
+{% set formAction = entity.id ? path('oro_cms_loginpage_update', {id: entity.id}) : path('oro_cms_loginpage_create') %}
 
 {% oro_title_set({params : {'%entityName%': 'oro.cms.loginpage.entity_label'|trans} }) %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_cms_loginpage_index')) }}
+    {{ UI.cancelButton(path('oro_cms_loginpage_index')) }}
 
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_crm_login_page_update') %}
+    {% if entity.id or resource_granted('oro_crm_login_page_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -20,7 +20,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_cms_loginpage_index'),
+            'indexPath':   path('oro_cms_loginpage_index'),
             'indexLabel': 'oro.cms.loginpage.entity_plural_label'|trans,
             'entityTitle': entity.id|default('N/A'|trans)
         } %}

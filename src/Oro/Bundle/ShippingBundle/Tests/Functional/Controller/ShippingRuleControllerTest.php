@@ -29,12 +29,12 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         $auth = $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
         $this->initClient([], $auth);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('shipping-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Shipping Rule')->attr('href');
-        $this->assertEquals($this->getUrl('orob2b_shipping_rule_create'), $href);
+        $this->assertEquals($this->getUrl('oro_shipping_rule_create'), $href);
 
         $response = $this->client->requestGrid([
             'gridName'                         => 'shipping-rule-grid',
@@ -101,7 +101,7 @@ class ShippingRuleControllerTest extends WebTestCase
     public function testIndexWithoutCreate()
     {
         $this->initClient([], $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(0, $crawler->selectLink('Create Shipping Rule')->count());
@@ -116,7 +116,7 @@ class ShippingRuleControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
         );
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_create'));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -124,18 +124,18 @@ class ShippingRuleControllerTest extends WebTestCase
         $name = 'New Rule';
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_shipping_rule']['name'] = $name;
-        $formValues['orob2b_shipping_rule']['enabled'] = false;
-        $formValues['orob2b_shipping_rule']['currency'] = 'USD';
-        $formValues['orob2b_shipping_rule']['priority'] = 1;
-        $formValues['orob2b_shipping_rule']['destinations'] = [
+        $formValues['oro_shipping_rule']['name'] = $name;
+        $formValues['oro_shipping_rule']['enabled'] = false;
+        $formValues['oro_shipping_rule']['currency'] = 'USD';
+        $formValues['oro_shipping_rule']['priority'] = 1;
+        $formValues['oro_shipping_rule']['destinations'] = [
             [
                 'postalCode' => '54321',
                 'country' => 'FR',
                 'region' => 'FR-75'
             ]
         ];
-        $formValues['orob2b_shipping_rule']['configurations'] = [
+        $formValues['oro_shipping_rule']['configurations'] = [
             [
                 'enabled' => true,
                 'method' => FlatRateShippingMethod::NAME,
@@ -169,7 +169,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_view', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_view', ['id' => $shippingRule->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -198,7 +198,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertNotEmpty($shippingRule);
 
         $id = $shippingRule->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_update', ['id' => $id]));
 
         $html = $crawler->html();
 
@@ -209,18 +209,18 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $newName = 'New name for new rule';
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_shipping_rule']['name'] = $newName;
-        $formValues['orob2b_shipping_rule']['enabled'] = false;
-        $formValues['orob2b_shipping_rule']['currency'] = 'USD';
-        $formValues['orob2b_shipping_rule']['priority'] = 1;
-        $formValues['orob2b_shipping_rule']['destinations'] = [
+        $formValues['oro_shipping_rule']['name'] = $newName;
+        $formValues['oro_shipping_rule']['enabled'] = false;
+        $formValues['oro_shipping_rule']['currency'] = 'USD';
+        $formValues['oro_shipping_rule']['priority'] = 1;
+        $formValues['oro_shipping_rule']['destinations'] = [
             [
                 'postalCode' => '54321',
                 'country' => 'TH',
                 'region' => 'TH-83'
             ]
         ];
-        $formValues['orob2b_shipping_rule']['configurations'] = [
+        $formValues['oro_shipping_rule']['configurations'] = [
             [
                 'enabled' => true,
                 'method' => FlatRateShippingMethod::NAME,
@@ -265,7 +265,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $html = $crawler->html();
@@ -298,7 +298,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $html = $crawler->html();
@@ -309,7 +309,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_shipping_rule']['destinations'] = [];
+        $formValues['oro_shipping_rule']['destinations'] = [];
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
@@ -327,7 +327,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
-            'orob2b_status_shipping_rule_massaction',
+            'oro_status_shipping_rule_massaction',
             [
                 'gridName'   => 'shipping-rule-grid',
                 'actionName' => 'disable',
@@ -361,7 +361,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
-            'orob2b_status_shipping_rule_massaction',
+            'oro_status_shipping_rule_massaction',
             [
                 'gridName'   => 'shipping-rule-grid',
                 'actionName' => 'enable',
@@ -397,7 +397,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
@@ -413,7 +413,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -421,14 +421,14 @@ class ShippingRuleControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        $form['orob2b_shipping_rule[enabled]'] = !$shippingRule->isEnabled();
-        $form['orob2b_shipping_rule[name]'] = $shippingRule->getName() . ' new name';
-        $form['orob2b_shipping_rule[priority]'] = $shippingRule->getPriority() + 1;
-        $form['orob2b_shipping_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
-        $form['orob2b_shipping_rule[stopProcessing]'] = !$shippingRule->isStopProcessing();
-        $form['orob2b_shipping_rule[conditions]'] = $shippingRule->getConditions() . ' new data';
-        $form['orob2b_shipping_rule[destinations][0][postalCode]'] = '11111';
-        $form['orob2b_shipping_rule[configurations][0][enabled]'] = '1';
+        $form['oro_shipping_rule[enabled]'] = !$shippingRule->isEnabled();
+        $form['oro_shipping_rule[name]'] = $shippingRule->getName() . ' new name';
+        $form['oro_shipping_rule[priority]'] = $shippingRule->getPriority() + 1;
+        $form['oro_shipping_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
+        $form['oro_shipping_rule[stopProcessing]'] = !$shippingRule->isStopProcessing();
+        $form['oro_shipping_rule[conditions]'] = $shippingRule->getConditions() . ' new data';
+        $form['oro_shipping_rule[destinations][0][postalCode]'] = '11111';
+        $form['oro_shipping_rule[configurations][0][enabled]'] = '1';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

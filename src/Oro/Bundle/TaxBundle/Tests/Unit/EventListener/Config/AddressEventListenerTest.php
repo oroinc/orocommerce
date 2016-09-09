@@ -51,7 +51,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getSettings')
             ->willReturn(
                 [
-                    'orob2b_tax___origin_address' => [
+                    'oro_tax___origin_address' => [
                         'value' => [
                             'region_text' => 'Alabama',
                             'postal_code' => '35004',
@@ -78,10 +78,10 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
                 $this->callback(
                     function ($settings) use ($address) {
                         $this->assertInternalType('array', $settings);
-                        $this->assertArrayHasKey('orob2b_tax___origin_address', $settings);
-                        $this->assertInternalType('array', $settings['orob2b_tax___origin_address']);
-                        $this->assertArrayHasKey('value', $settings['orob2b_tax___origin_address']);
-                        $value = $settings['orob2b_tax___origin_address']['value'];
+                        $this->assertArrayHasKey('oro_tax___origin_address', $settings);
+                        $this->assertInternalType('array', $settings['oro_tax___origin_address']);
+                        $this->assertArrayHasKey('value', $settings['oro_tax___origin_address']);
+                        $value = $settings['oro_tax___origin_address']['value'];
                         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Address', $value);
                         $this->assertEquals($address, $value);
 
@@ -113,7 +113,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_tax.origin_address' => ['value' => null]]);
+            ->willReturn(['oro_tax.origin_address' => ['value' => null]]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
         $event->expects($this->never())->method('setSettings');
@@ -134,7 +134,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
         $address->setRegion($region);
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_tax.origin_address' => ['value' => $address]]);
+            ->willReturn(['oro_tax.origin_address' => ['value' => $address]]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
@@ -142,21 +142,21 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->callback(
                 function ($settings) {
                     $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('orob2b_tax.origin_address', $settings);
-                    $this->assertInternalType('array', $settings['orob2b_tax.origin_address']);
-                    $this->assertArrayHasKey('value', $settings['orob2b_tax.origin_address']);
-                    $this->assertInternalType('array', $settings['orob2b_tax.origin_address']['value']);
-                    $this->assertArrayHasKey('country', $settings['orob2b_tax.origin_address']['value']);
-                    $this->assertEquals('US', $settings['orob2b_tax.origin_address']['value']['country']);
+                    $this->assertArrayHasKey('oro_tax.origin_address', $settings);
+                    $this->assertInternalType('array', $settings['oro_tax.origin_address']);
+                    $this->assertArrayHasKey('value', $settings['oro_tax.origin_address']);
+                    $this->assertInternalType('array', $settings['oro_tax.origin_address']['value']);
+                    $this->assertArrayHasKey('country', $settings['oro_tax.origin_address']['value']);
+                    $this->assertEquals('US', $settings['oro_tax.origin_address']['value']['country']);
 
-                    $this->assertArrayHasKey('region', $settings['orob2b_tax.origin_address']['value']);
-                    $this->assertEquals('US-AL', $settings['orob2b_tax.origin_address']['value']['region']);
+                    $this->assertArrayHasKey('region', $settings['oro_tax.origin_address']['value']);
+                    $this->assertEquals('US-AL', $settings['oro_tax.origin_address']['value']['region']);
 
-                    $this->assertArrayHasKey('region_text', $settings['orob2b_tax.origin_address']['value']);
-                    $this->assertEquals('Alabama', $settings['orob2b_tax.origin_address']['value']['region_text']);
+                    $this->assertArrayHasKey('region_text', $settings['oro_tax.origin_address']['value']);
+                    $this->assertEquals('Alabama', $settings['oro_tax.origin_address']['value']['region_text']);
 
-                    $this->assertArrayHasKey('postal_code', $settings['orob2b_tax.origin_address']['value']);
-                    $this->assertEquals('35004', $settings['orob2b_tax.origin_address']['value']['postal_code']);
+                    $this->assertArrayHasKey('postal_code', $settings['oro_tax.origin_address']['value']);
+                    $this->assertEquals('35004', $settings['oro_tax.origin_address']['value']['postal_code']);
 
                     return true;
                 }
@@ -175,7 +175,7 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
         $address ='some_value';
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_tax.origin_address' => ['value' => $address]]);
+            ->willReturn(['oro_tax.origin_address' => ['value' => $address]]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 

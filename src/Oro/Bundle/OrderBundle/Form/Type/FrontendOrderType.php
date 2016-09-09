@@ -24,7 +24,7 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class FrontendOrderType extends AbstractType
 {
-    const NAME = 'orob2b_order_frontend_type';
+    const NAME = 'oro_order_frontend_type';
 
     /** @var string */
     protected $dataClass;

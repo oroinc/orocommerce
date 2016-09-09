@@ -47,7 +47,7 @@ class PageControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals("Landing Pages", $crawler->filter('h1.oro-subtitle')->html());
@@ -186,12 +186,12 @@ class PageControllerTest extends WebTestCase
                 'success' => true,
                 'message' => '',
                 'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_cms_page_index')
+                'redirectUrl' => $this->getUrl('oro_cms_page_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
 
-        $this->client->request('GET', $this->getUrl('orob2b_cms_page_update', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -212,15 +212,15 @@ class PageControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_cms_page_create', ['id' => $parentId])
+            $this->getUrl('oro_cms_page_create', ['id' => $parentId])
         );
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_cms_page[title]']      = $title;
-        $form['orob2b_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $title);
-        $form['orob2b_cms_page[slug][mode]'] = 'new';
-        $form['orob2b_cms_page[slug][slug]'] = $slug;
+        $form['oro_cms_page[title]']      = $title;
+        $form['oro_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $title);
+        $form['oro_cms_page[slug][mode]'] = 'new';
+        $form['oro_cms_page[slug][slug]'] = $slug;
 
         $form->setValues(['input_action' => 'save_and_stay']);
 
@@ -246,13 +246,13 @@ class PageControllerTest extends WebTestCase
      */
     protected function assertEdit($title, $url, $newTitle, $newSlug, $newUrl, $slugMode, $id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
-        $this->assertEquals($title, $formValues['orob2b_cms_page[title]']);
+        $this->assertEquals($title, $formValues['oro_cms_page[title]']);
         $this->assertEquals(
             sprintf('<p>Content for page:<strong>%s</strong></p>', $title),
-            $formValues['orob2b_cms_page[content]']
+            $formValues['oro_cms_page[content]']
         );
 
         $this->assertContains(
@@ -260,21 +260,21 @@ class PageControllerTest extends WebTestCase
             $crawler->filter('.sub-item')->html()
         );
 
-        $form['orob2b_cms_page[title]']      = $newTitle;
-        $form['orob2b_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $newTitle);
+        $form['oro_cms_page[title]']      = $newTitle;
+        $form['oro_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $newTitle);
 
         switch ($slugMode) {
             case self::SLUG_MODE_NEW:
-                $form['orob2b_cms_page[slug][mode]'] = $slugMode;
-                $form['orob2b_cms_page[slug][slug]'] = $newSlug;
+                $form['oro_cms_page[slug][mode]'] = $slugMode;
+                $form['oro_cms_page[slug][slug]'] = $newSlug;
                 break;
             case self::SLUG_MODE_OLD:
-                $form['orob2b_cms_page[slug][slug]'] = $newSlug;
+                $form['oro_cms_page[slug][slug]'] = $newSlug;
                 break;
             case self::SLUG_MODE_REDIRECT:
-                $form['orob2b_cms_page[slug][mode]']     = self::SLUG_MODE_NEW;
-                $form['orob2b_cms_page[slug][slug]']     = $newSlug;
-                $form['orob2b_cms_page[slug][redirect]'] = 1;
+                $form['oro_cms_page[slug][mode]']     = self::SLUG_MODE_NEW;
+                $form['oro_cms_page[slug][slug]']     = $newSlug;
+                $form['oro_cms_page[slug][redirect]'] = 1;
                 break;
         }
 
@@ -288,10 +288,10 @@ class PageControllerTest extends WebTestCase
         $this->assertContains("Page has been saved", $crawler->html());
 
         $formValues = $form->getValues();
-        $this->assertEquals($newTitle, $formValues['orob2b_cms_page[title]']);
+        $this->assertEquals($newTitle, $formValues['oro_cms_page[title]']);
         $this->assertEquals(
             sprintf('<p>Content for page:<strong>%s</strong></p>', $newTitle),
-            $formValues['orob2b_cms_page[content]']
+            $formValues['oro_cms_page[content]']
         );
 
         $this->assertContains(

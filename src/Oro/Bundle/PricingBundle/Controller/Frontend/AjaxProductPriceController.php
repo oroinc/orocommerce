@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-account", name="orob2b_pricing_frontend_price_by_account")
+     * @Route("/get-product-prices-by-account", name="oro_pricing_frontend_price_by_account")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -24,7 +24,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="orob2b_pricing_frontend_matching_price")
+     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-product-units-by-currency", name="orob2b_pricing_frontend_units_by_pricelist")
+     * @Route("/get-product-units-by-currency", name="oro_pricing_frontend_units_by_pricelist")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -56,7 +56,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/set-current-currency", name="orob2b_pricing_frontend_set_current_currency")
+     * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency")
      * @Method({"POST"})
      *
      * {@inheritdoc}

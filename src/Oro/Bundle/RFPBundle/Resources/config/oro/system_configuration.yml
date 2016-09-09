@@ -17,17 +17,17 @@ system_configuration:
         oro_b2b_rfp.default_request_status:
             ui_only: true
             data_type: string
-            type: orob2b_rfp_default_request_status
+            type: oro_rfp_default_request_status
             options:
                 label: oro.rfp.system_configuration.fields.requeststatus_default.title
         oro_b2b_rfp.backend_product_visibility:
             data_type: array
-            type: orob2b_product_inventory_status_select
+            type: oro_product_inventory_status_select
             options:
                 label: oro.rfp.system_configuration.fields.backend_product_visibility.title
         oro_b2b_rfp.frontend_product_visibility:
             data_type: array
-            type: orob2b_product_inventory_status_select
+            type: oro_product_inventory_status_select
             options:
                 label: oro.rfp.system_configuration.fields.frontend_product_visibility.title
         oro_b2b_rfp.notify_assigned_sales_reps_of_the_account:

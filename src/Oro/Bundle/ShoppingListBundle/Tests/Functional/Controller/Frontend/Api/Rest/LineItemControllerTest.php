@@ -35,7 +35,7 @@ class LineItemControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
+            $this->getUrl('oro_api_shopping_list_frontend_delete_line_item', ['id' => $lineItem->getId()])
         );
 
         $result = $this->client->getResponse();

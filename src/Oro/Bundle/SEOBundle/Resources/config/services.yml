@@ -33,14 +33,14 @@ services:
     oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
         tags:
-            - { name: form.type_extension, alias: orob2b_cms_page }
+            - { name: form.type_extension, alias: oro_cms_page }
 
     oro_seo.form.extension.product_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
         tags:
-            - { name: form.type_extension, alias: orob2b_product }
+            - { name: form.type_extension, alias: oro_product }
 
     oro_seo.form.extension.category_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         tags:
-            - { name: form.type_extension, alias: orob2b_catalog_category }
+            - { name: form.type_extension, alias: oro_catalog_category }

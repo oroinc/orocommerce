@@ -3,21 +3,21 @@ navigation:
         items:
             shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
-                route:           'orob2b_shopping_list_index'
+                route:           'oro_shopping_list_index'
                 extras:
                     position:    100
-                    routes:      ['orob2b_shopping_list_index', 'orob2b_shopping_list_view']
+                    routes:      ['oro_shopping_list_index', 'oro_shopping_list_view']
                     description: 'oro.shoppinglist.menu.shopping_list.description'
 
             shortcut_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
-                route:           'orob2b_shopping_list_index'
+                route:           'oro_shopping_list_index'
                 extras:
                     description: 'oro.shoppinglist.menu.shortcut_shopping_list.description'
 
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
-                route:           'orob2b_shopping_list_frontend_view'
+                route:           'oro_shopping_list_frontend_view'
                 extras:
                     position:    200
                     description: 'oro.shoppinglist.menu.shopping_list.description'
@@ -36,7 +36,7 @@ navigation:
                     frontend_shopping_list: ~
 
     titles:
-        orob2b_shopping_list_index: ~
-        orob2b_shopping_list_view:  '%%label%%'
+        oro_shopping_list_index: ~
+        oro_shopping_list_view:  '%%label%%'
         # TODO: join this somehow with index
-        orob2b_shopping_list_frontend_view:  '%%label%% - oro.shoppinglist.entity_plural_label'
+        oro_shopping_list_frontend_view:  '%%label%% - oro.shoppinglist.entity_plural_label'

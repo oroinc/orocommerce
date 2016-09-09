@@ -3,14 +3,14 @@
 
 {% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans)}}) %}
 
-{% set formAction = entity.id ? path('orob2b_warehouse_update', { 'id': entity.id }) : path('orob2b_warehouse_create')  %}
+{% set formAction = entity.id ? path('oro_warehouse_update', { 'id': entity.id }) : path('oro_warehouse_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_warehouse_index')) }}
+    {{ UI.cancelButton(path('oro_warehouse_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_warehouse_update') %}
+    {% if entity.id or resource_granted('oro_warehouse_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -20,7 +20,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_warehouse_index'),
+            'indexPath':   path('oro_warehouse_index'),
             'indexLabel': 'oro.warehouse.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}

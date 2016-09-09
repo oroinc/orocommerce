@@ -12,7 +12,7 @@ class FrontendController extends Controller
 {
     /**
      * @Layout
-     * @Route("/", name="orob2b_frontend_root")
+     * @Route("/", name="oro_frontend_root")
      */
     public function indexAction()
     {
@@ -21,7 +21,7 @@ class FrontendController extends Controller
 
     /**
      * @Layout()
-     * @Route("/exception/{code}/{text}", name="orob2b_frontend_exception", requirements={"code"="\d+"})
+     * @Route("/exception/{code}/{text}", name="oro_frontend_exception", requirements={"code"="\d+"})
      * @param int $code
      * @param string $text
      * @return array
