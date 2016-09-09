@@ -22,8 +22,8 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
-            this.currentShoppingListId = this.initCurrentShoppingListId();
-            this.setCurrentShoppingListUrl = options.setCurrentShoppingListUrl;
+            this.currentShoppingList = this.getCurrentShoppingList();
+            this.setCurrentShoppingListRoute = options.setCurrentShoppingListRoute;
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
             this.$el.on({
@@ -50,8 +50,7 @@ define(function(require) {
          * @param e
          */
         _onChangeCurrentShoppingList: function(e) {
-            var currentId = e.target.value,
-                shoppingListData,
+            var shoppingList = $(e.target).data('shoppinglist'),
                 _self = this;
 
             $.ajax({
@@ -59,17 +58,16 @@ define(function(require) {
                 url: this.setCurrentShoppingListUrl,
                 //dataType: 'json',
                 data: {
-                    id: currentId
+                    id: shoppingList.id
                 },
                 success: function(response) {
-                    _self.currentShoppingListId = currentId;
+                    _self.currentShoppingList = shoppingList;
 
-                    mediator.trigger('shopping-list:change-current', _self.currentShoppingListId);
-                    shoppingListData = _self.getShoppingListData(_self.currentShoppingListId);
+                    mediator.trigger('shopping-list:change-current', _self.currentShoppingList);
                     mediator.execute(
                         'showFlashMessage',
                         'success',
-                        'Shopping list "<a href="' + shoppingListData.url + '">' + shoppingListData.text + '</a>" was set as default'
+                        'Shopping list "<a href="' + _self.currentShoppingList.url + '">' + _self.currentShoppingList.label + '</a>" was set as default'
                     );
                 },
                 error: function(xhr) {
@@ -87,29 +85,14 @@ define(function(require) {
          * Retrieving the shopping list ID from another component.
          *
          * @param id
-         * @return shoppingListData
-         */
-        getShoppingListData: function(id) {
-            var shoppingListData = {};
-
-            shoppingListData.url = this.$el.find('.shopping-list-dropdown__link--' + id).attr('href');
-            shoppingListData.text = this.$el.find('.shopping-list-dropdown__name-inner--' + id).text();
-
-            return shoppingListData;
-        },
-
-        /**
-         * Retrieving the shopping list ID from another component.
-         *
-         * @param id
          */
         getShoppingListId: function(id) {
             this.shoppingListId = id;
         },
 
-        initCurrentShoppingListId: function() {
+        getCurrentShoppingList: function() {
             var checkedEl = this.$el.find('input[name="shopping-list-dropdown-radio"]:checked');
-            return checkedEl.length ? checkedEl.val() : null;
+            return checkedEl.length ? checkedEl.data('shoppinglist') : null;
         },
 
         dispose: function() {

@@ -6,7 +6,7 @@
             rootId : block.vars.id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
             eventChannelId: 'shopping-list-title',
-            setCurrentShoppingListUrl: path('orob2b_product_frontend_product_index')|default('')
+            setCurrentShoppingListRoute: path('orob2b_product_frontend_product_index')|default('')
         },
         'data-dropdown-trigger': true
     }|merge(attr|merge({
@@ -61,11 +61,15 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " shopping-list-dropdown__item"
     }) %}
-
+    {% set dataShoppingList = {
+        id: shoppingList.id,
+        label: shoppingList.label,
+        url: path('orob2b_shopping_list_frontend_view', {id: shoppingList.id})
+    } %}
     <div {{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__radio">
             <label class="custom-radio" data-toggle="tooltip" title="Set as default">
-                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" value="{{ shoppingList.id }}" {% if shoppingList.isCurrent %}checked{% endif %}>
+                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" data-shoppinglist="{{ dataShoppingList|json_encode }}" value="{{ shoppingList.id }}" {% if shoppingList.isCurrent %}checked{% endif %}>
                 <span class="custom-radio__text"></span>
             </label>
         </div>
