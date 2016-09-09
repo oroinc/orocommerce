@@ -143,11 +143,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityIds = [];
         foreach ($iterator as $entity) {
             $entityIds[] = $entity['id'];
-            $itemsCount++;
 
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $itemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
@@ -155,7 +154,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $entitiesData = $this->indexEntities($entityClass, $entityIds, $context);
-            $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+            $itemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
             $entityManager->clear($entityClass);
         }
 

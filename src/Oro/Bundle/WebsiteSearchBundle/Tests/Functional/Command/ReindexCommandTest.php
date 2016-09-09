@@ -9,6 +9,7 @@ class ReindexCommandTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->getContainer()->set('oro_website_search.indexer', new OrmIndexerStub());
     }
 
     public function testCommand()

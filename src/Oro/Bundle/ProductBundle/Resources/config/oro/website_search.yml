@@ -25,10 +25,3 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: visibility_new
             type: integer
-
-Oro\Bundle\CatalogBundle\Entity\Category:
-    alias: oro_product_category_WEBSITE_ID
-    fields:
-        -
-            name: title_LOCALIZATION_ID
-            type: text

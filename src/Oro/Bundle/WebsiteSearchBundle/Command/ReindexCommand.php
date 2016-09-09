@@ -53,7 +53,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
-        $indexer = $this->getContainer()->get('oro_website_search.engine.orm_indexer');
+        $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $recordsCount = $indexer->reindex($class, $context);
 
         $output->writeln(sprintf('Total indexed items: %u', $recordsCount));
