@@ -40,7 +40,7 @@ define([
 
             var opsRegEx = this.getRegexp(options.operations);
 
-            var words = _.isRegExp(opsRegEx) ? value.replace(opsRegEx, '$1').split(' ') : [],
+            var words = _.isRegExp(opsRegEx) ? this.splitString(value.replace(opsRegEx, '$1'), ' ').arr : [],
                 groups = this.getGroups(words);
 
             var logicWordIsLast = _.last(groups.logic) === _.last(words),
@@ -57,17 +57,17 @@ define([
                 _.each(arr, function(item) {
                     if (isValid) {
                         var expressionMatch = item.match(opsRegEx);
-                        var matchSplit = expressionMatch ? item.split(expressionMatch[0]) : [];
+                        var matchSplit = expressionMatch ? self.splitString(item, expressionMatch[0]).arr : [];
 
                         isValid = !_.isNull(expressionMatch) && matchSplit[1] !== '';
 
                         if (isValid) {
-                            var path = (matchSplit[0] || item).split('.');
+                            var path = self.splitString(matchSplit[0] || item, '.').arr;
                             var currentRef = refs;
 
                             _.each(path, function(pathItem) {
                                 if (isValid) {
-                                    isValid = _.contains(_.isArray(currentRef) ? currentRef : _.keys(currentRef), pathItem);
+                                    isValid = _.contains(self.getPathsArray(currentRef), pathItem);
 
                                     if (isValid && _.last(path) !== pathItem) {
                                         currentRef = self.getRef(refs, pathItem, currentRef);
@@ -85,20 +85,24 @@ define([
         },
 
         autocomplete: function($element, options) {
-            var value = $element.val(),
+            var self = this,
+                refs = options,
+                value = $element.val(),
                 caretPosition = $element[0].selectionStart,
                 separatorsPositions = (function(string) {
                     var arr = [0];
 
                     _.each(string, function(char, i) {
-                        if (!isLetterBeforeCaret(char)) {
+                        if (self.isSpace(char)) {
                             arr.push(i + 1);
                         }
                     });
 
+                    arr.push(string.length + 1);
+
                     return arr;
                 })(value),
-                nearestSeparatorPosition = (function(arr, position) {
+                nearestSeparator = (function(arr, position) {
                     var index = 0;
 
                     if (!arr.length) {
@@ -110,22 +114,48 @@ define([
                         index++;
                     }
 
-                    return arr[index - 1];
+                    return {
+                        position: arr[index] === position ? null : arr[index - 1],
+                        index: index
+                    };
 
                 })(separatorsPositions, caretPosition),
-                wordBeforeCaret = getWordBeforeCaret(value, nearestSeparatorPosition, caretPosition);
-
-            console.log(caretPosition, nearestSeparatorPosition, wordBeforeCaret);
-
-            function isLetterBeforeCaret(char) {
-                return /^[a-zA-Z]$/.test(char);
-            }
-
-            function getWordBeforeCaret(string, startPos, endPos) {
-                return string.substr(startPos, endPos - startPos);
-            }
+                wordUnderCaret = this.getStringPart(value, nearestSeparator.position, separatorsPositions[nearestSeparator.index] - 1),
+                suggested = (function(word, ref) {
+                    return _.filter(self.getPathsArray(ref.data), function(item) {
+                        return item.indexOf(word) === 0;
+                    });
+                })(wordUnderCaret, refs);
 
 
+            console.log(wordUnderCaret, suggested);
+        },
+
+        getPathsArray: function(src, baseName, baseArr) {
+            var self = this,
+                arr = [baseName];
+
+            _.each(src, function(item, name) {
+                var subName = (baseName ? (baseName + '.') : '') + item;
+
+                if (_.isArray(item)) {
+                    arr = _.union(arr, self.getPathsArray(item, name, baseArr || src));
+                } else if (_.isString(item) && _.isArray(baseArr[item])) {
+                    arr = _.union(arr, self.getPathsArray(baseArr[item], subName, baseArr || src));
+                } else {
+                    arr.push(subName);
+                }
+            });
+
+            return _.compact(arr);
+        },
+
+        getStringPart: function(string, startPos, endPos) {
+            return _.isNull(startPos) ? null : string.substr(startPos, endPos - startPos);
+        },
+
+        isSpace: function(char) {
+            return /^\s$/.test(char);
         },
 
         getRegexp: function(opsArr) {
@@ -142,6 +172,27 @@ define([
             })(opsArr);
 
             return escapedOps && escapedOps.length ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'g') : null;
+        },
+
+        getStringParts: function(string, sub) {
+            var stringLength = string.length,
+                subLength = sub.length,
+                indexOf = string.indexOf(sub);
+
+            return indexOf === -1 || !subLength ? null : {
+                before: indexOf !== 0 ? string.substr(0, subLength) : '',
+                after: string.substr(indexOf + subLength, stringLength - subLength - indexOf),
+                sub: sub
+            };
+        },
+
+        splitString: function(string, splitter) {
+            var arr = string.split(splitter);
+
+            return {
+                arr: arr,
+                hasParts: arr.length > 1
+            };
         },
 
         getGroups: function(words) {
