@@ -28,11 +28,11 @@ class AjaxLineItemController extends Controller
      *
      * @Route(
      *      "/add-product-from-view/{productId}",
-     *      name="orob2b_shopping_list_frontend_add_product",
+     *      name="oro_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_add",
+     *      id="oro_shopping_list_line_item_frontend_add",
      *      type="entity",
      *      class="OroShoppingListBundle:LineItem",
      *      permission="CREATE",
@@ -80,11 +80,11 @@ class AjaxLineItemController extends Controller
      *
      * @Route(
      *      "/remove-product-from-view/{productId}",
-     *      name="orob2b_shopping_list_frontend_remove_product",
+     *      name="oro_shopping_list_frontend_remove_product",
      *      requirements={"productId"="\d+"}
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_remove",
+     *      id="oro_shopping_list_line_item_frontend_remove",
      *      type="entity",
      *      class="OroShoppingListBundle:LineItem",
      *      permission="DELETE",
@@ -126,8 +126,8 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
      *
      * @param Request $request
      * @param string $gridName
@@ -151,9 +151,9 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}/create", name="orob2b_shopping_list_add_products_to_new_massaction")
+     * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
      * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
      *
      * @param Request $request
      * @param string $gridName
@@ -186,7 +186,7 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
     {
-        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
 
         $translator = $this->get('translator');
 

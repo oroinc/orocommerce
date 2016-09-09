@@ -26,9 +26,9 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
  * @Config(
- *      routeName="orob2b_product_index",
- *      routeView="orob2b_product_view",
- *      routeUpdate="orob2b_product_update",
+ *      routeName="oro_product_index",
+ *      routeView="oro_product_view",
+ *      routeUpdate="oro_product_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -48,7 +48,7 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="orob2b_product_select",
+ *              "form_type"="oro_product_select",
  *              "grid_name"="products-select-grid"
  *          }
  *      }

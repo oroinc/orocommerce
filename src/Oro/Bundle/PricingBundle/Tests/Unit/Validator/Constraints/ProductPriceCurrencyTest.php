@@ -49,7 +49,7 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
 
     public function testConfiguration()
     {
-        $this->assertEquals('orob2b_pricing_product_price_currency_validator', $this->constraint->validatedBy());
+        $this->assertEquals('oro_pricing_product_price_currency_validator', $this->constraint->validatedBy());
         $this->assertEquals(Constraint::CLASS_CONSTRAINT, $this->constraint->getTargets());
     }
 

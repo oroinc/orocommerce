@@ -21,10 +21,10 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 class ShoppingListController extends Controller
 {
     /**
-     * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
+     * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout(vars={"title"})
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_view",
+     *      id="oro_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="ACCOUNT_VIEW",
@@ -87,10 +87,10 @@ class ShoppingListController extends Controller
     /**
      * Create shopping list form
      *
-     * @Route("/create", name="orob2b_shopping_list_frontend_create")
+     * @Route("/create", name="oro_shopping_list_frontend_create")
      * @Layout
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_create",
+     *      id="oro_shopping_list_frontend_create",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="CREATE",
@@ -141,13 +141,13 @@ class ShoppingListController extends Controller
             $this->createForm(ShoppingListType::NAME, $shoppingList),
             function (ShoppingList $shoppingList) {
                 return [
-                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'oro_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
             function (ShoppingList $shoppingList) {
                 return [
-                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'oro_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },

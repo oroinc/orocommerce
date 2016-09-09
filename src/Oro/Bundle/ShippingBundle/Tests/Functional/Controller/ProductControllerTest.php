@@ -45,14 +45,14 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['additionalUnitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
-        $formValues['orob2b_product'][ProductFormExtension::FORM_ELEMENT_NAME][] = $data;
+        $formValues['oro_product']['additionalUnitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
+        $formValues['oro_product'][ProductFormExtension::FORM_ELEMENT_NAME][] = $data;
 
         $this->client->followRedirects(true);
 
@@ -90,7 +90,7 @@ class ProductControllerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 

@@ -9,6 +9,11 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+        options: {
+            unitLabel: 'oro.product.product_unit.%s.label.full',
+            defaultQuantity: 1
+        },
+
         elements: {
             price: '[data-name="price"]',
             unit: '[data-name="unit"]',
@@ -23,7 +28,6 @@ define(function(require) {
             quantityWasChanged: false
         },
 
-        defaultQuantity: 1,
         prices: {},
 
         initialize: function(options) {
@@ -132,7 +136,7 @@ define(function(require) {
             }) || null;
 
             if (!this.modelAttr.quantityWasChanged && quantityUpdate) {
-                this.model.set('quantity', smallestPrice ? smallestPrice.quantity : this.defaultQuantity);
+                this.model.set('quantity', smallestPrice ? smallestPrice.quantity : this.options.defaultQuantity);
                 this.modelAttr.quantityWasChanged = false;
                 price=smallestPrice;
             }
@@ -145,7 +149,7 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(this.model.get('product_units')[price.unit]);
+                this.getElement('unit').html(_.__(this.options.unitLabel.replace('%s', price.unit)));
 
                 price = NumberFormatter.formatCurrency(price.price, price.currency);
                 this.getElement('priceValue').html(price);

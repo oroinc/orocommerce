@@ -27,7 +27,7 @@ class OroProductExtensionTest extends ExtensionTestCase
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
         $expectedExtensionConfigs = [
-            'orob2b_product',
+            'oro_product',
         ];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
@@ -38,6 +38,6 @@ class OroProductExtensionTest extends ExtensionTestCase
     public function testGetAlias()
     {
         $extension = new OroProductExtension();
-        $this->assertEquals('orob2b_product', $extension->getAlias());
+        $this->assertEquals('oro_product', $extension->getAlias());
     }
 }

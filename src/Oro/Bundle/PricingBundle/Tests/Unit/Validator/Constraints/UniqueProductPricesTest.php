@@ -53,7 +53,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 
     public function testConfiguration()
     {
-        $this->assertEquals('orob2b_pricing_unique_product_prices_validator', $this->constraint->validatedBy());
+        $this->assertEquals('oro_pricing_unique_product_prices_validator', $this->constraint->validatedBy());
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
     }
 

@@ -7,7 +7,7 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use Oro\Bundle\NavigationBundle\Controller\Api\PagestateController as BasePagestateController;
 
 /**
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class PagestateController extends BasePagestateController
 {

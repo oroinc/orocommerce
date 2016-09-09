@@ -17,7 +17,7 @@ class AjaxEntityTotalsController extends Controller
     /**
      * @Route(
      *      "/get-totals-for-entity/{entityClassName}/{entityId}",
-     *      name="orob2b_pricing_frontend_entity_totals",
+     *      name="oro_pricing_frontend_entity_totals",
      *      requirements={"entityId"="\d+"},
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
@@ -44,7 +44,7 @@ class AjaxEntityTotalsController extends Controller
     /**
      * @Route(
      *      "/recalculate-totals-for-entity/{entityClassName}/{entityId}",
-     *      name="orob2b_pricing_frontend_recalculate_entity_totals",
+     *      name="oro_pricing_frontend_recalculate_entity_totals",
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
      *

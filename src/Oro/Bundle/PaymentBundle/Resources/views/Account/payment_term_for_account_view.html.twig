@@ -5,7 +5,7 @@
         {% if accountGroupPaymentTerm %}
             {% if is_granted('VIEW', accountGroupPaymentTerm) %}
                 {% set accountGroupPaymentTermData %}
-                    <a href="{{ path('orob2b_payment_term_view', {id: accountGroupPaymentTerm.id}) }}">
+                    <a href="{{ path('oro_payment_term_view', {id: accountGroupPaymentTerm.id}) }}">
                         {{ accountGroupPaymentTerm.label }}
                     </a>
                 {% endset %}

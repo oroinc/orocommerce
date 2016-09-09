@@ -20,7 +20,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_catalog_category_index",
+ *      routeName="oro_catalog_category_index",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-folder-close"

@@ -87,17 +87,17 @@ class AuditControllerTest extends WebTestCase
 
     protected function createUser()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_account_frontend_account_user[enabled]'] = $this->userData['enabled'];
-        $form['orob2b_account_frontend_account_user[plainPassword][first]'] = $this->userData['password'];
-        $form['orob2b_account_frontend_account_user[plainPassword][second]'] = $this->userData['password'];
-        $form['orob2b_account_frontend_account_user[firstName]'] = $this->userData['firstName'];
-        $form['orob2b_account_frontend_account_user[lastName]'] = $this->userData['lastName'];
-        $form['orob2b_account_frontend_account_user[email]'] = $this->userData['email'];
-        $form['orob2b_account_frontend_account_user[roles][0]']->tick();
+        $form['oro_account_frontend_account_user[enabled]'] = $this->userData['enabled'];
+        $form['oro_account_frontend_account_user[plainPassword][first]'] = $this->userData['password'];
+        $form['oro_account_frontend_account_user[plainPassword][second]'] = $this->userData['password'];
+        $form['oro_account_frontend_account_user[firstName]'] = $this->userData['firstName'];
+        $form['oro_account_frontend_account_user[lastName]'] = $this->userData['lastName'];
+        $form['oro_account_frontend_account_user[email]'] = $this->userData['email'];
+        $form['oro_account_frontend_account_user[roles][0]']->tick();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

@@ -72,7 +72,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertContains($noProductsError, $crawler->html());
 
         $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
-        $url = $this->getUrl('orob2b_shopping_list_frontend_remove_product', [
+        $url = $this->getUrl('oro_shopping_list_frontend_remove_product', [
             'productId' => $productId,
             'shoppingListId' => $shoppingList->getId(),
         ]);

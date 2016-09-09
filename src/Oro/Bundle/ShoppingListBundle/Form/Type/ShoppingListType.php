@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShoppingListType extends AbstractType
 {
-    const NAME = 'orob2b_shopping_list_type';
+    const NAME = 'oro_shopping_list_type';
 
     /** @var  string */
     protected $dataClass;

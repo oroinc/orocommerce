@@ -17,7 +17,7 @@ services:
             - '%oro_payment.entity.payment_term.class%'
             - ["label"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_payment_term, acl_resource: orob2b_payment_term_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_payment_term, acl_resource: oro_payment_term_view }
 
     oro_payment.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator'
@@ -95,12 +95,12 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
+            - { name: layout.data_provider, alias: oro_payment_methods_provider }
 
     oro_payment.provider.method_widget_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
         tags:
-            - { name: layout.data_provider, alias: orob2b_payment_method_widget_provider }
+            - { name: layout.data_provider, alias: oro_payment_method_widget_provider }
 
     oro_payment.event.callback_handler:
         class: 'Oro\Bundle\PaymentBundle\Event\CallbackHandler'
@@ -162,8 +162,8 @@ services:
         arguments:
             - '@session'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn, priority: 10 }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 10 }
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 10 }
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 10 }
 
     oro_payment.condition.payment_method_enabled:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodEnabled'
@@ -217,7 +217,7 @@ services:
         arguments:
             - '@oro_payment.manager.payment_status'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.event.transaction_complete, method: onTransactionComplete }
+            - { name: kernel.event_listener, event: oro_payment.event.transaction_complete, method: onTransactionComplete }
 
     oro_payment.manager.payment_status:
         class: 'Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager'

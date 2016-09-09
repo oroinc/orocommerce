@@ -14,7 +14,7 @@ system_configuration:
     fields:
         oro_b2b_pricing.default_price_lists:
             data_type: array
-            type: orob2b_pricing_price_list_system_config
+            type: oro_pricing_price_list_system_config
             options:
                 label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
@@ -71,7 +71,7 @@ system_configuration:
                     - NotBlank: ~
         oro_b2b_pricing.default_currency:
             data_type: string
-            type: orob2b_pricing_default_currency_selection
+            type: oro_pricing_default_currency_selection
             priority: 100
             options:
                 label: oro.pricing.system_configuration.fields.default_currency.label

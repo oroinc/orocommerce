@@ -25,8 +25,8 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
             ]
         );
 
-        $this->setDatagridIndexPath('orob2b_frontend_datagrid_index');
-        $this->setSearchAutocompletePath('orob2b_frontend_autocomplete_search');
+        $this->setDatagridIndexPath('oro_frontend_datagrid_index');
+        $this->setSearchAutocompletePath('oro_frontend_autocomplete_search');
 
         $this->setDataParameters(['price_list' => ProductSelectPriceListAwareListener::DEFAULT_ACCOUNT_USER]);
     }

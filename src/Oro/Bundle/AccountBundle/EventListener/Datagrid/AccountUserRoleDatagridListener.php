@@ -31,7 +31,7 @@ class AccountUserRoleDatagridListener
 
         if ($user instanceof AccountUser &&
             $user->getAccount() &&
-            $this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_view')
+            $this->securityFacade->isGranted('oro_account_frontend_account_user_role_view')
         ) {
             $andWhere = 'role.account IN (' . $user->getAccount()->getId() . ') or role.account IS NULL';
             $config->offsetAddToArrayByPath('[source][query][where][and]', [$andWhere]);

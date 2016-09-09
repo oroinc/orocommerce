@@ -11,8 +11,8 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 {
     public function setUp()
     {
-        $this->setDatagridIndexPath('orob2b_frontend_datagrid_index');
-        $this->setSearchAutocompletePath('orob2b_frontend_autocomplete_search');
+        $this->setDatagridIndexPath('oro_frontend_datagrid_index');
+        $this->setSearchAutocompletePath('oro_frontend_autocomplete_search');
 
         parent::setUp();
 

@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 /**
  * @RouteResource("slug")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class RedirectController extends FOSRestController
 {
@@ -32,7 +32,7 @@ class RedirectController extends FOSRestController
      * )
      *
      * @Acl(
-     *      id="orob2b_redirect_view",
+     *      id="oro_redirect_view",
      *      type="entity",
      *      class="OroRedirectBundle:Slug",
      *      permission="VIEW"

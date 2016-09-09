@@ -30,7 +30,7 @@ class AjaxOrderControllerTest extends WebTestCase
     public function testNewOrderTotals()
     {
         $this->markTestIncomplete('Should be fixed in scope of task BB-3686');
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_create'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -44,7 +44,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_frontend_update', ['id' => $order->getId()])
+            $this->getUrl('oro_order_frontend_update', ['id' => $order->getId()])
         );
         $result = $this->client->getResponse();
 
@@ -60,7 +60,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_entry_point', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_frontend_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 

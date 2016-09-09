@@ -14,7 +14,7 @@ class AclPermissionController extends Controller
     /**
      * @Route(
      *      "/acl-access-levels/{oid}",
-     *      name="orob2b_account_acl_access_levels",
+     *      name="oro_account_acl_access_levels",
      *      requirements={"oid"="\w+:[\w\(\)]+"},
      *      defaults={"_format"="json"}
      * )

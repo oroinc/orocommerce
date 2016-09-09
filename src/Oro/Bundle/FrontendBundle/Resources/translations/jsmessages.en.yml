@@ -1,4 +1,4 @@
-orob2b_frontend:
+oro_frontend:
     form:
         inlineEditing:
             action.save: Save

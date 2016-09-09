@@ -20,10 +20,10 @@ use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 class ProductController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_product_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_product_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_product_view",
+     *      id="oro_product_view",
      *      type="entity",
      *      class="OroProductBundle:Product",
      *      permission="VIEW"
@@ -40,9 +40,9 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_product_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_product_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_product_view")
+     * @AclAncestor("oro_product_view")
      *
      * @param Product $product
      * @return array
@@ -56,9 +56,9 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_product_index")
+     * @Route("/", name="oro_product_index")
      * @Template
-     * @AclAncestor("orob2b_product_view")
+     * @AclAncestor("oro_product_view")
      *
      * @return array
      */
@@ -91,10 +91,10 @@ class ProductController extends Controller
     /**
      * Create product form
      *
-     * @Route("/create", name="orob2b_product_create")
+     * @Route("/create", name="oro_product_create")
      * @Template("OroProductBundle:Product:createStepOne.html.twig")
      * @Acl(
-     *      id="orob2b_product_create",
+     *      id="oro_product_create",
      *      type="entity",
      *      class="OroProductBundle:Product",
      *      permission="CREATE"
@@ -110,10 +110,10 @@ class ProductController extends Controller
     /**
      * Create product form step two
      *
-     * @Route("/create/step-two", name="orob2b_product_create_step_two")
+     * @Route("/create/step-two", name="oro_product_create_step_two")
      * @Template("OroProductBundle:Product:createStepTwo.html.twig")
      *
-     * @AclAncestor("orob2b_product_create")
+     * @AclAncestor("oro_product_create")
      *
      * @param Request $request
      * @return array|RedirectResponse
@@ -126,10 +126,10 @@ class ProductController extends Controller
     /**
      * Edit product form
      *
-     * @Route("/update/{id}", name="orob2b_product_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_product_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_product_update",
+     *      id="oro_product_update",
      *      type="entity",
      *      class="OroProductBundle:Product",
      *      permission="EDIT"
@@ -153,13 +153,13 @@ class ProductController extends Controller
             $this->createForm(ProductType::NAME, $product),
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_update',
+                    'route' => 'oro_product_update',
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_view',
+                    'route' => 'oro_product_view',
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
@@ -190,7 +190,7 @@ class ProductController extends Controller
      */
     protected function createStepTwo($request, Product $product)
     {
-        if ($request->get('input_action') == 'orob2b_product_create') {
+        if ($request->get('input_action') == 'oro_product_create') {
             $form = $this->createForm(ProductStepOneType::NAME);
             $form->handleRequest($request);
             $formData = $form->all();
@@ -214,13 +214,13 @@ class ProductController extends Controller
             $this->createForm(ProductType::NAME, $product),
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_update',
+                    'route' => 'oro_product_update',
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_product_view',
+                    'route' => 'oro_product_view',
                     'parameters' => ['id' => $product->getId()]
                 ];
             },

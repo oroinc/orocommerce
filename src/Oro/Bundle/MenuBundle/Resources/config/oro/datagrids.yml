@@ -5,7 +5,7 @@ datagrids:
             entityHint: menu_item
             entity_pagination: true
         source:
-            acl_resource: orob2b_menu_item_view
+            acl_resource: oro_menu_item_view
             type: orm
             query:
                 select:
@@ -25,7 +25,7 @@ datagrids:
                 data_name: titles
             view_link:
                 type: url
-                route: orob2b_menu_item_view
+                route: oro_menu_item_view
                 params:
                     - id
         sorters:
@@ -44,5 +44,5 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_menu_item_view
+                acl_resource:  oro_menu_item_view
                 rowAction:     true

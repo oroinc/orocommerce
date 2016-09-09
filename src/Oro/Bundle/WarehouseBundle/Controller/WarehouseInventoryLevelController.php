@@ -22,9 +22,9 @@ use Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
 class WarehouseInventoryLevelController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_warehouse_inventory_level_index")
+     * @Route("/", name="oro_warehouse_inventory_level_index")
      * @Template
-     * @AclAncestor("orob2b_warehouse_inventory_level_index")
+     * @AclAncestor("oro_warehouse_inventory_level_index")
      *
      * @return array
      */
@@ -44,10 +44,10 @@ class WarehouseInventoryLevelController extends Controller
     /**
      * Edit product warehouse inventory levels
      *
-     * @Route("/update/{id}", name="orob2b_warehouse_inventory_level_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_warehouse_inventory_level_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_product_warehouse_inventory_update",
+     *      id="oro_product_warehouse_inventory_update",
      *      type="entity",
      *      class="OroWarehouseBundle:WarehouseInventoryLevel",
      *      permission="EDIT"

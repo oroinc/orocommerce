@@ -51,7 +51,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \Twig_SimpleFunction $function */
         $function = $functions[0];
         $this->assertInstanceOf('\Twig_SimpleFunction', $function);
-        $this->assertEquals('orob2b_category_list', $function->getName());
+        $this->assertEquals('oro_category_list', $function->getName());
         $this->assertEquals([$this->extension, 'getCategoryList'], $function->getCallable());
     }
 

@@ -6,10 +6,10 @@
         <div class="responsive-block">
             {{ UI.renderProperty('oro.shoppinglist.id.label'|trans, shopping_list.id) }}
             {% if shopping_list.account %}
-                {{ UI.renderHtmlProperty('oro.shoppinglist.account.label'|trans, UI.entityViewLink(shopping_list.account, shopping_list.account|oro_format_name, 'orob2b_account_view')) }}
+                {{ UI.renderHtmlProperty('oro.shoppinglist.account.label'|trans, UI.entityViewLink(shopping_list.account, shopping_list.account|oro_format_name, 'oro_account_view')) }}
             {% endif %}
             {% if shopping_list.accountUser %}
-                {{ UI.renderHtmlProperty('oro.shoppinglist.account_user.label'|trans, UI.entityViewLink(shopping_list.accountUser, shopping_list.accountUser|oro_format_name, 'orob2b_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.shoppinglist.account_user.label'|trans, UI.entityViewLink(shopping_list.accountUser, shopping_list.accountUser|oro_format_name, 'oro_account_account_user_view')) }}
             {% endif %}
             {{ UI.renderProperty('oro.shoppinglist.label.label'|trans, shopping_list.label) }}
             {{ UI.renderSwitchableHtmlProperty('oro.shoppinglist.notes.label'|trans, shopping_list.notes) }}
