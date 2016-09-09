@@ -4,8 +4,6 @@ namespace Oro\Bundle\PricingBundle\Expression\Preprocessor;
 
 class ExpressionPreprocessor implements ExpressionPreprocessorInterface
 {
-    const PREPROCESSOR = 'preprocessor';
-    const SORT_ORDER = 'sort_order';
     const MAX_ITERATIONS = 100;
 
     /**
