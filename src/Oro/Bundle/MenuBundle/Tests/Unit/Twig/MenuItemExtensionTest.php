@@ -128,9 +128,9 @@ class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
     public function expectedFunctionsProvider()
     {
         return [
-            ['orob2b_menu_item_list', 'getTree'],
-            ['orob2b_menu_is_current', 'isCurrent'],
-            ['orob2b_menu_is_ancestor', 'isAncestor']
+            ['oro_menu_item_list', 'getTree'],
+            ['oro_menu_is_current', 'isCurrent'],
+            ['oro_menu_is_ancestor', 'isAncestor']
         ];
     }
 }

@@ -9,7 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 class CatalogVisibilityType extends AbstractType
 {
-    const NAME = 'orob2b_account_catalog_default_visibility';
+    const NAME = 'oro_account_catalog_default_visibility';
 
     /**
      * {@inheritdoc}

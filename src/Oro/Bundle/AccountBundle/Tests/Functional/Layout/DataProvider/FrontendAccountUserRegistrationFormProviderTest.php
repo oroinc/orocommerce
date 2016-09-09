@@ -41,12 +41,12 @@ class FrontendAccountUserRegistrationFormProviderTest extends WebTestCase
     {
         $this->websiteManager->expects($this->any())
             ->method('getCurrentWebsite')
-            ->willReturn($this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite());
+            ->willReturn($this->getContainer()->get('oro_website.manager')->getDefaultWebsite());
 
         $actual = $this->dataProvider->getRegisterForm();
 
         $this->assertInstanceOf('\Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface', $actual);
         $this->assertEquals(FrontendAccountUserRegistrationType::NAME, $actual->getForm()->getName());
-        $this->assertNotEmpty('orob2b_account_frontend_account_user_register', $actual->getAction()->getRouteName());
+        $this->assertNotEmpty('oro_account_frontend_account_user_register', $actual->getAction()->getRouteName());
     }
 }

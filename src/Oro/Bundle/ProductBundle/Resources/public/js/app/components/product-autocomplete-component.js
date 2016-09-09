@@ -14,7 +14,7 @@ define(function(require) {
         initialize: function(options) {
             var thisOptions = {
                 product: {},
-                productBySkuRoute: 'orob2b_product_frontend_ajax_names_by_skus',
+                productBySkuRoute: 'oro_product_frontend_ajax_names_by_skus',
                 selectors: {
                     row: '.quick-order__form__row',
                     name: '.product-autocomplete-name',

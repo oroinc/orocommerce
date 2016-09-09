@@ -119,7 +119,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     public function load(ObjectManager $manager)
     {
         /** @var BaseUserManager $userManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
         $owner = $this->getFirstUser($manager);
         $role = $manager->getRepository('OroAccountBundle:AccountUserRole')->findOneBy([]);
         foreach (static::$users as $user) {

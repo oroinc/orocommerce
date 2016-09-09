@@ -63,11 +63,11 @@ class CategoryControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_catalog_category_update', ['id' => $this->category->getId()])
+            $this->getUrl('oro_catalog_category_update', ['id' => $this->category->getId()])
         );
 
         $selectedCatalogVisibility = $crawler
-            ->filterXPath('//select[@name="orob2b_catalog_category[visibility][all]"]/option[@selected]/@value')
+            ->filterXPath('//select[@name="oro_catalog_category[visibility][all]"]/option[@selected]/@value')
             ->text();
 
         $this->assertEquals($categoryVisibility, $selectedCatalogVisibility);
@@ -162,16 +162,16 @@ class CategoryControllerTest extends WebTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_catalog_category_update', ['id' => $this->category->getId()])
+            $this->getUrl('oro_catalog_category_update', ['id' => $this->category->getId()])
         );
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
         $form = $crawler->selectButton('Save')->form();
         $parameters = $this->explodeArrayPaths($form->getValues());
-        $token = $crawler->filterXPath('//input[@name="orob2b_catalog_category[_token]"]/@value')->text();
+        $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
-        $parameters['orob2b_catalog_category'] = array_merge(
-            $parameters['orob2b_catalog_category'],
+        $parameters['oro_catalog_category'] = array_merge(
+            $parameters['oro_catalog_category'],
             [
                 '_token' => $token,
                 'visibility' => [
@@ -184,7 +184,7 @@ class CategoryControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->getUrl('orob2b_catalog_category_update', ['id' => $this->category->getId()]),
+            $this->getUrl('oro_catalog_category_update', ['id' => $this->category->getId()]),
             $parameters
         );
 

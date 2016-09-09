@@ -29,12 +29,12 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
         );
 
         $this->dataProvider = $this->getContainer()
-            ->get('orob2b_shopping_list.layout.data_provider.account_user_shopping_lists');
+            ->get('oro_shopping_list.layout.data_provider.account_user_shopping_lists');
     }
 
     public function testGetShoppingLists()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         $actual = $this->dataProvider->getShoppingLists();
 

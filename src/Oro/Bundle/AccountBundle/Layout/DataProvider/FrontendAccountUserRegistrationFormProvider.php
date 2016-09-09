@@ -19,7 +19,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
 {
-    const ACCOUNT_USER_REGISTER_ROUTE_NAME = 'orob2b_account_frontend_account_user_register';
+    const ACCOUNT_USER_REGISTER_ROUTE_NAME = 'oro_account_frontend_account_user_register';
     
     /** @var ManagerRegistry */
     protected $managerRegistry;

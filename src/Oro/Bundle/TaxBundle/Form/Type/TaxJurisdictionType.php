@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 
 class TaxJurisdictionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_jurisdiction_type';
+    const NAME = 'oro_tax_jurisdiction_type';
 
     /**
      * @var string

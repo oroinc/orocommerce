@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 /**
- * @NamePrefix("orob2b_api_rfp_")
+ * @NamePrefix("oro_api_rfp_")
  */
 class RequestStatusController extends FOSRestController implements ClassResourceInterface
 {
@@ -31,7 +31,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_rfp_request_status_delete",
+     *      id="oro_rfp_request_status_delete",
      *      type="entity",
      *      permission="DELETE",
      *      class="OroRFPBundle:RequestStatus"
@@ -40,7 +40,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      */
     public function deleteAction($id)
     {
-        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
         $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
 
         /** @var RequestStatus $requestStatus */
@@ -81,13 +81,13 @@ class RequestStatusController extends FOSRestController implements ClassResource
      *      description="Restore RequestStatus",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_rfp_request_status_delete")
+     * @AclAncestor("oro_rfp_request_status_delete")
      *
      * @return Response
      */
     public function restoreAction($id)
     {
-        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
         $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
         $requestStatus = $em->getRepository($requestStatusClass)->find($id);
 

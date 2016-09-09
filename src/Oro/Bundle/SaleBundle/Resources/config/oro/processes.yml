@@ -1,0 +1,50 @@
+processes:
+    definitions:
+        expire_quotes:
+            label:   'Expire old Quotes'
+            enabled: true
+            order:   50
+            entity:  Oro\Bundle\SaleBundle\Entity\Quote
+            actions_configuration:
+                - '@create_datetime':
+                    attribute: $.date
+                - '@find_entities':
+                    class: Oro\Bundle\SaleBundle\Entity\Quote
+                    attribute: $.quotes
+                    where:
+                        and:
+                            - e.expired = false
+                            - e.validUntil < :date
+                    query_parameters:
+                        date: $.date
+                - '@foreach':
+                    array: $.quotes
+                    value: $.quote
+                    actions:
+                        - '@run_action_group':
+                            action_group: oro_sale_expire_quote
+                            parameters_mapping:
+                                data: $.quote
+
+        send_no_quote_alert:
+            label:   'Send alerts about Requests Without Quote'
+            enabled: false
+            order:   50
+            entity:  Oro\Bundle\RFPBundle\Entity\Request
+            actions_configuration:
+                - '@call_service_method':
+                    attribute: $.requests
+                    service: oro_sale.service.request_helper
+                    method: getRequestsWoQuote
+                - '@foreach':
+                    array: $.requests
+                    value: $.request
+                    actions:
+                        - '@run_action_group':
+                            action_group: oro_sale_send_no_quote_alert
+                            parameters_mapping:
+                                data: $.request
+    triggers:
+        expire_quotes:
+            -
+                cron: '1 * * * *'

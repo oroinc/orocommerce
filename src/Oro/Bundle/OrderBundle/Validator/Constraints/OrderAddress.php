@@ -16,7 +16,7 @@ class OrderAddress extends Constraint implements ConstraintByValidationGroups
      */
     public function validatedBy()
     {
-        return 'orob2b_order_address_validator';
+        return 'oro_order_address_validator';
     }
 
     /**

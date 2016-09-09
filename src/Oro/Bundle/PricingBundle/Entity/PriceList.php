@@ -12,9 +12,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @ORM\Table(name="oro_price_list")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
- *      routeName="orob2b_pricing_price_list_index",
- *      routeView="orob2b_pricing_price_list_view",
- *      routeUpdate="orob2b_pricing_price_list_update",
+ *      routeName="oro_pricing_price_list_index",
+ *      routeView="oro_pricing_price_list_view",
+ *      routeUpdate="oro_pricing_price_list_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -27,7 +27,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="orob2b_pricing_price_list_select",
+ *              "form_type"="oro_pricing_price_list_select",
  *              "grid_name"="pricing-price-list-select-grid",
  *          }
  *      }

@@ -11,7 +11,7 @@ class QuantityRoundingService extends AbstractRoundingService
     /** {@inheritdoc} */
     public function getRoundType()
     {
-        return $this->configManager->get('orob2b_product.unit_rounding_type', self::ROUND_HALF_UP);
+        return $this->configManager->get('oro_product.unit_rounding_type', self::ROUND_HALF_UP);
     }
 
     /** {@inheritdoc} */

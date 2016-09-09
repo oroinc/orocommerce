@@ -47,10 +47,10 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->clearCombinedPrices();
         $this->assertCombinedPriceCount(0);
 
-        $this->getContainer()->get('orob2b_pricing.builder.combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('orob2b_pricing.builder.website_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('orob2b_pricing.builder.account_group_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('orob2b_pricing.builder.account_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.account_group_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.account_combined_price_list_builder')->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();

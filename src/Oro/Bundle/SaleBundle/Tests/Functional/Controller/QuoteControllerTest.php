@@ -91,19 +91,19 @@ class QuoteControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_create'));
         $owner      = $this->getUser(LoadUserData::USER1);
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->remove('orob2b_sale_quote[quoteProducts][0]');
-        $form['orob2b_sale_quote[owner]']      = $owner->getId();
-        $form['orob2b_sale_quote[qid]']        = self::$qid;
-        $form['orob2b_sale_quote[validUntil]'] = self::$validUntil;
-        $form['orob2b_sale_quote[poNumber]']   = self::$poNumber;
-        $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntil;
+        $form->remove('oro_sale_quote[quoteProducts][0]');
+        $form['oro_sale_quote[owner]']      = $owner->getId();
+        $form['oro_sale_quote[qid]']        = self::$qid;
+        $form['oro_sale_quote[validUntil]'] = self::$validUntil;
+        $form['oro_sale_quote[poNumber]']   = self::$poNumber;
+        $form['oro_sale_quote[shipUntil]']  = self::$shipUntil;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -119,7 +119,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
+        $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_index'));
         $owner      = $this->getUser(LoadUserData::USER1);
 
         $result = $this->client->getResponse();
@@ -155,7 +155,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testUpdate($id)
     {
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+        $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
         $owner      = $this->getUser(LoadUserData::USER2);
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this
@@ -163,16 +163,16 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->remove('orob2b_sale_quote[quoteProducts][0]');
-        $form['orob2b_sale_quote[owner]'] = $owner->getId();
-        $form['orob2b_sale_quote[qid]'] = self::$qidUpdated;
-        $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
-        $form['orob2b_sale_quote[poNumber]'] = self::$poNumberUpdated;
-        $form['orob2b_sale_quote[shipUntil]'] = self::$shipUntilUpdated;
-        $form['orob2b_sale_quote[paymentTerm]'] = $paymentTerm->getId();
+        $form->remove('oro_sale_quote[quoteProducts][0]');
+        $form['oro_sale_quote[owner]'] = $owner->getId();
+        $form['oro_sale_quote[qid]'] = self::$qidUpdated;
+        $form['oro_sale_quote[validUntil]'] = self::$validUntilUpdated;
+        $form['oro_sale_quote[poNumber]'] = self::$poNumberUpdated;
+        $form['oro_sale_quote[shipUntil]'] = self::$shipUntilUpdated;
+        $form['oro_sale_quote[paymentTerm]'] = $paymentTerm->getId();
 
-        $form['orob2b_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['orob2b_sale_quote[assignedAccountUsers]'] = implode(',', [
+        $form['oro_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
+        $form['oro_sale_quote[assignedAccountUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);
@@ -210,17 +210,17 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testUpdateShippingEstimate($id)
     {
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+        $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateAmount;
-        $form['orob2b_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
+        $form['oro_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateAmount;
+        $form['oro_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $form = $crawler->selectButton('Save')->form();
-        $fields = $form->get('orob2b_sale_quote');
+        $fields = $form->get('oro_sale_quote');
         $this->assertEquals(self::$shippingEstimateAmount, $fields['shippingEstimate']['value']->getValue());
         $this->assertEquals(self::$shippingEstimateCurrency, $fields['shippingEstimate']['currency']->getValue());
 
@@ -235,7 +235,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -249,15 +249,15 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testLockedFieldAndBadge($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
 
         $this->assertContains('Not Locked', $crawler->html(), 'By default Quote shouldn\'t be locked');
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_sale_quote[locked]'] = true;
+        $form['oro_sale_quote[locked]'] = true;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -280,7 +280,7 @@ class QuoteControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_sale.entity.quote.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_sale.entity.quote.class'),
                 ]
             ),
             [],
@@ -293,12 +293,12 @@ class QuoteControllerTest extends WebTestCase
                 'success' => true,
                 'message' => '',
                 'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_sale_quote_index')
+                'redirectUrl' => $this->getUrl('oro_sale_quote_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
 
-        $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 404);
@@ -314,11 +314,11 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->prepareProviderData($submittedData);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_create'));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->remove('orob2b_sale_quote[quoteProducts][0]');
+        $form->remove('oro_sale_quote[quoteProducts][0]');
         foreach ($submittedData as $field => $value) {
             $form[QuoteType::NAME . $field] = $value;
         }

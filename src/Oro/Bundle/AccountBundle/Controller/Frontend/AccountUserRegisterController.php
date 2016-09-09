@@ -18,7 +18,7 @@ class AccountUserRegisterController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/register", name="orob2b_account_frontend_account_user_register")
+     * @Route("/register", name="oro_account_frontend_account_user_register")
      * @Layout()
      * @param Request $request
      * @return array|RedirectResponse
@@ -26,11 +26,11 @@ class AccountUserRegisterController extends Controller
     public function registerAction(Request $request)
     {
         if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
+            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_profile'));
         }
 
         if (!$this->isRegistrationAllowed()) {
-            return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
+            return $this->redirect($this->generateUrl('oro_account_account_user_security_login'));
         }
 
         return $this->handleForm($request);
@@ -50,10 +50,10 @@ class AccountUserRegisterController extends Controller
      */
     protected function handleForm(Request $request)
     {
-        $form = $this->get('orob2b_account.provider.frontend_account_user_registration_form')
+        $form = $this->get('oro_account.provider.frontend_account_user_registration_form')
             ->getRegisterForm()
             ->getForm();
-        $userManager = $this->get('orob2b_account_user.manager');
+        $userManager = $this->get('oro_account_user.manager');
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
         if ($userManager->isConfirmationRequired()) {
@@ -64,8 +64,8 @@ class AccountUserRegisterController extends Controller
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
             $form,
-            ['route' => 'orob2b_account_account_user_security_login'],
-            ['route' => 'orob2b_account_account_user_security_login'],
+            ['route' => 'oro_account_account_user_security_login'],
+            ['route' => 'oro_account_account_user_security_login'],
             $this->get('translator')->trans($registrationMessage),
             $handler
         );
@@ -77,13 +77,13 @@ class AccountUserRegisterController extends Controller
     }
 
     /**
-     * @Route("/confirm-email", name="orob2b_account_frontend_account_user_confirmation")
+     * @Route("/confirm-email", name="oro_account_frontend_account_user_confirmation")
      * @param Request $request
      * @return RedirectResponse
      */
     public function confirmEmailAction(Request $request)
     {
-        $userManager = $this->get('orob2b_account_user.manager');
+        $userManager = $this->get('oro_account_user.manager');
         /** @var AccountUser $accountUser */
         $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
         $token = $request->get('token');
@@ -105,6 +105,6 @@ class AccountUserRegisterController extends Controller
 
         $this->get('session')->getFlashBag()->add($messageType, $message);
 
-        return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
+        return $this->redirect($this->generateUrl('oro_account_account_user_security_login'));
     }
 }

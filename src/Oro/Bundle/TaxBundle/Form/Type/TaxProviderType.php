@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderType extends AbstractType
 {
-    const NAME = 'orob2b_tax_provider_type';
+    const NAME = 'oro_tax_provider_type';
 
     /**
      * @var TaxProviderRegistry

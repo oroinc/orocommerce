@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Form\Type;
 
 class AccountTaxCodeType extends AbstractTaxCodeType
 {
-    const NAME = 'orob2b_tax_account_tax_code_type';
+    const NAME = 'oro_tax_account_tax_code_type';
 
     /**
      * {@inheritdoc}

@@ -8,9 +8,9 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 
 class ResolveTaxEvent extends Event
 {
-    const RESOLVE_BEFORE = 'orob2b_tax.resolve_before';
-    const RESOLVE = 'orob2b_tax.resolve';
-    const RESOLVE_AFTER = 'orob2b_tax.resolve_after';
+    const RESOLVE_BEFORE = 'oro_tax.resolve_before';
+    const RESOLVE = 'oro_tax.resolve';
+    const RESOLVE_AFTER = 'oro_tax.resolve_after';
 
     /** @var Taxable */
     protected $taxable;

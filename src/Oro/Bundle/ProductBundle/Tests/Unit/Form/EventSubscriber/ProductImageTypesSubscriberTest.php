@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\EventSubscriber;
 
+use Symfony\Component\Form\FormEvent;
+
 use Prophecy\Prophecy\ObjectProphecy;
 
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
@@ -60,10 +62,9 @@ class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->addFormAddExpectation($form, ProductImageType::TYPE_ADDITIONAL, 'checkbox', false);
         $this->addFormAddExpectation($form, ProductImageType::TYPE_LISTING, 'checkbox', false);
 
-        $event = $this->prophesize('Symfony\Component\Form\FormEvent');
-        $event->getForm()->willReturn($form->reveal());
+        $event = new FormEvent($form->reveal(), null);
 
-        $this->productImageTypesSubscriber->postSetData($event->reveal());
+        $this->productImageTypesSubscriber->postSetData($event);
     }
 
     public function testPreSubmit()
@@ -74,13 +75,15 @@ class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
             ProductImageType::TYPE_ADDITIONAL => 1
         ];
 
-        $event = $this->prophesize('Symfony\Component\Form\FormEvent');
-        $event->getData()->willReturn($data);
-        $event
-            ->setData(array_merge($data, ['types' => [ProductImageType::TYPE_MAIN, ProductImageType::TYPE_ADDITIONAL]]))
-            ->shouldBeCalled();
+        $form = $this->prophesize('Symfony\Component\Form\FormInterface');
+        $event = new FormEvent($form->reveal(), $data);
 
-        $this->productImageTypesSubscriber->preSubmit($event->reveal());
+        $this->productImageTypesSubscriber->preSubmit($event);
+
+        $this->assertEquals(
+            array_merge($data, ['types' => [ProductImageType::TYPE_MAIN, ProductImageType::TYPE_ADDITIONAL]]),
+            $event->getData()
+        );
     }
 
     /**
