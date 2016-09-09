@@ -186,7 +186,7 @@ class OroWebsiteSearchBundle implements Migration, ContainerAwareInterface, Data
             $schema->getTable('oro_website_search_item'),
             ['item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }
