@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
 class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoData
@@ -13,7 +12,7 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
      */
     public function getDependencies()
     {
-        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
+        return array_merge(parent::getDependencies(), [LoadWebsiteData::class, LoadCategoryVisibilityDemoData::class]);
     }
 
     /**
@@ -37,5 +36,6 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
 
         fclose($handler);
         $manager->flush();
+        $this->container->get('orob2b_account.visibility.cache.product.cache_builder')->buildCache();
     }
 }

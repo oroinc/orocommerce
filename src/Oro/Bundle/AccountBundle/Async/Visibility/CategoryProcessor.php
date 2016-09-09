@@ -87,6 +87,7 @@ class CategoryProcessor implements MessageProcessorInterface
                 $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
                 $this->setToDefaultAccountProductVisibilityWithoutCategory();
             }
+            $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
             $this->logger->error(

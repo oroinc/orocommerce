@@ -5,16 +5,14 @@ namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -84,6 +82,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
 
         fclose($handler);
         $manager->flush();
+        $this->container->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
     }
 
     /**
