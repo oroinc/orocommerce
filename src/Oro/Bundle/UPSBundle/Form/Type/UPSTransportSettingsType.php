@@ -133,7 +133,10 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.unit_of_weight.label',
                 'required' => true,
-                'choices' => UPSTransport::UNITS_OF_WEIGHT,
+                'choices' => [
+                    UPSTransport::UNIT_OF_WEIGHT_LBS => 'oro.ups.transport.unit_of_weight.lbs.label',
+                    UPSTransport::UNIT_OF_WEIGHT_KGS => 'oro.ups.transport.unit_of_weight.kgs.label'
+                ]
             ]
         );
         $builder->add(
