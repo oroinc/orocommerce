@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
@@ -13,14 +12,12 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
-
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -103,7 +100,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                                         return $item->getIso2Code();
                                     }
 
-                                    return $item . uniqid('form', true);
+                                    return $item.uniqid('form', true);
                                 }
                             );
                         }
@@ -166,13 +163,13 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     ) {
         $shippingOrigin = new ShippingOrigin(
             [
-                'country'     => 'US',
-                'region'      => 'test',
+                'country' => 'US',
+                'region' => 'test',
                 'region_text' => 'test region text',
                 'postal_code' => 'test postal code',
-                'city'        => 'test city',
-                'street'      => 'test street 1',
-                'street2'     => 'test street 2'
+                'city' => 'test city',
+                'street' => 'test street 1',
+                'street2' => 'test street 2'
             ]
         );
 
@@ -227,10 +224,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         );
         return [
             'service without value' => [
-                'defaultData'   => new UPSTransport(),
+                'defaultData' => new UPSTransport(),
                 'submittedData' => [],
                 'isValid' => true,
-                'expectedData'  => (new UPSTransport())
+                'expectedData' => (new UPSTransport())
             ],
             'service with value' => [
                 'defaultData' => new UPSTransport(),
@@ -277,6 +274,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals(UPSTransportSettingsType::NAME, $this->formType->getBlockPrefix());
+        static::assertEquals(UPSTransportSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 }
