@@ -10,7 +10,6 @@ oro:
             api_key.label: API Key
             shipping_account_name.label: Shipping Account Name
             shipping_account_number.label: Shipping Account Number
-            country.label: Country
         shipping_service:
             label: Shipping Service
             plural_label: Shipping Services

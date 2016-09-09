@@ -35,10 +35,7 @@ class UPSShippingMethodOptionsType extends AbstractType
             'label' => 'oro.ups.form.shipping_method_config_options.surcharge.label',
             'scale' => $this->roundingService->getPrecision(),
             'rounding_mode' => $this->roundingService->getRoundType(),
-            'attr' => [
-                'data-scale' => $this->roundingService->getPrecision(),
-                'class' => 'method-options-surcharge'
-            ],
+            'attr' => ['data-scale' => $this->roundingService->getPrecision()],
         ]);
     }
 
