@@ -125,7 +125,6 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 2
         currency:  'EUR'
 
-
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice1:
         pricelist: '@combinedPriceList'

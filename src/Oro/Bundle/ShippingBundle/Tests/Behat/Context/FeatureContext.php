@@ -119,7 +119,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         if (array_search('Country2', $table->getColumn(0))) {
-                $form->clickLink('Add');
+            $form->clickLink('Add');
         }
         $form->fill($table);
         $form->saveAndClose();
@@ -153,8 +153,8 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $form->fillField('Name', $shoppingRuleName);
 
         if (array_search('Country2', $table->getColumn(0))) {
-                $form->fillField('Sort Order', '1');
-                $form->clickLink('Add');
+            $form->fillField('Sort Order', '1');
+            $form->clickLink('Add');
         }
 
         $form->fill($table);
