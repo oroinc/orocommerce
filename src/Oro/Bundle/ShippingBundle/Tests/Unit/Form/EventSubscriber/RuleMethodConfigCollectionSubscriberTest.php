@@ -141,7 +141,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->willReturn(['USD']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
+        $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
             ->setMethods(['setDefaultOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
