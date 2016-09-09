@@ -45,7 +45,10 @@ define(function(require) {
             this.initModel(options);
 
             this.dropdownWidget = options.dropdownWidget;
-            this.setElement(this.dropdownWidget.element);
+
+            if (this.dropdownWidget) {
+                this.setElement(this.dropdownWidget.element);
+            }
 
             if (this.options.buttonTemplate) {
                 this.options.buttonTemplate = _.template(this.options.buttonTemplate);
