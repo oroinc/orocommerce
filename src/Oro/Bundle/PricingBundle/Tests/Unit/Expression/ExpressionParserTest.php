@@ -166,11 +166,12 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      * @dataProvider lexemeExpressionsDataProvider
      * @param string $expression
      * @param array $expected
+     * @param bool $withResolvedContainer
      */
-    public function testGetUsedLexemes($expression, array $expected)
+    public function testGetUsedLexemes($expression, array $expected, $withResolvedContainer = false)
     {
         $this->prepareCategoryRelation();
-        $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression));
+        $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression, $withResolvedContainer));
     }
 
     /**
@@ -180,48 +181,35 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
-                " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))",
+                "(PriceList[1].prices.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
+                " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))" .
+                ' and Product.id in PriceList[1].assignedProducts',
                 [
-                    'pl' => ['currency'],
-                    'p' => ['margin', 'someValue'],
+                    'pl' => ['assignedProducts'],
+                    'pl::prices' => ['currency'],
+                    'p' => ['margin', 'someValue', 'id'],
                     'p::MSRP' => ['currency'],
                     'p::category' => ['minMargin', 'categoryId']
-                ]
+                ],
+                false
             ],
             [
                 '1+1',
-                []
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider getUsedLexemesConsideringContainerIdDataProvider
-     * @param string $expression
-     * @param array $expected
-     */
-    public function testGetUsedLexemesConsideringContainerId($expression, array $expected)
-    {
-        $this->prepareCategoryRelation();
-        $this->assertEquals($expected, $this->expressionParser->getUsedLexemesConsideringContainerId($expression));
-    }
-
-    /**
-     * @return array
-     */
-    public function getUsedLexemesConsideringContainerIdDataProvider()
-    {
-        return [
+                [],
+                false
+            ],
             [
-                "(PriceList.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
-                " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))",
+                "(PriceList[1].prices.currency == 'USD' and Product.margin * 10 > 130*Product.category.minMargin)" .
+                " || (Product.category == -Product.someValue and not (Product.MSRP.currency matches 'U'))" .
+                ' and Product.id in PriceList[1].assignedProducts',
                 [
-                    'pl' => [null => ['currency']],
-                    'p' => [null => ['margin', 'someValue']],
-                    'p::MSRP' => [null => ['currency']],
-                    'p::category' => [null => ['minMargin', 'categoryId']]
-                ]
+                    'pl|1' => ['assignedProducts'],
+                    'pl::prices|1' => ['currency'],
+                    'p' => ['margin', 'someValue', 'id'],
+                    'p::MSRP' => ['currency'],
+                    'p::category' => ['minMargin', 'categoryId']
+                ],
+                true
             ],
         ];
     }

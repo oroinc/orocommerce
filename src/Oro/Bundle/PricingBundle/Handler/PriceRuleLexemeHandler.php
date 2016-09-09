@@ -64,13 +64,13 @@ class PriceRuleLexemeHandler
         $lexemes = [];
 
         if ($assignmentRule) {
-            $assignmentRuleLexemes = $this->parser->getUsedLexemesConsideringContainerId($assignmentRule);
+            $assignmentRuleLexemes = $this->parser->getUsedLexemes($assignmentRule, true);
             $lexemes = $this->prepareLexemes($assignmentRuleLexemes, $priceList, null);
         }
 
         foreach ($priceRules as $rule) {
-            $conditionRules = $this->parser->getUsedLexemesConsideringContainerId($rule->getRuleCondition());
-            $priceRules = $this->parser->getUsedLexemesConsideringContainerId($rule->getRule());
+            $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition(), true);
+            $priceRules = $this->parser->getUsedLexemes($rule->getRule(), true);
             $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
             $lexemes = array_merge($this->prepareLexemes($uniqueLexemes, $priceList, $rule), $lexemes);
         }
@@ -91,41 +91,48 @@ class PriceRuleLexemeHandler
      * @param PriceRule|null $priceRule
      * @return PriceRuleLexeme[]
      */
-    protected function prepareLexemes($lexemes, PriceList $priceList, PriceRule $priceRule = null)
+    protected function prepareLexemes(array $lexemes, PriceList $priceList, PriceRule $priceRule = null)
     {
         $lexemeEntities = [];
-        foreach ($lexemes as $class => $values) {
+        /**
+         * @var string $class
+         * @var array $fieldNames
+         */
+        foreach ($lexemes as $class => $fieldNames) {
+            $containerId = null;
+            if (strpos($class, '|') !== false) {
+                list($class, $containerId) = explode('|', $class);
+            }
             $realClassName = $this->priceRuleProvider->getRealClassName($class);
-            foreach ($values as $containerId => $fieldNames) {
-                if (strpos($class, '::') !== false) {
-                    list($containerClass, $fieldName) = explode('::', $class);
-                        $lexeme = new PriceRuleLexeme();
-                        $lexeme->setPriceRule($priceRule);
-                        $lexeme->setPriceList($priceList);
-                        $lexeme->setClassName($containerClass);
-                        $lexeme->setFieldName($fieldName);
-                        $lexeme->setRelationId($containerId);
-                        $lexemeEntities[] = $lexeme;
-                }
 
-                foreach ($fieldNames as $fieldName) {
+            if (strpos($class, '::') !== false) {
+                list($containerClass, $fieldName) = explode('::', $class);
                     $lexeme = new PriceRuleLexeme();
                     $lexeme->setPriceRule($priceRule);
-                    $lexeme->setClassName($realClassName);
-                    $lexeme->setFieldName(
-                        $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
-                    );
                     $lexeme->setPriceList($priceList);
-
-                    if ($realClassName ===  PriceAttributeProductPrice::class) {
-                        $relation = $this->getPriceAttributeRelationByClass($class);
-                        $lexeme->setRelationId($relation->getId());
-                    } elseif ($realClassName ===  ProductPrice::class) {
-                        $lexeme->setRelationId($containerId);
-                    }
-
+                    $lexeme->setClassName($containerClass);
+                    $lexeme->setFieldName($fieldName);
+                    $lexeme->setRelationId($containerId);
                     $lexemeEntities[] = $lexeme;
+            }
+
+            foreach ($fieldNames as $fieldName) {
+                $lexeme = new PriceRuleLexeme();
+                $lexeme->setPriceRule($priceRule);
+                $lexeme->setClassName($realClassName);
+                $lexeme->setFieldName(
+                    $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
+                );
+                $lexeme->setPriceList($priceList);
+
+                if ($realClassName ===  PriceAttributeProductPrice::class) {
+                    $relation = $this->getPriceAttributeRelationByClass($class);
+                    $lexeme->setRelationId($relation->getId());
+                } elseif ($realClassName ===  ProductPrice::class) {
+                    $lexeme->setRelationId($containerId);
                 }
+
+                $lexemeEntities[] = $lexeme;
             }
         }
 
@@ -152,18 +159,17 @@ class PriceRuleLexemeHandler
      */
     protected function mergeLexemes(array $lexemes1, array $lexemes2)
     {
-        $result = $lexemes1;
-        foreach ($lexemes2 as $className => $data) {
-            foreach ($data as $containerId => $fields) {
-                foreach ($fields as $field) {
-                    if (!isset($result[$className][$containerId])
-                        || isset($result[$className][$containerId])
-                        && !in_array($field, $result[$className][$containerId], true)
-                    ) {
-                        $result[$className][$containerId][] = $field;
-                    }
-                }
+        $classes = array_unique(array_merge(array_keys($lexemes1), array_keys($lexemes2)));
+        $result = [];
+        foreach ($classes as $class) {
+            $fields = [];
+            if (array_key_exists($class, $lexemes1)) {
+                $fields = $lexemes1[$class];
             }
+            if (array_key_exists($class, $lexemes2)) {
+                $fields = array_merge($lexemes2[$class], $fields);
+            }
+            $result[$class] = array_unique($fields);
         }
 
         return $result;

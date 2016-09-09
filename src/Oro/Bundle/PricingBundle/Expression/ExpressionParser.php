@@ -83,9 +83,10 @@ class ExpressionParser
 
     /**
      * @param string|Expression $expression
+     * @param bool $withResolvedContainer
      * @return array
      */
-    public function getUsedLexemes($expression)
+    public function getUsedLexemes($expression, $withResolvedContainer = false)
     {
         $usedLexemes = [];
         $rootNode = $this->parse($expression);
@@ -95,21 +96,10 @@ class ExpressionParser
 
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
-                $class = $node->getContainer();
-                if (!array_key_exists($class, $usedLexemes)) {
-                    $usedLexemes[$class] = [];
-                }
-                if (!in_array($node->getField(), $usedLexemes[$class], true)) {
-                    $usedLexemes[$class][] = $node->getField();
-                }
-            } elseif ($node instanceof RelationNode) {
-                $class = $node->getRelationAlias();
-                if (!array_key_exists($class, $usedLexemes)) {
-                    $usedLexemes[$class] = [];
-                }
-                if (!in_array($node->getRelationField(), $usedLexemes[$class], true)) {
-                    $usedLexemes[$class][] = $node->getRelationField();
-                }
+                $this->updateUsedLexemesByNameNode($node, $withResolvedContainer, $usedLexemes);
+            }
+            if ($node instanceof RelationNode) {
+                $this->updateUsedLexemesByRelationNode($node, $withResolvedContainer, $usedLexemes);
             }
         }
         
@@ -117,42 +107,44 @@ class ExpressionParser
     }
 
     /**
-     * @param string|Expression $expression
-     * @return array
+     * @param NameNode $node
+     * @param bool $withResolvedContainer
+     * @param array $usedLexemes
      */
-    public function getUsedLexemesConsideringContainerId($expression)
+    protected function updateUsedLexemesByNameNode(NameNode $node, $withResolvedContainer, array &$usedLexemes)
     {
-        $usedLexemes = [];
-        $rootNode = $this->parse($expression);
-        if (!$rootNode) {
-            return $usedLexemes;
+        $class = $node->getContainer();
+        if ($withResolvedContainer) {
+            $class = $node->getResolvedContainer();
         }
 
-        foreach ($rootNode->getNodes() as $node) {
-            if ($node instanceof NameNode) {
-                $class = $node->getContainer();
-                $containerId = $node->getContainerId();
+        if (!array_key_exists($class, $usedLexemes)) {
+            $usedLexemes[$class] = [];
+        }
+        if (!in_array($node->getField(), $usedLexemes[$class], true)) {
+            $usedLexemes[$class][] = $node->getField();
+        }
+    }
 
-                if (!isset($usedLexemes[$class][$containerId]) ||
-                    isset($usedLexemes[$class][$containerId])
-                    && !in_array($node->getField(), $usedLexemes[$class][$containerId], true)
-                ) {
-                    $usedLexemes[$class][$containerId][] = $node->getField();
-                }
-            } elseif ($node instanceof RelationNode) {
-                $class = $node->getRelationAlias();
-                $containerId = $node->getContainerId();
-
-                if (!isset($usedLexemes[$class][$containerId]) ||
-                    isset($usedLexemes[$class][$containerId])
-                    && !in_array($node->getRelationField(), $usedLexemes[$class][$containerId], true)
-                ) {
-                    $usedLexemes[$class][$containerId][] = $node->getRelationField();
-                }
-            }
+    /**
+     * @param RelationNode $node
+     * @param bool $withResolvedContainer
+     * @param array $usedLexemes
+     */
+    protected function updateUsedLexemesByRelationNode(RelationNode $node, $withResolvedContainer, array &$usedLexemes)
+    {
+        if ($withResolvedContainer) {
+            $class = $node->getResolvedContainer();
+        } else {
+            $class = $node->getRelationAlias();
         }
 
-        return $usedLexemes;
+        if (!array_key_exists($class, $usedLexemes)) {
+            $usedLexemes[$class] = [];
+        }
+        if (!in_array($node->getRelationField(), $usedLexemes[$class], true)) {
+            $usedLexemes[$class][] = $node->getRelationField();
+        }
     }
 
     /**
