@@ -81,6 +81,35 @@ class UPSTransport extends AbstractRestTransport
      */
     public function getPrices(PriceRequest $priceRequest)
     {
+        $transportEntity = $this->getTransportEntity();
+        if ($transportEntity) {
+            $this->client = $this->createRestClient($transportEntity);
+
+            $parameterBag = $transportEntity->getSettingsBag();
+            $priceRequest->setSecurity(
+                $parameterBag->get('api_user'),
+                $parameterBag->get('api_password'),
+                $parameterBag->get('api_key')
+            );
+            $priceRequest
+                ->setShipperName($parameterBag->get('shipping_account_name'))
+                ->setShipperNumber($parameterBag->get('shipping_account_number'));
+
+            $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
+            $priceResponse = new PriceResponse();
+            $priceResponse->parseJSON($json);
+
+            return $priceResponse;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return \Oro\Bundle\UPSBundle\Entity\UPSTransport
+     */
+    public function getTransportEntity()
+    {
         $repo = $this->registry
             ->getManagerForClass('Oro\Bundle\IntegrationBundle\Entity\Channel')
             ->getRepository('Oro\Bundle\IntegrationBundle\Entity\Channel');
@@ -89,22 +118,7 @@ class UPSTransport extends AbstractRestTransport
         if ($integration && $integration->isEnabled()) {
             $transportEntity = $integration->getTransport();
             if ($transportEntity) {
-                $this->client = $this->createRestClient($transportEntity);
-
-                $parameterBag = $transportEntity->getSettingsBag();
-                $priceRequest->setSecurity(
-                    $parameterBag->get('api_user'),
-                    $parameterBag->get('api_password'),
-                    $parameterBag->get('api_key')
-                );
-                $priceRequest
-                    ->setShipperName($parameterBag->get('shipping_account_name'))
-                    ->setShipperNumber($parameterBag->get('shipping_account_number'));
-
-                $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
-                $priceResponse = new PriceResponse();
-                $priceResponse->parseJSON($json);
-                return $priceResponse;
+                return $transportEntity;
             }
         }
 

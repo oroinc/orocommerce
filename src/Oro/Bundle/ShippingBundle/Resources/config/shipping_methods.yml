@@ -9,15 +9,6 @@ services:
         tags:
             - { name: orob2b_shipping_method }
 
-    orob2b_shipping.shipping_method.ups:
-        class: 'Oro\Bundle\ShippingBundle\Method\UPS\UPSShippingMethod'
-        arguments:
-            - '@oro_ups.repository.transport'
-            - '@orob2b_shipping.factory.ups_shipping_method_type_factory'
-        public: false
-        tags:
-            - { name: orob2b_shipping_method }
-
     orob2b_shipping.provider.shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
         arguments:
