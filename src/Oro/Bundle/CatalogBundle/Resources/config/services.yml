@@ -20,9 +20,8 @@ services:
             - '@event_dispatcher'
 
     oro_catalog.repository.category:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory: ['@oro_entity.doctrine_helper', getEntityRepository]
+        class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
+        parent: oro_entity.abstract_repository
         arguments:
             - '%oro_catalog.entity.category.class%'
 

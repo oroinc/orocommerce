@@ -117,3 +117,4 @@ services:
             - '%installed%'
         tags:
             - { name: kernel.cache_warmer, priority: 35 }
+            - { name: oro_entity_extend.warmer }

@@ -145,9 +145,8 @@ services:
             - [ setNamespace, [ 'oro_checkout_grid_totals_metadata' ] ]
 
     oro_checkout.repository.checkout:
-        class: Doctrine\ORM\EntityRepository
-        public: false
-        factory:  ['@oro_entity.doctrine_helper', getEntityRepository]
+        class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
+        parent: oro_entity.abstract_repository
         arguments:
             - '%oro_checkout.entity.checkout.class%'
 
