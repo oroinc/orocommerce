@@ -9,7 +9,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class UPSTransportSettingsType extends AbstractType
 {
-    const NAME = 'oro_ups_transport_settings';
+    const BLOCK_PREFIX = 'oro_ups_transport_settings';
 
     /**
      * @var TransportInterface
@@ -210,6 +209,6 @@ class UPSTransportSettingsType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
     }
 }
