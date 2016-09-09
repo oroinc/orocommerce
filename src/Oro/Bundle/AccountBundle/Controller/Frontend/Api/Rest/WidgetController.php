@@ -9,7 +9,7 @@ use Oro\Bundle\SidebarBundle\Controller\Api\Rest\WidgetController as BaseControl
 
 /**
  * @RouteResource("sidebarwidgets")
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class WidgetController extends BaseController
 {
@@ -18,6 +18,6 @@ class WidgetController extends BaseController
      */
     protected function getWidgetClass()
     {
-        return $this->getParameter('orob2b_account.entity.widget.class');
+        return $this->getParameter('oro_account.entity.widget.class');
     }
 }

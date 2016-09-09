@@ -34,7 +34,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $paymentTransactionProvider = $this->container->get('orob2b_payment.provider.payment_transaction');
+        $paymentTransactionProvider = $this->container->get('oro_payment.provider.payment_transaction');
 
         $orders = $this->container->get('doctrine')->getRepository('OroOrderBundle:Order')->findAll();
 

@@ -26,7 +26,7 @@ use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
  */
 class InvoiceLineItemType extends AbstractType
 {
-    const NAME = 'orob2b_invoice_line_item';
+    const NAME = 'oro_invoice_line_item';
 
     /**
      * @var ProductUnitLabelFormatter

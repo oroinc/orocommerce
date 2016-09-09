@@ -16,7 +16,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserRegistrationType extends AbstractType
 {
-    const NAME = 'orob2b_account_frontend_account_user_register';
+    const NAME = 'oro_account_frontend_account_user_register';
 
     /**
      * @var ConfigManager

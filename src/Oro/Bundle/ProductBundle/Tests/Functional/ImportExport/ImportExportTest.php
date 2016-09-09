@@ -80,7 +80,7 @@ class ImportExportTest extends WebTestCase
     public function strategyDataProvider()
     {
         return [
-            'add or replace' => ['orob2b_product_product.add_or_replace'],
+            'add or replace' => ['oro_product_product.add_or_replace'],
         ];
     }
 
@@ -136,7 +136,7 @@ class ImportExportTest extends WebTestCase
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
-                    'processorAlias' => 'orob2b_product_product',
+                    'processorAlias' => 'oro_product_product',
                     '_format' => 'json',
                 ]
             )
@@ -201,7 +201,7 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'orob2b_product_product_export_template',
+                'oro_product_product_export_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
@@ -224,7 +224,7 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.handler.export')
             ->handleExport(
                 JobExecutor::JOB_EXPORT_TO_CSV,
-                'orob2b_product_product',
+                'oro_product_product',
                 ProcessorRegistry::TYPE_EXPORT
             );
 
@@ -302,8 +302,8 @@ class ImportExportTest extends WebTestCase
 
         $configuration = [
             'import_validation' => [
-                'processorAlias' => 'orob2b_product_product.add_or_replace',
-                'entityName' => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                'processorAlias' => 'oro_product_product.add_or_replace',
+                'entityName' => $this->getContainer()->getParameter('oro_product.entity.product.class'),
                 'filePath' => $filePath,
             ],
         ];
@@ -363,10 +363,10 @@ class ImportExportTest extends WebTestCase
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
 
-        $productClass = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
         $configuration = [
             'import' => [
-                'processorAlias' => 'orob2b_product_product.add_or_replace',
+                'processorAlias' => 'oro_product_product.add_or_replace',
                 'entityName' => $productClass,
                 'filePath' => $filePath,
             ],

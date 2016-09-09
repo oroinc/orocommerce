@@ -22,8 +22,8 @@ define(function(require) {
             matchedPrices: {},
             currency: null,
             account: null,
-            subtotalValidationSelector: '[data-ftid=orob2b_order_type_subtotalValidation]',
-            totalValidationSelector: '[data-ftid=orob2b_order_type_totalValidation]',
+            subtotalValidationSelector: '[data-ftid=oro_order_type_subtotalValidation]',
+            totalValidationSelector: '[data-ftid=oro_order_type_totalValidation]',
             subtotalType: null
         },
 

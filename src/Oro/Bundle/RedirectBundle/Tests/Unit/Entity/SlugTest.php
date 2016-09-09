@@ -12,7 +12,7 @@ class SlugTest extends EntityTestCase
         $properties = [
             ['id', 1],
             ['url', 'test/page'],
-            ['routeName', 'orob2b_cms_page_view'],
+            ['routeName', 'oro_cms_page_view'],
             ['routeParameters', ['id' => 1]],
         ];
 

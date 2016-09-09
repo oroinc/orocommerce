@@ -121,7 +121,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
-                ->with('orob2b_account_account_user_role_view')
+                ->with('oro_account_account_user_role_view')
                 ->will($this->returnValue(true));
         }
         $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());

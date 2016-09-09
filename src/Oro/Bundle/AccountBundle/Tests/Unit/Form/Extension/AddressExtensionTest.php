@@ -35,7 +35,7 @@ class AddressExtensionTest extends AbstractAccountUserAwareExtensionTest
             ->getMock();
         $resolver->expects($this->once())
             ->method('setDefault')
-            ->with('region_route', 'orob2b_api_frontend_country_get_regions');
+            ->with('region_route', 'oro_api_frontend_country_get_regions');
 
         $this->extension->configureOptions($resolver);
     }

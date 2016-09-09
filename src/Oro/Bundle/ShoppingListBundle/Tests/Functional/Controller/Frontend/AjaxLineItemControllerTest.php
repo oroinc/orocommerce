@@ -64,14 +64,14 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_shopping_list_frontend_add_product',
+                'oro_shopping_list_frontend_add_product',
                 [
                     'productId' => $product->getId(),
                     'shoppingListId' => $shoppingList->getId(),
                 ]
             ),
             [
-                'orob2b_product_frontend_line_item' => [
+                'oro_product_frontend_line_item' => [
                     'quantity' => $quantity,
                     'unit' => $unit->getCode(),
                     '_token' => $this->getCsrfToken(),
@@ -144,9 +144,9 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
+            $this->getUrl('oro_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
             [
-                'orob2b_product_frontend_line_item' => [
+                'oro_product_frontend_line_item' => [
                     'quantity' => null,
                     'unit' => null,
                     '_token' => $this->getCsrfToken(),
@@ -195,7 +195,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_shopping_list_frontend_remove_product',
+                'oro_shopping_list_frontend_remove_product',
                 [
                     'productId' => $product->getId(),
                     'shoppingListId' => $shoppingList->getId(),
@@ -221,7 +221,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 ->getRepository(ShoppingListTotal::class)
                 ->findBy(['shoppingList' => $shoppingList]);
             $subtotalProvider = $this->getContainer()
-                ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
+                ->get('oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
             foreach ($totals as $total) {
                 $expectedSubtotal = $subtotalProvider
                     ->getSubtotalByCurrency($shoppingList, $total->getCurrency())
@@ -255,7 +255,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         $container = $this->getContainer();
         $manager = $container->get('doctrine')->getManagerForClass(
-            $container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+            $container->getParameter('oro_shopping_list.entity.shopping_list.class')
         );
 
         /** @var ShoppingList[] $shoppingLists */
@@ -326,10 +326,10 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_shopping_list_add_products_massaction',
+                'oro_shopping_list_add_products_massaction',
                 [
                     'gridName' => 'frontend-products-grid',
-                    'actionName' => 'orob2b_shoppinglist_frontend_addlineitemlist' . $shoppingList->getId(),
+                    'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $shoppingList->getId(),
                     'shoppingList' => $shoppingList->getId(),
                     'inset' => 1,
                     'values' => $this->getReference('product.1')->getId(),
@@ -355,10 +355,10 @@ class AjaxLineItemControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_shopping_list_add_products_to_new_massaction',
+                'oro_shopping_list_add_products_to_new_massaction',
                 [
                     'gridName' => 'frontend-products-grid',
-                    'actionName' => 'orob2b_shoppinglist_frontend_addlineitemnew',
+                    'actionName' => 'oro_shoppinglist_frontend_addlineitemnew',
                     '_widgetContainer' => 'dialog',
                     '_wid' => 'test-uuid',
                 ]
@@ -368,15 +368,15 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Create and Add')->form();
-        $form['orob2b_shopping_list_type[label]'] = 'TestShoppingList';
+        $form['oro_shopping_list_type[label]'] = 'TestShoppingList';
 
         $this->client->request(
             $form->getMethod(),
             $this->getUrl(
-                'orob2b_shopping_list_add_products_to_new_massaction',
+                'oro_shopping_list_add_products_to_new_massaction',
                 [
                     'gridName' => 'frontend-products-grid',
-                    'actionName' => 'orob2b_shoppinglist_frontend_addlineitemnew',
+                    'actionName' => 'oro_shoppinglist_frontend_addlineitemnew',
                     'inset' => 1,
                     'values' => $product->getId(),
                     '_widgetContainer' => 'dialog',
@@ -411,7 +411,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         return $this->client
             ->getContainer()
             ->get('security.csrf.token_manager')
-            ->getToken('orob2b_product_frontend_line_item')
+            ->getToken('oro_product_frontend_line_item')
             ->getValue();
     }
 

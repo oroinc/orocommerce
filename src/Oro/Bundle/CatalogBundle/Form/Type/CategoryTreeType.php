@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 class CategoryTreeType extends AbstractType
 {
-    const NAME = 'orob2b_catalog_category_tree';
+    const NAME = 'oro_catalog_category_tree';
 
     /**
      * @var string

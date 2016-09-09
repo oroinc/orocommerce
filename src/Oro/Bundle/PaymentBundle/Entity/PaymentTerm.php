@@ -15,9 +15,9 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
  * @ORM\Table(name="oro_payment_term")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository")
  * @Config(
- *      routeName="orob2b_payment_term_index",
- *      routeView="orob2b_payment_term_view",
- *      routeUpdate="orob2b_payment_term_update",
+ *      routeName="oro_payment_term_index",
+ *      routeView="oro_payment_term_view",
+ *      routeUpdate="oro_payment_term_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-usd"
@@ -30,7 +30,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="orob2b_payment_term_select",
+ *              "form_type"="oro_payment_term_select",
  *              "grid_name"="payment-terms-select-grid",
  *          }
  *      }

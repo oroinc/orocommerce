@@ -14,7 +14,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class SlugType extends AbstractType
 {
-    const NAME = 'orob2b_slug';
+    const NAME = 'oro_slug';
     const MODE_NEW = 'new';
     const MODE_OLD = 'old';
 

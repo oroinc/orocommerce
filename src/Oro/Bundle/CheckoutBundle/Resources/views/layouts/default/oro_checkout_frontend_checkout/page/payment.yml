@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'OroPaymentBundle:layouts:default/oro_payment_methods/layout.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
+                - 'OroPaymentBundle:layouts:default/templates/order_review.html.twig'
+                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/payment.html.twig'
+        - '@setOption':
+            id: checkout_information
+            optionName: stepOrder
+            optionValue: 4
+        - '@add':
+            id: payment_methods
+            parentId: checkout_information
+            blockType: payment_methods
+            prepend: true
+            options:
+                class_prefix: 'checkout'
+                views: '=data["oro_payment_methods_provider"].getViews(data["checkout"])'
+                currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
+
+    conditions: 'context["workflowStepName"]=="enter_payment"'

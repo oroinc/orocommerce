@@ -38,7 +38,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             ->delete()
             ->getQuery()
             ->execute();
-        $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler')->sendScheduledTriggers();
+        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
     }
 
     public function testOnCreate()
@@ -98,7 +98,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $productPrice = $this->getReference(LoadProductPrices::PRODUCT_PRICE_4);
         $productPrice->setPrice(Price::create(1000, 'EUR'));
         $em->flush();
-        $handler = $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler');
+        $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
     }
 
@@ -147,7 +147,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $em->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
         $em->flush();
 
-        $handler = $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler');
+        $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
     }
 

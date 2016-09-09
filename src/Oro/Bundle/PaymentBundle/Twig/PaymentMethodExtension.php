@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodExtension extends \Twig_Extension
 {
-    const PAYMENT_METHOD_EXTENSION_NAME = 'orob2b_payment_method';
+    const PAYMENT_METHOD_EXTENSION_NAME = 'oro_payment_method';
 
     /**
      * @var  PaymentTransactionProvider

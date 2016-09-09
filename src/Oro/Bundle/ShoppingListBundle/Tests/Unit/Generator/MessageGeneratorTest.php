@@ -47,7 +47,7 @@ class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->router->expects($withUrl ? $this->once() : $this->never())
             ->method('generate')
-            ->with('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId])
+            ->with('oro_shopping_list_frontend_view', ['id' => $shoppingListId])
             ->willReturn($url);
 
         $this->translator->expects($this->once())

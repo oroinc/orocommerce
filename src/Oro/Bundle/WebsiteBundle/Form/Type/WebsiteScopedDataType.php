@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataType extends AbstractType
 {
-    const NAME = 'orob2b_website_scoped_data_type';
+    const NAME = 'oro_website_scoped_data_type';
     const WEBSITE_OPTION = 'website';
 
     /**
