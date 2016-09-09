@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
@@ -97,7 +98,7 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
         $this->checkoutLineItemsManager
             ->expects(static::once())
             ->method('getData')
-            ->willReturn([]);
+            ->willReturn(new ArrayCollection());
 
         $this->shippingContextFactory
             ->expects(static::once())

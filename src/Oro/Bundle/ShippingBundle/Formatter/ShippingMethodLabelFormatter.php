@@ -29,7 +29,11 @@ class ShippingMethodLabelFormatter
         try {
             $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
 
-            return $label = $shippingMethod->getLabel();
+            if (!$shippingMethod->isGrouped()) {
+                return '';
+            }
+
+            return $shippingMethod->getLabel();
         } catch (\InvalidArgumentException $e) {
             return '';
         }
@@ -44,10 +48,16 @@ class ShippingMethodLabelFormatter
     {
         try {
             $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
-
-            return $label = $shippingMethod->getShippingTypeLabel($shippingTypeName);
         } catch (\InvalidArgumentException $e) {
             return '';
         }
+
+        $shippingMethodType = $shippingMethod->getType($shippingTypeName);
+
+        if ($shippingMethodType) {
+            return $shippingMethodType->getLabel();
+        }
+
+        return '';
     }
 }

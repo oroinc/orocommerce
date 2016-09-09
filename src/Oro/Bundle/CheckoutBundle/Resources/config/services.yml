@@ -64,14 +64,12 @@ services:
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
 
-    orob2b_checkout.layout.data_provider.shipping_methods:
-        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\ShippingMethodsProvider'
+    orob2b_checkout.layout.data_provider.shipping_context:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
         arguments:
-            - '@orob2b_shipping.shipping_method.registry'
-            - '@orob2b_shipping.provider.shipping_rules'
             - '@orob2b_checkout.factory.shipping_context_provider_factory'
         tags:
-            - { name: layout.data_provider, alias: shipping_methods_data_provider }
+            - { name: layout.data_provider, alias: checkout_shipping_context }
 
     orob2b_checkout.model.action.start_checkout:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout'
@@ -202,8 +200,7 @@ services:
     orob2b_checkout.condition.shipping_method_supports:
         class: 'Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports'
         arguments:
-            - '@orob2b_shipping.shipping_method.registry'
-            - '@orob2b_shipping.provider.shipping_rules'
+            - '@orob2b_shipping.shipping_price.provider'
             - '@orob2b_checkout.factory.shipping_context_provider_factory'
         tags:
             - { name: oro_workflow.condition, alias: 'shipping_method_supports' }

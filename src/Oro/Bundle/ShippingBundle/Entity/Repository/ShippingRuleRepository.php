@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
@@ -32,7 +32,8 @@ class ShippingRuleRepository extends EntityRepository
             ->andWhere('nullDestinations.id is null or destinations.id is not null')
             ->setParameter('country', $country)
             ->setParameter('currency', $currency)
-            ->orderBy('rule.priority')
+            ->orderBy('rule.priority', Criteria::DESC)
+            ->orderBy('rule.id', Criteria::DESC)
             ->addOrderBy('rule.id')
             ->getQuery()->execute();
     }

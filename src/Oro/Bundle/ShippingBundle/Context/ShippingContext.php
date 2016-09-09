@@ -180,7 +180,6 @@ class ShippingContext implements ShippingContextInterface
     public function getPaymentMethod()
     {
         return $this->paymentMethod;
-
     }
 
     /**
@@ -219,21 +218,5 @@ class ShippingContext implements ShippingContextInterface
     public function getSubtotal()
     {
         return $this->subtotal;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptions()
-    {
-        return [
-            'lineItems' => $this->getLineItems(),
-            'billingAddress' => $this->getBillingAddress(),
-            'shippingAddress' => $this->getShippingAddress(),
-            'shippingOrigin' => $this->getShippingOrigin(),
-            'paymentMethod' => $this->getPaymentMethod(),
-            'currency' => $this->getCurrency(),
-            'subtotal' => $this->getSubtotal(),
-        ];
     }
 }

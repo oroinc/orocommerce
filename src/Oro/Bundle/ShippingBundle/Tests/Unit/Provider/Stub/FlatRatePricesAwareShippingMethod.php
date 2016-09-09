@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 
 class FlatRatePricesAwareShippingMethod extends FlatRateShippingMethod implements PricesAwareShippingMethodInterface
@@ -17,6 +18,10 @@ class FlatRatePricesAwareShippingMethod extends FlatRateShippingMethod implement
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        return ['primary' => $this->getType('primary')->calculatePrice($context, [], [])];
+        return [
+            'primary' => $this
+                ->getType(FlatRateShippingMethodType::IDENTIFIER)
+                ->calculatePrice($context, $methodOptions, $optionsByTypes[FlatRateShippingMethodType::IDENTIFIER])
+        ];
     }
 }

@@ -36,7 +36,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     protected $type;
 
     /**
-     * @var string
+     * @var array
      *
      * @ORM\Column(name="options", type="array")
      * @ConfigField(
@@ -108,7 +108,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getOptions()
     {
@@ -116,7 +116,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @param string $options
+     * @param array $options
      * @return $this
      */
     public function setOptions($options)

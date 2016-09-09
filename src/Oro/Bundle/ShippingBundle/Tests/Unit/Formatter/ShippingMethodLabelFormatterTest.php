@@ -2,9 +2,9 @@
 
 namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,8 +41,9 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $shippingMethod
      * @param string $methodLabel
+     * @param boolean $isGrouped
      */
-    public function shippingMethodLabelMock($shippingMethod, $methodLabel)
+    public function shippingMethodLabelMock($shippingMethod, $methodLabel, $isGrouped)
     {
         $this->shippingMethodRegistry
             ->expects($this->once())
@@ -50,9 +51,13 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->with($shippingMethod)
             ->willReturn($this->shippingMethod);
         $this->shippingMethod
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getLabel')
             ->willReturn($methodLabel);
+        $this->shippingMethod
+            ->expects($this->once())
+            ->method('isGrouped')
+            ->willReturn($isGrouped);
     }
 
     /**
@@ -67,11 +72,15 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('getShippingMethod')
             ->with($shippingMethod)
             ->willReturn($this->shippingMethod);
+        $method = $this->getMockBuilder(ShippingMethodInterface::class)->getMock();
+        $method->expects($this->any())
+            ->method('getLabel')
+            ->willReturn($shippingTypeLabel);
         $this->shippingMethod
             ->expects($this->once())
-            ->method('getShippingTypeLabel')
+            ->method('getType')
             ->with($shippingType)
-            ->willReturn($shippingTypeLabel);
+            ->willReturn($method);
     }
 
     /**
@@ -79,14 +88,15 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
      * @param string $shippingMethod
      * @param string $shippingMethodLabel
      * @param string $expectedResult
+     * @param boolean $isGrouped
      */
     public function testFormatShippingMethodLabel(
         $shippingMethod,
         $shippingMethodLabel,
-        $expectedResult
+        $expectedResult,
+        $isGrouped
     ) {
-
-        $this->shippingMethodLabelMock($shippingMethod, $shippingMethodLabel);
+        $this->shippingMethodLabelMock($shippingMethod, $shippingMethodLabel, $isGrouped);
 
         $this->assertEquals($expectedResult, $this->formatter->formatShippingMethodLabel($shippingMethod));
     }
@@ -100,12 +110,14 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             [
                 'shippingMethod'           => 'shipping_method_1',
                 'shippingMethodLabel'      => 'Shipping Method 1 Label',
-                'expectedResult'           => 'Shipping Method 1 Label',
+                'expectedResult'           => '',
+                'isGrouped'                => false
             ],
             [
                 'shippingMethod'           => 'shipping_method_2',
                 'shippingMethodLabel'      => 'Shipping Method 2 Label',
                 'expectedResult'           => 'Shipping Method 2 Label',
+                'isGrouped'                => true
             ],
         ];
     }
@@ -123,7 +135,6 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $shippingMethodTypeLabel,
         $expectedResult
     ) {
-
         $this->shippingMethodTypeLabelMock($shippingMethod, $shippingMethodType, $shippingMethodTypeLabel);
 
         $this->assertEquals(

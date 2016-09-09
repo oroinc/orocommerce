@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +44,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->shippingContextProviderFactory->expects(static::any())
             ->method('create')
-            ->willReturn(new ShippingContextProvider([]));
+            ->willReturn(new ShippingContext([]));
 
         $this->condition = new HasApplicableShippingMethods(
             $this->shippingMethodRegistry,
@@ -107,19 +107,18 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
      */
     public function evaluateProvider()
     {
-        $shippingConfig = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
+        $methodConfig = $this->getEntity(
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig',
             [
                 'id'     => 1,
-                'method' => 'flat_rate',
-                'type'   => 'per_order'
+                'method' => 'flat_rate'
             ]
         );
 
         $shippingRule = new ShippingRule();
         $shippingRule->setName('TetsRule')
             ->setPriority(10)
-            ->addConfiguration($shippingConfig);
+            ->addMethodConfig($methodConfig);
         
         return [
             'no_rules' => [
