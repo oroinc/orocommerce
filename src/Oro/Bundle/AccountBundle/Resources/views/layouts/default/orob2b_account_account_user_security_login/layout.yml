@@ -2,8 +2,9 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@setFormTheme':
-            themes: 'form_theme.html.twig'
+        - '@move':
+            id: notification
+            parentId: body
         - '@remove':
             id: wrapper
         - '@setOption':

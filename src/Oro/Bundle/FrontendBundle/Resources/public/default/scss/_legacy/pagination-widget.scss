@@ -15,6 +15,8 @@
   &__pager {
     display: inline-block;
     vertical-align: middle;
+
+    font-size: 0;
     
     + span {
       margin-left: 5px;

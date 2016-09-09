@@ -1,65 +1,9 @@
-/*Reset*/
-@import 'shared/_reset';
+@import '_legacy/legacy';
 
-/*Variables & mixins & helpers*/
-@import 'shared/_vars';
-@import 'shared/_helpers';
-@import 'shared/_mixins';
-
-//fonts
-@import 'shared/_fonts';
-
-//icons
-@import 'shared/icons';
-
-/*Base styles*/
-@import 'shared/base';
 @import 'base/base';
 
-/*=== START COMPONENTS===*/
-@import 'components/checkout-widget';
-@import 'components/messages-widget';
-@import 'components/notification-messages';
-@import 'components/dialog';
-@import 'components/pagination-widget';
-@import 'components/products-widget';
-@import 'components/search-widget';
-@import 'components/tab-collection';
-@import 'components/uploader-widget';
 @import 'components/page-title';
 @import 'components/link';
-@import 'components/loading-mask-url';
-/*=== END COMPONENTS===*/
-
-/*Layout*/
-@import 'shared/layout';
-
-/*Tables*/
-@import 'shared/tables';
-
-/*Tooltip styles*/
-@import 'shared/tooltip';
-
-/*Bootstrap override styles*/
-@import 'shared/bootstrap-override';
-
-/*jQuery UI datepicker override styles*/
-@import 'shared/ui-datepicker-override';
-
-@import 'shared/forms';
-
-@import 'shared/validation';
-
-/*Styles needed for development only, $todo must be removed before release*/
-@import 'shared/develop';
-
-/*Current grid styles*/
-@import 'current-grid/current-grid';
-@import 'shared/dialog-widget';
-
-/* Commerce theme */
-
-@import 'components/commerce/commerce';
 @import 'components/embedded-list/embedded-list';
 @import 'components/header/header';
 @import 'components/grid';
