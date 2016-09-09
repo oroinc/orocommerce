@@ -5,9 +5,11 @@ namespace Oro\Bundle\UPSBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
+use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
+use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 
@@ -61,7 +63,7 @@ class UPSTransport extends AbstractRestTransport
      */
     public function getSettingsFormType()
     {
-        return 'oro_ups_transport_settings_type';
+        return UPSTransportSettingsType::class;
     }
 
     /**
@@ -74,14 +76,14 @@ class UPSTransport extends AbstractRestTransport
 
     /**
      * @param PriceRequest $priceRequest
+     * @param Transport $transportEntity
      * @throws RestException
      * @throws InvalidConfigurationException
      * @throws \InvalidArgumentException
      * @return PriceResponse|null
      */
-    public function getPrices(PriceRequest $priceRequest)
+    public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
     {
-        $transportEntity = $this->getTransportEntity();
         if ($transportEntity) {
             $this->client = $this->createRestClient($transportEntity);
 
@@ -100,26 +102,6 @@ class UPSTransport extends AbstractRestTransport
             $priceResponse->parseJSON($json);
 
             return $priceResponse;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return \Oro\Bundle\UPSBundle\Entity\UPSTransport
-     */
-    public function getTransportEntity()
-    {
-        $repo = $this->registry
-            ->getManagerForClass('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->getRepository('Oro\Bundle\IntegrationBundle\Entity\Channel');
-        /** @var Integration $integration */
-        $integration = $repo->findOneBy(['type' => ChannelType::TYPE]);
-        if ($integration && $integration->isEnabled()) {
-            $transportEntity = $integration->getTransport();
-            if ($transportEntity) {
-                return $transportEntity;
-            }
         }
 
         return null;

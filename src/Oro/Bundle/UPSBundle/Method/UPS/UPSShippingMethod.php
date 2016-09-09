@@ -10,10 +10,9 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportPrivider;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
+use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingMethodInterface
 {
@@ -22,19 +21,24 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     /** @var  ManagerRegistry */
     protected $registry;
 
+    /** @var UPSTransportProvider */
+    protected $transportProvider;
+
     /** @var Channel */
     protected $channel;
 
     /**
      * @param ManagerRegistry $registry
+     * @param UPSTransportProvider $transportProvider
      * @param int $channelId
      */
-    public function __construct(ManagerRegistry $registry, $channelId)
+    public function __construct(ManagerRegistry $registry, UPSTransportProvider $transportProvider, $channelId)
     {
         $this->registry = $registry;
         $this->channel = $registry->getManagerForClass('OroIntegrationBundle:Channel')
             ->getRepository('OroIntegrationBundle:Channel')->find($channelId)
         ;
+        $this->transportProvider = $transportProvider;
     }
 
     /**
@@ -127,7 +131,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
         $shippingServices = $transport->getApplicableShippingServices();
         if (count($shippingServices) > 0) {
             foreach ($shippingServices as $shippingService) {
-                $types[] = new UPSShippingMethodType($shippingService->getCode(), $shippingService->getDescription());
+                $types[] = new UPSShippingMethodType($transport, $this->transportProvider, $shippingService);
             }
         }
 

@@ -4,9 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
-
 use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingCountries extends AbstractFixture

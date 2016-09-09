@@ -29,7 +29,10 @@ class ShippingChannelCompilerPass implements CompilerPassInterface
         ;
         foreach ($channels as $channel) {
             if ($channel->isEnabled()) {
-                $definition = new Definition(UPSShippingMethod::class, [new Reference('doctrine'), $channel->getId()]);
+                $definition = new Definition(
+                    UPSShippingMethod::class,
+                    [new Reference('doctrine'), new Reference('oro_ups.provider.transport'), $channel->getId()]
+                );
                 $definition->addTag(ShippingMethodsCompilerPass::TAG);
                 $container->setDefinition('oro_ups.shipping_method.' . $channel->getId(), $definition);
             }

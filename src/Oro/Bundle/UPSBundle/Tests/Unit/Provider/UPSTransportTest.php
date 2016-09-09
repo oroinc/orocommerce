@@ -3,9 +3,9 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
+use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
@@ -25,7 +25,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $client;
-    
+
     /**
      * @var UPSTransport
      */
@@ -51,7 +51,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSettingsFormType()
     {
-        static::assertEquals('oro_ups_transport_settings_type', $this->transport->getSettingsFormType());
+        static::assertEquals(UPSTransportSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
@@ -61,7 +61,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPrices()
     {
-        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest **/
+        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
         $rateRequest = $this->getMock(PriceRequest::class);
 
         $rateRequest->expects(static::once())
@@ -104,7 +104,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->client);
 
         $restResponse = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
-        
+
         $json = '{
                    "RateResponse":{
                       "RatedShipment":{
@@ -118,11 +118,11 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                       }
                    }
                 }';
-        
+
         $restResponse->expects(static::once())
             ->method('json')
             ->willReturn($json);
-            
+
         $this->client->expects(static::once())
             ->method('post')
             ->willReturn($restResponse);

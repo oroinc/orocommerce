@@ -4,6 +4,7 @@ services:
         arguments:
             - "@oro_ups.provider.transport"
             - '@orob2b_shipping.shipping_origin.provider'
+            - '@oro_entity.doctrine_helper'
         tags:
             - { name: form.type, alias: oro_ups_transport_settings_type }
 

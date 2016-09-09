@@ -2,15 +2,23 @@
 
 namespace Oro\Bundle\UPSBundle\Method\UPS;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
+use Oro\Bundle\UPSBundle\Model\Package;
+use Oro\Bundle\UPSBundle\Model\PriceRequest;
 
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
-    const PRICE_OPTION = 'price';
-    const TYPE_OPTION = 'type';
-    const HANDLING_FEE_OPTION = 'handling_fee';
+    const REQUEST_OPTION = 'Rate';
+    const PACKAGING_TYPE_CODE = '00';
+    const MAX_PACKAG_WEIGHT = 70;
+
+    const OPTION_SURCHARGE = 'surcharge';
 
     /** @var string|int */
     protected $identifier;
@@ -18,14 +26,31 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /** @var string */
     protected $label;
 
+    /** @var UPSTransport */
+    protected $transport;
+
+    /** @var UPSTransportProvider */
+    protected $transportProvider;
+
+    /** @var ShippingService */
+    protected $shippingService;
+
     /**
-     * @param string|int $identifier
-     * @param string $label
+     * @param UPSTransport $transport
+     * @param UPSTransportProvider $transportProvider
+     * @param ShippingService $shippingService
      */
-    public function __construct($identifier, $label)
-    {
-        $this->setIdentifier($identifier);
-        $this->setLabel($label);
+    public function __construct(
+        UPSTransport $transport,
+        UPSTransportProvider $transportProvider,
+        ShippingService $shippingService
+    ) {
+        $this->setIdentifier($shippingService->getCode());
+        $this->setLabel($shippingService->getDescription());
+
+        $this->transport = $transport;
+        $this->transportProvider = $transportProvider;
+        $this->shippingService = $shippingService;
     }
 
     /**
@@ -98,25 +123,65 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
-        $price = $typeOptions[static::PRICE_OPTION];
-        switch ($typeOptions[static::TYPE_OPTION]) {
-            case static::PER_ORDER_TYPE:
-                break;
-            case static::PER_ITEM_TYPE:
-                $countItems = array_sum(array_map(function (ShippingLineItemInterface $item) {
-                    return $item->getQuantity();
-                }, $context->getLineItems()));
-                $price = $countItems * (float)$price;
-                break;
-            default:
-                return null;
+        $price = null;
+
+        $priceRequest = (new PriceRequest())
+            ->setUsername($this->transport->getApiUser())
+            ->setPassword($this->transport->getApiPassword())
+            ->setAccessLicenseNumber($this->transport->getApiKey())
+            ->setRequestOption(self::REQUEST_OPTION)
+            ->setShipperName($this->transport->getShippingAccountName())
+            ->setShipperNumber($this->transport->getShippingAccountNumber())
+            ->setShipperAddress($context->getShippingOrigin())
+            ->setShipToAddress($context->getShippingAddress())
+            ->setShipFromName($this->transport->getShippingAccountName())
+            ->setShipFromAddress($context->getShippingOrigin())
+            ->setServiceCode($this->shippingService->getCode())
+            ->setServiceDescription($this->shippingService->getDescription())
+        ;
+
+        $weight = 0;
+        $lineItems = $context->getLineItems();
+        if (count($lineItems) > 0) {
+            foreach ($lineItems as $lineItem) {
+                $lineItemWeight = $lineItem->getWeight()->getValue();
+                if (empty($lineItemWeight)) {
+                    return null;
+                }
+
+                if (($weight + $lineItemWeight) >= self::MAX_PACKAG_WEIGHT) {
+                    $package = (new Package())
+                        ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
+                        ->setWeightCode($this->transport->getUnitOfWeight())
+                        ->setWeight($weight)
+                    ;
+                    $priceRequest = $priceRequest->setPackages([$package]);
+                    $packagePrice = $this->transportProvider->getPrices($priceRequest, $this->transport);
+                    if ($packagePrice !== null) {
+                        $price += $packagePrice;
+                    }
+
+                    $weight = 0;
+                }
+
+                $weight += $lineItemWeight;
+            }
+
+            if ($weight > 0) {
+                $package = (new Package())
+                    ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
+                    ->setWeightCode($this->transport->getUnitOfWeight())
+                    ->setWeight($weight);
+                $priceRequest = $priceRequest->setPackages([$package]);
+                $packagePrice = $this->transportProvider->getPrices($priceRequest, $this->transport);
+                if ($packagePrice !== null) {
+                    $price += $packagePrice;
+                }
+            }
         }
 
-        $handlingFee = 0;
-        if ($typeOptions[static::HANDLING_FEE_OPTION]) {
-            $handlingFee = $typeOptions[static::HANDLING_FEE_OPTION];
-        }
+        $surcharge = $typeOptions[self::OPTION_SURCHARGE];
 
-        return Price::create((float)$price + (float)$handlingFee, $context->getCurrency());
+        return Price::create($price + (float)$surcharge, $context->getCurrency());
     }
 }

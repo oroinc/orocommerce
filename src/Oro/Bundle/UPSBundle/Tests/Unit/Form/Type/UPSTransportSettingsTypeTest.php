@@ -3,8 +3,8 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
@@ -12,14 +12,12 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
-
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -40,6 +38,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $shippingOriginProvider;
 
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrineHelper;
+
     /**
      * @var UPSTransportSettingsType
      */
@@ -56,8 +57,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $this->transport->expects(static::any())
             ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
-        $this->formType = new UPSTransportSettingsType($this->transport, $this->shippingOriginProvider);
-        $this->formType->setDataClass(self::DATA_CLASS);
+
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new UPSTransportSettingsType(
+            $this->transport,
+            $this->shippingOriginProvider,
+            $this->doctrineHelper
+        );
 
         parent::setUp();
     }
@@ -91,7 +100,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                                         return $item->getIso2Code();
                                     }
 
-                                    return $item . uniqid('form', true);
+                                    return $item.uniqid('form', true);
                                 }
                             );
                         }
@@ -129,7 +138,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'entity' =>$entityType,
+                    'entity' => $entityType,
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'translatable_entity' => $translatableEntity,
                 ],
@@ -154,13 +163,13 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     ) {
         $shippingOrigin = new ShippingOrigin(
             [
-                'country'     => 'US',
-                'region'      => 'test',
+                'country' => 'US',
+                'region' => 'test',
                 'region_text' => 'test region text',
                 'postal_code' => 'test postal code',
-                'city'        => 'test city',
-                'street'      => 'test street 1',
-                'street2'     => 'test street 2'
+                'city' => 'test city',
+                'street' => 'test street 1',
+                'street2' => 'test street 2'
             ]
         );
 
@@ -168,6 +177,25 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->expects(static::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
+
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository->expects(static::once())
+            ->method('findOneBy')
+            ->willReturn(new Country('US'));
+
+        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects(static::once())
+            ->method('getRepository')
+            ->with('OroAddressBundle:Country')
+            ->willReturn($repository);
+
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityManagerForClass')
+            ->with('OroAddressBundle:Country')
+            ->willReturn($entityManager);
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
@@ -196,31 +224,35 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         );
         return [
             'service without value' => [
-                'defaultData'   => new UPSTransport(),
+                'defaultData' => new UPSTransport(),
                 'submittedData' => [],
-                'isValid' => false,
-                'expectedData'  => (new UPSTransport())
+                'isValid' => true,
+                'expectedData' => (new UPSTransport())
             ],
             'service with value' => [
-                'defaultData'   => new UPSTransport(),
+                'defaultData' => new UPSTransport(),
                 'submittedData' => [
                     'baseUrl' => 'http://ups.com',
                     'apiUser' => 'user',
                     'apiPassword' => 'password',
-                    'apiKey'=> 'key',
+                    'apiKey' => 'key',
                     'shippingAccountName' => 'name',
                     'shippingAccountNumber' => 'number',
+                    'pickupType' => '01',
+                    'unitOfWeight' => 'KGS',
                     'country' => 'US',
                     'applicableShippingServices' => [1]
                 ],
                 'isValid' => true,
-                'expectedData'  => (new UPSTransport())
+                'expectedData' => (new UPSTransport())
                     ->setBaseUrl('http://ups.com')
                     ->setApiUser('user')
                     ->setApiPassword('password')
                     ->setApiKey('key')
                     ->setShippingAccountName('name')
                     ->setShippingAccountNumber('number')
+                    ->setPickupType('01')
+                    ->setUnitOfWeight('KGS')
                     ->setCountry(new Country('US'))
                     ->addApplicableShippingService($expectedShippingService)
             ]
@@ -240,13 +272,8 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        static::assertEquals(UPSTransportSettingsType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        static::assertEquals(UPSTransportSettingsType::NAME, $this->formType->getBlockPrefix());
+        static::assertEquals(UPSTransportSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 }

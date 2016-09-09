@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -33,7 +32,9 @@ class OroUPSBundle implements Migration
         $table->addColumn('ups_api_key', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_shipping_account_number', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('ups_shipping_account_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('ups_country_code', 'string', ['length' => 2]);
+        $table->addColumn('ups_pickup_type', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('ups_unit_of_measurement', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
     }
 
     /**

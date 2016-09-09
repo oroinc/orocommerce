@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingServiceTest extends \PHPUnit_Framework_TestCase
@@ -19,7 +18,7 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
             ['country', new Country('US')]
         ]);
     }
-    
+
     public function testToString()
     {
         $entity = new ShippingService();

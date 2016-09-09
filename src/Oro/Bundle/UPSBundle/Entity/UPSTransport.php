@@ -5,12 +5,10 @@ namespace Oro\Bundle\UPSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @ORM\Entity
@@ -18,6 +16,19 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
  */
 class UPSTransport extends Transport
 {
+    const PICKUP_TYPES = [
+        '01' => 'Regular Daily Pickup',
+        '03' => 'Customer Counter',
+        '06' => 'One Time Pickup',
+        '07' => 'On Call Air',
+        '19' => 'Letter Center'
+    ];
+    
+    const UNITS_OF_WEIGHT = [
+        'LBS' => 'LBS',
+        'KGS' => 'KGS'
+    ];
+    
     /**
      * @var string
      *
@@ -64,6 +75,20 @@ class UPSTransport extends Transport
     protected $shippingAccountName;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="ups_pickup_type", type="string", length=2, nullable=false)
+     */
+    protected $pickupType;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ups_unit_of_weight", type="string", length=3, nullable=false)
+     */
+    protected $unitOfWeight;
+
+    /**
      * @var Country
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
@@ -93,7 +118,7 @@ class UPSTransport extends Transport
      * @var ParameterBag
      */
     protected $settings;
-    
+
     public function __construct()
     {
         $this->applicableShippingServices = new ArrayCollection();
@@ -220,10 +245,50 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @param Country $country
+     * @param string $pickupType
+     *
      * @return $this
      */
-    public function setCountry($country)
+    public function setPickupType($pickupType)
+    {
+        $this->pickupType = $pickupType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPickupType()
+    {
+        return $this->pickupType;
+    }
+
+    /**
+     * @param string $unitOfWeight
+     *
+     * @return $this
+     */
+    public function setUnitOfWeight($unitOfWeight)
+    {
+        $this->unitOfWeight = $unitOfWeight;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUnitOfWeight()
+    {
+        return $this->unitOfWeight;
+    }
+
+    /**
+     * @param Country|null $country
+     * @return $this
+     */
+    public function setCountry(Country $country = null)
     {
         $this->country = $country;
         return $this;
@@ -303,6 +368,8 @@ class UPSTransport extends Transport
                     'base_url' => $this->getBaseUrl(),
                     'shipping_account_name' => $this->getShippingAccountName(),
                     'shipping_account_number' => $this->getShippingAccountNumber(),
+                    'pickup_type' => $this->getPickupType(),
+                    'unit_of_weight' => $this->getUnitOfWeight(),
                     'country' => $this->getCountry(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
                 ]
