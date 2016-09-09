@@ -27,5 +27,7 @@ input,
 textarea,
 select,
 a {
-  outline: none
+  &:focus {
+    outline: none;
+  }
 }
