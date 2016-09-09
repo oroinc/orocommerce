@@ -45,9 +45,9 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertArrayHasKey('autocomplete', $options);
                         $this->assertEquals(
                             [
-                                'route_name' => 'orob2b_frontend_autocomplete_search',
+                                'route_name' => 'oro_frontend_autocomplete_search',
                                 'route_parameters' => [
-                                    'name' => 'orob2b_product_visibility_limited',
+                                    'name' => 'oro_product_visibility_limited',
                                 ],
                                 'selection_template_twig' =>
                                     'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',

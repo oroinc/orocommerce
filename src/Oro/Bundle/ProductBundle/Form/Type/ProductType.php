@@ -18,7 +18,7 @@ use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ProductType extends AbstractType
 {
-    const NAME = 'orob2b_product';
+    const NAME = 'oro_product';
 
     /**
      * @var string

@@ -6,16 +6,16 @@
 {% block navButtons %}
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
         entity_class: entity_class,
-        exportProcessor: 'orob2b_product_product',
-        exportTemplateProcessor: 'orob2b_product_product_export_template',
-        importProcessor: 'orob2b_product_product.add_or_replace',
+        exportProcessor: 'oro_product_product',
+        exportTemplateProcessor: 'oro_product_product_export_template',
+        importProcessor: 'oro_product_product.add_or_replace',
         importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.product.entity_plural_label'|trans}),
         dataGridName: gridName
     } %}
-    {% if resource_granted('orob2b_product_create') %}
+    {% if resource_granted('oro_product_create') %}
         <div class="btn-group pull-right">
             {{ UI.addButton({
-                'path': path('orob2b_product_create'),
+                'path': path('oro_product_create'),
                 'entity_label': 'oro.product.entity_label'|trans
             }) }}
         </div>
@@ -39,7 +39,7 @@
         <div class="product-index-content">
             {{ oro_widget_render({
                 'widgetType': 'block',
-                'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'orob2b_product_index'})),
+                'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'oro_product_index'})),
                 'title': '',
                 'alias': 'products-grid-widget'
             }) }}

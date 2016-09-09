@@ -41,7 +41,7 @@ class MessageGenerator
             $message = sprintf(
                 '%s (<a href="%s">%s</a>).',
                 $message,
-                $this->router->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]),
+                $this->router->generate('oro_shopping_list_frontend_view', ['id' => $shoppingListId]),
                 $linkTitle = $this->translator->trans('oro.shoppinglist.actions.view')
             );
         }

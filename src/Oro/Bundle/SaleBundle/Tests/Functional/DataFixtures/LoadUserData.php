@@ -40,43 +40,43 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected $roles = [
         self::ROLE1 => [
             [
-                'class' => 'orob2b_sale.entity.quote.class',
+                'class' => 'oro_sale.entity.quote.class',
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_user.class',
+                'class' => 'oro_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'orob2b_sale.entity.quote.class',
+                'class' => 'oro_sale.entity.quote.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_user.class',
+                'class' => 'oro_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
         self::ROLE3 => [
             [
-                'class' => 'orob2b_sale.entity.quote.class',
+                'class' => 'oro_sale.entity.quote.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_user.class',
+                'class' => 'oro_account.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ]
         ],
         self::ROLE4 => [
             [
-                'class' => 'orob2b_order.entity.order.class',
+                'class' => 'oro_order.entity.order.class',
                 'acls'  => [],
             ],
         ],
         self::ROLE5 => [
             [
-                'class' => 'orob2b_order.entity.order.class',
+                'class' => 'oro_order.entity.order.class',
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
@@ -228,7 +228,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected function loadAccountUsers(ObjectManager $manager)
     {
         /* @var $userManager AccountUserManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();

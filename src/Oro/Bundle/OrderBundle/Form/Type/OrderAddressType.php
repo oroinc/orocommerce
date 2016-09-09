@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormView;
 
 class OrderAddressType extends AbstractOrderAddressType
 {
-    const NAME = 'orob2b_order_address_type';
+    const NAME = 'oro_order_address_type';
 
     /**
      * @param FormBuilderInterface $builder

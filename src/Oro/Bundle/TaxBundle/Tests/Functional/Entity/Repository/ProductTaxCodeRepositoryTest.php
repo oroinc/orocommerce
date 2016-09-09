@@ -55,7 +55,7 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_tax.entity.product_tax_code.class')
+            $this->getContainer()->getParameter('oro_tax.entity.product_tax_code.class')
         );
     }
 }

@@ -25,9 +25,9 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  * @ORM\Table("oro_rfp_request")
  * @ORM\Entity
  * @Config(
- *      routeName="orob2b_rfp_request_index",
- *      routeView="orob2b_rfp_request_view",
- *      routeUpdate="orob2b_rfp_request_update",
+ *      routeName="oro_rfp_request_index",
+ *      routeView="oro_rfp_request_view",
+ *      routeUpdate="oro_rfp_request_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-file-text"

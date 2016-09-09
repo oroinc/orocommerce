@@ -93,7 +93,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         $token = new UsernamePasswordToken($user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
-        $action = $this->client->getContainer()->get('orob2b_checkout.model.action.start_checkout');
+        $action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');
         $action->initialize($data['options']);
         $action->execute($data['context']);
         CheckoutControllerTestCase::$checkoutUrl = $data['context']['redirectUrl'];

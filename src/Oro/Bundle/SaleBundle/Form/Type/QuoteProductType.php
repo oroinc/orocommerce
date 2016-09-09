@@ -19,7 +19,7 @@ use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
 class QuoteProductType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product';
+    const NAME = 'oro_sale_quote_product';
 
     /**
      * @var ProductUnitLabelFormatter

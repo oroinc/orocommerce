@@ -17,10 +17,10 @@ class AjaxQuoteProductController extends Controller
     /**
      * @Route(
      *      "/match-offer/{id}",
-     *      name="orob2b_sale_quote_frontend_quote_product_match_offer",
+     *      name="oro_sale_quote_frontend_quote_product_match_offer",
      *      requirements={"id"="\d+"}
      * )
-     * @AclAncestor("orob2b_sale_quote_frontend_view")
+     * @AclAncestor("oro_sale_quote_frontend_view")
      *
      * @param QuoteProduct $quoteProduct
      * @param Request $request
@@ -28,7 +28,7 @@ class AjaxQuoteProductController extends Controller
      */
     public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, Request $request)
     {
-        $matcher = $this->get('orob2b_sale.service.quote_product_offer_matcher');
+        $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
         return new JsonResponse($this->createResponseData($offer));

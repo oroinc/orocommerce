@@ -33,7 +33,7 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_view',
+                'oro_account_account_user_view',
                 ['id' => $accountUser->getId()]
             )
         );

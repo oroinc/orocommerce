@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
-    const ALIAS = 'orob2b_product_unique_variant_links';
+    const ALIAS = 'oro_product_unique_variant_links';
 
     /**
      * @param Product $value

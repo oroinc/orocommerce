@@ -5,7 +5,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_invoice_index'),
+        'indexPath': path('oro_invoice_index'),
         'indexLabel': 'oro.invoice.entity_plural_label'|trans,
         'entityTitle': 'oro.invoice.navigation.view'|trans({
             '%identifier%': entity.invoiceNumber|default('N/A'|trans)
@@ -19,7 +19,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.invoice.widgets.invoice_information'|trans,
-            'url': path('orob2b_invoice_info', {id: entity.id})
+            'url': path('oro_invoice_info', {id: entity.id})
         }) }}
     {% endset %}
 
@@ -61,7 +61,7 @@
                                     {{ lineItem.product }}
                                 {% endif %}
                             </td>
-                            <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
+                            <td>{{ lineItem.quantity|oro_format_product_unit_value(lineItem.productUnit) }}</td>
                             <td>{{ lineItem.price|oro_format_price }}</td>
                             <td>{{ lineItem.totalPrice|oro_format_price }}</td>
                         </tr>

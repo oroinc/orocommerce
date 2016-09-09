@@ -43,7 +43,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
             ]
         );
 
-        $this->handler = $this->getContainer()->get('orob2b_pricing.price_list_relation_trigger_handler');
+        $this->handler = $this->getContainer()->get('oro_pricing.price_list_relation_trigger_handler');
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
         $this->messageProducer->clear();
         $this->messageProducer->enable();

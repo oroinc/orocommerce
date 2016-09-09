@@ -24,7 +24,7 @@ class AccountTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getHandlerId()
     {
-        return 'orob2b_account.account_tree_handler';
+        return 'oro_account.account_tree_handler';
     }
 
     /**

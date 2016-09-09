@@ -12,13 +12,13 @@ class OroPaymentExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroPaymentExtension());
 
         $expectedParameters = [
-            'orob2b_payment.entity.payment_term.class',
+            'oro_payment.entity.payment_term.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_payment.payment_term.manager.api',
-            'orob2b_payment.form.type.payment_term'
+            'oro_payment.payment_term.manager.api',
+            'oro_payment.form.type.payment_term'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

@@ -31,6 +31,6 @@ class PriceRuleExpression extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing.validator_constraints.price_rule_expression_validator';
+        return 'oro_pricing.validator_constraints.price_rule_expression_validator';
     }
 }

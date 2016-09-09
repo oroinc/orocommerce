@@ -16,7 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemType extends AbstractType
 {
-    const NAME = 'orob2b_shopping_list_line_item';
+    const NAME = 'oro_shopping_list_line_item';
 
     /**
      * @var string

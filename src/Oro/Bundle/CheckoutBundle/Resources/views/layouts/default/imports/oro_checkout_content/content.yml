@@ -1,0 +1,78 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'content.html.twig'
+        - '@addTree':
+            items:
+                __checkout_content:
+                    blockType: container
+                __checkout_information:
+                    blockType: checkout_information
+                    options:
+                        workflowStep: '=data["workflowStep"]'
+                        stepOrder: '-'
+                __checkout_form:
+                    blockType: checkout_form
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                __checkout_form_fields:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+                __checkout_order_summary:
+                    blockType: checkout_order_summary
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review"'
+                        lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
+                        total: '=data["oro_checkout_totals"].getData(data["checkout"])["subtotal"]'
+                        checkout: '=data["checkout"]'
+                        workflowItem: '=data["workflowItem"]'
+                __checkout_order_summary_table:
+                    blockType: container
+                __checkout_order_summary_line_items:
+                    blockType: checkout_order_summary_line_items
+                    options:
+                        checkout: '=data["checkout"]'
+                        workflowStep: '=data["workflowStep"]'
+                        lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
+                        workflowItem: '=data["workflowItem"]'
+                __checkout_order_summary_totals:
+                    blockType: price_totals
+                    options:
+                        totals: '=data["oro_checkout_totals"].getData(data["checkout"])'
+                        entityClassName: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                        entityId: '=data["checkout"].getId()'
+                        events:
+                            - 'checkout:shipping-method:changed'
+                        selectors:
+                            form: '[name$="oro_workflow_transition"]'
+                        skipMaskView: true
+                        route: 'oro_checkout_frontend_totals'
+                __checkout_form_buttons:
+                    blockType: container
+                __checkout_button_continue:
+                    blockType: checkout_transition_continue
+                    options:
+                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                        checkout: '=data["checkout"]'
+                __checkout_button_back:
+                    blockType: checkout_transition_back
+                    options:
+                        transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
+                        checkout: '=data["checkout"]'
+            tree:
+                __root:
+                    __checkout_content:
+                        __checkout_information:
+                            __checkout_form:
+                                __checkout_form_fields: ~
+                                __checkout_form_buttons:
+                                    __checkout_button_continue: ~
+                                    __checkout_button_back: ~
+                        __checkout_order_summary:
+                            __checkout_order_summary_table:
+                                __checkout_order_summary_line_items: ~
+                                __checkout_order_summary_totals: ~

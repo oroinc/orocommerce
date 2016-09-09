@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class ResolvePaymentTermEvent extends Event
 {
-    const NAME = 'orob2b_payment.resolve.payment_term';
+    const NAME = 'oro_payment.resolve.payment_term';
 
     /** @var PaymentTerm|null */
     protected $paymentTerm;

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutCompilerPass implements CompilerPassInterface
 {
-    const CHECKOUT_DATA_PROVIDER_MANAGER = 'orob2b_checkout.data_provider.manager.checkout_line_items';
+    const CHECKOUT_DATA_PROVIDER_MANAGER = 'oro_checkout.data_provider.manager.checkout_line_items';
     const CHECKOUT_DATA_PROVIDER_TAG = 'checkout.data_provider.line_item';
 
     /**

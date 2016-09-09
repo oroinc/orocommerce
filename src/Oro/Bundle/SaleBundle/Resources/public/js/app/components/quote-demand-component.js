@@ -14,7 +14,7 @@ define(function(require) {
 
     QuoteDemandComponent = BaseComponent.extend({
         options: {
-            subtotalsRoute: 'orob2b_sale_quote_frontend_subtotals',
+            subtotalsRoute: 'oro_sale_quote_frontend_subtotals',
             quoteDemandId: null,
             subtotalSelector: null,
             formSelector: null,
