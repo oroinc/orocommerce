@@ -3,19 +3,17 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\Address;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,27 +57,21 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getApplicableShippingRulesProvider
      *
      * @param ShippingRule $shippingRule
-     * @param array $context
+     * @param ShippingContext $shippingContext
      * @param bool $expectedApplicability
      */
     public function testGetApplicableShippingRules(
         ShippingRule $shippingRule,
-        array $context,
+        ShippingContext $shippingContext,
         $expectedApplicability
     ) {
         /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
+        $shippingAddress = $shippingContext->getShippingAddress();
 
         $this->repository->expects($this->once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
+            ->with($shippingContext->getCurrency(), $shippingAddress->getCountry())
             ->willReturn([$shippingRule]);
-
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
 
         $rules = $this->provider->getApplicableShippingRules($shippingContext);
 
@@ -172,7 +164,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                     'conditions' => null,
                     'currency' => 'USD',
                     'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-83',]
+                        ['country' => 'TH', 'region' => 'TH-83', ]
                     ]
                 ]),
                 'context' => $this->createContext('USD', 'TH', 'TH-83'),
@@ -231,9 +223,9 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetApplicableShippingRulesMultiple()
     {
-        $context = $this->createContext('USD', 'TH', 'TH-83');
+        $shippingContext = $this->createContext('USD', 'TH', 'TH-83');
         /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
+        $shippingAddress = $shippingContext->getShippingAddress();
 
         $firstShippingRule = $this->createShippingRule([
             'name' => 'ShippingRule.1',
@@ -253,14 +245,8 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->repository->expects($this->once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
+            ->with($shippingContext->getCurrency(), $shippingAddress->getCountry())
             ->willReturn([$firstShippingRule, $secondShippingRule]);
-
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
 
         $rules = $this->provider->getApplicableShippingRules($shippingContext);
 
@@ -271,9 +257,9 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetApplicableShippingRulesStopProcessing()
     {
-        $context = $this->createContext('USD', 'TH');
+        $shippingContext = $this->createContext('USD', 'TH');
         /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
+        $shippingAddress = $shippingContext->getShippingAddress();
 
         $firstShippingRule = $this->createShippingRule([
             'name' => 'ShippingRule.1',
@@ -294,14 +280,8 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->repository->expects($this->once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
+            ->with($shippingContext->getCurrency(), $shippingAddress->getCountry())
             ->willReturn([$firstShippingRule, $secondShippingRule]);
-
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
 
         $rules = $this->provider->getApplicableShippingRules($shippingContext);
 
@@ -314,18 +294,17 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $country
      * @param string|null $region
      * @param string|null $postalCode
-     * @return array
+     * @return ShippingContext
      */
     protected function createContext($currency, $country, $region = null, $postalCode = null)
     {
-        return [
-            'currency' => $currency,
-            'shippingAddress' => $this->getEntity(Address::class, [
-                'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
-                'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
+        return (new ShippingContext())
+            ->setCurrency($currency)
+            ->setShippingAddress($this->getEntity(Address::class, [
+                'country'    => $this->getEntity(Country::class, ['iso2Code' => $country]),
+                'region'     => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
                 'postalCode' => $postalCode,
-            ]),
-        ];
+            ]));
     }
 
     /**

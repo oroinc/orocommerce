@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
-use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 
 class ShippingContextTest extends \PHPUnit_Framework_TestCase
 {
@@ -99,19 +98,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
                 ['subtotal', new Price()],
             ]
         );
-    }
-
-    public function testGetOptions()
-    {
-        $options = $this->model->getOptions();
-
-        $this->assertEquals($this->model->getLineItems(), $options['lineItems']);
-        $this->assertEquals($this->model->getBillingAddress(), $options['billingAddress']);
-        $this->assertEquals($this->model->getShippingAddress(), $options['shippingAddress']);
-        $this->assertEquals($this->model->getShippingOrigin(), $options['shippingOrigin']);
-        $this->assertEquals($this->model->getPaymentMethod(), $options['paymentMethod']);
-        $this->assertEquals($this->model->getCurrency(), $options['currency']);
-        $this->assertEquals($this->model->getSubtotal(), $options['subtotal']);
     }
 
     public function testSetLineItemsWithShippingContextInterface()

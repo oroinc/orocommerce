@@ -35,7 +35,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function isGrouped()
     {
-        return true;
+        return false;
     }
 
     /**

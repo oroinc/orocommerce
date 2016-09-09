@@ -230,3 +230,11 @@ services:
         arguments:
             - '@request'
             - '@doctrine.orm.entity_manager'
+
+    orob2b_shipping.layout.data_provider.shipping_methods:
+          class: 'Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider'
+          arguments:
+              - '@orob2b_shipping.shipping_price.provider'
+              - '@orob2b_shipping.shipping_method.registry'
+          tags:
+              - { name: layout.data_provider, alias: shipping_methods }

@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\CheckoutBundle\Condition;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 /**
  * Check shipping method supports
  * Usage:
  * @shipping_method_supports:
  *      entity: $checkout
- *      shipping_rule_config_id: $shipping_rule_config
  */
 class ShippingMethodSupports extends AbstractCondition implements ContextAccessorAwareInterface
 {
@@ -25,33 +22,30 @@ class ShippingMethodSupports extends AbstractCondition implements ContextAccesso
 
     const NAME = 'shipping_method_supports';
 
-    /** @var ShippingMethodRegistry */
-    protected $shippingMethodRegistry;
-
-    /** ShippingRulesProvider */
-    protected $shippingRulesProvider;
-
-    /** ShippingContextProviderFactory */
-    protected $shippingContextProviderFactory;
-
-    /** @var Checkout */
+    /**
+     * @var Checkout
+     */
     protected $entity;
 
-    /** @var  ShippingRuleConfiguration */
-    protected $shippingRuleConfig;
+    /**
+     * @var ShippingPriceProvider
+     */
+    protected $shippingPriceProvider;
 
     /**
-     * @param ShippingMethodRegistry $shippingMethodRegistry
-     * @param ShippingRulesProvider $shippingRulesProvider
+     * @var ShippingContextProviderFactory
+     */
+    protected $shippingContextProviderFactory;
+
+    /**
+     * @param ShippingPriceProvider $shippingPriceProvider
      * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
     public function __construct(
-        ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingRulesProvider $shippingRulesProvider,
+        ShippingPriceProvider $shippingPriceProvider,
         ShippingContextProviderFactory $shippingContextProviderFactory
     ) {
-        $this->shippingMethodRegistry = $shippingMethodRegistry;
-        $this->shippingRulesProvider = $shippingRulesProvider;
+        $this->shippingPriceProvider = $shippingPriceProvider;
         $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
@@ -71,22 +65,9 @@ class ShippingMethodSupports extends AbstractCondition implements ContextAccesso
         if (array_key_exists('entity', $options)) {
             $this->entity = $options['entity'];
         }
-        if (array_key_exists('shipping_rule_config', $options)) {
-            $this->shippingRuleConfig = $options['shipping_rule_config'];
-        }
-        if (!$this->entity && array_key_exists(0, $options)) {
-            $this->entity = $options[0];
-        }
-        if (!$this->shippingRuleConfig && array_key_exists(1, $options)) {
-            $this->shippingRuleConfig = $options[1];
-        }
 
         if (!$this->entity) {
             throw new InvalidArgumentException('Missing "entity" option');
-        }
-
-        if (!$this->shippingRuleConfig) {
-            throw new InvalidArgumentException('Missing "shipping_rule_config" option');
         }
 
         return $this;
@@ -97,54 +78,34 @@ class ShippingMethodSupports extends AbstractCondition implements ContextAccesso
      */
     protected function isConditionAllowed($context)
     {
-        $result = false;
         /** @var Checkout $entity */
         $entity = $this->resolveValue($context, $this->entity, false);
-        $shippingRuleConfig = $this->resolveValue($context, $this->shippingRuleConfig, false);
 
-        $rules = [];
-        if (null !==$entity) {
-            $shippingContext = $this->shippingContextProviderFactory->create($entity);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
-        }
-        if (0 !== count($rules)) {
-            foreach ($rules as $rule) {
-                foreach ($rule->getConfigurations() as $config) {
-                    if ($config === $shippingRuleConfig) {
-                        $result = $this->evaluateShippingConfiguration($entity, $config);
-                    }
-                    if ($result) {
-                        return $result;
+        $shippingContext = $this->shippingContextProviderFactory->create($entity);
+        $allMethodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
+
+        foreach ($allMethodsData as $method) {
+            if (!array_key_exists('identifier', $method) || !array_key_exists('types', $method)) {
+                continue;
+            }
+            if ($method['identifier'] === $entity->getShippingMethod()) {
+                foreach ($method['types'] as $type) {
+                    if (array_key_exists('identifier', $type)
+                        && $type['identifier'] === $entity->getShippingMethodType()) {
+                        return true;
                     }
                 }
+                break;
             }
         }
 
-        return $result;
-    }
-
-    /**
-     * @param Checkout $entity
-     * @param ShippingRuleConfiguration $config
-     * @return bool
-     */
-    protected function evaluateShippingConfiguration(Checkout $entity, ShippingRuleConfiguration $config)
-    {
-        if ($config->getMethod() === $entity->getShippingMethod()) {
-            $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
-            $types = $method->getShippingTypes();
-            if (!$entity->getShippingMethodType() && 0 === count($types)) {
-                return true;
-            } elseif (in_array($entity->getShippingMethodType(), $types, true)) {
-                return true;
-            }
-        }
-        
         return false;
     }
 
     /**
-     * {@inheritdoc}
+     * Gets an array representation of the expression.
+     *
+     * @return array
      */
     public function toArray()
     {

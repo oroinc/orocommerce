@@ -79,7 +79,9 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
         }
 
         $handlingFee = 0;
-        if ($typeOptions[static::HANDLING_FEE_OPTION]) {
+        if (array_key_exists(static::HANDLING_FEE_OPTION, $typeOptions)
+            && $typeOptions[static::HANDLING_FEE_OPTION]
+        ) {
             $handlingFee = $typeOptions[static::HANDLING_FEE_OPTION];
         }
 

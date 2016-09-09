@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 abstract class CheckoutControllerTestCase extends WebTestCase
 {
@@ -172,11 +171,10 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     {
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.8');
-        /** @var ShippingRuleConfiguration $shippingRuleConfig */
-        $shippingRuleConfig = $shippingRule->getConfigurations()->first();
+        /** @var ShippingRuleMethodConfig $shippingRuleConfig */
+        $shippingRuleConfig = $shippingRule->getMethodConfigs()->first();
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = null;
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

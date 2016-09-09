@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -16,6 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
@@ -103,14 +103,20 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $applicableMethodsWithTypesData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context);
 
         $this->assertCount(1, $applicableMethodsWithTypesData);
-        $this->assertEquals('flat_rate', $applicableMethodsWithTypesData[0]['identifier']);
-        $this->assertEquals('oro.shipping.method.flat_rate.label', $applicableMethodsWithTypesData[0]['label']);
-        $this->assertCount(1, $applicableMethodsWithTypesData[0]['types']);
-        $this->assertEquals('primary', $applicableMethodsWithTypesData[0]['types'][0]['identifier']);
-        $this->assertInstanceOf(Price::class, $applicableMethodsWithTypesData[0]['types'][0]['price']);
+        $this->assertEquals('flat_rate', $applicableMethodsWithTypesData['flat_rate']['identifier']);
+        $this->assertEquals(
+            'oro.shipping.method.flat_rate.label',
+            $applicableMethodsWithTypesData['flat_rate']['label']
+        );
+        $this->assertCount(1, $applicableMethodsWithTypesData['flat_rate']['types']);
+        $this->assertEquals('primary', $applicableMethodsWithTypesData['flat_rate']['types']['primary']['identifier']);
+        $this->assertInstanceOf(
+            Price::class,
+            $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
+        );
         $this->assertEquals(
             Price::create(5, 'USD'),
-            $applicableMethodsWithTypesData[0]['types'][0]['price']
+            $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
         );
     }
 
@@ -170,34 +176,6 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPricesAwareShippingMethodTypePricesProvider
-     *
-     * @param ShippingContext $context
-     * @param ShippingMethodInterface $method
-     * @param string|int|null $methodTypeIdentifier
-     * @param Price $expectedValue
-     */
-    public function testGetPricesAwareShippingMethodTypePrices(
-        ShippingContext $context,
-        ShippingMethodInterface $method,
-        $methodTypeIdentifier,
-        $expectedValue
-    ) {
-        $awareShippingMethodTypePricesReflection = self::getMethod('getAwareShippingMethodTypePrices');
-        $prices = $awareShippingMethodTypePricesReflection->invokeArgs(
-            $this->shippingPriceProvider,
-            [$context, $method, $methodTypeIdentifier]
-        );
-
-        $this->assertCount(1, $prices);
-
-        $price = reset($prices);
-
-        $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals($expectedValue->getValue(), $price->getValue());
-    }
-
-    /**
      * @param string $name
      * @return \ReflectionMethod
      */
@@ -217,7 +195,24 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function createShippingRule(array $data)
     {
         $data['destinations'] = $this->createDestinations($data);
-        $data['methodConfigs'] = [$this->getEntity(ShippingRuleMethodConfig::class, ['method' => 'flat_rate'])];
+        $data['methodConfigs'] = [
+            $this->getEntity(
+                ShippingRuleMethodConfig::class,
+                [
+                    'method' => 'flat_rate',
+                    'typeConfigs' => [
+                        (new ShippingRuleMethodTypeConfig())
+                            ->setEnabled(true)
+                            ->setType(FlatRateShippingMethodType::IDENTIFIER)
+                            ->setOptions([
+                                'price' => 12,
+                                'handling_fee' => null,
+                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                            ])
+                    ]
+                ]
+            )
+        ];
 
         return $this->getEntity(ShippingRule::class, $data);
     }
@@ -269,8 +264,15 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ;
         $shippingMethodType->expects($this->any())
             ->method('getOptions')
-            ->willReturn([])
-        ;
+            ->willReturn(
+                [
+                    FlatRateShippingMethodType::IDENTIFIER =>
+                        [
+                            FlatRateShippingMethodType::PRICE_OPTION => 1,
+                            FlatRateShippingMethodType::TYPE_OPTION  => FlatRateShippingMethodType::PER_ORDER_TYPE
+                        ]
+                ]
+            );
 
         return $this->getEntity(FlatRatePricesAwareShippingMethod::class, ['type' => $shippingMethodType]);
     }
@@ -350,27 +352,6 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'context' => $this->createContext('USD', 'US'),
                 'expectedValue' => true,
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getPricesAwareShippingMethodTypePricesProvider()
-    {
-        return [
-            'without type identifier' => [
-                'context' => $this->createContext('USD', 'US'),
-                'method' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
-                'methodTypeIdentifier' => null,
-                'expectedValue' => Price::create(5, 'USD'),
-            ],
-            'with type identifier' => [
-                'context' => $this->createContext('USD', 'US'),
-                'method' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
-                'methodTypeIdentifier' => 'primary',
-                'expectedValue' => Price::create(5, 'USD'),
             ],
         ];
     }

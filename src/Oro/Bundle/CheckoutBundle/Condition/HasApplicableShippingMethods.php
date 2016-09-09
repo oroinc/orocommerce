@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\Condition;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 
 /**
  * Check applicable shipping methods
@@ -92,8 +93,9 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         }
         if (0 !== count($rules)) {
             $result = true;
+            /** @var ShippingRule $rule */
             foreach ($rules as $rule) {
-                foreach ($rule->getConfigurations() as $config) {
+                foreach ($rule->getMethodConfigs() as $config) {
                     $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
                     if (null === $method) {
                         $result = false;
