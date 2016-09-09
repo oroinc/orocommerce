@@ -13,10 +13,10 @@ oro:
             pickup_type.label: Pickup Type
             unit_of_weight.label: Unit Of Weight
             country.label: Country
-        shipping_service:
-            label: Shipping Service
-            plural_label: Shipping Services
-            blank: Should be configured at least one Shipping Service
+            shipping_service:
+                label: Shipping Service
+                plural_label: Shipping Services
+                blank: Should be configured at least one Shipping Service
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
