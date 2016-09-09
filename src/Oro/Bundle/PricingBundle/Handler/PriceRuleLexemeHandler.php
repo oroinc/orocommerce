@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Handler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
@@ -103,7 +102,6 @@ class PriceRuleLexemeHandler
             if (strpos($class, '|') !== false) {
                 list($class, $containerId) = explode('|', $class);
             }
-            $realClassName = $this->priceRuleProvider->getRealClassName($class);
 
             if (strpos($class, '::') !== false) {
                 list($containerClass, $fieldName) = explode('::', $class);
@@ -116,21 +114,19 @@ class PriceRuleLexemeHandler
                 $lexemeEntities[] = $lexeme;
             }
 
+            $realClassName = $this->priceRuleProvider->getRealClassName($class);
+            if ($realClassName === PriceAttributeProductPrice::class) {
+                $containerId = $this->getPriceAttributeRelationByClass($class)->getId();
+            }
             foreach ($fieldNames as $fieldName) {
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setClassName($realClassName);
+                $lexeme->setRelationId($containerId);
                 $lexeme->setFieldName(
                     $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
                 );
                 $lexeme->setPriceList($priceList);
-
-                if ($realClassName ===  PriceAttributeProductPrice::class) {
-                    $relation = $this->getPriceAttributeRelationByClass($class);
-                    $lexeme->setRelationId($relation->getId());
-                } elseif ($realClassName ===  ProductPrice::class) {
-                    $lexeme->setRelationId($containerId);
-                }
 
                 $lexemeEntities[] = $lexeme;
             }
