@@ -60,9 +60,11 @@ $shopping-lists-popup-offset: 15px;
 
     &__footer &__list {
         padding: ($shopping-lists-popup-offset / 4) $shopping-lists-popup-offset;
+        vertical-align: middle;
     }
 
     &__footer &__quantity {
         padding: ($shopping-lists-popup-offset / 4) 0 ($shopping-lists-popup-offset / 4) $shopping-lists-popup-offset;
+        vertical-align: middle;
     }
 }
