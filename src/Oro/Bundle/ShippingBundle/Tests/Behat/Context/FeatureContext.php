@@ -118,7 +118,11 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        $form ->clickLink('Add');
+        foreach ($table->getRows() as $row) {
+            if (trim($row[0]) == 'Country2') {
+                $form->clickLink('Add');
+            }
+        }
         $form->fill($table);
         $form->saveAndClose();
         $this->waitForAjax();
@@ -149,8 +153,14 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
-        $form->fillField('Sort Order', '2');
-        $form ->clickLink('Add');
+
+        foreach ($table->getRows() as $row) {
+            if (trim($row[0]) == 'Country2') {
+                $form->fillField('Sort Order', '1');
+                $form->clickLink('Add');
+            }
+        }
+
         $form->fill($table);
         $form->saveAndClose();
 
@@ -197,7 +207,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getSession()->getPage()->clickLink('Back');
         $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Information');
-        
+
         /** @var Form $form */
         $form = $this->createElement('Address');
         $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
