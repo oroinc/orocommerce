@@ -751,7 +751,7 @@ services:
             - '@oro_pricing.expression.expression_language_converter'
         calls:
             - [addNameMapping, ['product', '%oro_product.entity.product.class%']]
-            - [addNameMapping, ['pricelist', '%oro_pricing.entity.product_price.class%']]
+            - [addNameMapping, ['pricelist', '%oro_pricing.entity.price_list.class%']]
 
     oro_pricing.expression.node_to_query_designer_converter:
         class: 'Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'

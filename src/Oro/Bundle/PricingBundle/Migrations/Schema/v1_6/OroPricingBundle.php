@@ -8,7 +8,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPricingBundle implements Migration
 {
-
     /**
      * {@inheritdoc}
      */
