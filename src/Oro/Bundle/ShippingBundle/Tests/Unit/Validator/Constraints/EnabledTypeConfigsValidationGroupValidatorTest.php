@@ -67,7 +67,16 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
 
         $this->context->expects($this->once())
             ->method('buildViolation')
-            ->with($this->constraint->message, ['{{ limit }}' => $this->constraint->min])
+            ->with($this->constraint->message)
+            ->willReturn($builder);
+
+        $builder->expects($this->exactly(2))
+            ->method('setParameter')
+            ->willReturn($builder);
+
+        $builder->expects($this->once())
+            ->method('setPlural')
+            ->with($this->constraint->min)
             ->willReturn($builder);
 
         $builder->expects($this->once())

@@ -35,6 +35,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
 {
     /**
+     * @var RuleMethodConfigCollectionSubscriberProxy
+     */
+    protected $ruleMethodConfigCollectionSubscriber;
+
+    /**
      * @var RuleMethodTypeConfigCollectionSubscriberProxy
      */
     protected $ruleMethodTypeConfigCollectionSubscriber;
@@ -53,9 +58,12 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
     {
         $this->methodRegistry = new ShippingMethodRegistry();
         $this->ruleMethodTypeConfigCollectionSubscriber = new RuleMethodTypeConfigCollectionSubscriberProxy();
+        $this->ruleMethodConfigCollectionSubscriber = new RuleMethodConfigCollectionSubscriberProxy();
         $this->subscriber = new RuleMethodConfigSubscriberProxy();
         parent::setUp();
         $this->ruleMethodTypeConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->ruleMethodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
     }
@@ -211,7 +219,8 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
                     ShippingRuleType::class => new ShippingRuleType($this->methodRegistry, $translator),
                     FlatRateShippingMethodTypeOptionsType::class
                     => new FlatRateShippingMethodTypeOptionsType($roundingService),
-                    ShippingRuleMethodConfigCollectionType::class => new ShippingRuleMethodConfigCollectionType(),
+                    ShippingRuleMethodConfigCollectionType::class
+                    => new ShippingRuleMethodConfigCollectionType($this->ruleMethodConfigCollectionSubscriber),
                     ShippingRuleMethodConfigType::class
                     => new ShippingRuleMethodConfigType($this->subscriber, $this->methodRegistry),
                     ShippingRuleMethodTypeConfigCollectionType::class =>

@@ -23,6 +23,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
@@ -46,6 +47,11 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
     protected $ruleMethodTypeConfigCollectionSubscriber;
 
     /**
+     * @var RuleMethodConfigCollectionSubscriberProxy
+     */
+    protected $ruleMethodConfigCollectionSubscriber;
+
+    /**
      * @var RuleMethodConfigSubscriberProxy
      */
     protected $ruleMethodConfigSubscriber;
@@ -62,10 +68,13 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
         $this->methodRegistry->addShippingMethod($flatRate);
         $this->ruleMethodTypeConfigCollectionSubscriber = new RuleMethodTypeConfigCollectionSubscriberProxy();
         $this->ruleMethodConfigSubscriber = new RuleMethodConfigSubscriberProxy();
+        $this->ruleMethodConfigCollectionSubscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->ruleMethodTypeConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
         $this->ruleMethodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->ruleMethodConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
 
         $translator = $this->getMock(TranslatorInterface::class);
         $translator->expects(static::any())
@@ -197,7 +206,8 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
                 [
                     FlatRateShippingMethodTypeOptionsType::class
                     => new FlatRateShippingMethodTypeOptionsType($roundingService),
-                    ShippingRuleMethodConfigCollectionType::class => new ShippingRuleMethodConfigCollectionType(),
+                    ShippingRuleMethodConfigCollectionType::class
+                    => new ShippingRuleMethodConfigCollectionType($this->ruleMethodConfigCollectionSubscriber),
                     ShippingRuleMethodConfigType::class
                     => new ShippingRuleMethodConfigType($this->ruleMethodConfigSubscriber, $this->methodRegistry),
                     ShippingRuleMethodTypeConfigCollectionType::class =>

@@ -59,6 +59,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
             - Valid: ~
             - Count:
                 min: 1
+                minMessage: oro.shipping.shippingrule.method.config.count.message
         currency:
             - Currency: ~
             - NotBlank: ~

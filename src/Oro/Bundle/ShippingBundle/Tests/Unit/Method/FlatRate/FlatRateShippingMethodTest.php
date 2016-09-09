@@ -25,7 +25,7 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testIsGrouped()
     {
-        static::assertTrue($this->flatRate->isGrouped());
+        static::assertFalse($this->flatRate->isGrouped());
     }
 
     public function testGetLabel()

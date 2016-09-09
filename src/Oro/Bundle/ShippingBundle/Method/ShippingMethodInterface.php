@@ -36,11 +36,6 @@ interface ShippingMethodInterface
     public function getOptionsConfigurationFormType();
 
     /**
-     * @return array
-     */
-    public function getOptions();
-
-    /**
      * @return int
      */
     public function getSortOrder();

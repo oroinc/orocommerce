@@ -210,7 +210,7 @@
 {% endblock %}
 
 {% block oro_shipping_rule_method_type_config_collection_widget %}
-    {% if not is_grouped %}
+    {% if is_grouped %}
         {{- block('collection_widget') -}}
     {% else %}
         {% if prototype is defined %}
@@ -229,10 +229,12 @@
 {% endblock %}
 
 {% block oro_shipping_rule_method_type_config_widget %}
-    {% if form.enabled is defined%}
+    {% if form.enabled is defined %}
         {{ form_row(form.enabled) }}
     {% endif %}
+<div data-validation-ignore="">
     {{ form_widget(form.options) }}
+</div>
     {{ form_rest(form) }}
 {% endblock %}
 

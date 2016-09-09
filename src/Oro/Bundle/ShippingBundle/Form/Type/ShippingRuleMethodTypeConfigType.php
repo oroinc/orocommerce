@@ -7,7 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraint;
 
 class ShippingRuleMethodTypeConfigType extends AbstractType
 {
@@ -18,7 +20,7 @@ class ShippingRuleMethodTypeConfigType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!$options['is_grouped']) {
+        if ($options['is_grouped']) {
             $builder->add('enabled', CheckboxType::class);
         } else {
             $builder->add('enabled', HiddenType::class, [
@@ -38,6 +40,13 @@ class ShippingRuleMethodTypeConfigType extends AbstractType
             'data_class' => ShippingRuleMethodTypeConfig::class,
             'options_type' => HiddenType::class,
             'is_grouped' => false,
+            'validation_groups' => function (FormInterface $form) {
+                $data = $form->getData();
+                if ($data && $data->isEnabled()) {
+                    return [Constraint::DEFAULT_GROUP];
+                }
+                return [];
+            },
         ]);
     }
 
