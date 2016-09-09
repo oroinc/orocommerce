@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\EventListener\Datagrid;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
