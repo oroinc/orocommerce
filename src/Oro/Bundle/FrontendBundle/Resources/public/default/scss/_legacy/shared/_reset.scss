@@ -22,12 +22,7 @@ footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
-button,
-input,
-textarea,
-select,
-a {
-  &:focus {
-    outline: none;
-  }
+&:focus {
+  outline: none;
 }
+
