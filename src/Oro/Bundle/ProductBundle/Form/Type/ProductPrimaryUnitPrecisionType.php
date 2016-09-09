@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductPrimaryUnitPrecisionType extends AbstractType
 {
-    const NAME = 'orob2b_product_primary_unit_precision';
+    const NAME = 'oro_product_primary_unit_precision';
 
     /**
      * @var string

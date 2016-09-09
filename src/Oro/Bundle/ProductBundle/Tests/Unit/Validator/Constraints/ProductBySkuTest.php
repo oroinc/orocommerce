@@ -21,6 +21,6 @@ class ProductBySkuTest extends \PHPUnit_Framework_TestCase
 
     public function testValidatedBy()
     {
-        $this->assertEquals('orob2b_product_product_by_sku_validator', $this->constraint->validatedBy());
+        $this->assertEquals('oro_product_product_by_sku_validator', $this->constraint->validatedBy());
     }
 }

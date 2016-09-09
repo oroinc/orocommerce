@@ -22,9 +22,9 @@ use Oro\Bundle\AccountBundle\Model\ExtendAccount;
  * )
  *
  * @Config(
- *      routeName="orob2b_account_index",
- *      routeView="orob2b_account_view",
- *      routeUpdate="orob2b_account_update",
+ *      routeName="oro_account_index",
+ *      routeView="oro_account_view",
+ *      routeUpdate="oro_account_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-user"
@@ -37,7 +37,7 @@ use Oro\Bundle\AccountBundle\Model\ExtendAccount;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="orob2b_account_select",
+ *              "form_type"="oro_account_select",
  *              "grid_name"="account-accounts-select-grid",
  *          },
  *          "security"={

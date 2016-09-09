@@ -5,15 +5,15 @@
 {% oro_title_set({params : { "%entityLabel%": entity.label } }) %}
 
 {% set formAction = entityId
-    ? path('orob2b_payment_term_update', { 'id': entityId })
-    : path('orob2b_payment_term_create')
+    ? path('oro_payment_term_update', { 'id': entityId })
+    : path('oro_payment_term_create')
 %}
 
 {% block navButtons %}
     {% if entityId and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_delete_paymentterm', {'id': entityId}),
-            'dataRedirect': path('orob2b_payment_term_index'),
+            'dataUrl': path('oro_api_delete_paymentterm', {'id': entityId}),
+            'dataRedirect': path('oro_payment_term_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entityId,
             'id': 'btn-remove-payment_term',
@@ -22,9 +22,9 @@
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('orob2b_payment_term_index')) }}
+    {{ UI.cancelButton(path('oro_payment_term_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_payment_term_update') %}
+    {% if entity.id or resource_granted('oro_payment_term_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -34,7 +34,7 @@
     {% if entityId %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_payment_term_index'),
+            'indexPath':   path('oro_payment_term_index'),
             'indexLabel': 'oro.payment.paymentterm.entity_plural_label'|trans,
             'entityTitle': entity.label
         } %}

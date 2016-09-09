@@ -23,10 +23,10 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 class QuoteController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_sale_quote_frontend_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_sale_quote_frontend_view", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="orob2b_sale_quote_frontend_view",
+     *      id="oro_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
@@ -49,10 +49,10 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_sale_quote_frontend_index")
+     * @Route("/", name="oro_sale_quote_frontend_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
-     *      id="orob2b_sale_quote_frontend_index",
+     *      id="oro_sale_quote_frontend_index",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
      *      permission="VIEW",
@@ -64,14 +64,14 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_sale.entity.quote.class')
+            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
         ];
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_sale_quote_frontend_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_sale_quote_frontend_info", requirements={"id"="\d+"})
      * @Template("OroSaleBundle:Quote/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_sale_quote_frontend_view")
+     * @AclAncestor("oro_sale_quote_frontend_view")
      *
      * @param Quote $quote
      * @return array
@@ -84,10 +84,10 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/choice/{id}", name="orob2b_sale_quote_frontend_choice", requirements={"id"="\d+"})
+     * @Route("/choice/{id}", name="oro_sale_quote_frontend_choice", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="orob2b_sale_quote_frontend_choice",
+     *      id="oro_sale_quote_frontend_choice",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
@@ -110,7 +110,7 @@ class QuoteController extends Controller
             if ($form->isValid()) {
                 $actionGroupRegistry = $this->get('oro_action.action_group_registry');
                 $actionGroup = $actionGroupRegistry
-                    ->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
+                    ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
                 if ($actionGroup) {
                     $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
 
@@ -137,10 +137,10 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/subtotals/{id}", name="orob2b_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
+     * @Route("/subtotals/{id}", name="oro_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="orob2b_sale_quote_frontend_subtotals",
+     *      id="oro_sale_quote_frontend_subtotals",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
      *      permission="ACCOUNT_VIEW",
@@ -170,6 +170,6 @@ class QuoteController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

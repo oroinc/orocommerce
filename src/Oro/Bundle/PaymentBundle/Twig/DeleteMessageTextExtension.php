@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {
-    const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'orob2b_payment_term_delete_message';
+    const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'oro_payment_term_delete_message';
 
     /** @var  DeleteMessageTextGenerator */
     protected $deleteMessageGenerator;

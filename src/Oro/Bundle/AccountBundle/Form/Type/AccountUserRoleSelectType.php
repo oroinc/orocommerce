@@ -10,7 +10,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class AccountUserRoleSelectType extends AbstractType
 {
-    const NAME = 'orob2b_account_account_user_role_select';
+    const NAME = 'oro_account_account_user_role_select';
 
     /**
      * @var TranslatorInterface

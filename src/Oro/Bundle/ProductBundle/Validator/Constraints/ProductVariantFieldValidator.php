@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductVariantFieldValidator extends ConstraintValidator
 {
-    const ALIAS = 'orob2b_product_variant_field';
+    const ALIAS = 'oro_product_variant_field';
 
     /** @var CustomFieldProvider */
     protected $customFieldProvider;

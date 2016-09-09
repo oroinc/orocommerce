@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
 class ProductRowType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_product_row';
+    const NAME = 'oro_product_row';
 
     /**
      * {@inheritdoc}

@@ -14,9 +14,9 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 class AjaxMenuItemController extends Controller
 {
     /**
-     * @Route("/move", name="orob2b_menu_item_move")
+     * @Route("/move", name="oro_menu_item_move")
      * @Method({"PUT"})
-     * @AclAncestor("orob2b_menu_item_update")
+     * @AclAncestor("oro_menu_item_update")
      *
      * @param Request $request
      * @return JsonResponse
@@ -28,7 +28,7 @@ class AjaxMenuItemController extends Controller
         $position = $request->get('position');
 
         return new JsonResponse(
-            $this->get('orob2b_menu.tree.menu_item_tree_handler')->moveNode($nodeId, $parentId, $position)
+            $this->get('oro_menu.tree.menu_item_tree_handler')->moveNode($nodeId, $parentId, $position)
         );
     }
 }

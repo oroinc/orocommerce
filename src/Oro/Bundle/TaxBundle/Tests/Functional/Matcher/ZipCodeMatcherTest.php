@@ -63,7 +63,7 @@ class ZipCodeMatcherTest extends WebTestCase
         /** @var TaxCodeInterface $accountTaxCode */
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
 
-        $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
+        $zipCodeMatcher = $this->getContainer()->get('oro_tax.matcher.zip_code_matcher');
         /** @var TaxRule[] $rules */
         $rules = $zipCodeMatcher->match(
             $address,

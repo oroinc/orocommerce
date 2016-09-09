@@ -5,16 +5,16 @@
     '%entityName%': 'oro.order.entity_label'|trans
 } }) %}
 
-{% set formAction = entity.id ? path('orob2b_order_frontend_update', { 'id': entity.id }) : path('orob2b_order_frontend_create')  %}
+{% set formAction = entity.id ? path('oro_order_frontend_update', { 'id': entity.id }) : path('oro_order_frontend_create')  %}
 
 {% form_theme form with ['OroOrderBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_order_frontend_index')) }}
+    {{ UI.cancelButton(path('oro_order_frontend_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_order_frontend_update') %}
+    {% if entity.id or resource_granted('oro_order_frontend_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -24,7 +24,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_order_frontend_index'),
+            'indexPath':   path('oro_order_frontend_index'),
             'indexLabel': 'oro.order.entity_plural_label'|trans,
             'entityTitle': entity.identifier|default('N/A'|trans)
         } %}
@@ -37,7 +37,7 @@
 
 {% set pageComponent = {
     module: 'oroorder/js/app/components/entry-point-component',
-    options: { route: 'orob2b_order_frontend_entry_point', routeParams: {id: entity.id|default(0)} },
+    options: { route: 'oro_order_frontend_entry_point', routeParams: {id: entity.id|default(0)} },
 } %}
 
 {% block content_data %}

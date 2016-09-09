@@ -156,12 +156,12 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     {
         return [
             'errorUrl' => $this->router->generate(
-                'orob2b_payment_callback_error',
+                'oro_payment_callback_error',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'returnUrl' => $this->router->generate(
-                'orob2b_payment_callback_return',
+                'oro_payment_callback_return',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),

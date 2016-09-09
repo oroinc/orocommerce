@@ -66,7 +66,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_menu_item', $this->formType->getName());
+        $this->assertEquals('oro_menu_item', $this->formType->getName());
     }
 
     public function testBuildFormForRootMenuItem()

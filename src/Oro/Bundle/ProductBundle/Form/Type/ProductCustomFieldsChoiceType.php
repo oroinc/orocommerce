@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductCustomFieldsChoiceType extends AbstractType
 {
-    const NAME = 'orob2b_product_custom_entity_fields_choice';
+    const NAME = 'oro_product_custom_entity_fields_choice';
 
     /**
      * @var CustomFieldProvider

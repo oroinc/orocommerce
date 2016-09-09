@@ -16,8 +16,8 @@ class QuickAddControllerTest extends BaseControllerTest
     {
         return [
             'add to shopping list' => [
-                'processorName' => 'orob2b_shopping_list_quick_add_processor',
-                'routerName' => 'orob2b_product_frontend_quick_add',
+                'processorName' => 'oro_shopping_list_quick_add_processor',
+                'routerName' => 'oro_product_frontend_quick_add',
                 'routerParams' => [],
                 'expectedMessage' => '3 products were added'
             ],

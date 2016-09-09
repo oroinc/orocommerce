@@ -13,11 +13,11 @@ use Oro\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 class FrontendAccountUserFormProvider extends AbstractFormProvider
 {
-    const ACCOUNT_USER_CREATE_ROUTE_NAME            = 'orob2b_account_frontend_account_user_create';
-    const ACCOUNT_USER_UPDATE_ROUTE_NAME            = 'orob2b_account_frontend_account_user_update';
-    const ACCOUNT_USER_PROFILE_UPDATE_ROUTE_NAME    = 'orob2b_account_frontend_account_user_profile_update';
-    const ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME     = 'orob2b_account_frontend_account_user_reset_request';
-    const ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME    = 'orob2b_account_frontend_account_user_password_reset';
+    const ACCOUNT_USER_CREATE_ROUTE_NAME            = 'oro_account_frontend_account_user_create';
+    const ACCOUNT_USER_UPDATE_ROUTE_NAME            = 'oro_account_frontend_account_user_update';
+    const ACCOUNT_USER_PROFILE_UPDATE_ROUTE_NAME    = 'oro_account_frontend_account_user_profile_update';
+    const ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME     = 'oro_account_frontend_account_user_reset_request';
+    const ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME    = 'oro_account_frontend_account_user_password_reset';
 
     /**
      * @param AccountUser $accountUser

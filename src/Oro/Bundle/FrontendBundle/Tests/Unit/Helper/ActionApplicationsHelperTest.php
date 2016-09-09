@@ -86,9 +86,9 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             'frontend user' => [
                 'token' => $this->createToken(new AccountUser(), $this->any()),
                 'routes' => [
-                    'widget' => 'orob2b_frontend_action_widget_buttons',
-                    'dialog' => 'orob2b_frontend_action_widget_form',
-                    'execution' => 'orob2b_frontend_action_operation_execute',
+                    'widget' => 'oro_frontend_action_widget_buttons',
+                    'dialog' => 'oro_frontend_action_widget_form',
+                    'execution' => 'oro_frontend_action_operation_execute',
                 ],
             ],
             'not supported user' => [

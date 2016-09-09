@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class TaxJurisdictionSelectType extends AbstractType
 {
-    const NAME = 'orob2b_tax_jurisdiction_select';
+    const NAME = 'oro_tax_jurisdiction_select';
 
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class TaxJurisdictionSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_tax_jurisdiction_autocomplete',
-                'create_form_route' => 'orob2b_tax_jurisdiction_create',
+                'autocomplete_alias' => 'oro_tax_jurisdiction_autocomplete',
+                'create_form_route' => 'oro_tax_jurisdiction_create',
                 'grid_name' => 'tax-jurisdiction-select-grid',
                 'configs' => [
                     'placeholder' => 'oro.tax.taxjurisdiction.form.choose',

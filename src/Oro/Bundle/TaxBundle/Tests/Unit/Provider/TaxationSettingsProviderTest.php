@@ -68,7 +68,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.start_calculation_with')
+            ->with('oro_tax.start_calculation_with')
             ->willReturn(TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE);
 
         $this->assertEquals(
@@ -87,7 +87,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.start_calculation_with')
+            ->with('oro_tax.start_calculation_with')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isStartCalculationWithUnitPrice());
@@ -115,7 +115,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.start_calculation_on')
+            ->with('oro_tax.start_calculation_on')
             ->willReturn(TaxationSettingsProvider::START_CALCULATION_ON_TOTAL);
 
         $this->assertEquals(
@@ -134,7 +134,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->exactly(2))
             ->method('get')
-            ->with('orob2b_tax.start_calculation_on')
+            ->with('oro_tax.start_calculation_on')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isStartCalculationOnTotal());
@@ -168,7 +168,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.start_calculation_with')
+            ->with('oro_tax.start_calculation_with')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isStartCalculationWithRowTotal());
@@ -201,7 +201,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.product_prices_include_tax')
+            ->with('oro_tax.product_prices_include_tax')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isProductPricesIncludeTax());
@@ -231,7 +231,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.destination')
+            ->with('oro_tax.destination')
             ->willReturn($value);
 
         $this->assertEquals($value, $this->provider->getDestination());
@@ -244,7 +244,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.digital_products_us')
+            ->with('oro_tax.digital_products_us')
             ->willReturn($value);
 
         $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesUS());
@@ -257,7 +257,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.digital_products_eu')
+            ->with('oro_tax.digital_products_eu')
             ->willReturn($value);
 
         $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesEU());
@@ -273,7 +273,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.destination')
+            ->with('oro_tax.destination')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isBillingAddressDestination());
@@ -306,7 +306,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.destination')
+            ->with('oro_tax.destination')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isShippingAddressDestination());
@@ -335,7 +335,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.use_as_base_by_default')
+            ->with('oro_tax.use_as_base_by_default')
             ->willReturn($value);
 
         $this->assertEquals($value, $this->provider->getBaseByDefaultAddressType());
@@ -351,7 +351,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.use_as_base_by_default')
+            ->with('oro_tax.use_as_base_by_default')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isOriginBaseByDefaultAddressType());
@@ -384,7 +384,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.use_as_base_by_default')
+            ->with('oro_tax.use_as_base_by_default')
             ->willReturn($configValue);
 
         $this->assertEquals($expected, $this->provider->isDestinationBaseByDefaultAddressType());
@@ -417,7 +417,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.use_as_base_exclusions')
+            ->with('oro_tax.use_as_base_exclusions')
             ->willReturn($exclusionData);
 
         $this->taxBaseExclusionFactory
@@ -435,7 +435,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.origin_address')
+            ->with('oro_tax.origin_address')
             ->willReturn($addressData);
 
         $address = new Address();
@@ -453,7 +453,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('orob2b_tax.tax_enable')
+            ->with('oro_tax.tax_enable')
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isEnabled());

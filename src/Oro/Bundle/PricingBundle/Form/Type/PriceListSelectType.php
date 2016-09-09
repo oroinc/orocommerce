@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class PriceListSelectType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_select';
+    const NAME = 'oro_pricing_price_list_select';
 
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class PriceListSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_pricing_price_list',
-                'create_form_route' => 'orob2b_pricing_price_list_create',
+                'autocomplete_alias' => 'oro_pricing_price_list',
+                'create_form_route' => 'oro_pricing_price_list_create',
                 'configs' => [
                     'placeholder' => 'oro.pricing.form.choose_price_list'
                 ]

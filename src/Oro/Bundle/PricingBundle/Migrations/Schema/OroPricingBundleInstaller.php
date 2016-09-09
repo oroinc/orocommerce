@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -34,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -996,6 +995,9 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('rule_condition', 'text', ['notnull' => false]);
         $table->addColumn('rule', 'text', ['notnull' => true]);
         $table->addColumn('priority', 'integer', []);
+        $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
+        $table->addColumn('currency_expression', 'text', ['notnull' => false]);
+        $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
