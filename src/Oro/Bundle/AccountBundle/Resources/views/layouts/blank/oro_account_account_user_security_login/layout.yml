@@ -31,15 +31,15 @@ layout:
                 login_form_notifications:
                     blockType: text
                     options:
-                        visible: '=data["orob2b_account_sign_in"].getError()!=null'
-                        text: '=data["orob2b_account_sign_in"].getError()'
+                        visible: '=data["oro_account_sign_in"].getError()!=null'
+                        text: '=data["oro_account_sign_in"].getError()'
                 login_form_username_text:
                 login_form_username:
                     blockType: input
                     options:
                         id: userNameSignIn
                         name: _username
-                        value: '=data["orob2b_account_sign_in"].getLastName()'
+                        value: '=data["oro_account_sign_in"].getLastName()'
                         placeholder: oro.account.accountuser.email.label
                         label: oro.account.accountuser.email.label
                 login_form_password:
@@ -68,7 +68,7 @@ layout:
                     options:
                         type: hidden
                         name: _csrf_token
-                        value: '=data["orob2b_account_sign_in"].getCSRFToken()'
+                        value: '=data["oro_account_sign_in"].getCSRFToken()'
                 login_form_submit:
                     blockType: button
                     options:
@@ -81,13 +81,13 @@ layout:
                 login_form_forgot:
                     blockType: link
                     options:
-                        route_name: orob2b_account_frontend_account_user_reset_request
+                        route_name: oro_account_frontend_account_user_reset_request
                         text: oro.account.accountuser.profile.forgot_password
                 login_form_register:
                     blockType: link
                     options:
                         visible: '=data["registrationAllowed"]==true'
-                        route_name: orob2b_account_frontend_account_user_register
+                        route_name: oro_account_frontend_account_user_register
                         text: oro.account.accountuser.profile.create_an_account
             tree:
                 body:
