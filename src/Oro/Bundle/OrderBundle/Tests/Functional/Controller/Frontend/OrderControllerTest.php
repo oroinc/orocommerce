@@ -52,7 +52,7 @@ class OrderControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -78,7 +78,7 @@ class OrderControllerTest extends WebTestCase
     public function testCreate()
     {
         $this->markTestIncomplete('Should be fixed in scope of task BB-3686');
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -100,8 +100,8 @@ class OrderControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_order_frontend_type' => [
-                '_token' => $form['orob2b_order_frontend_type[_token]']->getValue(),
+            'oro_order_frontend_type' => [
+                '_token' => $form['oro_order_frontend_type[_token]']->getValue(),
                 'poNumber' => self::ORDER_PO_NUMBER,
                 'shipUntil' => $date,
                 'customerNotes' => 'Customer Notes',
@@ -151,7 +151,7 @@ class OrderControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_frontend_update', ['id' => $id])
+            $this->getUrl('oro_order_frontend_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -175,8 +175,8 @@ class OrderControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_order_frontend_type' => [
-                '_token' => $form['orob2b_order_frontend_type[_token]']->getValue(),
+            'oro_order_frontend_type' => [
+                '_token' => $form['oro_order_frontend_type[_token]']->getValue(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
             ],
@@ -191,11 +191,11 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check updated order
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_update', ['id' => $id]));
 
         $this->assertEquals(
             self::ORDER_PO_NUMBER_UPDATED,
-            $crawler->filter('input[name="orob2b_order_frontend_type[poNumber]"]')
+            $crawler->filter('input[name="oro_order_frontend_type[poNumber]"]')
                 ->extract('value')[0]
         );
 
@@ -223,7 +223,7 @@ class OrderControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_view', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_view', ['id' => $id]));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -284,9 +284,9 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $data = [
-                'product' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][product]"]')
+                'product' => $crawler->filter('input[name="oro_order_frontend_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][quantity]"]')
+                'quantity' => $crawler->filter('input[name="oro_order_frontend_type[lineItems]['.$i.'][quantity]"]')
                     ->extract('value')[0]
             ];
 
@@ -298,18 +298,18 @@ class OrderControllerTest extends WebTestCase
                     [
                         'productUnit' => $crawler
                             ->filter(
-                                'select[name="orob2b_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected'
+                                'select[name="oro_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected'
                             )
                             ->html(),
                         'price' => trim(
                             $crawler->filter(
-                                'tr[data-content="orob2b_order_frontend_type[lineItems]['
+                                'tr[data-content="oro_order_frontend_type[lineItems]['
                                 .$i.']"] .order-line-item-price-value'
                             )
                                 ->html()
                         ),
                         'shipBy' => $crawler->filter(
-                            'input[name="orob2b_order_frontend_type[lineItems]['.$i.'][shipBy]"]'
+                            'input[name="oro_order_frontend_type[lineItems]['.$i.'][shipBy]"]'
                         )
                             ->extract('value')[0]
                     ]

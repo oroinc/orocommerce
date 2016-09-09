@@ -22,7 +22,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
  * @RouteResource("shippingrules")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class ShippingRuleController extends RestController implements ClassResourceInterface
 {
@@ -38,7 +38,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
-     * @AclAncestor("orob2b_shipping_rule_update")
+     * @AclAncestor("oro_shipping_rule_update")
      *
      * @return Response
      */
@@ -83,7 +83,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
-     * @AclAncestor("orob2b_shipping_rule_update")
+     * @AclAncestor("oro_shipping_rule_update")
      *
      * @return Response
      */
@@ -124,7 +124,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_shipping_rule_delete",
+     *      id="oro_shipping_rule_delete",
      *      type="entity",
      *      permission="DELETE",
      *      class="OroShippingBundle:ShippingRule"

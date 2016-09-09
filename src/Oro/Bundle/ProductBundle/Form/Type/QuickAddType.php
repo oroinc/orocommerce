@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class QuickAddType extends AbstractType
 {
-    const NAME = 'orob2b_product_quick_add';
+    const NAME = 'oro_product_quick_add';
 
     const PRODUCTS_FIELD_NAME = 'products';
     const COMPONENT_FIELD_NAME = 'component';

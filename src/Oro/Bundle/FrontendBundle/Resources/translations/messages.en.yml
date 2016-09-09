@@ -2,7 +2,7 @@ oro:
     privilege:
         category.commerce.label: 'Commerce'
 
-orob2b_frontend:
+oro_frontend:
     widget_form_component:
         save_flash_success: Saved successfully
     form:

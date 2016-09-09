@@ -1,38 +1,38 @@
 acls:
-    orob2b_account_delete:
+    oro_account_delete:
         type: entity
         permission: DELETE
         class: OroAccountBundle:Account
         category: 'account_management'
 
-    orob2b_account_account_user_delete:
+    oro_account_account_user_delete:
         type: entity
         permission: DELETE
         class: OroAccountBundle:AccountUser
         category: 'account_management'
 
-    orob2b_account_frontend_account_user_view:
+    oro_account_frontend_account_user_view:
         type: entity
         permission: VIEW
         class: OroAccountBundle:AccountUser
         group_name: "commerce"
         category: 'account_management'
 
-    orob2b_account_frontend_account_user_role_view:
+    oro_account_frontend_account_user_role_view:
         type: entity
         permission: VIEW
         class: OroAccountBundle:AccountUserRole
         group_name: "commerce"
         category: 'account_management'
 
-    orob2b_account_frontend_account_user_role_update:
+    oro_account_frontend_account_user_role_update:
         type: entity
         class: OroAccountBundle:AccountUserRole
         permission: EDIT
         group_name: "commerce"
         category: 'account_management'
 
-    orob2b_account_frontend_account_user_role_delete:
+    oro_account_frontend_account_user_role_delete:
         type: entity
         class: OroAccountBundle:AccountUserRole
         permission: DELETE

@@ -16,8 +16,8 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 class OrderController extends Controller
 {
     /**
-     * @Route("/create/{id}", name="orob2b_rfp_request_create_order", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_order_create")
+     * @Route("/create/{id}", name="oro_rfp_request_create_order", requirements={"id"="\d+"})
+     * @AclAncestor("oro_order_create")
      *
      * @param RFPRequest $request
      *
@@ -44,7 +44,7 @@ class OrderController extends Controller
         $this->get('oro_product.storage.product_data_storage')->set($data);
         $this->get('oro_rfp.storage.offers_data_storage')->set($offers);
 
-        return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
+        return $this->redirectToRoute('oro_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 
     /**

@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\ProductBundle\Entity\Product:
-        alias:                          orob2b_product
+        alias:                          oro_product
         title_fields:                   [defaultName]
         route:
-            name:                       orob2b_product_view
+            name:                       oro_product_view
             parameters:
                 id:                     id
         search_template:                OroProductBundle:Product:searchResult.html.twig

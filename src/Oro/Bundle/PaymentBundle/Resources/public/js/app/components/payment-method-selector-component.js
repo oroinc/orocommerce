@@ -61,7 +61,7 @@ define(function(require) {
         redirectToHomepage: function() {
             mediator.execute(
                 'redirectTo',
-                {url: routing.generate('orob2b_product_frontend_product_index')}, {redirect: true}
+                {url: routing.generate('oro_product_frontend_product_index')}, {redirect: true}
             );
         },
 

@@ -9,7 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryTreeCreateAfterEvent extends Event
 {
-    const NAME = 'orob2b_catalog.category.tree.create_after';
+    const NAME = 'oro_catalog.category.tree.create_after';
 
     /**
      * @var UserInterface|null

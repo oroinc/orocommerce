@@ -29,7 +29,7 @@ class CategoryControllerTest extends WebTestCase
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_category', ['id' => $category->getId()])
+            $this->getUrl('oro_api_delete_category', ['id' => $category->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

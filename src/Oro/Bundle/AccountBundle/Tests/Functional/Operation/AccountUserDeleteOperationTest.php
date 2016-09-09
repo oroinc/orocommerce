@@ -35,7 +35,7 @@ class AccountUserDeleteOperationTest extends ActionTestCase
         $this->assertDeleteOperation(
             $id,
             'oro_account.entity.account_user.class',
-            'orob2b_account_account_user_index'
+            'oro_account_account_user_index'
         );
 
         $this->getObjectManager()->clear();

@@ -52,7 +52,7 @@ class WebsiteScopedDataHandler
 
             if ($this->form->isValid()) {
                 $this->eventDispatcher->dispatch(
-                    'orob2b_product.product.edit',
+                    'oro_product.product.edit',
                     new AfterFormProcessEvent($this->form, $entity)
                 );
 

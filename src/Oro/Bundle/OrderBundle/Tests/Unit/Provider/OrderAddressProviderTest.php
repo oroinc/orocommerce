@@ -79,10 +79,10 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     public function accountAddressPermissions()
     {
         return [
-            ['shipping', 'orob2b_order_address_shipping_account_use_any', new AccountUser()],
-            ['shipping', 'orob2b_order_address_shipping_account_use_any_backend', new \stdClass()],
-            ['billing', 'orob2b_order_address_billing_account_use_any', new AccountUser()],
-            ['billing', 'orob2b_order_address_billing_account_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_order_address_shipping_account_use_any', new AccountUser()],
+            ['shipping', 'oro_order_address_shipping_account_use_any_backend', new \stdClass()],
+            ['billing', 'oro_order_address_billing_account_use_any', new AccountUser()],
+            ['billing', 'oro_order_address_billing_account_use_any_backend', new \stdClass()],
         ];
     }
 
@@ -96,8 +96,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any' => false,
-                    'orob2b_order_address_shipping_account_user_use_default' => false,
+                    'oro_order_address_shipping_account_user_use_any' => false,
+                    'oro_order_address_shipping_account_user_use_default' => false,
                 ],
                 null,
                 [],
@@ -106,7 +106,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any' => true
+                    'oro_order_address_shipping_account_user_use_any' => true
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
@@ -115,8 +115,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any' => false,
-                    'orob2b_order_address_shipping_account_user_use_default' => true
+                    'oro_order_address_shipping_account_user_use_any' => false,
+                    'oro_order_address_shipping_account_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
@@ -125,8 +125,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any' => false,
-                    'orob2b_order_address_billing_account_user_use_default' => false,
+                    'oro_order_address_billing_account_user_use_any' => false,
+                    'oro_order_address_billing_account_user_use_default' => false,
                 ],
                 null,
                 [],
@@ -135,7 +135,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any' => true
+                    'oro_order_address_billing_account_user_use_any' => true
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
@@ -144,8 +144,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any' => false,
-                    'orob2b_order_address_billing_account_user_use_default' => true
+                    'oro_order_address_billing_account_user_use_any' => false,
+                    'oro_order_address_billing_account_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
@@ -154,8 +154,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_order_address_shipping_account_user_use_default_backend' => false,
+                    'oro_order_address_shipping_account_user_use_any_backend' => false,
+                    'oro_order_address_shipping_account_user_use_default_backend' => false,
                 ],
                 null,
                 [],
@@ -164,7 +164,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any_backend' => true
+                    'oro_order_address_shipping_account_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
@@ -173,8 +173,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_order_address_shipping_account_user_use_default_backend' => true
+                    'oro_order_address_shipping_account_user_use_any_backend' => false,
+                    'oro_order_address_shipping_account_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
@@ -183,8 +183,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
-                    'orob2b_order_address_billing_account_user_use_default_backend' => false,
+                    'oro_order_address_billing_account_user_use_any_backend' => false,
+                    'oro_order_address_billing_account_user_use_default_backend' => false,
                 ],
                 null,
                 [],
@@ -193,7 +193,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any_backend' => true
+                    'oro_order_address_billing_account_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
@@ -202,8 +202,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
-                    'orob2b_order_address_billing_account_user_use_default_backend' => true
+                    'oro_order_address_billing_account_user_use_any_backend' => false,
+                    'oro_order_address_billing_account_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],

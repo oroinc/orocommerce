@@ -12,7 +12,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
  */
 class InvoiceLineItemsCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_invoice_line_items_collection';
+    const NAME = 'oro_invoice_line_items_collection';
 
     /**
      * {@inheritdoc}

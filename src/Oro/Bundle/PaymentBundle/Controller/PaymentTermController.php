@@ -18,10 +18,10 @@ use Oro\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
 class PaymentTermController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_payment_term_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_payment_term_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_payment_term_view",
+     *      id="oro_payment_term_view",
      *      type="entity",
      *      class="OroPaymentBundle:PaymentTerm",
      *      permission="VIEW"
@@ -38,9 +38,9 @@ class PaymentTermController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_payment_term_index")
+     * @Route("/", name="oro_payment_term_index")
      * @Template
-     * @AclAncestor("orob2b_payment_term_view")
+     * @AclAncestor("oro_payment_term_view")
      *
      * @return array
      */
@@ -54,10 +54,10 @@ class PaymentTermController extends Controller
     /**
      * Create payment term form
      *
-     * @Route("/create", name="orob2b_payment_term_create")
+     * @Route("/create", name="oro_payment_term_create")
      * @Template("OroPaymentBundle:PaymentTerm:update.html.twig")
      * @Acl(
-     *      id="orob2b_payment_term_create",
+     *      id="oro_payment_term_create",
      *      type="entity",
      *      class="OroPaymentBundle:PaymentTerm",
      *      permission="CREATE"
@@ -74,10 +74,10 @@ class PaymentTermController extends Controller
     /**
      * Edit payment term form
      *
-     * @Route("/update/{id}", name="orob2b_payment_term_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_payment_term_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_payment_term_update",
+     *      id="oro_payment_term_update",
      *      type="entity",
      *      class="OroPaymentBundle:PaymentTerm",
      *      permission="EDIT"
@@ -92,9 +92,9 @@ class PaymentTermController extends Controller
     }
 
     /**
-     * @Route("/widget/info/{id}", name="orob2b_payment_term_widget_info", requirements={"id"="\d+"})
+     * @Route("/widget/info/{id}", name="oro_payment_term_widget_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_payment_term_view")
+     * @AclAncestor("oro_payment_term_view")
      * @param PaymentTerm $entity
      * @return array
      */
@@ -124,13 +124,13 @@ class PaymentTermController extends Controller
             $form,
             function (PaymentTerm $paymentTerm) {
                 return [
-                    'route' => 'orob2b_payment_term_update',
+                    'route' => 'oro_payment_term_update',
                     'parameters' => ['id' => $paymentTerm->getId()]
                 ];
             },
             function (PaymentTerm $paymentTerm) {
                 return [
-                    'route' => 'orob2b_payment_term_view',
+                    'route' => 'oro_payment_term_view',
                     'parameters' => ['id' => $paymentTerm->getId()]
                 ];
             },

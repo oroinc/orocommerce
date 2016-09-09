@@ -27,7 +27,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('orob2b_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
+        return $this->getUrl('oro_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
     }
 
     /**
@@ -35,7 +35,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getCreateUrl()
     {
-        return $this->getUrl('orob2b_account_group_create');
+        return $this->getUrl('oro_account_group_create');
     }
 
     /**
@@ -43,7 +43,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getViewUrl()
     {
-        return $this->getUrl('orob2b_account_group_view', ['id' => $this->accountGroup->getId()]);
+        return $this->getUrl('oro_account_group_view', ['id' => $this->accountGroup->getId()]);
     }
 
     /**

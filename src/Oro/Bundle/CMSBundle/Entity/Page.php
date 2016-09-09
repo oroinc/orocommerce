@@ -20,9 +20,9 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_cms_page_index",
- *      routeView="orob2b_cms_page_view",
- *      routeUpdate="orob2b_cms_page_update",
+ *      routeName="oro_cms_page_index",
+ *      routeView="oro_cms_page_view",
+ *      routeUpdate="oro_cms_page_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-book"

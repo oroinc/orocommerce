@@ -28,7 +28,7 @@ class ProductActionsTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->executeOperation($product, 'orob2b_product_duplicate');
+        $this->executeOperation($product, 'oro_product_duplicate');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -55,7 +55,7 @@ class ProductActionsTest extends WebTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
-                    'route' => 'orob2b_product_view',
+                    'route' => 'oro_product_view',
                     'entityId' => $product->getId(),
                     'entityClass' => 'Oro\Bundle\ProductBundle\Entity\Product'
                 ]

@@ -16,9 +16,9 @@ use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
 class ProductTaxCodeController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_tax_product_tax_code_index")
+     * @Route("/", name="oro_tax_product_tax_code_index")
      * @Template
-     * @AclAncestor("orob2b_tax_product_tax_code_view")
+     * @AclAncestor("oro_tax_product_tax_code_view")
      *
      * @return array
      */
@@ -30,10 +30,10 @@ class ProductTaxCodeController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_tax_product_tax_code_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_tax_product_tax_code_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_product_tax_code_view",
+     *      id="oro_tax_product_tax_code_view",
      *      type="entity",
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class ProductTaxCodeController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_tax_product_tax_code_create")
+     * @Route("/create", name="oro_tax_product_tax_code_create")
      * @Template("OroTaxBundle:ProductTaxCode:update.html.twig")
      * @Acl(
-     *      id="orob2b_tax_product_tax_code_create",
+     *      id="oro_tax_product_tax_code_create",
      *      type="entity",
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class ProductTaxCodeController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_tax_product_tax_code_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_tax_product_tax_code_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_product_tax_code_update",
+     *      id="oro_tax_product_tax_code_update",
      *      type="entity",
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class ProductTaxCodeController extends Controller
             $this->createForm(ProductTaxCodeType::NAME, $productTaxCode),
             function (ProductTaxCode $productTaxCode) {
                 return [
-                    'route' => 'orob2b_tax_product_tax_code_update',
+                    'route' => 'oro_tax_product_tax_code_update',
                     'parameters' => ['id' => $productTaxCode->getId()]
                 ];
             },
             function (ProductTaxCode $productTaxCode) {
                 return [
-                    'route' => 'orob2b_tax_product_tax_code_view',
+                    'route' => 'oro_tax_product_tax_code_view',
                     'parameters' => ['id' => $productTaxCode->getId()]
                 ];
             },

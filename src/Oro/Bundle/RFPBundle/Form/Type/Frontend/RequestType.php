@@ -19,7 +19,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_frontend_request';
+    const NAME = 'oro_rfp_frontend_request';
 
     /**
      * @var ConfigManager

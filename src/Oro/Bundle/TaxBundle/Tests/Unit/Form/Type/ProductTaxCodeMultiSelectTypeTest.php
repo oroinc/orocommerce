@@ -28,7 +28,7 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_product_tax_code_multiselect', $this->formType->getName());
+        $this->assertEquals('oro_tax_product_tax_code_multiselect', $this->formType->getName());
     }
 
     public function testGetParent()
@@ -43,7 +43,7 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('autocomplete_alias', $options);
-        $this->assertEquals('orob2b_product_tax_code', $options['autocomplete_alias']);
+        $this->assertEquals('oro_product_tax_code', $options['autocomplete_alias']);
         $this->assertArrayHasKey('configs', $options);
         $this->assertEquals(['multiple' => true, 'forceSelectedData' => true], $options['configs']);
     }
