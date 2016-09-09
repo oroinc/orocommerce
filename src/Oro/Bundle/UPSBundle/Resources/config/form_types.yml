@@ -7,3 +7,10 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: form.type }
+
+    oro_ups.form.type.shipping_method_config_options:
+        class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType
+        arguments:
+            - '@orob2b_pricing.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }

@@ -1,19 +1,22 @@
 oro:
-  ups:
-    channel_type:
-      label: UPS
-    transport:
-      label: UPS API
-      base_url.label: Base URL
-      api_user.label: API User
-      api_password.label: API Password
-      api_key.label: API Key
-      shipping_account_name.label: Shipping Account Name
-      shipping_account_number.label: Shipping Account Number
-      pickup_type.label: Pickup Type
-      unit_of_weight.label: Unit Of Weight
-      country.label: Country
-      shipping_service:
-        label: Shipping Service
-        plural_label: Shipping Services
-        blank: Should be configured at least one Shipping Service
+    ups:
+        channel_type:
+            label: UPS
+        transport:
+            label: UPS API
+            base_url.label: Base URL
+            api_user.label: API User
+            api_password.label: API Password
+            api_key.label: API Key
+            shipping_account_name.label: Shipping Account Name
+            shipping_account_number.label: Shipping Account Number
+            pickup_type.label: Pickup Type
+            unit_of_weight.label: Unit Of Weight
+            country.label: Country
+        shipping_service:
+            label: Shipping Service
+            plural_label: Shipping Services
+            blank: Should be configured at least one Shipping Service
+        form:
+            shipping_method_config_options:
+                surcharge.label: Surcharge
