@@ -27,4 +27,4 @@ oro:
               relation_not_in_rule.message: 'Relation "%relationName%" not used in rule'
               only_price_relations_available.message: 'Only price relations available'
               one_expression_allowed.message: 'Only one element allowed in expression'
-
+              too_many_relations.message: 'Too many relations in expression'
