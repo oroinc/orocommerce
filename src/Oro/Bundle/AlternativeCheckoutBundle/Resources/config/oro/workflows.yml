@@ -155,7 +155,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         billing_address:
-                            form_type: orob2b_checkout_address
+                            form_type: oro_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -171,7 +171,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
+                            form_type: oro_ship_to_billing_address
                             options:
                                 label: Ship to this address
 
@@ -186,7 +186,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         shipping_address:
-                            form_type: orob2b_checkout_address
+                            form_type: oro_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -202,7 +202,7 @@ workflows:
                             options:
                                 label: Save address
                         ship_to_billing_address:
-                            form_type: orob2b_ship_to_billing_address
+                            form_type: oro_ship_to_billing_address
                             options:
                                 label: Use billing address
 
@@ -501,7 +501,7 @@ workflows:
                         parameters:
                             - '@less_order_total_limit': [$checkout, 5000]
                             - '@equal': [$allowed, true]
-                            - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
+                            - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                 actions:
                     - '@assign_value':
                         conditions:
@@ -565,7 +565,7 @@ workflows:
                                 - '@equal': [$checkout.saveBillingAddress, true]
                                 - '@empty': $.result.order.billingAddress.accountAddress
                                 - '@empty': $.result.order.billingAddress.accountUserAddress
-                                - '@acl_granted': 'orob2b_order_address_billing_allow_manual'
+                                - '@acl_granted': 'oro_order_address_billing_allow_manual'
                         actions:
                             - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
@@ -611,7 +611,7 @@ workflows:
                                 - '@equal': [$checkout.saveShippingAddress, true]
                                 - '@empty': $.result.order.shippingAddress.accountAddress
                                 - '@empty': $.result.order.shippingAddress.accountUserAddress
-                                - '@acl_granted': 'orob2b_order_address_shipping_allow_manual'
+                                - '@acl_granted': 'oro_order_address_shipping_allow_manual'
                         actions:
                             - '@find_entity':
                                 class: Oro\Bundle\AddressBundle\Entity\AddressType
@@ -677,7 +677,7 @@ workflows:
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
-                                route: orob2b_order_frontend_success
+                                route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
                             - '@payment_purchase':
@@ -689,7 +689,7 @@ workflows:
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                             - '@redirect':
-                                route: orob2b_order_frontend_success
+                                route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
 
@@ -697,7 +697,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@not':
-                            - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
+                            - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@not':
                             - '@less_order_total_limit': [$checkout, 5000]
                         - '@equal': [$allowed, false]
@@ -712,7 +712,7 @@ workflows:
             approve_order_definition:
                 preconditions:
                     '@and':
-                        - '@acl_granted': 'orob2b_alternativecheckout_checkout_approve'
+                        - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@equal': [$allowed, false]
                 actions:
                     - '@assign_value':

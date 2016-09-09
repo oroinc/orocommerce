@@ -17,7 +17,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 /**
- * @NamePrefix("orob2b_api_account_")
+ * @NamePrefix("oro_api_account_")
  */
 class AccountAddressController extends RestController implements ClassResourceInterface
 {
@@ -31,7 +31,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      * @return Response
      */
     public function getAction($entityId, $addressId)
@@ -57,7 +57,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get all addresses items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      * @param int $entityId
      *
      * @return JsonResponse
@@ -86,7 +86,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Delete address items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_delete")
+     * @AclAncestor("oro_account_delete")
      * @param int $entityId
      * @param int $addressId
      *
@@ -116,7 +116,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account address by type",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      * @return Response
      */
     public function getByTypeAction($entityId, $typeName)
@@ -144,7 +144,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account primary address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      * @return Response
      */
     public function getPrimaryAction($entityId)

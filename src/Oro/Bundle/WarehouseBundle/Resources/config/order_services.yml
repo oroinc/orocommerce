@@ -32,7 +32,7 @@ services:
         arguments:
             - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
-            - { name: form.type_extension, alias: orob2b_order_type }
+            - { name: form.type_extension, alias: oro_order_type }
 
     oro_warehouse.form.extension.order_line:
         class: 'Oro\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension'
@@ -40,4 +40,4 @@ services:
             - "@oro_order.form.section.provider"
             - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
-            - { name: form.type_extension, alias: orob2b_order_line_item }
+            - { name: form.type_extension, alias: oro_order_line_item }

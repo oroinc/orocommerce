@@ -16,10 +16,10 @@ class AjaxPageController extends Controller
     /**
      * @Route(
      *      "/page-move",
-     *      name="orob2b_cms_page_move"
+     *      name="oro_cms_page_move"
      * )
      * @Method({"PUT"})
-     * @AclAncestor("orob2b_cms_page_update")
+     * @AclAncestor("oro_cms_page_update")
      *
      * @param Request $request
      * @return JsonResponse

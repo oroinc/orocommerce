@@ -4,10 +4,10 @@
 {% set pageTitle = 'oro.pricing.pricelist.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_pricing_price_list_create') %}
+    {% if resource_granted('oro_pricing_price_list_create') %}
         <div class="btn-group">
             {{ UI.addButton({
-                'path': path('orob2b_pricing_price_list_create'),
+                'path': path('oro_pricing_price_list_create'),
                 'entity_label': 'oro.pricing.pricelist.entity_label'|trans
             }) }}
         </div>

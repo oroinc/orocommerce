@@ -35,7 +35,7 @@ class RequestStatusControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $requestStatus->getId()])
+            $this->getUrl('oro_api_rfp_delete_request_status', ['id' => $requestStatus->getId()])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
@@ -49,7 +49,7 @@ class RequestStatusControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_rfp_restore_request_status', ['id' => $requestStatus->getId()])
+            $this->getUrl('oro_api_rfp_restore_request_status', ['id' => $requestStatus->getId()])
         );
         $result = $this->getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
         $this->assertNotEmpty($result);

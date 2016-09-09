@@ -5,7 +5,7 @@ services:
             - "@doctrine"
             - "@oro_website.website.provider"
         tags:
-            - { name: form.type, alias: orob2b_website_scoped_data_type }
+            - { name: form.type, alias: oro_website_scoped_data_type }
         calls:
             - [setWebsiteClass,['%oro_website.entity.website.class%']]
 

@@ -1,0 +1,13 @@
+{% block _top_selling_items_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-products'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _top_selling_product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-product'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

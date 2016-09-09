@@ -1,5 +1,5 @@
 acls:
-    orob2b_pricing_product_price_view:
+    oro_pricing_product_price_view:
         type: entity
         class: OroPricingBundle:ProductPrice
         permission: VIEW

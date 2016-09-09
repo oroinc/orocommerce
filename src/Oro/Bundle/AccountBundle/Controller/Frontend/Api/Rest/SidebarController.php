@@ -9,7 +9,7 @@ use Oro\Bundle\SidebarBundle\Controller\Api\Rest\SidebarController as BaseContro
 
 /**
  * @RouteResource("sidebars")
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class SidebarController extends BaseController
 {

@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitsType extends AbstractType
 {
-    const NAME = 'orob2b_product_units';
+    const NAME = 'oro_product_units';
 
     /**
      * @var  ProductUnitsProvider

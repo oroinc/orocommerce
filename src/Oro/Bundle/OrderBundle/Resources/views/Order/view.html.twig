@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_order_index'),
+        'indexPath': path('oro_order_index'),
         'indexLabel': 'oro.order.entity_plural_label'|trans,
         'entityTitle': 'oro.order.navigation.view'|trans({
             '%identifier%': entity.identifier|default('N/A'|trans)
@@ -20,7 +20,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.order.widgets.order_information'|trans,
-            'url': path('orob2b_order_info', {id: entity.id})
+            'url': path('oro_order_info', {id: entity.id})
         }) }}
     {% endset %}
 
@@ -71,7 +71,7 @@
     {% set paymentTerm %}
         {% if entity.paymentTerm is not empty %}
             {% if resource_granted('VIEW', entity.paymentTerm) %}
-                {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
+                {% set paymentTermView = UI.renderUrl(path('oro_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
             {% else %}
                 {% set paymentTermView = entity.paymentTerm.label|escape %}
             {% endif %}

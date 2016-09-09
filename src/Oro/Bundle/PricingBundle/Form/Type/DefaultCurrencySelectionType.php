@@ -18,7 +18,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 class DefaultCurrencySelectionType extends CurrencySelectionType
 {
-    const NAME = 'orob2b_pricing_default_currency_selection';
+    const NAME = 'oro_pricing_default_currency_selection';
 
     const ENABLED_CURRENCIES_NAME = 'oro_b2b_pricing___enabled_currencies';
     const DEFAULT_CURRENCY_NAME = 'oro_b2b_pricing___default_currency';

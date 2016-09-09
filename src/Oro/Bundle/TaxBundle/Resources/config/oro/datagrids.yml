@@ -60,7 +60,7 @@ datagrids:
                 rowAction:     true
 
     tax-product-tax-codes-grid:
-        acl_resource: orob2b_tax_product_tax_code_view
+        acl_resource: oro_tax_product_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
             entityHint: product tax code
@@ -75,13 +75,13 @@ datagrids:
                 label: oro.tax.producttaxcode.description.label
         properties:
             view_link:
-                route: orob2b_tax_product_tax_code_view
+                route: oro_tax_product_tax_code_view
         actions:
             view:
-                acl_resource:  orob2b_tax_product_tax_code_view
+                acl_resource:  oro_tax_product_tax_code_view
 
     tax-account-tax-codes-grid:
-        acl_resource: orob2b_tax_account_tax_code_view
+        acl_resource: oro_tax_account_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
             entityHint: account tax code
@@ -96,10 +96,10 @@ datagrids:
                 label: oro.tax.accounttaxcode.description.label
         properties:
             view_link:
-                route: orob2b_tax_account_tax_code_view
+                route: oro_tax_account_tax_code_view
         actions:
             view:
-                acl_resource:  orob2b_tax_account_tax_code_view
+                acl_resource:  oro_tax_account_tax_code_view
 
     products-tax-code-select-grid:
         extends: tax-product-tax-codes-grid
@@ -112,7 +112,7 @@ datagrids:
         actions: ~
 
     tax-taxes-grid:
-        acl_resource: orob2b_tax_view
+        acl_resource: oro_tax_view
         options:
             entityHint: tax
         source:
@@ -176,7 +176,7 @@ datagrids:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_tax_view
+                route: oro_tax_view
                 params: [ id ]
         actions:
             view:
@@ -184,7 +184,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_tax_view
+                acl_resource:  oro_tax_view
                 rowAction:     true
 
     tax-taxes-select-grid:
@@ -193,7 +193,7 @@ datagrids:
         actions: ~
 
     tax-taxe-rules-grid:
-        acl_resource: orob2b_tax_rule_view
+        acl_resource: oro_tax_rule_view
         options:
             entityHint: tax
         source:
@@ -278,7 +278,7 @@ datagrids:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_tax_rule_view
+                route: oro_tax_rule_view
                 params: [ id ]
         actions:
             view:
@@ -286,11 +286,11 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_tax_rule_view
+                acl_resource:  oro_tax_rule_view
                 rowAction:     true
 
     tax-jurisdiction-grid:
-        acl_resource: orob2b_tax_jurisdiction_view
+        acl_resource: oro_tax_jurisdiction_view
         source:
             type: orm
             query:
@@ -343,7 +343,7 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route: orob2b_tax_jurisdiction_view
+                route: oro_tax_jurisdiction_view
                 params: [ id ]
         actions:
             view:
@@ -351,7 +351,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_tax_jurisdiction_view
+                acl_resource:  oro_tax_jurisdiction_view
                 rowAction:     true
 
     tax-jurisdiction-select-grid:
@@ -374,7 +374,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route: orob2b_account_group_view
+                route: oro_account_group_view
                 params: [ id ]
         actions:
             view:
@@ -382,7 +382,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_account_group_view
+                acl_resource:  oro_account_group_view
                 rowAction:     true
 
     tax-account-grid:
@@ -400,7 +400,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route: orob2b_account_view
+                route: oro_account_view
                 params: [ id ]
         actions:
             view:
@@ -408,7 +408,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_account_view
+                acl_resource:  oro_account_view
                 rowAction:     true
 
     tax-product-grid:
@@ -426,7 +426,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route: orob2b_product_view
+                route: oro_product_view
                 params: [ id ]
         actions:
             view:
@@ -434,5 +434,5 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_product_view
+                acl_resource:  oro_product_view
                 rowAction:     true

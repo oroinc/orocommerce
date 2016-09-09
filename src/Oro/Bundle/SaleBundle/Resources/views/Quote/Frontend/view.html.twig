@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_sale_quote_frontend_index'),
+        'indexPath': path('oro_sale_quote_frontend_index'),
         'indexLabel': 'oro.frontend.sale.quote.entity_plural_label'|trans,
         'entityTitle': 'oro.sale.navigation.view'|trans({
             '%id%': entity.qid|default('N/A'|trans)
@@ -22,7 +22,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.frontend.sale.quote.widgets.quote_information'|trans,
-            'url': path('orob2b_sale_quote_frontend_info', {'id': entity.id})
+            'url': path('oro_sale_quote_frontend_info', {'id': entity.id})
         }) }}
     {% endset %}
 
@@ -55,7 +55,7 @@
                                     <td rowspan="{{ numSubItems }}">{{ quoteProduct.productName }}</td>
                                 {% endif %}
                                 <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                    {{ quoteProductOffer.quantity|orob2b_format_short_product_unit_value(quoteProductOffer.productUnit) }}
+                                    {{ quoteProductOffer.quantity|oro_format_short_product_unit_value(quoteProductOffer.productUnit) }}
                                     {% if quoteProductOffer.allowIncrements %}{{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                                 </td>
                                 <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">

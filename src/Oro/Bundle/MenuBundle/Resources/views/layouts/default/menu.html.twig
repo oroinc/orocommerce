@@ -75,9 +75,9 @@
 {% block item_renderer %}
     {% if item.displayed and item.extras.isAllowed %}
         {# building the class of the item #}
-        {%- if orob2b_menu_is_current(item) %}
+        {%- if oro_menu_is_current(item) %}
             {%- set classes = classes|merge([options.currentClass]) %}
-        {%- elseif orob2b_menu_is_ancestor(item, options.depth) %}
+        {%- elseif oro_menu_is_ancestor(item, options.depth) %}
             {%- set classes = classes|merge([options.ancestorClass]) %}
         {%- endif %}
         {%- if item.actsLikeFirst %}
@@ -100,7 +100,7 @@
 {% block item_content %}
     {%- set linkAttributes = item.linkAttributes|merge(link_attr) %}
     {%- set labelAttributes = item.labelAttributes|merge(label_attr) %}
-    {%- if item.uri is not empty and (not orob2b_menu_is_current(item) or options.currentAsLink) %}
+    {%- if item.uri is not empty and (not oro_menu_is_current(item) or options.currentAsLink) %}
         {{ block('linkElement') }}
     {%- else %}
         {{ block('spanElement') }}

@@ -2,7 +2,6 @@
 .middlebar {
   min-height: 100px;
   padding: 20px 0 19px;
-  border-bottom: 1px solid $theme-lighter-gray-color;
 
   @media (max-width: $screen-md) {
     min-height: initial;
@@ -370,7 +369,7 @@
 
 /*===== START FOOTER =====*/
 .footer {
-  padding: 5rem 8rem 0 0;
+  padding-top: 5rem;
 
   background: $theme-lightest-gray-color;
 
@@ -380,12 +379,20 @@
 }
 
 .copy {
-  border-top: 1px solid $theme-lighter-gray-color;
+  margin: 0 -15px;
+  padding: 22px 15px;
 
-  color: $theme-slight-middle-gray-color;
   font-size: 12px;
-  line-height: 4.7;
+  line-height: normal;
   text-align: center;
+
+  border-top: 1px solid $theme-lighter-gray-color;
+  color: $theme-slight-middle-gray-color;
+
+  @media (max-width: $screen-sm) {
+    margin: 0;
+    padding: 22px 0;
+  }
 }
 /*===== END FOOTER =====*/
 

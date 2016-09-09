@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
-        alias:                          orob2b_shopping_list
+        alias:                          oro_shopping_list
         title_fields:                   [label]
         route:
-            name:                       orob2b_shopping_list_view
+            name:                       oro_shopping_list_view
             parameters:
                 id:                     id
         search_template:                OroShoppingListBundle:ShoppingList:searchResult.html.twig

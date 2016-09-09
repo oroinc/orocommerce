@@ -27,7 +27,7 @@ class OroWebsiteExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('orob2b_website_get_current_website', [$this->websiteManager, 'getCurrentWebsite'])
+            new \Twig_SimpleFunction('oro_website_get_current_website', [$this->websiteManager, 'getCurrentWebsite'])
         ];
     }
 

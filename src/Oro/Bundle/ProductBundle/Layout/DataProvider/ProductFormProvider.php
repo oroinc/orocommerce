@@ -14,9 +14,9 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 
 class ProductFormProvider extends AbstractFormProvider
 {
-    const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'orob2b_product_frontend_quick_add';
-    const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME   = 'orob2b_product_frontend_quick_add_copy_paste';
-    const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'orob2b_product_frontend_quick_add_import';
+    const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
+    const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME   = 'oro_product_frontend_quick_add_copy_paste';
+    const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'oro_product_frontend_quick_add_import';
 
     /**
      * @param null $data

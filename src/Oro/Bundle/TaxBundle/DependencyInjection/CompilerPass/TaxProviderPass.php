@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class TaxProviderPass implements CompilerPassInterface
 {
     const REGISTRY_SERVICE = 'oro_tax.provider.tax_provider_registry';
-    const TAG = 'orob2b_tax.tax_provider';
+    const TAG = 'oro_tax.tax_provider';
 
     /**
      * {@inheritdoc}

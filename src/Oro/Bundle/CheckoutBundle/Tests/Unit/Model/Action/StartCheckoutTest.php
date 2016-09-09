@@ -107,7 +107,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->action->setDispatcher($this->eventDispatcher);
-        $this->action->setCheckoutRoute('orob2b_checkout_frontend_checkout');
+        $this->action->setCheckoutRoute('oro_checkout_frontend_checkout');
     }
 
     public function testInitialize()
@@ -208,7 +208,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('initialize')
             ->with(
                 [
-                    'route' => 'orob2b_checkout_frontend_checkout',
+                    'route' => 'oro_checkout_frontend_checkout',
                     'route_parameters' => ['id' => $checkout->getId()]
                 ]
             );
