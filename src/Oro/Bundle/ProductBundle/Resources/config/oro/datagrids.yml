@@ -32,7 +32,7 @@ datagrids:
             status:
                 label:         oro.product.status.label
                 frontend_type: select
-                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
+                choices:       "@orob2b_product.provider.product_status_provider->getAvailableProductStatuses"
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
